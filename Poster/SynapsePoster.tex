@@ -1,4 +1,4 @@
-% -*- TeX -*- -*- UK -*- -*- BMR -*- -*- PST -*-
+% -*- TeX -*- -*- US -*- -*- BMR -*- -*- PST -*-
 % ----------------------------------------------------------------
 % Beamer  Poster presentation ************************************************
 %
@@ -89,7 +89,7 @@
 \newcommand{\pib}{\boldsymbol{\pi}}
 \newcommand{\Lb}{\boldsymbol{\Lambda}}
 \newcommand{\w}{\mathbf{w}}
-\newcommand{\W}{\mathbf{W}}
+\newcommand{\W}{\vec{w}}
 \newcommand{\M}{\mathbf{M}}
 \newcommand{\F}{\boldsymbol{\Phi}}
 \newcommand{\CS}{\mathcal{S}}
@@ -167,6 +167,12 @@ Department of Applied Physics, Stanford University, Stanford CA
  \hspace{2cm}
  \includegraphics[width=3cm]{dep.eps}
 }
+
+ \vp Experimental \net
+ \citerr{Coba2009phosphorylation}
+ \begin{center}
+ \includegraphics[width=15cm]{2000102CobaFig4.pdf}
+ \end{center}
 %
 \end{block}
 
@@ -174,7 +180,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Cascade and multistate models}
 %
- Two models of metaplasticity in complex synapses.
+ Two example models of metaplasticity in complex synapses.
  \begin{center}
  \parbox[t]{30cm}{
  \includegraphics[width=12cm]{cascade.eps}
@@ -182,22 +188,43 @@ Department of Applied Physics, Stanford University, Stanford CA
  \includegraphics[width=12cm]{multistate.eps}
  }
  \end{center}
- 
+ \citerr{Fusi2005cascade,Fusi2007multistate}
+
  These have different memory storage properties
  \begin{center}
- \includegraphics[width=20cm]{cascms.eps}
+ \includegraphics[width=15cm]{cascms.eps}
  \end{center}
 %
 \end{block}
 
 
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Questions}
+%
+ \begin{itemize}
+   \item How is structure of \net related to function?
+   \item What are the upper bounds on different measures of memory?
+   \item Which \net topologies maximize these measures?
+ \end{itemize}
+%
+\end{block}
+
+
+%-------------Column--------------------------------------------------------
+\end{column}
+
+%-------------Column--------------------------------------------------------
+\begin{column}{0.32\linewidth}
 
 \section{Framework}
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Markov processes}
+\begin{block}{Metaplasticity models}
 %
+ We have $N$ synapses with $n$ internal states.
+
  We have two Markov processes describing transition probabilities for potentiation, $\M\pot$, and depression, $\M\dep$.
 
  \vp Plasticity events are potentiating with probability $f\pot$ and depressing with probability $f\dep$.
@@ -211,12 +238,6 @@ Department of Applied Physics, Stanford University, Stanford CA
  This will eventually return it to the equilibrium distribution, $\eq$.
 %
 \end{block}
-
-%-------------Column--------------------------------------------------------
-\end{column}
-
-%-------------Column--------------------------------------------------------
-\begin{column}{0.32\linewidth}
 
 %-------------Box--------------------------------------------------------
 
@@ -264,6 +285,11 @@ Department of Applied Physics, Stanford University, Stanford CA
  %
  This leads to a bound on the lifetime of a memory:
  %
+ \begin{center}
+   \includegraphics[width=15cm]{lifetime.eps}
+ \end{center}
+ %
+ %
  \begin{equation*}
    \SNR(\text{lifetime})=1
    \qquad
@@ -302,17 +328,28 @@ Department of Applied Physics, Stanford University, Stanford CA
 %
 \end{block}
 
+%-------------Column--------------------------------------------------------
+\end{column}
+
+%-------------Column--------------------------------------------------------
+\begin{column}{0.32\linewidth}
+
 %-------------Box--------------------------------------------------------
 
 \begin{block}{Maximal area}
 %
  Given any \net, we can construct one with the multistate topology that has
  \begin{itemize}
-   \item same order,
+   \item same state order,
    \item same equilibrium distribution,
    \item larger area.
  \end{itemize}
  Uses a deformation that reduces ``shortcut'' transition probabilities and increases the bypassed ``direct'' ones.
+ %
+ \begin{center}
+   \includegraphics[width=6cm]{shortcut.eps}
+ \end{center}
+ %
 
  \vp The area of this model is
  %
@@ -330,12 +367,6 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 
 
-%-------------Column--------------------------------------------------------
-\end{column}
-
-%-------------Column--------------------------------------------------------
-\begin{column}{0.32\linewidth}
-
 \section{Envelope memory curve}
 
 
@@ -344,15 +375,15 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{block}{Maximal SNR curve}
 %
  Markov process $\implies$ SNR is sum of exponentials.
- 
- \vp If we find the optimum sum of exponentials \alert{at one time} subject to upper bounds on initial SNR and area,
+
+ \vp If we find the maximum sum of exponentials \alert{at one time} subject to upper bounds on initial SNR and area,
  we get an upper bound on SNR at that time.
- 
+
  \vp Resulting curve is always a single exponential.
- 
+
  \vp If we vary the time at which we find the optimum, we get an envelope curve with a power law tail.
  \begin{center}
- \includegraphics[width=20cm]{env.eps}
+ \includegraphics[width=15cm]{env.eps}
  \end{center}
 %
 \end{block}
@@ -361,19 +392,26 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Extra constraint}
 %
- The envelope above isn't tight.
- 
- \vp We can get a tight envelope 
- -- one that can be saturated at any single time by some model -- 
+ The envelope above may not be tight.
+
+ \vp We can get a tight envelope
+ -- one that can be saturated at any single time by some model --
  if we add one more constraint.
- 
+
  \vp Schematically, mode by mode:
  %
  \begin{equation*}
-   \SNR(0)\sqrt{\text{lifetime}} \leq \sqrt{N}\cdot \CO(1).
+   \SNR(0)\sqrt{\text{time-scale}} \leq \sqrt{N}\cdot \CO(1).
  \end{equation*}
  %
- We have found no model that exceeds this.
+ We have found no model can exceed this. It is saturated by a diffusive chain:
+ %
+ \begin{equation*}
+   \SNR(0) \sim \frac{1}{n},
+   \qquad
+   \text{time-scale} \sim n^2.
+ \end{equation*}
+ %
 %
 \end{block}
 
@@ -385,9 +423,9 @@ Department of Applied Physics, Stanford University, Stanford CA
  %
  \begin{equation*}
  \begin{aligned}
-   \operatorname{Envelope}(\text{max lifetime}) &= 1, \\
-   \text{max lifetime}  &= \frac{\sqrt{N}(n-1)}{\e r}.
- \end{aligned}   
+   \operatorname{Envelope}(\text{max lifetime}) = 1, \qquad
+   \text{max lifetime}  = \frac{\sqrt{N}(n-1)}{\e r}.
+ \end{aligned}
  \end{equation*}
  %
 %
