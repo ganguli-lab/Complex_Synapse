@@ -1,0 +1,415 @@
+% -*- TeX -*- -*- UK -*-
+% ----------------------------------------------------------------
+% arXiv Paper ************************************************
+%
+% Subhaneil Lahiri's template
+%
+% Before submitting:
+%    Comment out hyperref
+%    Comment out showkeys
+%    Replace \input{mydefs.tex} with its contents
+%       or include mydefs.tex in zip/tar file
+%    Replace \input{newsymb.tex} with its contents
+%       or include newsymb.tex in zip/tar file
+%    Put this file, the .bbl file, any picture or
+%       other additional files and natbib.sty
+%       file in a zip/tar file
+%
+% **** -----------------------------------------------------------
+\documentclass[12pt]{article}
+% Preamble:
+\usepackage{a4wide}
+\usepackage[centertags]{amsmath}
+\usepackage{amssymb}
+%\usepackage{amsthm}
+\usepackage[sort&compress,numbers]{natbib}
+%\usepackage{citeB}
+\usepackage{ifpdf}
+%\usepackage{graphicx}
+%\usepackage{graphics} for finding documentation only
+%\usepackage{xcolor}
+%\usepackage{pgf}
+\ifpdf
+\usepackage[pdftex,bookmarks]{hyperref}
+\else
+\usepackage[hypertex]{hyperref}
+%\DeclareGraphicsRule{.png}{eps}{.bb}{}
+\fi
+%
+% >> Only for drafts! <<
+\usepackage[notref,notcite]{showkeys}
+% ----------------------------------------------------------------
+\vfuzz2pt % Don't report over-full v-boxes if over-edge is small
+\hfuzz2pt % Don't report over-full h-boxes if over-edge is small
+%\numberwithin{equation}{section}
+%\renewcommand{\baselinestretch}{1.5}
+% ----------------------------------------------------------------
+% New commands etc.
+\input{mydefs.tex}
+\input{newsymb.tex}
+
+\newcommand{\means}{\Longleftrightarrow}
+\newcommand{\requires}{\Longleftarrow}
+\newcommand{\I}{\mathbf{I}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\pp}{\mathbf{p}^\infty}
+\newcommand{\T}{\mathbf{T}}
+\newcommand{\Zb}{\mathbf{Z}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\onev}{\mathbf{c}}
+\newcommand{\pib}{\boldsymbol{\pi}}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title info:
+\title{Area maximisation}
+%
+% Author List:
+%
+\author{Subhaneil Lahiri
+%
+}
+
+\begin{document}
+
+\maketitle
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{abstract}
+  We extremise the area under the synaptic memory curve
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginning of Article:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+It will be convenient for us to define the diagonal elements of $\T$ to be zero (it is conventional to define them to be the recurrence times, $\T_{ii} = 1/\pp_i$, but that would lead to a lot of extra $\delta_{ik}$'s for us). Similarly, we define $N^k_{ij}=0$ if $i=k$ or $j=k$.
+
+
+\section{Mixing times}\label{sec:mixing}
+
+Define
+%
+\begin{equation}\label{eq:mixingpm}
+  \eta^\pm_i \equiv \sum_k \T_{ik} \pp_k \prn{\frac{1 \pm \w_k}{2}}.
+\end{equation}
+%
+It can be shown that \cite{hunter2006mixing}\footnote{Not that their $\eta$ is equal to our $\eta+1$ due to the difference in diagonal elements of $\T$.}
+%
+\begin{equation}\label{eq:mixing}
+  \eta^+_i + \eta^-_i = \eta \qquad (\text{independent of }i).
+\end{equation}
+%
+
+It would be nice if we could prove (at least for the maximal area) that
+%
+\begin{equation}\label{eq:orderinghelp}
+  \w_i = +1 \quad \text{and} \quad \w_j = -1
+  \qquad \implies \qquad
+  \eta^+_i < \eta^+_j
+  \quad \means \quad
+  \eta^-_i > \eta^-_j
+\end{equation}
+%
+then we could use these quantities to order the states.
+
+The area under the memory curve is given by
+%
+\begin{equation}\label{eq:areamixing}
+\begin{aligned}
+  A &= \sqrt{N}(4f^+f^-) \sum_{i \neq j} q_{ij} \pp_i (\eta^+_i - \eta^+_j)
+   &&= -\sqrt{N}(4f^+f^-) \sum_{i , j} q_{ij} \pp_i \eta^+_j\\
+   &= \sqrt{N}(4f^+f^-) \sum_{i \neq j} q_{ij} \pp_i (\eta^-_j - \eta^-_i)
+   &&= \sqrt{N}(4f^+f^-) \sum_{i , j} q_{ij} \pp_i\eta^-_j .
+\end{aligned}
+\end{equation}
+%
+
+\section{Shifting $q_{ij}$}\label{sec:shiftq}
+
+Consider the following change
+%
+\begin{equation}\label{eq:shiftq}
+  \M^+_{ij} \to \M^+_{ij} + f^-\epsilon_{ij},
+  \qquad
+  \M^-_{ij} \to \M^-_{ij} - f^+\epsilon_{ij},
+  \qquad
+  \sum_j \epsilon_{ij} = 0.
+\end{equation}
+%
+This leaves $\M$ unchanged, and therefore $\pp$, $\T$, $\eta$, $N^j_{ik}$ and $H^j_{ik}$ as well. This means
+%
+\begin{equation}\label{eq:shiftqarea}
+  A \to A + \sqrt{N}(4f^+f^-) \sum_{i \neq j} \epsilon_{ij} \pp_i (\eta^+_i - \eta^+_j).
+\end{equation}
+%
+
+Suppose $\eta^+_i > \eta^+_j$. We can increase $A$ by making $\epsilon_{ij}>0$. The only thing that could stop us is if $\M^-_{ij}$ or $\M^+_{ii}$ hits zero (which also takes care of the possibility that $\M^+_{ij}$ hits unity). Similar considerations for $\eta^+_i < \eta^+_j$ imply that at the maximum:
+%
+\begin{equation}\label{eq:shiftqmax}
+  \begin{aligned}
+    \eta^+_i &> \eta^+_j \qquad\implies\qquad & \M^-_{ij} &= 0 \quad&\text{or}\quad \M^+_{ii} &= 0 ,\\
+    \eta^+_i &< \eta^+_j \qquad\implies & \M^+_{ij} &= 0 &\text{or}\quad \M^-_{ii} &= 0 .
+  \end{aligned}
+\end{equation}
+%
+If $\eta^+_i = \eta^+_j$, $\epsilon_{ij}$ is a null direction, so we can impose either of the two conditions if we wish. If it weren't for the second possibility in each case, this would imply an upper/lower triangular structure for $\M^\pm$.
+
+If we have a trio $\eta^+_i > \eta^+_j > \eta^+_k$, two of the transitions can help each other: decreasing $\M^-_{jk}$ increases $\M^-_{jj}$, which allows us to further decrease $\M^+_{ji}$. Decreasing $\M^+_{ji}$ increases $\M^+_{jj}$, which allows us to further decrease $\M^-_{jk}$.
+Successful triangulation requires:
+%
+\begin{equation}\label{eq:trianglesuccess}
+  \begin{aligned}
+    \sum_{\{i \mid \eta^+_i > \eta^+_j\}}\!\!\!\!\! \M^+_{ji}
+     &\leq \M^-_{jj} + \!\!\!\!\!\sum_{\{i \mid \eta^+_i < \eta^+_j\}}\!\!\!\!\! \M^-_{ji}
+    \qquad \implies&
+    \sum_{\{i \mid \eta^+_i > \eta^+_j\}}\!\!\!\!\! \prn{\M^+_{ji} + \M^-_{ji}}
+     \leq 1 ,\\
+    \sum_{\{i \mid \eta^+_i < \eta^+_j\}}\!\!\!\!\! \M^-_{ji}
+     &\leq \M^+_{jj} + \!\!\!\!\!\sum_{\{i \mid \eta^+_i > \eta^+_j\}}\!\!\!\!\! \M^+_{ji}
+    \qquad \implies&
+    \sum_{\{i \mid \eta^+_i < \eta^+_j\}}\!\!\!\!\! \prn{\M^+_{ji} + \M^-_{ji}}
+     \leq 1 .\\
+  \end{aligned}
+\end{equation}
+%
+The two left-hand-sides of the final inequalities sum to $(2-\M^+_{jj}-\M^-_{jj})$, so they are not quite inconsistent.
+
+
+%Guaranteeing that this process will allow us to set $\M^-_{jk}=\M^+_{ji}=0$ would probably require some sort of symmetry between potentiation and depression.
+
+\section{Generalised fundamental matrix}\label{sec:fundamental}
+
+Define the generalised fundamental matrix as
+%
+\begin{equation}\label{eq:funddef}
+  \Zb = (\I - \M + \onev\pib)^{-1},
+\end{equation}
+%
+where $\onev$ is a row vector of 1's and $\pib$ is any row vector such that $\pib\onev=1$. The usual fundamental matrix has $\pib=\pp$ \cite[\S3.2]{kemeny1960finite}, but it is more convenient to let it be independent of $\M$ \cite[App.VIII]{kemeny1960finite}, \eg $\pib=\onev^\mathrm{T}/n$.
+
+Then we have
+%
+\begin{equation}\label{eq:fromfund}
+  \begin{aligned}
+    \pp &= \pib \Zb, \\
+    \Zb \onev &= \onev , \\
+    \T_{ij} &= \frac{\Zb_{jj}-\Zb_{ij}}{\pp_j}, \\
+    \eta^+_i - \eta^+_j &= \half\sum_k (\Zb_{jk}-\Zb_{ik})\w_k.
+  \end{aligned}
+\end{equation}
+%
+
+This allows us to write the area as
+%
+\begin{equation}\label{eq:arefund}
+  A = \sqrt{N}(2f^+f^-)\sum_{ijkl} q_{ij} \pib_l \Zb_{li} (\Zb_{jk} - \Zb_{ik}) \w_k.
+\end{equation}
+%
+
+
+\section{Derivatives wrt.\ $\M^\pm_{ij}$}\label{sec:derivs}
+
+We will regard the off-diagonal elements of $\M^\pm_{ij}$ to be the independent variables, with $\M^\pm_{ii}=1-\sum_{j \neq i} M^\pm_{ij}$. Thus,
+%
+\begin{equation}\label{eq:basicderivs}
+%  \pdiff{\M_{ij}}{\M_{gh}} = \delta_{gi}(\delta_{hj}-\delta_{ij}),
+%  \qquad
+%  \pdiff{f(\M)}{\M^\pm_{gh}} = f^\pm \pdiff{f(\M)}{\M_{gh}},
+  \pdiff{\M_{ij}}{\M^\pm_{gh}} = f^\pm \delta_{gi}(\delta_{hj}-\delta_{ij}),
+  \qquad
+  \pdiff{q_{ij}}{\M^\pm_{gh}} = \pm\delta_{gi}(\delta_{hj}-\delta_{ij}).
+\end{equation}
+%
+The implicit $g \neq h$ that comes with all derivatives is unnecessary, as the derivatives above vanish when $g=h$.
+
+Differentiating \eqref{eq:funddef},
+%
+\begin{equation}\label{eq:fundderiv}
+  \pdiff{\Zb_{ij}}{\M_{gh}} = \Zb_{ig}(\Zb_{hj}-\Zb_{gj}).
+\end{equation}
+%
+From \cite{cho2000markov}, we have
+%
+\begin{equation}\label{eq:pderiv}
+  \pdiff{\pp_k}{\M_{gh}} = \pp_k \pp_g (\T_{gk} - \T_{hk}).
+\end{equation}
+%
+
+We can write \cite{grinstead1997introduction}
+%
+\begin{equation}\label{eq:NTexpr}
+  \M^{(k)}_{ij} = (1-\delta_{ik})(1-\delta_{jk}) \M_{ij},
+  \qquad
+  N^k_{ij} = (1-\delta_{jk})(I-\M^{(k)})^{-1}_{ij},
+  \qquad
+  \T_{ik} = \sum_{j} N^k_{ij},
+\end{equation}
+%
+with $i,j \neq k$. Differentiating,
+%
+\begin{equation}\label{eq:NTderiv}
+\begin{aligned}
+  \pdiff{N^k_{ij}}{\M_{gh}} &= -N^k_{ig}[ N^k_{gj} - N^k_{hj}],\\
+  \pdiff{\T_{ik}}{\M_{gh}} &= -N^k_{ig}[\T_{gk} - \T_{hk}],
+\end{aligned}
+\end{equation}
+%
+again with $i,j \neq k$.
+
+
+\section{Kuhn-Tucker conditions}
+
+Consider the Lagrangian
+%
+\begin{equation}\label{eq:lagrangian}
+  \CL = \frac{A}{\sqrt{N}(2f^+f^-)} + \sum_{\pm}\sum_{ij} \mu_{ij} \M^\pm_{ij}.
+\end{equation}
+%
+Necessary conditions for an extremum are
+%
+\begin{equation}\label{eq:extremum}
+  \pdiff{\CL}{\M^\pm_{gh}} = 0,
+  \qquad
+    \mu^\pm_{ij} \geq 0,\quad
+    \M^\pm_{ij} \geq 0,\quad
+    \mu^\pm_{ij}\M^\pm_{ij} = 0.
+\end{equation}
+%
+with $g \neq h$. We will make statements of the following form repeatedly:
+%
+\begin{equation}\label{eq:ineqstatement}
+  A < B \qquad \implies \qquad
+  A < 0 \quad \text{or}\quad B > 0.
+\end{equation}
+%
+
+Let $\lambda^\pm_{ij} = \mu^\pm_{ij} - \mu^\pm_{ii}$. Together with the bounds \eqref{eq:extremum}, applying \eqref{eq:ineqstatement} leads to
+%
+\begin{equation}\label{eq:lambdaineqs}
+  \begin{aligned}
+    \lambda^\pm_{ij}  &> 0
+    \qquad &\implies \qquad
+    \mu^\pm_{ij} > 0
+    \qquad &\implies \qquad
+    \M^\pm_{ij} = 0, \\
+    \lambda^\pm_{ij}  &< 0
+    \qquad &\implies \qquad
+    \mu^\pm_{ii} > 0
+    \qquad &\implies \qquad
+    \M^\pm_{ii} = 0. \\
+  \end{aligned}
+\end{equation}
+%
+Suppose $\M^+_{ii}=0$, then for some $j$, $\M^+_{ij}\neq0$ and that $\lambda^+_{ij}<0$. We can see that
+%
+\begin{equation}\label{eq:lambdadiagineq}
+  \M^\pm_{ii}=0 \quad\means\quad \min_j \lambda^\pm_{ij} <0.
+\end{equation}
+%
+
+
+Using the formulae of \S\ref{sec:derivs},
+%
+\begin{equation}\label{eq:lagrangderiv}
+  \begin{aligned}
+    \pdiff{\CL}{\M^\pm_{gh}} =&\, \lambda^\pm_{gh}
+    \pm \sum_k \pp_g \pp_k \w_k (\T_{gk} - \T_{hk}) \\
+      &+ f^\pm \sum_k \sum_{i \neq j} q_{ij} \pp_i \pp_k \w_k \pp_g
+         (\T_{ik} - \T_{jk}) (\T_{gi} - \T_{hi} + \T_{gk} - \T_{hk})\\
+      &- f^\pm \sum_k \sum_{i \neq j} q_{ij} \pp_i \pp_k \w_k
+         (N^k_{ig} - N^k_{jg}) (\T_{gk} - \T_{hk})\\
+    =&\, \lambda^\pm_{gh}
+    \pm \sum_{kl} \w_k \pib_l \Zb_{lg} (\Zb_{hk} - \Zb_{gk}) \\
+      &+ f^\pm \sum_{ijkl} q_{ij} \w_k \pib_l \brk{
+         \Zb_{lg}(\Zb_{hi}-\Zb_{gi})(\Zb_{jk}-\Zb_{ik}) + \Zb_{li}(\Zb_{jg}-\Zb_{ig})(\Zb_{hk}-\Zb_{gk}) } \\
+    =&\, \lambda^\pm_{gh}
+    \pm 2 \pp_g (\eta^+_g - \eta^+_h) \\
+      &+ 2f^\pm \sum_{ij} q_{ij} \pp_i \pp_g \brk{
+         (\T_{gi}-\T_{hi})(\eta^+_{i}-\eta^+_{j}) +
+         (\T_{ig}-\T_{jg})(\eta^+_{g}-\eta^+_{h}) } \\
+    =& \, 0.
+  \end{aligned}
+\end{equation}
+%
+
+Consider
+%
+\begin{equation}\label{eq:derivsshiftq}
+  f^- \pdiff{\CL}{\M^+_{gh}} - f^+ \pdiff{\CL}{\M^-_{gh}}
+   = (f^- \lambda^+_{gh} - f^+ \lambda^-_{gh}) + 2\pp_g (\eta^+_g - \eta^+_h)
+   = 0,
+\end{equation}
+%
+which corresponds to the shift considered in \S\ref{sec:shiftq}. We can see that
+%
+\begin{equation}\label{eq:etalambdaineq}
+  \begin{aligned}
+    \eta^+_g &> \eta^+_h
+    &\quad & \implies \quad&
+    f^+ \lambda^-_{gh} &> f^- \lambda^+_{gh}
+    &\quad & \implies \quad&
+    \lambda^-_{gh} &> 0
+    &\quad & \text{or} \quad&
+    \lambda^+_{gh} &< 0
+    \\ &&&&&
+    &\quad & \implies \quad&
+    \M^-_{gh} &= 0
+    &\quad & \text{or} \quad&
+    \M^+_{gg} &= 0,
+    \\
+    \eta^+_g &< \eta^+_h
+    &\quad & \implies \quad&
+    f^- \lambda^+_{gh} &> f^+ \lambda^-_{gh}
+    &\quad & \implies \quad&
+    \lambda^+_{gh} &> 0
+    &\quad & \text{or} \quad&
+    \lambda^-_{gh} &< 0
+    \\ &&&&&
+    &\quad & \implies \quad&
+    \M^+_{gh} &= 0
+    &\quad & \text{or} \quad&
+    \M^-_{gg} &= 0,
+  \end{aligned}
+\end{equation}
+%
+which we've already seen in \S\ref{sec:shiftq}.
+
+Consider
+%
+\begin{equation}\label{eq:derivsoverlap}
+ \begin{aligned}
+   \pdiff{\CL}{\M^+_{gh}} + \pdiff{\CL}{\M^-_{gh}}
+   =&\, (\lambda^+_{gh} + \lambda^-_{gh})
+       +  2 \sum_{ij} q_{ij} \pp_i \pp_g \brk{
+         (\T_{gi}-\T_{hi})(\eta^+_{i}-\eta^+_{j}) +
+         (\T_{ig}-\T_{jg})(\eta^+_{g}-\eta^+_{h}) }\\
+    =& \, 0.
+ \end{aligned}
+\end{equation}
+%
+If we could argue that $\lambda^+_{gh} + \lambda^-_{gh} > 0$, this would imply that $\M^+_{gh}\M^-_{gh}=0$.
+
+%\section*{Acknowledgements}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section*{Appendices}
+%\appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{utcaps_sl}
+\bibliography{maths}
+
+\end{document}

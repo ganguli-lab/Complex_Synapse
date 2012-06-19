@@ -1,0 +1,201 @@
+% this style was created by Subhaneil Lahiri, 2012
+% based on Dreuw by: Philippe Dreuw and Thomas Deselaers
+% and Madrid by: % Copyright 2007 by Till Tantau
+\ProvidesPackage{beamerthemeSubhy}
+\RequirePackage{tcolorbox}
+\mode
+<all>
+{
+  \newcommand\titlegraphicl[1]{\def\inserttitlegraphicl{#1}}
+  \titlegraphicl{}
+}
+
+
+\usecolortheme{whale}
+\usecolortheme{orchid}
+\useinnertheme[shadow]{rounded}
+\useoutertheme{infolines}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\RequirePackage{tangocolors}
+%\selectcolormodel{cmyk}
+\mode<presentation>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setbeamercolor{headline}{use=structure,fg=white,bg=structure.fg!75!black}
+\setbeamercolor{footline}{use=structure,fg=white,bg=structure.fg!75!black}
+\setbeamerfont{footline}{size=\large,series=\tt}
+\setbeamercolor{separation line}{use=structure,bg=structure.fg!75!black}
+\setbeamercolor{title in headline}{fg=white}
+\setbeamercolor{author in headline}{fg=white}
+\setbeamercolor{institute in headline}{fg=white}
+\setbeamerfont{title in headline}{size=\LARGE,series=\bfseries}
+\setbeamerfont{author in headline}{size=\large}
+\setbeamerfont{institute in headline}{size=\large}
+
+\setbeamercolor{framesubtitle}{use=structure,fg=white,bg=structure.fg!75!black}
+\setbeamercolor{author in head/foot}{use=structure,fg=white,bg=structure.fg!75!black}
+\setbeamercolor{title in head/foot}{use=structure,fg=white,bg=structure.fg!75!black}
+\setbeamercolor{date in head/foot}{use=structure,fg=white,bg=structure.fg!75!black}
+\setbeamerfont{author in head/foot}{size=\large,family=\sffamily}
+\setbeamerfont{title in head/foot}{size=\large,family=\sffamily}
+\setbeamerfont{date in head/foot}{size=\large,family=\sffamily}
+
+
+%\setbeamercolor*{normal text}{fg=tachameleon, bg=ta3gray}
+%\setbeamercolor*{block body}{bg=ta3aluminium,fg=black}
+\setbeamercolor{block title}{use=structure,fg=white,bg=structure.fg!75!black}
+\setbeamerfont{block title}{size=\large,series=\bfseries}
+\setbeamercolor{upper separation line head}{fg=white}
+
+%\setbeamercolor*{example body}{fg=ta3aluminium,bg=black}
+%\setbeamercolor*{example text}{fg=ta3aluminium,bg=black}
+%\setbeamercolor*{example title}{bg=taorange,fg=ta2gray}
+
+%\setbeamercolor{alerted text}{fg=gray}
+
+%\setbeamercolor{example text}{fg=taorange}
+%\setbeamercolor{structure}{fg=structure.fg!75!black}
+
+\setbeamercolor{section title}{parent=block title}
+%\setbeamercolor{section title}{parent=block body}
+%\setbeamercolor{section title}{use=struture,fg=structure.fg!75!black}
+%\setbeamercolor{section title}{bg=bg!75!black}
+\setbeamerfont{section title}{size=\large,series=\bfseries,family=\sffamily}
+%\setbeamercolor{section title border}{use=struture,bg=structure.fg!75!black}
+
+%\setbeamertemplate{itemize items}[triangle]
+\setbeamertemplate{navigation symbols}{}  % no navigation on a poster
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{block begin}{
+  \vskip.75ex
+  \begin{beamercolorbox}[rounded=true,shadow=true,leftskip=1cm,colsep*=.75ex]{block title}%
+    \usebeamerfont*{block title}\insertblocktitle
+  \end{beamercolorbox}%
+  {\ifbeamercolorempty[bg]{block body}{}{\nointerlineskip\vskip-0.5pt}}%
+  \usebeamerfont{block body}%
+  \begin{beamercolorbox}[rounded=true,shadow=true,colsep*=.75ex,sep=.75ex,vmode]{block body}%
+    \ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.75ex}\vbox{}%
+}
+\setbeamertemplate{block end}{
+  \end{beamercolorbox}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{headline}{
+  \leavevmode
+
+  \begin{beamercolorbox}[wd=\paperwidth]{headline}
+    \begin{columns}[T]
+      \begin{column}{.025\paperwidth}
+      \end{column}
+      \begin{column}{.125\paperwidth}
+        \begin{center}
+          \inserttitlegraphicl
+        \end{center}
+        \vskip1ex
+      \end{column}
+      \begin{column}{.7\paperwidth}
+        \vskip4ex
+        \centering
+        \usebeamercolor{title in headline}{\color{fg}\usebeamerfont{title in headline}\inserttitle\\[1ex]}
+        \usebeamercolor{author in headline}{\color{fg}\usebeamerfont{author in headline}{\insertauthor}\\[1ex]}
+        \usebeamercolor{institute in headline}{\color{fg}\usebeamerfont{institute in headline}{\insertinstitute}\\[1ex]}
+      \end{column}
+      \begin{column}{.125\paperwidth}
+        \vskip1cm
+        \begin{center}
+          \inserttitlegraphic
+        \end{center}
+        \vskip1.5cm
+      \end{column}
+      \begin{column}{.025\paperwidth}
+      \end{column}
+    \end{columns}
+  \end{beamercolorbox}
+
+  \begin{beamercolorbox}[wd=\paperwidth]{lower separation line head}
+    \rule{0pt}{2pt}
+  \end{beamercolorbox}
+}
+
+%  \setbeamertemplate{headline}{
+%    \leavevmode
+%    \begin{beamercolorbox}[sep=0.5cm,wd=.8\paperwidth]{headline}
+%      \usebeamercolor{title in headline}{\raggedleft\color{fg}\textbf{\LARGE{\inserttitle}}\\[1ex]}
+%      \usebeamercolor{author in headline}{\raggedleft\color{fg}\large{\insertauthor}\\[1ex]}
+%      \usebeamercolor{institute in headline}{\raggedleft\color{fg}\large{\insertinstitute}\\[1ex]}
+%    \end{beamercolorbox}%
+%    \begin{beamercolorbox}[wd=.2\paperwidth]{logo in headline}
+%      \centering
+%      \LARGE{LOGO}
+%    \end{beamercolorbox}
+
+
+%}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{footline}{
+  \begin{beamercolorbox}[wd=\paperwidth]{upper separation line foot}
+    \rule{0pt}{2pt}
+  \end{beamercolorbox}
+
+  \leavevmode%
+%  \begin{beamercolorbox}[ht=4ex,leftskip=1cm,rightskip=1cm]{author in head/foot}%
+%    \texttt{http://www-i6.informatik.rwth-aachen.de}
+%    \hfill
+%    \texttt{\{dreuw,deselaers\}@cs.rwth-aachen.de}
+%    \vskip1ex
+%  \end{beamercolorbox}
+  \begin{beamercolorbox}[wd=.35\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor\expandafter\beamer@ifempty\expandafter{\beamer@shortinstitute}{}{~~(\insertshortinstitute)}
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.45\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+  \end{beamercolorbox}%
+  \vskip0pt%
+  \begin{beamercolorbox}[wd=\paperwidth]{lower separation line foot}
+    \rule{0pt}{2pt}
+  \end{beamercolorbox}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{section title block}{
+   \vskip.75ex
+% \fcolorbox{section title.fg}{section title.bg}{%
+% \begin{tcolorbox}[colframe=section title.fg]
+% \begin{beamercolorbox}[]{section title border}
+  \begin{beamercolorbox}[rounded=true,shadow=true,leftskip=1cm,colsep*=.05ex]{section title}%
+%  \begin{beamercolorbox}[rounded=true,shadow=true,leftskip=0cm,colsep*=0ex]{section title}%
+    \centering
+  \begin{tcolorbox}[colback=section title.bg,colframe=section title.fg,colupper=section title.fg,width=\linewidth,boxrule=0.2ex]
+    \centering
+    \usebeamerfont{section title}\insertsection
+  \end{tcolorbox}
+  \end{beamercolorbox}
+% \end{beamercolorbox}
+%  \end{tcolorbox}
+% }
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Display a grid to help align images ... and it looks nice with this color scheme
+%\beamertemplategridbackground[1cm]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mode<all>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-PDF-mode: t
+%%% TeX-master: "poster"
+%%% End:
