@@ -8,3 +8,4 @@ xlabel('Time')
 ylabel('SNR')
 embiggen
 set(gcf, 'PaperPositionMode', 'auto');
+clear t s ts

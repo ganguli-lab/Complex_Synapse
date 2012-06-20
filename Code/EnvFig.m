@@ -21,7 +21,8 @@ s=UniSMScurve(t,40,1,eps);
 plot(t,s,'b','LineWidth',1.5)
 end
 line([1;1]*bnds',yl'*ones(1,length(bnds)),'Color','k','LineWidth',1.5,'LineStyle',':');
-% line([1;1]*bnds2',yl'*ones(1,length(bnds2)),'Color','k','LineWidth',1.5,'LineStyle','--');
+line([1;1]*bnds2',yl'*ones(1,length(bnds2)),'Color','k','LineWidth',1.5,'LineStyle','--');
 legend({'Envelope','Conjectured envelope','Examples'},'Location','NorthEast')
 set(gcf, 'PaperPositionMode', 'auto');
 hold off
+clear t env env2 bnds bnds2 yl s
