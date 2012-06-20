@@ -25,4 +25,4 @@ legend({'Cascade','Casc MS','Alt MS'},'Location','Best')
 embiggen
 set(gcf, 'PaperPositionMode', 'auto');
 %%
-clear Wp Wm w x beta n
+clear Wp Wm w x beta n q qm

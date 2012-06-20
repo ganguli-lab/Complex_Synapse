@@ -110,7 +110,9 @@
 \institute[Stanford]{%
 Department of Applied Physics, Stanford University, Stanford CA
 }
-\date[6/27/12]{June 27, 2012}%
+\date[6/27/12]{June 27, 2012}
+\titlegraphicl{\includegraphics[width=6cm]{SU_Seal_Card_pos.eps}}
+\titlegraphic{\includegraphics[width=6cm]{mbc_logo_102.png}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -126,13 +128,13 @@ Department of Applied Physics, Stanford University, Stanford CA
 %-------------Beginning--------------------------------------------------------
 
 %-------------Column--------------------------------------------------------
-\begin{column}{0.32\linewidth}
+\begin{column}{0.27\linewidth}
 
 \section{Background}
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Storage capacity ofsynaptic memory}
+\begin{block}{Storage capacity of synaptic memory}
 %
  \begin{itemize}
    \item Capacity limited by new memories overwriting old ones.
@@ -148,31 +150,38 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Complex synapses}
 %
-\parbox{25cm}{
+\parbox{15cm}{
  Not just a synaptic weight.
 
  \vp Take into account state of \net.
 }
-\parbox{11cm}{
- \includegraphics[width=10cm]{synapse.eps}
+\hfill
+\parbox{10cm}{
+ \includegraphics[width=9cm]{synapse.eps}
 }
 
 \vp
-\parbox{22cm}{
+\parbox{15cm}{
  Potentiation and depression cause transitions between these states.
 }
-\hspace{3cm}
-\parbox{11cm}{
+\hfill%\hspace{3cm}
+\parbox{9cm}{
  \includegraphics[width=3cm]{pot.eps}
  \hspace{2cm}
  \includegraphics[width=3cm]{dep.eps}
 }
 
- \vp Experimental \net
+ \vp
+ \parbox[t]{10cm}{
+ Experimental \net
+ 
  \citerr{Coba2009phosphorylation}
+ }\hfill
+\parbox[t]{17cm}{
  \begin{center}
  \includegraphics[width=15cm]{2000102CobaFig4.pdf}
  \end{center}
+}
 %
 \end{block}
 
@@ -215,7 +224,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 \end{column}
 
 %-------------Column--------------------------------------------------------
-\begin{column}{0.32\linewidth}
+\begin{column}{0.37\linewidth}
 
 \section{Framework}
 
@@ -277,27 +286,35 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Area bound}
 %
+\parbox[c]{20cm}{
  We can show that the area under the SNR curve is bounded:
  %
  \begin{equation*}
    A \leq \sqrt{N}(n-1)/r.
  \end{equation*}
  %
- This leads to a bound on the lifetime of a memory:
+ This leads to a bound on the lifetime of a memory:\\
+ %
+ \begin{equation*}
+ \begin{aligned}
+   \SNR(\text{lifetime})&=1
+   &\qquad
+   \implies
+   \quad
+   \text{lifetime} &< A.
+ \end{aligned}
+ \end{equation*}
+ %
+}
+\hfill
+\parbox[c]{16cm}{
  %
  \begin{center}
    \includegraphics[width=15cm]{lifetime.eps}
  \end{center}
  %
- %
- \begin{equation*}
-   \SNR(\text{lifetime})=1
-   \qquad
-   \implies
-   \qquad
-   A \geq \text{lifetime}.
- \end{equation*}
- %
+}
+ 
  This is saturated by a \net with the multistate topology.
 %
 \end{block}
@@ -328,28 +345,27 @@ Department of Applied Physics, Stanford University, Stanford CA
 %
 \end{block}
 
-%-------------Column--------------------------------------------------------
-\end{column}
-
-%-------------Column--------------------------------------------------------
-\begin{column}{0.32\linewidth}
-
 %-------------Box--------------------------------------------------------
 
 \begin{block}{Maximal area}
 %
  Given any \net, we can construct one with the multistate topology that has
+\parbox[c]{15cm}{
  \begin{itemize}
    \item same state order,
    \item same equilibrium distribution,
    \item larger area.
  \end{itemize}
- Uses a deformation that reduces ``shortcut'' transition probabilities and increases the bypassed ``direct'' ones.
+}
+\parbox[c]{15cm}{
  %
  \begin{center}
    \includegraphics[width=6cm]{shortcut.eps}
  \end{center}
  %
+}
+
+ Uses a deformation that reduces ``shortcut'' transition probabilities and increases the bypassed ``direct'' ones.
 
  \vp The area of this model is
  %
@@ -364,6 +380,12 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 
 
+
+%-------------Column--------------------------------------------------------
+\end{column}
+
+%-------------Column--------------------------------------------------------
+\begin{column}{0.32\linewidth}
 
 
 
