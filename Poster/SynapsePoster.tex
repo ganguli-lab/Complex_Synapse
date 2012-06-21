@@ -17,6 +17,8 @@
 \usepackage[orientation=Landscape,size=a0,scale=1.0,debug]{beamerposter}
 \AtBeginSection[]{\usebeamertemplate{section title block}}
 \graphicspath{{Figures/}}
+\addtolength{\abovedisplayshortskip}{-\baselinestretch\baselineskip}
+\usepackage{picinpar}
 %---------Packages-------------------------------------------------------
 
 % For finding documentation:
@@ -111,8 +113,8 @@
 Department of Applied Physics, Stanford University, Stanford CA
 }
 \date[6/27/12]{June 27, 2012}
-\titlegraphicl{\includegraphics[width=6cm]{SU_Seal_Card_pos.eps}}
-\titlegraphic{\includegraphics[width=6cm]{mbc_logo_102.png}}
+\titlegraphicl{\includegraphics[width=5cm]{SU_Seal_Card_pos.eps}}
+\titlegraphic{\includegraphics[width=5cm]{mbc_logo_102.png}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -136,51 +138,42 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Storage capacity of synaptic memory}
 %
- \begin{itemize}
-   \item Capacity limited by new memories overwriting old ones.
-   \item Hopfield capacity $\propto N$ requires unbounded synaptic strengths.
-   \item Bounded synapses $\implies$ capacity $\propto\log N$.
-   \item Trade-off between learning \& remembering.
-   \item Can be ameliorated by using metaplasticity in complex synapses
- \end{itemize}
+% \begin{itemize}
+%   \item Capacity limited by new memories overwriting old
+%   \item Hopfield capacity $\propto N$ requires unbounded synaptic strengths.
+%   \item Bounded synapses $\implies$ capacity $\propto\log N$.
+%   \item Trade-off between learning \& remembering.
+%   \item Can be ameliorated by using metaplasticity in complex synapses
+% \end{itemize}
 %
+A classical perceptron, when used as a recognition memory device, has a memory capacity proportional to the number of synapses $N$.  
+However, this requires synapses to have a dynamic range also proportional to $N$.  If synaptic efficacies
+are limited to a fixed dynamic range, this introduces a strong tradeoff between learning and forgetting due to new memories overwriting old.  If we wish to rapidly store new memories, then memory capacity is $ \CO(log N)$.  To circumvent this tradeoff, it is essential to enlarge our theoretical conception of a synapse as a single number.
 \end{block}
 
 %-------------Box--------------------------------------------------------
 
 \begin{block}{Complex synapses}
 %
-\parbox{15cm}{
- Not just a synaptic weight.
+ \begin{minipage}[b]{16cm}
+ \includegraphics[width=15cm]{2000102CobaFig4.pdf}
 
- \vp Take into account state of \net.
-}
-\hfill
-\parbox{10cm}{
- \includegraphics[width=9cm]{synapse.eps}
-}
+ \citerr{Coba2009phosphorylation}
+\end{minipage}
+ \begin{minipage}[b]{10cm}
+ In reality, a synapse is a complex dynamical system.
 
-\vp
-\parbox{15cm}{
- Potentiation and depression cause transitions between these states.
-}
+ \vp We will describe a synapse by a stochastic process with a finite number of states, $n$.
+
+ \vp Potentiation and depression cause transitions between these states.
+\end{minipage}
+ \vp
+\parbox[c]{25cm}{
+\includegraphics[width=9cm]{synapse.eps}
 \hfill%\hspace{3cm}
-\parbox{9cm}{
  \includegraphics[width=3cm]{pot.eps}
  \hspace{2cm}
  \includegraphics[width=3cm]{dep.eps}
-}
-
- \vp
- \parbox[t]{10cm}{
- Experimental \net
- 
- \citerr{Coba2009phosphorylation}
- }\hfill
-\parbox[t]{17cm}{
- \begin{center}
- \includegraphics[width=15cm]{2000102CobaFig4.pdf}
- \end{center}
 }
 %
 \end{block}
@@ -314,7 +307,7 @@ Department of Applied Physics, Stanford University, Stanford CA
  \end{center}
  %
 }
- 
+
  This is saturated by a \net with the multistate topology.
 %
 \end{block}
@@ -323,7 +316,8 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Ordering the states}
 %
- Let $\fpt_{ij}$ be the mean first passage time from sate $i$ to state $j$. The quantity
+ Let $\fpt_{ij}$ be the mean first passage time from sate $i$ to state $j$.
+ The following quantity
  %
  \begin{equation*}
    \eta = \sum_j \fpt_{ij} \eq_j,
