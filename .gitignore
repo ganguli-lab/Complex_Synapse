@@ -8,14 +8,10 @@
 *.bak
 *.sav
 *.prj
-
+*.nav
 *.toc
-
 *.lof
-
 *.lot
-
-
 *-generated.pdf
 *.asv
 *.mat

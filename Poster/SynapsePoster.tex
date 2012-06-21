@@ -114,8 +114,8 @@
 Department of Applied Physics, Stanford University, Stanford CA
 }
 \date[6/27/12]{June 27, 2012}
-\titlegraphicl{\includegraphics[width=5cm]{SU_Seal_Card_pos.eps}}
-\titlegraphic{\includegraphics[width=5cm]{mbc_logo_102.png}}
+\titlegraphicl{\includegraphics[height=5cm]{SU_Seal_Card_pos.eps}}
+\titlegraphic{\includegraphics[height=5cm]{bio-x.eps}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -148,11 +148,12 @@ Department of Applied Physics, Stanford University, Stanford CA
 % \end{itemize}
 %
  A classical perceptron, when used as a recognition memory device, has a memory capacity proportional to the number of synapses $N$.
- 
+
  \vp However, this requires synapses to have a dynamic range also $\propto N$.
  If synaptic efficacies are limited to a fixed dynamic range, this introduces a strong tradeoff between learning and forgetting due to new memories overwriting old.
  If we wish to rapidly store new memories, then memory capacity is $ \CO(log N)$.
- 
+ \\ \citerr{amit1992constraints,amit1994learning}
+
  \vp To circumvent this tradeoff, it is essential to enlarge our theoretical conception of a synapse as a single number.
  %
 \end{block}
@@ -161,10 +162,10 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Complex synapses}
 %
- \begin{minipage}[t]{13.5cm}
+ \begin{minipage}[t]{14.5cm}
    In reality, a synapse is a complex dynamical system.
 
-   \vp We will describe a synapse by a stochastic process with a finite number of states, $n$.
+   \vp We will describe a synapse by stochastic processes on a finite number of states, $n$.
 
    \vp Potentiation and depression cause transitions between these states.
 
@@ -174,7 +175,7 @@ Department of Applied Physics, Stanford University, Stanford CA
    \end{center}
  \end{minipage}
  %
- \hspace{1cm}
+ %\hspace{1cm}
  %
  \begin{minipage}[t]{15.5cm}
    \begin{center}
@@ -218,9 +219,10 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{block}{Questions}
 %
  \begin{itemize}
-   \item How is structure of \net related to function?
-   \item What are the upper bounds on different measures of memory?
-   \item Which \net topologies maximize these measures?
+   \item Can we understand the space of \emph{all possible} synaptic models?
+   \item How does the structure (topology) of a synaptic model affect its function (memory curve)?
+   \item How does synaptic complexity (number of states) extend the frontiers of possibility for memory?
+   \item Which \net\ topologies maximize measures of memory?
  \end{itemize}
 %
 \end{block}
@@ -236,9 +238,9 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Metaplasticity models}
+\begin{block}{Synaptic state transition models}
 %
- We have $N$ synapses with $n$ internal states.
+% We have $N$ synapses with $n$ internal states.
 
  We have two Markov processes describing transition probabilities for potentiation, $\M\pot$, and depression, $\M\dep$.
 
@@ -299,7 +301,9 @@ Department of Applied Physics, Stanford University, Stanford CA
    A \leq \sqrt{N}(n-1)/r.
  \end{equation*}
  %
- This leads to a bound on the lifetime of a memory:\\
+ This is saturated by a \net\ with the multistate topology.
+
+ \vp This leads to a bound on the memory lifetime of \emph{any} synaptic model:\\
  %
  \begin{equation*}
  \begin{aligned}
@@ -311,7 +315,6 @@ Department of Applied Physics, Stanford University, Stanford CA
  \end{aligned}
  \end{equation*}
  %
- This is saturated by a \net\ with the multistate topology.
 }
 \hfill
 \parbox[c]{16cm}{
@@ -326,9 +329,9 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Ordering the states}
+\begin{block}{Proof: Impose an ordering on the states}
 %
- Let $\fpt_{ij}$ be the mean first passage time from sate $i$ to state $j$.
+ Let $\fpt_{ij}$ be the mean first passage time from state $i$ to state $j$.
  The following quantity
  %
  \begin{equation*}
@@ -347,7 +350,7 @@ Department of Applied Physics, Stanford University, Stanford CA
  \end{equation*}
  %
  These measure ``distance'' to the srong/weak states.
- They can be used to put the states in order (increasing $\eta^-$ or decreasing $\eta^+$).
+ They can be used to arrange the states in an order (increasing $\eta^-$ or decreasing $\eta^+$).
 %
 \end{block}
 
@@ -379,7 +382,7 @@ Department of Applied Physics, Stanford University, Stanford CA
    A = \frac{2\sqrt{N}}{r}\sum_k \eq_k \abs{k-\av{k}}.
  \end{equation*}
  %
- Maximum is when all probability is at ends.
+ The maximum is when all probability is at ends.
 %
 \end{block}
 
@@ -402,12 +405,11 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Maximal SNR curve}
 %
- Markov process $\implies$ SNR is sum of exponentials.
+ Markov process $\implies$ SNR is a sum of exponentials.
 
  \vp If we find the maximum sum of exponentials \emph{at one time}, subject to upper bounds on initial SNR and area,
- we get an upper bound on SNR at that time.
-
- \vp Resulting curve is always a single exponential.
+ we get an upper bound on SNR at that time. 
+ The resulting curve is always a single exponential.
 
  \vp If we vary the time at which we find the optimum, we get an envelope curve with a power law tail.
  \begin{center}
@@ -418,7 +420,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Extra constraint}
+\begin{block}{Extra constraint: limits of diffusive forgetting}
 %
  The envelope above may not be tight.
 
@@ -456,6 +458,14 @@ Department of Applied Physics, Stanford University, Stanford CA
  \end{aligned}
  \end{equation*}
  %
+%
+\end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Summary}
+%
+ Summary to appear here.
 %
 \end{block}
 
