@@ -18,7 +18,6 @@
 \AtBeginSection[]{\usebeamertemplate{section title block}}
 \graphicspath{{Figures/}}
 \addtolength{\abovedisplayshortskip}{-\baselinestretch\baselineskip}
-\usepackage{picinpar}
 %---------Packages-------------------------------------------------------
 
 % For finding documentation:
@@ -39,6 +38,7 @@
 \fi
 \usepackage{epstopdf}
 \epstopdfsetup{update,suffix=-generated}
+\usepackage{adjustbox}
 %---------Colours---------------------------------------------------------
 
 % \newrgbcolor{LemonChiffon}{1. 0.98 0.8}
@@ -58,7 +58,8 @@
 
 \input{mydefs.tex}
 \input{slidesymb.tex}
-
+%\newcommand{\aligntop}[1]{\vtop{\vskip-1ex\hbox{#1}}}
+\newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
 \DeclareMathOperator{\SNR}{SNR}
 \DeclareMathOperator{\snr}{SNR}
 \newcommand{\net}{molecular network}
@@ -146,35 +147,47 @@ Department of Applied Physics, Stanford University, Stanford CA
 %   \item Can be ameliorated by using metaplasticity in complex synapses
 % \end{itemize}
 %
-A classical perceptron, when used as a recognition memory device, has a memory capacity proportional to the number of synapses $N$.  
-However, this requires synapses to have a dynamic range also proportional to $N$.  If synaptic efficacies
-are limited to a fixed dynamic range, this introduces a strong tradeoff between learning and forgetting due to new memories overwriting old.  If we wish to rapidly store new memories, then memory capacity is $ \CO(log N)$.  To circumvent this tradeoff, it is essential to enlarge our theoretical conception of a synapse as a single number.
+ A classical perceptron, when used as a recognition memory device, has a memory capacity proportional to the number of synapses $N$.
+ 
+ \vp However, this requires synapses to have a dynamic range also $\propto N$.
+ If synaptic efficacies are limited to a fixed dynamic range, this introduces a strong tradeoff between learning and forgetting due to new memories overwriting old.
+ If we wish to rapidly store new memories, then memory capacity is $ \CO(log N)$.
+ 
+ \vp To circumvent this tradeoff, it is essential to enlarge our theoretical conception of a synapse as a single number.
+ %
 \end{block}
 
 %-------------Box--------------------------------------------------------
 
 \begin{block}{Complex synapses}
 %
- \begin{minipage}[b]{16cm}
- \includegraphics[width=15cm]{2000102CobaFig4.pdf}
+ \begin{minipage}[t]{13.5cm}
+   In reality, a synapse is a complex dynamical system.
 
- \citerr{Coba2009phosphorylation}
-\end{minipage}
- \begin{minipage}[b]{10cm}
- In reality, a synapse is a complex dynamical system.
+   \vp We will describe a synapse by a stochastic process with a finite number of states, $n$.
 
- \vp We will describe a synapse by a stochastic process with a finite number of states, $n$.
+   \vp Potentiation and depression cause transitions between these states.
 
- \vp Potentiation and depression cause transitions between these states.
-\end{minipage}
- \vp
-\parbox[c]{25cm}{
-\includegraphics[width=9cm]{synapse.eps}
-\hfill%\hspace{3cm}
- \includegraphics[width=3cm]{pot.eps}
- \hspace{2cm}
- \includegraphics[width=3cm]{dep.eps}
-}
+   \vp
+   \begin{center}
+     \aligntop{\includegraphics[width=11cm]{synapse.eps}}
+   \end{center}
+ \end{minipage}
+ %
+ \hspace{1cm}
+ %
+ \begin{minipage}[t]{15.5cm}
+   \begin{center}
+    \aligntop{\includegraphics[width=15cm]{2000102CobaFig4.pdf}}
+   \end{center}
+    \citerr{Coba2009phosphorylation}
+
+   \begin{center}
+   \aligntop{\includegraphics[width=5cm]{pot.eps}}
+   \hspace{2cm}
+   \aligntop{\includegraphics[width=5cm]{dep.eps}}
+   \end{center}
+ \end{minipage}
 %
 \end{block}
 
@@ -185,9 +198,9 @@ are limited to a fixed dynamic range, this introduces a strong tradeoff between 
  Two example models of metaplasticity in complex synapses.
  \begin{center}
  \parbox[t]{30cm}{
- \includegraphics[width=12cm]{cascade.eps}
+ \aligntop{\includegraphics[width=12cm]{cascade.eps}}
  \hspace{2cm}
- \includegraphics[width=12cm]{multistate.eps}
+ \aligntop{\includegraphics[width=12cm]{multistate.eps}}
  }
  \end{center}
  \citerr{Fusi2005cascade,Fusi2007multistate}
@@ -279,7 +292,7 @@ are limited to a fixed dynamic range, this introduces a strong tradeoff between 
 
 \begin{block}{Area bound}
 %
-\parbox[c]{20cm}{
+\parbox[c]{26cm}{
  We can show that the area under the SNR curve is bounded:
  %
  \begin{equation*}
@@ -298,6 +311,7 @@ are limited to a fixed dynamic range, this introduces a strong tradeoff between 
  \end{aligned}
  \end{equation*}
  %
+ This is saturated by a \net\ with the multistate topology.
 }
 \hfill
 \parbox[c]{16cm}{
@@ -307,8 +321,6 @@ are limited to a fixed dynamic range, this introduces a strong tradeoff between 
  \end{center}
  %
 }
-
- This is saturated by a \net with the multistate topology.
 %
 \end{block}
 
@@ -392,7 +404,7 @@ are limited to a fixed dynamic range, this introduces a strong tradeoff between 
 %
  Markov process $\implies$ SNR is sum of exponentials.
 
- \vp If we find the maximum sum of exponentials \alert{at one time} subject to upper bounds on initial SNR and area,
+ \vp If we find the maximum sum of exponentials \emph{at one time}, subject to upper bounds on initial SNR and area,
  we get an upper bound on SNR at that time.
 
  \vp Resulting curve is always a single exponential.
@@ -455,6 +467,14 @@ are limited to a fixed dynamic range, this introduces a strong tradeoff between 
  \bibliographystyle{unsrt_poster}
  \bibliography{neuro,maths}
  }
+%
+\end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Acknowledgements}
+%
+ Swartz foundation.
 %
 \end{block}
 
