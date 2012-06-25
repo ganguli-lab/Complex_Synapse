@@ -113,9 +113,10 @@
 \institute[Stanford]{%
 Department of Applied Physics, Stanford University, Stanford CA
 }
-\date[6/27/12]{June 27, 2012}
+\date{June 27, 2012}
 \titlegraphicl{\includegraphics[height=5cm]{SU_Seal_Card_pos.eps}}
-\titlegraphic{\includegraphics[height=5cm]{bio-x.eps}}
+\titlegraphic{\includegraphics[height=5cm]{bio-x.eps}%
+    \hspace{0.5cm}\includegraphics[height=5cm]{swartz.eps}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -196,13 +197,13 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Cascade and multistate models}
 %
- Two example models of metaplasticity in complex synapses.
+ Two example models of complex synapses.
  \begin{center}
- \parbox[t]{30cm}{
- \aligntop{\includegraphics[width=12cm]{cascade.eps}}
- \hspace{2cm}
- \aligntop{\includegraphics[width=12cm]{multistate.eps}}
- }
+% \parbox[t]{30cm}{
+  \aligntop{\includegraphics[width=12cm]{cascade.eps}}
+  \hspace{2cm}
+  \aligntop{\includegraphics[width=12cm]{multistate.eps}}
+% }
  \end{center}
  \citerr{Fusi2005cascade,Fusi2007multistate}
 
@@ -222,7 +223,7 @@ Department of Applied Physics, Stanford University, Stanford CA
    \item Can we understand the space of \emph{all possible} synaptic models?
    \item How does the structure (topology) of a synaptic model affect its function (memory curve)?
    \item How does synaptic complexity (number of states) extend the frontiers of possibility for memory?
-   \item Which \net\ topologies maximize measures of memory?
+   \item Which synaptic state transition topologies maximize measures of memory?
  \end{itemize}
 %
 \end{block}
@@ -241,7 +242,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{block}{Synaptic state transition models}
 %
 % We have $N$ synapses with $n$ internal states.
-
+%
  We have two Markov processes describing transition probabilities for potentiation, $\M\pot$, and depression, $\M\dep$.
 
  \vp Plasticity events are potentiating with probability $f\pot$ and depressing with probability $f\dep$.
@@ -294,36 +295,55 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Area bound}
 %
-\parbox[c]{26cm}{
- We can show that the area under the SNR curve is bounded:
+ \parbox[c]{26cm}{
+ % We can show that the area under the SNR curve is bounded:
+ % %
+ % \begin{equation*}
+ %   A \leq \sqrt{N}(n-1)/r.
+ % \end{equation*}
+ % %
+ % This is saturated by a transition diagram with a linear chain topology.
  %
- \begin{equation*}
-   A \leq \sqrt{N}(n-1)/r.
- \end{equation*}
- %
- This is saturated by a \net\ with the multistate topology.
-
- \vp This leads to a bound on the memory lifetime of \emph{any} synaptic model:\\
- %
- \begin{equation*}
- \begin{aligned}
-   \SNR(\text{lifetime})&=1
-   &\qquad
-   \implies
-   \quad
-   \text{lifetime} &< A.
- \end{aligned}
- \end{equation*}
- %
-}
-\hfill
-\parbox[c]{16cm}{
- %
- \begin{center}
-   \includegraphics[width=15cm]{lifetime.eps}
- \end{center}
- %
-}
+ % \vp This leads to a bound on the memory lifetime of \emph{any} synaptic model:
+ % %
+ % \begin{equation*}
+ % \begin{aligned}
+ %   \SNR(\text{lifetime})&=1
+ %   &\qquad
+ %   \implies
+ %   \quad
+ %   \text{lifetime} &< A.
+ % \end{aligned}
+ % \end{equation*}
+ % %
+  The memory lifetime is bounded by the area under the SNR curve:
+  %
+  \begin{equation*}
+  \begin{aligned}
+    \SNR(\text{lifetime})&=1
+    &\qquad
+    \implies
+    \quad
+    \text{lifetime} &< A.
+  \end{aligned}
+  \end{equation*}
+  %
+  We can show that this area has an upper bound:
+  %
+  \begin{equation*}
+    A \leq \sqrt{N}(n-1)/r.
+  \end{equation*}
+  %
+  This is saturated by a transition diagram with a linear chain topology.
+ }
+ \hfill
+ \parbox[c]{16cm}{
+  %
+  \begin{center}
+    \includegraphics[width=15cm]{lifetime.eps}
+  \end{center}
+  %
+ }
 %
 \end{block}
 
@@ -359,20 +379,20 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{block}{Maximal area}
 %
  Given any \net, we can construct one with the multistate topology that has
-\parbox[c]{15cm}{
- \begin{itemize}
-   \item same state order,
-   \item same equilibrium distribution,
-   \item larger area.
- \end{itemize}
-}
-\parbox[c]{15cm}{
- %
- \begin{center}
-   \includegraphics[width=6cm]{shortcut.eps}
- \end{center}
- %
-}
+ \parbox[c]{15cm}{
+  \begin{itemize}
+    \item same state order,
+    \item same equilibrium distribution,
+    \item larger area.
+  \end{itemize}
+ }
+ \parbox[c]{15cm}{
+  %
+  \begin{center}
+    \includegraphics[width=6cm]{shortcut.eps}
+  \end{center}
+  %
+ }
 
  Uses a deformation that reduces ``shortcut'' transition probabilities and increases the bypassed ``direct'' ones.
 
@@ -382,7 +402,7 @@ Department of Applied Physics, Stanford University, Stanford CA
    A = \frac{2\sqrt{N}}{r}\sum_k \eq_k \abs{k-\av{k}}.
  \end{equation*}
  %
- The maximum is when all probability is at ends.
+ This is maximized when the equilibrium probability distribution is concentrated at both ends.
 %
 \end{block}
 
@@ -398,43 +418,71 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 
 
-\section{Envelope memory curve}
+\section{The memory envelope}
 
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Maximal SNR curve}
+\begin{block}{The frontiers of possibility: a maximal SNR curve}
 %
- Markov process $\implies$ SNR is a sum of exponentials.
+ Markovian learning and forgetting $\implies$ SNR is a sum of exponentials.
 
- \vp If we find the maximum sum of exponentials \emph{at one time}, subject to upper bounds on initial SNR and area,
- we get an upper bound on SNR at that time. 
- The resulting curve is always a single exponential.
+ \vp Optimizing the SNR \emph{at one time}, $t_0$, over the space of such curves, 
+ subject to upper bounds on initial SNR and area, 
+ yields an upper bound on SNR at $t_0$ for \emph{any} synaptic model.
+ The resulting optimal memory curve is a single exponential.
 
- \vp If we vary the time at which we find the optimum, we get an envelope curve with a power law tail.
+ \vp Varying $t_0$ yields an memory envelope curve with a power law tail.
+\parbox[c]{15.5cm}{
  \begin{center}
- \includegraphics[width=15cm]{env.eps}
+   \aligntop{\includegraphics[width=15cm]{env.eps}}
  \end{center}
+}
+\hspace{0.5cm}
+\parbox[c]{14cm}{
+ %
+% Proven:
+ \begin{equation*}
+  \begin{aligned}
+   \text{Proven envelope} &\sim \sqrt{N}
+     \begin{cases}
+       \CO(1)                  & rt_0 <\CO(n),\\
+       \CO\prn{\frac{n}{rt_0}} & rt_0 >\CO(n).
+     \end{cases}
+   \\
+%  \end{aligned}
+% \end{equation*}
+% %
+% Conjectured:
+% %
+% \begin{equation*}
+%  \begin{aligned}
+   \text{Conj.\ envelope} &\sim \sqrt{N}
+     \begin{cases}
+       \CO\prn{\frac{1}{\sqrt{rt_0}}}  & rt_0 <\CO\prn{n^2},\\
+       \CO\prn{\frac{n}{rt_0}}         & rt_0 >\CO\prn{n^2}.
+     \end{cases}
+  \end{aligned}
+ \end{equation*}
+ %
+}
 %
 \end{block}
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Extra constraint: limits of diffusive forgetting}
+\begin{block}{Extra constraint: limits of diffusive learning and forgetting}
 %
  The envelope above may not be tight.
-
- \vp We can get a tight envelope
- -- one that can be saturated at any single time by some model --
- if we add one more constraint.
-
- \vp Schematically, mode by mode:
+ We conjecture an additional constraint, which would yield a tight envelope (dashed line above).
+ Schematically, mode by mode:
  %
  \begin{equation*}
    \SNR(0)\sqrt{\text{time-scale}} \leq \sqrt{N}\cdot \CO(1).
  \end{equation*}
  %
- We have found no model can exceed this. It is saturated by a diffusive chain:
+ We have found no model that can exceed this bound. 
+ It is saturated by a diffusive chain:
  %
  \begin{equation*}
    \SNR(0) \sim \frac{1}{n},
@@ -445,27 +493,36 @@ Department of Applied Physics, Stanford University, Stanford CA
 %
 \end{block}
 
-%-------------Box--------------------------------------------------------
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{Maximum lifetime}
+%%
+% We can use the envelope to get a stricter bound on the lifetime of a memory
+% %
+% \begin{equation*}
+% \begin{aligned}
+%   \operatorname{Envelope}(\text{max lifetime}) = 1, \qquad
+%   \text{max lifetime}  = \frac{\sqrt{N}(n-1)}{\e r}.
+% \end{aligned}
+% \end{equation*}
+% %
+%%
+%\end{block}
 
-\begin{block}{Maximum lifetime}
-%
- We can use the envelope to get a stricter bound on the lifetime of a memory
- %
- \begin{equation*}
- \begin{aligned}
-   \operatorname{Envelope}(\text{max lifetime}) = 1, \qquad
-   \text{max lifetime}  = \frac{\sqrt{N}(n-1)}{\e r}.
- \end{aligned}
- \end{equation*}
- %
-%
-\end{block}
+%\section{}
 
 %-------------Box--------------------------------------------------------
 
 \begin{block}{Summary}
 %
- Summary to appear here.
+  \begin{itemize}
+    \item We have formulated a general theory of learning and memory with complex synapses.
+    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
+    \item The area under the memory curve of any synaptic transition diagram cannot exceed that of a linear chain with the same equilibrium probability distribution.
+    \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.  
+        Synaptic complexity ($n$ internal states) raises the memory envelope linearly in $n$ for times $> \CO(n^2)$.
+    \item For times $< \CO(n^2)$ we conjecture the close to optimal synaptic model that reaches the envelope exploits deterministic transitions, resulting in diffusive forgetting.
+  \end{itemize}
 %
 \end{block}
 
@@ -484,7 +541,8 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Acknowledgements}
 %
- Swartz foundation.
+ SL and SG thank the Swartz Foundation, Burroughs Wellcome Foundation, Stanford Bio-X Neuroventures and DARPA for funding, and Larry Abbott and Stefano Fusi for useful conversations.
+
 %
 \end{block}
 
