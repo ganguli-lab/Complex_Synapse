@@ -14,7 +14,7 @@
   \usepackage{times}
 %  \usepackage{amsmath,amsthm, amssymb, latexsym}
 %  \boldmath
-\usepackage[orientation=Landscape,size=a0,scale=1.0,debug]{beamerposter}
+\usepackage[orientation=Landscape,size=a0,scale=1.0]{beamerposter}
 \AtBeginSection[]{\usebeamertemplate{section title block}}
 \graphicspath{{Figures/}}
 \addtolength{\abovedisplayshortskip}{-\baselinestretch\baselineskip}
@@ -148,11 +148,11 @@ Department of Applied Physics, Stanford University, Stanford CA
 %   \item Can be ameliorated by using metaplasticity in complex synapses
 % \end{itemize}
 %
- A classical perceptron, when used as a recognition memory device, has a memory capacity proportional to the number of synapses $N$.
+ A classical perceptron, when used as a recognition memory device, has a memory capacity proportional to the number of synapses, $N$.
 
  \vp However, this requires synapses to have a dynamic range also $\propto N$.
  If synaptic efficacies are limited to a fixed dynamic range, this introduces a strong tradeoff between learning and forgetting due to new memories overwriting old.
- If we wish to rapidly store new memories, then memory capacity is $ \CO(log N)$.
+ If we wish to store new memories rapidly, then memory capacity is $\CO(\log N)$.
  \\ \citerr{amit1992constraints,amit1994learning}
 
  \vp To circumvent this tradeoff, it is essential to enlarge our theoretical conception of a synapse as a single number.
@@ -264,7 +264,7 @@ Department of Applied Physics, Stanford University, Stanford CA
  We use the ideal observer approach: read synaptic weights directly.
  This is an upper bound on what could be read from network activity.
 
- Reconstruction probability of a single synapse:
+ The reconstruction probability of a single synapse is:
  %
  \begin{equation*}
    s(t) = f\pot P(\text{strong},t|\text{pot},0) + f\dep P(\text{weak},t|\text{dep},0)
@@ -279,7 +279,7 @@ Department of Applied Physics, Stanford University, Stanford CA
    \end{aligned}
  \end{equation*}
  %
- If we ignore correlations between different synapses, signal-to-noise ratio:
+ If we ignore correlations between different synapses, the signal-to-noise ratio is:
  %
  \begin{equation*}
    \SNR(t) \sim \sqrt{N}(s(t)-s(\infty)).
@@ -369,7 +369,7 @@ Department of Applied Physics, Stanford University, Stanford CA
    \eta^-_i = \sum_{j\in\text{weak}} \fpt_{ij} \eq_j.
  \end{equation*}
  %
- These measure ``distance'' to the srong/weak states.
+ These measure ``distance'' to the strong/weak states.
  They can be used to arrange the states in an order (increasing $\eta^-$ or decreasing $\eta^+$).
 %
 \end{block}
@@ -378,12 +378,12 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Maximal area}
 %
- Given any \net, we can construct one with the multistate topology that has
+ Given any synaptic model, we can construct one with a linear chain topology that has
  \parbox[c]{15cm}{
   \begin{itemize}
-    \item same state order,
-    \item same equilibrium distribution,
-    \item larger area.
+    \item the same state order,
+    \item the same equilibrium distribution,
+    \item a larger area.
   \end{itemize}
  }
  \parbox[c]{15cm}{
@@ -425,14 +425,15 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{The frontiers of possibility: a maximal SNR curve}
 %
- Markovian learning and forgetting $\implies$ SNR is a sum of exponentials.
+ Markovian learning and forgetting $\implies$ SNR is a sum of decaying exponentials.
 
- \vp Optimizing the SNR \emph{at one time}, $t_0$, over the space of such curves, 
- subject to upper bounds on initial SNR and area, 
+ \vp Optimizing the SNR \emph{at one time}, $t_0$, over the space of such curves,
+ subject to upper bounds on initial SNR and area,
  yields an upper bound on SNR at $t_0$ for \emph{any} synaptic model.
- The resulting optimal memory curve is a single exponential.
+ The resulting optimal memory curve is a single exponential
+ (optimizing at two or more well separated times requires multiple exponentials).
 
- \vp Varying $t_0$ yields an memory envelope curve with a power law tail.
+ \vp Varying $t_0$ yields a memory envelope curve with a power law tail.
 \parbox[c]{15.5cm}{
  \begin{center}
    \aligntop{\includegraphics[width=15cm]{env.eps}}
@@ -459,8 +460,8 @@ Department of Applied Physics, Stanford University, Stanford CA
 %  \begin{aligned}
    \text{Conj.\ envelope} &\sim \sqrt{N}
      \begin{cases}
-       \CO\prn{\frac{1}{\sqrt{rt_0}}}  & rt_0 <\CO\prn{n^2},\\
-       \CO\prn{\frac{n}{rt_0}}         & rt_0 >\CO\prn{n^2}.
+       \CO\prn{\frac{1}{\sqrt{rt_0}}}  & rt_0 <\CO(n^2),\\
+       \CO\prn{\frac{n}{rt_0}}         & rt_0 >\CO(n^2).
      \end{cases}
   \end{aligned}
  \end{equation*}
@@ -481,7 +482,7 @@ Department of Applied Physics, Stanford University, Stanford CA
    \SNR(0)\sqrt{\text{time-scale}} \leq \sqrt{N}\cdot \CO(1).
  \end{equation*}
  %
- We have found no model that can exceed this bound. 
+ We have found no model that can exceed this bound.
  It is saturated by a diffusive chain:
  %
  \begin{equation*}
@@ -519,7 +520,7 @@ Department of Applied Physics, Stanford University, Stanford CA
     \item We have formulated a general theory of learning and memory with complex synapses.
     \item We can impose an order on the internal states of a synapse through the theory of first passage times.
     \item The area under the memory curve of any synaptic transition diagram cannot exceed that of a linear chain with the same equilibrium probability distribution.
-    \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.  
+    \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
         Synaptic complexity ($n$ internal states) raises the memory envelope linearly in $n$ for times $> \CO(n^2)$.
     \item For times $< \CO(n^2)$ we conjecture the close to optimal synaptic model that reaches the envelope exploits deterministic transitions, resulting in diffusive forgetting.
   \end{itemize}
