@@ -17,23 +17,38 @@ assert(mod(n,2)==0)
 % w=ones(n,1);
 % w(1:(n/2))=-1;
 
-Zinv=ones(n) - W;
 
 [u,qa]=eig(-W);
-
-% if rcond(u)<0.0001
-%     disp('bad u');
-% end
-% if rcond(Zinv)<0.0001
-%     disp('bad Z');
-% end
-ca = 2*fp*(1-fp) * (u\w) * sum((Zinv\q) * (Zinv\u), 1);
-
-
 qa=diag(qa);
-ca=diag(ca);
-
 [qa,ix]=sort(qa);
-ca=ca(ix);
+u=u(:,ix);
+
+[v,qb]=eig(-W');
+qb=diag(qb);
+[~,ix]=sort(qb);
+v=conj(v(:,ix));
+v=diag(1./diag(v'*u)) * v';
+
+% Zinv=ones(n) - W;
+% ca = 2*fp*(1-fp) * (u\w) * sum((Zinv\q) * (Zinv\u), 1);
+% ca=diag(ca);
+% ca=ca(ix);
+
+% if rcond(u) < 1e-7
+%     qa=NaN(n,1);
+%     ca=qa;
+%     return;
+% end
+
+% Z=u * diag(1./[1;qa(2:end)]) / u;
+% p=[1 zeros(1,length(qa)-1)] / u;
+% p=p/sum(p);
+% ca = 2*fp*(1-fp) * (u\w) .* (p*q*Z*u)';
+
+Z=u * diag(1./[1;qa(2:end)]) * v;
+p=v(1,:);
+p=p/sum(p);
+ca = 2*fp*(1-fp) * (v*w) .* (p*q*Z*u)';
+
 end
 

@@ -23,23 +23,24 @@ assert(mod(n,2)==0)
 
 q=Wp-Wm;
 W=fp*q + Wm;
-Zinv=ones(size(Wp)) - W;
-
-[u,qa]=eig(-W);
-
-% if rcond(u)<0.0001
-%     disp('bad u');
-% end
-% if rcond(Zinv)<0.0001
-%     disp('bad Z');
-% end
-ca = 2*fp*(1-fp) * (u\w) * sum((Zinv\q) * (Zinv\u), 1);
-
-
-qa=diag(qa);
-ca=diag(ca);
-
-[qa,ix]=sort(qa);
-ca=ca(ix);
+[qa,ca]=SpectrumWq(W,q,fp,w);
+% Zinv=ones(size(Wp)) - W;
+% 
+% [u,qa]=eig(-W);
+% 
+% % if rcond(u)<0.0001
+% %     disp('bad u');
+% % end
+% % if rcond(Zinv)<0.0001
+% %     disp('bad Z');
+% % end
+% ca = 2*fp*(1-fp) * (u\w) * sum((Zinv\q) * (Zinv\u), 1);
+% 
+% 
+% qa=diag(qa);
+% ca=diag(ca);
+% 
+% [qa,ix]=sort(qa);
+% ca=ca(ix);
 end
 
