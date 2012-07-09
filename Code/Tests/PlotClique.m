@@ -2,31 +2,24 @@
 % %PLOTCLIQUE Summary of this function goes here
 % %   Detailed explanation goes here
 
-n=zeros(1,100);
-% cq=n;
-crq=n;
-crqm=n;
-c2q=n;
-% init=n;
-% ev=n;
-% Tmax=n;
-% Eqbnd=n;
-% L2=n;
-% AI=n;
+%allvars={'crqm','crq','c2q','init','cqm','ev','L2','AI','Eqbnd','Tmax'};
+% varnames={'crq','crqm','c2q'};
+varnames={'crq','Eqbnd','init','ev'};
+numpts=100;
+n=zeros(1,numpts);
+output=zeros(length(varnames),numpts);
 
-for i=1:100
+for i=1:numpts
     n(i)=2*i+4;
 %     [ crq(i),init(i),cq(i),ev(i),Tmax(i),Eqbnd(i),L2(i),AI(i) ]=TestClique(n(i));
-    [ crq(i),crqm(i),c2q(i)]=TestClique(n(i));
+    output(:,i)=TestClique(n(i),varnames);
     if mod(i,10)==0
         disp(int2str(i));
     end%if
 end
-% plot(n,real([crq;init;cq;ev;Tmax;Eqbnd;L2;init./sqrt(ev);AI]));
-plot(n,real([crq;crqm;c2q]));
+plot(n,real(output));
 set(gca,'XScale','log','YScale','log')
-% legend({'crq','init','cq','ev','Tmax','Eqbnd','L2','inittau','AI'});
-legend({'crq','crqm','c2q'});
+legend(varnames);
 hold off;
 % end
-clear i;
+clear i numpts;
