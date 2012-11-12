@@ -4,7 +4,7 @@
 
 %allvars={'crqm','crq','c2q','init','cqm','ev','L2','AI','Eqbnd','Tmax'};
 % varnames={'crq','crqm','c2q'};
-varnames={'crq','Eqbnd','init','ev'};
+varnames={'crq','qPi','init','A','etaPi'};
 numpts=100;
 n=zeros(1,numpts);
 output=zeros(length(varnames),numpts);

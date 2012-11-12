@@ -397,16 +397,21 @@ or, using \eqref{eq:defDLP},
 \end{proof}
 I think the extra factor of $\Lb_{ii}$, compared to the discrete case \cite[Th.4.4.5]{kemeny1960finite}, occurs because in this case we are demanding that the process leaves the initial state once before returning, whereas in the discrete case we only measure the time it takes to go to the initial state after the first time-step.
 
+We can substitute this into \eqref{eq:fptrecdg} to get a recursion relation for the off diagonal part:
+%
+\begin{equation}\label{eq:fptbrec}
+  \MM\fptb = \D-\onem.
+\end{equation}
+%
 \begin{thm}
-  The solution of \eqref{eq:fptrecdg} is unique.
+  The off-diagonal solution of \eqref{eq:fptbrec} is unique.
 \end{thm}
 \begin{proof}
-  We have already seen that the diagonal part is determined by \eqref{eq:fptrecdg}.
   Suppose we have two solutions for the off-diagonal part, $\fptb$ and $\fptb'$.
-  Subtracting \eqref{eq:fptrecdg} for these two solutions gives
+  Subtracting \eqref{eq:fptbrec} for these two solutions gives
   %
   \begin{equation*}
-    \Lb\MM(\fptb-\fptb')=0.
+    \MM(\fptb-\fptb')=0.
   \end{equation*}
   %
   As we are assuming an ergodic process, the zero eigenvalue is non-degenerate.
@@ -434,14 +439,14 @@ I think the extra factor of $\Lb_{ii}$, compared to the discrete case \cite[Th.4
   %
 \end{thm}
 \begin{proof}
-  We just need to show that this satisfies \eqref{eq:fptrecdg} with \eqref{eq:recurtime}, and that the diagonal elements vanish.
-  Premultiply \eqref{eq:fptfund} by $\Lb\MM$ and subtract from \eqref{eq:fptrecdg}:
+  We just need to show that this satisfies \eqref{eq:fptbrec} and that the diagonal elements vanish.
+  Premultiply \eqref{eq:fptfund} by $\MM$:
   %
   \begin{equation*}
   \begin{aligned}
-    \fpt\dg - \Lb\MM\fptb &= \Lb(\I+\MM\fund)\D\\
-     &= \Lb\onev\eq\D \\
-     &= \Lb\onem,
+    \MM\fptb &= -\MM\fund\D\\
+     &= (\I-\onev\eq)\D \\
+     &= \D-\onem,
   \end{aligned}
   \end{equation*}
   %
@@ -594,7 +599,7 @@ We can use this partition to define a new stochastic process associated with the
 At time $t$, if the state of the original process is $i$, the state of the new process is $\sigma(i)$.
 
 One may ask if this new process is a Markov chain.
-The answer is yes, if the original Markov chain has a property called lumpability \wrt the partition 
+The answer is yes, if the original Markov chain has a property called lumpability \wrt the partition
 (see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time):
 %
 \begin{equation}\label{eq:lump}
@@ -1347,12 +1352,12 @@ These were shown by finding allowed perturbations that increase the area.
 This leaves two possibilities for the maximum area Markov chain.
 Either there is no degeneracy and no shortcuts, which implies the Multi-state topology that we'll discuss in \sref{sec:multistate}, or there is some degeneracy, which would allow shortcuts provided that they do not bypass an entire degenerate set (see \eqref{eq:shortcutarea}).
 
-Degeneracy tends to be very delicate. It is usually hard to arrange without some symmetry relating degenerate state. Such a symmetry would imply lumpability (see \sref{sec:lump}). The lumped chain would not have any shortcuts, as an entire degenerate set cannot be bypassed. As this lumped chain has the same area (see \sref{sec:SNRlump}), we would need only consider the multi-state topology.
+Degeneracy tends to be very delicate. It is usually hard to arrange without some symmetry relating degenerate states. Such a symmetry would imply lumpability (see \sref{sec:lump}). The lumped chain would not have any shortcuts, as an entire degenerate set cannot be bypassed. As this lumped chain has the same area (see \sref{sec:SNRlump}), we would need only consider the multi-state topology.
 
 
 \subsection{Multi-state topology}\label{sec:multistate}
 
-The multi-state topology is defined by:
+The multi-state topology is defined by (see \cite{amit1994learning,Fusi2007multistate}):
 %
 \begin{equation}\label{eq:multistatedef}
   \W^+_{ij} = q^+_i \delta_{i+1,j},
@@ -1455,20 +1460,20 @@ where we used $\w_k=\sgn(c_k)$, as discussed after \eqref{eq:areacoeffs}.
 First let us maximise \eqref{eq:multistatearea} at fixed $\eq_\pm = \sum_k \eq_k \prn{\frac{1\pm\w_k}{2}}$.
 Clearly this will happen when we put all of the probability at the ends: $\eq_1=\eq_-$ and $\eq_n=\eq_+$ are the only non-zero $\eq_k$.
 This gives an area of
-\footnote{Note that including the dropped factors in \eqref{eq:noisepm} would only change this to $A \leq \sqrt{N(4\eq_1\eq_n)}(n-1)/r$, which would have no effect on what follows.}
+\footnote{Note that including the dropped factors in \eqref{eq:noisepm} would only change this to $A \leq \sqrt{N(4\eq_+\eq_-)}(n-1)/r$, which would have no effect on what follows.}
 
 %
 \begin{equation}\label{eq:multistateextarea}
-  A \leq \frac{\sqrt{N}}{r}(n-1)\prn{4\eq_1\eq_n}.
+  A \leq \frac{\sqrt{N}}{r}(n-1)\prn{4\eq_+\eq_-}.
 \end{equation}
 %
-This is maximised at $\eq_1=\eq_n=\half$:
+This is maximised at $\eq_+=\eq_-=\half$:
 %
 \begin{equation}\label{eq:maxarea}
   A \leq \frac{\sqrt{N}}{r}(n-1).
 \end{equation}
 %
-Note that this is not an ergodic chain, the two states at each end are absorbing.
+Note that the chain that achieves this is not ergodic, the two states at each end are absorbing. This is similar to the results found numerically in \cite{Barrett2008discrete} in a slightly different situation.
 
 
 \appendix
@@ -1665,6 +1670,6 @@ The Lagrange multipliers are non-zero, so this could affect the topology of the 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{utcaps_sl}
-\bibliography{maths}
+\bibliography{maths,neuro}
 
 \end{document}

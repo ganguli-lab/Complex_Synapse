@@ -8,8 +8,8 @@ assert(mod(n,2)==0);
 % [wp,wm,w]=CliqueChain(n);
 
 q=ones(1,n-1);
-% q(n/2+1)=1/n;
-q(1)=1/n;
+q(n/2+1)=1/n;
+% q(1)=1/n;
 [wp,wm,w]=MakeSMS(q);
 
 % q=ones(1,n-1);
@@ -96,6 +96,11 @@ if tf
     output(loc)=(c.*q)'*recqaqb*(c.*q);
 end
 %
+[tf,loc]=ismember('A',varnames);
+if tf
+    output(loc)=real(sum(c));
+end
+%
 [tf,loc]=ismember('AI',varnames);
 if tf
     output(loc)=real(sum(c)*c'*q);
@@ -111,6 +116,17 @@ end
 if tf
     T=FPT((wp+wm)/2);
     output(loc)=max(max(T));
+end
+%
+[tf,loc]=ismember('qPi',varnames);
+if tf
+    output(loc)=-w'*(wp+wm)*w/(2*n);
+end
+%
+[tf,loc]=ismember('etaPi',varnames);
+if tf
+    Zinv=ones(size(wp))-(wp+wm)/2;
+    output(loc)=w'*(Zinv\w)/(2*n);
 end
 % allvars={'crqm','crq','c2q','init','cqm','ev','L2','AI','Eqbnd','Tmax'};
 end
