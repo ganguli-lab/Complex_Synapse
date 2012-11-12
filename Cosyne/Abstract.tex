@@ -2,13 +2,13 @@
 \documentclass[12pt]{article}
 \input{sl_preamble.tex}
 %\input{sl_graphics_preamble.tex}
-\usepackage{abstract}
-\renewcommand{\abstractname}{Summary}
-\renewcommand{\abstractnamefont}{\normalfont\large\bfseries}
-\renewcommand{\abstracttextfont}{\normalfont}
-\renewcommand{\absnamepos}{flushleft}
-\setlength{\absleftindent}{0in}
-\setlength{\absrightindent}{0in}
+%\usepackage{abstract}
+%\renewcommand{\abstractname}{Summary}
+%\renewcommand{\abstractnamefont}{\normalfont\large\bfseries}
+%\renewcommand{\abstracttextfont}{\normalfont}
+%\renewcommand{\absnamepos}{flushleft}
+%\setlength{\absleftindent}{0in}
+%\setlength{\absrightindent}{0in}
 % ----------------------------------------------------------------
 % New commands etc.
 \input{sl_definitions.tex}
@@ -37,18 +37,23 @@ Department of Applied Physics, Stanford University, Stanford CA
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\begin{abstract}
-  We consider the storage of long term memories through synaptic modifications in existing networks. Recent experimental work suggests that single synapses are digital, in the sense that, from the perspective of extracellular physiology, they can only take on a finite number of discrete values for their strength. This imposes catastrophic limits on the memory capacity of classical models of memory that have relied on a continuum of analog synaptic strengths. However, synapses have many internal molecular states, suggesting we should model synapses themselves as complex molecular networks, rather than by a single scalar value, or strength. We develop new theorems bounding the memory capacity of such complex synaptic models and describe the structural organization of internal molecular networks necessary for achieving these limits. 
-\end{abstract}
+\subsection*{Summary}
+
+We consider the storage of long term memories through synaptic modifications in existing networks. 
+Recent experimental work suggests that single synapses are digital, in the sense that, from the perspective of extracellular physiology, they can only take on a finite number of discrete values for their strength. 
+This imposes catastrophic limits on the memory capacity of classical models of memory that have relied on a continuum of analog synaptic strengths. 
+However, synapses have many internal molecular states, suggesting we should model synapses themselves as complex molecular networks, rather than by a single scalar value, or strength. 
+We develop new theorems bounding the memory capacity of such complex synaptic models and describe the structural organization of internal molecular networks necessary for achieving these limits.
 
 \subsection*{Additional detail}
 
-
+Much of the previous work on complex synapses has focused on the study of specific models \cite{amit1994learning,Fusi2005cascade,Fusi2007multistate}.
+If we wish to understand the structure of the molecular networks responsible for synaptic plasticity (see \cite{Coba2009phosphorylation}), it will be vital to have explored the space of all possible molecular networks so that we can develop a correspondence between features of these networks and desirable/undersirable properties of the synapse.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\bibliographystyle{utcaps_sl}
-%\bibliography{maths,neuro}
+\bibliographystyle{utcaps_sl}
+\bibliography{maths,neuro}
 
 \end{document}
