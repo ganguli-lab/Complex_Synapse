@@ -1,7 +1,8 @@
 % -*- TeX -*- -*- US -*-
 \documentclass[12pt]{article}
 \input{sl_preamble.tex}
-%\input{sl_graphics_preamble.tex}
+\input{sl_graphics_preamble.tex}
+\graphicspath{{Figures/}}
 %\usepackage{abstract}
 %\renewcommand{\abstractname}{Summary}
 %\renewcommand{\abstractnamefont}{\normalfont\large\bfseries}
@@ -22,12 +23,14 @@
 %
 % Author List:
 %
-\author{Subhaneil Lahiri\thanks{\emaillink{sulahiri@stanford.edu}}~ and Surya Ganguli\thanks{\emaillink{sganguli@stanford.edu}}\\
-%
-\small{
-Department of Applied Physics, Stanford University, Stanford CA
-}
-}
+\author{Subhaneil Lahiri and Surya Ganguli}
+%\author{Subhaneil Lahiri\thanks{\emaillink{sulahiri@stanford.edu}}~ and Surya Ganguli\thanks{\emaillink{sganguli@stanford.edu}}\\
+%%
+%\small{
+%Department of Applied Physics, Stanford University, Stanford CA
+%}
+%}
+\date{}
 
 \begin{document}
 
@@ -36,20 +39,44 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-
+%\begin{abstract}
 \subsection*{Summary}
 
-We consider the storage of long term memories through synaptic modifications in existing networks. 
-Recent experimental work suggests that single synapses are digital, in the sense that, from the perspective of extracellular physiology, they can only take on a finite number of discrete values for their strength. 
-This imposes catastrophic limits on the memory capacity of classical models of memory that have relied on a continuum of analog synaptic strengths. 
-However, synapses have many internal molecular states, suggesting we should model synapses themselves as complex molecular networks, rather than by a single scalar value, or strength. 
+We consider the storage of long term memories through synaptic modifications in existing networks.
+Recent experimental work suggests that single synapses are digital, in the sense that, from the perspective of extracellular physiology, they can only take on a finite number of discrete values for their strength.
+This imposes catastrophic limits on the memory capacity of classical models of memory that have relied on a continuum of analog synaptic strengths [Amit and Fusi, Network: Computation in Neural Systems (1992), Neural Computation (1994)]\nocite{amit1992constraints,amit1994learning}.
+
+However, synapses have many internal molecular states [Coba et al., Sci Signal (2009)]\nocite{Coba2009phosphorylation}, suggesting we should model synapses themselves as complex molecular networks, rather than by a single scalar value, or strength.
 We develop new theorems bounding the memory capacity of such complex synaptic models and describe the structural organization of internal molecular networks necessary for achieving these limits.
+%\end{abstract}
 
 \subsection*{Additional detail}
 
 Much of the previous work on complex synapses has focused on the study of specific models \cite{amit1994learning,Fusi2005cascade,Fusi2007multistate}.
-If we wish to understand the structure of the molecular networks responsible for synaptic plasticity (see \cite{Coba2009phosphorylation}), it will be vital to have explored the space of all possible molecular networks so that we can develop a correspondence between features of these networks and desirable/undersirable properties of the synapse.
+If we wish to understand the structure of the molecular networks responsible for synaptic plasticit, it will be vital to have explored the space of all possible molecular networks so that we can develop a correspondence between features of these networks and desirable/undersirable properties of the synapse.
 
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+   \item\aligntop{\includegraphics[width=4cm]{synapse.svg}}
+   \hspace{0.25cm}
+   \item\aligntop{\includegraphics[width=2cm]{pot.svg}}
+   \hspace{0.25cm}
+   \item\aligntop{\includegraphics[width=2cm]{dep.svg}}
+ \end{myenuma}
+ \end{center}
+ \caption{Model of a complex synapse.}\label{fig:compsynapse}
+\end{figure}
+
+We model synaptic plasticity with two Markov processes between the internal states, one for potentiation and one for depression (see \fref{fig:compsynapse}).
+These are responsible for the initial creation of a memory and the subsequent forgetting due to ongoing plasticity.
+The performance of the synapse is quantified by the signal-to-noise ratio (SNR) as a function of time.
+
+We prove upper limits on the SNR curve.
+For example we show that the area under the curve has an upper bound proportional to the number of internal states.
+This upper limit is saturated by a transition network with a linear chain topology,
+We also find an upper limit on the instantaneous value of the SNR at any time.
+This bounds the length of time that any memory can be recovered, and hence the memory capacity of such synapses.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
