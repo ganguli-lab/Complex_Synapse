@@ -1,5 +1,6 @@
 function [ S1 ] = Case1Exp1( t1,t2,S2,n,varargin )
-%S1=CASE1EXP1(t1,t2,S2,n,...) Two-time envelope in case 1 with 1 exponential
+%S1=CASE1EXP1(t1,t2,S2,n,...) Two-time envelope in case 1 with 1
+%exponential 
 %   t1 = time of maximisation
 %   t2 = time of fixed SNR
 %   S2 = SNR(t2)
@@ -30,7 +31,7 @@ Constraint3=false;
 varargin=assignApplicable(varargin);
 
 
-S1=S2^(t/t2);
+S1=S2.^(t/t2);
 
 valid = t1<=t2;
 valid = valid && t2 <= - (n-1)*log(S2);

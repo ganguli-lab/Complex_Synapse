@@ -1,5 +1,6 @@
 function [ S1 ] = Case2Exp1( t1,t2,S2,n,varargin )
-%S1=CASE2EXP1(t1,t2,S2,n,...) Two-time envelope in case 2 with 1 exponential
+%S1=CASE2EXP1(t1,t2,S2,n,...) Two-time envelope in case 2 with 1
+%exponential 
 %   t1 = time of maximisation
 %   t2 = time of fixed SNR
 %   S2 = SNR(t2)

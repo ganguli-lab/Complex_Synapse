@@ -1,6 +1,6 @@
 function [ S1 ] = Case3Exp1( t1,t2,S2,n,varargin )
-%S1=CASE3EXP1(t1,t2,S2,n,...) Two-time envelope in case 1 with 2
-%exponentials
+%S1=CASE3EXP1(t1,t2,S2,n,...) Two-time envelope in case 3 with 1
+%exponential
 %   t1 = time of maximisation
 %   t2 = time of fixed SNR
 %   S2 = SNR(t2)
@@ -24,7 +24,11 @@ error(CheckValue(S2,@(x)x>0))
 error(CheckSize(n,@isscalar))
 error(CheckValue(n,@(x)x>0))
 
-S1=0;
+t=t1;
+Constraint3=false;
+varargin=assignApplicable(varargin);
+
+S1=zeros(size(t));
 
 end%function
 

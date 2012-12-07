@@ -5,14 +5,14 @@ function [ area ] = SNRarea( Wp, Wm, fp, w )
 %   FP = Fraction of potentiation transitions
 %   w  = Weights of states (+/-1)
 
-assert(ismat(Wp));%matrix
-assert(issquare(Wp));%square
-assert(samesize(Wp,Wm));%also square matrix of same size
-assert(isscalar(fp));
-assert(0<=fp && fp<=1);%fp in [0,1]
-assert(iscol(w));%row
+error(CheckSize(Wp,@ismat));%matrix
+error(CheckSize(Wp,@issquare));%square
+error(CheckSize(Wm,@(x)samesize(Wp,x),'samesize(Wp)'));%also square matrix of same size
+error(CheckSize(fp,@isscalar));
+error(CheckValue(fp,@(x) inrange(fp,0,1),'inrange(0,1)'));%fp in [0,1]
+error(CheckSize(w,@iscol));
+error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
 assert(length(w)==length(Wp));%same size
-assert(all(abs(w)==1));%+/-1
 
 
 n=size(Wp,1);

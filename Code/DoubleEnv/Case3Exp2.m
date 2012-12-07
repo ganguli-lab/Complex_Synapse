@@ -1,5 +1,5 @@
 function [ S1 ] = Case3Exp2( t1,t2,S2,n,varargin )
-%S1=CASE3EXP2(t1,t2,S2,n,...) Two-time envelope in case 1 with 2
+%S1=CASE3EXP2(t1,t2,S2,n,...) Two-time envelope in case 3 with 2
 %exponentials
 %   t1 = time of maximisation
 %   t2 = time of fixed SNR
@@ -34,7 +34,7 @@ varargin=assignApplicable(varargin);
 q1guess=(1+exp(1)*t1/t2)/t2;
 q2guess=1/t1;
 
-qc=fsolve(@eqs,[q1guess,q2guess]);
+qc=fsolve(@eqs,[q1guess,q2guess],optimset('Display','off'));
 
 q1=qc(1);
 q2=qc(2);
@@ -87,6 +87,7 @@ S1=S1*valid;
         vals=[0 0];
         vals(1)=eq1(qcs(1),qcs(2));
         vals(2)=eq2(qcs(1),qcs(2));
+        vals=vals/(qcs(1)-qcs(2));
     end
 
 end%function

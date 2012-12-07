@@ -2,7 +2,7 @@ function [ Wp,Wm,w ] = MakeSMS( qvec )
 %[WP,WM,w]=MAKESMS(QVEC) Transition rates for SMS toplogy
 %   QVEC=adjacent transiton rates for potentiation, row vector
 
-assert(isrow(qvec));
+error(CheckSize(qvec,@isrow));
 
 Wp=diag(qvec,1)-diag([qvec 0]);
 
