@@ -28,14 +28,21 @@ gammasq=128/pi^4;
 
 t=t1;
 Constraint3=false;
+Display='off';
 varargin=assignApplicable(varargin);
 
 
-q1guess=(1+exp(1)*t1/t2)/t2;
-q2guess=1/t1;
+q1guess=0.9/t1;
+q2guess=1.1/t2;
 
-qc=fsolve(@eqs,[q1guess,q2guess],optimset('Display','off'));
-
+% try
+    qc=fsolve(@eqs,[q1guess,q2guess],optimset('Display',Display,'Jacobian','on'));
+% catch ME
+%     disp([t1,t2]);
+%     disp([q1guess,q2guess]);
+%     disp(eqs([q1guess,q2guess]));
+%     qc=nan(1,2);
+% end
 q1=qc(1);
 q2=qc(2);
 
@@ -56,27 +63,32 @@ S1=S1*valid;
 
 
 
-    function lam=lambda(q)
-        lam=-(1-q*t1)/(1-q*t2)*exp(q*(t2-t1));
-    end
+%     function lam=lambda(q)
+%         lam=-(1-q*t1)/(1-q*t2)*exp(q*(t2-t1));
+%     end
 
     function mu=mu2(q)
         mu=q^2*(t1-t2)/(1-q*t2)*exp(-q*t1);
     end
 
-    function val=eq1(q1,q2)
-        val=lambda(q1)-lambda(q2);
+    function [val,grad]=eq1(q1,q2)
+        val=(1-q1*t1)*(1-q2*t2)*exp(-q1*t1-q2*t2)-(1-q1*t2)*(1-q2*t1)*exp(-q1*t2-q2*t1);
+        grad(1)=-t1*(2-q1*t1)*(1-q2*t2)*exp(-q1*t1-q2*t2)+t2*(2-q1*t2)*(1-q2*t1)*exp(-q1*t2-q2*t1);
+        grad(2)=-t2*(1-q1*t1)*(2-q2*t2)*exp(-q1*t1-q2*t2)+t1*(1-q1*t2)*(2-q2*t1)*exp(-q1*t2-q2*t1);
     end
 
-    function val=eq2(q1,q2)
-        val=mu2(q1)-mu2(q2);
+    function [val,grad]=eq2(q1,q2)
+        val=(1-q2*t2)*q1^2*exp(-q1*t1)-(1-q1*t2)*q2^2*exp(-q2*t1);
+        grad(1)=(1-q2*t2)*q1*(2-q1*t1)*exp(-q1*t1)+t2*q2^2*exp(-q2*t1);
+        grad(2)=-t2*q1^2*exp(-q1*t1)-(1-q1*t2)*q2*(2-q2*t1)*exp(-q2*t1);
     end
 
-    function vals=eqs(qcs)
+    function [vals,jac]=eqs(qcs)
         vals=[0 0];
-        vals(1)=eq1(qcs(1),qcs(2));
-        vals(2)=eq2(qcs(1),qcs(2));
+        [vals(1),grad1]=eq1(qcs(1),qcs(2));
+        [vals(2),grad2]=eq2(qcs(1),qcs(2));
         vals=vals/(qcs(1)-qcs(2));
+        jac=[grad1;grad2]/(qcs(1)-qcs(2)) + vals'*[-1/qcs(1)^2,1/qcs(2)^2];
     end
 
 end%function

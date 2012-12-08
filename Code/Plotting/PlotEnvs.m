@@ -6,23 +6,24 @@ error(CheckSize(t,@isrow))
 error(CheckSize(n,@isscalar))
 
 format=true;
+Parent=gca;
 varargin=assignApplicable(varargin);
 
 [env,bnds]=SNRenvelope(t,n);
 [env2,bnds2]=SNRenvelope2(t,n);
-h=plot(t,env2,'g',t,env,'g--','LineWidth',3,varargin{:});
-hold on
+h=plot(t,env2,'g',t,env,'g--','LineWidth',3,'Parent',Parent,varargin{:});
+hold(Parent,'on');
 yl=[env(end) env2(1)];
-line([1;1]*bnds',yl'*ones(1,length(bnds)),'Color','k','LineWidth',1.5,'LineStyle',':',varargin{:});
-line([1;1]*bnds2',yl'*ones(1,length(bnds2)),'Color','k','LineWidth',1.5,'LineStyle','--',varargin{:});
+lh1=line([1;1]*bnds',yl'*ones(1,length(bnds)),'Color','k','LineWidth',1.5,'LineStyle',':','Parent',Parent,varargin{:});
+lh2=line([1;1]*bnds2',yl'*ones(1,length(bnds2)),'Color','k','LineWidth',1.5,'LineStyle','--','Parent',Parent,varargin{:});
 if format
-    set(gca,'XScale','log','YScale','log')
-    xlim([t(1) t(end)])
-    ylim(yl)
+    set(Parent,'XScale','log','YScale','log')
+    xlim(Parent,[t(1) t(end)])
+    ylim(Parent,yl)
     embiggen
-    xlabel('Time')
-    ylabel('SNR');
+    xlabel(Parent,'Time')
+    ylabel(Parent,'SNR');
 end
-
+h=[h;lh1;lh2];
 end
 

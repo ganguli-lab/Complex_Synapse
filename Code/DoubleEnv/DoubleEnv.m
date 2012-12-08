@@ -20,6 +20,12 @@ varargin=assignApplicable(varargin);
 
 error(CheckSize(t,@isscalar));
 
+if t1==t2
+    numexp=1;
+    whichcase=0;
+    S1=S2*exp((t2-t)/t2);
+    return;
+end
 
 if Constraint3
     numcases=8;
