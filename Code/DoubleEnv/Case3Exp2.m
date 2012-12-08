@@ -93,7 +93,7 @@ S1=S1*valid;
         [vals(1),grad1]=eq1(qcs(1),qcs(2));
         [vals(2),grad2]=eq2(qcs(1),qcs(2));
         vals=vals/(qcs(1)-qcs(2));
-        jac=[grad1;grad2]/(qcs(1)-qcs(2)) + vals'*[-1/qcs(1)^2,1/qcs(2)^2];
+        jac=[grad1;grad2]/(qcs(1)-qcs(2)) + vals'*[-1,1]/(qcs(1)-qcs(2))^2;
     end
 
 end%function
