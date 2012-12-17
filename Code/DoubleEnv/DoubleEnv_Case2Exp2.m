@@ -1,4 +1,4 @@
-function [ S1 ] = Case2Exp2( t1,t2,S2,n,varargin )
+function [ S1 ] = DoubleEnv_Case2Exp2( t1,t2,S2,n,varargin )
 %S1=CASE2EXP2(t1,t2,S2,n,...) Two-time envelope in case 2 with 2
 %exponentials
 %   t1 = time of maximisation
@@ -29,24 +29,17 @@ gammasq=128/pi^4;
 t=t1;
 Constraint3=false;
 Display='off';
+Jacobian='on';
 varargin=assignApplicable(varargin);
 
 
 q1guess=0.9/t1;
 q2guess=1.1/t2;
 
-% try
-    qc=fsolve(@eqs,[q1guess,q2guess],optimset('Display',Display,'Jacobian','on'));
-% catch ME
-%     disp([t1,t2]);
-%     disp([q1guess,q2guess]);
-%     disp(eqs([q1guess,q2guess]));
-%     qc=nan(1,2);
-% end
+[qc,~,ef]=fsolve(@eqs,[q1guess,q2guess],optimset('Display',Display,'Jacobian',Jacobian));
+
 q1=qc(1);
 q2=qc(2);
-
-
 c1=(S2-(n-1)*q2*exp(-q2*t2))/(q1*exp(-q1*t2)-q2*exp(-q2*t2));
 c2=n-1-c1;
 
@@ -61,14 +54,16 @@ end%if
 
 S1=S1*valid;
 
-
+if ef ~=1
+    S1=nan;
+end
 
 %     function lam=lambda(q)
 %         lam=-(1-q*t1)/(1-q*t2)*exp(q*(t2-t1));
 %     end
 
     function mu=mu2(q)
-        mu=q^2*(t1-t2)/(1-q*t2)*exp(-q*t1);
+        mu=(t1-t2)/(1-q*t2);
     end
 
     function [val,grad]=eq1(q1,q2)

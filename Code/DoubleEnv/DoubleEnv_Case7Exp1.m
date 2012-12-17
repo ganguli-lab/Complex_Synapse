@@ -1,5 +1,5 @@
-function [ S1 ] = Case0Exp1( t1,t2,S2,n,varargin )
-%S1=CASE0EXP1(t1,t2,S2,n,...) Two-time envelope in case 0 with 1
+function [ S1 ] = DoubleEnv_Case7Exp1( t1,t2,S2,n,varargin )
+%S1=CASE7EXP1(t1,t2,S2,n,...) Two-time envelope in case 0 with 1
 %exponential
 %   t1 = time of maximisation
 %   t2 = time of fixed SNR

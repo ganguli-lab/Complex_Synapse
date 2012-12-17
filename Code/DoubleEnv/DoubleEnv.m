@@ -14,11 +14,18 @@ function [ S1,whichcase,numexp ] = DoubleEnv( t1,t2,S2,n,varargin )
 %       t = time to evaluate SNR envelope (default=t1)
 %       Constraint3 = Use constraint 3? (default=false)
 
-t=t1;
+error(CheckSize(t1,@isscalar))
+error(CheckValue(t1,@(x)x>0))
+error(CheckSize(t2,@isscalar))
+error(CheckValue(t2,@(x)x>0))
+error(CheckSize(S2,@isscalar))
+error(CheckValue(S2,@(x)x>0))
+error(CheckSize(n,@isscalar))
+error(CheckValue(n,@(x)x>0))
+
+t=[];
 Constraint3=false;
 varargin=assignApplicable(varargin);
-
-error(CheckSize(t,@isscalar));
 
 if t1==t2
     numexp=1;
@@ -33,19 +40,12 @@ else
     numcases=4;
 end%if Constraint3
 
-if isscalar(t)
-    siz=[numcases 2 1];
-elseif isvector(t)
-    siz=[numcases 2 length(t)];
-else
-    siz=[numcases 2 size(t)];
-end
-S1=zeros(siz);
+S1=zeros(numcases,2);
 
 for i=1:numcases
     for j=1:2
-        S1(i,j,:) = feval(['Case' int2str(i-1) 'Exp' int2str(j)],...
-            t1,t2,S2,n,'t',t,'Constraint3',Constraint3,varargin{:});
+        S1(i,j) = feval(['DoubleEnv_Case' int2str(i-1) 'Exp' int2str(j)],...
+            t1,t2,S2,n,'Constraint3',Constraint3,varargin{:});
     end%for j
 end%for i
 
@@ -53,7 +53,13 @@ end%for i
 [S1,numexp]=max(S1,[],2);
 [S1,whichcase]=max(S1,[],1);
 numexp=numexp(whichcase);
+whichcase=whichcase-1;
 % S1=squeeze(S1);
+
+if ~isempty(t)
+    S1 = feval(['Case' int2str(whichcase) 'Exp' int2str(numexp)],...
+        t1,t2,S2,n,'t',t,'Constraint3',Constraint3,varargin{:});
+end
 
 end
 

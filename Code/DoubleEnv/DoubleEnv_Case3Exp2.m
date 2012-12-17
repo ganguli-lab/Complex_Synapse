@@ -1,4 +1,4 @@
-function [ S1 ] = Case3Exp2( t1,t2,S2,n,varargin )
+function [ S1 ] = DoubleEnv_Case3Exp2( t1,t2,S2,n,varargin )
 %S1=CASE3EXP2(t1,t2,S2,n,...) Two-time envelope in case 3 with 2
 %exponentials
 %   t1 = time of maximisation
@@ -29,13 +29,14 @@ gammasq=128/pi^4;
 t=t1;
 Constraint3=false;
 Display='off';
+Jacobian='on';
 varargin=assignApplicable(varargin);
 
 
 q1guess=0.9/t1;
 q2guess=1.1/t2;
 
-qc=fsolve(@eqs,[q1guess,q2guess],optimset('Display',Display,'Jacobian','on'));
+[qc,~,ef]=fsolve(@eqs,[q1guess,q2guess],optimset('Display',Display,'Jacobian',Jacobian));
 
 q1=qc(1);
 q2=qc(2);
@@ -53,6 +54,9 @@ end%if
 
 S1=S1*valid;
 
+if ef ~=1
+    S1=nan;
+end
 
 
     function lam=lambda(qa,qb)

@@ -1,6 +1,6 @@
-function [ S1 ] = Case1Exp1( t1,t2,S2,n,varargin )
-%S1=CASE1EXP1(t1,t2,S2,n,...) Two-time envelope in case 1 with 1
-%exponential 
+function [ S1 ] = DoubleEnv_Case5Exp1( t1,t2,S2,n,varargin )
+%S1=CASE5EXP1(t1,t2,S2,n,...) Two-time envelope in case 0 with 1
+%exponential
 %   t1 = time of maximisation
 %   t2 = time of fixed SNR
 %   S2 = SNR(t2)
@@ -24,22 +24,11 @@ error(CheckValue(S2,@(x)x>0))
 error(CheckSize(n,@isscalar))
 error(CheckValue(n,@(x)x>0))
 
-gammasq=128/pi^4;
-
 t=t1;
 Constraint3=false;
 varargin=assignApplicable(varargin);
 
-
-S1=S2.^(t/t2);
-
-valid = t1<=t2;
-valid = valid && t2 <= - (n-1)*log(S2);
-if Constraint3
-    valid = valid && t2 <= - gammasq*log(S2);
-end%if
-
-S1=S1*valid;
+S1=zeros(size(t));
 
 end%function
 
