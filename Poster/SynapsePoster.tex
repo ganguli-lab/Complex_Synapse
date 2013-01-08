@@ -10,56 +10,12 @@
 % **** -----------------------------------------------------------
 \documentclass[final,hyperref={pdfpagelabels=false,bookmarks=false}]{beamer}
 %\documentclass{beamer}
-\usetheme{Subhy}
-  \usepackage{times}
-%  \usepackage{amsmath,amsthm, amssymb, latexsym}
-%  \boldmath
-\usepackage[orientation=Landscape,size=a0,scale=1.0]{beamerposter}
-\AtBeginSection[]{\usebeamertemplate{section title block}}
+\input{sl_poster_preamble.tex}
+\input{sl_graphics_preamble.tex}
+\input{sl_definitions.tex}
+\input{sl_slide_symbols.tex}
+% ----------------------------------------------------------------
 \graphicspath{{Figures/}}
-\addtolength{\abovedisplayshortskip}{-\baselinestretch\baselineskip}
-%---------Packages-------------------------------------------------------
-
-% For finding documentation:
-%\usepackage{ams}
-%\usepackage[centertags]{amsmath}
-%\usepackage{amssymb}
-%\usepackage{xcolor}
-%\usepackage{color}
-%\usepackage{pgf}
-%\usepackage{graphicx}
-%\usepackage{graphics}
-%\usepackage{hyperref}
-%
-%\usepackage{ifpdf}
-\ifpdf
-\else
-\DeclareGraphicsRule{.png}{eps}{.bb}{}
-\fi
-\usepackage{epstopdf}
-\epstopdfsetup{update,suffix=-generated}
-\usepackage{adjustbox}
-%---------Colours---------------------------------------------------------
-
-% \newrgbcolor{LemonChiffon}{1. 0.98 0.8}
-% \newrgbcolor{myellow}{.9 .8 .1}
-% \newrgbcolor{myblue}{.2 .36 .77}
-% \newrgbcolor{orange}{0.8 0.7 0.2}
-% \newrgbcolor{myred}{0.95 0.0 0.0}
-\definecolor{darkgrey}{rgb}{.5 .5 .5}
-\definecolor{darkblue}{rgb}{0.27843137 0.27058824 0.5372549}
-\definecolor{darkred}{rgb}{0.5372549 0.27843137 0.27058824}
-
-%---------Commands-------------------------------------------------------
-
-\newcommand{\rref}[1]{\hfill \small{\color{darkgrey} [#1]}}
-\newcommand{\rrref}[1]{ {\color{darkgrey} #1}}
-\newcommand{\citerr}[1]{\hfill {\footnotesize{\color{darkgrey}\cite{#1}}}}
-
-\input{mydefs.tex}
-\input{slidesymb.tex}
-%\newcommand{\aligntop}[1]{\vtop{\vskip-1ex\hbox{#1}}}
-\newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
 \DeclareMathOperator{\SNR}{SNR}
 \DeclareMathOperator{\snr}{SNR}
 \newcommand{\net}{molecular network}
