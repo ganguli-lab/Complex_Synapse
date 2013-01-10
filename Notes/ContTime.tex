@@ -17,37 +17,19 @@
 %
 % **** -----------------------------------------------------------
 \documentclass[12pt]{article}
-% Preamble:
+%Preamble:
 \usepackage{a4wide}
-\usepackage[centertags]{amsmath}
-%\usepackage{ams} for finding documentation only
-\usepackage{amssymb}
-%\usepackage{amsthm}
-\usepackage[sort&compress,numbers]{natbib}
-%\usepackage{citeB}
-\usepackage{ifpdf}
-%\usepackage{graphicx}
-%\usepackage{graphics} for finding documentation only
-%\usepackage{xcolor}
-%\usepackage{pgf}
-\ifpdf
-\usepackage[pdftex,bookmarks,bookmarksopen,pdfstartview=FitH]{hyperref}
-\else
-\usepackage[hypertex]{hyperref}
-%\DeclareGraphicsRule{.png}{eps}{.bb}{}
-\fi
+\input{sl_preamble.tex}
 %
 % >> Only for drafts! <<
 \usepackage[notref,notcite]{showkeys}
 % ----------------------------------------------------------------
-\vfuzz2pt % Don't report over-full v-boxes if over-edge is small
-\hfuzz2pt % Don't report over-full h-boxes if over-edge is small
 %\numberwithin{equation}{section}
 %\renewcommand{\baselinestretch}{1.5}
 % ----------------------------------------------------------------
 % New commands etc.
-\input{mydefs.tex}
-\input{newsymb.tex}
+\input{sl_definitions.tex}
+\input{sl_symbols.tex}
 %matrices
 \newcommand{\inv}{^{-1}}
 \newcommand{\dg}{^\mathrm{dg}}
@@ -1033,7 +1015,7 @@ It is also helpful to define the following quantities:
 %
 Note that the optimal choice of $\w$ is $\w_k = \sgn(c_k)$.
 
-\subsection{Derivatives \wrt $\W^\pm$}\label{sec:deriv}
+\subsection{Derivatives \wrt \texorpdfstring{$\W^\pm$}{W+/-}}\label{sec:deriv}
 
 As discussed in \sref{sec:constraints},
 we will regard the off-diagonal elements of $\W^\pm_{ij}$ to be the independent variables,
@@ -1207,7 +1189,7 @@ We have ignored the possibility that $\eq_g=0$, as this would imply that $\fpt_{
 %%
 %which is probably useless
 
-\subsubsection{Increasing $c_k$}\label{sec:areacoeffincr}
+\subsubsection{Increasing \texorpdfstring{$c_k$}{c(k)}}\label{sec:areacoeffincr}
 
 Consider the following combinations of derivatives:
 %
@@ -1481,7 +1463,7 @@ Note that the chain that achieves this is not ergodic, the two states at each en
 
 Here we collect useless facts.
 
-\subsection{Differences in $c_k$'s}\label{sec:areacoeffdiff}
+\subsection{Differences in \texorpdfstring{$c_k$}{c(k)}'s}\label{sec:areacoeffdiff}
 
 In the general case, making full use of \cite[Cor.6.2.7]{kemeny1960finite}, we can show that:
 %
@@ -1508,7 +1490,7 @@ We need to show that the positivity of one ($\forall k$) implies that the positi
 
 
 
-\subsection{Derivatives \wrt $\fptb$}\label{sec:derivT}
+\subsection{Derivatives \wrt \texorpdfstring{$\fptb$}{T}}\label{sec:derivT}
 
 The Markov chain, $\W^F$, is completely determined by the off-diagonal mean first passage times, $\fptb$, \cite[Th.4.4.12]{kemeny1960finite}:
 %
