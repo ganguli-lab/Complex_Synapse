@@ -64,36 +64,7 @@
 \newcommand{\CB}{\mathcal{B}}
 \newcommand{\comp}{^\mathrm{c}}
 % ----------------------------------------------------------------
-\usepackage{amsthm}
-\newtheoremstyle{sldefinition}%
-  {3pt}%space above
-  {3pt}%space below
-  {}%body font
-  {}%indent amount
-  {\bfseries}%theorem head font
-  {}%theorem head punctuation
-  {\newline}%space after head
-  {\thmname{#1}\thmnumber{ #2}:{\bfseries\thmnote{ #3}}}%head spec
-\newtheoremstyle{slplain}%
-  {3pt}%space above
-  {3pt}%space below
-  {}%body font
-  {}%indent amount
-  {\bfseries}%theorem head font
-  {}%theorem head punctuation
-  {\newline}%space after head
-  {\thmname{#1}\thmnumber{ #2}{\bfseries\thmnote{ (#3)}}: }%head spec
-%
-\theoremstyle{slplain}
-\newtheorem{thm}{Theorem}
-\newtheorem{cor}[thm]{Corollary}
-%
-\theoremstyle{sldefinition}
-\newtheorem{defn}{Definition}
-%
-\theoremstyle{remark}
-\newtheorem*{notn}{Notation}
-\newtheorem*{rem}{Remark}
+\input{sl_theorems_preamble.tex}
 % ----------------------------------------------------------------
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

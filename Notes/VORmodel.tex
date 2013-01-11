@@ -1,0 +1,208 @@
+% -*- TeX -*- -*- UK -*-
+% ----------------------------------------------------------------
+% arXiv Paper ************************************************
+%
+% Subhaneil Lahiri's template
+%
+% Before submitting:
+%    Comment out hyperref
+%    Comment out showkeys
+%    Replace \input{mydefs.tex} with its contents
+%       or include mydefs.tex in zip/tar file
+%    Replace \input{newsymb.tex} with its contents
+%       or include newsymb.tex in zip/tar file
+%    Put this file, the .bbl file, any picture or
+%       other additional files and natbib.sty
+%       file in a zip/tar file
+%
+% **** -----------------------------------------------------------
+\documentclass[12pt]{article}
+%Preamble:
+\usepackage{a4wide}
+\input{sl_preamble.tex}
+%
+% >> Only for drafts! <<
+\usepackage[notref,notcite]{showkeys}
+% ----------------------------------------------------------------
+%\numberwithin{equation}{section}
+%\renewcommand{\baselinestretch}{1.5}
+% ----------------------------------------------------------------
+% New commands etc.
+\input{sl_definitions.tex}
+\input{sl_symbols.tex}
+%matrices
+\newcommand{\inv}{^{-1}}
+\newcommand{\dg}{^\mathrm{dg}}
+\newcommand{\trans}{^\mathrm{T}}
+\newcommand{\I}{\mathbf{I}}
+%vec of ones
+\newcommand{\onev}{\mathbf{e}}
+%mat of ones
+\newcommand{\onem}{\mathbf{E}}
+%Markov matrix
+\newcommand{\MM}{\mathbf{Q}}
+%equilibrium distribution
+\newcommand{\pr}{\mathbf{p}}
+\newcommand{\eq}{\pr^\infty}
+%first passage times
+\newcommand{\fpt}{\mathbf{T}}
+%off-diag first passage times
+\newcommand{\fptb}{\overline{\fpt}}
+%fundamental matrix
+\newcommand{\fund}{\mathbf{Z}}
+%other symbols
+\newcommand{\Pb}{\mathbf{P}}
+\newcommand{\D}{\mathbf{D}}
+\newcommand{\pib}{\boldsymbol{\pi}}
+\newcommand{\Lb}{\boldsymbol{\Lambda}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\frg}{\W^\mathrm{F}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\F}{\boldsymbol{\Phi}}
+\DeclareMathOperator{\SNR}{SNR}
+\newcommand{\CS}{\mathcal{S}}
+\newcommand{\CA}{\mathcal{A}}
+\newcommand{\CB}{\mathcal{B}}
+\newcommand{\comp}{^\mathrm{c}}
+\newcommand{\pot}{^{\text{pot}}}
+\newcommand{\dep}{^{\text{dep}}}
+\newcommand{\potdep}{^{\text{pot/dep}}}
+\newcommand{\inc}{_{\text{inc}}}
+\newcommand{\dec}{_{\text{dec}}}
+\newcommand{\incdec}{_{\text{inc/dec}}}
+\newcommand{\wt}{_{\text{WT}}}
+\newcommand{\kn}{_{\text{D$^b$K$^b$}}}
+\newcommand{\tpre}{t_{\text{pre}}}
+% ----------------------------------------------------------------
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title info:
+\title{Models of VOR learning in MHC knockout mice}
+%
+% Author List:
+%
+\author{Subhaneil Lahiri
+%
+}
+
+\begin{document}
+
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{abstract}
+  We see if we can model VOR gain increase and decrease learning in mice with a knockout in MHC as well as wild type.
+\end{abstract}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginning of Article:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The setup}\label{sec:setup}
+
+
+\subsection{Models of synapses}\label{sec:synapse}
+
+We make the following assumptions:
+\begin{itemize}
+  \item There are $N$ identical synapses with $M$ internal functional states.
+  \item The states of different synapses are independent of each other.
+  \item The synapses that are eligible for plasticity are chosen randomly.
+  \item The potentiating/depressing plasticity event timings are distributes as Poisson processes with rates $rf\potdep$, where $f\pot+f\dep=1$.
+  \item Potentiation and depression are described by Markov processes with transition probabilities $\M\potdep$.
+  \item The synaptic weights of the internal states are given by the column vector $\w$. This can only take two values that we can call $\pm1$.
+\end{itemize}
+
+The independence and identicalness of synapses means that the state of the system can be completely described by the probability distribution of the internal states, the row vector $\pr(t)$.
+
+The evolution of this probability is described by a forgetting matrix, $\frg$:
+%
+\begin{equation}\label{eq:evolve}
+  \diff{\pr(t)}{t} = r\pr(t)\frg,
+  \qquad
+  \frg = f\pot\M\pot+f\dep\M\dep-\I.
+\end{equation}
+%
+Eventually, this will settle into the equilibrium distribution:
+%
+\begin{equation}\label{eq:eqprob}
+  \eq\frg=0.
+\end{equation}
+%
+
+
+
+With only two possible synaptic weights, the distribution of synaptic weights is completely described by the mean, $\pr(t)\w$.
+
+
+\subsection{Model of VOR learning experiment}\label{sec:learning}
+
+Training the animal will not change the internal dynamics of a synapse under potentiation or depression.
+It will change the environment, will lead to a change in how often potentiation and depression occur.
+It could be manifested in a change in which synapses are potentiated/depressed, but this could not be captured in this type of model.
+We will model this by changing $f\potdep$, leaving $r$ and $\M\potdep$ unchanged.
+
+The untrained case will be described by $f\pot=f\pot_0$.
+Gain increase training  will be described by $f\pot=f\pot\inc<f\pot_0$, and
+gain decrease training  will be described by $f\pot=f\pot\inc<f\pot_0$. Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depends on $f\pot$, which we will indicate with subscripts.
+
+Before training, the synaptic distribution will in equilibrium with $f\pot_0$.
+During gain increase training, it will evolve according to \eqref{eq:evolve} with $f\pot\inc$:
+%
+\begin{equation}\label{eq:nopre}
+  \pr(t) = \eq_0 \exp\prn{rt\frg\inc}.
+\end{equation}
+%
+On the other hand, if the gain increase training follows gain decrease pre-training for some time period, $\tpre$:
+%
+\begin{equation}\label{eq:withpre}
+  \pr(t) = \eq_0 \exp\prn{r\tpre\frg\dec} \exp\prn{r(t-\tpre)\frg\inc}.
+\end{equation}
+%
+
+We will describe the effect of training by the decrease in mean synaptic weight:
+%
+\begin{equation}\label{eq:learning}
+  L(t) = (\pr(0)-\pr(t))\w.
+\end{equation}
+%
+The behavioural output (VOR gain) will be some non-linear function of the synaptic weights, so the best we can hope for is to reproduce qualitative features of the experiment.
+
+The MHC knockout has a lower threshold for depression.
+We can model this by changing $\W\dep\wt$ to $\W\dep\kn$, which should have larger matrix elements.
+
+QUESTION: Should $f\pot\wt=f\pot\kn$? 
+
+If they are equal, this would change the mean synaptic weight in equilibrium.
+This seems like it would affect the ability of the network to perform its function, and one might expect adaptation to the environment to produce an equilibrium state that has the same performance.
+In any case, if the synaptic weights are different, the electrical activity will be different, and there will be no reason to expect the same statistics for potentiation or depression.
+
+On the other hand, one could imagine adjusting $f\pot\wt$ and $f\pot\kn$ so that $\eq\wt\w = \eq\kn\w$.
+But, now that the synaptic weights are the same, the electrical activity will be the same, and there will be no reason to expect different statistics for potentiation or depression.
+
+
+%\subsection*{Acknowledgements}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection*{Appendices}
+%\appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{utcaps_sl}
+\bibliography{maths,neuro}
+
+\end{document}
