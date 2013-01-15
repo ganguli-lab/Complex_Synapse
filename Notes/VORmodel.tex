@@ -20,6 +20,8 @@
 %Preamble:
 \usepackage{a4wide}
 \input{sl_preamble.tex}
+\input{sl_graphics_preamble.tex}
+\graphicspath{{"Figures/"}}
 %
 % >> Only for drafts! <<
 \usepackage[notref,notcite]{showkeys}
@@ -73,7 +75,8 @@
 \newcommand{\dec}{_{\text{dec}}}
 \newcommand{\incdec}{_{\text{inc/dec}}}
 \newcommand{\wt}{_{\text{WT}}}
-\newcommand{\kn}{_{\text{D$^b$K$^b$}}}
+\newcommand{\kn}{_{\text{D$^\mathrm{b}$K$^\mathrm{b}$}}}
+\newcommand{\Kn}{D$^\mathrm{b}$K$^\mathrm{b}$-/-}
 \newcommand{\tpre}{t_{\text{pre}}}
 % ----------------------------------------------------------------
 %
@@ -151,7 +154,7 @@ We will model this by changing $f\potdep$, leaving $r$ and $\M\potdep$ unchanged
 
 The untrained case will be described by $f\pot=f\pot\norm$.
 Gain increase training  will be described by $f\pot=f\pot\inc<f\pot\norm$, and
-gain decrease training  will be described by $f\pot=f\pot\inc<f\pot\norm$. Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depends on $f\pot$, which we will indicate with subscripts.
+gain decrease training  will be described by $f\pot=f\pot\dec<f\pot\norm$. Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depends on $f\pot$, which we will indicate with subscripts.
 
 Before training, the synaptic distribution will in equilibrium with $f\pot\norm$.
 During gain increase training, it will evolve according to \eqref{eq:evolve} with $f\pot\inc$:
@@ -178,7 +181,7 @@ The behavioural output (VOR gain) will be some non-linear function of the synapt
 The MHC knockout has a lower threshold for depression.
 We can model this by changing $\W\dep\wt$ to $\W\dep\kn$, which should have larger matrix elements.
 
-QUESTION: Should $f\pot\wt=f\pot\kn$? 
+QUESTION: Should $f\pot\wt=f\pot\kn$?
 
 If they are equal, this would change the mean synaptic weight in equilibrium.
 This seems like it would affect the ability of the network to perform its function, and one might expect adaptation to the environment to produce an equilibrium state that has the same performance.
@@ -186,6 +189,48 @@ In any case, if the synaptic weights are different, the electrical activity will
 
 On the other hand, one could imagine adjusting $f\pot\wt$ and $f\pot\kn$ so that $\eq\wt\w = \eq\kn\w$.
 But, now that the synaptic weights are the same, the electrical activity will be the same, and there will be no reason to expect different statistics for potentiation or depression.
+
+
+\section{Simulations}\label{sec:sims}
+
+\subsection{Models and parameters}
+
+We will look at three different models, the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade}), the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate}) and the two-state model (which can be thought of as a special case of the previous two, see \autoref{fig:models}\ref{fig:binary}).
+
+For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \Kn\ mutant. We will use a larger value for $x$ for depression in the \Kn\ mutant.
+
+For the multistate and two state models, we will use the same value for the transition probabilities, $q$ for potentiation and depression in the wild-type as well as potentiation in the \Kn\ mutant. We will use a larger value for $q$ for depression in the \Kn\ mutant.
+
+In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\pot\dec=f\pot\norm-\Delta f$. The values of all these parameters are listed in \autoref{tab:params}.
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[height=2cm]{cascade.svg}}\label{fig:cascade}\hspace{0.5cm}
+  \item\aligntop{\includegraphics[height=1.7cm]{multistate.svg}}\label{fig:multistate}\hspace{0.5cm}
+  \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary}
+ \end{myenuma}
+ \end{center}
+  \caption{Transition probabilities for different models. (\ref{fig:cascade}) In the cascade model, the transition probabilities decay geometrically with a parameter $x$ (see \cite{Fusi2005cascade}). (\ref{fig:multistate}) In the multistate model the transition probabilities for potentiation/depression are all equal and it is parameterised by these two values. (\ref{fig:binary}) The two-state model is parameterised by the two transition probailities.}\label{fig:models}
+\end{figure}
+
+\begin{table}
+ \begin{center}
+  \begin{tabular}{|l|c|c|c|c|}
+    \hline
+    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+    Model & \# states & pot,WT dep & \Kn\ dep & $\Delta f$\\
+    \hline
+    Cascade & 10 & $x=0.25$ & $x=0.3$ & -0.1 \\
+    Multistate & 10 & $q=0.6$ & $q=0.8$ & -0.1 \\
+    Two-state & 2 & $q=0.6$ & $q=0.8$ & -0.1 \\
+    \hline
+  \end{tabular}
+ \end{center}
+  \caption{Parameters used in simulations.}\label{tab:params}
+\end{table}
+
+
 
 
 %\subsection*{Acknowledgements}
@@ -203,7 +248,7 @@ But, now that the synaptic weights are the same, the electrical activity will be
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\bibliographystyle{utcaps_sl}
-%\bibliography{maths,neuro}
+\bibliographystyle{utcaps_sl}
+\bibliography{maths,neuro}
 
 \end{document}
