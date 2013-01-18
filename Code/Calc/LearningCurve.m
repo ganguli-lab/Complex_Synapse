@@ -1,4 +1,4 @@
-function [ S ] = LearningCurve( W0,w,t,W1,varargin )
+function [ S,Pt ] = LearningCurve( W0,w,t,W1,varargin )
 %S=LEARNINGCURVE(W0,w,t,W1,...) mean synaptic weight as function of time,
 %starting in equilibrium state for W0, then evolving according to W1
 %   S(t)=p(t)w
@@ -32,8 +32,7 @@ expqt=exp(diag(D)*t)';
 pt=expqt*diag(p0*V)/V;
 %S: col=what time.
 S=(pt*w)';
-
-
+Pt=pt;
 
 for i=1:numchange
     tchange=varargin{2*i-1};
@@ -48,11 +47,13 @@ for i=1:numchange
     p0=pt(ix,:);
     [V,D]=eig(W);
     expqt=exp(diag(D)*(t-t(ix)))';%row=wich eigenmode, col=what time.
-    pt=(expqt*diag(p0*V))/V;%col=wich eigenmode, row=what time.
+    pt=(expqt*diag(p0*V))/V;%col=which state, row=what time.
     
     newS=(pt*w)';
     S(valid)=newS(valid);
+    Pt(ix+1:end,:)=pt(ix+1:end,:);
 end
+
 
 
 end
