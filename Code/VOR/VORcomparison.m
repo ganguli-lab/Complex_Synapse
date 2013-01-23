@@ -16,24 +16,38 @@ if isempty(altfig)
     altaxWT=[];
     altaxKn=[];
 else
-    clf(altfig);
-    altaxWT=subplot(2,1,1,'Parent',altfig);
-    altaxKn=subplot(2,1,2,'Parent',altfig);
-end
-
-if isempty(fig3)
-    fig3=figure('WindowStyle','docked');
+    if isscalar(altfig)
+        clf(altfig);
+        altaxWT=subplot(2,1,1,'Parent',altfig);
+        altaxKn=subplot(2,1,2,'Parent',altfig);
+    else
+        clf(altfig(1));
+        clf(altfig(2));
+        altaxWT=axes('Parent',altfig(1));
+        altaxKn=axes('Parent',altfig(2));
+        embiggen(altaxWT);
+        embiggen(altaxKn);
+    end
 end
 
 if Superpose
 %     phWT=VORsuperpose(Wp,Wm,w,t,df,'LinSpec','k','Parent',Parent,'altax',altaxWT,varargin{:});
 %     phKn=VORsuperpose(WpM,WmM,w,t,df,'LinSpec','r','Parent',Parent,'altax',altaxKn,varargin{:});
-    phWT=VORexptSuperpose(Wp,Wm,w,t,df,tchange,'LinSpec','k','Parent',Parent,'altax',altaxWT,varargin{:});
-    phKn=VORexptSuperpose(WpM,WmM,w,t,df,tchange,'LinSpec','r','Parent',Parent,'altax',altaxKn,varargin{:});
+    phWT=VORexptSuperpose(Wp,Wm,w,t,df,tchange,'LinSpec','k','Parent',Parent,varargin{:});
+    phKn=VORexptSuperpose(WpM,WmM,w,t,df,tchange,'LinSpec','r','Parent',Parent,varargin{:});
 else
-    [phWT,P_WT_nopre,P_WT_pre]=VORexpt(Wp,Wm,w,t,df,tchange,'LinSpec','k','Parent',Parent,'altax',altaxWT,varargin{:});
-    [phKn,P_Kn_nopre,P_Kn_pre]=VORexpt(WpM,WmM,w,t,df,tchange,'LinSpec','r','Parent',Parent,'altax',altaxKn,varargin{:});
+    [phWT,P_WT_nopre,P_WT_pre]=VORexpt(Wp,Wm,w,t,df,tchange,'LinSpec','k','Parent',Parent,varargin{:});
+    [phKn,P_Kn_nopre,P_Kn_pre]=VORexpt(WpM,WmM,w,t,df,tchange,'LinSpec','r','Parent',Parent,varargin{:});
 end%if 
+
+if ~isempty(altfig)
+    EqProbPlot(Wp,Wm,df,'Parent',altaxWT,varargin{:});
+    EqProbPlot(WpM,WmM,df,'Parent',altaxKn,varargin{:});
+%     plot(altax,[EqProb(fp*Wp+(1-fp)*Wm); EqProb((fp+df)*Wp+(1-fp-df)*Wm); EqProb((fp-df)*Wp+(1-fp+df)*Wm)]');
+%     xlabel(altax,'State');
+%     ylabel(altax,'Equilibrium prob.');
+%     legend(altax,{'Untrained','Gain increase','Gain decrease'},'Location','Best');
+end
 
 axes(Parent);
 xlabel('Training time')
@@ -41,7 +55,7 @@ ylabel('Learning (-\Delta mean w)')
 embiggen
 
 if Superpose
-    legend({'WT, no-pre';'WT, pre';'D^bK^b-/- no-pre';'D^bK^b-/- pre'},'Location','Best')
+    legend({'WT, no-pre';'WT, pre';'D^bK^b-/-, no-pre';'D^bK^b-/-, pre'},'Location','Best')
 else
     yl=ylim;
     xl=xlim;
@@ -61,27 +75,30 @@ else
     legend([phWT(1);phKn(1)],{'WT';'D^bK^b-/-'},'Location','Best')
     drawnow;
     
-    figure(fig3);
-    subplot(2,2,1,'Parent',fig3);
-    imagesc(P_WT_nopre);
-    xlabel('State');
-    ylabel('Training time');
-    title('WT no pre-training');
-    subplot(2,2,2,'Parent',fig3);
-    imagesc(P_WT_pre);
-    xlabel('State');
-    ylabel('Training time');
-    title('WT pre-training');
-    subplot(2,2,3,'Parent',fig3);
-    imagesc(P_Kn_nopre);
-    xlabel('State');
-    ylabel('Training time');
-    title('D^bK^b-/- no pre-training');
-    subplot(2,2,4,'Parent',fig3);
-    imagesc(P_Kn_pre);
-    xlabel('State');
-    ylabel('Training time');
-    title('D^bK^b-/- pre-training');
+    if isscalar(fig3)
+        clf(fig3);
+        h=subplot(2,2,1,'Parent',fig3);
+        ProbEvol(P_WT_nopre,t,'WT no pre-training','Parent',h);
+        h=subplot(2,2,2,'Parent',fig3);
+        ProbEvol(P_WT_pre,t,'WT pre-training','Parent',h);
+        h=subplot(2,2,3,'Parent',fig3);
+        ProbEvol(P_Kn_nopre,t,'D^bK^b-/- no pre-training','Parent',h);
+        h=subplot(2,2,4,'Parent',fig3);
+        ProbEvol(P_Kn_pre,t,'D^bK^b-/- pre-training','Parent',h);
+    elseif numel(fig3)==4
+        h=axes('Parent',fig3(1));
+        ProbEvol(P_WT_nopre,t,'WT no pre-training','Parent',h,'FontSize',16);
+        embiggen(h);
+        h=axes('Parent',fig3(2));
+        ProbEvol(P_WT_pre,t,'WT pre-training','Parent',h,'FontSize',16);
+        embiggen(h);
+        h=axes('Parent',fig3(3));
+        ProbEvol(P_Kn_nopre,t,'D^bK^b-/- no pre-training','Parent',h,'FontSize',16);
+        embiggen(h);
+        h=axes('Parent',fig3(4));
+        ProbEvol(P_Kn_pre,t,'D^bK^b-/- pre-training','Parent',h,'FontSize',16);
+        embiggen(h);
+    end
 end
 
 if ~isempty(altfig)

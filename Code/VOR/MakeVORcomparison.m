@@ -14,6 +14,7 @@ LinWeights=false;
 gradq=0;
 altfig=[];
 fig=gcf;
+fig3=[];
 
 varargin=assignApplicable(varargin);
 
@@ -40,11 +41,16 @@ end
 clf(fig);
 set(fig,'WindowStyle','docked')
 Parent=axes('Parent',fig);
-if isempty(altfig)
-    altfig=figure('WindowStyle','docked');
-end
 
-VORcomparison(Wp,Wm,w,t,df,tchange,Wp,WmKn,'LineWidth',2,'Parent',Parent,'altfig',altfig,varargin{:});
+% if isempty(altfig)
+%     altfig=figure('WindowStyle','docked');
+% end
+% if isempty(fig3)
+%     fig3=figure('WindowStyle','docked');
+% end
+
+
+VORcomparison(Wp,Wm,w,t,df,tchange,Wp,WmKn,'LineWidth',2,'Parent',Parent,'altfig',altfig,'fig3',fig3,varargin{:});
 
 end
 

@@ -17,7 +17,7 @@ error(CheckSize(w,@iscol));
 fp=0.5;
 LinSpec='b';
 Parent=gca;
-altax=[];
+% altax=[];
 
 varargin=assignApplicable(varargin);
 
@@ -27,13 +27,13 @@ hold(Parent,'on');
 [S,P_pre]=LearningCurve(fp*Wp+(1-fp)*Wm,w,t,(fp-df)*Wp+(1-fp+df)*Wm,tchange,(fp+df)*Wp+(1-fp-df)*Wm);
 ph(2)=plot(t,S(1)-S,LinSpec,'Parent',Parent,varargin{:});
 
-if ~isempty(altax)
-    plot(altax,[EqProb(fp*Wp+(1-fp)*Wm); EqProb((fp+df)*Wp+(1-fp-df)*Wm); EqProb((fp-df)*Wp+(1-fp+df)*Wm)]');
-%     plot(altax,pT');
-    xlabel(altax,'State');
-    ylabel(altax,'Equilibrium prob.');
-    legend(altax,{'Untrained','Gain increase','Gain decrease'},'Location','Best');
-end
-
+% if ~isempty(altax)
+%     plot(altax,[EqProb(fp*Wp+(1-fp)*Wm); EqProb((fp+df)*Wp+(1-fp-df)*Wm); EqProb((fp-df)*Wp+(1-fp+df)*Wm)]');
+% %     plot(altax,pT');
+%     xlabel(altax,'State');
+%     ylabel(altax,'Equilibrium prob.');
+%     legend(altax,{'Untrained','Gain increase','Gain decrease'},'Location','Best');
+% end
+% 
 end
 

@@ -75,8 +75,8 @@
 \newcommand{\dec}{_{\text{dec}}}
 \newcommand{\incdec}{_{\text{inc/dec}}}
 \newcommand{\wt}{_{\text{WT}}}
-\newcommand{\kn}{_{\text{D$^\mathrm{b}$K$^\mathrm{b}$-/-}}}
-\newcommand{\Kn}{D$^\mathrm{b}$K$^\mathrm{b}$-/-}
+\newcommand{\ko}{_{\text{D$^\mathrm{b}$K$^\mathrm{b}$-/-}}}
+\newcommand{\KO}{D$^\mathrm{b}$K$^\mathrm{b}$-/-}
 \newcommand{\tpre}{t_{\text{pre}}}
 % ----------------------------------------------------------------
 %
@@ -179,16 +179,17 @@ We will describe the effect of training by the decrease in mean synaptic weight:
 The behavioural output (VOR gain) will be some non-linear function of the synaptic weights, so the best we can hope for is to reproduce qualitative features of the experiment.
 
 The MHC knockout has a lower threshold for depression.
-We can model this by changing $\W\dep\wt$ to $\W\dep\kn$, which should have larger matrix elements.
+We can model this by changing $\W\dep\wt$ to $\W\dep\ko$, which should have larger matrix elements.
 
-QUESTION: Should $f\pot\wt=f\pot\kn$?
+QUESTION: Should $f\pot\wt=f\pot\ko$?
 
 If they are equal, this would change the mean synaptic weight in equilibrium.
 This seems like it would affect the ability of the network to perform its function, and one might expect adaptation to the environment to produce an equilibrium state that has the same performance.
 In any case, if the synaptic weights are different, the electrical activity will be different, and there will be no reason to expect the same statistics for potentiation or depression.
 
-On the other hand, one could imagine adjusting $f\pot\wt$ and $f\pot\kn$ so that $\eq\wt\w = \eq\kn\w$.
+On the other hand, one could imagine adjusting $f\pot\wt$ and $f\pot\ko$ so that $\eq\wt\w = \eq\ko\w$.
 But, now that the synaptic weights are the same, the electrical activity will be the same, and there will be no reason to expect different statistics for potentiation or depression.
+If we did this for the multistate or two-state models, we'd remove all differences between the wild-type and \KO\ knockout.
 
 
 \section{Simulations}\label{sec:sims}
@@ -197,11 +198,11 @@ But, now that the synaptic weights are the same, the electrical activity will be
 
 We will look at three different models, the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade}), the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate}) and the two-state model (which can be thought of as a special case of the previous two, see \autoref{fig:models}\ref{fig:binary}).
 
-For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \Kn\ mutant. 
-We will use a larger value for $x$ for depression in the \Kn\ mutant.
+For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
+We will use a larger value for $x$ for depression in the \KO\ mutant.
 
-For the multistate and two state models, we will use the same value for the transition probabilities, $q$ for potentiation and depression in the wild-type as well as potentiation in the \Kn\ mutant. 
-We will use a larger value for $q$ for depression in the \Kn\ mutant.
+For the multistate and two state models, we will use the same value for the transition probabilities, $q$ for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
+We will use a larger value for $q$ for depression in the \KO\ mutant.
 
 In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\pot\dec=f\pot\norm-\Delta f$. The values of all these parameters are listed in \autoref{tab:params}.
 
@@ -213,26 +214,28 @@ In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\
   \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary}
  \end{myenuma}
  \end{center}
-  \caption{Transition probabilities for different models. 
+  \caption{Transition probabilities for different models.
   (\ref{fig:cascade}) In the cascade model, the transition probabilities decay geometrically with a parameter $x$ (see \cite{Fusi2005cascade}).
   (\ref{fig:multistate}) In the multistate model the transition probabilities for potentiation/depression are all equal and it is parameterised by these two values.
-  (\ref{fig:binary}) The two-state model is parameterised by the two transition probailities.}\label{fig:models}
+  (\ref{fig:binary}) The two-state model is parameterised by the two transition probailities.} \label{fig:models}
 \end{figure}
 
 \begin{table}
  \begin{center}
-  \begin{tabular}{|l|c|c|c|c|}
+  \begin{tabular}{|l|c|c|c|c|c|c|}
     \hline
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-    Model & \# states & pot,WT dep & \Kn\ dep & $\Delta f$\\
+    Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $rt_\text{train}$ & $rt_\text{pre}$ \\
     \hline
-    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.1 \\
-    Two-state  & 2  & $q=0.6$  & $q=0.8$  & -0.1 \\
+    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 50 \\
+    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 150 \\
+    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.1 & 50 & 50 \\
+    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.4 & 20 & 20 \\
+    Two-state  & 2  & $q=0.4$  & $q=0.8$  & -0.1 & 5 & 5 \\
     \hline
   \end{tabular}
  \end{center}
-  \caption{Parameters used in simulations.}\label{tab:params}
+  \caption{Parameters used in simulations.} \label{tab:params}
 \end{table}
 
 \subsection{Results}\label{sec:results}
@@ -253,10 +256,114 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
 \subsubsection{Cascade}\label{sec:cascade}
 
 
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{cascade_short_learn.eps}}\label{fig:cascade_short_learn}
+  \item\aligntop{\includegraphics[width=7cm]{cascade_short_learnS.eps}}\label{fig:cascade_short_learnS}
+  \item\label{fig:cascade_short_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{cascade_short_eq_WT.eps}}\label{fig:cascade_short_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{cascade_short_eq_KO.eps}}\label{fig:cascade_short_eq_KO}
+                  \end{myenumi}
+  \item\label{fig:cascade_short_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{cascade_short_pr_WT_nopre.eps}}\label{fig:cascade_short_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{cascade_short_pr_WT_pre.eps}}\label{fig:cascade_short_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{cascade_short_pr_KO_nopre.eps}}\label{fig:cascade_short_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{cascade_short_pr_KO_pre.eps}}\label{fig:cascade_short_pr_KO_pre}
+                  \end{myenumi}
+ \end{myenuma}
+ \end{center}
+  \caption{Simulation results for cascade model with short pre-training ($rt_\text{pre}=50$).
+  (\ref{fig:cascade_short_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  (\ref{fig:cascade_short_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:cascade_short_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:cascade_short_eq_WT}) wild-type and (\ref{fig:cascade_short_eq_KO}) \KO\ knockout.
+  (\ref{fig:cascade_short_pr}) Evolution of probability distributions for (\ref{fig:cascade_short_pr_WT_nopre}\ref{fig:cascade_short_pr_WT_pre}) wild-type and  (\ref{fig:cascade_short_pr_KO_nopre}\ref{fig:cascade_short_pr_KO_pre}) \KO\ knockout without (\ref{fig:cascade_short_pr_WT_nopre},\ref{fig:cascade_short_pr_KO_nopre}) and with (\ref{fig:cascade_short_pr_WT_pre},\ref{fig:cascade_short_pr_KO_pre}) pre-training. } \label{fig:cascade_short}
+\end{figure}
+
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{cascade_long_learn.eps}}\label{fig:cascade_long_learn}
+  \item\aligntop{\includegraphics[width=7cm]{cascade_long_learnS.eps}}\label{fig:cascade_long_learnS}
+  \item\label{fig:cascade_long_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{cascade_long_eq_WT.eps}}\label{fig:cascade_long_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{cascade_long_eq_KO.eps}}\label{fig:cascade_long_eq_KO}
+                  \end{myenumi}
+  \item\label{fig:cascade_long_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{cascade_long_pr_WT_nopre.eps}}\label{fig:cascade_long_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{cascade_long_pr_WT_pre.eps}}\label{fig:cascade_long_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{cascade_long_pr_KO_nopre.eps}}\label{fig:cascade_long_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{cascade_long_pr_KO_pre.eps}}\label{fig:cascade_long_pr_KO_pre}
+                  \end{myenumi}
+ \end{myenuma}
+ \end{center}
+  \caption{Simulation results for cascade model with long pre-training ($rt_\text{pre}=150$).
+  (\ref{fig:cascade_long_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  (\ref{fig:cascade_long_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:cascade_long_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:cascade_long_eq_WT}) wild-type and (\ref{fig:cascade_long_eq_KO}) \KO\ knockout.
+  (\ref{fig:cascade_long_pr}) Evolution of probability distributions for (\ref{fig:cascade_long_pr_WT_nopre}\ref{fig:cascade_long_pr_WT_pre}) wild-type and  (\ref{fig:cascade_long_pr_KO_nopre}\ref{fig:cascade_long_pr_KO_pre}) \KO\ knockout without (\ref{fig:cascade_long_pr_WT_nopre},\ref{fig:cascade_long_pr_KO_nopre}) and with (\ref{fig:cascade_long_pr_WT_pre},\ref{fig:cascade_long_pr_KO_pre}) pre-training. } \label{fig:cascade_long}
+\end{figure}
+
+
+
+
 \subsubsection{Multistate}\label{sec:multistate}
 
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{multistate_weak_learn.eps}}\label{fig:multistate_weak_learn}
+  \item\aligntop{\includegraphics[width=7cm]{multistate_weak_learnS.eps}}\label{fig:multistate_weak_learnS}
+  \item\label{fig:multistate_weak_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{multistate_weak_eq_WT.eps}}\label{fig:multistate_weak_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{multistate_weak_eq_KO.eps}}\label{fig:multistate_weak_eq_KO}
+                  \end{myenumi}
+  \item\label{fig:multistate_weak_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{multistate_weak_pr_WT_nopre.eps}}\label{fig:multistate_weak_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{multistate_weak_pr_WT_pre.eps}}\label{fig:multistate_weak_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{multistate_weak_pr_KO_nopre.eps}}\label{fig:multistate_weak_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{multistate_weak_pr_KO_pre.eps}}\label{fig:multistate_weak_pr_KO_pre}
+                  \end{myenumi}
+ \end{myenuma}
+ \end{center}
+  \caption{Simulation results for multistate model with weak training ($\Delta f=-0.1$).
+  (\ref{fig:multistate_weak_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  (\ref{fig:multistate_weak_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:multistate_weak_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:multistate_weak_eq_WT}) wild-type and (\ref{fig:multistate_weak_eq_KO}) \KO\ knockout.
+  (\ref{fig:multistate_weak_pr}) Evolution of probability distributions for (\ref{fig:multistate_weak_pr_WT_nopre}\ref{fig:multistate_weak_pr_WT_pre}) wild-type and  (\ref{fig:multistate_weak_pr_KO_nopre}\ref{fig:multistate_weak_pr_KO_pre}) \KO\ knockout without (\ref{fig:multistate_weak_pr_WT_nopre},\ref{fig:multistate_weak_pr_KO_nopre}) and with (\ref{fig:multistate_weak_pr_WT_pre},\ref{fig:multistate_weak_pr_KO_pre}) pre-training. } \label{fig:multistate_weak}
+\end{figure}
 
-Consider the general uniform multistate model. 
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{multistate_strong_learn.eps}}\label{fig:multistate_strong_learn}
+  \item\aligntop{\includegraphics[width=7cm]{multistate_strong_learnS.eps}}\label{fig:multistate_strong_learnS}
+  \item\label{fig:multistate_strong_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{multistate_strong_eq_WT.eps}}\label{fig:multistate_strong_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{multistate_strong_eq_KO.eps}}\label{fig:multistate_strong_eq_KO}
+                  \end{myenumi}
+  \item\label{fig:multistate_strong_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{multistate_strong_pr_WT_nopre.eps}}\label{fig:multistate_strong_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{multistate_strong_pr_WT_pre.eps}}\label{fig:multistate_strong_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{multistate_strong_pr_KO_nopre.eps}}\label{fig:multistate_strong_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{multistate_strong_pr_KO_pre.eps}}\label{fig:multistate_strong_pr_KO_pre}
+                  \end{myenumi}
+ \end{myenuma}
+ \end{center}
+  \caption{Simulation results for multistate model with strong training ($\Delta f=-0.4$).
+  (\ref{fig:multistate_strong_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  (\ref{fig:multistate_strong_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:multistate_strong_eq}) Equilibrium distributions with/without gain-increase/decrease training for (\ref{fig:multistate_strong_eq_WT}) wild-type and (\ref{fig:multistate_strong_eq_KO}) \KO\ knockout.
+  (\ref{fig:multistate_strong_pr}) Evolution of probability distributions for (\ref{fig:multistate_strong_pr_WT_nopre}\ref{fig:multistate_strong_pr_WT_pre}) wild-type and  (\ref{fig:multistate_strong_pr_KO_nopre}\ref{fig:multistate_strong_pr_KO_pre}) \KO\ knockout without (\ref{fig:multistate_strong_pr_WT_nopre},\ref{fig:multistate_strong_pr_KO_nopre}) and with (\ref{fig:multistate_strong_pr_WT_pre},\ref{fig:multistate_strong_pr_KO_pre}) pre-training. } \label{fig:multistate_strong}
+\end{figure}
+
+
+
+
+
+Consider the general uniform multistate model.
 Then the equilibrium distribution is given by
 %
 \begin{equation}\label{eq:mutltieq}
@@ -299,13 +406,13 @@ On the other hand, if $\Delta f$ is close to $-\half$, pre-training will initial
 Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
 Without pre-training:
 %
-\begin{equation}\label{eq:multiKNnopre}
+\begin{equation}\label{eq:multiKOnopre}
   \Phi = -\frac{2(1-\beta)\beta^{M/2-1}\Delta fq}{1-\beta^M}.
 \end{equation}
 %
 With pre-training:
 %
-\begin{equation}\label{eq:multiKnpre}
+\begin{equation}\label{eq:multiKOpre}
 \begin{aligned}
   \Phi &= -4\Delta f q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
           {(1-2\Delta f)^M - \beta^M(1+2\Delta f)^M}   \,
@@ -316,6 +423,32 @@ With pre-training:
 
 
 \subsubsection{Two-state}\label{sec:binary}
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{binary_learn.eps}}\label{fig:binary_learn}
+  \item\aligntop{\includegraphics[width=7cm]{binary_learnS.eps}}\label{fig:binary_learnS}
+  \item\label{fig:binary_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{binary_eq_WT.eps}}\label{fig:binary_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{binary_eq_KO.eps}}\label{fig:binary_eq_KO}
+                  \end{myenumi}
+  \item\label{fig:binary_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{binary_pr_WT_nopre.eps}}\label{fig:binary_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{binary_pr_WT_pre.eps}}\label{fig:binary_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{binary_pr_KO_nopre.eps}}\label{fig:binary_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{binary_pr_KO_pre.eps}}\label{fig:binary_pr_KO_pre}
+                  \end{myenumi}
+ \end{myenuma}
+ \end{center}
+  \caption{Simulation results for two-state model.
+  (\ref{fig:binary_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  (\ref{fig:binary_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:binary_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:binary_eq_WT}) wild-type and (\ref{fig:binary_eq_KO}) \KO\ knockout.
+  (\ref{fig:binary_pr}) Evolution of probability distributions for (\ref{fig:binary_pr_WT_nopre}\ref{fig:binary_pr_WT_pre}) wild-type and  (\ref{fig:binary_pr_KO_nopre}\ref{fig:binary_pr_KO_pre}) \KO\ knockout without (\ref{fig:binary_pr_WT_nopre},\ref{fig:binary_pr_KO_nopre}) and with (\ref{fig:binary_pr_WT_pre},\ref{fig:binary_pr_KO_pre}) pre-training. } \label{fig:binary_res}
+\end{figure}
+
+
 
 This model can be solved exactly:
 %
@@ -351,14 +484,14 @@ So, we see that pre-training will always speed up learning.
 Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
 Without pre-training:
 %
-\begin{equation}\label{eq:binKNnopre}
+\begin{equation}\label{eq:binKOnopre}
   \Phi = -\frac{2\Delta f q}{1+\beta},
 \end{equation}
 %
 which is always larger that \eqref{eq:binWTnopre}.
 With pre-training:
 %
-\begin{equation}\label{eq:binKnpre}
+\begin{equation}\label{eq:binKOpre}
 \begin{aligned}
   \Phi &= -4\Delta f q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
           {(1-2\Delta f)^2 - \beta^2(1+2\Delta f)^2}.
