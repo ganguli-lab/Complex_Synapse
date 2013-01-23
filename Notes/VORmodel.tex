@@ -108,6 +108,11 @@
 % Beginning of Article:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Introduction and summary}\label{sec:intro}
+
+
+
+
 \section{The setup}\label{sec:setup}
 
 
@@ -178,7 +183,7 @@ We will describe the effect of training by the decrease in mean synaptic weight:
 %
 The behavioural output (VOR gain) will be some non-linear function of the synaptic weights, so the best we can hope for is to reproduce qualitative features of the experiment.
 
-The MHC knockout has a lower threshold for depression.
+The MHC mutant has a lower threshold for depression.
 We can model this by changing $\W\dep\wt$ to $\W\dep\ko$, which should have larger matrix elements.
 
 QUESTION: Should $f\pot\wt=f\pot\ko$?
@@ -189,7 +194,7 @@ In any case, if the synaptic weights are different, the electrical activity will
 
 On the other hand, one could imagine adjusting $f\pot\wt$ and $f\pot\ko$ so that $\eq\wt\w = \eq\ko\w$.
 But, now that the synaptic weights are the same, the electrical activity will be the same, and there will be no reason to expect different statistics for potentiation or depression.
-If we did this for the multistate or two-state models, we'd remove all differences between the wild-type and \KO\ knockout.
+If we did this for the multistate or two-state models, we'd remove all differences between the wild-type and \KO\ mutant.
 
 
 \section{Simulations}\label{sec:sims}
@@ -255,8 +260,6 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
 
 \subsubsection{Cascade}\label{sec:cascade}
 
-
-
 \begin{figure}
  \begin{center}
  \begin{myenuma}
@@ -275,10 +278,11 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
  \end{myenuma}
  \end{center}
   \caption{Simulation results for cascade model with short pre-training ($rt_\text{pre}=50$).
-  (\ref{fig:cascade_short_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  Other parameters can be found in \autoref{tab:params}.
+  (\ref{fig:cascade_short_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:cascade_short_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:cascade_short_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:cascade_short_eq_WT}) wild-type and (\ref{fig:cascade_short_eq_KO}) \KO\ knockout.
-  (\ref{fig:cascade_short_pr}) Evolution of probability distributions for (\ref{fig:cascade_short_pr_WT_nopre}\ref{fig:cascade_short_pr_WT_pre}) wild-type and  (\ref{fig:cascade_short_pr_KO_nopre}\ref{fig:cascade_short_pr_KO_pre}) \KO\ knockout without (\ref{fig:cascade_short_pr_WT_nopre},\ref{fig:cascade_short_pr_KO_nopre}) and with (\ref{fig:cascade_short_pr_WT_pre},\ref{fig:cascade_short_pr_KO_pre}) pre-training. } \label{fig:cascade_short}
+  (\ref{fig:cascade_short_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:cascade_short_eq_WT}) wild-type and (\ref{fig:cascade_short_eq_KO}) \KO\ mutant.
+  (\ref{fig:cascade_short_pr}) Evolution of probability distributions for (\ref{fig:cascade_short_pr_WT_nopre}\ref{fig:cascade_short_pr_WT_pre}) wild-type and  (\ref{fig:cascade_short_pr_KO_nopre}\ref{fig:cascade_short_pr_KO_pre}) \KO\ mutant without (\ref{fig:cascade_short_pr_WT_nopre},\ref{fig:cascade_short_pr_KO_nopre}) and with (\ref{fig:cascade_short_pr_WT_pre},\ref{fig:cascade_short_pr_KO_pre}) pre-training. } \label{fig:cascade_short}
 \end{figure}
 
 
@@ -300,13 +304,24 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
  \end{myenuma}
  \end{center}
   \caption{Simulation results for cascade model with long pre-training ($rt_\text{pre}=150$).
-  (\ref{fig:cascade_long_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  Other parameters can be found in \autoref{tab:params}.
+  (\ref{fig:cascade_long_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:cascade_long_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:cascade_long_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:cascade_long_eq_WT}) wild-type and (\ref{fig:cascade_long_eq_KO}) \KO\ knockout.
-  (\ref{fig:cascade_long_pr}) Evolution of probability distributions for (\ref{fig:cascade_long_pr_WT_nopre}\ref{fig:cascade_long_pr_WT_pre}) wild-type and  (\ref{fig:cascade_long_pr_KO_nopre}\ref{fig:cascade_long_pr_KO_pre}) \KO\ knockout without (\ref{fig:cascade_long_pr_WT_nopre},\ref{fig:cascade_long_pr_KO_nopre}) and with (\ref{fig:cascade_long_pr_WT_pre},\ref{fig:cascade_long_pr_KO_pre}) pre-training. } \label{fig:cascade_long}
+  (\ref{fig:cascade_long_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:cascade_long_eq_WT}) wild-type and (\ref{fig:cascade_long_eq_KO}) \KO\ mutant.
+  (\ref{fig:cascade_long_pr}) Evolution of probability distributions for (\ref{fig:cascade_long_pr_WT_nopre}\ref{fig:cascade_long_pr_WT_pre}) wild-type and  (\ref{fig:cascade_long_pr_KO_nopre}\ref{fig:cascade_long_pr_KO_pre}) \KO\ mutant without (\ref{fig:cascade_long_pr_WT_nopre},\ref{fig:cascade_long_pr_KO_nopre}) and with (\ref{fig:cascade_long_pr_WT_pre},\ref{fig:cascade_long_pr_KO_pre}) pre-training. } \label{fig:cascade_long}
 \end{figure}
 
+The results of simulations of the cascade model can be seen in \autoref{fig:cascade_short} and \autoref{fig:cascade_long}.
 
+In both of these, we see that the mutant is slower than wild-type without pre-training but faster with it.
+This seems to be due to the fact that, without pre-training, very few synapses will be available for depression as most of them are already depressed (\autoref{fig:cascade_short}\ref{fig:cascade_short_eq}\ref{fig:cascade_short_eq_KO} and \ref{fig:cascade_short_pr}\ref{fig:cascade_short_pr_KO_nopre}).
+With pre-training, some of them will now be potentiated (\autoref{fig:cascade_short}\ref{fig:cascade_short_eq}\ref{fig:cascade_short_eq_KO} and \ref{fig:cascade_short_pr}\ref{fig:cascade_short_pr_KO_pre}), and the enhanced depression can speed up learning.
+
+With shorter pre-training, we see that it speeds up learning in both wild-type and mutant (see \autoref{fig:cascade_short}\ref{fig:cascade_short_learnS}), whereas experimentally this only happens for the mutant.
+This is due to the fact that pre-training results in more synapses being potentiated, and thus ready for depression, but does not push them far enough down the cascade for the lower transition probabilities to slow down learning.
+
+We can see from \autoref{fig:cascade_long}\ref{fig:cascade_long_learnS} that longer pre-training pushes the synapses further down the cascade, slow in down learning for the wild-type.
+This effect is weaker for the mutant, as the equilibrium distribution is not as heavily concentrated at the end (see \autoref{fig:cascade_long}\ref{fig:cascade_long_eq}\ref{fig:cascade_long_eq_KO}).
 
 
 \subsubsection{Multistate}\label{sec:multistate}
@@ -329,10 +344,11 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
  \end{myenuma}
  \end{center}
   \caption{Simulation results for multistate model with weak training ($\Delta f=-0.1$).
-  (\ref{fig:multistate_weak_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  Other parameters can be found in \autoref{tab:params}.
+  (\ref{fig:multistate_weak_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:multistate_weak_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:multistate_weak_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:multistate_weak_eq_WT}) wild-type and (\ref{fig:multistate_weak_eq_KO}) \KO\ knockout.
-  (\ref{fig:multistate_weak_pr}) Evolution of probability distributions for (\ref{fig:multistate_weak_pr_WT_nopre}\ref{fig:multistate_weak_pr_WT_pre}) wild-type and  (\ref{fig:multistate_weak_pr_KO_nopre}\ref{fig:multistate_weak_pr_KO_pre}) \KO\ knockout without (\ref{fig:multistate_weak_pr_WT_nopre},\ref{fig:multistate_weak_pr_KO_nopre}) and with (\ref{fig:multistate_weak_pr_WT_pre},\ref{fig:multistate_weak_pr_KO_pre}) pre-training. } \label{fig:multistate_weak}
+  (\ref{fig:multistate_weak_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:multistate_weak_eq_WT}) wild-type and (\ref{fig:multistate_weak_eq_KO}) \KO\ mutant.
+  (\ref{fig:multistate_weak_pr}) Evolution of probability distributions for (\ref{fig:multistate_weak_pr_WT_nopre}\ref{fig:multistate_weak_pr_WT_pre}) wild-type and  (\ref{fig:multistate_weak_pr_KO_nopre}\ref{fig:multistate_weak_pr_KO_pre}) \KO\ mutant without (\ref{fig:multistate_weak_pr_WT_nopre},\ref{fig:multistate_weak_pr_KO_nopre}) and with (\ref{fig:multistate_weak_pr_WT_pre},\ref{fig:multistate_weak_pr_KO_pre}) pre-training. } \label{fig:multistate_weak}
 \end{figure}
 
 \begin{figure}
@@ -352,14 +368,16 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
                   \end{myenumi}
  \end{myenuma}
  \end{center}
-  \caption{Simulation results for multistate model with strong training ($\Delta f=-0.4$).
-  (\ref{fig:multistate_strong_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  \caption{Simulation results for multistate model with strong training ($\Delta f=-0.4$). 
+  Other parameters can be found in \autoref{tab:params}.
+  (\ref{fig:multistate_strong_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:multistate_strong_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:multistate_strong_eq}) Equilibrium distributions with/without gain-increase/decrease training for (\ref{fig:multistate_strong_eq_WT}) wild-type and (\ref{fig:multistate_strong_eq_KO}) \KO\ knockout.
-  (\ref{fig:multistate_strong_pr}) Evolution of probability distributions for (\ref{fig:multistate_strong_pr_WT_nopre}\ref{fig:multistate_strong_pr_WT_pre}) wild-type and  (\ref{fig:multistate_strong_pr_KO_nopre}\ref{fig:multistate_strong_pr_KO_pre}) \KO\ knockout without (\ref{fig:multistate_strong_pr_WT_nopre},\ref{fig:multistate_strong_pr_KO_nopre}) and with (\ref{fig:multistate_strong_pr_WT_pre},\ref{fig:multistate_strong_pr_KO_pre}) pre-training. } \label{fig:multistate_strong}
+  (\ref{fig:multistate_strong_eq}) Equilibrium distributions with/without gain-increase/decrease training for (\ref{fig:multistate_strong_eq_WT}) wild-type and (\ref{fig:multistate_strong_eq_KO}) \KO\ mutant.
+  (\ref{fig:multistate_strong_pr}) Evolution of probability distributions for (\ref{fig:multistate_strong_pr_WT_nopre}\ref{fig:multistate_strong_pr_WT_pre}) wild-type and  (\ref{fig:multistate_strong_pr_KO_nopre}\ref{fig:multistate_strong_pr_KO_pre}) \KO\ mutant without (\ref{fig:multistate_strong_pr_WT_nopre},\ref{fig:multistate_strong_pr_KO_nopre}) and with (\ref{fig:multistate_strong_pr_WT_pre},\ref{fig:multistate_strong_pr_KO_pre}) pre-training. } \label{fig:multistate_strong}
 \end{figure}
 
-
+The results of simulations of the multistate model can be seen in \autoref{fig:multistate_weak} and \autoref{fig:multistate_strong}.
+However, we can get some insight into this model analytically.
 
 
 
@@ -400,26 +418,67 @@ With pre-training:
 \end{aligned}
 \end{equation}
 %
-So, we see that pre-training will speed up learning when $\Delta f$ is small.
-On the other hand, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning a lot.
+So, we see that pre-training will speed up learning when $\Delta f$ is small (in absolute value), as seen in \autoref{fig:multistate_weak}\ref{fig:multistate_weak_learnS}.
+On the other hand, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning a lot, as seen in \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}.
+
+Intuitively, the flux depends on the slope of the distribution at the centre of the chain (with an offset due to the difference between $f\pot$ and $f\dep$).
+Pre-training has two effects: it produces a slope in the right direction (see \autoref{fig:multistate_weak}\ref{fig:multistate_weak_eq}), but it also reduces distribution at the centre (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}).
+For small $\Delta f$, the first effect is stronger and learning speeds up.
+For larger $\Delta f$, the second effect wins and learning slows down.
 
 Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiKOnopre}
-  \Phi = -\frac{2(1-\beta)\beta^{M/2-1}\Delta fq}{1-\beta^M}.
+  \Phi = -2\Delta f q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M}.
 \end{equation}
 %
+This will be smaller than \eqref{eq:multiWTnopre} if $\beta<\beta^*(M)$. 
+This function is plotted in \autoref{fig:multistate_star}\ref{fig:multistate_betastar}, where we can see that it approaches 1 rapidly as we increase $M$.
+
+There are two effects here as well.
+Smaller $\beta$ will increase the probability of crossing the centre of the chain, speeding up learning, but it will also concentrate probability at the ends of the chain, depleting the centre and slowing down learning.
+The first effect goes like $1/\beta$, whereas the second goes like $\beta^{M/2}$ and will be more significant for smaller $\beta$ or in a longer chain.
+
 With pre-training:
 %
 \begin{equation}\label{eq:multiKOpre}
 \begin{aligned}
   \Phi &= -4\Delta f q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
           {(1-2\Delta f)^M - \beta^M(1+2\Delta f)^M}   \,
-          \beta^{M/2-1}(1-2\Delta f)^{M/2-1} (1+2\Delta f)^{M/2-1}.
+          \beta^{M/2-1}(1-2\Delta f)^{M/2-1} (1+2\Delta f)^{M/2-1} \\
+       &= -4\Delta f q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
 %
+Once again, we see that pre-training will speed up learning when $\Delta f$ is small, whereas, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning.
+
+Let us define $\Delta f^*(\beta,M)$ to be the value at which \eqref{eq:multiKOnopre} and \eqref{eq:multiKOpre} are equal.
+As we would like pre-training to slow down learning in the wild-type but speed it up in the mutant, it would seem that we require $\Delta f^*(\beta,M) < \Delta f < \Delta f^*(1,M)$ (remembering once more that $\Delta f<0$ and that the wild-type corresponds to $\beta=1$).
+However, as seen in \autoref{fig:multistate_star}\ref{fig:multistate_deltafstar}, $\Delta f^*(\beta,M) > \Delta f^*(1,M)$, which would make this impossible.
+
+But, all is not lost.
+This is only the initial, instantaneous rate of change.
+Let's look at \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}, for which $\Delta f < \Delta f^*(1,M)$, so that pre-training initially slows down learning for both wild-type and mutant.
+We see that the pre-trained curve can rapidly catch up with the un-pre-trained one, due to the mass of probability concentrated at the end of the chain (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}) drifting to the centre.
+This happens sooner for the mutant than the wild-type, due to the stronger depressing transitions.
+This means that there is an intermediate range of time-scales over which pre-training does slow down learning in the wild-type but speed it up in the mutant.
+
+In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f < \Delta f^*(1,M)$ and look at intermediate time-scales, we will see that the mutant learns slower than wild-type without pre-training, and that pre-training speeds up learning in the mutant but slows it down in the wild-type.
+However, in this case pre-training proceeds much faster in the mutant than wild-type (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learn}), which is \emph{not} seen in the experiment.
+
+
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{multistate_betastar.eps}}\label{fig:multistate_betastar}
+  \item\aligntop{\includegraphics[width=7cm]{multistate_deltafstar.eps}}\label{fig:multistate_deltafstar}
+ \end{myenuma}
+ \end{center}
+  \caption{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$ and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$.}\label{fig:multistate_star}
+\end{figure}
+
 
 
 \subsubsection{Two-state}\label{sec:binary}
@@ -442,15 +501,16 @@ With pre-training:
  \end{myenuma}
  \end{center}
   \caption{Simulation results for two-state model.
-  (\ref{fig:binary_learn}) Learning curves for wild-type and \KO\ knockout with and without pre-training.
+  Parameters can be found in \autoref{tab:params}.
+  (\ref{fig:binary_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:binary_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:binary_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:binary_eq_WT}) wild-type and (\ref{fig:binary_eq_KO}) \KO\ knockout.
-  (\ref{fig:binary_pr}) Evolution of probability distributions for (\ref{fig:binary_pr_WT_nopre}\ref{fig:binary_pr_WT_pre}) wild-type and  (\ref{fig:binary_pr_KO_nopre}\ref{fig:binary_pr_KO_pre}) \KO\ knockout without (\ref{fig:binary_pr_WT_nopre},\ref{fig:binary_pr_KO_nopre}) and with (\ref{fig:binary_pr_WT_pre},\ref{fig:binary_pr_KO_pre}) pre-training. } \label{fig:binary_res}
+  (\ref{fig:binary_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:binary_eq_WT}) wild-type and (\ref{fig:binary_eq_KO}) \KO\ mutant.
+  (\ref{fig:binary_pr}) Evolution of probability distributions for (\ref{fig:binary_pr_WT_nopre}\ref{fig:binary_pr_WT_pre}) wild-type and  (\ref{fig:binary_pr_KO_nopre}\ref{fig:binary_pr_KO_pre}) \KO\ mutant without (\ref{fig:binary_pr_WT_nopre},\ref{fig:binary_pr_KO_nopre}) and with (\ref{fig:binary_pr_WT_pre},\ref{fig:binary_pr_KO_pre}) pre-training. } \label{fig:binary_res}
 \end{figure}
 
 
-
-This model can be solved exactly:
+The results of simulations of the multistate model can be seen in \autoref{fig:binary_res}.
+However, this model can be solved exactly:
 %
 \begin{multline}\label{eq:binarysol}
   \eq = \frac{(f\dep q\dep, f\pot q\pot)}{\lambda},
@@ -470,7 +530,7 @@ Without pre-training:
   \Phi = -\Delta f q,
 \end{equation}
 %
-where it's worth remembering that $\Delta f<0$.
+where, again, it's worth remembering that $\Delta f<0$.
 With pre-training:
 %
 \begin{equation}\label{eq:binWTpre}
@@ -479,7 +539,8 @@ With pre-training:
 \end{aligned}
 \end{equation}
 %
-So, we see that pre-training will always speed up learning.
+So, we see that pre-training will always speed up learning, unlike what is seen in the experiment.
+This can be seen in \autoref{fig:binary_res}\ref{fig:binary_learn},\ref{fig:binary_learnS}.
 
 Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
 Without pre-training:
@@ -488,7 +549,12 @@ Without pre-training:
   \Phi = -\frac{2\Delta f q}{1+\beta},
 \end{equation}
 %
-which is always larger that \eqref{eq:binWTnopre}.
+which is always larger that \eqref{eq:binWTnopre}, unlike what is seen in the experiment.
+This is also seen in \autoref{fig:binary_res}\ref{fig:binary_learn},\ref{fig:binary_learnS}.
+As discussed below \eqref{eq:multiKOnopre}, the smaller values of has two effects.
+Smaller $\beta$ will increase the probability of depression, speeding up learning, but it will also decrease the probability of being ready for depression, slowing down learning.
+The second effect is much smaller for the very short chain considered here.
+
 With pre-training:
 %
 \begin{equation}\label{eq:binKOpre}
@@ -498,7 +564,7 @@ With pre-training:
 \end{aligned}
 \end{equation}
 %
-
+As we've already ruled out this model, we won't waste any time analysing this formula.
 
 
 %\subsection*{Acknowledgements}
