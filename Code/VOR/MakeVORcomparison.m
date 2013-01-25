@@ -30,6 +30,12 @@ if strcmpi(modelname,'multistate')
 elseif strcmpi(modelname,'cascade')
     [Wp,Wm,w]=CascadeOriginal(paramWT,paramWT,n);
     [~,WmKn]=CascadeOriginal(paramWT,paramKn,n);
+elseif strcmpi(modelname,'pooled')
+    w=(-1:2/(n-1):1)';
+    q=(paramWT(1):diff(paramWT)/(n-2):paramWT(2)).*(n-1:-1:1)/(n-1);
+    [Wp,Wm]=MakeSMS(q);
+    q=(paramKn(1):diff(paramKn)/(n-2):paramKn(2)).*(n-1:-1:1)/(n-1);
+    [~,WmKn]=MakeSMS(q);
 else
     error(['invalid model name: ' modelname]);
 end

@@ -33,6 +33,9 @@ elseif strncmpi(prefix,'multistate',3)
 elseif strncmpi(prefix,'binary',3)
     modelname='multistate';
     n=2;
+elseif strncmpi(prefix,'pooled',3)
+    modelname='pooled';
+    n=10;
 end
 
 

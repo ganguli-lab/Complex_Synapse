@@ -78,6 +78,9 @@
 \newcommand{\ko}{_{\text{D$^\mathrm{b}$K$^\mathrm{b}$-/-}}}
 \newcommand{\KO}{D$^\mathrm{b}$K$^\mathrm{b}$-/-}
 \newcommand{\tpre}{t_{\text{pre}}}
+\newcommand{\ttrain}{t_{\text{train}}}
+\newcommand{\lmax}{_{\text{max}}}
+\newcommand{\lmin}{_{\text{min}}}
 % ----------------------------------------------------------------
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,7 +102,7 @@
 
 
 \begin{abstract}
-  We see if we can model VOR gain increase and decrease learning in mice with a knockout in MHC as well as wild type.
+  We see if we can model VOR gain increase and decrease learning in mice with a knockout in MHC as well as wild-type.
 \end{abstract}
 
 \tableofcontents
@@ -125,7 +128,7 @@ We make the following assumptions:
   \item The synapses that are eligible for plasticity are chosen randomly.
   \item The potentiating/depressing plasticity event timings are distributed as Poisson processes with rates $rf\potdep$, where $f\pot+f\dep=1$.
   \item Potentiation and depression are described by Markov processes with transition probabilities $\M\potdep$.
-  \item The synaptic weights of the internal states are given by the column vector $\w$. This can only take two values that we can call $\pm1$.
+  \item The synaptic weights of the internal states are given by the column vector $\w$. This can only take two values that we can call $\pm1$, except for the pooled resource model that we will discuss in \sref{sec:pooledmodel} and \sref{sec:pooled}.
 \end{itemize}
 
 The independence and identicalness of synapses means that the state of the system can be completely described by the probability distribution of the internal states, the row vector $\pr(t)$.
@@ -230,7 +233,7 @@ In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\
   \begin{tabular}{|l|c|c|c|c|c|c|}
     \hline
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-    Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $rt_\text{train}$ & $rt_\text{pre}$ \\
+    Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $r\ttrain$ & $r\tpre$ \\
     \hline
     Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 50 \\
     Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 150 \\
@@ -242,6 +245,56 @@ In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\
  \end{center}
   \caption{Parameters used in simulations.} \label{tab:params}
 \end{table}
+
+\subsubsection{Pooled resource model}\label{sec:pooledmodel}
+
+Suppose that there is some resource required for potentiation/depression that is shared between $P$ synapses and is depleted as more synapses are potentiated/depressed.
+We can avoid going beyond the independent synapse model by modelling this pool of synapse as a single pseudo-synapse.
+
+We will model the individual synapses with the two-state model. 
+Let $i$ be the number of them that are potentiated.
+We will model the effect of resource depletion linearly with the potentiation/depression probabilities for the individual synapses:
+%
+\begin{equation}\label{eq:depletion}
+  \begin{aligned}
+    q\pot &= \frac{(P-i-1)q\lmax + i\,q\lmin}{P-1}, \qquad
+    q\dep &= \frac{(i-1)q\lmax + (P-i)q\lmin}{P-1}.
+  \end{aligned}
+\end{equation}
+%
+At each plasticity event for the pseudo-synapse, one of the individual synapses will be chosen randomly for update.
+This effectively reduces the transition probabilities by $1/P$.
+
+This pseudo-synapse would seem to have $2^P$ internal states.
+However, we need only keep track of the number of potentiated synapses, not their identity, leaving $M=P+1$ states.
+The transition network topology will then have a multistate toplogy (see \autoref{fig:models}\ref{fig:multistate}) but the transition probabilities will no longer be uniform and the weight of the pseudo-synapse is the mean of its constituent synapses:
+%
+\begin{equation}\label{eq:pooledweight}
+  \w_i = \frac{2i}{P}-1.
+\end{equation}
+%
+
+
+The Markov process is lumpable \wrt this partition of states (see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time).
+The transition probabilities between lumps $i$ and $j$ is computed by choosing one state from lump $i$ and summing the transition probabilities to all states in lump $j$.
+The result must be the same for all states in lump $i$.
+
+For any state in lump $i$, there are $P-i$ synapses that can be potentiated to go to lump $i+1$.
+Each of these transition probabilities is $q\pot/P$.
+Similarly, there are $i$ synapses that can be depressed to go to lump $i-1$.
+Each of these transition probabilities is $q\dep/P$.
+Thus:
+%
+\begin{equation}\label{eq:pooledpotdep}
+  \begin{aligned}
+    \M\pot_{ii+1} &=  \brk{\frac{(P-i-1)q\lmax + i\,q\lmin}{P-1}} \frac{P-i}{P}, \\
+    \M\dep_{ii-1} &=  \brk{\frac{(i-1)q\lmax + (P-i)q\lmin}{P-1}} \frac{i}{P},
+  \end{aligned}
+\end{equation}
+%
+with all other off-diagonal elements equal to zero.
+The diagonal elements are chosen so that the rows sum to one.
+
 
 \subsection{Results}\label{sec:results}
 
@@ -258,7 +311,7 @@ We will try to gain some analytic insight to some of these models by looking at 
 This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ states, measuring using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
 
 
-\subsubsection{Cascade}\label{sec:cascade}
+\subsubsection{Cascade model}\label{sec:cascade}
 
 \begin{figure}
  \begin{center}
@@ -324,7 +377,7 @@ We can see from \autoref{fig:cascade_long}\ref{fig:cascade_long_learnS} that lon
 This effect is weaker for the mutant, as the equilibrium distribution is not as heavily concentrated at the end (see \autoref{fig:cascade_long}\ref{fig:cascade_long_eq}\ref{fig:cascade_long_eq_KO}).
 
 
-\subsubsection{Multistate}\label{sec:multistate}
+\subsubsection{Multistate model}\label{sec:multistate}
 
 \begin{figure}
  \begin{center}
@@ -368,7 +421,7 @@ This effect is weaker for the mutant, as the equilibrium distribution is not as 
                   \end{myenumi}
  \end{myenuma}
  \end{center}
-  \caption{Simulation results for multistate model with strong training ($\Delta f=-0.4$). 
+  \caption{Simulation results for multistate model with strong training ($\Delta f=-0.4$).
   Other parameters can be found in \autoref{tab:params}.
   (\ref{fig:multistate_strong_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:multistate_strong_learnS}) Learning curves restricted to gain-increase training.
@@ -433,7 +486,7 @@ Without pre-training:
   \Phi = -2\Delta f q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M}.
 \end{equation}
 %
-This will be smaller than \eqref{eq:multiWTnopre} if $\beta<\beta^*(M)$. 
+This will be smaller than \eqref{eq:multiWTnopre} if $\beta<\beta^*(M)$.
 This function is plotted in \autoref{fig:multistate_star}\ref{fig:multistate_betastar}, where we can see that it approaches 1 rapidly as we increase $M$.
 
 There are two effects here as well.
@@ -481,7 +534,7 @@ However, in this case pre-training proceeds much faster in the mutant than wild-
 
 
 
-\subsubsection{Two-state}\label{sec:binary}
+\subsubsection{Two-state model}\label{sec:binary}
 
 \begin{figure}
  \begin{center}
@@ -565,6 +618,10 @@ With pre-training:
 \end{equation}
 %
 As we've already ruled out this model, we won't waste any time analysing this formula.
+
+
+\subsubsection{Pooled resource model}\label{sec:pooled}
+
 
 
 %\subsection*{Acknowledgements}
