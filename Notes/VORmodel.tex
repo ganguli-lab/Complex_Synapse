@@ -113,7 +113,47 @@
 
 \section{Introduction and summary}\label{sec:intro}
 
+We will see if we can capture the essential features of VOR gain-increase learning in wild type and MHC \KO\ mutants and wild-type, with and without gain-decrease pre-training.
+We will try to do this using models of complex synapses, such as the cascade model \cite{Fusi2005cascade} or the multistate model \cite{amit1994learning,Fusi2007multistate}.
+We will also construct a new model in \autoref{sec:pooledmodel} that incorporates the idea that biasing the synapses in one direction could deplete some resource, thereby impairing further plasticity in the same direction in nearby synapses.
 
+These models all assume independent, statistically identical synapses.
+This has the benefit of freeing us from modelling the neurons and their networks, allowing us to focus on the synapses themselves.
+However, we will lose certain aspects of real synapses.
+For example, during gain-increase learning, certain synapses will be potentiated more often and others will be depressed more often.
+In these models, however, synaptic identity is not kept track of, so training can only be described by changing the overall levels of potentiation and depression.
+
+As the MHC \KO\ mutation lowers the threshold for LTD, we will model these mice by increasing the probabilities for internal synaptic transitions associated with depression, whilst leaving potentiation unchanged.
+
+We will be parsimonious in our modelling.
+We will assume that the wild-type has a symmetry between potentiation and depression and we will treat gain-increase and decrease training in a symmetric way.
+We will also assume that the rates of potentiation/depression in the mutant and wild-type are the same.
+None of these assumptions are necessary or justified experimentally (although \cite{Fusi2007multistate} notes that imbalance between potentiation and depression can drastically impair memory).
+They do reduce the number of adjustable parameters we have, simplifying searches for good models.
+Presumably, relaxing these assumptions and enlarging the parameter space would allow for a better fit to data, but the number of parameters would start to look large compared to the number of features we're trying to match.
+
+If we imagine something like an LN model for the Purkinje cell, the output would depend on some linear combination of the synaptic weights (weighted by the activities of the corresponding parallel fibres).
+If we're not keeping track of synaptic identity, the most natural linear combination to use would be an equal sum of them all.
+Thus we will quantify learning by the change in the mean synaptic weight.
+
+The output of the Purkinje cell, and the behavioural output of the animal, will depend on this quantity in some complicated nonlinear way.
+Modelling this is far beyond the scope of this work.
+Instead we will look at more qualitative features, asking whether learning is slower or faster in some situation compared to another.
+
+Within the parameter range explored, we will see that synaptic complexity is essential.
+The simple two-state model always shows enhanced learning in the mutant (see \autoref{fig:binary_res}), in contradiction with experiment.
+It seems that the enhanced depressing transition more than compensates for saturation effects.
+
+On the other hand, the cascade, multistate and pooled resource models all have parameter ranges where the mutant has impaired learning without pre-training (see \autoref{fig:cascade_short}, \autoref{fig:cascade_long}, \autoref{fig:multistate_weak}, \autoref{fig:multistate_strong} and \autoref{fig:pooled_scarce}).
+We have found parameter ranges where the reverse happens for the multistate (see discussion below \eqref{eq:multiKOnopre}) and the pooled resource model (see \autoref{fig:pooled_plenty}).
+These rely on properties of the mutation, so it would be difficult to explore with further experiments.
+
+All of these models show pre-training enhancing learning for the mutant, as expected.
+It is harder to find regimes where pre-training impairs learning for the wild-type.
+In the cascade model, this required a much longer duration for pe-training (see \autoref{fig:cascade_long}).
+In the multistate model, this required stronger training, which resulted in gain-decrease learning being faster for the mutant then wild-type (see \autoref{fig:multistate_strong}), unlike what is seen experimentally.
+It is possible that these features could be improved by lessening the symmetry between gain-increase and decrease or potentiation and depression.
+We haven't found any parameter regime where pre-training impairs learning for the wild-type, and we discuss why it seems unlikely in \autoref{sec:pooled}.
 
 
 \section{The setup}\label{sec:setup}
@@ -258,7 +298,7 @@ The values of all these parameters are listed in \autoref{tab:params}.
 \subsubsection{Pooled resource model}\label{sec:pooledmodel}
 
 Suppose that there is some resource required for potentiation/depression that is shared between $P$ synapses and is depleted as more synapses are potentiated/depressed.
-We can avoid going beyond the independent synapse model by modelling this pool of synapse as a single pseudo-synapse.
+We can avoid going beyond the independent synapse model by modelling this pool of synapse as a single compound synapse.
 
 We will model the individual synapses with the two-state model.
 Let $i$ be the number of them that are potentiated.
@@ -271,12 +311,12 @@ We will model the effect of resource depletion linearly with the potentiation/de
   \end{aligned}
 \end{equation}
 %
-At each plasticity event for the pseudo-synapse, one of the individual synapses will be chosen randomly for update.
+At each plasticity event for the compound synapse, one of the individual synapses will be chosen randomly for update.
 This effectively reduces the transition probabilities by $1/P$.
 
-This pseudo-synapse would seem to have $2^P$ internal states.
+This compound synapse would seem to have $2^P$ internal states.
 However, we need only keep track of the number of potentiated synapses, not their identity, leaving $M=P+1$ states.
-The transition network topology will then have a multistate toplogy (see \autoref{fig:models}\ref{fig:multistate}) but the transition probabilities will no longer be uniform and the weight of the pseudo-synapse is the mean of its constituent synapses:
+The transition network topology will then have a multistate toplogy (see \autoref{fig:models}\ref{fig:multistate}) but the transition probabilities will no longer be uniform and the weight of the compound synapse is the mean of its constituent synapses:
 %
 \begin{equation}\label{eq:pooledweight}
   \w_i = \frac{2i}{P}-1.
