@@ -45,7 +45,7 @@ if LinWeights
 end
 
 clf(fig);
-set(fig,'WindowStyle','docked')
+% set(fig,'WindowStyle','docked')
 Parent=axes('Parent',fig);
 
 % if isempty(altfig)

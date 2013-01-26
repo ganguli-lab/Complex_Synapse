@@ -127,8 +127,9 @@ We make the following assumptions:
   \item The states of different synapses are independent of each other.
   \item The synapses that are eligible for plasticity are chosen randomly.
   \item The potentiating/depressing plasticity event timings are distributed as Poisson processes with rates $rf\potdep$, where $f\pot+f\dep=1$.
+      In other words, $r$ is the total rate of plasticity events per synapse and $f\potdep$ are the fraction of these events that are potentiating/depressing.
   \item Potentiation and depression are described by Markov processes with transition probabilities $\M\potdep$.
-  \item The synaptic weights of the internal states are given by the column vector $\w$. This can only take two values that we can call $\pm1$, except for the pooled resource model that we will discuss in \sref{sec:pooledmodel} and \sref{sec:pooled}.
+  \item The synaptic weights of the internal states are given by the column vector $\w$. This can only take two values that we can call $\pm1$, except for the pooled resource model that we will discuss in \autoref{sec:pooledmodel} and \autoref{sec:pooled}.
 \end{itemize}
 
 The independence and identicalness of synapses means that the state of the system can be completely described by the probability distribution of the internal states, the row vector $\pr(t)$.
@@ -162,7 +163,7 @@ We will model this by changing $f\potdep$, leaving $r$ and $\M\potdep$ unchanged
 
 The untrained case will be described by $f\pot=f\pot\norm$.
 Gain-increase training  will be described by $f\pot=f\pot\inc<f\pot\norm$, and
-gain-decrease training  will be described by $f\pot=f\pot\dec<f\pot\norm$. Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depends on $f\pot$, which we will indicate with subscripts.
+gain-decrease training  will be described by $f\pot=f\pot\dec<f\pot\norm$. Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depend on $f\pot$, which we will indicate with subscripts.
 
 Before training, the synaptic distribution will in equilibrium with $f\pot\norm$.
 During gain-increase training, it will evolve according to \eqref{eq:evolve} with $f\pot\inc$:
@@ -192,12 +193,13 @@ We can model this by changing $\W\dep\wt$ to $\W\dep\ko$, which should have larg
 QUESTION: Should $f\pot\wt=f\pot\ko$?
 
 If they are equal, this would change the mean synaptic weight in equilibrium.
-This seems like it would affect the ability of the network to perform its function, and one might expect adaptation to the environment to produce an equilibrium state that has the same performance.
+This seems like it could affect the ability of the network to perform its function, whereas, in reality, the wild-type and mutant have the same baseline performance.
 In any case, if the synaptic weights are different, the electrical activity will be different, and there will be no reason to expect the same statistics for potentiation or depression.
+In setting $f\pot\wt=f\pot\ko$, we are assuming that the rest of the brain compensates for the difference in synaptic weights somehow.
 
 On the other hand, one could imagine adjusting $f\pot\wt$ and $f\pot\ko$ so that $\eq\wt\w = \eq\ko\w$.
 But, now that the synaptic weights are the same, the electrical activity will be the same, and there will be no reason to expect different statistics for potentiation or depression.
-If we did this for the multistate or two-state models, we'd remove all differences between the wild-type and \KO\ mutant.
+If we did this for the multistate or two-state models, we'd remove all differences between the wild-type and \KO\ mutant, so we won't.
 
 
 \section{Simulations}\label{sec:sims}
@@ -205,14 +207,17 @@ If we did this for the multistate or two-state models, we'd remove all differenc
 \subsection{Models and parameters}
 
 We will look at three different models, the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade}), the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate}) and the two-state model (which can be thought of as a special case of the previous two, see \autoref{fig:models}\ref{fig:binary}).
+We will also look at a new, pooled resource model that we will define below in \autoref{sec:pooledmodel}.
 
 For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
 We will use a larger value for $x$ for depression in the \KO\ mutant.
 
-For the multistate and two state models, we will use the same value for the transition probabilities, $q$ for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
+For the multistate and two state models, we will use the same value for the transition probabilities, $q$, for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
 We will use a larger value for $q$ for depression in the \KO\ mutant.
 
-In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\pot\dec=f\pot\norm-\Delta f$. The values of all these parameters are listed in \autoref{tab:params}.
+In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\pot\dec=f\pot\norm-\Delta f$. 
+We use the same values for wild-type and mutant and treat gain-increase and decrease symmetrically.
+The values of all these parameters are listed in \autoref{tab:params}.
 
 \begin{figure}
  \begin{center}
@@ -235,11 +240,15 @@ In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
     Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $r\ttrain$ & $r\tpre$ \\
     \hline
-    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 50 \\
+    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 50  \\
     Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 150 \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.1 & 50 & 50 \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.4 & 20 & 20 \\
-    Two-state  & 2  & $q=0.4$  & $q=0.8$  & -0.1 & 5 & 5 \\
+    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.1 & 50 & 50  \\
+    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.4 & 20 & 20  \\
+    Two-state  & 2  & $q=0.4$  & $q=0.8$  & -0.1 & 5  & 5   \\
+    Pooled     & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
+                                          & -0.1 & 70 & 70 \\
+    Pooled     & 10 & $q\in[0.1,0.4]$  & $q\in[0.2,0.8]$
+                                          & -0.1 & 70 & 70 \\
     \hline
   \end{tabular}
  \end{center}
@@ -251,7 +260,7 @@ In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\
 Suppose that there is some resource required for potentiation/depression that is shared between $P$ synapses and is depleted as more synapses are potentiated/depressed.
 We can avoid going beyond the independent synapse model by modelling this pool of synapse as a single pseudo-synapse.
 
-We will model the individual synapses with the two-state model. 
+We will model the individual synapses with the two-state model.
 Let $i$ be the number of them that are potentiated.
 We will model the effect of resource depletion linearly with the potentiation/depression probabilities for the individual synapses:
 %
@@ -294,6 +303,10 @@ Thus:
 %
 with all other off-diagonal elements equal to zero.
 The diagonal elements are chosen so that the rows sum to one.
+
+This model is parameterised by the range of values, $q\in[q\lmin,q\lmax]$, for potentiation and depression.
+We will use the same values for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
+We will use larger values for depression in the \KO\ mutant.
 
 
 \subsection{Results}\label{sec:results}
@@ -562,7 +575,7 @@ However, in this case pre-training proceeds much faster in the mutant than wild-
 \end{figure}
 
 
-The results of simulations of the multistate model can be seen in \autoref{fig:binary_res}.
+The results of simulations of the two-state model can be seen in \autoref{fig:binary_res}.
 However, this model can be solved exactly:
 %
 \begin{multline}\label{eq:binarysol}
@@ -573,7 +586,7 @@ However, this model can be solved exactly:
   \lambda = f\pot q\pot + f\dep q\dep.
 \end{multline}
 %
-But it is easier to just substitute $M=2$ into the formulae in \sref{sec:multistate}.
+But it is easier to just substitute $M=2$ into the formulae in \autoref{sec:multistate}.
 In this case, the initial rate of change encapsulates the whole solution, as there is only a single exponential decay.
 
 First, consider the wild-type, for which $q\pot=q\dep=q$.
@@ -593,7 +606,7 @@ With pre-training:
 \end{equation}
 %
 So, we see that pre-training will always speed up learning, unlike what is seen in the experiment.
-This can be seen in \autoref{fig:binary_res}\ref{fig:binary_learn},\ref{fig:binary_learnS}.
+This can be seen in \autoref{fig:binary_res}\ref{fig:binary_learnS}.
 
 Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
 Without pre-training:
@@ -621,6 +634,71 @@ As we've already ruled out this model, we won't waste any time analysing this fo
 
 
 \subsubsection{Pooled resource model}\label{sec:pooled}
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{pooled_plenty_learn.eps}}\label{fig:pooled_plenty_learn}
+  \item\aligntop{\includegraphics[width=7cm]{pooled_plenty_learnS.eps}}\label{fig:pooled_plenty_learnS}
+  \item\label{fig:pooled_plenty_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{pooled_plenty_eq_WT.eps}}\label{fig:pooled_plenty_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{pooled_plenty_eq_KO.eps}}\label{fig:pooled_plenty_eq_KO}
+                  \end{myenumi}
+  \item\label{fig:pooled_plenty_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{pooled_plenty_pr_WT_nopre.eps}}\label{fig:pooled_plenty_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{pooled_plenty_pr_WT_pre.eps}}\label{fig:pooled_plenty_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{pooled_plenty_pr_KO_nopre.eps}}\label{fig:pooled_plenty_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{pooled_plenty_pr_KO_pre.eps}}\label{fig:pooled_plenty_pr_KO_pre}
+                  \end{myenumi}
+ \end{myenuma}
+ \end{center}
+  \caption{Simulation results for pooled resource model with light resource depletion ($q\lmin/q\lmax=0.75$).
+  Parameters can be found in \autoref{tab:params}.
+  (\ref{fig:pooled_plenty_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
+  (\ref{fig:pooled_plenty_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:pooled_plenty_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:pooled_plenty_eq_WT}) wild-type and (\ref{fig:pooled_plenty_eq_KO}) \KO\ mutant.
+  (\ref{fig:pooled_plenty_pr}) Evolution of probability distributions for (\ref{fig:pooled_plenty_pr_WT_nopre}\ref{fig:pooled_plenty_pr_WT_pre}) wild-type and  (\ref{fig:pooled_plenty_pr_KO_nopre}\ref{fig:pooled_plenty_pr_KO_pre}) \KO\ mutant without (\ref{fig:pooled_plenty_pr_WT_nopre},\ref{fig:pooled_plenty_pr_KO_nopre}) and with (\ref{fig:pooled_plenty_pr_WT_pre},\ref{fig:pooled_plenty_pr_KO_pre}) pre-training. } \label{fig:pooled_plenty}
+\end{figure}
+
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{pooled_scarce_learn.eps}}\label{fig:pooled_scarce_learn}
+  \item\aligntop{\includegraphics[width=7cm]{pooled_scarce_learnS.eps}}\label{fig:pooled_scarce_learnS}
+  \item\label{fig:pooled_scarce_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{pooled_scarce_eq_WT.eps}}\label{fig:pooled_scarce_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{pooled_scarce_eq_KO.eps}}\label{fig:pooled_scarce_eq_KO}
+                  \end{myenumi}
+  \item\label{fig:pooled_scarce_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{pooled_scarce_pr_WT_nopre.eps}}\label{fig:pooled_scarce_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{pooled_scarce_pr_WT_pre.eps}}\label{fig:pooled_scarce_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{pooled_scarce_pr_KO_nopre.eps}}\label{fig:pooled_scarce_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{pooled_scarce_pr_KO_pre.eps}}\label{fig:pooled_scarce_pr_KO_pre}
+                  \end{myenumi}
+ \end{myenuma}
+ \end{center}
+  \caption{Simulation results for pooled resource model with heavy resource depletion ($q\lmin/q\lmax=0.25$).
+  Parameters can be found in \autoref{tab:params}.
+  (\ref{fig:pooled_scarce_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
+  (\ref{fig:pooled_scarce_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:pooled_scarce_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:pooled_scarce_eq_WT}) wild-type and (\ref{fig:pooled_scarce_eq_KO}) \KO\ mutant.
+  (\ref{fig:pooled_scarce_pr}) Evolution of probability distributions for (\ref{fig:pooled_scarce_pr_WT_nopre}\ref{fig:pooled_scarce_pr_WT_pre}) wild-type and  (\ref{fig:pooled_scarce_pr_KO_nopre}\ref{fig:pooled_scarce_pr_KO_pre}) \KO\ mutant without (\ref{fig:pooled_scarce_pr_WT_nopre},\ref{fig:pooled_scarce_pr_KO_nopre}) and with (\ref{fig:pooled_scarce_pr_WT_pre},\ref{fig:pooled_scarce_pr_KO_pre}) pre-training. } \label{fig:pooled_scarce}
+\end{figure}
+
+
+The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}. 
+
+If we compare gain-increase learning in the mutant to wild-type, there are two effects: the increased transition rates speed up learning, but the equilibrium distribution is shifted to the depressed side (compare \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_eq}: \ref{fig:pooled_plenty_eq_WT} and \ref{fig:pooled_plenty_eq_KO} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_eq}: \ref{fig:pooled_scarce_eq_WT} and \ref{fig:pooled_scarce_eq_KO}), where there are fewer synapses available for depression and resources are depleted.
+When resource depletion is less severe, the first effect dominates and the mutant learns faster than wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learn},\ref{fig:pooled_plenty_learnS}).
+However, when resource depletion is more severe, the second effect dominates and the mutant learns slower than wild-type (see \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learn},\ref{fig:pooled_scarce_learnS}), which matches what is seen in the experiment.
+
+Gain-decrease pre-training lessens the second effect, and results in the mutant learning faster than wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learn},\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learn},\ref{fig:pooled_scarce_learnS}), as seen in the experiment. 
+
+Gain-decrease pre-training will shift the distribution to the potentiated site, where there are more synapses available for depression and resources are more plentiful, for both the mutant and wild type.
+This means that the pre-trained animal will learn faster then the untrained one for both mutant and wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learnS}).
+This differs from what is seen experimentally, where the pre-trained wild-type learns slower than the untrained one.
+
 
 
 

@@ -13,15 +13,20 @@ DoPrint= strcmpi(PrintView,'Print');
 numpts=100;
 close('all');
 
-fig=figure('WindowStyle','docked','PaperPositionMode','auto');
-figs=figure('WindowStyle','docked','PaperPositionMode','auto');
-altfig(1)=figure('WindowStyle','docked','PaperPositionMode','auto');
-fig3(1)=figure('WindowStyle','docked','PaperPositionMode','auto');
 if DoPrint
-    altfig(2)=figure('WindowStyle','docked','PaperPositionMode','auto');
-    fig3(2)=figure('WindowStyle','docked','PaperPositionMode','auto');
-    fig3(3)=figure('WindowStyle','docked','PaperPositionMode','auto');
-    fig3(4)=figure('WindowStyle','docked','PaperPositionMode','auto');
+    fig=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
+    figs=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
+    altfig(1)=figure('PaperPositionMode','auto','Position',[60 60 1000 500]);
+    altfig(2)=figure('PaperPositionMode','auto','Position',[60 60 1000 500]);
+    fig3(1)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
+    fig3(2)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
+    fig3(3)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
+    fig3(4)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
+else
+    fig=figure('WindowStyle','docked','PaperPositionMode','auto');
+    figs=figure('WindowStyle','docked','PaperPositionMode','auto');
+    altfig=figure('WindowStyle','docked','PaperPositionMode','auto');
+    fig3=figure('WindowStyle','docked','PaperPositionMode','auto');
 end
 
 if strncmpi(prefix,'cascade',3)
@@ -63,6 +68,7 @@ if DoPrint
     print(fig3(2),[prefix '_pr_WT_pre.eps'],'-depsc');
     print(fig3(3),[prefix '_pr_KO_nopre.eps'],'-depsc');
     print(fig3(4),[prefix '_pr_KO_pre.eps'],'-depsc');
+    close('all');
 end
 
 
