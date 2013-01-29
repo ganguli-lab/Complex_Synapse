@@ -23,6 +23,13 @@
 \input{sl_graphics_preamble.tex}
 \graphicspath{{"Figures/"}}
 %
+\usepackage{array}
+\newcounter{tablerow}
+\newcommand{\tablerowautorefname}{row}
+\newenvironment{tabularn}[1]{\setcounter{tablerow}{0}\begin{tabular}{#1>{\refstepcounter{tablerow}}l}}{\end{tabular}}
+%\usepackage{etoolbox}
+%\AtBeginEnvironment{tabular}{\setcounter{tablerow}{0}}
+%
 % >> Only for drafts! <<
 \usepackage[notref,notcite]{showkeys}
 % ----------------------------------------------------------------
@@ -255,7 +262,7 @@ We will use a larger value for $x$ for depression in the \KO\ mutant.
 For the multistate and two state models, we will use the same value for the transition probabilities, $q$, for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
 We will use a larger value for $q$ for depression in the \KO\ mutant.
 
-In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\pot\dec=f\pot\norm-\Delta f$. 
+In each case, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\pot\dec=f\pot\norm-\Delta f$.
 We use the same values for wild-type and mutant and treat gain-increase and decrease symmetrically.
 The values of all these parameters are listed in \autoref{tab:params}.
 
@@ -275,22 +282,23 @@ The values of all these parameters are listed in \autoref{tab:params}.
 
 \begin{table}
  \begin{center}
-  \begin{tabular}{|l|c|c|c|c|c|c|}
-    \hline
+  \begin{tabularn}{|l|c|c|c|c|c|c|}
+%  \begin{tabular}{|l|c|c|c|c|c|c|>{\refstepcounter{tablerow}}l}
+    \cline{1-7}
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
     Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $r\ttrain$ & $r\tpre$ \\
-    \hline
-    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 50  \\
-    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 150 \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.1 & 50 & 50  \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.4 & 20 & 20  \\
-    Two-state  & 2  & $q=0.4$  & $q=0.8$  & -0.1 & 5  & 5   \\
+    \cline{1-7}
+    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 50  &\label{tr:cascade_short} \\
+    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 150 &\label{tr:cascade_long} \\
+    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.1 & 50 & 50  &\label{tr:multistate_weak} \\
+    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.4 & 20 & 20  & \label{tr:multistate_strong} \\
+    Two-state  & 2  & $q=0.4$  & $q=0.8$  & -0.1 & 5  & 5   &\label{tr:binary} \\
     Pooled     & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
-                                          & -0.1 & 70 & 70 \\
+                                          & -0.1 & 70 & 70 &\label{tr:pooled_plenty}\\
     Pooled     & 10 & $q\in[0.1,0.4]$  & $q\in[0.2,0.8]$
-                                          & -0.1 & 70 & 70 \\
-    \hline
-  \end{tabular}
+                                          & -0.1 & 70 & 70 &\label{tr:pooled_scarce}\\
+    \cline{1-7}
+  \end{tabularn}
  \end{center}
   \caption{Parameters used in simulations.} \label{tab:params}
 \end{table}
@@ -384,7 +392,7 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
  \end{myenuma}
  \end{center}
   \caption{Simulation results for cascade model with short pre-training ($rt_\text{pre}=50$).
-  Other parameters can be found in \autoref{tab:params}.
+  Other parameters can be found in \autoref{tr:cascade_short} of \autoref{tab:params}.
   (\ref{fig:cascade_short_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:cascade_short_learnS}) Learning curves restricted to gain-increase training.
   (\ref{fig:cascade_short_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:cascade_short_eq_WT}) wild-type and (\ref{fig:cascade_short_eq_KO}) \KO\ mutant.
@@ -410,7 +418,7 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
  \end{myenuma}
  \end{center}
   \caption{Simulation results for cascade model with long pre-training ($rt_\text{pre}=150$).
-  Other parameters can be found in \autoref{tab:params}.
+  Other parameters can be found in \autoref{tr:cascade_long} of \autoref{tab:params}.
   (\ref{fig:cascade_long_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:cascade_long_learnS}) Learning curves restricted to gain-increase training.
   (\ref{fig:cascade_long_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:cascade_long_eq_WT}) wild-type and (\ref{fig:cascade_long_eq_KO}) \KO\ mutant.
@@ -450,7 +458,7 @@ This effect is weaker for the mutant, as the equilibrium distribution is not as 
  \end{myenuma}
  \end{center}
   \caption{Simulation results for multistate model with weak training ($\Delta f=-0.1$).
-  Other parameters can be found in \autoref{tab:params}.
+  Other parameters can be found in \autoref{tr:multistate_weak} of \autoref{tab:params}.
   (\ref{fig:multistate_weak_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:multistate_weak_learnS}) Learning curves restricted to gain-increase training.
   (\ref{fig:multistate_weak_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:multistate_weak_eq_WT}) wild-type and (\ref{fig:multistate_weak_eq_KO}) \KO\ mutant.
@@ -475,7 +483,7 @@ This effect is weaker for the mutant, as the equilibrium distribution is not as 
  \end{myenuma}
  \end{center}
   \caption{Simulation results for multistate model with strong training ($\Delta f=-0.4$).
-  Other parameters can be found in \autoref{tab:params}.
+  Other parameters can be found in \autoref{tr:multistate_strong} of \autoref{tab:params}.
   (\ref{fig:multistate_strong_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:multistate_strong_learnS}) Learning curves restricted to gain-increase training.
   (\ref{fig:multistate_strong_eq}) Equilibrium distributions with/without gain-increase/decrease training for (\ref{fig:multistate_strong_eq_WT}) wild-type and (\ref{fig:multistate_strong_eq_KO}) \KO\ mutant.
@@ -607,7 +615,7 @@ However, in this case pre-training proceeds much faster in the mutant than wild-
  \end{myenuma}
  \end{center}
   \caption{Simulation results for two-state model.
-  Parameters can be found in \autoref{tab:params}.
+  Parameters can be found in \autoref{tr:binary} of \autoref{tab:params}.
   (\ref{fig:binary_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:binary_learnS}) Learning curves restricted to gain-increase training.
   (\ref{fig:binary_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:binary_eq_WT}) wild-type and (\ref{fig:binary_eq_KO}) \KO\ mutant.
@@ -693,7 +701,7 @@ As we've already ruled out this model, we won't waste any time analysing this fo
  \end{myenuma}
  \end{center}
   \caption{Simulation results for pooled resource model with light resource depletion ($q\lmin/q\lmax=0.75$).
-  Parameters can be found in \autoref{tab:params}.
+  Parameters can be found in \autoref{tr:pooled_plenty} of \autoref{tab:params}.
   (\ref{fig:pooled_plenty_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:pooled_plenty_learnS}) Learning curves restricted to gain-increase training.
   (\ref{fig:pooled_plenty_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:pooled_plenty_eq_WT}) wild-type and (\ref{fig:pooled_plenty_eq_KO}) \KO\ mutant.
@@ -719,7 +727,7 @@ As we've already ruled out this model, we won't waste any time analysing this fo
  \end{myenuma}
  \end{center}
   \caption{Simulation results for pooled resource model with heavy resource depletion ($q\lmin/q\lmax=0.25$).
-  Parameters can be found in \autoref{tab:params}.
+  Parameters can be found in \autoref{tr:pooled_scarce} of \autoref{tab:params}.
   (\ref{fig:pooled_scarce_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:pooled_scarce_learnS}) Learning curves restricted to gain-increase training.
   (\ref{fig:pooled_scarce_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:pooled_scarce_eq_WT}) wild-type and (\ref{fig:pooled_scarce_eq_KO}) \KO\ mutant.
@@ -727,13 +735,13 @@ As we've already ruled out this model, we won't waste any time analysing this fo
 \end{figure}
 
 
-The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}. 
+The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}.
 
 If we compare gain-increase learning in the mutant to wild-type, there are two effects: the increased transition rates speed up learning, but the equilibrium distribution is shifted to the depressed side (compare \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_eq}: \ref{fig:pooled_plenty_eq_WT} and \ref{fig:pooled_plenty_eq_KO} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_eq}: \ref{fig:pooled_scarce_eq_WT} and \ref{fig:pooled_scarce_eq_KO}), where there are fewer synapses available for depression and resources are depleted.
 When resource depletion is less severe, the first effect dominates and the mutant learns faster than wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learn},\ref{fig:pooled_plenty_learnS}).
 However, when resource depletion is more severe, the second effect dominates and the mutant learns slower than wild-type (see \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learn},\ref{fig:pooled_scarce_learnS}), which matches what is seen in the experiment.
 
-Gain-decrease pre-training lessens the second effect, and results in the mutant learning faster than wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learn},\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learn},\ref{fig:pooled_scarce_learnS}), as seen in the experiment. 
+Gain-decrease pre-training lessens the second effect, and results in the mutant learning faster than wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learn},\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learn},\ref{fig:pooled_scarce_learnS}), as seen in the experiment.
 
 Gain-decrease pre-training will shift the distribution to the potentiated site, where there are more synapses available for depression and resources are more plentiful, for both the mutant and wild type.
 This means that the pre-trained animal will learn faster then the untrained one for both mutant and wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learnS}).
