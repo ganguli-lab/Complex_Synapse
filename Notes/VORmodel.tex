@@ -160,7 +160,12 @@ It is harder to find regimes where pre-training impairs learning for the wild-ty
 In the cascade model, this required a much longer duration for pe-training (see \autoref{fig:cascade_long}).
 In the multistate model, this required stronger training, which resulted in gain-decrease learning being faster for the mutant then wild-type (see \autoref{fig:multistate_strong}), unlike what is seen experimentally.
 It is possible that these features could be improved by lessening the symmetry between gain-increase and decrease or potentiation and depression.
-We haven't found any parameter regime where pre-training impairs learning for the wild-type, and we discuss why it seems unlikely in \autoref{sec:pooled}.
+For the pooled resource model, we haven't found any parameter regime where pre-training impairs learning for the wild-type, and we discuss why it seems unlikely in \autoref{sec:pooled}.
+
+There seems to be two take home messages.
+First, impaired learning without pre-training in the mutant requires synaptic complexity, as it is not seen in the simple two-state model.
+Second, impaired learning with pre-training in the wild-type requires a form of metaplasticity where repeated potentiation makes subsequent depression less likely.
+This is a feature of the cascade model and our version of the multistate model, but not the pooled resource model.
 
 
 \section{The setup}\label{sec:setup}
@@ -253,7 +258,7 @@ If we did this for the multistate or two-state models, we'd remove all differenc
 
 \subsection{Models and parameters}
 
-We will look at three different models, the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade}), the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate}) and the two-state model (which can be thought of as a special case of the previous two, see \autoref{fig:models}\ref{fig:binary}).
+We will look at three different models, the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade}), the multistate model\footnote{The version of the multistate model that we'll study is slightly different than the original definition. We will only allow the synaptic weight to take two values, whereas it originally varied linearly across the states. } (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate}) and the two-state model (which can be thought of as a special case of the previous two, see \autoref{fig:models}\ref{fig:binary}).
 We will also look at a new, pooled resource model that we will define below in \autoref{sec:pooledmodel}.
 
 For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
