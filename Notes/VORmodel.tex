@@ -191,8 +191,9 @@ The evolution of this probability is described by a forgetting matrix, $\frg$:
 \begin{equation}\label{eq:evolve}
   \diff{\pr(t)}{t} = r\pr(t)\frg,
   \qquad
-  \frg = f\pot\M\pot+f\dep\M\dep-\I.
+  \frg = f\pot\M\pot+f\dep\M\dep-\I,
 \end{equation}
+where $\I$ is the identity matrix.
 %
 Eventually, this will settle into the equilibrium distribution:
 %
@@ -215,7 +216,7 @@ We will model this by changing $f\potdep$, leaving $r$ and $\M\potdep$ unchanged
 
 The untrained case will be described by $f\pot=f\pot\norm$.
 Gain-increase training  will be described by $f\pot=f\pot\inc<f\pot\norm$, and
-gain-decrease training  will be described by $f\pot=f\pot\dec<f\pot\norm$. Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depend on $f\pot$, which we will indicate with subscripts.
+gain-decrease training  will be described by $f\pot=f\pot\dec>f\pot\norm$. Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depend on $f\pot$, which we will indicate with subscripts.
 
 Before training, the synaptic distribution will in equilibrium with $f\pot\norm$.
 During gain-increase training, it will evolve according to \eqref{eq:evolve} with $f\pot\inc$:
