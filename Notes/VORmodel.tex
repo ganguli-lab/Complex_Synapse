@@ -146,6 +146,7 @@ Thus we will quantify learning by the change in the mean synaptic weight.
 The output of the Purkinje cell, and the behavioural output of the animal, will depend on this quantity in some complicated nonlinear way.
 Modelling this is far beyond the scope of this work.
 Instead we will look at more qualitative features, asking whether learning is slower or faster in some situation compared to another.
+Provided that the nonlinearity is monotonic, these types of questions will not be affected by it.
 
 Within the parameter range explored, we will see that synaptic complexity is essential.
 The simple two-state model always shows enhanced learning in the mutant (see \autoref{fig:binary}), in contradiction with experiment.
@@ -524,8 +525,8 @@ With pre-training:
 %
 \begin{equation}\label{eq:multiKOpre}
 \begin{aligned}
-  \Phi &= -4\Delta f q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
-          {(1-2\Delta f)^M - \beta^M(1+2\Delta f)^M}   \,
+  \Phi &= -4\Delta f q \, \frac{(1+2\Delta f) - \beta(1-2\Delta f)}
+          {(1+2\Delta f)^M - \beta^M(1-2\Delta f)^M}   \,
           \beta^{M/2-1}(1-2\Delta f)^{M/2-1} (1+2\Delta f)^{M/2-1} \\
        &= -4\Delta f q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f)^2.
 \end{aligned}
@@ -547,6 +548,33 @@ This means that there is an intermediate range of time-scales over which pre-tra
 In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f < \Delta f^*(1,M)$ and look at intermediate time-scales, we will see that the mutant learns slower than wild-type without pre-training, and that pre-training speeds up learning in the mutant but slows it down in the wild-type.
 However, in this case pre-training proceeds much faster in the mutant than wild-type (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learn}), which is \emph{not} seen in the experiment.
 
+Now consider what would happen if we did not treat gain-increase and gain-decrease symmetrically.
+Let us set $f\pot\dec = f\pot\norm - \overline{\Delta f}$.
+Then, \eqref{eq:multiKOpre} becomes
+%
+\begin{equation}\label{eq:multiKOdiffpre}
+\begin{aligned}
+  \Phi &= -2\prn{\Delta f + \overline{\Delta f}} q \, \frac{(1+2\overline{\Delta f}) - \beta(1-2\overline{\Delta f})}
+          {(1+2\overline{\Delta f})^M - \beta^M(1-2\overline{\Delta f})^M}   \,
+          \beta^{M/2-1}(1-2\overline{\Delta f})^{M/2-1} (1+2\overline{\Delta f})^{M/2-1} \\
+       &= -2\prn{\Delta f + \overline{\Delta f}} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f,\overline{\Delta f})^2.
+\end{aligned}
+\end{equation}
+%
+We can then look at the wild-type by setting $\beta=1$:
+%
+\begin{equation}\label{eq:multiWTdiffpre}
+\begin{aligned}
+  \Phi &= -8\,\overline{\Delta f}\prn{\Delta f + \overline{\Delta f}} q \, 
+          \frac{(1-2\overline{\Delta f})^{M/2-1} (1+2\overline{\Delta f})^{M/2-1} }
+          {(1+2\overline{\Delta f})^M - (1-2\overline{\Delta f})^M}   \\
+       &= -\frac{2\prn{\Delta f + \overline{\Delta f}} q}{M} + \CO(\Delta f,\overline{\Delta f})^2.
+\end{aligned}
+\end{equation}
+%
+
+We can see from these formulae that, if we want pre-training to impair learning in wild-type, but enhance it in the mutant, the important thing is to have \emph{strong pre-training}, not strong training.
+Thus, removing the symmetry between gain-increase and gain-decrease will not help with the unrealistic feature of this model -- the fact that pre-training proceeds much faster in the mutant than wild-type.
 
 
 \begin{figure}
