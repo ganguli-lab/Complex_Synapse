@@ -40,6 +40,10 @@ else
     [phKn,P_Kn_nopre,P_Kn_pre]=VORexpt(WpM,WmM,w,t,df,tchange,'LinSpec','r','Parent',Parent,varargin{:});
 end%if 
 
+PretrainFactor=1;
+varargin=assignApplicable(varargin);
+
+
 if ~isempty(altfig)
     EqProbPlot(Wp,Wm,df,'Parent',altaxWT,varargin{:});
     EqProbPlot(WpM,WmM,df,'Parent',altaxKn,varargin{:});
