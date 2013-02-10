@@ -286,7 +286,7 @@ The values of all these parameters are listed in \autoref{tab:params}.
   \caption{Transition probabilities for different models.
   (\ref{fig:cascade_model}) In the cascade model, the transition probabilities decay geometrically with a parameter $x$ (see \cite{Fusi2005cascade}).
   (\ref{fig:multistate_model}) In the multistate model the transition probabilities for potentiation/depression are all equal and it is parameterised by these two values.
-  (\ref{fig:binary_model}) The two-state model is parameterised by the two transition probailities.} \label{fig:models}
+  (\ref{fig:binary_model}) The two-state model is parameterised by the two transition probabilities.} \label{fig:models}
 \end{figure}
 
 \begin{table}
@@ -431,9 +431,9 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
 
 \subsubsection{Cascade model}\label{sec:cascade}
 
-\resultsfig{cascade_short}{Simulation results for cascade model with short pre-training ($rt_\text{pre}=50$)}
+\resultsfig{cascade_short}{Simulation results for the cascade model with short pre-training ($rt_\text{pre}=50$)}
 
-\resultsfig{cascade_long}{Simulation results for cascade model with long pre-training ($rt_\text{pre}=150$)}
+\resultsfig{cascade_long}{Simulation results for the cascade model with long pre-training ($rt_\text{pre}=150$)}
 
 
 
@@ -452,9 +452,9 @@ This effect is weaker for the mutant, as the equilibrium distribution is not as 
 
 \subsubsection{Multistate model}\label{sec:multistate}
 
-\resultsfig{multistate_weak}{Simulation results for multistate model with weak training ($\Delta f=-0.1$)}
+\resultsfig{multistate_weak}{Simulation results for the multistate model with weak training ($\Delta f=-0.1$)}
 
-\resultsfig{multistate_strong}{Simulation results for multistate model with strong training ($\Delta f=-0.4$)}
+\resultsfig{multistate_strong}{Simulation results for the multistate model with strong training ($\Delta f=-0.4$)}
 
 
 The results of simulations of the multistate model can be seen in \autoref{fig:multistate_weak} and \autoref{fig:multistate_strong}.
@@ -565,7 +565,7 @@ We can then look at the wild-type by setting $\beta=1$:
 %
 \begin{equation}\label{eq:multiWTdiffpre}
 \begin{aligned}
-  \Phi &= -8\,\overline{\Delta f}\prn{\Delta f + \overline{\Delta f}} q \, 
+  \Phi &= -8\,\overline{\Delta f}\prn{\Delta f + \overline{\Delta f}} q \,
           \frac{(1-2\overline{\Delta f})^{M/2-1} (1+2\overline{\Delta f})^{M/2-1} }
           {(1+2\overline{\Delta f})^M - (1-2\overline{\Delta f})^M}   \\
        &= -\frac{2\prn{\Delta f + \overline{\Delta f}} q}{M} + \CO(\Delta f,\overline{\Delta f})^2.
@@ -586,6 +586,67 @@ Thus, removing the symmetry between gain-increase and gain-decrease will not hel
  \end{center}
   \caption{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$ and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$.}\label{fig:multistate_star}
 \end{figure}
+
+
+
+\subsubsection{OG multistate model}\label{sec:multistate_lin}
+
+In this section, we will consider the multistate model as originally defined in \cite{amit1994learning}, \ie with linearly varying synaptic weight:
+%
+\begin{equation}\label{eq:multistateLinWeight}
+  \w_i = \frac{2i-M-1}{M-1}.
+\end{equation}
+%
+The equilibrium distribution, \eqref{eq:mutltieq}, still applies.
+However, now the rate of change of our learning metric, \eqref{eq:learning}, will be proportional to the sum of the net fluxes between adjacent states:
+%
+\begin{equation}\label{eq:multiLinFlux}
+  \begin{aligned}
+    \Phi &= \sum_{i=1}^{M-1} \eq_{i+1} f'{}\dep q\dep - \eq_i f'{}\pot q\pot 
+         &= \sum_{i=1}^{M-1} \eq_i (\alpha-\alpha') f'{}\dep q\dep \\
+         &= \frac{1-\alpha^{M-1}}{1-\alpha^M} \, (\alpha-\alpha') f'{}\dep q\dep.
+  \end{aligned}
+\end{equation}
+%
+
+First, consider the wild-type, for which $q\pot=q\dep=q$.
+Without pre-training:
+%
+\begin{equation}\label{eq:multiLinWTnopre}
+  \Phi = -2\Delta fq\,\frac{M-1}{M},
+\end{equation}
+%
+where it's worth remembering that $\Delta f<0$.
+With pre-training:
+%
+\begin{equation}\label{eq:multiLinWTpre}
+\begin{aligned}
+  \Phi &= -4\Delta f q \, \frac{(1+2\Delta f)^{M-1} - (1-2\Delta f)^{M-1}}
+          {(1+2\Delta f)^M - (1-2\Delta f)^M} \\
+       &= -{4\Delta f q}\,\frac{M-1}{M} + \CO(\Delta f)^2.
+\end{aligned}
+\end{equation}
+%
+
+Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
+Without pre-training:
+%
+\begin{equation}\label{eq:multiLinKOnopre}
+  \Phi = -2\Delta f q\,\frac{1-\beta^{M-1}}{1-\beta^M}.
+\end{equation}
+%
+With pre-training:
+%
+\begin{equation}\label{eq:multiLinKOpre}
+\begin{aligned}
+  \Phi &= -4\Delta f q \, \frac{(1+2\Delta f)^{M-1} - \beta^{M-1}(1-2\Delta f)^{M-1}}
+          {(1+2\Delta f)^M - \beta^M(1-2\Delta f)^M} \\
+       &= -4\Delta f q\,\frac{1-\beta^{M-1}}{1-\beta^M} + \CO(\Delta f)^2.
+\end{aligned}
+\end{equation}
+%
+
+
 
 
 
@@ -652,13 +713,31 @@ With pre-training:
 %
 As we've already ruled out this model, we won't waste any time analysing this formula.
 
+We made a number of assumptions in our analysis so far.
+Before we declare this model to be falsified, we should think about what would happen if we relaxed these assumptions and explored a larger parameter space.
+
+First, we assumed that the wild type had symmetric potentiation and depression.
+Relaxing this assumption would correspond modelling the wild-type like the mutant, but with a different value for $\beta$.
+We will still have $\beta\ko<\beta\wt$, and looking at \eqref{eq:binKOnopre} tell us that we would still have faster learning in the mutant.
+
+Secondly, we assumed that there would be equal rates of potentiation and depression in the untrained situation.
+However, relaxing this assumption merely changes \eqref{eq:binKOnopre} to
+%
+\begin{equation}\label{eq:binKOnoprediff}
+  \Phi = -\frac{\Delta f q}{f\dep+\beta f\pot}.
+\end{equation}
+%
+This will not change our conclusions either.
+
+As we didn't need the pre-training paradigm to rule out this model, we don't need to look at removing the symmetry between gain-increase and decrease.
+
 
 \subsubsection{Pooled resource model}\label{sec:pooled}
 
 
-\resultsfig{pooled_plenty}{Simulation results for pooled resource model with light resource depletion ($q\lmin/q\lmax=0.75$)}
+\resultsfig{pooled_plenty}{Simulation results for the pooled resource model with light resource depletion ($q\lmin/q\lmax=0.75$)}
 
-\resultsfig{pooled_scarce}{Simulation results for pooled resource model with heavy resource depletion ($q\lmin/q\lmax=0.25$)}
+\resultsfig{pooled_scarce}{Simulation results for the pooled resource model with heavy resource depletion ($q\lmin/q\lmax=0.25$)}
 
 
 The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}.
