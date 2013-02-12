@@ -113,6 +113,7 @@
 \end{abstract}
 
 \tableofcontents
+\listoffigures
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Beginning of Article:
@@ -283,7 +284,7 @@ The values of all these parameters are listed in \autoref{tab:params}.
   \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary_model}
  \end{myenuma}
  \end{center}
-  \caption{Transition probabilities for different models.
+  \caption[Transition probabilities for different models]{Transition probabilities for different models.
   (\ref{fig:cascade_model}) In the cascade model, the transition probabilities decay geometrically with a parameter $x$ (see \cite{Fusi2005cascade}).
   (\ref{fig:multistate_model}) In the multistate model the transition probabilities for potentiation/depression are all equal and it is parameterised by these two values.
   (\ref{fig:binary_model}) The two-state model is parameterised by the two transition probabilities.} \label{fig:models}
@@ -296,15 +297,16 @@ The values of all these parameters are listed in \autoref{tab:params}.
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
     Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $r\ttrain$ & $r\tpre$ \\
     \cline{1-7}
-    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 50  &\label{tr:cascade_short} \\
-    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 150 &\label{tr:cascade_long} \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.1  & 50 & 50  &\label{tr:multistate_weak} \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.17 & 10 & 30  &\label{tr:multistate_med} \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.4  & 20 & 20  &\label{tr:multistate_strong} \\
-    Two-state  & 2  & $q=0.4$  & $q=0.8$  & -0.1  & 5  & 5   &\label{tr:binary} \\
-    Pooled     & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
+    Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 50  &\label{tr:cascade_short} \\
+    Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 150 &\label{tr:cascade_long} \\
+    Multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.1  & 50 & 50  &\label{tr:multistate_weak} \\
+    Multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.17 & 10 & 30  &\label{tr:multistate_med} \\
+    Multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.4  & 20 & 20  &\label{tr:multistate_strong} \\
+    OG Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.3  & 20 & 20  &\label{tr:multistate_lin} \\
+    Two-state     & 2  & $q=0.4$  & $q=0.8$  & -0.1  & 5  & 5   &\label{tr:binary} \\
+    Pooled        & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
                                           & -0.1 & 70 & 70 &\label{tr:pooled_plenty}\\
-    Pooled     & 10 & $q\in[0.1,0.4]$  & $q\in[0.2,0.8]$
+    Pooled        & 10 & $q\in[0.1,0.4]$  & $q\in[0.2,0.8]$
                                           & -0.1 & 70 & 70 &\label{tr:pooled_scarce}\\
     \cline{1-7}
 %   \hline
@@ -339,13 +341,13 @@ Suppose that there is some resource required for potentiation/depression that is
 We can avoid going beyond the independent synapse model by modelling this pool of synapse as a single compound synapse.
 
 We will model the individual synapses with the two-state model.
-Let $i$ be the number of them that are potentiated.
+Let $i=0\ldots P$ be the number of them that are potentiated.
 We will model the effect of resource depletion linearly with the potentiation/depression probabilities for the individual synapses:
 %
 \begin{equation}\label{eq:depletion}
   \begin{aligned}
-    q\pot &= \frac{(P-i-1)q\lmax + i\,q\lmin}{P-1}, \qquad
-    q\dep &= \frac{(i-1)q\lmax + (P-i)q\lmin}{P-1}.
+    q\pot &= \frac{(P-i-1)q\lmax + i\,q\lmin}{P-1}, \quad& i &= 0 \ldots P-1,\\
+    q\dep &= \frac{(i-1)q\lmax + (P-i)q\lmin}{P-1}, & i &= 1 \ldots P.
   \end{aligned}
 \end{equation}
 %
@@ -399,7 +401,9 @@ The features of the actual experiments that we'd like to capture are:
 \end{itemize}
 
 We will try to gain some analytic insight to some of these models by looking at the slope of the learning curve at the start of gain-increase training.
-This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ states, measuring using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
+This is proportional to the net-flux from the states with strong synaptic weight to the weaker states, measuring using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
+This should be multiplied by the difference in synaptic weights 
+But, as this quantity is constant within a model and doesn't change when comparing wild-type and mutant or with/without pre-training, it can be ignored.
 
 
 \newcommand{\resultsfig}[2]{\begin{figure}
@@ -424,8 +428,10 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
   Time is measured in units of $1/r$, the mean time between plasticity events.
   (\ref{fig:#1_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
   (\ref{fig:#1_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:#1_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#1_eq_WT}) wild-type and (\ref{fig:#1_eq_KO}) \KO\ mutant.
-  (\ref{fig:#1_pr}) Evolution of probability distributions for (\ref{fig:#1_pr_WT_nopre}\ref{fig:#1_pr_WT_pre}) wild-type and  (\ref{fig:#1_pr_KO_nopre}\ref{fig:#1_pr_KO_pre}) \KO\ mutant without (\ref{fig:#1_pr_WT_nopre},\ref{fig:#1_pr_KO_nopre}) and with (\ref{fig:#1_pr_WT_pre},\ref{fig:#1_pr_KO_pre}) pre-training. } \label{fig:#1}
+  (\ref{fig:#1_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#1_eq_WT}) wild-type and (\ref{fig:#1_eq_KO}) \KO\ mutant,
+  with states of weak synaptic strength to the left and strong states to the right.
+  (\ref{fig:#1_pr}) Evolution of probability distributions for (\ref{fig:#1_pr_WT_nopre}\ref{fig:#1_pr_WT_pre}) wild-type and  (\ref{fig:#1_pr_KO_nopre}\ref{fig:#1_pr_KO_pre}) \KO\ mutant without (\ref{fig:#1_pr_WT_nopre},\ref{fig:#1_pr_KO_nopre}) and with (\ref{fig:#1_pr_WT_pre},\ref{fig:#1_pr_KO_pre}) pre-training,
+  with states of weak synaptic strength at the top and strong states underneath. } \label{fig:#1}
 \end{figure}}
 
 
@@ -439,6 +445,8 @@ This is proportional to the net-flux between the $\w=+1$ states and the $\w=-1$ 
 
 
 The results of simulations of the cascade model can be seen in \autoref{fig:cascade_short} and \autoref{fig:cascade_long}.
+It is difficult to study this model analytically.
+However, the numerical results can helps us understand it qualitatively.
 
 In both of these, we see that the mutant is slower than wild-type without pre-training but faster with it.
 This seems to be due to the fact that, without pre-training, very few synapses will be available for depression as most of them are already depressed (\autoref{fig:cascade_short}\ref{fig:cascade_short_eq}\ref{fig:cascade_short_eq_KO} and \ref{fig:cascade_short_pr}\ref{fig:cascade_short_pr_KO_nopre}).
@@ -503,7 +511,7 @@ With pre-training:
 \end{equation}
 %
 So, we see that pre-training will speed up learning when $\Delta f$ is small (in absolute value), as seen in \autoref{fig:multistate_weak}\ref{fig:multistate_weak_learnS}.
-On the other hand, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning a lot, as seen in \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}.
+On the other hand, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning a lot due to the factor of $(1+2\Delta f)^{M/2-1}$, as seen in \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}.
 
 Intuitively, the flux depends on the slope of the distribution at the centre of the chain (with an offset due to the difference between $f\pot$ and $f\dep$).
 Pre-training has two effects: it produces a slope in the right direction (see \autoref{fig:multistate_weak}\ref{fig:multistate_weak_eq}), but it also reduces distribution at the centre (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}).
@@ -530,7 +538,7 @@ With pre-training:
 \begin{aligned}
   \Phi &= -4\Delta f q \, \frac{(1+2\Delta f) - \beta(1-2\Delta f)}
           {(1+2\Delta f)^M - \beta^M(1-2\Delta f)^M}   \,
-          \beta^{M/2-1}(1-2\Delta f)^{M/2-1} (1+2\Delta f)^{M/2-1} \\
+          \brk{\beta (1-2\Delta f) (1+2\Delta f)}^{M/2-1} \\
        &= -4\Delta f q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
@@ -561,7 +569,7 @@ Then, \eqref{eq:multiKOpre} becomes
 \begin{aligned}
   \Phi &= -2\prn{\Delta f + \overline{\Delta f}} q \, \frac{(1+2\overline{\Delta f}) - \beta(1-2\overline{\Delta f})}
           {(1+2\overline{\Delta f})^M - \beta^M(1-2\overline{\Delta f})^M}   \,
-          \beta^{M/2-1}(1-2\overline{\Delta f})^{M/2-1} (1+2\overline{\Delta f})^{M/2-1} \\
+          \brk{\beta (1-2\overline{\Delta f}) (1+2\overline{\Delta f})}^{M/2-1} \\
        &= -2\prn{\Delta f + \overline{\Delta f}} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f,\overline{\Delta f})^2.
 \end{aligned}
 \end{equation}
@@ -579,7 +587,7 @@ We can then look at the wild-type by setting $\beta=1$:
 %
 
 We can see from these formulae that, if we want pre-training to impair learning in wild-type, but enhance it in the mutant, the important thing is to have \emph{strong pre-training}, not strong training.
-Thus, removing the symmetry between gain-increase and gain-decrease will not help with the unrealistic feature of this model -- the fact that pre-training proceeds much faster in the mutant than wild-type.
+Thus, removing the symmetry between gain-increase and gain-decrease will not help with the most unrealistic feature of this model -- the fact that pre-training proceeds much faster in the mutant than wild-type.
 
 
 \begin{figure}
@@ -589,12 +597,15 @@ Thus, removing the symmetry between gain-increase and gain-decrease will not hel
   \item\aligntop{\includegraphics[width=7cm]{multistate_deltafstar.eps}}\label{fig:multistate_deltafstar}
  \end{myenuma}
  \end{center}
-  \caption{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the mutant has impaired learning, and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
+  \caption[The functions $\beta^*(M)$ and $\Delta f^*(\beta,M)$]{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the mutant has impaired learning, and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
 \end{figure}
 
 
 
 \subsubsection{OG multistate model}\label{sec:multistate_lin}
+
+\resultsfig{multistate_lin}{Simulation results for multistate model with linear weights}%\label{fig:multistate_lin}
+
 
 In this section, we will consider the multistate model as originally defined in \cite{amit1994learning}, \ie with linearly varying synaptic weight:
 %
@@ -602,6 +613,9 @@ In this section, we will consider the multistate model as originally defined in 
   \w_i = \frac{2i-M-1}{M-1}.
 \end{equation}
 %
+The numerical results can be seen in \autoref{fig:multistate_lin}, but we can get some analytic insight into this model as well.
+
+
 The equilibrium distribution, \eqref{eq:mutltieq}, still applies.
 However, now the rate of change of our learning metric, \eqref{eq:learning}, will be proportional to the sum of the net fluxes between adjacent states:
 %
@@ -640,6 +654,10 @@ Without pre-training:
   \Phi = -2\Delta f q\,\frac{1-\beta^{M-1}}{1-\beta^M}.
 \end{equation}
 %
+This decreases monotonically in the interval $\beta\in[0,1]$, therefore this will always be greater than \eqref{eq:multiLinWTnopre}.
+This means that the mutant will initially learn faster than the wild-type.
+However, as the wild-type will eventually catch up, and this can happen very quickly, as seen in \autoref{fig:multistate_lin}\ref{fig:multistate_lin_learn},\ref{fig:multistate_lin_learnS}
+
 With pre-training:
 %
 \begin{equation}\label{eq:multiLinKOpre}
@@ -650,7 +668,15 @@ With pre-training:
 \end{aligned}
 \end{equation}
 %
-
+The ratio of this to \eqref{eq:multiLinKOnopre} takes its minimum value at the lowest end of the interval $\Delta f \in \brk{-\half,0}$, where it takes the value
+%
+\begin{equation}\label{eq:multiLinprenopre}
+  \frac{\Phi_{\text{with pre}}}{\Phi_{\text{without pre}}} = \frac{1-\beta^M}{\beta-\beta^M}
+   \longrightarrow \frac{M}{M-1} \quad \text{as} \quad \beta\to1,
+\end{equation}
+%
+which is always greater than 1.
+Therefore, pre-training will always enhance learning, for both mutant and wild-type.
 
 
 
@@ -747,12 +773,14 @@ In the data, it looks like that timescale is longer than the gaps between succes
 \subsubsection{Pooled resource model}\label{sec:pooled}
 
 
-\resultsfig{pooled_plenty}{Simulation results for the pooled resource model with light resource depletion ($q\lmin/q\lmax=0.75$)}
+\resultsfig{pooled_plenty}{Simulation results for the pooled resource model with light depletion ($q\lmin/q\lmax=0.75$)}
 
-\resultsfig{pooled_scarce}{Simulation results for the pooled resource model with heavy resource depletion ($q\lmin/q\lmax=0.25$)}
+\resultsfig{pooled_scarce}{Simulation results for the pooled resource model with heavy depletion ($q\lmin/q\lmax=0.25$)}
 
 
 The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}.
+It is difficult to study this model analytically.
+However, the numerical results can helps us understand it qualitatively.
 
 If we compare gain-increase learning in the mutant to wild-type, there are two effects: the increased transition rates speed up learning, but the equilibrium distribution is shifted to the depressed side (compare \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_eq}: \ref{fig:pooled_plenty_eq_WT} and \ref{fig:pooled_plenty_eq_KO} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_eq}: \ref{fig:pooled_scarce_eq_WT} and \ref{fig:pooled_scarce_eq_KO}), where there are fewer synapses available for depression and resources are depleted.
 When resource depletion is less severe, the first effect dominates and the mutant learns faster than wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learn},\ref{fig:pooled_plenty_learnS}).
