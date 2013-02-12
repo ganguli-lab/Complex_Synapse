@@ -296,11 +296,12 @@ The values of all these parameters are listed in \autoref{tab:params}.
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
     Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $r\ttrain$ & $r\tpre$ \\
     \cline{1-7}
-    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 50  &\label{tr:cascade_short} \\
-    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3 & 50 & 150 &\label{tr:cascade_long} \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.1 & 50 & 50  &\label{tr:multistate_weak} \\
-    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.4 & 20 & 20  & \label{tr:multistate_strong} \\
-    Two-state  & 2  & $q=0.4$  & $q=0.8$  & -0.1 & 5  & 5   &\label{tr:binary} \\
+    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 50  &\label{tr:cascade_short} \\
+    Cascade    & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 150 &\label{tr:cascade_long} \\
+    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.1  & 50 & 50  &\label{tr:multistate_weak} \\
+    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.17 & 10 & 30  &\label{tr:multistate_med} \\
+    Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.4  & 20 & 20  &\label{tr:multistate_strong} \\
+    Two-state  & 2  & $q=0.4$  & $q=0.8$  & -0.1  & 5  & 5   &\label{tr:binary} \\
     Pooled     & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
                                           & -0.1 & 70 & 70 &\label{tr:pooled_plenty}\\
     Pooled     & 10 & $q\in[0.1,0.4]$  & $q\in[0.2,0.8]$
@@ -454,10 +455,12 @@ This effect is weaker for the mutant, as the equilibrium distribution is not as 
 
 \resultsfig{multistate_weak}{Simulation results for the multistate model with weak training ($\Delta f=-0.1$)}
 
+\resultsfig{multistate_med}{Simulation results for the multistate model with intermediate training ($\Delta f=-0.17$)}
+
 \resultsfig{multistate_strong}{Simulation results for the multistate model with strong training ($\Delta f=-0.4$)}
 
 
-The results of simulations of the multistate model can be seen in \autoref{fig:multistate_weak} and \autoref{fig:multistate_strong}.
+The results of simulations of the multistate model can be seen in \autoref{fig:multistate_weak}, \autoref{fig:multistate_med} and \autoref{fig:multistate_strong}.
 However, we can get some insight into this model analytically.
 
 
@@ -535,15 +538,17 @@ With pre-training:
 Once again, we see that pre-training will speed up learning when $\Delta f$ is small, whereas, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning.
 
 Let us define $\Delta f^*(\beta,M)$ to be the value at which \eqref{eq:multiKOnopre} and \eqref{eq:multiKOpre} are equal.
+Values of $\Delta f$ that are smaller than this (stronger training) will correspond to slower learning after pre-training.
 As we would like pre-training to slow down learning in the wild-type but speed it up in the mutant, it would seem that we require $\Delta f^*(\beta,M) < \Delta f < \Delta f^*(1,M)$ (remembering once more that $\Delta f<0$ and that the wild-type corresponds to $\beta=1$).
-However, as seen in \autoref{fig:multistate_star}\ref{fig:multistate_deltafstar}, $\Delta f^*(\beta,M) > \Delta f^*(1,M)$, which would make this impossible.
+As we see in \autoref{fig:multistate_star}\ref{fig:multistate_deltafstar}, $\Delta f^*(\beta,M) < \Delta f^*(1,M)$, so this range always exists.
+We can see an example of this in \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS}.
 
-But, all is not lost.
-This is only the initial, instantaneous rate of change.
+However, this is only the initial, instantaneous rate of change.
 Let's look at \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}, for which $\Delta f < \Delta f^*(1,M)$, so that pre-training initially slows down learning for both wild-type and mutant.
 We see that the pre-trained curve can rapidly catch up with the un-pre-trained one, due to the mass of probability concentrated at the end of the chain (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}) drifting to the centre.
 This happens sooner for the mutant than the wild-type, due to the stronger depressing transitions.
-This means that there is an intermediate range of time-scales over which pre-training does slow down learning in the wild-type but speed it up in the mutant.
+This means that there is an intermediate range of time-scales over which pre-training does slow down learning in the wild-type but speed it up in the mutant, even outside the desired range of values for $\Delta f$.
+As we see in \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS}, even when we are in this range, the period of time for which pre-training impairs learning in the wild-type can be very small.
 
 In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f < \Delta f^*(1,M)$ and look at intermediate time-scales, we will see that the mutant learns slower than wild-type without pre-training, and that pre-training speeds up learning in the mutant but slows it down in the wild-type.
 However, in this case pre-training proceeds much faster in the mutant than wild-type (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learn}), which is \emph{not} seen in the experiment.
@@ -584,7 +589,7 @@ Thus, removing the symmetry between gain-increase and gain-decrease will not hel
   \item\aligntop{\includegraphics[width=7cm]{multistate_deltafstar.eps}}\label{fig:multistate_deltafstar}
  \end{myenuma}
  \end{center}
-  \caption{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$ and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$.}\label{fig:multistate_star}
+  \caption{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the mutant has impaired learning, and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
 \end{figure}
 
 
@@ -602,7 +607,7 @@ However, now the rate of change of our learning metric, \eqref{eq:learning}, wil
 %
 \begin{equation}\label{eq:multiLinFlux}
   \begin{aligned}
-    \Phi &= \sum_{i=1}^{M-1} \eq_{i+1} f'{}\dep q\dep - \eq_i f'{}\pot q\pot 
+    \Phi &= \sum_{i=1}^{M-1} \eq_{i+1} f'{}\dep q\dep - \eq_i f'{}\pot q\pot
          &= \sum_{i=1}^{M-1} \eq_i (\alpha-\alpha') f'{}\dep q\dep \\
          &= \frac{1-\alpha^{M-1}}{1-\alpha^M} \, (\alpha-\alpha') f'{}\dep q\dep.
   \end{aligned}
