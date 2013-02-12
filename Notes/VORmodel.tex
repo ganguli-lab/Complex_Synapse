@@ -621,7 +621,7 @@ Without pre-training:
   \Phi = -2\Delta fq\,\frac{M-1}{M},
 \end{equation}
 %
-where it's worth remembering that $\Delta f<0$.
+where, once more, we should note that $\Delta f<0$.
 With pre-training:
 %
 \begin{equation}\label{eq:multiLinWTpre}
@@ -673,7 +673,7 @@ However, this model can be solved exactly:
 \end{multline}
 %
 But it is easier to just substitute $M=2$ into the formulae in \autoref{sec:multistate}.
-In this case, the initial rate of change encapsulates the whole solution, as there is only a single exponential decay.
+In this case, the initial rate of change and the total change encapsulate the whole solution, as there is only a single exponential decay.
 
 First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
@@ -682,7 +682,7 @@ Without pre-training:
   \Phi = -\Delta f q,
 \end{equation}
 %
-where, again, it's worth remembering that $\Delta f<0$.
+where, once again, it's worth remembering that $\Delta f<0$.
 With pre-training:
 %
 \begin{equation}\label{eq:binWTpre}
@@ -735,6 +735,13 @@ However, relaxing this assumption merely changes \eqref{eq:binKOnopre} to
 This will not change our conclusions either.
 
 As we didn't need the pre-training paradigm to rule out this model, we don't need to look at removing the symmetry between gain-increase and decrease.
+
+The only thing we have to worry about is when the wild-type catches up with the mutant.
+As the total change will be larger for the wild-type than mutant, it must overtake eventually.
+If this happens early enough, the initial period, where the mutant learns faster than wild-type, would not be seen in the experiment.
+However, the timescale for this crossover would be similar to the timescale of the exponentials.
+In the data, it looks like that timescale is longer than the gaps between successive measurements, so we needn't worry about this.
+
 
 
 \subsubsection{Pooled resource model}\label{sec:pooled}
