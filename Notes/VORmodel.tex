@@ -402,45 +402,73 @@ The features of the actual experiments that we'd like to capture are:
 
 We will try to gain some analytic insight to some of these models by looking at the slope of the learning curve at the start of gain-increase training.
 This is proportional to the net-flux from the states with strong synaptic weight to the weaker states, measuring using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
-This should be multiplied by the difference in synaptic weights 
+This should be multiplied by the difference in synaptic weights
 But, as this quantity is constant within a model and doesn't change when comparing wild-type and mutant or with/without pre-training, it can be ignored.
 
 
-\newcommand{\resultsfig}[2]{\begin{figure}
+\newcommand{\resultsfig}[3]{\begin{figure}
  \begin{center}
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=7cm]{#1_learn.eps}}\label{fig:#1_learn}
-  \item\aligntop{\includegraphics[width=7cm]{#1_learnS.eps}}\label{fig:#1_learnS}
-  \item\label{fig:#1_eq}\begin{myenumi}
-                    \item\aligntop{\includegraphics[width=7cm]{#1_eq_WT.eps}}\label{fig:#1_eq_WT}
-                    \item\aligntop{\includegraphics[width=7cm]{#1_eq_KO.eps}}\label{fig:#1_eq_KO}
+  \item\aligntop{\includegraphics[width=7cm]{#3_learn.eps}}\label{fig:#3_learn}
+  \item\aligntop{\includegraphics[width=7cm]{#3_learnS.eps}}\label{fig:#3_learnS}
+  \item\label{fig:#3_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{#3_eq_WT.eps}}\label{fig:#3_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{#3_eq_KO.eps}}\label{fig:#3_eq_KO}
                   \end{myenumi}
-  \item\label{fig:#1_pr}\begin{myenumi}
-                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_WT_nopre.eps}}\label{fig:#1_pr_WT_nopre}
-                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_WT_pre.eps}}\label{fig:#1_pr_WT_pre}
-                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_KO_nopre.eps}}\label{fig:#1_pr_KO_nopre}
-                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_KO_pre.eps}}\label{fig:#1_pr_KO_pre}
+  \item\label{fig:#3_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{#3_pr_WT_nopre.eps}}\label{fig:#3_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{#3_pr_WT_pre.eps}}\label{fig:#3_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{#3_pr_KO_nopre.eps}}\label{fig:#3_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{#3_pr_KO_pre.eps}}\label{fig:#3_pr_KO_pre}
                   \end{myenumi}
  \end{myenuma}
  \end{center}
-  \caption[#2]{#2.
-  Other parameters can be found in \autoref{tr:#1} of \autoref{tab:params}.
+  \caption[#1]{#1 #2.
+  Other parameters can be found in \autoref{tr:#3} of \autoref{tab:params}.
   Time is measured in units of $1/r$, the mean time between plasticity events.
-  (\ref{fig:#1_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
-  (\ref{fig:#1_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:#1_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#1_eq_WT}) wild-type and (\ref{fig:#1_eq_KO}) \KO\ mutant,
+  (\ref{fig:#3_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
+  (\ref{fig:#3_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:#3_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#3_eq_WT}) wild-type and (\ref{fig:#3_eq_KO}) \KO\ mutant,
   with states of weak synaptic strength to the left and strong states to the right.
-  (\ref{fig:#1_pr}) Evolution of probability distributions for (\ref{fig:#1_pr_WT_nopre}\ref{fig:#1_pr_WT_pre}) wild-type and  (\ref{fig:#1_pr_KO_nopre}\ref{fig:#1_pr_KO_pre}) \KO\ mutant without (\ref{fig:#1_pr_WT_nopre},\ref{fig:#1_pr_KO_nopre}) and with (\ref{fig:#1_pr_WT_pre},\ref{fig:#1_pr_KO_pre}) pre-training,
-  with states of weak synaptic strength at the top and strong states underneath. } \label{fig:#1}
+  (\ref{fig:#3_pr}) Evolution of probability distributions for (\ref{fig:#3_pr_WT_nopre}\ref{fig:#3_pr_WT_pre}) wild-type and  (\ref{fig:#3_pr_KO_nopre}\ref{fig:#3_pr_KO_pre}) \KO\ mutant without (\ref{fig:#3_pr_WT_nopre},\ref{fig:#3_pr_KO_nopre}) and with (\ref{fig:#3_pr_WT_pre},\ref{fig:#3_pr_KO_pre}) pre-training,
+  with states of weak synaptic strength at the top and strong states underneath. } \label{fig:#3}
+\end{figure}}
+
+\newcommand{\resultsfign}[2]{\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{#2_learn.eps}}\label{fig:#2_learn}
+  \item\aligntop{\includegraphics[width=7cm]{#2_learnS.eps}}\label{fig:#2_learnS}
+  \item\label{fig:#2_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{#2_eq_WT.eps}}\label{fig:#2_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{#2_eq_KO.eps}}\label{fig:#2_eq_KO}
+                  \end{myenumi}
+  \item\label{fig:#2_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{#2_pr_WT_nopre.eps}}\label{fig:#2_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{#2_pr_WT_pre.eps}}\label{fig:#2_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{#2_pr_KO_nopre.eps}}\label{fig:#2_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{#2_pr_KO_pre.eps}}\label{fig:#2_pr_KO_pre}
+                  \end{myenumi}
+ \end{myenuma}
+ \end{center}
+  \caption[#1]{#1.
+  Parameters can be found in \autoref{tr:#2} of \autoref{tab:params}.
+  Time is measured in units of $1/r$, the mean time between plasticity events.
+  (\ref{fig:#2_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
+  (\ref{fig:#2_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:#2_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#2_eq_WT}) wild-type and (\ref{fig:#2_eq_KO}) \KO\ mutant,
+  with states of weak synaptic strength to the left and strong states to the right.
+  (\ref{fig:#2_pr}) Evolution of probability distributions for (\ref{fig:#2_pr_WT_nopre}\ref{fig:#2_pr_WT_pre}) wild-type and  (\ref{fig:#2_pr_KO_nopre}\ref{fig:#2_pr_KO_pre}) \KO\ mutant without (\ref{fig:#2_pr_WT_nopre},\ref{fig:#2_pr_KO_nopre}) and with (\ref{fig:#2_pr_WT_pre},\ref{fig:#2_pr_KO_pre}) pre-training,
+  with states of weak synaptic strength at the top and strong states underneath. } \label{fig:#2}
 \end{figure}}
 
 
 
 \subsubsection{Cascade model}\label{sec:cascade}
 
-\resultsfig{cascade_short}{Simulation results for the cascade model with short pre-training ($rt_\text{pre}=50$)}
+\resultsfig{Simulation results for the cascade model with short pre-training}{($rt_\text{pre}=50$)}{cascade_short}
 
-\resultsfig{cascade_long}{Simulation results for the cascade model with long pre-training ($rt_\text{pre}=150$)}
+\resultsfig{Simulation results for the cascade model with long pre-training}{($rt_\text{pre}=150$)}{cascade_long}
 
 
 
@@ -461,11 +489,11 @@ This effect is weaker for the mutant, as the equilibrium distribution is not as 
 
 \subsubsection{Multistate model}\label{sec:multistate}
 
-\resultsfig{multistate_weak}{Simulation results for the multistate model with weak training ($\Delta f=-0.1$)}
+\resultsfig{Simulation results for the multistate model with weak training}{($\Delta f=-0.1$)}{multistate_weak}
 
-\resultsfig{multistate_med}{Simulation results for the multistate model with moderate training ($\Delta f=-0.17$)}
+\resultsfig{Simulation results for the multistate model with moderate training}{($\Delta f=-0.17$)}{multistate_med}
 
-\resultsfig{multistate_strong}{Simulation results for the multistate model with strong training ($\Delta f=-0.4$)}
+\resultsfig{Simulation results for the multistate model with strong training}{($\Delta f=-0.4$)}{multistate_strong}
 
 
 The results of simulations of the multistate model can be seen in \autoref{fig:multistate_weak}, \autoref{fig:multistate_med} and \autoref{fig:multistate_strong}.
@@ -604,7 +632,7 @@ Thus, removing the symmetry between gain-increase and gain-decrease will not hel
 
 \subsubsection{OG multistate model}\label{sec:multistate_lin}
 
-\resultsfig{multistate_lin}{Simulation results for multistate model with linear weights}%\label{fig:multistate_lin}
+\resultsfign{Simulation results for multistate model with linear weights}{multistate_lin}
 
 
 In this section, we will consider the multistate model as originally defined in \cite{amit1994learning}, \ie with linearly varying synaptic weight:
@@ -684,7 +712,7 @@ Therefore, pre-training will always enhance learning, for both mutant and wild-t
 \subsubsection{Two-state model}\label{sec:binary}
 
 
-\resultsfig{binary}{Simulation results for two-state model}
+\resultsfign{Simulation results for two-state model}{binary}
 
 
 The results of simulations of the two-state model can be seen in \autoref{fig:binary}.
@@ -773,9 +801,9 @@ In the data, it looks like that timescale is longer than the gaps between succes
 \subsubsection{Pooled resource model}\label{sec:pooled}
 
 
-\resultsfig{pooled_plenty}{Simulation results for the pooled resource model with light depletion ($q\lmin/q\lmax=0.75$)}
+\resultsfig{Simulation results for the pooled resource model with light depletion}{($q\lmin/q\lmax=0.75$)}{pooled_plenty}
 
-\resultsfig{pooled_scarce}{Simulation results for the pooled resource model with heavy depletion ($q\lmin/q\lmax=0.25$)}
+\resultsfig{Simulation results for the pooled resource model with heavy depletion}{($q\lmin/q\lmax=0.25$)}{pooled_scarce}
 
 
 The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}.
