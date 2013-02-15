@@ -122,7 +122,7 @@
 \section{Introduction and summary}\label{sec:intro}
 
 We will see if we can capture the essential features of VOR gain-increase learning in wild type and MHC \KO\ mutants and wild-type, with and without gain-decrease pre-training.
-We will try to do this using models of complex synapses, such as the cascade model \cite{Fusi2005cascade} or the multistate model \cite{amit1994learning,Fusi2007multistate}.
+We will try to do this using models of complex synapses, such as the cascade model \cite{Fusi2005cascade} or the multistate model \cite{amit1994learning,Fusi2007multistate}.\footnote{The original definition of the multistate model had a synaptic weight that varied linearly along the chain. We will refer to this as the linear multistate model. We will also look at the step-multistate model, for which the synaptic weight to take two values.}
 We will also construct a new model in \autoref{sec:pooledmodel} that incorporates the idea that biasing the synapses in one direction could deplete some resource, thereby impairing further plasticity in the same direction in nearby synapses.
 
 These models all assume independent, statistically identical synapses.
@@ -153,21 +153,23 @@ Within the parameter range explored, we will see that synaptic complexity is ess
 The simple two-state model always shows enhanced learning in the mutant (see \autoref{fig:binary}), in contradiction with experiment.
 It seems that the enhanced depressing transition more than compensates for saturation effects.
 
-On the other hand, the cascade, multistate and pooled resource models all have parameter ranges where the mutant has impaired learning without pre-training (see \autoref{fig:cascade_short}, \autoref{fig:cascade_long}, \autoref{fig:multistate_weak}, \autoref{fig:multistate_strong} and \autoref{fig:pooled_scarce}).
+A similar thing happens for the linear multistate model (see \autoref{fig:multistate_lin}), but the wild-type catches up and overtakes the mutant very quickly.
+
+On the other hand, the cascade, step-multistate and pooled resource models all have parameter ranges where the mutant has impaired learning without pre-training (see \autoref{fig:cascade_short}, \autoref{fig:cascade_long}, \autoref{fig:multistate_weak}, \autoref{fig:multistate_strong} and \autoref{fig:pooled_scarce}).
 We have found parameter ranges where the reverse happens for the multistate (see discussion below \eqref{eq:multiKOnopre}) and the pooled resource model (see \autoref{fig:pooled_plenty}).
 These rely on properties of the mutation, so it would be difficult to explore with further experiments.
 
 All of these models show pre-training enhancing learning for the mutant, as expected.
 It is harder to find regimes where pre-training impairs learning for the wild-type.
 In the cascade model, this required a much longer duration for pe-training (see \autoref{fig:cascade_long}).
-In the multistate model, this required stronger training, which resulted in gain-decrease learning being faster for the mutant then wild-type (see \autoref{fig:multistate_strong}), unlike what is seen experimentally.
+In the step-multistate model, this required stronger training, which resulted in gain-decrease learning being faster for the mutant then wild-type (see \autoref{fig:multistate_strong}), unlike what is seen experimentally.
 It is possible that these features could be improved by lessening the symmetry between gain-increase and decrease or potentiation and depression, or by allowing the rate of plasticity events to vary.
-For the pooled resource model, we haven't found any parameter regime where pre-training impairs learning for the wild-type, and we discuss why it seems unlikely in \autoref{sec:pooled}.
+For the linear multistate and pooled resource models, we haven't found any parameter regime where pre-training impairs learning for the wild-type, and we discuss why it seems unlikely in \autoref{sec:pooled}.
 
 There seems to be two take home messages.
 First, impaired learning without pre-training in the mutant requires synaptic complexity, as it is not seen in the simple two-state model.
 Second, impaired learning with pre-training in the wild-type requires a form of metaplasticity where repeated potentiation makes subsequent depression less likely.
-This is a feature of the cascade model and our version of the multistate model, but not the pooled resource model.
+This is a feature of the cascade model and our version of the multistate model, but not the pooled resource model or linear multistate.
 
 
 \section{The setup}\label{sec:setup}
@@ -263,7 +265,7 @@ We are also assuming that the relation between VOR gain and mean synaptic weight
 
 \subsection{Models and parameters}
 
-We will look at three different models, the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}), the multistate model\footnote{The version of the multistate model that we'll study is slightly different than the original definition. We will only allow the synaptic weight to take two values, whereas it originally varied linearly across the states. } (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate_model}) and the two-state model (which can be thought of as a special case of the previous two, see \autoref{fig:models}\ref{fig:binary_model}).
+We will look at three different models, the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}), the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate_model}) and the two-state model (which can be thought of as a special case of the previous two, see \autoref{fig:models}\ref{fig:binary_model}).
 We will also look at a new, pooled resource model that we will define below in \autoref{sec:pooledmodel}.
 
 For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
@@ -299,10 +301,10 @@ The values of all these parameters are listed in \autoref{tab:params}.
     \cline{1-7}
     Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 50  &\label{tr:cascade_short} \\
     Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 150 &\label{tr:cascade_long} \\
-    Multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.1  & 50 & 50  &\label{tr:multistate_weak} \\
-    Multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.17 & 10 & 30  &\label{tr:multistate_med} \\
-    Multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.4  & 20 & 20  &\label{tr:multistate_strong} \\
-    OG Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.3  & 20 & 20  &\label{tr:multistate_lin} \\
+    Step-multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.1  & 50 & 50  &\label{tr:multistate_weak} \\
+    Step-multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.17 & 10 & 30  &\label{tr:multistate_med} \\
+    Step-multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.4  & 20 & 20  &\label{tr:multistate_strong} \\
+    Linear Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.3  & 20 & 20  &\label{tr:multistate_lin} \\
     Two-state     & 2  & $q=0.4$  & $q=0.8$  & -0.1  & 5  & 5   &\label{tr:binary} \\
     Pooled        & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
                                           & -0.1 & 70 & 70 &\label{tr:pooled_plenty}\\
@@ -487,16 +489,16 @@ We can see from \autoref{fig:cascade_long}\ref{fig:cascade_long_learnS} that lon
 This effect is weaker for the mutant, as the equilibrium distribution is not as heavily concentrated at the end (see \autoref{fig:cascade_long}\ref{fig:cascade_long_eq}\ref{fig:cascade_long_eq_KO}).
 
 
-\subsubsection{Multistate model}\label{sec:multistate}
+\subsubsection{Step-multistate model}\label{sec:multistate}
 
-\resultsfig{Simulation results for the multistate model with weak training}{($\Delta f=-0.1$)}{multistate_weak}
+\resultsfig{Simulation results for the step-multistate model with weak training}{($\Delta f=-0.1$)}{multistate_weak}
 
-\resultsfig{Simulation results for the multistate model with moderate training}{($\Delta f=-0.17$)}{multistate_med}
+\resultsfig{Simulation results for the step-multistate model with moderate training}{($\Delta f=-0.17$)}{multistate_med}
 
-\resultsfig{Simulation results for the multistate model with strong training}{($\Delta f=-0.4$)}{multistate_strong}
+\resultsfig{Simulation results for the step-multistate model with strong training}{($\Delta f=-0.4$)}{multistate_strong}
 
 
-The results of simulations of the multistate model can be seen in \autoref{fig:multistate_weak}, \autoref{fig:multistate_med} and \autoref{fig:multistate_strong}.
+The results of simulations of the step-multistate model can be seen in \autoref{fig:multistate_weak}, \autoref{fig:multistate_med} and \autoref{fig:multistate_strong}.
 However, we can get some insight into this model analytically.
 
 
@@ -630,7 +632,7 @@ Thus, removing the symmetry between gain-increase and gain-decrease will not hel
 
 
 
-\subsubsection{OG multistate model}\label{sec:multistate_lin}
+\subsubsection{Linear multistate model}\label{sec:multistate_lin}
 
 \resultsfign{Simulation results for multistate model with linear weights}{multistate_lin}
 
