@@ -247,16 +247,23 @@ The behavioural output (VOR gain) will be some non-linear function of the synapt
 The MHC mutant has a lower threshold for depression.
 We can model this by changing $\W\dep\wt$ to $\W\dep\ko$, which should have larger matrix elements.
 
-QUESTION: Should $f\pot\wt=f\pot\ko$?
+%QUESTION: Should $f\pot\wt=f\pot\ko$?
+%
+%If they are equal, this would change the mean synaptic weight in equilibrium.
+%This seems like it could affect the ability of the network to perform its function, whereas, in reality, the wild-type and mutant have the same baseline performance.
+%In any case, if the synaptic weights are different, the electrical activity will be different, and there will be no reason to expect the same statistics for potentiation or depression.
+%In setting $f\pot\wt=f\pot\ko$, we are assuming that the rest of the brain compensates for the difference in synaptic weights somehow.
+%
+%On the other hand, one could imagine adjusting $f\pot\wt$ and $f\pot\ko$ so that $\eq\wt\w = \eq\ko\w$.
+%But, now that the synaptic weights are the same, the electrical activity will be the same, and there will be no reason to expect different statistics for potentiation or depression.
+%If we did this for the multistate or two-state models, we'd remove all differences between the wild-type and \KO\ mutant, so we won't.
 
-If they are equal, this would change the mean synaptic weight in equilibrium.
-This seems like it could affect the ability of the network to perform its function, whereas, in reality, the wild-type and mutant have the same baseline performance.
-In any case, if the synaptic weights are different, the electrical activity will be different, and there will be no reason to expect the same statistics for potentiation or depression.
-In setting $f\pot\wt=f\pot\ko$, we are assuming that the rest of the brain compensates for the difference in synaptic weights somehow.
-
-On the other hand, one could imagine adjusting $f\pot\wt$ and $f\pot\ko$ so that $\eq\wt\w = \eq\ko\w$.
-But, now that the synaptic weights are the same, the electrical activity will be the same, and there will be no reason to expect different statistics for potentiation or depression.
-If we did this for the multistate or two-state models, we'd remove all differences between the wild-type and \KO\ mutant, so we won't.
+We will assume $f\pot\wt=f\pot\ko$.
+This is because the mutation is well localised to the Purkinje cells, so the activity of the parallel and climbing fibres should not change very much.
+Therefore the rates of potentiation and depression should not change very much either.
+This implies that the mean synaptic weight in equilibrium differs between the mutant and wild type, but that is also suggested by the data regarding basal levels of phospho-GluR2 at serine 880.
+As the mutation produces no change in baseline performance, there must be a compensatory mechanism somewhere else.
+We will model this compensation as a simple linear offset, as could be produced by another population of neurons/synapses whose effect cancels with these neurons/synapses. 
 
 We are also assuming that the relation between VOR gain and mean synaptic weight is the same for mutant ant wild-type, except for a linear offset to compensate for the difference in equilibrium weights mentioned above.
 
@@ -394,13 +401,19 @@ We will use larger values for depression in the \KO\ mutant.
 \subsection{Results}\label{sec:results}
 
 The features of the actual experiments that we'd like to capture are:
-\begin{itemize}
+\begin{enumerate}
   \item Without pre-training, gain-increase learning is significantly faster in the wild-type than in the mutant.
-  \item Gain-decrease pre-training is slightly faster in the wild-type, but not significantly so.
+  \item Gain-decrease pre-training is slightly faster in the wild-type, but not significantly so.\label{it:gaindown}
   \item After pre-training, gain-increase learning is significantly faster in the mutant than in the wild-type.
   \item For the wild-type, gain-increase learning is significantly faster without pre-training than with it.
   \item For the mutant, gain-increase learning is significantly faster with pre-training than without it.
-\end{itemize}
+\end{enumerate}
+These questions will not be affected by any output nonlinearity, as long as it is monotonic and fixed.
+We will not worry too much about \autoref{it:gaindown}, as gain-decrease learning uses a different mechanism to gain-increase.
+We are only modelling the effect of gain-decrease training on \emph{these} synapses.
+
+We will not worry too much about the curvature of the learning curves, as this can be changes by the nonlinearity.
+However, both the wild-type and mutant should be affected in the same way, so the difference in the curvature of the mutant and wild-type curves after pre-training would be nice to capture.
 
 We will try to gain some analytic insight to some of these models by looking at the slope of the learning curve at the start of gain-increase training.
 This is proportional to the net-flux from the states with strong synaptic weight to the weaker states, measuring using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
