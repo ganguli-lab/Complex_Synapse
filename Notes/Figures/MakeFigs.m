@@ -1,6 +1,8 @@
 MakeVORfigs('multistate_med',0.6,0.8,-0.17,10,30,'print')
 MakeVORfigs('multistate_strong',0.6,0.8,-0.4,20,20,'print')
 MakeVORfigs('multistate_weak',0.6,0.8,-0.1,50,50,'print')
+MakeVORfigs('pooled_plenty',[0.3 0.4],[0.6 0.8],-0.1,70,70,'print')
+MakeVORfigs('pooled_scarce',[0.1 0.4],[0.2 0.8],-0.1,70,70,'print')
 MakeVORfigs('cascade_short',0.25,0.33,-0.3,50,50,'print')
 MakeVORfigs('cascade_long',0.25,0.33,-0.3,50,150,'print')
 MakeVORfigs('multistate_weak',0.6,0.8,-0.1,50,50,'print')
