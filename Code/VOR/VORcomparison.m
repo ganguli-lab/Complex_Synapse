@@ -85,25 +85,25 @@ else
     if isscalar(fig3)
         clf(fig3);
         h=subplot(2,2,1,'Parent',fig3);
-        ProbEvol(P_WT_nopre,t,'WT no pre-training','Parent',h);
+        ProbEvol(P_WT_nopre,t,'WT no pre-training','Parent',h,'Pooled',Pooled);
         h=subplot(2,2,2,'Parent',fig3);
-        ProbEvol(P_WT_pre,t,'WT pre-training','Parent',h);
+        ProbEvol(P_WT_pre,t,'WT pre-training','Parent',h,'Pooled',Pooled);
         h=subplot(2,2,3,'Parent',fig3);
-        ProbEvol(P_Kn_nopre,t,[ mutant ' no pre-training'],'Parent',h);
+        ProbEvol(P_Kn_nopre,t,[ mutant ' no pre-training'],'Parent',h,'Pooled',Pooled);
         h=subplot(2,2,4,'Parent',fig3);
-        ProbEvol(P_Kn_pre,t,[mutant ' pre-training'],'Parent',h);
+        ProbEvol(P_Kn_pre,t,[mutant ' pre-training'],'Parent',h,'Pooled',Pooled);
     elseif numel(fig3)==4
         h=axes('Parent',fig3(1));
-        ProbEvol(P_WT_nopre,t,'WT no pre-training','Parent',h,'FontSize',FontSize);
+        ProbEvol(P_WT_nopre,t,'WT no pre-training','Parent',h,'FontSize',FontSize,'Pooled',Pooled);
         embiggen(h,FontSize);
         h=axes('Parent',fig3(2));
-        ProbEvol(P_WT_pre,t,'WT pre-training','Parent',h,'FontSize',FontSize);
+        ProbEvol(P_WT_pre,t,'WT pre-training','Parent',h,'FontSize',FontSize,'Pooled',Pooled);
         embiggen(h,FontSize);
         h=axes('Parent',fig3(3));
-        ProbEvol(P_Kn_nopre,t,[ mutant ' no pre-training'],'Parent',h,'FontSize',FontSize);
+        ProbEvol(P_Kn_nopre,t,[ mutant ' no pre-training'],'Parent',h,'FontSize',FontSize,'Pooled',Pooled);
         embiggen(h,FontSize);
         h=axes('Parent',fig3(4));
-        ProbEvol(P_Kn_pre,t,[mutant ' pre-training'],'Parent',h,'FontSize',FontSize);
+        ProbEvol(P_Kn_pre,t,[mutant ' pre-training'],'Parent',h,'FontSize',FontSize,'Pooled',Pooled);
         embiggen(h,FontSize);
     end
 end

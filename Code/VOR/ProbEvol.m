@@ -4,11 +4,21 @@ function ProbEvol( Pt,t,titletext,varargin )
 
 Parent=gca;
 FontSize=10;
+Pooled=false;
 varargin=assignApplicable(varargin);
 cla(Parent);
 
-imagesc(t,1:size(Pt,2),Pt','Parent',Parent,varargin{:});
-ylabel(Parent,'State');
+n=1:size(Pt,2);
+if Pooled
+    n=n-1;
+    xlab='Number potentiated';
+else
+    xlab='State';
+end
+
+
+imagesc(t,n,Pt','Parent',Parent,varargin{:});
+ylabel(Parent,xlab);
 xlabel(Parent,'Training time');
 title(Parent,titletext);
 h=colorbar('peer',Parent);
