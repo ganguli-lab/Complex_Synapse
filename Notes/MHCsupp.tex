@@ -1,7 +1,10 @@
+% -*- TeX -*- -*- UK -*-
+% ----------------------------------------------------------------
 \documentclass[12pt]{article}
 %Preamble:
 \usepackage{a4wide}
 \input{sl_preamble.tex}
+\hypersetup{colorlinks,linkcolor=blue,citecolor=violet}
 \input{sl_graphics_preamble.tex}
 \graphicspath{{"Figures/"}}
 %
@@ -118,7 +121,7 @@ We can model this by changing $\M\dep\wt$ to $\M\dep\ko$, which should have larg
 
 We will look at several different models,
 the multistate model\footnote{The original definition of the multistate model had a synaptic weight that varied linearly along the chain. We will refer to this as the linear multistate model. We will also look at the step-multistate model, for which the synaptic weight takes only two values.} (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate_model}),
-and the two-state model (which can be thought of as a special case of the multistate model, see \autoref{fig:models}\ref{fig:binary_model}),
+the two-state model (which can be thought of as a special case of the multistate model, see \autoref{fig:models}\ref{fig:binary_model}),
 and the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}).
 We will also look at a new, pooled resource model that we will define below in \autoref{sec:pooledmodel}.
 
@@ -128,7 +131,7 @@ We will use a larger value for $q$ for depression in the \KO\ mutant.
 For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
 We will use a larger value for $x$ for depression in the \KO\ mutant.
 
-The values of all these parameters are listed in \autoref{tab:params}.
+The values used for all these parameters in simulations are listed in \autoref{tab:params}.
 
 \begin{figure}
  \begin{center}
@@ -169,7 +172,7 @@ This effectively reduces the transition probabilities by $1/P$.
 
 This compound synapse would seem to have $2^P$ internal states.
 However, we need only keep track of the number of potentiated synapses, not their identity, leaving $M=P+1$ states.
-The transition network topology will then have a multistate topology (see \autoref{fig:models}\ref{fig:multistate_model}) but the transition probabilities will no longer be uniform and the weight of the compound synapse is the mean of its constituent synapses:
+The transition network will then have a multistate topology (see \autoref{fig:models}\ref{fig:multistate_model}) but the transition probabilities will no longer be uniform and the weight of the compound synapse is the mean of its constituent synapses:
 %
 \begin{equation}\label{eq:pooledweight}
   \w_i = \frac{2i}{P}-1.
@@ -189,8 +192,10 @@ Thus:
 %
 \begin{equation}\label{eq:pooledpotdep}
   \begin{aligned}
-    \M\pot_{ii+1} &=  \brk{\frac{(P-i-1)q\lmax + i\,q\lmin}{P-1}} \frac{P-i}{P}, \\
-    \M\dep_{ii-1} &=  \brk{\frac{(i-1)q\lmax + (P-i)q\lmin}{P-1}} \frac{i}{P},
+    \M\pot_{ii+1} &=  \brk{\frac{(P-i-1)q\lmax + i\,q\lmin}{P-1}} \frac{P-i}{P} ,  
+      \quad& i &= 0 \ldots P-1,\\
+    \M\dep_{ii-1} &=  \brk{\frac{(i-1)q\lmax + (P-i)q\lmin}{P-1}} \frac{i}{P} ,   
+           & i &= 1 \ldots P,
   \end{aligned}
 \end{equation}
 %
@@ -218,7 +223,7 @@ The values of these parameters are listed in \autoref{tab:params}.
 \subsection{Model of VOR learning experiment}\label{sec:learning}
 
 Training the animal will not change the internal dynamics of a synapse under potentiation or depression.
-It will change the environment, will lead to a change in how often potentiation and depression occur.
+It will change the environment, which will lead to a change in how often potentiation and depression occur.
 It could be manifested in a change in which synapses are potentiated/depressed, but this could not be captured in this type of model.
 We will model this by changing $f\potdep$, leaving $r$ and $\M\potdep$ unchanged.
 
@@ -226,7 +231,7 @@ The untrained case will be described by $f\pot=f\pot\norm$.
 Gain-increase training  will be described by $f\pot=f\pot\inc<f\pot\norm$, and
 gain-decrease training  will be described by $f\pot=f\pot\dec>f\pot\norm$. Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depend on $f\pot$, which we will indicate with subscripts.
 
-Before training, the synaptic distribution will in equilibrium with $f\pot\norm$.
+Before training, the synaptic distribution will be in the equilibrium distribution corresponding to $f\pot\norm$.
 During gain-increase training, it will evolve according to \eqref{eq:evolve} with $f\pot\inc$:
 %
 \begin{equation}\label{eq:nopre}
@@ -262,7 +267,7 @@ We use the same values for wild-type and mutant and treat gain-increase and decr
 The values of these parameters are listed in \autoref{tab:params}.
 
 We are also assuming that the relation between VOR gain and mean synaptic weight is the same for mutant ant wild-type, except for a linear offset to compensate for the difference in equilibrium weights mentioned above.
-This ensures that the qualitative questions (enhancement or impairment of learning) will not be affected.
+This ensures that the qualitative questions mentioned above (enhancement or impairment of learning) will not be affected.
 
 
 
@@ -281,12 +286,12 @@ These questions will not be affected by any output nonlinearity, as long as it i
 We will not worry too much about \autoref{it:gaindown}, as gain-decrease learning uses a different mechanism to gain-increase.
 We are only modelling the effect of gain-decrease training on \emph{these} synapses.
 
-We will not worry too much about the curvature of the learning curves, as this can be changes by the nonlinearity.
+We will not worry too much about the curvature of the learning curves, as this can be changed by the nonlinear relation between synaptic weight and VOR gain.
 However, both the wild-type and mutant should be affected in the same way, so the difference in the curvature of the mutant and wild-type curves after pre-training would be nice to capture.
 
 We will try to gain some analytic insight to some of these models by looking at the slope of the learning curve at the start of gain-increase training.
 This is proportional to the net-flux from the states with strong synaptic weight to the weaker states, measuring using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
-This should be multiplied by the difference in synaptic weights
+This should be multiplied by the difference in synaptic weights.
 But, as this quantity is constant within a model and doesn't change when comparing wild-type and mutant or with/without pre-training, it can be ignored.
 
 The values for all parameters we will use can be found in \autoref{tab:params}.
@@ -451,7 +456,7 @@ So, we see that pre-training will speed up learning when $\Delta f$ is small (in
 On the other hand, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning a lot due to the factor of $(1+2\Delta f)^{M/2-1}$, as seen in \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}.
 
 Intuitively, the flux depends on the slope of the distribution at the centre of the chain (with an offset due to the difference between $f\pot$ and $f\dep$).
-Pre-training has two effects: it produces a slope in the right direction (see \autoref{fig:multistate_weak}\ref{fig:multistate_weak_eq}), but it also reduces distribution at the centre (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}).
+Pre-training has two effects: it produces a slope in the right direction (see \autoref{fig:multistate_weak}\ref{fig:multistate_weak_eq}), but it also reduces the distribution at the centre (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}).
 For small $\Delta f$, the first effect is stronger and learning speeds up.
 For larger $\Delta f$, the second effect wins and learning slows down.
 
@@ -496,7 +501,7 @@ This means that there is an intermediate range of time-scales over which pre-tra
 As we see in \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS}, even when we are in this range, the period of time for which pre-training impairs learning in the wild-type can be very small.
 
 In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f < \Delta f^*(1,M)$ and look at intermediate time-scales, we will see that the mutant learns slower than wild-type without pre-training, and that pre-training speeds up learning in the mutant but slows it down in the wild-type.
-However, in this case pre-training proceeds much faster in the mutant than wild-type (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learn}), which is \emph{not} seen in the experiment.
+However, in this case pre-training proceeds much faster in the mutant than wild-type (see \autoref{fig:multistate_med}\ref{fig:multistate_med_learn} and \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learn}), which is \emph{not} seen in the experiment.
 
 Now consider what would happen if we did not treat gain-increase and gain-decrease symmetrically.
 Let us set $f\pot\dec = f\pot\norm - \overline{\Delta f}$.
