@@ -170,7 +170,7 @@ MakePlot;
         [Wp,Wm,w]=CascadeMSinterp(q,q,S.fp,S.pertval);
         
         %calc decay rates and area of eigenmodes
-        [qa,ca]=Spectrum(Wp,Wm,S.fp,w);
+        [qa,ca]=SpectrumWpm(Wp,Wm,S.fp,w);
         qa(1)=[];
         ca(1)=[];
         

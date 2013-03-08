@@ -15,7 +15,7 @@ error(CheckSize(w,@iscol));
 error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
 
 
-[ qa,ca ] = Spectrum( Wp, Wm, fp, w );
+[ qa,ca ] = SpectrumWpm( Wp, Wm, fp, w );
 
 % S = gmdmp(ca.*qa, 1, exp(-outer(qa,t,true)), 1);
 S = SNRcurveCaQa(t,ca,qa);

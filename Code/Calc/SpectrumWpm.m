@@ -1,5 +1,5 @@
-function [ qa,ca ] = Spectrum( Wp, Wm, fp, w )
-%[QA,CA]=SPECTRUM(WP,WM,FP,w) Weights and eigenvalues of SNR curve for complex synapse (cts time)
+function [ qa,ca ] = SpectrumWpm( Wp, Wm, fp, w )
+%[QA,CA]=SPECTRUMWPM(WP,WM,FP,w) Weights and eigenvalues of SNR curve for complex synapse (cts time)
 %   WP = potentiation transition rates
 %   WM = depression transition rates
 %   FP = Fraction of potentiation transitions

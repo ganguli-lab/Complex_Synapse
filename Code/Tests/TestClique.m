@@ -34,7 +34,7 @@ q(n/2+1)=1/n;
 %     return;
 % end
 
-[q,c]=Spectrum(wp,wm,0.5,w);
+[q,c]=SpectrumWpm(wp,wm,0.5,w);
 % crqm=max(real(c.*sqrt(q)));
 % crq=real(c'*sqrt(q));
 % c2q=real((c.^2)'*q);
