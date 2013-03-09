@@ -7,7 +7,7 @@ function [ Wp,Wm,w ] = BennaFusi( numvar,numlevel,m,decay,rdt )
 %   numvar   = number of varibales (min=2)
 %   numlevel = number of levels that each variable can take (even)
 %   m        = sqrt of ratio of adjacent timescales
-%   decay    = decay rate of last state (default = m^(2*numvar+1))
+%   decay    = decay rate of last state (default = m^(-2*numvar+1))
 %   rdt      = rate X time-step (default=1)
 
 error(CheckSize(numvar,@isscalar));
@@ -15,11 +15,15 @@ error(CheckValue(numvar,@isint));
 error(CheckSize(numlevel,@isscalar));
 error(CheckValue(numlevel,@(x) isint(x/2),'even'));
 error(CheckSize(m,@isscalar));
-error(CheckValue(m,@(x) inrange(x,0,1),'in range [0,1]'));
-existsAndDefault('decay', m^(2*numvar+1));
+error(CheckValue(m,@(x) x>1,'> 1'));
+existsAndDefault('decay', m^(-2*numvar+1));
 error(CheckSize(decay,@isscalar));
 existsAndDefault('rdt',1);
 error(CheckSize(rdt,@isscalar));
+
+% Each state can be described by a vector of levels, one element for each
+% variable, in the range 0:numlevel-1. This can be converted to a state #:
+% state # = sum_{i=1:numvar} level_i numlevel^(numvar-i)
 
 numstates=numlevel^numvar;
 
@@ -39,12 +43,12 @@ for i=1:numstates
     du=diff(fromst);
     %state we jump to for potentiation, vector of levels of each variable
     %(real number, deal with integer part and probs later)
-    tostp = fromst + (rdt/4)* m.^(2*(1:numvar)+1) .* ( -m * [0 du] + [du 0]);
-    %now deal with 
-    tostp(end) = tostp(end) - rdt * decay * fromst(end);
+    tostp = fromst + (rdt/4)* m.^(-2*(1:numvar)+1) .* ( -m * [0 du] + [du 0]);
+    %now deal with last var (decay to centre piece)
+    tostp(end) = tostp(end) - rdt * decay * (fromst(end)-(numlevel-1)/2);
     %now for depression:
     tostm=tostp;
-    %now deal with first state:
+    %now deal with first var (pot vs dep piece):
     tostp(1) = tostp(1) + rdt;
     tostm(1) = tostm(1) - rdt;
     %prevent going over edge
