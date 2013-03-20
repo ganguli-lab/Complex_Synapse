@@ -23,16 +23,12 @@ qa=diag(qa);
 [qa,ix]=sort(qa);
 u=u(:,ix);
 
-[v,qb]=eig(-W');
-qb=diag(qb);
-[~,ix]=sort(qb);
-v=conj(v(:,ix));
-v=diag(1./diag(v'*u)) * v';
+%this method doesn't work when eigenvectors are nearly parallel
 
-% Zinv=ones(n) - W;
-% ca = 2*fp*(1-fp) * (u\w) * sum((Zinv\q) * (Zinv\u), 1);
-% ca=diag(ca);
-% ca=ca(ix);
+Zinv=ones(n) - W;
+ca = 2*fp*(1-fp) * (u\w) * sum((Zinv\q) * (Zinv\u), 1);
+ca=diag(ca);
+ca=ca(ix);
 
 % if rcond(u) < 1e-7
 %     qa=NaN(n,1);
@@ -40,15 +36,25 @@ v=diag(1./diag(v'*u)) * v';
 %     return;
 % end
 
+%this method doesn't work when eigenvectors are nearly parallel
+
 % Z=u * diag(1./[1;qa(2:end)]) / u;
 % p=[1 zeros(1,length(qa)-1)] / u;
 % p=p/sum(p);
 % ca = 2*fp*(1-fp) * (u\w) .* (p*q*Z*u)';
 
-Z=u * diag(1./[1;qa(2:end)]) * v;
-p=v(1,:);
-p=p/sum(p);
-ca = 2*fp*(1-fp) * (v*w) .* (p*q*Z*u)';
+%this method doesn't work when eigenvalues are nearly degenerate
+
+% [v,qb]=eig(-W');
+% qb=diag(qb);
+% [~,ix]=sort(qb);
+% v=conj(v(:,ix));
+% v=diag(1./diag(v'*u)) * v';
+% 
+% Z=u * diag(1./[1;qa(2:end)]) * v;
+% p=v(1,:);
+% p=p/sum(p);
+% ca = 2*fp*(1-fp) * (v*w) .* (p*q*Z*u)';
 
 end
 
