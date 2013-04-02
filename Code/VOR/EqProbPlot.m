@@ -8,6 +8,7 @@ Pooled=false;
 
 n=(0.5:length(Wp)+0.5)';
 p=[EqProb(fp*Wp+(1-fp)*Wm); EqProb((fp+df)*Wp+(1-fp-df)*Wm); EqProb((fp-df)*Wp+(1-fp+df)*Wm)]';
+%if we're using stairs:
 p=[p;p(end,:)];
 
 varargin=assignApplicable(varargin);
@@ -20,7 +21,8 @@ else
 end
 
 stairs(Parent,n,p,varargin{:});
-% plot(Parent,[EqProb(fp*Wp+(1-fp)*Wm); EqProb((fp+df)*Wp+(1-fp-df)*Wm); EqProb((fp-df)*Wp+(1-fp+df)*Wm)]',varargin{:});
+% plot(Parent,n(1:end-1)+0.5,p,varargin{:});
+% bar(Parent,n(1:end-1)+0.5,p,varargin{:});
 xlabel(Parent,xlab);
 xlim(Parent,[n(1) n(end)]);
 set(Parent,'XTick',n(1:end-1)+0.5);
