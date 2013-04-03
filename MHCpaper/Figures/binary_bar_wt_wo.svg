@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="bin_bar_wt_wo.svg">
+   sodipodi:docname="binary_bar_wt_wo.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -22,20 +22,20 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4.0042122"
-     inkscape:cx="-3.4561226"
-     inkscape:cy="65.655969"
+     inkscape:zoom="10.067682"
+     inkscape:cx="23.633193"
+     inkscape:cy="65.605964"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:snap-global="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1264"
-     inkscape:window-height="742"
-     inkscape:window-x="1"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
+     inkscape:window-width="2560"
+     inkscape:window-height="1538"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
      fit-margin-top="0"
      fit-margin-left="0"
      fit-margin-right="0"
@@ -526,5 +526,15 @@
          x="-418.76654"
          y="199.06052"
          style="font-size:12px">Initial distribution</tspan></text>
+    <path
+       inkscape:connector-curvature="0"
+       id="path130-1"
+       style="fill:none;stroke:#000000;stroke-width:0.125;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
+       d="m 209.29677,418.62151 1.1041,0" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path130-1-7"
+       style="fill:none;stroke:#000000;stroke-width:0.125;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
+       d="m 209.29677,330.58531 1.1041,0" />
   </g>
 </svg>
