@@ -66,7 +66,7 @@ xlabel('Training time','FontSize',axFontSize)
 ylabel('Learning (-\Delta mean w)','FontSize',axFontSize)
 
 if Superpose
-    legend({'WT, no-pre';'WT, pre';[mutant ', no-pre'];[mutant ', pre']},'Location','Best')
+    legend([phWT(1);phKn(1);phWT(2);phKn(2)],{'WT w/o pre';[mutant ' w/o pre'];'WT w/ pre';[mutant ' w/ pre']},'Location','Best')
 else
     yl=ylim;
     xl=xlim;
