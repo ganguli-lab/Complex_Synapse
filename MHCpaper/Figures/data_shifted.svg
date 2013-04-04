@@ -207,7 +207,7 @@
      id="namedview4"
      showgrid="false"
      inkscape:zoom="2.1851339"
-     inkscape:cx="431.84481"
+     inkscape:cx="360.4533"
      inkscape:cy="153.07986"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -465,13 +465,11 @@
    style="fill:none;stroke:#7d60a0;stroke-width:0.86562002;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
    id="path226"
    inkscape:connector-curvature="0" /><g
-   id="g228"><g
-     id="g230"
-     clip-path="url(#clipPath232)"><path
-       d="m 139.01,240.38 181.98,17.12 182.07,28.42 182.07,65.94"
-       style="fill:none;stroke:#000000;stroke-width:4.80900002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80900002, 9.61800003;stroke-dashoffset:0"
-       id="path236"
-       inkscape:connector-curvature="0" /></g></g><path
+   id="g228"><path
+     inkscape:connector-curvature="0"
+     id="path236"
+     style="fill:none;stroke:#000000;stroke-width:4.80900002;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80900002,4.80900002;stroke-dashoffset:0"
+     d="m 139.01,240.38 181.98,17.12 182.07,28.42 182.07,65.94" /></g><path
    d="m 144.77,240.55 c 0,-3.27 -2.65,-5.92 -5.92,-5.92 -3.27,0 -5.91,2.65 -5.91,5.92 0,3.26 2.64,5.91 5.91,5.91 3.27,0 5.92,-2.65 5.92,-5.91 z"
    style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
    id="path238"
@@ -503,14 +501,11 @@
    d="m 690.83,352.07 c 0,-3.27 -2.65,-5.92 -5.92,-5.92 -3.26,0 -5.91,2.65 -5.91,5.92 0,3.26 2.65,5.91 5.91,5.91 3.27,0 5.92,-2.65 5.92,-5.91 z"
    style="fill:none;stroke:#000000;stroke-width:3.60680008;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
    id="path252"
-   inkscape:connector-curvature="0" /><g
-   id="g254"><g
-     id="g256"
-     clip-path="url(#clipPath258)"><path
-       d="m 139.01,240.38 181.98,99.06 182.07,40.25 182.07,31.42"
-       style="fill:none;stroke:#c0504d;stroke-width:4.80900002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80900002, 9.61800003;stroke-dashoffset:0"
-       id="path262"
-       inkscape:connector-curvature="0" /></g></g><path
+   inkscape:connector-curvature="0" /><path
+   d="m 139.01,240.38 181.98,99.06 182.07,40.25 182.07,31.42"
+   style="fill:none;stroke:#c0504d;stroke-width:4.80900002;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80900002,4.80900002;stroke-dashoffset:0"
+   id="path262"
+   inkscape:connector-curvature="0" /><path
    d="m 144.77,240.55 c 0,-3.27 -2.65,-5.92 -5.92,-5.92 -3.27,0 -5.91,2.65 -5.91,5.92 0,3.26 2.64,5.91 5.91,5.91 3.27,0 5.92,-2.65 5.92,-5.91 z"
    style="fill:#c0504d;fill-opacity:1;fill-rule:nonzero;stroke:none"
    id="path264"
@@ -555,6 +550,7 @@
      id="tspan302">0%</tspan></text>
 
 
+
 </g></g><g
    id="g304"><g
      id="g306"
@@ -566,6 +562,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan314">25%</tspan></text>
+
 
 
 </g></g><g
@@ -581,6 +578,7 @@
      id="tspan326">50%</tspan></text>
 
 
+
 </g></g><g
    id="g328"><g
      id="g330"
@@ -591,6 +589,7 @@
      x="0"
      y="0"
      id="tspan338">0</tspan></text>
+
 
 
 </g></g><g
@@ -606,6 +605,7 @@
      id="tspan350">10</tspan></text>
 
 
+
 </g></g><g
    id="g352"><g
      id="g354"
@@ -619,6 +619,7 @@
      id="tspan362">20</tspan></text>
 
 
+
 </g></g><g
    id="g364"><g
      id="g366"
@@ -630,6 +631,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan374">30</tspan></text>
+
 
 
 </g></g><path
@@ -656,6 +658,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan404">WT n=16 w/ pre training</tspan></text>
+
 
 
 </g></g><path
@@ -686,9 +689,10 @@
      id="tspan422">KO n=24 w/ pre training</tspan></text>
 
 
+
 </g></g><path
    d="m 166.52804,439.46047 23.08,0"
-   style="fill:none;stroke:#000000;stroke-width:4.80880022;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.8088, 14.4264;stroke-dashoffset:0"
+   style="fill:none;stroke:#000000;stroke-width:4.80880013;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80880013,14.42640038;stroke-dashoffset:0"
    id="path424"
    inkscape:connector-curvature="0" /><path
    d="m 181.59804,439.47047 c 0,-1.95 -1.58,-3.53 -3.53,-3.53 -1.95,0 -3.54,1.58 -3.54,3.53 0,1.96 1.59,3.54 3.54,3.54 1.95,0 3.53,-1.58 3.53,-3.54 z"
@@ -712,9 +716,10 @@
      id="tspan440">WT n=16 w/o pre training</tspan></text>
 
 
+
 </g></g><path
    d="m 166.52804,416.81047 23.08,0"
-   style="fill:none;stroke:#c0504d;stroke-width:4.80900002;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80900002, 14.42700005;stroke-dashoffset:0"
+   style="fill:none;stroke:#c0504d;stroke-width:4.80900002000000000;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80900002000000000, 14.42700005000000000;stroke-dashoffset:0"
    id="path442"
    inkscape:connector-curvature="0" /><path
    d="m 181.59804,416.82047 c 0,-1.95 -1.58,-3.53 -3.53,-3.53 -1.95,0 -3.54,1.58 -3.54,3.53 0,1.95 1.59,3.54 3.54,3.54 1.95,0 3.53,-1.59 3.53,-3.54 z"
@@ -738,6 +743,7 @@
      id="tspan458">KO n=24 w/o pre training</tspan></text>
 
 
+
 </g></g><path
    d="m 51.002413,183.90037 690.169177,0 0,363.49722 -690.169177,0 0,-363.49722 z"
    style="fill:none;stroke:none;stroke-width:0.78251588000000005;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
@@ -756,6 +762,7 @@
      y="-196.23509"
      style="font-size:22.39999962px">Time (mins)</tspan></text>
 
+
 <g
    id="g3215"><text
    transform="matrix(0,1,1,0,0,0)"
@@ -770,6 +777,7 @@
      id="tspan3213"
      sodipodi:role="line"
      style="font-size:22.39999962px">Learning (Δ VOR gain)</tspan></text>
+
 
 </g><rect
    style="fill:none;stroke:#000000;stroke-width:1.60000002;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
