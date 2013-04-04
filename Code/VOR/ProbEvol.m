@@ -4,6 +4,7 @@ function ProbEvol( Pt,t,titletext,varargin )
 
 Parent=gca;
 FontSize=10;
+axFontSize=10;
 Pooled=false;
 varargin=assignApplicable(varargin);
 cla(Parent);
@@ -18,12 +19,12 @@ end
 
 
 imagesc(t,n,Pt','Parent',Parent,varargin{:});
-ylabel(Parent,xlab);
-xlabel(Parent,'Training time');
-title(Parent,titletext);
+ylabel(Parent,xlab,'FontSize',axFontSize);
+xlabel(Parent,'Training time','FontSize',axFontSize);
+title(Parent,titletext,'FontSize',FontSize);
 h=colorbar('peer',Parent);
 % set(get(h,'YLabel'),'String','Probability','Rotation',270,'VerticalAlignment','bottom','FontSize',FontSize);
-colorbarlabel(h,'Probability','FontSize',FontSize);
+colorbarlabel(h,'Probability','FontSize',axFontSize);
         
 end
 

@@ -10,7 +10,10 @@ Parent=gca;
 altfig=[];
 fig3=[];
 Superpose=false;
+axFontSize=40;
 FontSize=20;
+EqFontSize=20;
+txFontSize=20;
 Pooled=false;
 mutant='D^bK^b-/-';
 varargin=assignApplicable(varargin);
@@ -23,13 +26,14 @@ else
         clf(altfig);
         altaxWT=subplot(2,1,1,'Parent',altfig);
         altaxKn=subplot(2,1,2,'Parent',altfig);
+        txFontSize=10;
     else
         clf(altfig(1));
         clf(altfig(2));
         altaxWT=axes('Parent',altfig(1));
         altaxKn=axes('Parent',altfig(2));
-        embiggen(altaxWT,FontSize);
-        embiggen(altaxKn,FontSize);
+        embiggen(altaxWT,EqFontSize);
+        embiggen(altaxKn,EqFontSize);
     end
 end
 
@@ -57,9 +61,9 @@ if ~isempty(altfig)
 end
 
 axes(Parent);
-xlabel('Training time')
-ylabel('Learning (-\Delta mean w)')
 embiggen(Parent,FontSize);
+xlabel('Training time','FontSize',axFontSize)
+ylabel('Learning (-\Delta mean w)','FontSize',axFontSize)
 
 if Superpose
     legend({'WT, no-pre';'WT, pre';[mutant ', no-pre'];[mutant ', pre']},'Location','Best')
@@ -70,15 +74,15 @@ else
     [x,y]=dsxy2figxy([xl(1) xl(2)], (0.95*yl(2)+0.05*yl(1))*[1 1]);
     annotation('doublearrow',x,y);
     pos=dsxy2figxy([0.6*xl(1)+0.4*xl(2) (0.9*yl(2)+0.1*yl(1)) 0.2*(xl(2)-xl(1)) 0.05*(yl(2)-yl(1))]);
-    annotation('textbox',pos,'String','training','VerticalAlignment','top','LineStyle','none','HorizontalAlignment','center');
+    annotation('textbox',pos,'String','training','VerticalAlignment','top','LineStyle','none','HorizontalAlignment','center','FontSize',txFontSize);
     [x,y]=dsxy2figxy([xl(1) tchange], (0.95*yl(1)+0.05*yl(2))*[1 1]);
     annotation('doublearrow',x,y);
     pos=dsxy2figxy([0.6*xl(1)+0.4*tchange (0.95*yl(1)+0.05*yl(2)) 0.2*(tchange-xl(1)) 0.05*(yl(2)-yl(1))]);
-    annotation('textbox',pos,'String','pre-training','VerticalAlignment','bottom','LineStyle','none','HorizontalAlignment','center');
+    annotation('textbox',pos,'String','pre-training','VerticalAlignment','bottom','LineStyle','none','HorizontalAlignment','center','FontSize',txFontSize);
     [x,y]=dsxy2figxy([tchange xl(2)], (0.95*yl(1)+0.05*yl(2))*[1 1]);
     annotation('doublearrow',x,y);
     pos=dsxy2figxy([0.6*tchange+0.4*xl(2) (0.95*yl(1)+0.05*yl(2)) 0.2*(xl(2)-tchange) 0.05*(yl(2)-yl(1))]);
-    annotation('textbox',pos,'String','training','VerticalAlignment','bottom','LineStyle','none','HorizontalAlignment','center');
+    annotation('textbox',pos,'String','training','VerticalAlignment','bottom','LineStyle','none','HorizontalAlignment','center','FontSize',txFontSize);
     legend([phWT(1);phKn(1)],{'WT';'D^bK^b-/-'},'Location','Best')
     drawnow;
     
@@ -94,17 +98,17 @@ else
         ProbEvol(P_Kn_pre,t,[mutant ' pre-training'],'Parent',h,'Pooled',Pooled);
     elseif numel(fig3)==4
         h=axes('Parent',fig3(1));
-        ProbEvol(P_WT_nopre,t,'WT no pre-training','Parent',h,'FontSize',FontSize,'Pooled',Pooled);
-        embiggen(h,FontSize);
+        ProbEvol(P_WT_nopre,t,'WT no pre-training','Parent',h,'FontSize',FontSize,'axFontSize',axFontSize,'Pooled',Pooled);
+%         embiggen(h,FontSize);
         h=axes('Parent',fig3(2));
-        ProbEvol(P_WT_pre,t,'WT pre-training','Parent',h,'FontSize',FontSize,'Pooled',Pooled);
-        embiggen(h,FontSize);
+        ProbEvol(P_WT_pre,t,'WT pre-training','Parent',h,'FontSize',FontSize,'axFontSize',axFontSize,'Pooled',Pooled);
+%         embiggen(h,FontSize);
         h=axes('Parent',fig3(3));
-        ProbEvol(P_Kn_nopre,t,[ mutant ' no pre-training'],'Parent',h,'FontSize',FontSize,'Pooled',Pooled);
-        embiggen(h,FontSize);
+        ProbEvol(P_Kn_nopre,t,[ mutant ' no pre-training'],'Parent',h,'FontSize',FontSize,'axFontSize',axFontSize,'Pooled',Pooled);
+%         embiggen(h,FontSize);
         h=axes('Parent',fig3(4));
-        ProbEvol(P_Kn_pre,t,[mutant ' pre-training'],'Parent',h,'FontSize',FontSize,'Pooled',Pooled);
-        embiggen(h,FontSize);
+        ProbEvol(P_Kn_pre,t,[mutant ' pre-training'],'Parent',h,'FontSize',FontSize,'axFontSize',axFontSize,'Pooled',Pooled);
+%         embiggen(h,FontSize);
     end
 end
 
