@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="bin_bar_ko_w.svg">
+   sodipodi:docname="binary_bar_ko_w.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -23,7 +23,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.0042122"
-     inkscape:cx="-3.4561226"
+     inkscape:cx="-25.062649"
      inkscape:cy="66.055969"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -431,7 +431,7 @@
        sodipodi:ry="5"
        d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
-       style="fill:none;stroke:#003380;stroke-width:3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#Arrow2SenduU0)"
+       style="fill:none;stroke:#003380;stroke-width:3.5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker-end:url(#Arrow2SenduU0)"
        d="m 253.11882,444.44627 c -7.6964,18.27925 -14.01322,19.05124 -20.35587,3.27951"
        id="path5894-5-1-9"
        inkscape:connector-curvature="0"
@@ -487,7 +487,7 @@
        style="fill:none;stroke:#000000;stroke-width:0.125;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
        d="m 209.29677,418.58799 0,-88.02075" />
     <path
-       style="fill:none;stroke:#aa0000;stroke-width:1.29999995;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2SenduM)"
+       style="fill:none;stroke:#aa0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2SenduM)"
        d="m 232.56902,435.7033 c 7.6964,-18.27925 13.54207,-17.95189 19.88472,-2.18016"
        id="path5894-5-8"
        inkscape:connector-curvature="0"
@@ -503,19 +503,6 @@
          id="tspan3121"
          x="182.41573"
          y="386.91949" /></text>
-    <text
-       xml:space="preserve"
-       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-418.76654"
-       y="199.06052"
-       id="text3123"
-       sodipodi:linespacing="125%"
-       transform="matrix(0,-1,1,0,0,0)"><tspan
-         sodipodi:role="line"
-         id="tspan3125"
-         x="-418.76654"
-         y="199.06052"
-         style="font-size:12px">Initial distribution</tspan></text>
     <path
        d="m 227.42808,418.65049 6.1875,0 0,-50.3125 -6.1875,0 0,50.3125 z"
        style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none"
