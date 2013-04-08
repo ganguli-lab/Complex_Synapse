@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="71.005707"
-   height="131.61194"
+   width="69.318726"
+   height="131.86194"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
@@ -22,9 +22,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4.0042122"
-     inkscape:cx="-25.062649"
-     inkscape:cy="66.055969"
+     inkscape:zoom="3.9814372"
+     inkscape:cx="33.659364"
+     inkscape:cy="65.930973"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -33,8 +33,8 @@
      inkscape:guide-bbox="true"
      inkscape:window-width="1264"
      inkscape:window-height="742"
-     inkscape:window-x="1280"
-     inkscape:window-y="780"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -47,11 +47,11 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-190.47067px"
-       originy="-591.96182px" />
+       originx="-201.57727px"
+       originy="-591.71184px" />
     <sodipodi:guide
        orientation="1,0"
-       position="190.28355,-47.125671"
+       position="179.17695,-46.875685"
        id="guide3093" />
   </sodipodi:namedview>
   <defs
@@ -409,7 +409,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-190.47067,-328.78843)">
+     transform="translate(-201.57727,-328.78843)">
     <path
        transform="matrix(-1,0,0,1,440.97638,93.571429)"
        sodipodi:type="arc"
@@ -503,15 +503,39 @@
          id="tspan3121"
          x="182.41573"
          y="386.91949" /></text>
-    <path
-       d="m 227.42808,418.65049 6.1875,0 0,-50.3125 -6.1875,0 0,50.3125 z"
-       style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none"
-       id="path190"
-       inkscape:connector-curvature="0" />
-    <path
-       d="m 252.88263,418.65049 6.1875,0 0,-37.72925 -6.1875,0 0,37.72925 z"
-       style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none"
-       id="path194"
-       inkscape:connector-curvature="0" />
+    <g
+       id="g3060">
+      <path
+         inkscape:connector-curvature="0"
+         id="path190"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="m 227.42808,418.65049 6.1875,0 0,-50.3125 -6.1875,0 0,50.3125 z" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path194"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="m 252.88263,418.65049 6.1875,0 0,-37.72925 -6.1875,0 0,37.72925 z" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="244.06787"
+       y="339.32004"
+       id="text2993-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2995-0"
+         x="244.06787"
+         y="339.32004"
+         style="font-size:8px">D<tspan
+   id="tspan3028"
+   style="font-size:8px;baseline-shift:super">b</tspan>K<tspan
+   id="tspan3030"
+   style="font-size:8px;baseline-shift:super">b</tspan> -/-</tspan><tspan
+         sodipodi:role="line"
+         x="244.06787"
+         y="349.32004"
+         id="tspan2997-9"
+         style="font-size:8px">w/ pre-training</tspan></text>
   </g>
 </svg>

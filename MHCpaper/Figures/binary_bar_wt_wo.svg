@@ -9,7 +9,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="71.005707"
+   width="79.651215"
    height="131.21193"
    id="svg2"
    version="1.1"
@@ -23,8 +23,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.191692"
-     inkscape:cx="-1.7136187"
-     inkscape:cy="65.605964"
+     inkscape:cx="9.3168334"
+     inkscape:cy="65.605965"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -32,9 +32,9 @@
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="1264"
-     inkscape:window-height="767"
-     inkscape:window-x="5"
-     inkscape:window-y="1"
+     inkscape:window-height="742"
+     inkscape:window-x="1280"
+     inkscape:window-y="0"
      inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -51,7 +51,7 @@
        originy="-592.36182px" />
     <sodipodi:guide
        orientation="1,0"
-       position="190.28355,-47.525671"
+       position="190.28355,-47.525668"
        id="guide3093" />
   </sodipodi:namedview>
   <defs
@@ -486,16 +486,19 @@
        id="path156"
        style="fill:none;stroke:#000000;stroke-width:0.125;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
        d="m 209.29677,418.58799 0,-88.02075" />
-    <path
-       d="m 226.95378,418.65049 6.1875,0 0,-44.02075 -6.1875,0 0,44.02075 z"
-       style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none"
-       id="path166"
-       inkscape:connector-curvature="0" />
-    <path
-       d="m 252.39793,418.65049 6.2083,0 0,-44.02075 -6.2083,0 0,44.02075 z"
-       style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none"
-       id="path170"
-       inkscape:connector-curvature="0" />
+    <g
+       id="g3058">
+      <path
+         inkscape:connector-curvature="0"
+         id="path166"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="m 226.95378,418.65049 6.1875,0 0,-44.02075 -6.1875,0 0,44.02075 z" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path170"
+         style="fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none"
+         d="m 252.39793,418.65049 6.2083,0 0,-44.02075 -6.2083,0 0,44.02075 z" />
+    </g>
     <path
        style="fill:none;stroke:#aa0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2SenduM)"
        d="m 232.56902,435.7033 c 7.6964,-18.27925 13.54207,-17.95189 19.88472,-2.18016"
@@ -536,5 +539,22 @@
        id="path130-1-7"
        style="fill:none;stroke:#000000;stroke-width:0.125;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
        d="m 209.29677,330.58531 1.1041,0" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="243.0672"
+       y="335.41757"
+       id="text2993"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2995"
+         x="243.0672"
+         y="335.41757"
+         style="font-size:8px">WT</tspan><tspan
+         sodipodi:role="line"
+         x="243.0672"
+         y="345.41757"
+         id="tspan2997"
+         style="font-size:8px">w/o pre-training</tspan></text>
   </g>
 </svg>
