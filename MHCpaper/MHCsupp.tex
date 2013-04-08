@@ -4,7 +4,7 @@
 %Preamble:
 \usepackage{a4wide}
 \input{sl_preamble.tex}
-\hypersetup{colorlinks,linkcolor=blue,citecolor=violet}
+\hypersetup{colorlinks,linkcolor=blue,citecolor=teal,urlcolor=teal}
 \input{sl_graphics_preamble.tex}
 \graphicspath{{"Figures/"}}
 %
@@ -210,7 +210,7 @@ The values of these parameters are listed in \autoref{tab:params}.
 
 \begin{figure}
  \begin{center}
-  \aligntop{\includegraphics[height=1.7cm]{pooled.svg}}
+  \aligntop{\includegraphics[height=4cm]{pooled.svg}}
  \end{center}
   \caption[The pooled resource model]{The pooled resource model.
   Several two-state synapses share resources that are required for potentiation and depression.
@@ -277,10 +277,10 @@ This ensures that the qualitative questions mentioned above (enhancement or impa
 The features of the actual experiments that we'd like to capture are:
 \begin{enumerate}
   \item Without pre-training, gain-increase learning is significantly faster in the wild-type than in the mutant.
-  \item Gain-decrease pre-training is slightly faster in the wild-type, but not significantly so.\label{it:gaindown}
-  \item After pre-training, gain-increase learning is significantly faster in the mutant than in the wild-type.
   \item For the wild-type, gain-increase learning is significantly faster without pre-training than with it.
   \item For the mutant, gain-increase learning is significantly faster with pre-training than without it.
+  \item After pre-training, gain-increase learning is significantly faster in the mutant than in the wild-type.
+  \item Gain-decrease pre-training is slightly faster in the wild-type, but not significantly so.\label{it:gaindown}
 \end{enumerate}
 These questions will not be affected by any output nonlinearity, as long as it is monotonic and fixed.
 We will not worry too much about \autoref{it:gaindown}, as gain-decrease learning uses a different mechanism to gain-increase.
@@ -290,7 +290,7 @@ We will not worry too much about the curvature of the learning curves, as this c
 However, both the wild-type and mutant should be affected in the same way, so the difference in the curvature of the mutant and wild-type curves after pre-training would be nice to capture.
 
 We will try to gain some analytic insight to some of these models by looking at the slope of the learning curve at the start of gain-increase training.
-This is proportional to the net-flux from the states with strong synaptic weight to the weaker states, measuring using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
+This is proportional to the net-flux from the states with strong synaptic weight to the weaker states, measured using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
 This should be multiplied by the difference in synaptic weights.
 But, as this quantity is constant within a model and doesn't change when comparing wild-type and mutant or with/without pre-training, it can be ignored.
 
@@ -442,7 +442,7 @@ First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiWTnopre}
-  \Phi = -\frac{2\Delta fq}{M},
+  \Phi = \frac{2\abs{\Delta f}q}{M},
 \end{equation}
 %
 where it's worth remembering that $\Delta f<0$.
@@ -452,7 +452,7 @@ With pre-training:
 \begin{aligned}
   \Phi &= 16(\Delta f)^2q \, \frac{(1-2\Delta f)^{M/2-1} (1+2\Delta f)^{M/2-1}}
           {(1-2\Delta f)^M - (1+2\Delta f)^M} \\
-       &= -\frac{4\Delta fq}{M} + \CO(\Delta f)^2.
+       &= \frac{4\abs{\Delta f}q}{M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
 %
@@ -468,7 +468,7 @@ Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiKOnopre}
-  \Phi = -2\Delta f q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M}.
+  \Phi = 2\abs{\Delta f} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M}.
 \end{equation}
 %
 This will be smaller than \eqref{eq:multiWTnopre} if $\beta<\beta^*(M)$.
@@ -482,10 +482,10 @@ With pre-training:
 %
 \begin{equation}\label{eq:multiKOpre}
 \begin{aligned}
-  \Phi &= -4\Delta f q \, \frac{(1+2\Delta f) - \beta(1-2\Delta f)}
+  \Phi &= 4\abs{\Delta f} q \, \frac{(1+2\Delta f) - \beta(1-2\Delta f)}
           {(1+2\Delta f)^M - \beta^M(1-2\Delta f)^M}   \,
           \brk{\beta (1-2\Delta f) (1+2\Delta f)}^{M/2-1} \\
-       &= -4\Delta f q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f)^2.
+       &= 4\abs{\Delta f} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
 %
@@ -523,10 +523,10 @@ Then, \eqref{eq:multiKOpre} becomes
 %
 \begin{equation}\label{eq:multiKOdiffpre}
 \begin{aligned}
-  \Phi &= -2\prn{\Delta f + \overline{\Delta f}} q \, \frac{(1+2\overline{\Delta f}) - \beta(1-2\overline{\Delta f})}
+  \Phi &= 2\abs{\Delta f + \overline{\Delta f}} q \, \frac{(1+2\overline{\Delta f}) - \beta(1-2\overline{\Delta f})}
           {(1+2\overline{\Delta f})^M - \beta^M(1-2\overline{\Delta f})^M}   \,
           \brk{\beta (1-2\overline{\Delta f}) (1+2\overline{\Delta f})}^{M/2-1} \\
-       &= -2\prn{\Delta f + \overline{\Delta f}} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f,\overline{\Delta f})^2.
+       &= 2\abs{\Delta f + \overline{\Delta f}} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f,\overline{\Delta f})^2.
 \end{aligned}
 \end{equation}
 %
@@ -534,10 +534,10 @@ We can then look at the wild-type by setting $\beta=1$:
 %
 \begin{equation}\label{eq:multiWTdiffpre}
 \begin{aligned}
-  \Phi &= -8\,\overline{\Delta f}\prn{\Delta f + \overline{\Delta f}} q \,
+  \Phi &= 8\,\overline{\Delta f}\prn{\Delta f + \overline{\Delta f}} q \,
           \frac{(1-2\overline{\Delta f})^{M/2-1} (1+2\overline{\Delta f})^{M/2-1} }
-          {(1+2\overline{\Delta f})^M - (1-2\overline{\Delta f})^M}   \\
-       &= -\frac{2\prn{\Delta f + \overline{\Delta f}} q}{M} + \CO(\Delta f,\overline{\Delta f})^2.
+          {\abs{(1+2\overline{\Delta f})^M - (1-2\overline{\Delta f})^M}}   \\
+       &= \frac{2\abs{\Delta f + \overline{\Delta f}} q}{M} + \CO(\Delta f,\overline{\Delta f})^2.
 \end{aligned}
 \end{equation}
 %
@@ -577,7 +577,7 @@ First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:binWTnopre}
-  \Phi = -\Delta f q,
+  \Phi = \abs{\Delta f} q,
 \end{equation}
 %
 where, once again, it's worth remembering that $\Delta f<0$.
@@ -585,7 +585,7 @@ With pre-training:
 %
 \begin{equation}\label{eq:binWTpre}
 \begin{aligned}
-  \Phi &= -2\Delta f q.
+  \Phi &= 2\abs{\Delta f} q.
 \end{aligned}
 \end{equation}
 %
@@ -596,20 +596,22 @@ Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
 Without pre-training:
 %
 \begin{equation}\label{eq:binKOnopre}
-  \Phi = -\frac{2\Delta f q}{1+\beta},
+  \Phi = \frac{2\abs{\Delta f} q}{1+\beta},
 \end{equation}
 %
 which is always larger that \eqref{eq:binWTnopre}, unlike what is seen in the experiment.
 This is also seen in \autoref{fig:binary}\ref{fig:binary_learn},\ref{fig:binary_learnS} (solid curves).
-As discussed below \eqref{eq:multiKOnopre}, the smaller values of has two effects.
+As discussed above (below \eqref{eq:multiKOnopre}), the larger value of $q\dep=q/\beta$ has two effects.
 Smaller $\beta$ will increase the probability of depression, speeding up learning, but it will also decrease the probability of being ready for depression, slowing down learning.
-The second effect is much smaller for the very short chain considered here.
+For the step-multistate model, we argued that the first effect goes like $1/\beta$, whereas the second goes like $\beta^{M/2}$ to leading order.
+Here $M=2$, so the leading part of the two effects will cancel.
+The subleading effects are responsible for the faster learning in the mutant.
 
 With pre-training:
 %
 \begin{equation}\label{eq:binKOpre}
 \begin{aligned}
-  \Phi &= -4\Delta f q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
+  \Phi &= 4\abs{\Delta f} q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
           {(1-2\Delta f)^2 - \beta^2(1+2\Delta f)^2}.
 \end{aligned}
 \end{equation}
@@ -627,7 +629,7 @@ Secondly, we assumed that there would be equal rates of potentiation and depress
 However, relaxing this assumption merely changes \eqref{eq:binKOnopre} to
 %
 \begin{equation}\label{eq:binKOnoprediff}
-  \Phi = -\frac{\Delta f q}{f\dep+\beta f\pot}.
+  \Phi = \frac{\abs{\Delta f} q}{f\dep+\beta f\pot}.
 \end{equation}
 %
 This will not change our conclusions either.
@@ -673,7 +675,7 @@ First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiLinWTnopre}
-  \Phi = -2\Delta fq\,\frac{M-1}{M},
+  \Phi = 2\abs{\Delta f}q\,\frac{M-1}{M},
 \end{equation}
 %
 where, once more, we should note that $\Delta f<0$.
@@ -681,9 +683,9 @@ With pre-training:
 %
 \begin{equation}\label{eq:multiLinWTpre}
 \begin{aligned}
-  \Phi &= -4\Delta f q \, \frac{(1+2\Delta f)^{M-1} - (1-2\Delta f)^{M-1}}
+  \Phi &= 4\abs{\Delta f} q \, \frac{(1+2\Delta f)^{M-1} - (1-2\Delta f)^{M-1}}
           {(1+2\Delta f)^M - (1-2\Delta f)^M} \\
-       &= -{4\Delta f q}\,\frac{M-1}{M} + \CO(\Delta f)^2.
+       &= {4\abs{\Delta f} q}\,\frac{M-1}{M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
 %
@@ -692,7 +694,7 @@ Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiLinKOnopre}
-  \Phi = -2\Delta f q\,\frac{1-\beta^{M-1}}{1-\beta^M}.
+  \Phi = 2\abs{\Delta f} q\,\frac{1-\beta^{M-1}}{1-\beta^M}.
 \end{equation}
 %
 This decreases monotonically in the interval $\beta\in[0,1]$, therefore this will always be greater than \eqref{eq:multiLinWTnopre}.
@@ -703,16 +705,16 @@ With pre-training:
 %
 \begin{equation}\label{eq:multiLinKOpre}
 \begin{aligned}
-  \Phi &= -4\Delta f q \, \frac{(1+2\Delta f)^{M-1} - \beta^{M-1}(1-2\Delta f)^{M-1}}
+  \Phi &= 4\abs{\Delta f} q \, \frac{(1+2\Delta f)^{M-1} - \beta^{M-1}(1-2\Delta f)^{M-1}}
           {(1+2\Delta f)^M - \beta^M(1-2\Delta f)^M} \\
-       &= -4\Delta f q\,\frac{1-\beta^{M-1}}{1-\beta^M} + \CO(\Delta f)^2.
+       &= 4\abs{\Delta f} q\,\frac{1-\beta^{M-1}}{1-\beta^M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
 %
 The ratio of this to \eqref{eq:multiLinKOnopre} takes its minimum value at the lowest end of the interval $\Delta f \in \brk{-\half,0}$, where it takes the value
 %
 \begin{equation}\label{eq:multiLinprenopre}
-  \frac{\Phi_{\text{with pre}}}{\Phi_{\text{without pre}}} = \frac{1-\beta^M}{\beta-\beta^M}
+  \frac{\Phi_{\text{w/ pre}}}{\Phi_{\text{w/o pre}}} = \frac{1-\beta^M}{\beta-\beta^M}
    \longrightarrow \frac{M}{M-1} \quad \text{as} \quad \beta\to1,
 \end{equation}
 %
