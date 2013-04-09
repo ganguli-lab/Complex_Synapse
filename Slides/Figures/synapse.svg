@@ -13,7 +13,7 @@
    height="1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.0 r9654"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="synapse.svg">
   <defs
      id="defs4" />
@@ -31,8 +31,8 @@
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:snap-global="true"
-     inkscape:window-width="1280"
-     inkscape:window-height="750"
+     inkscape:window-width="2560"
+     inkscape:window-height="1538"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -128,7 +128,7 @@
          sodipodi:role="line"
          x="318"
          y="400.36218"
-         style="font-size:18px"
+         style="font-size:22px"
          id="tspan3786">Possible molecular states</tspan></text>
     <path
        transform="translate(-15,30)"
@@ -260,7 +260,8 @@
          sodipodi:role="line"
          id="tspan3931"
          x="331.33005"
-         y="430.61328">strong state</tspan></text>
+         y="430.61328"
+         style="font-size:18px">strong state</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:14px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
@@ -271,6 +272,7 @@
          sodipodi:role="line"
          id="tspan3935"
          x="330.31989"
-         y="456.37219">weak state</tspan></text>
+         y="456.37219"
+         style="font-size:18px">weak state</tspan></text>
   </g>
 </svg>

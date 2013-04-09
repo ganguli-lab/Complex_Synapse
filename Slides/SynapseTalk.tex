@@ -15,6 +15,23 @@
 \input{sl_definitions.tex}
 \input{sl_slide_symbols.tex}
 \graphicspath{{"Figures/"}}
+%matrices
+\newcommand{\I}{\mathbf{I}}
+%vec of ones
+%equilibrium distribution
+\newcommand{\pr}{\mathbf{p}}
+\newcommand{\eq}{\pr^\infty}
+%other symbols
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\frg}{\W^\mathrm{F}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\F}{\boldsymbol{\Phi}}
+\newcommand{\pot}{^{\text{pot}}}
+\newcommand{\dep}{^{\text{dep}}}
+\newcommand{\potdep}{^{\text{pot/dep}}}
+\newcommand{\lmax}{_{\text{max}}}
+\newcommand{\lmin}{_{\text{min}}}
 %---------Title-----------------------------------------------------------
 
 \title[Complex synapses]{A general theory of learning and memory with Complex Synapses}
@@ -82,8 +99,8 @@ Stanford University, Applied Physics
 %
  \begin{center}
  \includegraphics[height=6cm]{2000102CobaFig4.pdf}\citerrr{Coba2009phosphorylation}
- \end{center} 
- There is a complex, dynamical molecular network underlying synaptic plasticity.     
+ \end{center}
+ There is a complex, dynamical molecular network underlying synaptic plasticity.
  \note[item]{Does this matter?}
  \note[item]{Could just be the machinery for changing synaptic weight}
 %
@@ -96,11 +113,11 @@ Stanford University, Applied Physics
   A classical perceptron (used as a recognition memory device) has a capacity $\propto N$, the number of synapses.
 
  \vp Requires synapses' dynamic range also $\propto N$.
- 
- \vp If we restrict synaptic weight to a fixed, finite set of values,\\ 
+
+ \vp If we restrict synaptic weight to a fixed, finite set of values,\\
  \hp $\implies$ tradeoff between learning and forgetting:\\
  \hp new memories overwriting old.
- 
+
  \vp If we wish to store new memories rapidly, memory capacity  $\sim\CO(\log N)$.
  \\ \citerr{amit1992constraints,amit1994learning}
 
@@ -113,6 +130,30 @@ Stanford University, Applied Physics
 \section{Modelling synaptic complexity}
 
 %-------------Slide--------------------------------------------------------
+
+\begin{frame}{Complex synapses}
+%
+  \aligntop{\includegraphics[width=5cm]{synapse.svg}}
+  \hp\aligntop{\includegraphics[width=2cm]{pot.svg}}
+  \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Simplifying assumptions}
+%
+\begin{itemize}
+  \item There are $N$ identical synapses with $M$ internal functional states.
+  \item States of different synapses are independent of each other.
+  \item Which synapses eligible for plasticity chosen randomly.
+  \item Potentiating/depressing plasticity events $\sim$ Poisson processes with rates $rf\potdep$, where $f\pot+f\dep=1$.
+      \note{In other words, $r$ is the total rate of plasticity events per synapse and $f\potdep$ are the fraction of these events that are potentiating/depressing.}
+  \item Potentiation and depression are described by Markov processes with transition probabilities $\M\potdep$.
+  \item Synaptic weights of the internal states are given by vector $\w$.\\ Can only take values $\pm1$.
+\end{itemize}
+%
+\end{frame}
 
 
 %-------------Section--------------------------------------------------------
