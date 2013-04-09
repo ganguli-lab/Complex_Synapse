@@ -15,11 +15,13 @@
 \input{sl_definitions.tex}
 \input{sl_slide_symbols.tex}
 \graphicspath{{"Figures/"}}
+\DeclareMathOperator{\SNR}{SNR}
+\DeclareMathOperator{\snr}{SNR}
 %matrices
 \newcommand{\I}{\mathbf{I}}
-%vec of ones
-%equilibrium distribution
+%prob vector
 \newcommand{\pr}{\mathbf{p}}
+%equilibrium distribution
 \newcommand{\eq}{\pr^\infty}
 %other symbols
 \newcommand{\w}{\mathbf{w}}
@@ -27,11 +29,17 @@
 \newcommand{\frg}{\W^\mathrm{F}}
 \newcommand{\M}{\mathbf{M}}
 \newcommand{\F}{\boldsymbol{\Phi}}
+\newcommand{\wv}{\vec{w}}
+%super/subscripts
 \newcommand{\pot}{^{\text{pot}}}
 \newcommand{\dep}{^{\text{dep}}}
 \newcommand{\potdep}{^{\text{pot/dep}}}
 \newcommand{\lmax}{_{\text{max}}}
 \newcommand{\lmin}{_{\text{min}}}
+%quantities
+\newcommand{\initial}{\mathcal{I}}
+\newcommand{\area}{\mathcal{A}}
+\renewcommand{\e}{\mathsf{e}}
 %---------Title-----------------------------------------------------------
 
 \title[Complex synapses]{A general theory of learning and memory with Complex Synapses}
@@ -95,14 +103,15 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Complex synapse}
+\begin{frame}[label=fr_net]{Complex synapse}
 %
  \begin{center}
  \includegraphics[height=6cm]{2000102CobaFig4.pdf}\citerrr{Coba2009phosphorylation}
  \end{center}
- There is a complex, dynamical molecular network underlying synaptic plasticity.
+ \hyperlink{fr_questions}{There} is a complex, dynamical molecular network underlying synaptic plasticity.
  \note[item]{Does this matter?}
  \note[item]{Could just be the machinery for changing synaptic weight}
+ \note[item]{link back to questions on ``There''}
 %
 \end{frame}
 
@@ -155,10 +164,147 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Probabilities}
+%
+ At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
+ \note[item]{for this one, we keep track of pot/dep}
+
+ \vp Forgetting caused by subsequent memories, evolving as
+ %
+ \begin{equation*}
+   \diff{\pr(t)}{t} = r\pr(t)\frg,
+   \qquad
+   \frg = f\pot\M\pot+f\dep\M\dep-\I,
+ \end{equation*}
+ %
+ \note[item]{$\frg$ is forgetting matrix, don't keep track of pot/dep}
+ Eventually, this will settle into the equilibrium distribution:
+ %
+ \begin{equation*}
+   \eq\frg=0.
+ \end{equation*}
+ %
+ \note[item]{In equilibrium prior to memory creation}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Memory curve}
+%
+ $\wv$ is the $N$-element vector of synaptic weights.
+ \note[item]{of different synapses}
+  %
+ \begin{equation*}
+   \begin{aligned}
+     \text{Signal} &= \av{\wv_\text{ideal} \cdot \wv(t) -  \wv_\text{ideal} \cdot \wv(\infty)}\\
+     \text{Noise} &= \var\prn{\wv_\text{ideal} \cdot \wv(\infty)}
+   \end{aligned}
+ \end{equation*}
+ %
+ \note[item]{ideal: pot$\to$strong...}
+ \note[item]{if we ignore correlations...}
+ Related to reconstruction probability of single synapses.
+ %
+ \begin{equation*}
+   \SNR(t) \sim \sqrt{N}\,P(\text{strong/weak},t|\text{pot/dep},t=0)-\ldots(t=\infty).
+ \end{equation*}
+ %
+
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Example models}
+%
+ Two example models of complex synapses.
+ \begin{center}
+% \parbox[t]{30cm}{
+  \aligntop{\includegraphics[width=4cm]{cascade.svg}}
+  \hspace{2cm}
+  \aligntop{\includegraphics[width=4cm]{multistate.svg}}
+% }
+ \end{center}
+ \citerr{Fusi2005cascade,amit1994learning,Fusi2007multistate}
+
+ These have different memory storage properties
+ \begin{center}
+ \includegraphics[width=8cm]{cascms.eps}
+ \end{center}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}[label=fr_questions]{Questions}
+%
+ \begin{itemize}
+   \item Can we understand the space of \emph{all possible} synaptic models?
+   \note[item]{not just individual models}
+   \item How does structure \hyperlink{fr_net<1>}{(topology)} of model $\to$ function (memory curve)?
+   \note[item]{understand net (link on topology)}
+   \item What are the limits on what can be achieved?
+   \note[item]{avoid using word ``optimal''. depends on what want to do.}
+   \item Which transition topologies saturate these limits?
+ \end{itemize}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Memory curve 2}
+%
+ Memory curve given by
+ %
+ \begin{equation*}
+   \snr(t) = \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{\eq_+\eq_-}}\, \eq \prn{\M\pot-\M\dep}
+      \exp\prn{rt\frg}\w.
+ \end{equation*}
+ %
+ \note[item]{prefactors don't do anything, ignore}
+ \note[item]{prior state, encoding, forgetting, readout}
+ Constraints: \qquad $\M\potdep_{ij}\in[0,1]$, \qquad $\sum_j\M\potdep_{ij}=1$.
+ \note[item]{difficult to to apply}
+ 
+ \vp Eigenmode decomposition:
+ %
+ \begin{equation*}
+   \snr(t) = \sqrt{N}\sum_a \initial_a \,\e^{-rt/\tau_a}.
+ \end{equation*}
+ %
+ \note[item]{what are constraints on these?}
+%
+\end{frame}
+
 
 %-------------Section--------------------------------------------------------
 
 \section{Upper bounds}
+
+%-------------Section--------------------------------------------------------
+
+\subsection{Initial SNR}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Initial SNR as flux}
+%
+ Initial SNR is closely related to flux between strong \& weak states
+ %
+ \begin{equation*}
+   \SNR(0) \leq \frac{4\sqrt{N}}{r}\,\F_{-+}.
+ \end{equation*}
+ %
+ \note[item]{usually saturated: pot never dec, dep never inc}
+ Max when {\parbox[t]{8cm}{potentiation guarantees $\w\to+1$,\\ 
+ depression guarantees $\w\to-1$.}}
+%
+\end{frame}
+
 
 %-------------Slide--------------------------------------------------------
 
