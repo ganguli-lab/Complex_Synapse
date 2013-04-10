@@ -11,9 +11,11 @@
 \documentclass{beamer}%[hyperref={backref=slide}]
 
 \input{sl_slide_preamble.tex}
+%\input{sl_slide_preamble_nonotes.tex}
 \input{sl_slide_graphics_preamble.tex}
 \input{sl_definitions.tex}
 \input{sl_slide_symbols.tex}
+%
 \graphicspath{{"Figures/"}}
 \DeclareMathOperator{\SNR}{SNR}
 \DeclareMathOperator{\snr}{SNR}
@@ -23,6 +25,10 @@
 \newcommand{\pr}{\mathbf{p}}
 %equilibrium distribution
 \newcommand{\eq}{\pr^\infty}
+%first passage times
+\newcommand{\fpt}{\mathbf{T}}
+%off-diag first passage times
+\newcommand{\fptb}{\overline{\fpt}}
 %other symbols
 \newcommand{\w}{\mathbf{w}}
 \newcommand{\W}{\mathbf{W}}
@@ -74,10 +80,13 @@ Stanford University, Applied Physics
 \begin{frame}{Introduction}
 %
  We often model synaptic plasticity as the change of a single number (synaptic weight).
+ %
  \note[item]{amplitude of psp.}
+ %
  In reality, there is a complex dynamical system inside a synapse.
 
  \vp Semi-realistic models of synaptic memory have terrible storage without synaptic complexity.
+ %
  \note[item]{finite number of values.}
 
  \vp We will study the entire space of a broad class of models of complex synapses to find upper bounds on their performance.
@@ -90,6 +99,7 @@ Stanford University, Applied Physics
 \begin{frame}{Outline}
 %
  \tableofcontents[hideallsubsections]
+ %
  \note[item]{review terrible properties of simple synapses.}
  \note[item]{mathematical formalism of model, quantify performance (memory decay over time)}
  \note[item]{upper bounds on single numbers that describe performance at all times}
@@ -108,7 +118,11 @@ Stanford University, Applied Physics
  \begin{center}
  \includegraphics[height=6cm]{2000102CobaFig4.pdf}\citerrr{Coba2009phosphorylation}
  \end{center}
+ %
+ \note[item]{Molecular network, post-synaptic density, from Seth Grant}
+ %
  \hyperlink{fr_questions}{There} is a complex, dynamical molecular network underlying synaptic plasticity.
+ %
  \note[item]{Does this matter?}
  \note[item]{Could just be the machinery for changing synaptic weight}
  \note[item]{link back to questions on ``There''}
@@ -126,11 +140,17 @@ Stanford University, Applied Physics
  \vp If we restrict synaptic weight to a fixed, finite set of values,\\
  \hp $\implies$ tradeoff between learning and forgetting:\\
  \hp new memories overwriting old.
+ %
+ \note[item]{very plastic: learn easy, forget easy}
+ \note[item]{little plasticity, remember better, learn harder}
 
  \vp If we wish to store new memories rapidly, memory capacity  $\sim\CO(\log N)$.
  \\ \citerr{amit1992constraints,amit1994learning}
-
+ %
+ \note[item]{or sparse $\sim \log N / N$}
+ 
  \vp To circumvent this tradeoff, need to go beyond model of a synapse as a single number.
+ \note[item]{one way around limit: complexity}
 %
 \end{frame}
 
@@ -142,9 +162,16 @@ Stanford University, Applied Physics
 
 \begin{frame}{Complex synapses}
 %
-  \aligntop{\includegraphics[width=5cm]{synapse.svg}}
+  \aligntop{\includegraphics[width=5cm]{synapse.svg}}\hp
+  %
+  \note[item]{functional states, not molecules}
+  \note[item]{synaptic weight depends on state}
+  \note[item]{many states can have same weight}
+  %
   \hp\aligntop{\includegraphics[width=2cm]{pot.svg}}
   \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
+  %
+  \note[item]{stochastic transitions}
 %
 \end{frame}
 
@@ -155,21 +182,34 @@ Stanford University, Applied Physics
 \begin{itemize}
   \item There are $N$ identical synapses with $M$ internal functional states.
   \item States of different synapses are independent of each other.
+      %
+      \note[item]{allows us to concentrate on synapse, not neuron/network}
+      %
   \item Which synapses eligible for plasticity chosen randomly.
+      %
+      \note[item]{don't care if STDP...}
+      %
   \item Potentiating/depressing plasticity events $\sim$ Poisson processes with rates $rf\potdep$, where $f\pot+f\dep=1$.
-      \note{In other words, $r$ is the total rate of plasticity events per synapse and $f\potdep$ are the fraction of these events that are potentiating/depressing.}
+      %
+      \note[item]{$r=$ total rate of plasticity events per synapse, $f\potdep=$ fraction of events that are potentiating/depressing.}
+      %
   \item Potentiation and depression are described by Markov processes with transition probabilities $\M\potdep$.
+      %
+      \note[item]{matrix elements: transition prob from $i\to j$, given pot/dep}
+      %
   \item Synaptic weights of the internal states are given by vector $\w$.\\ Can only take values $\pm1$.
+      %
+      \note[item]{looks like binary synapse from outside. Inside...}
 \end{itemize}
 %
 \end{frame}
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Probabilities}
+\begin{frame}{Dynamics}
 %
  At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
- \note[item]{for this one, we keep track of pot/dep}
+ \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
 
  \vp Forgetting caused by subsequent memories, evolving as
  %
@@ -179,7 +219,7 @@ Stanford University, Applied Physics
    \frg = f\pot\M\pot+f\dep\M\dep-\I,
  \end{equation*}
  %
- \note[item]{$\frg$ is forgetting matrix, don't keep track of pot/dep}
+ \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
  Eventually, this will settle into the equilibrium distribution:
  %
  \begin{equation*}
@@ -195,8 +235,11 @@ Stanford University, Applied Physics
 \begin{frame}{Memory curve}
 %
  $\wv$ is the $N$-element vector of synaptic weights.
+ %
  \note[item]{of different synapses}
-  %
+ \note[item]{ideal observer reads weights, not states}
+ \note[item]{upper bound on electrical activity readout}
+ %
  \begin{equation*}
    \begin{aligned}
      \text{Signal} &= \av{\wv_\text{ideal} \cdot \wv(t) -  \wv_\text{ideal} \cdot \wv(\infty)}\\
@@ -205,7 +248,9 @@ Stanford University, Applied Physics
  \end{equation*}
  %
  \note[item]{ideal: pot$\to$strong...}
+ \note[item]{subtract baseline, some overlap even w/o encoding}
  \note[item]{if we ignore correlations...}
+ %
  Related to reconstruction probability of single synapses.
  %
  \begin{equation*}
@@ -221,6 +266,7 @@ Stanford University, Applied Physics
 \begin{frame}{Example models}
 %
  Two example models of complex synapses.
+ %
  \begin{center}
 % \parbox[t]{30cm}{
   \aligntop{\includegraphics[width=4cm]{cascade.svg}}
@@ -229,11 +275,17 @@ Stanford University, Applied Physics
 % }
  \end{center}
  \citerr{Fusi2005cascade,amit1994learning,Fusi2007multistate}
+ %
+ \note[item]{previous work, also: Benna-Fusi}
 
  These have different memory storage properties
+ %
  \begin{center}
  \includegraphics[width=8cm]{cascms.eps}
  \end{center}
+ %
+ \note[item]{Multistate good at one time, bad at others,}
+ \note[item]{Cascade, less well at that time, better over range of times.}
 %
 \end{frame}
 
@@ -260,13 +312,15 @@ Stanford University, Applied Physics
  Memory curve given by
  %
  \begin{equation*}
-   \snr(t) = \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{\eq_+\eq_-}}\, \eq \prn{\M\pot-\M\dep}
+   \snr(t) = \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{4\eq_+\eq_-}}\, \eq \prn{\M\pot-\M\dep}
       \exp\prn{rt\frg}\w.
  \end{equation*}
  %
  \note[item]{prefactors don't do anything, ignore}
  \note[item]{prior state, encoding, forgetting, readout}
+ %
  Constraints: \qquad $\M\potdep_{ij}\in[0,1]$, \qquad $\sum_j\M\potdep_{ij}=1$.
+ %
  \note[item]{difficult to to apply}
  
  \vp Eigenmode decomposition:
@@ -288,7 +342,6 @@ Stanford University, Applied Physics
 
 \subsection{Initial SNR}
 
-
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Initial SNR as flux}
@@ -302,11 +355,120 @@ Stanford University, Applied Physics
  \note[item]{usually saturated: pot never dec, dep never inc}
  Max when {\parbox[t]{8cm}{potentiation guarantees $\w\to+1$,\\ 
  depression guarantees $\w\to-1$.}}
+ %
+ \begin{center}
+   \includegraphics[height=3cm]{max_init_pot.svg}
+   \hp \hp
+   \includegraphics[height=3cm]{max_init_dep.svg}
+ \end{center}
+ %
+ \note[item]{transitions out of one node sum to 1}
+ \note[item]{equivalent to two-state model: doesn't matter which strong/weak state, same prob of going to other set.}
 %
 \end{frame}
 
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Two-state model}
+%
+ Two-state model equivalent to previous slide:
+  \begin{center}
+  Transitions:
+   \parbox{2cm}{\includegraphics[height=2cm]{binary_det.svg}}
+   $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
+  \end{center}
+  \note[item]{decays very quickly}
+ 
+ \vp Maximal initial SNR:\note[item]{$f\pot=\half$}
+ %
+ \begin{equation*}
+   \snr(0) \leq \sqrt{N}.
+ \end{equation*}
+ %
+%
+\end{frame}
+
+%-------------Section--------------------------------------------------------
+
+\subsection{Area under memory curve}
 
 %-------------Slide--------------------------------------------------------
+
+\begin{frame}{Area under memory curve}
+%
+  Memory lifetime bounded by area under SNR curve:\\
+  \vp\parbox{5cm}{
+  %
+  \begin{equation*}
+  \begin{aligned}
+    \SNR(\text{lifetime})&=1
+    \\
+    \implies
+    \quad
+    \text{lifetime} &< \area.
+  \end{aligned}
+  \end{equation*}
+  %
+  }
+  \parbox{6.5cm}{
+    \includegraphics[width=6cm]{lifetime.eps}
+  }
+  %
+  \note[item]{lifetime = area under green < area under blue}
+  \note[item]{capacity $\sim r$ lifetime, \#new memories before we forget original.}
+  
+  %
+  \vp This area has an upper bound:
+  %
+  \begin{equation*}
+    \area \leq \sqrt{N}(M-1)/r.
+  \end{equation*}
+  %
+  \note[item]{reminder: $N=$\#synapses, $M=$\#states}
+  Saturated by a model with linear chain topology.
+  \note[item]{proof next slide}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}[label=fr_areaproof]{Proof of area bound}
+%
+ For any model, we can construct perturbations that
+ \parbox[c]{5cm}{
+  \begin{itemize}
+    \item preserve equilibrium distribution,
+    \item increase area.
+  \end{itemize}
+  \hyperlink{fr_tech}{\beamerbutton{details}}
+  %
+  \note[item]{relies on order \& technical condition}
+ }
+ \parbox[c]{5cm}{
+  %
+  \begin{center}
+    \includegraphics[width=4cm]{shortcut.svg}
+  \end{center}
+  %
+ }\\
+ \eg decrease``shortcut'' transitions, increase bypassed ``direct'' ones.\\
+ Endpoint: linear chain
+
+ \vp The area of this model is
+ %
+ \begin{equation*}
+   A = \frac{2\sqrt{N}}{r}\sum_k \eq_k \abs{k-\av{k}}.
+ \end{equation*}
+ %
+ \note[item]{max given $\eq$}
+ \note[item]{now max \wrt $\eq$}
+ Max: equilibrium probability distribution concentrated at both ends.
+ \note[item]{keep c.o.m.\ in middle}
+ \\
+ \citerr{Barrett2008discrete}
+ \note[item]{similar result, slightly different conditions: linear weights, mutual info}
+%
+\end{frame}
 
 
 %-------------Section--------------------------------------------------------
@@ -314,6 +476,28 @@ Stanford University, Applied Physics
 \section{Envelope memory curve}
 
 %-------------Slide--------------------------------------------------------
+
+\begin{frame}{Bounding finite time SNR}
+%
+ SNR curve:
+ %
+ \begin{equation*}
+   \snr(t) = \sqrt{N}\sum_a \initial_a \,\e^{-rt/\tau_a}.
+ \end{equation*}
+ %
+ \note[item]{from eigenmode decomposition}
+ subject to constraints:
+ %
+ \begin{equation*}
+   \sum_a \initial_a \leq 1,
+   \qquad
+   \sum_a \initial_a\, \tau_a \leq M-1.
+ \end{equation*}
+ %
+ \note[item]{from initial, area bounds}
+ We can maximise \wrt $\initial_a,\tau_a$.
+%
+\end{frame}
 
 
 
@@ -348,6 +532,56 @@ Stanford University, Applied Physics
  \bibliographystyle{unsrt_slides}
  \bibliography{maths,neuro}
  }
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}[label=fr_tech]{Techinical detail: ordering states}
+%
+ Let $\fpt_{ij}=$ mean first passage time from state $i$ to state $j$.
+ Then:
+ %
+ \begin{equation*}
+   \eta = \sum_j \fpt_{ij} \eq_j,
+ \end{equation*}
+ %
+ is independent of the initial state $i$
+ (Kemeney's constant).\\ \citerr{kemeny1960finite}
+
+ \vp We define:
+ %
+ \begin{equation*}
+   \eta^+_i = \sum_{j\in\text{strong}} \fpt_{ij} \eq_j,
+   \qquad
+   \eta^-_i = \sum_{j\in\text{weak}} \fpt_{ij} \eq_j.
+ \end{equation*}
+ %
+ \note[item]{Measure ``distance'' to the strong/weak states.}
+ They can be used to arrange the states in an order (increasing $\eta^-$ or decreasing $\eta^+$).
+ \hyperlink{fr_areaproof}{\beamerbutton{back}}
+ \note[item]{sum to constant, $\implies$ two orders same}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Technical detail: upper/lower triangular}
+%
+ With states in order:
+ %
+ \begin{center}
+   \includegraphics[width=2cm]{triangular_right.svg}
+   \hp \hp \hp
+   \includegraphics[width=2cm]{triangular_left.svg}
+ \end{center}
+ %
+ \note[item]{pot \& dep with same initial \& final state}
+ Endpoint: potentiation goes right, depression goes left.
+ \note[item]{pot/dep matrices are upper/lower triangular.}
+ \note[item]{one other pert. too technical, even for bonus slide!}
+ 
+ \hyperlink{fr_areaproof}{\beamerbutton{back}}
 %
 \end{frame}
 
