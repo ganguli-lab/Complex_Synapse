@@ -148,7 +148,7 @@ Stanford University, Applied Physics
  \\ \citerr{amit1992constraints,amit1994learning}
  %
  \note[item]{or sparse $\sim \log N / N$}
- 
+
  \vp To circumvent this tradeoff, need to go beyond model of a synapse as a single number.
  \note[item]{one way around limit: complexity}
 %
@@ -322,7 +322,7 @@ Stanford University, Applied Physics
  Constraints: \qquad $\M\potdep_{ij}\in[0,1]$, \qquad $\sum_j\M\potdep_{ij}=1$.
  %
  \note[item]{difficult to to apply}
- 
+
  \vp Eigenmode decomposition:
  %
  \begin{equation*}
@@ -353,7 +353,7 @@ Stanford University, Applied Physics
  \end{equation*}
  %
  \note[item]{usually saturated: pot never dec, dep never inc}
- Max when {\parbox[t]{8cm}{potentiation guarantees $\w\to+1$,\\ 
+ Max when {\parbox[t]{8cm}{potentiation guarantees $\w\to+1$,\\
  depression guarantees $\w\to-1$.}}
  %
  \begin{center}
@@ -378,7 +378,7 @@ Stanford University, Applied Physics
    $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
   \end{center}
   \note[item]{decays very quickly}
- 
+
  \vp Maximal initial SNR:\note[item]{$f\pot=\half$}
  %
  \begin{equation*}
@@ -416,7 +416,7 @@ Stanford University, Applied Physics
   %
   \note[item]{lifetime = area under green < area under blue}
   \note[item]{capacity $\sim r$ lifetime, \#new memories before we forget original.}
-  
+
   %
   \vp This area has an upper bound:
   %
@@ -500,6 +500,40 @@ Stanford University, Applied Physics
 \end{frame}
 
 
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Constructing the envelope}
+%
+ %
+ \begin{center}
+ \begin{overlayarea}{10cm}{4.5cm}
+   \only<1>{\includegraphics[width=8cm]{env2_t1.eps}}
+   \only<2>{\includegraphics[width=8cm]{env2_t2.eps}}
+   \only<3>{\includegraphics[width=8cm]{env2_all.eps}}
+   \only<4>{\includegraphics[width=8cm]{env2_ex.eps}}
+ \end{overlayarea}
+ \end{center}
+ %
+ \begin{overlayarea}{10cm}{2cm}
+  \only<1>{Maximise SNR at one time}
+  %
+  \note[item]{only constrains SNR at that time, not others}
+  %
+  \only<2>{Another time}
+  %
+  \note[item]{get another bound}
+  %
+  \only<3>{All times $\to$ envelope}
+  %
+  \note[item]{vary time of max. no curve can cross this. is it tight? can any constrained set of exps be acheived?}
+  %
+  \only<4>{Memory curves of example models.}
+  %
+  \note[item]{no}
+ \end{overlayarea}
+%
+\end{frame}
+
 
 
 
@@ -580,7 +614,7 @@ Stanford University, Applied Physics
  Endpoint: potentiation goes right, depression goes left.
  \note[item]{pot/dep matrices are upper/lower triangular.}
  \note[item]{one other pert. too technical, even for bonus slide!}
- 
+
  \hyperlink{fr_areaproof}{\beamerbutton{back}}
 %
 \end{frame}
