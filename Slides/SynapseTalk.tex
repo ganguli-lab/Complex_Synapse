@@ -104,7 +104,7 @@ Stanford University, Applied Physics
  %
  \note[item]{review terrible properties of simple synapses.}
  \note[item]{mathematical formalism of model, quantify performance (memory decay over time)}
- \note[item]{upper bounds on single numbers that describe performance at all times}
+ \note[item]{upper bounds on single numbers that depend on whole memory curve (decay over time)}
  \note[item]{upper bounds at finite times}
 %
 \end{frame}
@@ -140,8 +140,8 @@ Stanford University, Applied Physics
  \vp Requires synapses' dynamic range also $\propto N$.
 
  \vp If we restrict synaptic weight to a fixed, finite set of values,\\
- \hp $\implies$ tradeoff between learning and forgetting:\\
- \hp new memories overwriting old.
+ \hp $\implies$ \parbox[t]{8cm}{tradeoff between learning and forgetting:\\
+ new memories overwriting old.}
  %
  \note[item]{very plastic: learn easy, forget easy}
  \note[item]{little plasticity, remember better, learn harder}
@@ -202,6 +202,8 @@ Stanford University, Applied Physics
   \item Synaptic weights of the internal states are given by vector $\w$.\\ Can only take values $\pm1$.
       %
       \note[item]{looks like binary synapse from outside. Inside...}
+      \note[item]{ideal observer reads weights, not electrical activity: don't model neurons/network}
+      \note[item]{upper bound on electrical activity readout}
 \end{itemize}
 %
 \end{frame}
@@ -271,12 +273,12 @@ Stanford University, Applied Physics
  %
  \begin{center}
 % \parbox[t]{30cm}{
-  \aligntop{\includegraphics[width=4cm]{cascade.svg}}
-  \hspace{2cm}
   \aligntop{\includegraphics[width=4cm]{multistate.svg}}
+  \hspace{2cm}
+  \aligntop{\includegraphics[width=4cm]{cascade.svg}}
 % }
  \end{center}
- \citerr{Fusi2005cascade,amit1994learning,Fusi2007multistate}
+ \citerr{amit1994learning,Fusi2007multistate,Fusi2005cascade}
  %
  \note[item]{previous work, also: Benna-Fusi}
 
@@ -554,7 +556,7 @@ Stanford University, Applied Physics
   \only<4>{Memory curves of example models.}
   %
   \note<4->[item]{no}
-  \note<4->[item]{One exp. discuss models later}
+  \note<4->[item]{One exp. discuss models next slide}
  \end{overlayarea}
 %
 \end{frame}
@@ -616,13 +618,13 @@ Stanford University, Applied Physics
  \end{center}
  %
  \note[item]{dashed: conjecture. tight.}
- 
+
  %
  \begin{equation*}
  \begin{aligned}
-   rt &< \CO(M^2) &
+   rt &< \CO(M^2), &\quad
    \text{envelope} &\sim (rt)^{-1/2}, \\
-   rt &> \CO(M^2) &
+   rt &> \CO(M^2), &
    \text{envelope} &\sim (rt)^{-1} .
  \end{aligned}
  \end{equation*}
@@ -641,38 +643,16 @@ Stanford University, Applied Physics
  %
  \begin{equation*}
  \begin{aligned}
-   N &> \CO(M^2) &\implies
+   N &< \CO(M^2) &\implies
    \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
    N &> \CO(M^2) &\implies
-   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}. 
+   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}.
  \end{aligned}
  \end{equation*}
  %
  \note[item]{$\gamma\sim\CO(1)$ constant in additional constaint}
  \note[item]{First $t^{-1}$ assumes M low. Second $t^{-1/2}$ applies to Benna-Fusi.}
  \note[item]{Independent synapses?}
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Two-time envelope}
-%
- Maximise $\snr(t_1)$ subject to constraint $\snr(t_2)=S_2$.
- 
- \vp For $t_1$ close to $t_2$, get single exponential. Far away, get two exponentials.
- %
- \note[item]{Max at multiple times, $\to$ multiple timescales? cascade? Benna-Fusi?}
- 
- \vp See tradeoff between $\snr(t_1)$ and $\snr(t_2)$.
- %
- 
- %
- \begin{center}
-   \includegraphics[width=5cm]{two_time_env.eps}
- \end{center}
- %
-  \note[item]{numerics not working. 2 exp solution need to solve 2 transcendental equations.}
 %
 \end{frame}
 
@@ -714,7 +694,7 @@ Stanford University, Applied Physics
  Cheeger constant:
  %
  \begin{equation*}
-   \phi \equiv \min_\CS \brc{\frac{\operatorname{Perimeter}(\CS)}{\operatorname{Area}(\CS)}}.
+   \phi \equiv \min_\CS \brc{\frac{\operatorname{Perimeter}(\p\CS)}{\operatorname{Area}(\CS)}}.
  \end{equation*}
  %
  \note[item]{split into two pieces. pick smaller. higher dim.}
@@ -783,8 +763,32 @@ Stanford University, Applied Physics
  %
  \note[item]{high inital snr and long timescale in different modes.}
  \note[item]{only eigenmode dependent constraints survive (and L2 - but difficult to work with).}
- 
+
  Also tried: random Markov chains.
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Two-time envelope}
+%
+ Maximise $\snr(t_1)$ subject to constraint $\snr(t_2)=S_2$.
+ %
+
+ \vp For $t_1$ close to $t_2$, get single exponential. Far away, get two exponentials.
+ %
+ \note[item]{Max at multiple times, $\to$ multiple timescales? cascade? Benna-Fusi?}
+
+ \vp See tradeoff between $\snr(t_1)$ and $\snr(t_2)$.
+ %
+
+ %
+ \begin{center}
+   \includegraphics[width=5cm]{two_time_env.eps}
+ \end{center}
+ %
+\note[item]{only implemented first 2 constraints}
+  \note[item]{numerics not working. 2 exp solution need to solve 2 transcendental equations.}
 %
 \end{frame}
 
