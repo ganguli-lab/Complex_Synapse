@@ -18,6 +18,7 @@ function [ hs ] = PlotDoubleEnv( t1,t2,S2,n,hs,varargin )
 %       3: c_a sqrt(q_a) < gamma
 
 Constraint3=false;
+FontSize=16;
 varargin=assignApplicable(varargin);
 
 if isempty(hs)
@@ -42,36 +43,37 @@ for i=1:length(t1)
     cons(:,i)=BinVec(whichcase,2,2+Constraint3)';
 end
 
-
+S1(S1==0)=NaN;
+valid=~isnan(S1);
 
 xl=[t1(1) t1(end)];
 
 [hs.envh,yl]=PlotEnvs(t1,n,'Parent',hs.ax_snr,'Format',false);
-hs.ph_snr=plot(t1,S1,'b',t2,S2,'r+','LineWidth',1.5,'Parent',hs.ax_snr);
-xlabel(hs.ax_snr,'Time');
-ylabel(hs.ax_snr,'SNR');
+hs.ph_snr=plot(t1(valid),S1(valid),'b',t2,S2,'r+','LineWidth',1.5,'Parent',hs.ax_snr);
+xlabel(hs.ax_snr,'Time','FontSize',FontSize);
+ylabel(hs.ax_snr,'SNR','FontSize',FontSize);
 ylim(hs.ax_snr,yl);
 xlim(hs.ax_snr,xl);
 set(hs.ax_snr,'XScale','log','YScale','log');
 
-hs.ph_exp=area(t1,numexp,'Parent',hs.ax_exp);
-ylabel(hs.ax_exp,'#exp');
+hs.ph_exp=area(t1(valid),numexp(valid),'Parent',hs.ax_exp);
+ylabel(hs.ax_exp,'#exp','FontSize',FontSize);
 xlim(hs.ax_exp,xl);
 set(hs.ax_exp,'XScale','log');
 
-hs.ph_con1=area(t1,cons(1,:),'Parent',hs.ax_con1);
-ylabel(hs.ax_con1,'Initial');
+hs.ph_con1=area(t1(valid),cons(1,(valid)),'Parent',hs.ax_con1);
+ylabel(hs.ax_con1,'Initial','FontSize',FontSize);
 xlim(hs.ax_con1,xl);
 set(hs.ax_con1,'XScale','log');
 
-hs.ph_con2=area(t1,cons(2,:),'Parent',hs.ax_con2);
-ylabel(hs.ax_con2,'Area');
+hs.ph_con2=area(t1(valid),cons(2,(valid)),'Parent',hs.ax_con2);
+ylabel(hs.ax_con2,'Area','FontSize',FontSize);
 xlim(hs.ax_con2,xl);
 set(hs.ax_con2,'XScale','log');
 
 if Constraint3
-    hs.ph_con3=area(t1,cons(3,:),'Parent',hs.ax_con2);
-    ylabel(hs.ax_con3,'Mode');
+    hs.ph_con3=area(t1,cons(3,(valid)),'Parent',hs.ax_con2);
+    ylabel(hs.ax_con3,'Mode','FontSize',FontSize);
     xlim(hs.ax_con3,xl);
     set(hs.ax_con3,'XScale','log');
 end

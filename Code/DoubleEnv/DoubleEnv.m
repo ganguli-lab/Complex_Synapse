@@ -30,7 +30,11 @@ varargin=assignApplicable(varargin);
 if t1==t2
     numexp=1;
     whichcase=0;
-    S1=S2*exp((t2-t)/t2);
+    if isempty(t)
+        S1=S2;
+    else
+        S1=S2*exp((t2-t)/t2);
+    end
     return;
 end
 
