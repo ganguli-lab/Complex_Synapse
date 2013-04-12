@@ -45,6 +45,8 @@
 %quantities
 \newcommand{\initial}{\mathcal{I}}
 \newcommand{\area}{\mathcal{A}}
+\newcommand{\CS}{\mathcal{S}}
+\newcommand{\comp}{^\mathrm{c}}
 \renewcommand{\e}{\mathsf{e}}
 %---------Title-----------------------------------------------------------
 
@@ -348,6 +350,8 @@ Stanford University, Applied Physics
 %
  Initial SNR is closely related to flux between strong \& weak states
  %
+ \note[item]{flux = eq prob $\times$ trans prob}
+ %
  \begin{equation*}
    \SNR(0) \leq \frac{4\sqrt{N}}{r}\,\F_{-+}.
  \end{equation*}
@@ -385,6 +389,7 @@ Stanford University, Applied Physics
    \snr(0) \leq \sqrt{N}.
  \end{equation*}
  %
+ \note[item]{Initial SNR not a good thing to optimise.}
 %
 \end{frame}
 
@@ -470,6 +475,23 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Saturating model}
+%
+ Make end states ``sticky''
+ %
+ \begin{center}
+   \includegraphics[width=8cm]{multistate_sticky.svg}
+ \end{center}
+ %
+ Has long decay time, but terrible initial SNR.
+ %
+ \note[item]{Difficult to get out of end state.}
+ \note[item]{Area not a good thing to optimise}
+%
+\end{frame}
+
 
 %-------------Section--------------------------------------------------------
 
@@ -517,20 +539,268 @@ Stanford University, Applied Physics
  \begin{overlayarea}{10cm}{2cm}
   \only<1>{Maximise SNR at one time}
   %
-  \note[item]{only constrains SNR at that time, not others}
+  \note<1->[item]{One exp. only constrains SNR at that time, not others}
   %
   \only<2>{Another time}
   %
-  \note[item]{get another bound}
+  \note<2->[item]{get another bound}
   %
   \only<3>{All times $\to$ envelope}
   %
-  \note[item]{vary time of max. no curve can cross this. is it tight? can any constrained set of exps be acheived?}
+  \note<3->[item]{vary time of max. no curve can cross this.}
+  \note<3->[item]{Regions: init(1); area(1,2)}
+  \note<3->[item]{is it tight? can any constrained set of exps be acheived?}
   %
   \only<4>{Memory curves of example models.}
   %
-  \note[item]{no}
+  \note<4->[item]{no}
+  \note<4->[item]{One exp. discuss models later}
  \end{overlayarea}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Best models at single times}
+%
+ Early times:
+ %
+ \begin{center}
+   \includegraphics[width=6cm]{multistate_shorten.svg}
+ \end{center}
+ %
+ \note[item]{shorten length of chain, keeping deterministic}
+ %
+ Late times:
+ %
+ \begin{center}
+   \includegraphics[width=6cm]{multistate_sticky.svg}
+ \end{center}
+ %
+ \note[item]{Area maximising.}
+ \note[item]{two mechs for slowing forgetting: time (lower trans prob) and space (diffusion length)}
+ %
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Additional constraint}
+%
+ Conjecture: additional constraint
+ %
+ \begin{equation*}
+   \initial_a\sqrt{\tau_a} \leq \CO(1).
+ \end{equation*}
+ %
+ \note[item]{Tested experimentally. Discuss later}
+ %
+ Saturated by a diffusive chain:
+ %
+ \begin{equation*}
+   \SNR(0) \sim \frac{1}{n},
+   \qquad
+   \text{time-scale} \sim n^2.
+ \end{equation*}
+ %
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Envelope 2}
+%
+ %
+ \begin{center}
+   \includegraphics[width=8cm]{env23.eps}
+ \end{center}
+ %
+ \note[item]{dashed: conjecture. tight.}
+ 
+ %
+ \begin{equation*}
+ \begin{aligned}
+   rt &< \CO(M^2) &
+   \text{envelope} &\sim (rt)^{-1/2}, \\
+   rt &> \CO(M^2) &
+   \text{envelope} &\sim (rt)^{-1} .
+ \end{aligned}
+ \end{equation*}
+ %
+ \note[item]{earlier: diffusion limited. later: stochastic limited.}
+ \note[item]{regions: init(1); sqrt(2,3); area(3,4)}
+ \note[item]{Benna-Fusi hugs envelope? cascade $\sim t^{-3/4}$}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Lifetime bound}
+%
+ Lifetime of a memory bounded by where envelope crosses 1
+ %
+ \begin{equation*}
+ \begin{aligned}
+   N &> \CO(M^2) &\implies
+   \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
+   N &> \CO(M^2) &\implies
+   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}. 
+ \end{aligned}
+ \end{equation*}
+ %
+ \note[item]{$\gamma\sim\CO(1)$ constant in additional constaint}
+ \note[item]{First $t^{-1}$ assumes M low. Second $t^{-1/2}$ applies to Benna-Fusi.}
+ \note[item]{Independent synapses?}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Two-time envelope}
+%
+ Maximise $\snr(t_1)$ subject to constraint $\snr(t_2)=S_2$.
+ 
+ \vp For $t_1$ close to $t_2$, get single exponential. Far away, get two exponentials.
+ %
+ \note[item]{Max at multiple times, $\to$ multiple timescales? cascade? Benna-Fusi?}
+ 
+ \vp See tradeoff between $\snr(t_1)$ and $\snr(t_2)$.
+ %
+ 
+ %
+ \begin{center}
+   \includegraphics[width=5cm]{two_time_env.eps}
+ \end{center}
+ %
+  \note[item]{numerics not working. 2 exp solution need to solve 2 transcendental equations.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Additional constraint: other forms?}
+%
+ Involving eigenmodes:
+ %
+ \begin{equation*}
+   \initial_a \sqrt{\tau_a},
+   \qquad
+   \sum_a \initial_a \sqrt{\tau_a},
+   \qquad
+   \sum_a \initial_a^2 {\tau_a}.
+ \end{equation*}
+ %
+ \note[item]{as one-time max only involved one exp, would also work}
+ \note[item]{right units}
+ %
+ Not involving eigenmodes
+ %
+ \begin{equation*}
+   \area \times \snr(0),
+   \qquad
+   \intd{t} \snr(t)^2.
+ \end{equation*}
+ %
+ \note[item]{easier to work with?}
+ \note[item]{L2 doesn't have nice expression in terms of matrices}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Cheeger inequality}
+%
+ \parbox{5cm}{
+ Cheeger constant:
+ %
+ \begin{equation*}
+   \phi \equiv \min_\CS \brc{\frac{\operatorname{Perimeter}(\CS)}{\operatorname{Area}(\CS)}}.
+ \end{equation*}
+ %
+ \note[item]{split into two pieces. pick smaller. higher dim.}
+ \note[item]{bottleneck}
+ }
+ \parbox{6cm}{
+   \includegraphics[width=5cm]{dumbbell.svg}
+ }
+ Timescale for diffusion to equilibriate
+ %
+ \begin{equation*}
+   \frac{1}{D \tau_{\text{diffusion}}} < \CO(1)\, \phi^2.
+ \end{equation*}
+ %
+ \note[item]{if we want fast diffusion, need lhs large $\to$ no bottlenecks.}
+ \note[item]{purely geometric}
+ \note[item]{also inequality in other direction: want slow diffusion $\to$ need bottleneck. Not useful for us}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Cheeger inequality: Markov chains}
+%
+ Cheeger constant:
+ %
+ \begin{equation*}
+   \phi \equiv \min_\CS \brc{\frac{\F_{\CS\CS\comp}}{\eq(\CS)}}.
+ \end{equation*}
+ %
+ \note[item]{split states into two subsets. pick smaller.}
+ \note[item]{again bottleneck}
+ \note[item]{denominator varies}
+ %
+ Timescale to equilibriate:
+ %
+ \begin{equation*}
+   \frac{1}{\max_a\tau_a} < \CO(1)\, \phi^2.
+ \end{equation*}
+ %
+ Simple proof assuming detailed balance. \citerr{Sinclair1989cheeger}\\
+ More complicated proof for general case. \citerr{Lawler1988cheeger}
+ %
+ \note[item]{$\CO(1)$ bit differs}
+ \note[item]{bottleneck need not be between strong \& weak.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Counter examples?}
+%
+ Put bottleneck somewhere else:
+ %
+ \begin{center}
+   \includegraphics[width=6cm]{multistate_counter.svg}
+ \end{center}
+ %
+ \note[item]{eq prob concentrated near middle. bottleneck at $\epsilon$.}
+ %
+ Set $\epsilon = 1/M$, see how putative constraints vary:
+ %
+ \begin{center}
+   \includegraphics[width=6cm]{counter_graph.eps}
+ \end{center}
+ %
+ \note[item]{high inital snr and long timescale in different modes.}
+ \note[item]{only eigenmode dependent constraints survive (and L2 - but difficult to work with).}
+ 
+ Also tried: random Markov chains.
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Summary}
+%
+  \begin{itemize}
+    \item We have formulated a general theory of learning and memory with complex synapses.
+%    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
+    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
+    \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
+    \item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
+    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
+  \end{itemize}
+
 %
 \end{frame}
 
