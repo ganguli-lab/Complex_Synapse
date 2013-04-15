@@ -144,7 +144,6 @@ The values used for all these parameters in simulations are listed in \autoref{t
   \caption[Transition probabilities for different models]{Transition probabilities for different models.
   Potentiation induces transitions indicated by solid red arrows, depression indicated by dashed blue arrows.
   States of strong/weak synaptic weight indicated by red/blue circles.
-  States of strong/weak synaptic weight
   (\ref{fig:multistate_model}) In the multistate model the transition probabilities for potentiation/depression are all equal and it is parameterised by these two values.
   (\ref{fig:binary_model}) The two-state model is parameterised by the two transition probabilities.
   (\ref{fig:cascade_model}) In the cascade model, the transition probabilities decay geometrically with a parameter $x$ (see \cite{Fusi2005cascade}) and synaptic weight takes only two values.
@@ -342,76 +341,60 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
   \caption{Parameters used in simulations.} \label{tab:params}
 \end{table}
 
-
-\newcommand{\resultsfig}[3]{\begin{figure}
- \begin{center}
+\newcommand{\arrangefig}[1]{\begin{center}
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=7cm]{#3_learn.eps}}\label{fig:#3_learn}
-  \item\aligntop{\includegraphics[width=7cm]{#3_learnS.eps}}\label{fig:#3_learnS}
+  \item\aligntop{\includegraphics[width=7cm]{#1_learn.eps}}\label{fig:#1_learn}
+  \item\aligntop{\includegraphics[width=7cm]{#1_learnS.eps}}\label{fig:#1_learnS}
   \\ \vp\vp
-  \item\label{fig:#3_eq}\begin{myenumi}
-                    \item\aligntop{\includegraphics[width=7cm]{#3_eq_WT.eps}}\label{fig:#3_eq_WT}
-                    \item\aligntop{\includegraphics[width=7cm]{#3_eq_KO.eps}}\label{fig:#3_eq_KO}
+  \item\label{fig:#1_eq}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=7cm]{#1_eq_WT.eps}}\label{fig:#1_eq_WT}
+                    \item\aligntop{\includegraphics[width=7cm]{#1_eq_KO.eps}}\label{fig:#1_eq_KO}
                   \end{myenumi}
   \\ \vp \vp
-  \item\label{fig:#3_pr}\begin{myenumi}
-                    \item\aligntop{\includegraphics[width=3cm]{#3_pr_WT_nopre.eps}}\label{fig:#3_pr_WT_nopre}
-                    \item\aligntop{\includegraphics[width=3cm]{#3_pr_WT_pre.eps}}\label{fig:#3_pr_WT_pre}
-                    \item\aligntop{\includegraphics[width=3cm]{#3_pr_KO_nopre.eps}}\label{fig:#3_pr_KO_nopre}
-                    \item\aligntop{\includegraphics[width=3cm]{#3_pr_KO_pre.eps}}\label{fig:#3_pr_KO_pre}
+  \item\label{fig:#1_pr}\begin{myenumi}
+                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_WT_nopre.eps}}\label{fig:#1_pr_WT_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_WT_pre.eps}}\label{fig:#1_pr_WT_pre}
+                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_KO_nopre.eps}}\label{fig:#1_pr_KO_nopre}
+                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_KO_pre.eps}}\label{fig:#1_pr_KO_pre}
                   \end{myenumi}
  \end{myenuma}
- \end{center}
-  \caption[#1]{#1 #2.
-  Other parameters can be found in \autoref{tr:#3} of \autoref{tab:params}.
+ \end{center}}
+
+\newcommand{\captiontext}[1]{ can be found in \autoref{tr:#1} of \autoref{tab:params}.
   Time is measured in units of $1/r$, the mean time between plasticity events.
-  (\ref{fig:#3_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
-  (\ref{fig:#3_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:#3_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#3_eq_WT}) wild-type and (\ref{fig:#3_eq_KO}) \KO\ mutant,
+  (\ref{fig:#1_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
+  (\ref{fig:#1_learnS}) Learning curves restricted to gain-increase training.
+  (\ref{fig:#1_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#1_eq_WT}) wild-type and (\ref{fig:#1_eq_KO}) \KO\ mutant,
   with states of weak synaptic strength to the left and strong states to the right.
-  (\ref{fig:#3_pr}) Evolution of probability distributions for (\ref{fig:#3_pr_WT_nopre}\ref{fig:#3_pr_WT_pre}) wild-type and  (\ref{fig:#3_pr_KO_nopre}\ref{fig:#3_pr_KO_pre}) \KO\ mutant without (\ref{fig:#3_pr_WT_nopre},\ref{fig:#3_pr_KO_nopre}) and with (\ref{fig:#3_pr_WT_pre},\ref{fig:#3_pr_KO_pre}) pre-training,
-  with states of weak synaptic strength at the top and strong states underneath. } \label{fig:#3}
+  (\ref{fig:#1_pr}) Evolution of probability distributions for (\ref{fig:#1_pr_WT_nopre}\ref{fig:#1_pr_WT_pre}) wild-type and  (\ref{fig:#1_pr_KO_nopre}\ref{fig:#1_pr_KO_pre}) \KO\ mutant without (\ref{fig:#1_pr_WT_nopre},\ref{fig:#1_pr_KO_nopre}) and with (\ref{fig:#1_pr_WT_pre},\ref{fig:#1_pr_KO_pre}) pre-training,
+  with states of weak synaptic strength at the top and strong states underneath. } 
+
+\newcommand{\captionstart}[2]{Simulation results for the \textbf{#1} model with #2}
+\newcommand{\captionstarts}[2]{Simulation results for the #1 model with #2}
+\newcommand{\captionstartn}[1]{Simulation results for the \textbf{#1} model}
+\newcommand{\captionstartsn}[1]{Simulation results for the #1 model}
+
+\newcommand{\resultsfig}[4]{\begin{figure}
+  \arrangefig{#4}
+  \caption[\captionstarts{#1}{#2}]{\captionstart{#1}{#2 #3}.
+  Other parameters \captiontext{#4} } \label{fig:#4}
 \end{figure}}
 
 \newcommand{\resultsfign}[2]{\begin{figure}
- \begin{center}
- \begin{myenuma}
-  \item\aligntop{\includegraphics[width=7cm]{#2_learn.eps}}\label{fig:#2_learn}
-  \item\aligntop{\includegraphics[width=7cm]{#2_learnS.eps}}\label{fig:#2_learnS}
-  \\ \vp \vp
-  \item\label{fig:#2_eq}\begin{myenumi}
-                    \item\aligntop{\includegraphics[width=7cm]{#2_eq_WT.eps}}\label{fig:#2_eq_WT}
-                    \item\aligntop{\includegraphics[width=7cm]{#2_eq_KO.eps}}\label{fig:#2_eq_KO}
-                  \end{myenumi}
-  \\ \vp \vp
-  \item\label{fig:#2_pr}\begin{myenumi}
-                    \item\aligntop{\includegraphics[width=3cm]{#2_pr_WT_nopre.eps}}\label{fig:#2_pr_WT_nopre}
-                    \item\aligntop{\includegraphics[width=3cm]{#2_pr_WT_pre.eps}}\label{fig:#2_pr_WT_pre}
-                    \item\aligntop{\includegraphics[width=3cm]{#2_pr_KO_nopre.eps}}\label{fig:#2_pr_KO_nopre}
-                    \item\aligntop{\includegraphics[width=3cm]{#2_pr_KO_pre.eps}}\label{fig:#2_pr_KO_pre}
-                  \end{myenumi}
- \end{myenuma}
- \end{center}
-  \caption[#1]{#1.
-  Parameters can be found in \autoref{tr:#2} of \autoref{tab:params}.
-  Time is measured in units of $1/r$, the mean time between plasticity events.
-  (\ref{fig:#2_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
-  (\ref{fig:#2_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:#2_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#2_eq_WT}) wild-type and (\ref{fig:#2_eq_KO}) \KO\ mutant,
-  with states of weak synaptic strength to the left and strong states to the right.
-  (\ref{fig:#2_pr}) Evolution of probability distributions for (\ref{fig:#2_pr_WT_nopre}\ref{fig:#2_pr_WT_pre}) wild-type and  (\ref{fig:#2_pr_KO_nopre}\ref{fig:#2_pr_KO_pre}) \KO\ mutant without (\ref{fig:#2_pr_WT_nopre},\ref{fig:#2_pr_KO_nopre}) and with (\ref{fig:#2_pr_WT_pre},\ref{fig:#2_pr_KO_pre}) pre-training,
-  with states of weak synaptic strength at the top and strong states underneath. } \label{fig:#2}
+  \arrangefig{#2}
+  \caption[\captionstartsn{#1}]{\captionstartn{#1}.
+  Parameters \captiontext{#2} } \label{fig:#2}
 \end{figure}}
 
 
 
 \subsection{Step-multistate model}\label{sec:multistate}
 
-\resultsfig{Simulation results for the step-multistate model with weak training}{($\Delta f=-0.1$)}{multistate_weak}
+\resultsfig{step-multistate}{weak training}{($\Delta f=-0.1$)}{multistate_weak}
 
-\resultsfig{Simulation results for the step-multistate model with moderate training}{($\Delta f=-0.17$)}{multistate_med}
+\resultsfig{step-multistate}{moderate training}{($\Delta f=-0.17$)}{multistate_med}
 
-\resultsfig{Simulation results for the step-multistate model with strong training}{($\Delta f=-0.4$)}{multistate_strong}
+\resultsfig{step-multistate}{strong training}{($\Delta f=-0.4$)}{multistate_strong}
 
 
 The results of simulations of the step-multistate model can be seen in \autoref{fig:multistate_weak}, \autoref{fig:multistate_med} and \autoref{fig:multistate_strong}.
@@ -556,7 +539,7 @@ The difference in these two curvatures is therefore a good feature of this model
 \subsection{Two-state model}\label{sec:binary}
 
 
-\resultsfign{Simulation results for two-state model}{binary}
+\resultsfign{two-state model}{binary}
 
 
 The results of simulations of the two-state model can be seen in \autoref{fig:binary}.
@@ -646,7 +629,7 @@ In the data, it looks like that timescale is longer than the gaps between succes
 
 \subsection{Linear multistate model}\label{sec:multistate_lin}
 
-\resultsfign{Simulation results for multistate model with linear weights}{multistate_lin}
+\resultsfign{linear multistate model}{multistate_lin}
 
 
 In this section, we will consider the multistate model as originally defined in \cite{amit1994learning}, \ie with linearly varying synaptic weight:
@@ -727,9 +710,9 @@ Therefore, pre-training will always enhance learning, for both mutant and wild-t
 \subsection{Pooled resource model}\label{sec:pooled}
 
 
-\resultsfig{Simulation results for the pooled resource model with light depletion}{($q\lmin/q\lmax=0.75$)}{pooled_plenty}
+\resultsfig{pooled resource}{light depletion}{($q\lmin/q\lmax=0.75$)}{pooled_plenty}
 
-\resultsfig{Simulation results for the pooled resource model with heavy depletion}{($q\lmin/q\lmax=0.25$)}{pooled_scarce}
+\resultsfig{pooled resource}{heavy depletion}{($q\lmin/q\lmax=0.25$)}{pooled_scarce}
 
 
 The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}.
@@ -750,9 +733,9 @@ This differs from what is seen experimentally, where the pre-trained wild-type l
 
 \subsection{Cascade model}\label{sec:cascade}
 
-\resultsfig{Simulation results for the cascade model with short pre-training}{($rt_\text{pre}=50$)}{cascade_short}
+\resultsfig{cascade}{short pre-training}{($rt_\text{pre}=50$)}{cascade_short}
 
-\resultsfig{Simulation results for the cascade model with long pre-training}{($rt_\text{pre}=150$)}{cascade_long}
+\resultsfig{cascade}{long pre-training}{($rt_\text{pre}=150$)}{cascade_long}
 
 
 
