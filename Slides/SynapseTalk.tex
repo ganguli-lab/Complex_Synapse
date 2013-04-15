@@ -600,9 +600,9 @@ Stanford University, Applied Physics
  Saturated by a diffusive chain:
  %
  \begin{equation*}
-   \SNR(0) \sim \frac{1}{n},
+   \SNR(0) \sim \frac{1}{M},
    \qquad
-   \text{time-scale} \sim n^2.
+   \text{time-scale} \sim M^2.
  \end{equation*}
  %
 %
@@ -643,9 +643,9 @@ Stanford University, Applied Physics
  %
  \begin{equation*}
  \begin{aligned}
-   N &< \CO(M^2) &\implies
-   \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
    N &> \CO(M^2) &\implies
+   \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
+   N &< \CO(M^2) &\implies
    \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}.
  \end{aligned}
  \end{equation*}
@@ -706,10 +706,10 @@ Stanford University, Applied Physics
  Timescale for diffusion to equilibriate
  %
  \begin{equation*}
-   \frac{1}{D \tau_{\text{diffusion}}} < \CO(1)\, \phi^2.
+   \frac{1}{D \tau_{\text{diffusion}}} > \CO(1)\, \phi^2.
  \end{equation*}
  %
- \note[item]{if we want fast diffusion, need lhs large $\to$ no bottlenecks.}
+ \note[item]{if we want slow diffusion, need lhs small $\to$ need bottleneck.}
  \note[item]{purely geometric}
  \note[item]{also inequality in other direction: want slow diffusion $\to$ need bottleneck. Not useful for us}
 %
@@ -732,7 +732,7 @@ Stanford University, Applied Physics
  Timescale to equilibriate:
  %
  \begin{equation*}
-   \frac{1}{\max_a\tau_a} < \CO(1)\, \phi^2.
+   \frac{1}{\max_a\tau_a} > \CO(1)\, \phi^2.
  \end{equation*}
  %
  Simple proof assuming detailed balance. \citerr{Sinclair1989cheeger}\\
