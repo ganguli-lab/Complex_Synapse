@@ -4,6 +4,7 @@ hold(ax,'on')
 
 t=0.5:0.5:4000;
 n=40;
+doprint=false;
 
 [env,bnds]=SNRenvelope(t,n);
 [env2,bnds2]=SNRenvelope2(t,n);
@@ -27,7 +28,9 @@ xlabel(ax,'Time','FontSize',30)
 ylabel(ax,'SNR','FontSize',30);
 
 pause;
-print(fig,'env2_t1.eps','-depsc');
+if doprint
+    print(fig,'env2_t1.eps','-depsc');
+end
 
 delete([lh1,ph1]);
 clear('t1','s1','tn1','lh1','ph1');
@@ -41,7 +44,9 @@ ph2=plot(t,s2,'b','LineWidth',2,'Parent',ax);
 mh2=plot(t2,s2(tn2),'dg','Parent',ax,'MarkerFaceColor','g');
 
 pause;
-print(fig,'env2_t2.eps','-depsc');
+if doprint
+    print(fig,'env2_t2.eps','-depsc');
+end
 
 
 delete([mh1,mh2,lh2,ph2]);
@@ -51,21 +56,28 @@ plot(t,env2,'g','LineWidth',3,'Parent',ax);
 lh2=line([1;1]*bnds2',yl'*ones(1,length(bnds2)),'Color','k','LineWidth',1.5,'LineStyle','--','Parent',ax);
 
 pause;
-print(fig,'env2_all.eps','-depsc');
+if doprint
+    print(fig,'env2_all.eps','-depsc');
+end
 
 nvals=[4 10 16 28 40];
-epsvals=0.1.^(1:0.5:3);
 for nn=nvals
 s=UniSMScurve(t,nn,1);
 plot(t,s,'b','LineWidth',1.5)
 end
+
+pause;
+
+epsvals=0.1.^(1:0.5:3);
 for eps=epsvals
 s=UniSMScurve(t,n,1,eps);
 plot(t,s,'b','LineWidth',1.5)
 end
 
 pause;
-print(fig,'env2_ex.eps','-depsc');
+if doprint
+    print(fig,'env2_ex.eps','-depsc');
+end
 
 delete(lh2);
 clear('nvals','epsvals','nn','eps','s','lh2');
@@ -73,6 +85,8 @@ plot(t,env2,'g',t,env,'g--','LineWidth',3,'Parent',ax);
 line([1;1]*bnds',yl'*ones(1,length(bnds)),'Color','k','LineWidth',1.5,'LineStyle','--','Parent',ax);
 
 pause;
-print(fig,'env23.eps','-depsc');
+if doprint
+    print(fig,'env23.eps','-depsc');
+end
 
 close(fig);
