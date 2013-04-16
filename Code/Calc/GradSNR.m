@@ -25,23 +25,14 @@ u=u(:,ix);
 
 %this method doesn't work when eigenvectors are nearly parallel
 
-% Zinv=ones(n) - W;
-% ca = 2*fp*(1-fp) * (u\w) * sum((Zinv\q) * (Zinv\u), 1);
-% ca=diag(ca);
-% ca=ca(ix);
-
-% if rcond(u) < 1e-7
-%     qa=NaN(n,1);
-%     ca=qa;
-%     return;
-% end
+Zinv=ones(length(w)) - W;
+p = ones(1,length(w))/Zinv;
 
 %this method doesn't work when eigenvectors are nearly parallel
 
 % Z=u * diag(1./[1;qa(2:end)]) / u;
 % p=[1 zeros(1,length(qa)-1)] / u;
 % p=p/sum(p);
-% ca = 2*fp*(1-fp) * (u\w) .* (p*q*Z*u)';
 
 %this method doesn't work when eigenvalues are nearly degenerate
 
@@ -50,30 +41,34 @@ u=u(:,ix);
 % [~,ix]=sort(qb);
 % v=conj(v(:,ix));
 % v=diag(1./diag(v'*u)) * v';
-v=inv(u);
+% v=inv(u);
 
-Z=u * diag(1./[1;qa(2:end)]) * v;
-p=v(1,:);
-p=p/sum(p);
+% Z=u * diag(1./[1;qa(2:end)]) * v;
+% p=v(1,:);
+% p=p/sum(p);
 
 expLt=exp(-qa*t);
-expWt=u*diag(expLt)*v;
+% expWt=u*diag(expLt)*v;
+expWt=u*diag(expLt)/u;
 
-S=p*q*u*expLt*v*w;
+% S=p*q*u*expLt*v*w;
+S=p*q*expWt*w;
 
 %deriv wrt q_ij
 dSdq=((expWt*w)*p).';
 dSdq=dSdq-diag(dSdq)*ones(1,length(w));
 
 %deriv wrt W_ij, due to p
-dSdp=((Z*expWt*w)*p).';
+% dSdp=((Z*expWt*w)*p).';
+dSdp=((Zinv\expWt*w)*p).';
 %deriv wrt W_ij, due to expWt
 F=expLt*ones(1,length(w));
 F=F-F.'+diag(expLt);
 qa=qa*ones(1,length(w));
 qa=qa.'-qa+eye(length(w));
 F=F./qa;
-dSdexpWt=(u*diag(v*w)*F*diag(p*q*u)*v).';
+% dSdexpWt=(u*diag(v*w)*F*diag(p*q*u)*v).';
+dSdexpWt=(u*diag(u\w)*F*diag(p*q*u)/u).';
 %deriv wrt W_ij
 dSdW=dSdp+dSdexpWt;
 dSdW=dSdW-diag(dSdW)*ones(1,length(w));
