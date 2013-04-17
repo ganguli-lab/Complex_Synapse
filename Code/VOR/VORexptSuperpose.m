@@ -17,7 +17,7 @@ error(CheckSize(w,@iscol));
 
 fp=0.5;
 PretrainFactor=1;
-LinSpec='b';
+Color='b';
 Parent=gca;
 % altax=[];
 
@@ -25,11 +25,11 @@ varargin=assignApplicable(varargin);
 
 S=LearningCurve(fp*Wp+(1-fp)*Wm,w,t,(fp+df)*Wp+(1-fp-df)*Wm);
 T=t(end)-tchange;
-ph(1)=plot(t(t<=T),S(1)-S(t<=T),LinSpec,'Parent',Parent,varargin{:});
+ph(1)=plot(t(t<=T),S(1)-S(t<=T),'Color',Color,'Parent',Parent,varargin{:});
 hold(Parent,'on');
 S=LearningCurve(fp*Wp+(1-fp)*Wm,w,t,(fp-PretrainFactor*df)*Wp+(1-fp+PretrainFactor*df)*Wm,tchange,(fp+df)*Wp+(1-fp-df)*Wm);
 S(t<tchange)=[];
-ph(2)=plot(t(t>=tchange)-tchange,S(1)-S,LinSpec,'LineStyle','--','Parent',Parent,varargin{:});
+ph(2)=plot(t(t>=tchange)-tchange,S(1)-S,'Color',Color,'LineStyle','--','Parent',Parent,varargin{:});
 
 % if ~isempty(altax)
 %     plot(altax,[EqProb(fp*Wp+(1-fp)*Wm); EqProb((fp+df)*Wp+(1-fp-df)*Wm); EqProb((fp-df)*Wp+(1-fp+df)*Wm)]');

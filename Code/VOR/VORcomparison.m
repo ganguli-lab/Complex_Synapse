@@ -16,6 +16,7 @@ EqFontSize=20;
 txFontSize=20;
 Pooled=false;
 mutant='D^bK^b-/-';
+red=[192 80 77]/256;
 varargin=assignApplicable(varargin);
 
 if isempty(altfig)
@@ -38,13 +39,13 @@ else
 end
 
 if Superpose
-%     phWT=VORsuperpose(Wp,Wm,w,t,df,'LinSpec','k','Parent',Parent,'altax',altaxWT,varargin{:});
-%     phKn=VORsuperpose(WpM,WmM,w,t,df,'LinSpec','r','Parent',Parent,'altax',altaxKn,varargin{:});
-    phWT=VORexptSuperpose(Wp,Wm,w,t,df,tchange,'LinSpec','k','Parent',Parent,varargin{:});
-    phKn=VORexptSuperpose(WpM,WmM,w,t,df,tchange,'LinSpec','r','Parent',Parent,varargin{:});
+%     phWT=VORsuperpose(Wp,Wm,w,t,df,'Color','k','Parent',Parent,'altax',altaxWT,varargin{:});
+%     phKn=VORsuperpose(WpM,WmM,w,t,df,'Color',red,'Parent',Parent,'altax',altaxKn,varargin{:});
+    phWT=VORexptSuperpose(Wp,Wm,w,t,df,tchange,'Color','k','Parent',Parent,varargin{:});
+    phKn=VORexptSuperpose(WpM,WmM,w,t,df,tchange,'Color',red,'Parent',Parent,varargin{:});
 else
-    [phWT,P_WT_nopre,P_WT_pre]=VORexpt(Wp,Wm,w,t,df,tchange,'LinSpec','k','Parent',Parent,varargin{:});
-    [phKn,P_Kn_nopre,P_Kn_pre]=VORexpt(WpM,WmM,w,t,df,tchange,'LinSpec','r','Parent',Parent,varargin{:});
+    [phWT,P_WT_nopre,P_WT_pre]=VORexpt(Wp,Wm,w,t,df,tchange,'Color','k','Parent',Parent,varargin{:});
+    [phKn,P_Kn_nopre,P_Kn_pre]=VORexpt(WpM,WmM,w,t,df,tchange,'Color',red,'Parent',Parent,varargin{:});
 end%if 
 
 PretrainFactor=1;
