@@ -23,7 +23,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="3.9814372"
-     inkscape:cx="33.659364"
+     inkscape:cx="-4.693648"
      inkscape:cy="65.930973"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -527,15 +527,23 @@
          id="tspan2995-0"
          x="244.06787"
          y="339.32004"
-         style="font-size:8px">D<tspan
+         style="font-size:8px;fill:#000000">D<tspan
    id="tspan3028"
-   style="font-size:8px;baseline-shift:super">b</tspan>K<tspan
+   style="font-size:8px;baseline-shift:super;fill:#000000">b</tspan>K<tspan
    id="tspan3030"
-   style="font-size:8px;baseline-shift:super">b</tspan> -/-</tspan><tspan
+   style="font-size:8px;baseline-shift:super;fill:#000000">b</tspan> -/-</tspan><tspan
          sodipodi:role="line"
          x="244.06787"
          y="349.32004"
          id="tspan2997-9"
-         style="font-size:8px">w/ pre-training</tspan></text>
+         style="font-size:8px;fill:#000000">w/ pre-training</tspan></text>
+    <rect
+       style="fill:none;stroke:#c0504d;stroke-width:1.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-dasharray:1.5,1.5;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect3059"
+       width="52.505203"
+       height="22.758909"
+       x="15.971165"
+       y="0.79856563"
+       transform="translate(201.57727,328.78843)" />
   </g>
 </svg>

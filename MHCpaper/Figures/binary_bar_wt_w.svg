@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="65.31871"
-   height="131.21193"
+   width="66.850922"
+   height="131.51328"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
@@ -22,9 +22,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="4.0042122"
-     inkscape:cx="-38.160434"
-     inkscape:cy="66.34492"
+     inkscape:zoom="3.9919924"
+     inkscape:cx="-5.6527717"
+     inkscape:cy="65.756633"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -51,7 +51,7 @@
        originy="-592.36182px" />
     <sodipodi:guide
        orientation="1,0"
-       position="179.17695,-47.525667"
+       position="179.17695,-47.525665"
        id="guide3093" />
   </sodipodi:namedview>
   <defs
@@ -409,7 +409,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-201.57727,-328.78843)">
+     transform="translate(-201.57727,-328.48708)">
     <path
        transform="matrix(-1,0,0,1,440.97638,93.571429)"
        sodipodi:type="arc"
@@ -533,5 +533,13 @@
          y="345.92688"
          id="tspan2997-1"
          style="font-size:8px">w/ pre-training</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:1.5;stroke-miterlimit:4;stroke-dasharray:1.5,1.5;stroke-dashoffset:0"
+       id="rect3055"
+       width="52.345711"
+       height="19.567564"
+       x="14.00521"
+       y="0.19865365"
+       transform="translate(201.57727,328.78843)" />
   </g>
 </svg>

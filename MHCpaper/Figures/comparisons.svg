@@ -25,10 +25,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.2552713"
-     inkscape:cx="192.32561"
+     inkscape:cx="68.049687"
      inkscape:cy="-4.6226187"
      inkscape:document-units="px"
-     inkscape:current-layer="g2999-1"
+     inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:snap-global="true"
      fit-margin-top="0"
@@ -93,92 +93,80 @@
            x="129.87383"
            sodipodi:role="line">w/o pre-training</tspan></text>
     </g>
-    <g
-       transform="translate(300.12617,277.44629)"
-       id="g2999-1">
-      <rect
-         y="82.362183"
-         x="49.229294"
-         height="160"
-         width="160"
-         id="rect2991-7"
-         style="fill:none;stroke:#000000;stroke-width:3.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text2993-4"
-         y="154.91589"
+    <rect
+       style="fill:none;stroke:#c0504d;stroke-width:3.50000000000000000;stroke-miterlimit:4;stroke-dasharray:3.50000000000000000, 3.50000000000000000;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2991-7"
+       width="160"
+       height="160"
+       x="349.35547"
+       y="359.80847" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="430"
+       y="432.36218"
+       id="text2993-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2995-0"
+         x="430"
+         y="432.36218">D<tspan
+   id="tspan3028"
+   style="font-size:65.00091553%;baseline-shift:super">b</tspan>K<tspan
+   id="tspan3030"
+   style="font-size:65.00091553%;baseline-shift:super">b</tspan> -/-</tspan><tspan
+         sodipodi:role="line"
+         x="430"
+         y="457.36218"
+         id="tspan2997-9">w/ pre-training</tspan></text>
+    <rect
+       style="fill:none;stroke:#c0504d;stroke-width:3.50000000000000000;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect2991-8"
+       width="160"
+       height="160"
+       x="349.35544"
+       y="79.808472" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="429.99997"
+       y="152.36218"
+       id="text2993-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2995-2"
+         x="429.99997"
+         y="152.36218">D<tspan
+   id="tspan3069"
+   style="font-size:65.00091553%;baseline-shift:super">b</tspan>K<tspan
+   id="tspan3071"
+   style="font-size:65.00091553%;baseline-shift:super">b</tspan> -/-</tspan><tspan
+         sodipodi:role="line"
+         x="429.99997"
+         y="177.36218"
+         id="tspan2997-4">w/o pre-training</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-miterlimit:4;stroke-dasharray:3.5,3.5;stroke-dashoffset:0"
+       id="rect2991-5"
+       width="160"
+       height="160"
+       x="49.229294"
+       y="359.80847" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="129.87383"
+       y="432.36218"
+       id="text2993-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2995-7"
          x="129.87383"
-         style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="154.91589"
-           x="129.87383"
-           id="tspan2995-0"
-           sodipodi:role="line">D<tspan
-   style="font-size:65%;baseline-shift:super"
-   id="tspan3028">b</tspan>K<tspan
-   style="font-size:65%;baseline-shift:super"
-   id="tspan3030">b</tspan> -/-</tspan><tspan
-           id="tspan2997-9"
-           y="179.91589"
-           x="129.87383"
-           sodipodi:role="line">w/ pre-training</tspan></text>
-    </g>
-    <g
-       transform="translate(300.12615,-2.5537109)"
-       id="g2999-4">
-      <rect
-         y="82.362183"
-         x="49.229294"
-         height="160"
-         width="160"
-         id="rect2991-8"
-         style="fill:none;stroke:#000000;stroke-width:3.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text2993-8"
-         y="154.91589"
+         y="432.36218">WT</tspan><tspan
+         sodipodi:role="line"
          x="129.87383"
-         style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="154.91589"
-           x="129.87383"
-           id="tspan2995-2"
-           sodipodi:role="line">D<tspan
-   style="font-size:65.00091553%;baseline-shift:super"
-   id="tspan3069">b</tspan>K<tspan
-   style="font-size:65.00091553%;baseline-shift:super"
-   id="tspan3071">b</tspan> -/-</tspan><tspan
-           id="tspan2997-4"
-           y="179.91589"
-           x="129.87383"
-           sodipodi:role="line">w/o pre-training</tspan></text>
-    </g>
-    <g
-       transform="translate(0,277.44629)"
-       id="g2999-5">
-      <rect
-         y="82.362183"
-         x="49.229294"
-         height="160"
-         width="160"
-         id="rect2991-5"
-         style="fill:none;stroke:#000000;stroke-width:3.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text2993-1"
-         y="154.91589"
-         x="129.87383"
-         style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-         xml:space="preserve"><tspan
-           y="154.91589"
-           x="129.87383"
-           id="tspan2995-7"
-           sodipodi:role="line">WT</tspan><tspan
-           id="tspan2997-1"
-           y="179.91589"
-           x="129.87383"
-           sodipodi:role="line">w/ pre-training</tspan></text>
-    </g>
+         y="457.36218"
+         id="tspan2997-1">w/ pre-training</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:30px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
