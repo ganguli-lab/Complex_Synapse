@@ -16,7 +16,7 @@ EqFontSize=20;
 txFontSize=20;
 Pooled=false;
 mutant='D^bK^b-/-';
-red=[192 80 77]/256;
+red=[192 0 0]/255;
 varargin=assignApplicable(varargin);
 
 if isempty(altfig)

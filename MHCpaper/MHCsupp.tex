@@ -303,17 +303,17 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
     Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $r\ttrain$ & $r\tpre$ \\
     \cline{1-7}
-    Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 50  &\label{tr:cascade_short} \\
-    Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 150 &\label{tr:cascade_long} \\
-    Step-multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.1  & 50 & 50  &\label{tr:multistate_weak} \\
-    Step-multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.17 & 10 & 30  &\label{tr:multistate_med} \\
-    Step-multistate    & 10 & $q=0.6$  & $q=0.8$  & -0.4  & 20 & 20  &\label{tr:multistate_strong} \\
-    Linear Multistate & 10 & $q=0.6$  & $q=0.8$  & -0.3  & 20 & 20  &\label{tr:multistate_lin} \\
-    Two-state     & 2  & $q=0.4$  & $q=0.8$  & -0.1  & 5  & 5   &\label{tr:binary} \\
+    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & -0.1  & 5 & 20  &\label{tr:multistate_weak} \\
+    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & -0.3  & 5 & 20  &\label{tr:multistate_med} \\
+    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & -0.45 & 5 & 30  &\label{tr:multistate_strong} \\
+    Two-state          & 2  & $q=0.1$  & $q=0.2$  & -0.1  & 5 & 5   &\label{tr:binary} \\
+    Linear Multistate  & 10 & $q=0.3$  & $q=0.4$  & -0.3  & 5 & 5   &\label{tr:multistate_lin} \\
     Pooled        & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
-                                          & -0.1 & 70 & 70 &\label{tr:pooled_plenty}\\
-    Pooled        & 10 & $q\in[0.1,0.4]$  & $q\in[0.2,0.8]$
-                                          & -0.1 & 70 & 70 &\label{tr:pooled_scarce}\\
+                                          & -0.1 & 5 & 20 &\label{tr:pooled_plenty}\\
+    Pooled        & 10 & $q\in[0.05,0.4]$  & $q\in[0.1,0.8]$
+                                          & -0.1 & 5 & 20 &\label{tr:pooled_scarce}\\
+    Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 5 & 20  &\label{tr:cascade_short} \\
+    Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 5 & 100 &\label{tr:cascade_long} \\
     \cline{1-7}
 %   \hline
 %    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
@@ -367,7 +367,7 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
   (\ref{fig:#1_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#1_eq_WT}) wild-type and (\ref{fig:#1_eq_KO}) \KO\ mutant,
   with states of weak synaptic strength to the left and strong states to the right.
   (\ref{fig:#1_pr}) Evolution of probability distributions for (\ref{fig:#1_pr_WT_nopre}\ref{fig:#1_pr_WT_pre}) wild-type and  (\ref{fig:#1_pr_KO_nopre}\ref{fig:#1_pr_KO_pre}) \KO\ mutant without (\ref{fig:#1_pr_WT_nopre},\ref{fig:#1_pr_KO_nopre}) and with (\ref{fig:#1_pr_WT_pre},\ref{fig:#1_pr_KO_pre}) pre-training,
-  with states of weak synaptic strength at the top and strong states underneath. } 
+  with states of weak synaptic strength at the top and strong states underneath. }
 
 \newcommand{\captionstart}[2]{Simulation results for the \textbf{#1} model with #2}
 \newcommand{\captionstarts}[2]{Simulation results for the #1 model with #2}
@@ -392,9 +392,9 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
 
 \resultsfig{step-multistate}{weak training}{($\Delta f=-0.1$)}{multistate_weak}
 
-\resultsfig{step-multistate}{moderate training}{($\Delta f=-0.17$)}{multistate_med}
+\resultsfig{step-multistate}{moderate training}{($\Delta f=-0.3$)}{multistate_med}
 
-\resultsfig{step-multistate}{strong training}{($\Delta f=-0.4$)}{multistate_strong}
+\resultsfig{step-multistate}{strong training}{($\Delta f=-0.45$)}{multistate_strong}
 
 
 The results of simulations of the step-multistate model can be seen in \autoref{fig:multistate_weak}, \autoref{fig:multistate_med} and \autoref{fig:multistate_strong}.
@@ -712,7 +712,7 @@ Therefore, pre-training will always enhance learning, for both mutant and wild-t
 
 \resultsfig{pooled resource}{light depletion}{($q\lmin/q\lmax=0.75$)}{pooled_plenty}
 
-\resultsfig{pooled resource}{heavy depletion}{($q\lmin/q\lmax=0.25$)}{pooled_scarce}
+\resultsfig{pooled resource}{heavy depletion}{($q\lmin/q\lmax=0.125$)}{pooled_scarce}
 
 
 The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}.
@@ -733,9 +733,9 @@ This differs from what is seen experimentally, where the pre-trained wild-type l
 
 \subsection{Cascade model}\label{sec:cascade}
 
-\resultsfig{cascade}{short pre-training}{($rt_\text{pre}=50$)}{cascade_short}
+\resultsfig{cascade}{short pre-training}{($rt_\text{pre}=20$)}{cascade_short}
 
-\resultsfig{cascade}{long pre-training}{($rt_\text{pre}=150$)}{cascade_long}
+\resultsfig{cascade}{long pre-training}{($rt_\text{pre}=100$)}{cascade_long}
 
 
 
