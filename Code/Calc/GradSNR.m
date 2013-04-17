@@ -1,4 +1,4 @@
-function [ S, dSdWp,dSdWm ] = GradSNR( t, Wp, Wm, fp, w  )
+function [ S, dSdWp,dSdWm ] = GradSNR( t, Wp, Wm, fp, w, varargin  )
 %[S,GS]=GRADSNR(T,WP,WM,FP,w) Summary of this function goes here
 %   T = time value
 %   WP = potentiation transition rates
@@ -14,6 +14,10 @@ error(CheckSize(fp,@isscalar));
 error(CheckValue(fp,@(x) inrange(x,0,1),'inrange(0,1)'));%fp in [0,1]
 error(CheckSize(w,@iscol));
 error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
+
+NoDiag=true;
+varargin=assignApplicable(varargin);
+
 
 q=Wp-Wm;
 W=fp*q + Wm;
@@ -56,12 +60,15 @@ S=p*q*expWt*w;
 
 %deriv wrt q_ij
 dSdq=((expWt*w)*p).';
-dSdq=dSdq-diag(dSdq)*ones(1,length(w));
+if NoDiag
+    dSdq=dSdq-diag(dSdq)*ones(1,length(w));
+end
 
 %deriv wrt W_ij, due to p
 % dSdp=((Z*expWt*w)*p).';
 dSdp=((Zinv\expWt*w)*p).';
 %deriv wrt W_ij, due to expWt
+%ref: http://dx.doi.org/10.1002/nme.263
 F=expLt*ones(1,length(w));
 F=F-F.'+diag(expLt);
 qa=qa*ones(1,length(w));
@@ -71,7 +78,9 @@ F=F./qa;
 dSdexpWt=(u*diag(u\w)*F*diag(p*q*u)/u).';
 %deriv wrt W_ij
 dSdW=dSdp+dSdexpWt;
-dSdW=dSdW-diag(dSdW)*ones(1,length(w));
+if NoDiag
+    dSdW=dSdW-diag(dSdW)*ones(1,length(w));
+end
 
 dSdWp=fp*dSdW+dSdq;
 dSdWm=dSdW-dSdWp;
