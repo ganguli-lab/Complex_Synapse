@@ -16,6 +16,7 @@ error(CheckSize(w,@iscol));
 error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
 
 NoDiag=true;
+thresh=1e-7;
 varargin=assignApplicable(varargin);
 
 
@@ -29,8 +30,8 @@ u=u(:,ix);
 
 %this method doesn't work when eigenvectors are nearly parallel
 
-Zinv=ones(length(w)) - W;
-p = ones(1,length(w))/Zinv;
+% Zinv=ones(length(w)) - W;
+% p = ones(1,length(w))/Zinv;
 
 %this method doesn't work when eigenvectors are nearly parallel
 
@@ -40,20 +41,20 @@ p = ones(1,length(w))/Zinv;
 
 %this method doesn't work when eigenvalues are nearly degenerate
 
-% [v,qb]=eig(-W');
-% qb=diag(qb);
-% [~,ix]=sort(qb);
-% v=conj(v(:,ix));
-% v=diag(1./diag(v'*u)) * v';
+[v,qb]=eig(-W');
+qb=diag(qb);
+[~,ix]=sort(qb);
+v=conj(v(:,ix));
+v=diag(1./diag(v'*u)) * v';
 % v=inv(u);
 
-% Z=u * diag(1./[1;qa(2:end)]) * v;
-% p=v(1,:);
-% p=p/sum(p);
+Z=u * diag(1./[1;qa(2:end)]) * v;
+p=v(1,:);
+p=p/sum(p);
 
 expLt=exp(-qa*t);
-% expWt=u*diag(expLt)*v;
-expWt=u*diag(expLt)/u;
+expWt=u*diag(expLt)*v;
+% expWt=u*diag(expLt)/u;
 
 % S=p*q*u*expLt*v*w;
 S=p*q*expWt*w;
@@ -65,17 +66,22 @@ if NoDiag
 end
 
 %deriv wrt W_ij, due to p
-% dSdp=((Z*expWt*w)*p).';
-dSdp=((Zinv\expWt*w)*p).';
+dSdp=((Z*q*expWt*w)*p).';
+% dSdp=((Zinv\q*expWt*w)*p).';
 %deriv wrt W_ij, due to expWt
 %ref: http://dx.doi.org/10.1002/nme.263
-F=expLt*ones(1,length(w));
-F=F-F.'+diag(expLt);
+FF=expLt*ones(1,length(w));
+F=FF-FF.'+t*diag(expLt);
 qa=qa*ones(1,length(w));
 qa=qa.'-qa+eye(length(w));
+%check for degenerate evals
+degenerate= qa<thresh;
+qa(degenerate)=1;
+F(degenerate)=t*FF(degenerate);
+%
 F=F./qa;
-% dSdexpWt=(u*diag(v*w)*F*diag(p*q*u)*v).';
-dSdexpWt=(u*diag(u\w)*F*diag(p*q*u)/u).';
+dSdexpWt=(u*diag(v*w)*F*diag(p*q*u)*v).';
+% dSdexpWt=(u*diag(u\w)*F*diag(p*q*u)/u).';
 %deriv wrt W_ij
 dSdW=dSdp+dSdexpWt;
 if NoDiag

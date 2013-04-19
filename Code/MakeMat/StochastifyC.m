@@ -1,6 +1,6 @@
 function [ newW ] = StochastifyC( W )
-%NEWW=STOCHASTIFY(W) turn into continuous time stochastic matrix
-%   Changes diagonal terms to W_ii = sum_{j~=i} W_ij
+%NEWW=STOCHASTIFYC(W) turn into continuous time stochastic matrix
+%   Changes diagonal terms to W_ii = -sum_{j~=i} W_ij
 
 assert(ismat(W));
 assert(issquare(W));
