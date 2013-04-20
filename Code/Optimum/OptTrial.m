@@ -5,10 +5,12 @@ function [ lmax,KTp,KTm ] = OptTrial( nmax,n,varargin )
 %   nmax = max #states
 %   n = #states of trial uniform multistate model (default: nmax)
 
-existsAndDefault('n',nmax)
+existsAndDefault('n',nmax);
 Parent=gca;
 varargin=assignApplicable(varargin);
 varargin=[ {'Parent',Parent}, varargin];
+
+cla(Parent);
 
 t=10.^(-1:0.1:ceil(log10(nmax^2)));
 
@@ -37,8 +39,10 @@ plot(t,real(s),'r',varargin{:});
 smn=interp1(t,s,tm);
 
 if smn>smu
-    disp(Wp);
-    disp(Wm);
+    assignin('base','Wp',Wp);
+    assignin('base','Wm',Wm);
+%     disp(Wp);
+%     disp(Wm);
 end
 
 
