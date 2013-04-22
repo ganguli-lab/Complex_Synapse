@@ -3,7 +3,8 @@ function [ output ] = TestCounterEx( n,varnames )
 %   Detailed explanation goes here
 
 
-[wp,wm,w]=CounterEx(n);
+% [wp,wm,w]=CounterEx(n);
+[wp,wm,w]=DiffJump(n);
 
 % q=ones(1,n-1);
 % q(n/2+1)=1/n;

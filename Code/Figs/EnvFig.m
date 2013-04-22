@@ -3,7 +3,7 @@ PlotEnvs( t,40 );
 nvals=[4 10 16 28 40];
 epsvals=0.1.^(1:0.5:3);
 for n=nvals
-s=UniSMScurve(t,n,1);
+s=DiffJumpcurve(t,n);
 plot(t,s,'b','LineWidth',1.5)
 end
 for eps=epsvals
@@ -14,3 +14,4 @@ legend({'Envelope','Conjectured envelope','Examples'},'Location','NorthEast')
 set(gcf, 'PaperPositionMode', 'auto');
 hold off
 clear t s
+clear n eps nvals epsvals

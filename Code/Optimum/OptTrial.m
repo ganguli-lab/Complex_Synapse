@@ -26,19 +26,20 @@ s=SNRcurve(t,Wp,Wm,0.5,w);
 plot(t,real(s),varargin{:});
 smu=interp1(t,s,tm);
 
-line([1;1]*tm,yl','Color','b','LineStyle','--');
+line([1;1]*tm,yl','Color','b','LineStyle','--',varargin{:});
 
 [KTp,KTm]=KTmults(tm,Wp,Wm,0.5,w);
 
 lmax=all(all( KTp>=0 & KTm>=0 ));
 
-n=nmax+2;
+n=n+2;
 tf=true;
 while n>2 && tf
     n=n-2;
     w=[-ones(n/2,1);ones(n/2,1)];
-    [Wp,Wm]=FindOpt(tm,n,'UseDerivs',false);
-    [tf]=istransient(0.5*(Wp+Wm),1e-5,'UseP',true);
+    [Wp,Wm]=FindOpt(tm,n,'UseDerivs',false,'InitRand',false);
+    tf=false;
+%     [tf]=istransient(0.5*(Wp+Wm),1e-5,'UseP',true);
 end
 % if tf
 %     Wp(ix,:)=[];
