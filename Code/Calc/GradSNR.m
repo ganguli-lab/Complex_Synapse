@@ -35,7 +35,7 @@ u=u(:,ix);
 Zinv=ones(length(w)) - W;
 
 %this method doesn't work when eigenvalues are nearly degenerate
-if min(diff(qa)) < DegThresh
+if min(diff(qa)) > DegThresh
     [v,qb]=eig(-W');
     qb=diag(qb);
     [~,ix]=sort(qb);

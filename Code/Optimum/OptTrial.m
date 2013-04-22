@@ -32,27 +32,32 @@ line([1;1]*tm,yl','Color','b','LineStyle','--');
 
 lmax=all(all( KTp>=0 & KTm>=0 ));
 
-w=[-ones(nmax/2,1);ones(nmax/2,1)];
-[Wp,Wm]=FindOpt(tm,nmax,'UseDerivs',true);
-[tf,ix]=istransient(0.5*(Wp+Wm),1e-3,'UseP',true);
-if tf
-    Wp(ix,:)=[];
-    Wp(:,ix)=[];
-    Wm(ix,:)=[];
-    Wm(:,ix)=[];
-    w(ix)=[];
+n=nmax+2;
+tf=true;
+while n>2 && tf
+    n=n-2;
+    w=[-ones(n/2,1);ones(n/2,1)];
+    [Wp,Wm]=FindOpt(tm,n,'UseDerivs',false);
+    [tf]=istransient(0.5*(Wp+Wm),1e-5,'UseP',true);
 end
+% if tf
+%     Wp(ix,:)=[];
+%     Wp(:,ix)=[];
+%     Wm(ix,:)=[];
+%     Wm(:,ix)=[];
+%     w(ix)=[];
+% end
 
 s=SNRcurve(t,Wp,Wm,0.5,w);
 plot(t,real(s),'r',varargin{:});
 smn=interp1(t,s,tm);
 
-if smn>smu
+% if smn>smu
     assignin('base','Wp',Wp);
     assignin('base','Wm',Wm);
 %     disp(Wp);
 %     disp(Wm);
-end
+% end
 
 
 

@@ -28,7 +28,7 @@ qa=diag(qa);
 u=u(:,ix);
 
 %this method doesn't work when eigenvalues are nearly degenerate
-if min(diff(qa)) < DegThresh
+if min(diff(qa)) > DegThresh
     [v,qb]=eig(-W');
     qb=diag(qb);
     [~,ix]=sort(qb);
@@ -51,7 +51,6 @@ if rcond(u) > RCondThresh
     if rcond(Zinv) > RCondThresh
         ca = 2*fp*(1-fp) * (u\w) * sum((Zinv\q) * (Zinv\u), 1);
         ca=diag(ca);
-        ca=ca(ix);
     else
         Z=u * diag(1./[1;qa(2:end)]) / u;
         p=[1 zeros(1,length(qa)-1)] / u;
