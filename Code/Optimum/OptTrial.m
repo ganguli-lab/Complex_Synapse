@@ -33,7 +33,16 @@ line([1;1]*tm,yl','Color','b','LineStyle','--');
 lmax=all(all( KTp>=0 & KTm>=0 ));
 
 w=[-ones(nmax/2,1);ones(nmax/2,1)];
-[Wp,Wm]=FindOpt(tm,nmax);
+[Wp,Wm]=FindOpt(tm,nmax,'UseDerivs',true);
+[tf,ix]=istransient(0.5*(Wp+Wm),1e-3,'UseP',true);
+if tf
+    Wp(ix,:)=[];
+    Wp(:,ix)=[];
+    Wm(ix,:)=[];
+    Wm(:,ix)=[];
+    w(ix)=[];
+end
+
 s=SNRcurve(t,Wp,Wm,0.5,w);
 plot(t,real(s),'r',varargin{:});
 smn=interp1(t,s,tm);

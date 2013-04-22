@@ -1,6 +1,8 @@
 function [ newWp,newWm ] = ModelOpt( Wp,Wm,tm,varargin)
-%MODELOPT Summary of this function goes here
-%   Detailed explanation goes here
+%[newWp,newWm]=MODELOPT(Wp,Wm,tm) run gradient descent on model
+%   T = time value
+%   WP = potentiation transition rates
+%   WM = depression transition rates
 
 UseDerivs=false;
 varargin=assignApplicable(varargin);
@@ -12,7 +14,7 @@ w=[-ones(n/2,1);ones(n/2,1)];
 [A,b]=ParamsConstraints(n);
 
 x0 = Mats2Params(Wp,Wm);            % Starting guess 
-options = optimset('Algorithm','active-set','Display','off');
+options = optimset('Algorithm','active-set','Display','off',varargin{:});
 
 if UseDerivs
     options = optimset(options,'GradObj','on');

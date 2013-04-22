@@ -17,6 +17,10 @@ error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
 
 NoDiag=true;
 thresh=1e-7;
+DegThresh=1e-3;
+RCondThresh=1e-5;
+UseZ=true;
+UseV=false;
 varargin=assignApplicable(varargin);
 
 
@@ -28,35 +32,39 @@ qa=diag(qa);
 [qa,ix]=sort(qa);
 u=u(:,ix);
 
-%this method doesn't work when eigenvectors are nearly parallel
-
-% Zinv=ones(length(w)) - W;
-% p = ones(1,length(w))/Zinv;
-
-%this method doesn't work when eigenvectors are nearly parallel
-
-% Z=u * diag(1./[1;qa(2:end)]) / u;
-% p=[1 zeros(1,length(qa)-1)] / u;
-% p=p/sum(p);
+Zinv=ones(length(w)) - W;
 
 %this method doesn't work when eigenvalues are nearly degenerate
+if min(diff(qa)) < DegThresh
+    [v,qb]=eig(-W');
+    qb=diag(qb);
+    [~,ix]=sort(qb);
+    v=v(:,ix);
+    v=diag(1./diag(v.'*u)) * v.';
 
-[v,qb]=eig(-W');
-qb=diag(qb);
-[~,ix]=sort(qb);
-v=conj(v(:,ix));
-v=diag(1./diag(v'*u)) * v';
-% v=inv(u);
-
-Z=u * diag(1./[1;qa(2:end)]) * v;
-p=v(1,:);
-p=p/sum(p);
+    Z=u * diag(1./[1;qa(2:end)]) * v;
+    p=v(1,:);
+    p=p/sum(p);
+    UseV=true;
+%this method doesn't work when eigenvectors are nearly parallel or W is
+%nearly non-ergodic
+elseif rcond(Zinv) > RCondThresh
+    p = ones(1,length(w))/Zinv;
+    UseZ=false;
+%this method doesn't work when eigenvectors are nearly parallel
+else
+    Z=u * diag(1./[1;qa(2:end)]) / u;
+    p=[1 zeros(1,length(qa)-1)] / u;
+    p=p/sum(p);
+end
 
 expLt=exp(-qa*t);
-expWt=u*diag(expLt)*v;
-% expWt=u*diag(expLt)/u;
+if UseV
+    expWt=u*diag(expLt)*v;
+else
+    expWt=u*diag(expLt)/u;
+end
 
-% S=p*q*u*expLt*v*w;
 S=p*q*expWt*w;
 
 %deriv wrt q_ij
@@ -66,22 +74,28 @@ if NoDiag
 end
 
 %deriv wrt W_ij, due to p
-dSdp=((Z*q*expWt*w)*p).';
-% dSdp=((Zinv\q*expWt*w)*p).';
+if UseZ
+    dSdp=((Z*q*expWt*w)*p).';
+else
+    dSdp=((Zinv\q*expWt*w)*p).';
+end
 %deriv wrt W_ij, due to expWt
 %ref: http://dx.doi.org/10.1002/nme.263
 FF=expLt*ones(1,length(w));
-F=FF-FF.'+t*diag(expLt);
+F=FF-FF.';
 qa=qa*ones(1,length(w));
-qa=qa.'-qa+eye(length(w));
+qa=qa.'-qa;
 %check for degenerate evals
 degenerate= qa<thresh;
 qa(degenerate)=1;
 F(degenerate)=t*FF(degenerate);
 %
 F=F./qa;
-dSdexpWt=(u*diag(v*w)*F*diag(p*q*u)*v).';
-% dSdexpWt=(u*diag(u\w)*F*diag(p*q*u)/u).';
+if UseV
+    dSdexpWt=(u*diag(v*w)*F*diag(p*q*u)*v).';
+else
+    dSdexpWt=(u*diag(u\w)*F*diag(p*q*u)/u).';
+end
 %deriv wrt W_ij
 dSdW=dSdp+dSdexpWt;
 if NoDiag

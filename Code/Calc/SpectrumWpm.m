@@ -15,8 +15,8 @@ error(CheckValue(fp,@(x) inrange(fp,0,1),'inrange(0,1)'));%fp in [0,1]
 error(CheckSize(w,@iscol));
 error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
 
-n=size(Wp,1);
-assert(mod(n,2)==0)
+% n=size(Wp,1);
+% assert(mod(n,2)==0)
 
 % w=ones(n,1);
 % w(1:(n/2))=-1;
