@@ -44,7 +44,7 @@ end
 
 
 %this method doesn't work when eigenvectors are nearly parallel
-if rcond(u) > RCondThresh
+% if rcond(u) > RCondThresh
     Zinv=ones(n) - W;
     %this method doesn't work when eigenvectors are nearly parallel or W
     %non-ergodic
@@ -57,10 +57,10 @@ if rcond(u) > RCondThresh
         p=p/sum(p);
         ca = 2*fp*(1-fp) * (u\w) .* (p*q*Z*u)';
     end
-else
-    qa=NaN(n,1);
-    ca=qa;
-end
+% else
+%     qa=NaN(n,1);
+%     ca=qa;
+% end
 
 end
 

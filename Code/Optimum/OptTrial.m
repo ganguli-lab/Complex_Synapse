@@ -7,6 +7,8 @@ function [ lmax,KTp,KTm ] = OptTrial( nmax,n,varargin )
 
 existsAndDefault('n',nmax);
 Parent=gca;
+UseDerivs=false;
+InitRand=true;
 varargin=assignApplicable(varargin);
 varargin=[ {'Parent',Parent}, varargin];
 
@@ -37,7 +39,7 @@ tf=true;
 while n>2 && tf
     n=n-2;
     w=[-ones(n/2,1);ones(n/2,1)];
-    [Wp,Wm]=FindOpt(tm,n,'UseDerivs',false,'InitRand',false);
+    [Wp,Wm]=FindOpt(tm,n,'UseDerivs',UseDerivs,'InitRand',InitRand);
     tf=false;
 %     [tf]=istransient(0.5*(Wp+Wm),1e-5,'UseP',true);
 end
