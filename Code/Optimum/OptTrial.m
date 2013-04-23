@@ -7,17 +7,16 @@ function [ lmax,KTp,KTm ] = OptTrial( nmax,n,varargin )
 
 existsAndDefault('n',nmax);
 Parent=gca;
-UseDerivs=false;
-InitRand=true;
+LineWidth=1;
 varargin=assignApplicable(varargin);
-varargin=[ {'Parent',Parent}, varargin];
+plotArgs={'Parent',Parent,'LineWidth',LineWidth};
 
 cla(Parent);
 
 t=10.^(-1:0.1:ceil(log10(nmax^2)));
 
-[ h,yl ] = PlotEnvs( t,nmax,varargin{:} );
-delete(h(3:end));
+[ h,yl ] = PlotEnvs( t,nmax,plotArgs{:} );
+delete(h(3:end-1));
 
 q=ones(1,n-1);
 [Wp,Wm,w]=MakeSMS(q);
@@ -25,10 +24,10 @@ q=ones(1,n-1);
 tm=TouchEnv(q);
 
 s=SNRcurve(t,Wp,Wm,0.5,w);
-plot(t,real(s),varargin{:});
+plot(t,real(s),plotArgs{:});
 smu=interp1(t,s,tm);
 
-line([1;1]*tm,yl','Color','b','LineStyle','--',varargin{:});
+line([1;1]*tm,yl','Color','b','LineStyle','--',plotArgs{:});
 
 [KTp,KTm]=KTmults(tm,Wp,Wm,0.5,w);
 
@@ -39,7 +38,7 @@ tf=true;
 while n>2 && tf
     n=n-2;
     w=[-ones(n/2,1);ones(n/2,1)];
-    [Wp,Wm]=FindOpt(tm,n,'UseDerivs',UseDerivs,'InitRand',InitRand);
+    [Wp,Wm]=FindOpt(tm,n,varargin{:});
     tf=false;
 %     [tf]=istransient(0.5*(Wp+Wm),1e-5,'UseP',true);
 end
@@ -52,7 +51,7 @@ end
 % end
 
 s=SNRcurve(t,Wp,Wm,0.5,w);
-plot(t,real(s),'r',varargin{:});
+plot(t,real(s),'r',plotArgs{:});
 smn=interp1(t,s,tm);
 
 % if smn>smu
