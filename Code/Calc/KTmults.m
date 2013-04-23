@@ -19,11 +19,11 @@ error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
 
 [~,dSdWp,dSdWm]=GradSNR(tm,Wp,Wm,fp,w);
 
-KTdiag=diag(dSdWp,1);
-KTp=[KTdiag;0]*ones(1,length(Wp))-dSdWp;
+KTdiag=max(dSdWp,[],2).*(diag(Wp)<0);
+KTp=KTdiag*ones(1,length(Wp))-dSdWp;
 
-KTdiag=diag(dSdWm,-1);
-KTm=[0;KTdiag]*ones(1,length(Wp))-dSdWm;
+KTdiag=max(dSdWm,[],2).*(diag(Wm)<0);
+KTm=KTdiag*ones(1,length(Wp))-dSdWm;
 
 
 end
