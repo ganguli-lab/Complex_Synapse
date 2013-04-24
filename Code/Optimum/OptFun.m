@@ -6,11 +6,13 @@ function [ f ] = OptFun( x,t,fp,w )
 
 [Wp,Wm]=Params2Mats(x);
 
-q=Wp-Wm;
-W=fp*q + Wm;
-p=EqProb(W);
+% q=Wp-Wm;
+% W=fp*q + Wm;
+% p=EqProb(W);
+% 
+% f=-p*q*expm(W*t)*w;
 
-f=-p*q*expm(W*t)*w;
+f=-real(crq(Wp,Wm,fp,w));
 
 end
 
