@@ -30,7 +30,7 @@ if strcmpi(modelname,'multistate')
     [~,WmKn]=MakeSMS(paramKn*(ones(1,n-1)+gradq*dq));
 elseif strcmpi(modelname,'cascade')
     [Wp,Wm,w]=CascadeOriginal(paramWT,paramWT,n);
-    [~,WmKn]=CascadeOriginal(paramWT,paramKn,n);
+    [~,WmKn]=CascadeOriginal(paramKn,paramKn,n);
 elseif strcmpi(modelname,'pooled')
     w=(-1:2/(n-1):1)';
     q=(paramWT(1):diff(paramWT)/(n-2):paramWT(2)).*(n-1:-1:1)/(n-1);
