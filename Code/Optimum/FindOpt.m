@@ -12,8 +12,8 @@ if InitRand
     Wp=RandTrans(n);
     Wm=RandTrans(n);
 else
-%     [Wp,Wm]=MakeSMS(ones(1,n-1));
-    [Wp,Wm]=DiffJump(n);
+    [Wp,Wm]=MakeSMS(ones(1,n-1));
+%     [Wp,Wm]=DiffJump(n);
 end
 
 [ Wp,Wm ] = ModelOpt( Wp,Wm,t,varargin{:});

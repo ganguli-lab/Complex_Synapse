@@ -6,6 +6,7 @@ function [ newWp,newWm ] = ModelOpt( Wp,Wm,tm,varargin)
 
 UseDerivs=false;
 Algorithm='active-set';
+Display='off';
 varargin=assignApplicable(varargin);
 
 n=length(Wp);
@@ -15,7 +16,7 @@ w=[-ones(n/2,1);ones(n/2,1)];
 [A,b]=ParamsConstraints(n);
 
 x0 = Mats2Params(Wp,Wm);            % Starting guess 
-options = optimset('Algorithm',Algorithm,'Display','off',varargin{:});
+options = optimset('Algorithm',Algorithm,'Display',Display,varargin{:});
 
 if UseDerivs
     options = optimset(options,'GradObj','on');

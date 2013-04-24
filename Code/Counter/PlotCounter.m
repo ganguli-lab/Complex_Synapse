@@ -7,17 +7,17 @@ ax=axes('Parent',fig,'FontSize',16);
 % varnames={'crq','crqm','c2q'};
 %varnames={'crq','qPi','init','A','etaPi'};
 varnames={'crqm','crq','c2q','AI','L2'};
-numpts=100;
+numpts=7;
 n=zeros(1,numpts);
 output=zeros(length(varnames),numpts);
 
 for i=1:numpts
-    n(i)=2*i+4;
+    n(i)=2*i+2;
 %     [ crq(i),init(i),cq(i),ev(i),Tmax(i),Eqbnd(i),L2(i),AI(i) ]=TestClique(n(i));
     output(:,i)=TestCounterEx(n(i),varnames);
-    if mod(i,10)==0
+%     if mod(i,10)==0
         disp(int2str(i));
-    end%if
+%     end%if
 end
 plot(n,real(output),'LineWidth',3);
 set(gca,'XScale','log','YScale','log')

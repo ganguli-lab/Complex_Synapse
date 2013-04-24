@@ -5,7 +5,7 @@ function [ output ] = TestCounterEx( n,varnames )
 
 % [wp,wm,w]=CounterEx(n);
 [wp,wm,w]=DiffJump(n);
-
+[wp,wm ] = ModelOpt( wp,wm,1);
 % q=ones(1,n-1);
 % q(n/2+1)=1/n;
 % q(n/2)=0;
