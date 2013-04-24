@@ -15,6 +15,7 @@ gradq=0;
 altfig=[];
 fig=gcf;
 fig3=[];
+wexp=1;
 
 varargin=assignApplicable(varargin);
 
@@ -43,6 +44,9 @@ end
 if LinWeights
     w=(-1:2/(n-1):1)';
 end
+
+w=nthroot(w,wexp);
+% w=tanh(w);
 
 clf(fig);
 % set(fig,'WindowStyle','docked')
