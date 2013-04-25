@@ -55,8 +55,12 @@
 \newcommand{\pib}{\boldsymbol{\pi}}
 \newcommand{\Lb}{\boldsymbol{\Lambda}}
 \newcommand{\w}{\mathbf{w}}
+\newcommand{\uv}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
 \newcommand{\W}{\mathbf{W}}
 \newcommand{\M}{\mathbf{M}}
+\newcommand{\enc}{\mathbf{q}}
+\newcommand{\frg}{\W^{\mathrm{F}}}
 \newcommand{\F}{\boldsymbol{\Phi}}
 \DeclareMathOperator{\SNR}{SNR}
 \newcommand{\CS}{\mathcal{S}}
@@ -125,7 +129,7 @@ The probabilities of being in each state at time $t$, the row-vector $\mathbf{p}
   \MM\onev=0.
 \end{equation}
 %
-In Surya's notes, $\MM=r\W^F$.
+In Surya's notes, $\MM=r\frg$.
 
 The equilibrium probabilities, $\eq$, satisfy
 %
@@ -649,7 +653,7 @@ The initial signal creation event occurs at time $t=0$, but all subsequent poten
 This means that the ``forgetting'' process will be described by the \emph{continuous}-time Markov chain:
 %
 \begin{equation}\label{eq:forgetting}
-  \MM = r \W^F \equiv r\prn{f^+\W^+ + f^-\W^-}.
+  \MM = r \frg \equiv r\prn{f^+\W^+ + f^-\W^-}.
 \end{equation}
 %
 We only require that this Markov chain is ergodic. The Markov chains described by $\M^\pm$ need not be.
@@ -672,15 +676,15 @@ If there are $N$ synapses and the strength of the synapse in each state is given
 where $\mathbf{p}(t|\pm)$ is the probability of being in each state conditional on potentiation/depression at $t=0$:
 %
 \begin{equation}\label{eq:initprob}
-  \mathbf{p}(t|\pm) = \eq\M^\pm \e^{rt\W^F}.
+  \mathbf{p}(t|\pm) = \eq\M^\pm \e^{rt\frg}.
 \end{equation}
 %
 We can rewrite the signal as
 %
 \begin{equation}\label{eq:signalr}
 \begin{aligned}
-  S(t) &= N \eq (f^+\W^+ - f^-\W^-)\e^{rt\W^F}\w\\
-    & N (2f^+f^-) \eq (\W^+ - \W^-)\e^{rt\W^F}\w.
+  S(t) &= N \eq (f^+\W^+ - f^-\W^-)\e^{rt\frg}\w\\
+    & N (2f^+f^-) \eq (\W^+ - \W^-)\e^{rt\frg}\w.
 \end{aligned}
 \end{equation}
 %
@@ -707,7 +711,7 @@ This simplifies the noise:
 The factors of $\eq_+\eq_-$ will have little effect on anything that follows, so we will drop them.\footnote{They will not affect the optimal transition rates for most quantities, and the optima will correspond to the symmetric case when $\eq_+=\eq_-=\half$.} This leaves the signal-to-noise ratio as
 %
 \begin{equation}\label{eq:SNRcurve}
-  \SNR(t) = \sqrt{N} (2f^+f^-) \eq (\W^+ - \W^-)\e^{rt\W^F}\w.
+  \SNR(t) = \sqrt{N} (2f^+f^-) \eq (\W^+ - \W^-)\e^{rt\frg}\w.
 \end{equation}
 %
 
@@ -717,16 +721,16 @@ We can express this in terms of the one parameter family of transition matrices:
   \begin{aligned}
   \W(\alpha) &= \alpha\W^++(1-\alpha)\W^-,
   &\quad&\implies&
-    \W^F&=\W(f^+),\\&&&&
+    \frg&=\W(f^+),\\&&&&
     \W^+ - \W^- &= \diff{\W}{\alpha},\\&&&&
-    \eq \diff{\W}{\alpha} &= -\diff{\eq}{\alpha} \W^F.
+    \eq \diff{\W}{\alpha} &= -\diff{\eq}{\alpha} \frg.
   \end{aligned}
 \end{equation}
 %
 Then \eqref{eq:SNRcurve} becomes
 %
 \begin{equation}\label{eq:SNRalpha}
-  \SNR(t) = \sqrt{N} (2f^+f^-) \diff{\eq}{\alpha}(-\W^F)\,\e^{rt\W^F}\w.
+  \SNR(t) = \sqrt{N} (2f^+f^-) \diff{\eq}{\alpha}(-\frg)\,\e^{rt\frg}\w.
 \end{equation}
 %
 
@@ -784,10 +788,10 @@ This synapse has an SNR curve:
 \begin{equation}\label{eq:lumpedSNR}
   \begin{aligned}
     \frac{\SNR(t)}{\sqrt{N} (2f^+f^-)} &=  \widehat{\mathbf{p}}^\infty (\widehat{\W}^+ - \widehat{\W}^-)\e^{rt\widehat{\W}^F}\widehat{\w}. \\
-      &= \eq VU (\W^+ - \W^-) VU \e^{rt\W^F} VU \w. \\
-      &= \eq (\W^+ - \W^-) VU \e^{rt\W^F} VU \w. \\
-      &= \eq (\W^+ - \W^-)\e^{rt\W^F} VU \w. \\
-      &= \eq (\W^+ - \W^-)\e^{rt\W^F}\w. \\
+      &= \eq VU (\W^+ - \W^-) VU \e^{rt\frg} VU \w. \\
+      &= \eq (\W^+ - \W^-) VU \e^{rt\frg} VU \w. \\
+      &= \eq (\W^+ - \W^-)\e^{rt\frg} VU \w. \\
+      &= \eq (\W^+ - \W^-)\e^{rt\frg}\w. \\
   \end{aligned}
 \end{equation}
 %
@@ -853,7 +857,7 @@ This implies that the process is lumpable to a two state system (see \sref{sec:l
            1 \\
          \end{pmatrix}
   ,\\ \implies\quad
-  \W^F = \begin{pmatrix}
+  \frg = \begin{pmatrix}
            -f^+ & f^+ \\
            f^- & -f^- \\
          \end{pmatrix}
@@ -862,7 +866,7 @@ This implies that the process is lumpable to a two state system (see \sref{sec:l
            f^- & f^+ \\
          \end{pmatrix}
   ,%&
-%  \e^{rt\W^F} &= \I+(1-\e^{-rt})\W^F
+%  \e^{rt\frg} &= \I+(1-\e^{-rt})\frg
 %         \begin{pmatrix}
 %           f^-+f^+\e^{-rt} & f^+(1-\e^{-rt}) \\
 %           f^-(1-\e^{-rt}) & f^++f^-\e^{-rt} \\
@@ -902,24 +906,24 @@ We will see in \sref{sec:multistate} that the optimal chain is absorbing, so it 
 The signal-to-noise curve is given by \eqref{eq:SNRalpha}.
 %%
 %\begin{equation}\label{eq:SNR}
-%  \SNR(t) = \sqrt{N}(2f^+f^-) \diff{\eq}{\alpha} (-\W^F) \e^{rt\W^F} \w.
+%  \SNR(t) = \sqrt{N}(2f^+f^-) \diff{\eq}{\alpha} (-\frg) \e^{rt\frg} \w.
 %\end{equation}
 %%
 The area is computed by integrating this
 %
 \begin{equation}\label{eq:area}
 \begin{aligned}
-  A &= \frac{\sqrt{N}(2f^+f^-)}{r} \diff{\eq}{\alpha} \brk{-\e^{rt\W^F}}_0^\infty \w \\
+  A &= \frac{\sqrt{N}(2f^+f^-)}{r} \diff{\eq}{\alpha} \brk{-\e^{rt\frg}}_0^\infty \w \\
     &= \frac{\sqrt{N}(2f^+f^-)}{r} \diff{\eq}{\alpha} (\I-\onev\eq) \w \\
     &= \frac{\sqrt{N}(2f^+f^-)}{r} \diff{\eq}{\alpha} \w.
 \end{aligned}
 \end{equation}
 %
 
-We can rewrite this using \eqref{eq:diffpT}, with $A=\sqrt{N}(2f^+f^-)\hat{A}$ and $q_{ij} \equiv \diff{\W^F_{ij}}{\alpha}=\W^+_{ij}-\W^-_{ij}$
+We can rewrite this using \eqref{eq:diffpT}, with $A=\sqrt{N}(2f^+f^-)\hat{A}$ and $\enc_{ij} \equiv \diff{\frg_{ij}}{\alpha}=\W^+_{ij}-\W^-_{ij}$
 %
 \begin{equation}\label{eq:areaT}
-  \hat{A} = \sum_{i,j,k} \eq_i q_{ij} (\fptb_{ik} - \fptb_{jk}) \eq_k \w_k.
+  \hat{A} = \sum_{i,j,k} \eq_i \enc_{ij} (\fptb_{ik} - \fptb_{jk}) \eq_k \w_k.
 \end{equation}
 %
 
@@ -954,17 +958,17 @@ We can rewrite \eqref{eq:areaT} as
 %
 \begin{equation}\label{eq:areaEta}
 \begin{aligned}
-  \hat{A} &= 2\sum_{i,j} q_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}) &
-    &= -2\sum_{i,j} q_{ij} \eq_i \eta^+_{j} \\
-    &= 2\sum_{i,j} q_{ij} \eq_i (\eta^-_{j} - \eta^-_{i}) &
-    &= 2\sum_{i,j} q_{ij} \eq_i \eta^-_{j}.
+  \hat{A} &= 2\sum_{i,j} \enc_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}) &
+    &= -2\sum_{i,j} \enc_{ij} \eq_i \eta^+_{j} \\
+    &= 2\sum_{i,j} \enc_{ij} \eq_i (\eta^-_{j} - \eta^-_{i}) &
+    &= 2\sum_{i,j} \enc_{ij} \eq_i \eta^-_{j}.
 \end{aligned}
 \end{equation}
 %
 We can also express it in terms of the fundamental matrix \eqref{eq:funddef} as
 %
 \begin{equation}\label{eq:areaZ}
-  \hat{A} = \sum_{i,j,k,l} q_{ij} \pib_{l} \fund_{li} (\fund_{jk}-\fund_{ik}) \w_k
+  \hat{A} = \sum_{i,j,k,l} \enc_{ij} \pib_{l} \fund_{li} (\fund_{jk}-\fund_{ik}) \w_k
     = \pib \fund q \fund \w.
 \end{equation}
 %
@@ -974,10 +978,10 @@ It is also helpful to define the following quantities:
 \begin{equation}\label{eq:areacoeffs}
   \begin{aligned}
     c_k &= \diff{\ln\eq_k}{\alpha}
-      = \sum_{ij} \eq_i q_{ij} \prn{\fptb_{ik}-\fptb_{jk}}
+      = \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}-\fptb_{jk}}
       = - \prn{\eq q \fptb}_k
       = \frac{(\eq q \fund)_k}{\eq_k}, \\
-    a_i &= \sum_j q_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}),\\
+    a_i &= \sum_j \enc_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}),\\
     \implies
     \hat{A} &= \sum_k c_k \eq_k \w_k
       = 2\sum_i a_i.
@@ -994,9 +998,9 @@ with $\W^\pm_{ii}=-\sum_{j \neq i} \W^\pm_{ij}$ imposed by hand.
 Thus,
 %
 \begin{equation}\label{eq:basicderivs}
-  \pdiff{\W^F_{ij}}{\W^\pm_{gh}} = f^\pm \delta_{gi}(\delta_{hj}-\delta_{ij}),
+  \pdiff{\frg_{ij}}{\W^\pm_{gh}} = f^\pm \delta_{gi}(\delta_{hj}-\delta_{ij}),
   \qquad
-  \pdiff{q_{ij}}{\W^\pm_{gh}} = \pm\delta_{gi}(\delta_{hj}-\delta_{ij}).
+  \pdiff{\enc_{ij}}{\W^\pm_{gh}} = \pm\delta_{gi}(\delta_{hj}-\delta_{ij}).
 \end{equation}
 %
 The implicit $g \neq h$ that comes with all derivatives is unnecessary, as the derivatives above vanish when $g=h$.
@@ -1012,16 +1016,16 @@ We can then differentiate expression \eqref{eq:areaZ} to get
 \begin{equation}\label{eq:derivA}
   \begin{aligned}
     \pdiff{\hat{A}}{\W^\pm_{gh}} =&\,
-      rf^\pm \sum_{ijkl} q_{ij} \w_k \pib_l \brk{
+      rf^\pm \sum_{ijkl} \enc_{ij} \w_k \pib_l \brk{
          \fund_{lg}(\fund_{hi}-\fund_{gi})(\fund_{jk}-\fund_{ik}) + \fund_{li}(\fund_{jg}-\fund_{ig})(\fund_{hk}-\fund_{gk}) } \\
     &\pm \sum_{kl} \w_k \pib_l \fund_{lg} (\fund_{hk} - \fund_{gk}) \\
     =&\,
-      2rf^\pm \sum_{ij} q_{ij} \eq_i \eq_g \brk{
+      2rf^\pm \sum_{ij} \enc_{ij} \eq_i \eq_g \brk{
          (\fptb_{gi}-\fptb_{hi})(\eta^+_{i}-\eta^+_{j}) +
          (\fptb_{ig}-\fptb_{jg})(\eta^+_{g}-\eta^+_{h}) } \\
       &\pm 2 \eq_g (\eta^+_g - \eta^+_h) \\
     =&\,
-      2rf^\pm \sum_{ij} q_{ij} \eq_i \eq_g
+      2rf^\pm \sum_{ij} \enc_{ij} \eq_i \eq_g
          (\fptb_{gi}-\fptb_{hi})(\eta^+_{i}-\eta^+_{j})
       \pm 2 \eq_g (\eta^+_g - \eta^+_h)\brk{1+\pdiff{\ln(\eq_g)}{\,\ln(f^\pm)}} \\
     =&\,
@@ -1036,21 +1040,21 @@ It is sometimes useful to consider the following derivatives:
 %
 \begin{equation}\label{eq:derivqw}
   \begin{aligned}
-    \pdiff{}{\W^F_{gh}} &\equiv     \pdiff{}{\W^+_{gh}} +     \pdiff{}{\W^-_{gh}} ,&\qquad
-    \pdiff{}{q_{gh}}    &\equiv f^- \pdiff{}{\W^+_{gh}} - f^+ \pdiff{}{\W^-_{gh}} .
+    \pdiff{}{\frg_{gh}} &\equiv     \pdiff{}{\W^+_{gh}} +     \pdiff{}{\W^-_{gh}} ,&\qquad
+    \pdiff{}{\enc_{gh}}    &\equiv f^- \pdiff{}{\W^+_{gh}} - f^+ \pdiff{}{\W^-_{gh}} .
   \end{aligned}
 \end{equation}
 %
 Each of these derivatives behaves as their names suggest:
 %
 \begin{equation}\label{eq:derivqweff}
-  \pdiff{\W^F_{ij}}{\W^F_{gh}} = \pdiff{q_{ij}}{q_{gh}}
+  \pdiff{\frg_{ij}}{\frg_{gh}} = \pdiff{\enc_{ij}}{\enc_{gh}}
   =  \delta_{gi}(\delta_{hj}-\delta_{ij}),
   \qquad
-  \pdiff{q_{ij}}{\W^F_{gh}} = \pdiff{\W^F_{ij}}{q_{gh}}  = 0.
+  \pdiff{\enc_{ij}}{\frg_{gh}} = \pdiff{\frg_{ij}}{q_{gh}}  = 0.
 \end{equation}
 %
-This is because we could treat $\W^F$ and $q$ as the independent variables. However, the boundaries of the allowed region are more easily expressed in terms of $\W^\pm$.
+This is because we could treat $\frg$ and $q$ as the independent variables. However, the boundaries of the allowed region are more easily expressed in terms of $\W^\pm$.
 
 
 \subsubsection{Scaling mode}\label{sec:rescale}
@@ -1072,7 +1076,7 @@ This intuition is confirmed by the following results:
     \Delta \fpt  &= -\fpt ,
     \\
     \Delta \eta^\pm_i  &= - \eta^\pm_i ,&
-    \Delta q_{ij} &= q_{ij} ,&
+    \Delta \enc_{ij} &= \enc_{ij} ,&
     \Delta \hat{A}  &= 0 ,&
   \end{aligned}
 \end{equation}
@@ -1110,7 +1114,7 @@ with $g \neq h$. This enforces the constraints \eqref{eq:Wmin}, but not \eqref{e
 Consider
 %
 \begin{equation}\label{eq:shiftqderiv}
-  \pdiff{\CL}{q_{gh}} =
+  \pdiff{\CL}{\enc_{gh}} =
   f^- \pdiff{\CL}{\W^+_{gh}} - f^+ \pdiff{\CL}{\W^-_{gh}}
    = (f^- \mu^+_{gh} - f^+ \mu^-_{gh}) + 2\eq_g (\eta^+_g - \eta^+_h)
    = 0.
@@ -1126,7 +1130,7 @@ This corresponds to the shift
   \sum_j \epsilon_{ij} = 0,
 \end{equation}
 %
-which leaves $\W^F$ unchanged, and therefore $\eq$, $\fpt$ and $\eta^\pm$ as well.
+which leaves $\frg$ unchanged, and therefore $\eq$, $\fpt$ and $\eta^\pm$ as well.
 
 Assume $\eta^+_g > \eta^+_h$. Then
 %
@@ -1152,10 +1156,10 @@ Thus, if we arrange the states in order of decreasing $\eta^+$, $\W^+$ is upper-
 
 We have ignored the possibility that $\eq_g=0$, as this would imply that $\fpt_{ig}=\infty$, which would in turn imply that the Markov process is not ergodic.
 
-%Note that if we multiply \eqref{eq:shiftqderiv} by $q_{gh}$ and sum over $(g,h)$, we get
+%Note that if we multiply \eqref{eq:shiftqderiv} by $\enc_{gh}$ and sum over $(g,h)$, we get
 %%
 %\begin{equation}\label{eq:stupid}
-%  \hat{A} = \sum_\pm\sum_{g\neq h} \mu^\pm_{gh} \W^F_{gh},
+%  \hat{A} = \sum_\pm\sum_{g\neq h} \mu^\pm_{gh} \frg_{gh},
 %\end{equation}
 %%
 %which is probably useless
@@ -1168,8 +1172,8 @@ Consider the following combinations of derivatives:
 %  \begin{aligned}
 \label{eq:areacoeffincrderiv}
     \Delta_{gh} &\equiv
-      \frac{1}{\eq_{g}} \pdiffc{}{\W^F_{gh}}
-      + \frac{1}{\eq_h} \pdiffc{}{\W^F_{hg}}, \\
+      \frac{1}{\eq_{g}} \pdiffc{}{\frg_{gh}}
+      + \frac{1}{\eq_h} \pdiffc{}{\frg_{hg}}, \\
 %  \end{aligned}
 \end{align}
 %
@@ -1327,7 +1331,7 @@ It saturates various inequalities:
         \fptb_{ij},  &\text{if}\quad i \leq j \leq k \quad\text{or}\quad i \geq j \geq k,\\
         -\fptb_{ji}, &\text{if}\quad j \leq i \leq k \quad\text{or}\quad j \geq i \geq k,\\
       \end{cases} \\
-    r\eq_i \W^F_{ij} \prn{\fptb_{ij}+\fptb_{ji}} &= 1 \quad\text{if}\quad i=j\pm1,
+    r\eq_i \frg_{ij} \prn{\fptb_{ij}+\fptb_{ji}} &= 1 \quad\text{if}\quad i=j\pm1,
   \end{aligned}
 \end{equation}
 %
@@ -1348,10 +1352,10 @@ This allows us to calculate the $c_k$'s:
     %\\&
     - \sum_{i\geq k} \fpt_{i+1,i} \prn{\eq_{i}q^+_i+\eq_{i+1}q^-_i}
   ,\\
-  c_{k+1} - c_k =&\, \prn{\fpt_{k,k+1}+\fpt_{k+1,k}} \prn{\frac{\eq_{k}\W^F_{k,k+1}}{f^+}+\frac{\eq_{k+1}\W^F_{k+1,k}}{f^-}}
+  c_{k+1} - c_k =&\, \prn{\fpt_{k,k+1}+\fpt_{k+1,k}} \prn{\frac{\eq_{k}\frg_{k,k+1}}{f^+}+\frac{\eq_{k+1}\frg_{k+1,k}}{f^-}}
     =%\\=&\,
     \frac{1}{rf^+f^-},\\
-  \sum_k c_k \eq_k =&\, \sum_{ij} \eq_i q_{ij} (\eta-\eta) = 0,\\
+  \sum_k c_k \eq_k =&\, \sum_{ij} \eq_i \enc_{ij} (\eta-\eta) = 0,\\
 %  \implies c_k =&\, \frac{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j}{f^+f^-},
   \implies c_k =&\, \frac{k - \sum_j j\eq_j}{rf^+f^-},
 \end{aligned}
@@ -1429,6 +1433,132 @@ This is maximised at $\eq_+=\eq_-=\half$:
 Note that the chain that achieves this is not ergodic, the two states at each end are absorbing. This is similar to the results found numerically in \cite{Barrett2008discrete} in a slightly different situation.
 
 
+\section{Finite time SNR}\label{sec:finitetime}
+
+The SNR at time $t$ was given in \eqref{eq:SNRcurve} as
+%
+\begin{equation*}
+  \SNR(t) = \sqrt{N} (2f^+f^-) \eq \enc \, \e^{rt\frg}\w.
+\end{equation*}
+%
+Let us try to maximise this at time $t$ only.
+We will consider the independent parameters to be the off-diagonal elements of $\M^\pm$, with the diagonal elements determined via $\M^\pm_{ii} = \sum_{j\neq i} \M^\pm_{ij}$.
+Consider the Lagrangian
+%
+\begin{equation}\label{eq:finlagrangian}
+  \CL = \eq \enc\e^{rt\frg}\w + \sum_\pm \sum_{ij} \mu^\pm_{ij} \M^\pm_{ij}.
+\end{equation}
+%
+Necessary conditions for an extremum are
+%
+\begin{equation*}
+  \pdiff{\CL}{\M^\pm_{gh}} = 0,
+  \qquad
+    \mu^\pm_{gh} \geq 0,\quad
+    \M^\pm_{gh} \geq 0,\quad
+    \mu^\pm_{gh}\M^\pm_{gh} = 0.
+\end{equation*}
+%
+We can use the results of \cite{Ortiz2001diffmatexp} to write down the shift of this Lagrangian under an infinitesimal perturbation
+%
+\begin{equation}\label{eq:finpert}
+\begin{aligned}
+  \delta\CL =&\, \eq \delta\frg \fund\, \enc \, \e^{rt\frg} \w 
+    + \eq \delta\enc \, \e^{rt\frg} \w %\\ &
+   + r\int_{0}^{t}\!\!\dr\tau\, \eq \enc\, \e^{r\tau\frg} \delta\frg \e^{r(t-\tau)\frg} \w\\
+   &+ \sum_\pm \sum_{ij} \mu^\pm_{ij} \delta\M^\pm_{ij}
+\end{aligned}
+\end{equation}
+%
+This can be rewritten using the eigenvector decomposition of $\frg$.
+%
+\begin{equation}\label{eq:eigendecomp}
+  \frg = \sum_a -q_a \uv^a \vv^a,
+  \quad
+  \vv^a \uv^b = \delta_{ab},
+  \quad
+  \frg \uv^a = -q_a \uv^a,
+  \quad
+  \vv^a \frg = -q_a \vv^a.
+\end{equation}
+%
+People often write $\vv$ as $\vv\trans$, presumably because they find the concept of row vectors too difficult to handle. 
+We're better than that.
+We can choose $q_1=0$, $\uv^1=\onev$ and $\vv=\eq$.
+
+
+Then, defining
+%
+\begin{equation}\label{eq:eigdiff}
+  F_{ab} = \left\{
+           \begin{aligned}
+             &rt\,\e^{-q_art}, &\quad&\text{if } q_a=q_b,\\
+             &\frac{\e^{-q_art}-\e^{-q_brt}}{q_b-q_a}, &&\text{otherwise,}
+           \end{aligned}
+           \right.
+\end{equation}
+%
+we get
+%
+\begin{equation}\label{findiff}
+\begin{aligned}
+  \pdiff{\CL}{\M^\pm_{gh}} =&\,
+    f^\pm \eq_g \prn{\brk{\fund \, \enc \, \e^{rt\frg} \w}_h - \brk{\fund \, \enc \, \e^{rt\frg} \w}_g} \\
+    &\pm \eq_g \prn{\brk{\e^{rt\frg} \w}_h - \brk{\e^{rt\frg} \w}_g} \\
+    &+ \sum_{ab} F_{ab} (\eq\enc\uv^a) \vv^{ag} (\uv^b_h-\uv^b_g) (\vv^a\w) \\
+    &+ \mu^\pm_{gh} - \mu^\pm_{gg}.
+\end{aligned}
+\end{equation}
+%
+
+Consider
+%
+\begin{equation}\label{eq:finshiftq}
+\begin{aligned}
+  f^- \pdiff{\CL}{\M^+_{gh}} - f^+ \pdiff{\CL}{\M^-_{gh}}
+   =&\, \eq_g \prn{\brk{\e^{rt\frg} \w}_h - \brk{\e^{rt\frg} \w}_g}\\
+    &+ f^- \mu^+_{gh} + f^+\mu^-_{gg} - f^+ \mu^-_{gh} - f^- \mu^+_{gg}\\
+   =&\, 0,
+\end{aligned}
+\end{equation}
+%
+which corresponds to the shift considered in \S\ref{sec:triangular}. We can see that
+%
+\begin{equation}\label{eq:etalambdaineq}
+  \begin{aligned}
+    \brk{\e^{rt\frg} \w}_g &< \brk{\e^{rt\frg} \w}_h
+%    &\quad & \implies \quad&
+%    f^+ \mu^-_{gh} + f^- \mu^+_{gg} &> 0
+    &\quad & \implies \quad&
+    \mu^-_{gh} &> 0
+    &\quad & \text{or} \quad&
+    \mu^+_{gg} &> 0
+    \\ &
+    &\quad & \implies \quad&
+    \M^-_{gh} &= 0
+    &\quad & \text{or} \quad&
+    \M^+_{gg} &= 0,
+    \\
+    \brk{\e^{rt\frg} \w}_g &> \brk{\e^{rt\frg} \w}_h
+%    &\quad & \implies \quad&
+%    f^- \mu^+_{gh} + f^+\mu^-_{gg} &> 0
+    &\quad & \implies \quad&
+    \mu^+_{gh} &> 0
+    &\quad & \text{or} \quad&
+    \mu^-_{gg} &> 0
+    \\ &
+    &\quad & \implies \quad&
+    \M^+_{gh} &= 0
+    &\quad & \text{or} \quad&
+    \M^-_{gg} &= 0.
+  \end{aligned}
+\end{equation}
+%
+
+
+
+
+
 \appendix
 \section{Other quantities}
 
@@ -1441,12 +1571,14 @@ In the general case, making full use of \cite[Cor.6.2.7]{kemeny1960finite}, we c
 \begin{equation}\label{eq:areacoeffdiff}
   \begin{aligned}
     c_{k+1} - c_k &= \frac{N^{k+1}_{kk}}{\eq_k} \brk{
-      \sum_{i<j} \eq_i \frac{\W^F_{ij}}{f^+} \prn{H^{k+1}_{i,k} + H^{k}_{j,k+1} - 1}
-      +\sum_{i>j} \eq_i \frac{\W^F_{ij}}{f^+} \prn{H^{k+1}_{j,k} + H^{k}_{i,k+1} - 1}
+      \sum_{i<j} \eq_i \frac{\frg_{ij}}{f^+} \prn{H^{k+1}_{i,k} + H^{k}_{j,k+1} - 1}
+\right.\\&\qquad\qquad\qquad\qquad\qquad\qquad\qquad\left.
+      +\sum_{i>j} \eq_i \frac{\frg_{ij}}{f^+} \prn{H^{k+1}_{j,k} + H^{k}_{i,k+1} - 1}
     } \\
     &= \frac{N^{k+1}_{kk}}{\eq_k} \brk{
-      \sum_{i<j} \eq_i \frac{\W^F_{ij}}{f^+} \prn{1 - H^{k+1}_{j,k} + H^{k}_{i,k+1}}
-      +\sum_{i>j} \eq_i \frac{\W^F_{ij}}{f^+} \prn{1 - H^{k+1}_{i,k} + H^{k}_{j,k+1}}
+      \sum_{i<j} \eq_i \frac{\frg_{ij}}{f^+} \prn{1 - H^{k+1}_{j,k} + H^{k}_{i,k+1}}
+\right.\\&\qquad\qquad\qquad\qquad\qquad\qquad\qquad\left.
+      +\sum_{i>j} \eq_i \frac{\frg_{ij}}{f^+} \prn{1 - H^{k+1}_{i,k} + H^{k}_{j,k+1}}
     }, \\
     \eta^+_{k} - \eta^+_{k+1} &=
       \fpt_{k,k+1} \eq_+ - \sum_{\set{i}{\w_i>0}} N^{k+1}_{ii} \prn{1 - H^{i}_{k,k+1}} \\&=
@@ -1463,12 +1595,12 @@ We need to show that the positivity of one ($\forall k$) implies that the positi
 
 \subsection{Derivatives \wrt \texorpdfstring{$\fptb$}{T}}\label{sec:derivT}
 
-The Markov chain, $\W^F$, is completely determined by the off-diagonal mean first passage times, $\fptb$, \cite[Th.4.4.12]{kemeny1960finite}:
+The Markov chain, $\frg$, is completely determined by the off-diagonal mean first passage times, $\fptb$, \cite[Th.4.4.12]{kemeny1960finite}:
 %
 \begin{equation}\label{eq:fptdet}
   \begin{aligned}
     \eq &= \eta \prn{\fptb\inv\onev}\trans, \\
-    r\W^F= \MM &= (\D-\onem)\fptb\inv.
+    r\frg= \MM &= (\D-\onem)\fptb\inv.
   \end{aligned}
 \end{equation}
 %
@@ -1477,15 +1609,15 @@ where $\eta$ can be determined by normalising $\eq$ and $\D$ is determined by $\
 We can then define derivatives \wrt $\fptb$:
 %
 \begin{equation}\label{eq:derivTdef}
-  \pdiff{}{\fptb_{gh}} = \sum_{ij} \pdiffc{\W^F_{ij}}{\fptb_{gh}} \pdiff{}{\W^F_{ij}},
+  \pdiff{}{\fptb_{gh}} = \sum_{ij} \pdiffc{\frg_{ij}}{\fptb_{gh}} \pdiff{}{\frg_{ij}},
 \end{equation}
 %
 where
 %
 \begin{equation}\label{eq:derivTWp}
-  \pdiff{\W^F_{ij}}{\fptb_{gh}} = r \eq_h \W^F_{ig} \prn{\W^F_{ij}-\W^F_{hj}} ,
+  \pdiff{\frg_{ij}}{\fptb_{gh}} = r \eq_h \frg_{ig} \prn{\frg_{ij}-\frg_{hj}} ,
   \qquad
-  \pdiff{\eq_{i}}{\fptb_{gh}} = -r \eq_h \eq_i \W^F_{ig} .
+  \pdiff{\eq_{i}}{\fptb_{gh}} = -r \eq_h \eq_i \frg_{ig} .
 \end{equation}
 %
 These derivatives of $q$ will vanish.
@@ -1494,8 +1626,8 @@ This means that the derivatives of the area are:
 %
 \begin{equation}\label{derivTarea}
   \pdiff{\hat{A}}{\fptb_{gh}} = -\eq_h\brk{
-    \sum_i \eq_i q_{ig} \w_h
-    + r\sum_{ijk} \prn{\W^F_{ig}+\W^F_{kg}} \eq_i q_{ij} \prn{\fptb_{ik}-\fptb_{jk}} \eq_k \w_k
+    \sum_i \eq_i \enc_{ig} \w_h
+    + r\sum_{ijk} \prn{\frg_{ig}+\frg_{kg}} \eq_i \enc_{ij} \prn{\fptb_{ik}-\fptb_{jk}} \eq_k \w_k
     }.
 \end{equation}
 %
@@ -1508,12 +1640,12 @@ Let us write $\SNR(0) = \sqrt{N} (2f^+f^-) \hat{I}$. Using \eqref{eq:SNRcurve}, 
 %
 \begin{equation}\label{eq:initSNR}
   \begin{aligned}
-    \hat{I} &= \diff{\eq}{\alpha}(-\W^F)\w &
-      &= - \pib \fund \diff{\MM}{\alpha} \fund \W^F \w &
-      &= - \pib \fund \diff{\W^F}{\alpha} \fund \MM \w \\
-      &= \pib \fund \diff{\W^F}{\alpha} (\I - \tau\onev\pib) \w &
-      &= \pib \fund \diff{\W^F}{\alpha} \w &
-      &= \eq \diff{\W^F}{\alpha} \w .
+    \hat{I} &= \diff{\eq}{\alpha}(-\frg)\w &
+      &= - \pib \fund \diff{\MM}{\alpha} \fund \frg \w &
+      &= - \pib \fund \diff{\frg}{\alpha} \fund \MM \w \\
+      &= \pib \fund \diff{\frg}{\alpha} (\I - \tau\onev\pib) \w &
+      &= \pib \fund \diff{\frg}{\alpha} \w &
+      &= \eq \diff{\frg}{\alpha} \w .
   \end{aligned}
 \end{equation}
 %
@@ -1521,9 +1653,9 @@ We can also write this in component form
 %
 \begin{equation}\label{eq:initSNRcmpt}
   \begin{aligned}
-     \hat{I} &= \sum_{i,j} \eq_i q_{ij} \w_j \\
-      &= \sum_{i \neq j} \eq_i q_{ij} \w_j + \sum_i \eq_i q_{ii} \w_i \\
-      &= \sum_{i \neq j} q_{ij} \eq_i (\w_j - \w_i).
+     \hat{I} &= \sum_{i,j} \eq_i \enc_{ij} \w_j \\
+      &= \sum_{i \neq j} \eq_i \enc_{ij} \w_j + \sum_i \eq_i \enc_{ii} \w_i \\
+      &= \sum_{i \neq j} \enc_{ij} \eq_i (\w_j - \w_i).
   \end{aligned}
 \end{equation}
 %
@@ -1532,9 +1664,9 @@ We can differentiate the expression in terms of $\fund$ to get
 \begin{equation}\label{eq:initSNRdiff}
  \begin{aligned}
   \pdiff{\hat{I}}{\W^\pm_{gh}}
-    &= rf^\pm \sum_{ijk} \pib_k \fund_{kg} (\fund_{hi}-\fund_{gi}) q_{ij} \w_j
+    &= rf^\pm \sum_{ijk} \pib_k \fund_{kg} (\fund_{hi}-\fund_{gi}) \enc_{ij} \w_j
     \pm \sum_k \pib_k \fund_{kg} (\w_h - \w_g) \\
-    &= rf^\pm \sum_{ij} \eq_g q_{ij} (\fptb_{gi}-\fptb_{hi}) \eq_i \w_j
+    &= rf^\pm \sum_{ij} \eq_g \enc_{ij} (\fptb_{gi}-\fptb_{hi}) \eq_i \w_j
     \pm \eq_g (\w_h - \w_g).
  \end{aligned}
 \end{equation}
@@ -1572,7 +1704,7 @@ This corresponds to the scaling, $\W^\pm \to (1+\epsilon)\W^\pm$. Intuitively, t
     \Delta \eq  &= 0 ,&
     \Delta \fpt  &= -\fpt ,&
     \Delta \eta^\pm_i  &= - \eta^\pm_i ,&
-    \Delta q_{ij} &= q_{ij} ,
+    \Delta \enc_{ij} &= \enc_{ij} ,
     \\&&
     \Delta \hat{A}  &= 0 ,&
     \Delta \hat{I} &= \hat{I} ,&
