@@ -1,4 +1,4 @@
-function [ S ] = SNRcurve( t, Wp, Wm, fp, w  )
+function [ S ] = SNRcurve( t, Wp, Wm, fp, w, varargin  )
 %S=SNRCURVE(T,WP,WM,FP,w) SNR as function of time
 %   T = time values
 %   WP = potentiation transition rates
@@ -14,11 +14,14 @@ error(CheckValue(fp,@(x) inrange(x,0,1),'inrange(0,1)'));%fp in [0,1]
 error(CheckSize(w,@iscol));
 error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
 
+q=Wp-Wm;
+W=fp*q + Wm;
+S = SNRcurveWq(t,W,q,fp,w,varargin{:});
 
-[ qa,ca ] = SpectrumWpm( Wp, Wm, fp, w );
 
-% S = gmdmp(ca.*qa, 1, exp(-outer(qa,t,true)), 1);
-S = SNRcurveCaQa(t,ca,qa);
+% [ qa,ca ] = SpectrumWpm( Wp, Wm, fp, w );
+% % S = gmdmp(ca.*qa, 1, exp(-outer(qa,t,true)), 1);
+% S = SNRcurveCaQa(t,ca,qa);
 
 end
 

@@ -16,18 +16,21 @@ for i=1:length(nrange)
         s=0;
         for k=1:num_trials
             [ nWp,nWm ] = FindOpt( t,n );
-            [u,d]=eig(0.5*(nWp+nWm));
-            if rcond(u)<1e-5
+%             [u,d]=eig(0.5*(nWp+nWm));
+%             if rcond(u)<1e-5
+%                 continue;
+%             end
+            snew=SNRcurve(trange,nWp,nWm,0.5,w,'UseExpM',true);
+            if any(snew>1)
                 continue;
             end
-            snew=SNRcurve(t,nWp,nWm,0.5,w);
-            if snew>s
+            if snew(j)>s
                 Wp=nWp;
                 Wm=nWm;
-                s=snew;
+                s=snew(j);
             end                
         end
-        results_struct(i,j)=struct('Wp',Wp,'Wm',Wm,'SNR',SNRcurve(trange,Wp,Wm,0.5,w));
+        results_struct(i,j)=struct('Wp',Wp,'Wm',Wm,'SNR',snew);
     end
 end
 

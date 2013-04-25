@@ -1,5 +1,5 @@
 function [ S ] = SNRcurveWq( t, W, q ,fp, w, varargin  )
-%S=SNRCURVE(T,W,q,w) SNR as function of time
+%S=SNRCURVE(T,W,q,fp,w) SNR as function of time
 %   T = time values
 %   W = forgetting transition rates: f^+W^+ + f^-W^-
 %   q = encoding transition rates: W^+ - W^-
