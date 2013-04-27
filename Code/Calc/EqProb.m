@@ -1,18 +1,24 @@
-function [ pinf ] = EqProb( W )
+function [ pinf ] = EqProb( W,varargin )
 %EQPROB(W) equlibrium distribution of Markov chain (cts time)
 %   W = transition rates
 
 error(CheckSize(W,@ismat));%matrix
 error(CheckSize(W,@issquare));%square
 
-pinf = ones(1,size(W,1))/(ones(size(W)) - W);
+RCondThresh=1e-3;
+varargin=assignApplicable(varargin);
 
-% [v,qb]=eig(-W');
-% qb=diag(qb);
-% [~,ix]=sort(qb);
-% v=conj(v(:,ix))';
-% pinf=v(1,:);
-% pinf=pinf/sum(p);
+Zinv=ones(length(W)) - W;
+
+if rcond(Zinv)>RCondThresh
+    pinf = ones(1,size(W,1))/(ones(size(W)) - W);
+else
+    [v,qb]=eig(-W');
+    qb=diag(qb);
+    [~,ix]=min(qb);
+    pinf=v(:,ix).';
+    pinf=pinf/sum(pinf);
+end
 
 end
 
