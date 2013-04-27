@@ -6,11 +6,18 @@ function [ Wp,Wm ] = FindOpt( t,n,varargin )
 %   Wm = depression transition rates
 
 InitRand=true;
+Triangular=false;
 varargin=assignApplicable(varargin);
 
 if InitRand
-    Wp=RandTrans(n);
-    Wm=RandTrans(n);
+    if Triangular
+        W=RandTrans(n);
+        w=BinaryWeights(n);
+        [Wp,Wm]=TriangleDcmp(W,0.5,w);
+    else
+        Wp=RandTrans(n);
+        Wm=RandTrans(n);
+    end
 else
     [Wp,Wm]=MakeSMS(ones(1,n-1));
 %     [Wp,Wm]=DiffJump(n);
