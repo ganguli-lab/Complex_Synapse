@@ -106,5 +106,8 @@ end
 dSdWp=fp*dSdW+dSdq;
 dSdWm=dSdW-dSdWp;
 
+dSdWp=real(dSdWp);
+dSdWm=real(dSdWm);
+
 end
 

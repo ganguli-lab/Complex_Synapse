@@ -5,26 +5,37 @@ function [ newWp,newWm ] = ModelOpt( Wp,Wm,tm,varargin)
 %   WM = depression transition rates
 
 UseDerivs=false;
-Algorithm='active-set';
+Algorithm='trust-region-reflective';
 Display='off';
+TolFun=1e-6;
+TolX=1e-10;
+TolCon=1e-6;
+MaxIter=1000;
 varargin=assignApplicable(varargin);
 
 n=length(Wp);
-
-w=[-ones(n/2,1);ones(n/2,1)];
+w=BinaryWeights(n);
 
 [A,b]=ParamsConstraints(n);
 
 x0 = Mats2Params(Wp,Wm);            % Starting guess 
-options = optimset('Algorithm',Algorithm,'Display',Display,varargin{:});
+options = optimset('Algorithm',Algorithm,'Display',Display,...
+    'TolFun', TolFun,...  % termination based on function value (of the derivative)
+    'TolX', TolX,...
+    'TolCon',TolCon,...
+    'MaxIter',MaxIter, ...
+    'largescale', 'on', ...
+    varargin{:});
 
 if UseDerivs
     options = optimset(options,'GradObj','on');
-    x = fmincon(@(y)OptFunGrad(y,tm,0.5,w),x0,A,b,[],[],[],[],... 
-       [],options);
+    x = fmincon(@(y)OptFunGrad(y,tm,0.5,w),x0,A,b,...
+         [],[],[],[],[],... 
+       options);
 else
-    x = fmincon(@(y)OptFun(y,tm,0.5,w),x0,A,b,[],[],[],[],... 
-       [],options);
+    x = fmincon(@(y)OptFun(y,tm,0.5,w),x0,A,b,...
+         [],[],[],[],[],... 
+       options);
 end
 [Wp,Wm]=Params2Mats(x);
 
