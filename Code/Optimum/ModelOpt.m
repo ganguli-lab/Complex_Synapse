@@ -5,7 +5,7 @@ function [ newWp,newWm ] = ModelOpt( Wp,Wm,tm,varargin)
 %   WM = depression transition rates
 
 UseDerivs=false;
-Algorithm='trust-region-reflective';
+Algorithm='interior-point';
 Display='off';
 TolFun=1e-6;
 TolX=1e-10;
@@ -29,11 +29,11 @@ options = optimset('Algorithm',Algorithm,'Display',Display,...
 
 if UseDerivs
     options = optimset(options,'GradObj','on');
-    x = fmincon(@(y)OptFunGrad(y,tm,0.5,w),x0,A,b,...
+    [x,~,ef] = fmincon(@(y)OptFunGrad(y,tm,0.5,w),x0,A,b,...
          [],[],[],[],[],... 
        options);
 else
-    x = fmincon(@(y)OptFun(y,tm,0.5,w),x0,A,b,...
+    [x,~,ef] = fmincon(@(y)OptFun(y,tm,0.5,w),x0,A,b,...
          [],[],[],[],[],... 
        options);
 end
@@ -42,6 +42,33 @@ end
 [~,~,ix]=SortByEta(0.5*Wp+0.5*Wm,w);
 newWp=Wp(ix,ix);
 newWm=Wm(ix,ix);
+
+        switch ef
+            case 1
+                disp('Finished.  Magnitude of gradient smaller than the TolFun tolerance.');
+%                 do_accept_opt_stop = true;
+            case 2
+                disp('Finished.  Change in x was smaller than the TolX tolerance.');
+%                 do_accept_opt_stop = true;
+            case 3 
+                disp('Finished.  Change in the objective function value was less than the TolFun tolerance.');
+%                 do_accept_opt_stop = true;
+            case 5
+                disp('Finished.  Predicted decrease in the objective function was less than the TolFun tolerance.');
+%                 do_accept_opt_stop = true;
+            case 0
+                disp('Finished.  Number of iterations exceeded options.MaxIter or number of function evaluations exceeded options.FunEvals.');
+%                 if do_topo_map
+%                     do_accept_opt_stop = true;  % Hard to see how the fval will be less than fval_tol here, but anyways...
+%                 else
+%                     do_accept_opt_stop = false;
+%                 end
+            case -1
+                disp('Finished.  Algorithm was terminated by the output function.');
+                assert ( false, 'Still not sure what this case is.');
+            otherwise
+                assert ( false, 'New exit condition out of the fminunc optimizer front-end.');
+        end
 
 end
 
