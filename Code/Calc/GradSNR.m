@@ -69,9 +69,6 @@ S=p*q*expWt*w;
 
 %deriv wrt q_ij
 dSdq=((expWt*w)*p).';
-if NoDiag
-    dSdq=dSdq-diag(dSdq)*ones(1,length(w));
-end
 
 %deriv wrt W_ij, due to p
 if UseZ
@@ -79,6 +76,7 @@ if UseZ
 else
     dSdp=((Zinv\q*expWt*w)*p).';
 end
+
 %deriv wrt W_ij, due to expWt
 %ref: http://dx.doi.org/10.1002/nme.263
 FF=expLt*ones(1,length(w));
@@ -96,9 +94,12 @@ if UseV
 else
     dSdexpWt=(u*diag(u\w)*F*diag(p*q*u)/u).';
 end
+
 %deriv wrt W_ij
 dSdW=dSdp+dSdexpWt;
+
 if NoDiag
+    dSdq=dSdq-diag(dSdq)*ones(1,length(w));
     dSdW=dSdW-diag(dSdW)*ones(1,length(w));
 end
 

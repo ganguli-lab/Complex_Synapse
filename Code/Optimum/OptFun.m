@@ -1,4 +1,4 @@
-function [ f ] = OptFun( x,t,fp,w )
+function [ f ] = OptFun( x,t,fp,w,varargin )
 %OPTFUN function and gradient for fmincon
 %   x = parameters (off diagonal matrix elements)
 %   f = function to be minimised (-SNR(t))
@@ -8,7 +8,7 @@ function [ f ] = OptFun( x,t,fp,w )
 
 q=Wp-Wm;
 W=fp*q + Wm;
-p=EqProb(W);
+p=EqProb(W,varargin{:});
 
 f=-p*q*expm(W*t)*w;
 
