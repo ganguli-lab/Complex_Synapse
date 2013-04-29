@@ -10,13 +10,13 @@ varargin=assignApplicable(varargin);
 
 if UseExpM
     S=zeros(size(t));
-    p=EqProb(W);
+    p=EqProb(W,varargin{:});
     for i=1:numel(t)
         S(i) = p*q*expm(W*t(i))*w;
     end
     S=2*fp*(1-fp)*S;
 else
-    [ qa,ca ] = SpectrumWq( W,q ,fp, w );
+    [ qa,ca ] = SpectrumWq(W,q,fp,w,varargin{:});
     S = SNRcurveCaQa(t,ca,qa);
 end
 

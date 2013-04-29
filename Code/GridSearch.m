@@ -1,4 +1,4 @@
-function [ results_struct ] = GridSearch( nrange, trange, num_trials )
+function [ results_struct ] = GridSearch( nrange, trange, num_trials, varargin )
 %GRIDSEARCH Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -14,7 +14,7 @@ for i=1:length(nrange)
         t=trange(j);
         s=0;
         for k=1:num_trials
-            [ nWp,nWm ] = FindOpt(t,n);
+            [ nWp,nWm ] = FindOpt(t,n,varargin{:});
 %             [u,d]=eig(0.5*(nWp+nWm));
 %             if rcond(u)<1e-5
 %                 continue;
@@ -30,7 +30,7 @@ for i=1:length(nrange)
             end                
         end
         for k=1:num_trials
-            [ nWp,nWm ] = FindOpt(t,n,'Triangular',true);
+            [ nWp,nWm ] = FindOpt(t,n,'Triangular',true,varargin{:});
 %             [u,d]=eig(0.5*(nWp+nWm));
 %             if rcond(u)<1e-5
 %                 continue;
