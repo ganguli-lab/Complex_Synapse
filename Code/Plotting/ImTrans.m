@@ -12,16 +12,17 @@ if ~exist('axm','var')
     axm=subplot(1,2,2,'Parent',Parent);
 end
 
-ih(1)=imagesc(Wp,'Parent',axp);
-title(axp,'Wp');
+ih(1)=imagesc(Wp+eye(length(Wp)),'Parent',axp);
+title(axp,'M^{pot}');
 xlabel(axp,'To');
 ylabel(axp,'From');
+colorbar('peer',axp);
 
-ih(2)=imagesc(Wm,'Parent',axm);
-title(axm,'Wm');
+ih(2)=imagesc(Wm+eye(length(Wm)),'Parent',axm);
+title(axm,'M^{dep}');
 xlabel(axm,'To');
 ylabel(axm,'From');
-
+colorbar('peer',axm);
 
 
 end
