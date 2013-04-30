@@ -89,11 +89,23 @@ We make the following assumptions:
   \item There are $N$ identical synapses with $M$ internal functional states.
   \item The states of different synapses are independent of each other.
   \item The synapses that are eligible for plasticity are chosen randomly.
-  \item The potentiating/depressing plasticity event timings are distributed as Poisson processes with rates $rf\potdep$, where $f\pot+f\dep=1$.
-      In other words, $r$ is the total rate of plasticity events per synapse and $f\potdep$ are the fraction of these events that are potentiating/depressing.
+  \item Candidate potentiating/depressing plasticity event timings are distributed as Poisson processes with rates $r\potdep$.
   \item Potentiation and depression are described by Markov processes with transition probabilities $\M\potdep$.
   \item The synaptic weights of the internal states are given by the column vector $\w$. This can only take values in a finite range that we can shift to $\pm1$. Most of the models will only use the two extreme values.
 \end{itemize}
+
+In practice, the overall rate of candidate plasticity events will only set the timescale, and only the relative rates will matter.
+With this in mind, we define
+%
+\begin{equation}\label{eq:fpotdep}
+  r = r\pot + r\dep,
+  \qquad
+  f\pot = \frac{r\pot}{r},
+  \qquad
+  f\dep = \frac{r\dep}{r}.
+\end{equation}
+%
+The quantities $f\potdep$ measure the fraction of candidate plasticity events that are potentiating/depressing.
 
 The independence and identicalness of synapses means that the state of the system can be completely described by the probability distribution of the internal states, the row vector $\pr(t)$.
 
@@ -224,13 +236,14 @@ The values of these parameters are listed in \autoref{tab:params}.
 Training the animal will not change the internal dynamics of a synapse under potentiation or depression.
 It will change the environment, which will lead to a change in how often potentiation and depression occur.
 It could be manifested in a change in which synapses are potentiated/depressed, but this could not be captured in this type of model.
-We will model this by changing $f\potdep$, leaving $r$ and $\M\potdep$ unchanged.
+We will model this by changing $f\potdep$, leaving $\M\potdep$ unchanged.
 
-The untrained case will be described by $f\pot=f\pot\norm$.
-Gain-increase training  will be described by $f\pot=f\pot\inc<f\pot\norm$, and
-gain-decrease training  will be described by $f\pot=f\pot\dec>f\pot\norm$. Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depend on $f\pot$, which we will indicate with subscripts.
+The untrained case will be described by $f\dep=f\dep\norm$.
+Gain-increase training  will be described by $f\dep=f\dep\inc>f\dep\norm$, and
+gain-decrease training  will be described by $f\dep=f\dep\dec<f\dep\norm$. 
+Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depend on $f\dep$, which we will indicate with subscripts.
 
-Before training, the synaptic distribution will be in the equilibrium distribution corresponding to $f\pot\norm$.
+Before training, the synaptic distribution will be in the equilibrium distribution corresponding to $f\dep\norm$.
 During gain-increase training, it will evolve according to \eqref{eq:evolve} with $f\pot\inc$:
 %
 \begin{equation}\label{eq:nopre}
@@ -254,15 +267,17 @@ If we imagine something like an LN model for the Purkinje cell, the output would
 If we're not keeping track of synaptic identity, the most natural linear combination to use would be an equal sum of them all.
 The behavioural output (VOR gain) will be some unknown, non-linear function of the synaptic weights, so the best we can hope for is to reproduce qualitative features of the experiment, such as whether learning is enhanced or impaired by the mutation or pre-training.
 
-We will assume $f\pot\wt=f\pot\ko$.
-This is because the mutation is well localised to the Purkinje cells, so the activity of the parallel and climbing fibres should not change very much.
+We will assume $f\dep\wt=f\dep\ko$.
+This is because the effects of the mutation is well localised to the Purkinje cells, so the activity of the parallel and climbing fibres should not change very much.
 Therefore the rates of potentiation and depression should not change very much either.
 This implies that the mean synaptic weight in equilibrium differs between the mutant and wild type, but that is also suggested by the data regarding basal levels of phospho-GluR2 at serine 880.
 As the mutation produces no change in baseline performance, there must be a compensatory mechanism somewhere else.
 We will model this compensation as a simple linear offset, as could be produced by another population of neurons/synapses whose effect cancels with these neurons/synapses.
 
-For the most part, we set $f\pot\norm=\half$, $f\pot\inc=f\pot\norm+\Delta f$ and $f\pot\dec=f\pot\norm-\Delta f$, with $\Delta f<0$.
-We use the same values for wild-type and mutant and treat gain-increase and decrease symmetrically.
+For the most part, we set $f\dep\norm=\half$, $f\dep\inc=f\dep\norm+\Delta f$ and $f\dep\dec=f\dep\norm-\Delta f$, with $\Delta f>0$.
+We use the same values for wild-type and mutant for the reasons discussed above.
+We will mostly treat gain-increase and decrease symmetrically, but this is not necessary.
+We could adjust $r$ to keep $r\pot$ unchanged, if so desired, but this would only change the overall timescale and would not affect any of the qualitative comparisons that we are concerned with here. 
 The values of these parameters are listed in \autoref{tab:params}.
 
 We are also assuming that the relation between VOR gain and mean synaptic weight is the same for mutant ant wild-type, except for a linear offset to compensate for the difference in equilibrium weights mentioned above.
@@ -303,17 +318,17 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
     Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $r\ttrain$ & $r\tpre$ \\
     \cline{1-7}
-    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & -0.1  & 5 & 20  &\label{tr:multistate_weak} \\
-    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & -0.3  & 5 & 20  &\label{tr:multistate_med} \\
-    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & -0.45 & 5 & 30  &\label{tr:multistate_strong} \\
-    Two-state          & 2  & $q=0.1$  & $q=0.2$  & -0.1  & 5 & 5   &\label{tr:binary} \\
-    Linear Multistate  & 10 & $q=0.3$  & $q=0.4$  & -0.3  & 5 & 5   &\label{tr:multistate_lin} \\
+    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & 0.1  & 5 & 20  &\label{tr:multistate_weak} \\
+    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & 0.3  & 5 & 20  &\label{tr:multistate_med} \\
+    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & 0.45 & 5 & 30  &\label{tr:multistate_strong} \\
+    Two-state          & 2  & $q=0.1$  & $q=0.2$  & 0.1  & 5 & 5   &\label{tr:binary} \\
+    Linear Multistate  & 10 & $q=0.3$  & $q=0.4$  & 0.3  & 5 & 5   &\label{tr:multistate_lin} \\
     Pooled        & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
-                                          & -0.1 & 5 & 20 &\label{tr:pooled_plenty}\\
+                                          & 0.1 & 5 & 20 &\label{tr:pooled_plenty}\\
     Pooled        & 10 & $q\in[0.05,0.4]$  & $q\in[0.1,0.8]$
-                                          & -0.1 & 5 & 20 &\label{tr:pooled_scarce}\\
-    Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 5 & 20  &\label{tr:cascade_short} \\
-    Cascade       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 5 & 100 &\label{tr:cascade_long} \\
+                                          & 0.1 & 5 & 20 &\label{tr:pooled_scarce}\\
+    Cascade       & 10 & $x=0.25$ & $x=0.33$ & 0.3  & 5 & 20  &\label{tr:cascade_short} \\
+    Cascade       & 10 & $x=0.25$ & $x=0.33$ & 0.3  & 5 & 100 &\label{tr:cascade_long} \\
     \cline{1-7}
 %   \hline
 %    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
@@ -425,36 +440,36 @@ First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiWTnopre}
-  \Phi = \frac{2\abs{\Delta f}q}{M},
+  \Phi = \frac{2{\Delta f}q}{M}.
 \end{equation}
 %
-where it's worth remembering that $\Delta f<0$.
+%where it's worth remembering that $\Delta f<0$.
 With pre-training:
 %
 \begin{equation}\label{eq:multiWTpre}
 \begin{aligned}
-  \Phi &= 16(\Delta f)^2q \, \frac{(1-2\Delta f)^{M/2-1} (1+2\Delta f)^{M/2-1}}
-          {(1-2\Delta f)^M - (1+2\Delta f)^M} \\
-       &= \frac{4\abs{\Delta f}q}{M} + \CO(\Delta f)^2.
+  \Phi &= 16(\Delta f)^2q \, \frac{(1+2\Delta f)^{M/2-1} (1-2\Delta f)^{M/2-1}}
+          {(1+2\Delta f)^M - (1-2\Delta f)^M} \\
+       &= \frac{4{\Delta f}\,q}{M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
 %
 So, we see that pre-training will speed up learning when $\Delta f$ is small (in absolute value), as seen in \autoref{fig:multistate_weak}\ref{fig:multistate_weak_learnS} (black curves).
-On the other hand, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning a lot due to the factor of $(1+2\Delta f)^{M/2-1}$, as seen in \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}.
+On the other hand, if $\Delta f$ is close to $\half$, pre-training will initially slow down learning a lot due to the factor of $(1-2\Delta f)^{M/2-1}$, as seen in \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}.
 
 Intuitively, the flux depends on the slope of the distribution at the centre of the chain (with an offset due to the difference between $f\pot$ and $f\dep$).
 Pre-training has two effects: it produces a slope in the right direction (see \autoref{fig:multistate_weak}\ref{fig:multistate_weak_eq}, red trace), but it also reduces the distribution at the centre (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}, red trace).
 For small $\Delta f$, the first effect is stronger and learning speeds up.
 For larger $\Delta f$, the second effect wins and learning slows down.
 
-Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
+Now, consider the mutant, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiKOnopre}
-  \Phi = 2\abs{\Delta f} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M}.
+  \Phi = 2{\Delta f} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M}.
 \end{equation}
 %
-This will be smaller than \eqref{eq:multiWTnopre} if $\beta<\beta^*(M)$.
+This will be smaller than \eqref{eq:multiWTnopre} if $\beta<\beta^*(M)$, where $\beta^*(M)$ is defined as the value at which they are equal.
 This function is plotted in \autoref{fig:multistate_star}\ref{fig:multistate_betastar}, where we can see that it approaches 1 rapidly as we increase $M$.
 
 There are two effects here as well.
@@ -465,23 +480,23 @@ With pre-training:
 %
 \begin{equation}\label{eq:multiKOpre}
 \begin{aligned}
-  \Phi &= 4\abs{\Delta f} q \, \frac{(1+2\Delta f) - \beta(1-2\Delta f)}
-          {(1+2\Delta f)^M - \beta^M(1-2\Delta f)^M}   \,
+  \Phi &= 4{\Delta f}\, q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
+          {(1-2\Delta f)^M - \beta^M(1+2\Delta f)^M}   \,
           \brk{\beta (1-2\Delta f) (1+2\Delta f)}^{M/2-1} \\
-       &= 4\abs{\Delta f} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f)^2.
+       &= 4{\Delta f}\, q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
 %
 Once again, we see that pre-training will speed up learning when $\Delta f$ is small, whereas, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning.
 
 Let us define $\Delta f^*(\beta,M)$ to be the value at which \eqref{eq:multiKOnopre} and \eqref{eq:multiKOpre} are equal.
-Values of $\Delta f$ that are smaller than this (stronger training) will correspond to slower learning after pre-training.
-As we would like pre-training to slow down learning in the wild-type but speed it up in the mutant, it would seem that we require $\Delta f^*(\beta,M) < \Delta f < \Delta f^*(1,M)$ (remembering once more that $\Delta f<0$ and that the wild-type corresponds to $\beta=1$).
-As we see in \autoref{fig:multistate_star}\ref{fig:multistate_deltafstar}, $\Delta f^*(\beta,M) < \Delta f^*(1,M)$, so this range always exists.
+Values of $\Delta f$ that are larger than this (stronger training) will correspond to slower learning after pre-training.
+As we would like pre-training to slow down learning in the wild-type but speed it up in the mutant, it would seem that we require $\Delta f^*(1,M) < \Delta f < \Delta f^*(\beta,M)$ (remembering that the wild-type corresponds to $\beta=1$).
+As we see in \autoref{fig:multistate_star}\ref{fig:multistate_deltafstar}, $\Delta f^*(\beta,M) > \Delta f^*(1,M)$, so this range always exists.
 We can see an example of this in \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS}.
 
 However, this is only the initial, instantaneous rate of change.
-Let's look at \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}, for which $\Delta f < \Delta f^*(1,M)$, so that pre-training initially slows down learning for both wild-type and mutant.
+Let's look at \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}, for which $\Delta f > \Delta f^*(\beta,M)$, so that pre-training initially slows down learning for both wild-type and mutant.
 We see that the pre-trained curve can rapidly catch up with the un-pre-trained one, due to the mass of probability concentrated at the end of the chain (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}, red trace) drifting to the centre.
 This happens sooner for the mutant than the wild-type, due to the stronger depressing transitions.
 This means that there is an intermediate range of time-scales over which pre-training does slow down learning in the wild-type but speed it up in the mutant, even outside the desired range of values for $\Delta f$.
@@ -506,10 +521,10 @@ Then, \eqref{eq:multiKOpre} becomes
 %
 \begin{equation}\label{eq:multiKOdiffpre}
 \begin{aligned}
-  \Phi &= 2\abs{\Delta f + \overline{\Delta f}} q \, \frac{(1+2\overline{\Delta f}) - \beta(1-2\overline{\Delta f})}
-          {(1+2\overline{\Delta f})^M - \beta^M(1-2\overline{\Delta f})^M}   \,
+  \Phi &= 2\prn{\Delta f + \overline{\Delta f}} q \, \frac{(1-2\overline{\Delta f}) - \beta(1+2\overline{\Delta f})}
+          {(1-2\overline{\Delta f})^M - \beta^M(1+2\overline{\Delta f})^M}   \,
           \brk{\beta (1-2\overline{\Delta f}) (1+2\overline{\Delta f})}^{M/2-1} \\
-       &= 2\abs{\Delta f + \overline{\Delta f}} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f,\overline{\Delta f})^2.
+       &= 2\prn{\Delta f + \overline{\Delta f}} q\,\frac{(1-\beta)\beta^{M/2-1}}{1-\beta^M} + \CO(\Delta f,\overline{\Delta f})^2.
 \end{aligned}
 \end{equation}
 %
@@ -519,8 +534,8 @@ We can then look at the wild-type by setting $\beta=1$:
 \begin{aligned}
   \Phi &= 8\,\overline{\Delta f}\prn{\Delta f + \overline{\Delta f}} q \,
           \frac{(1-2\overline{\Delta f})^{M/2-1} (1+2\overline{\Delta f})^{M/2-1} }
-          {\abs{(1+2\overline{\Delta f})^M - (1-2\overline{\Delta f})^M}}   \\
-       &= \frac{2\abs{\Delta f + \overline{\Delta f}} q}{M} + \CO(\Delta f,\overline{\Delta f})^2.
+          {{(1+2\overline{\Delta f})^M - (1-2\overline{\Delta f})^M}}   \\
+       &= \frac{2\prn{\Delta f + \overline{\Delta f}} q}{M} + \CO(\Delta f,\overline{\Delta f})^2.
 \end{aligned}
 \end{equation}
 %
@@ -560,26 +575,25 @@ First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:binWTnopre}
-  \Phi = \abs{\Delta f} q,
+  \Phi = {\Delta f}\, q.
 \end{equation}
 %
-where, once again, it's worth remembering that $\Delta f<0$.
 With pre-training:
 %
 \begin{equation}\label{eq:binWTpre}
 \begin{aligned}
-  \Phi &= 2\abs{\Delta f} q.
+  \Phi &= 2{\Delta f}\, q.
 \end{aligned}
 \end{equation}
 %
 So, we see that pre-training will always speed up learning, unlike what is seen in the experiment.
 This can be seen in \autoref{fig:binary}\ref{fig:binary_learnS} (black curves).
 
-Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
+Now, consider the mutant, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:binKOnopre}
-  \Phi = \frac{2\abs{\Delta f} q}{1+\beta},
+  \Phi = \frac{2{\Delta f}\, q}{1+\beta},
 \end{equation}
 %
 which is always larger that \eqref{eq:binWTnopre}, unlike what is seen in the experiment.
@@ -594,7 +608,7 @@ With pre-training:
 %
 \begin{equation}\label{eq:binKOpre}
 \begin{aligned}
-  \Phi &= 4\abs{\Delta f} q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
+  \Phi &= 4{\Delta f}\, q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
           {(1-2\Delta f)^2 - \beta^2(1+2\Delta f)^2}.
 \end{aligned}
 \end{equation}
@@ -612,7 +626,7 @@ Secondly, we assumed that there would be equal rates of potentiation and depress
 However, relaxing this assumption merely changes \eqref{eq:binKOnopre} to
 %
 \begin{equation}\label{eq:binKOnoprediff}
-  \Phi = \frac{\abs{\Delta f} q}{f\dep+\beta f\pot}.
+  \Phi = \frac{{\Delta f}\, q}{f\dep+\beta f\pot} = \frac{{\Delta f}\, q\pot q\dep}{f\dep q\dep+ f\pot q\pot}.
 \end{equation}
 %
 This will not change our conclusions either.
@@ -658,7 +672,7 @@ First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiLinWTnopre}
-  \Phi = 2\abs{\Delta f}q\,\frac{M-1}{M},
+  \Phi = 2{\Delta f}\,q\,\frac{M-1}{M},
 \end{equation}
 %
 where, once more, we should note that $\Delta f<0$.
@@ -666,18 +680,18 @@ With pre-training:
 %
 \begin{equation}\label{eq:multiLinWTpre}
 \begin{aligned}
-  \Phi &= 4\abs{\Delta f} q \, \frac{(1+2\Delta f)^{M-1} - (1-2\Delta f)^{M-1}}
+  \Phi &= 4{\Delta f}\, q \, \frac{(1+2\Delta f)^{M-1} - (1-2\Delta f)^{M-1}}
           {(1+2\Delta f)^M - (1-2\Delta f)^M} \\
-       &= {4\abs{\Delta f} q}\,\frac{M-1}{M} + \CO(\Delta f)^2.
+       &= {4{\Delta f}\, q}\,\frac{M-1}{M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
 %
 
-Now, consider the mutant, for which $q\pot=\beta q\dep=q$, $\beta<1$.
+Now, consider the mutant, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiLinKOnopre}
-  \Phi = 2\abs{\Delta f} q\,\frac{1-\beta^{M-1}}{1-\beta^M}.
+  \Phi = 2{\Delta f}\, q\,\frac{1-\beta^{M-1}}{1-\beta^M}.
 \end{equation}
 %
 This decreases monotonically in the interval $\beta\in[0,1]$, therefore this will always be greater than \eqref{eq:multiLinWTnopre}.
@@ -688,13 +702,13 @@ With pre-training:
 %
 \begin{equation}\label{eq:multiLinKOpre}
 \begin{aligned}
-  \Phi &= 4\abs{\Delta f} q \, \frac{(1+2\Delta f)^{M-1} - \beta^{M-1}(1-2\Delta f)^{M-1}}
-          {(1+2\Delta f)^M - \beta^M(1-2\Delta f)^M} \\
-       &= 4\abs{\Delta f} q\,\frac{1-\beta^{M-1}}{1-\beta^M} + \CO(\Delta f)^2.
+  \Phi &= 4{\Delta f}\, q \, \frac{(1-2\Delta f)^{M-1} - \beta^{M-1}(1+2\Delta f)^{M-1}}
+          {(1-2\Delta f)^M - \beta^M(1+2\Delta f)^M} \\
+       &= 4{\Delta f}\, q\,\frac{1-\beta^{M-1}}{1-\beta^M} + \CO(\Delta f)^2.
 \end{aligned}
 \end{equation}
 %
-The ratio of this to \eqref{eq:multiLinKOnopre} takes its minimum value at the lowest end of the interval $\Delta f \in \brk{-\half,0}$, where it takes the value
+The ratio of this to \eqref{eq:multiLinKOnopre} takes its minimum value at the upper end of the interval $\Delta f \in \brk{0,\half}$, where it takes the value
 %
 \begin{equation}\label{eq:multiLinprenopre}
   \frac{\Phi_{\text{w/ pre}}}{\Phi_{\text{w/o pre}}} = \frac{1-\beta^M}{\beta-\beta^M}
