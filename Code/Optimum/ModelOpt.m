@@ -11,6 +11,7 @@ TolFun=1e-6;
 TolX=1e-10;
 TolCon=1e-6;
 MaxIter=1000;
+DispExit=false;
 varargin=assignApplicable(varargin);
 
 n=length(Wp);
@@ -39,10 +40,12 @@ else
 end
 [Wp,Wm]=Params2Mats(x);
 
-[~,~,ix]=SortByEta(0.5*Wp+0.5*Wm,w);
+% [~,~,ix]=SortByEta(0.5*Wp+0.5*Wm,w);
+[~,~,ix]=SortByWt(0.5*Wp+0.5*Wm,w,tm);
 newWp=Wp(ix,ix);
 newWm=Wm(ix,ix);
 
+if DispExit
         switch ef
             case 1
                 disp('Finished.  Magnitude of gradient smaller than the TolFun tolerance.');
@@ -69,6 +72,7 @@ newWm=Wm(ix,ix);
             otherwise
                 assert ( false, 'New exit condition out of the fminunc optimizer front-end.');
         end
+end
 
 end
 

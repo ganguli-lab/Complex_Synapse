@@ -13,7 +13,7 @@ if InitRand
     if Triangular
         W=RandTrans(n);
         w=BinaryWeights(n);
-        [Wp,Wm]=TriangleDcmp(W,0.5,w);
+        [Wp,Wm]=TriangleDcmp(W,0.5,w,t);
     else
         Wp=RandTrans(n);
         Wm=RandTrans(n);
@@ -23,7 +23,11 @@ else
 %     [Wp,Wm]=DiffJump(n);
 end
 
-[ Wp,Wm ] = ModelOpt( Wp,Wm,t,varargin{:});
+try
+    [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
+catch ME
+    return;
+end
 
 end
 

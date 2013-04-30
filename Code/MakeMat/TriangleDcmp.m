@@ -1,4 +1,4 @@
-function [ Wp,Wm,neww ] = TriangleDcmp( W,fp,w )
+function [ Wp,Wm,neww ] = TriangleDcmp( W,fp,w,t )
 %[WP,WM,neww]=TRIANGLEDCMP(W,FP,w) Extract W^+,W^- from W, consistent with
 %upper/lower triangularity assocated with w.
 %   Detailed explanation goes here
@@ -22,7 +22,11 @@ if exist('w','var')
     assert(length(w)==length(W));%same size
     assert(all(abs(w)==1));%+/-1
     %
-    [W,neww]=SortByEta(W,w);
+    if exist('t','var')
+        [W,neww]=SortByWt(W,w,t);
+    else
+        [W,neww]=SortByEta(W,w);
+    end
 else
     neww=[-ones(length(W)/2,1);ones(length(W)/2,1)];
 end
