@@ -10,10 +10,10 @@ function [ Wp,Wm,neww ] = TriangleDcmp( W,fp,w,t )
 %   neww = w after sorting
 %
 
-assert(ismat(W));%matrix
-assert(issquare(W));%square
-assert(isscalar(fp));
-assert(0<=fp && fp<=1);%fp in [0,1]
+error(CheckSize(W,@ismat));%matrix
+error(CheckSize(W,@issquare));%square
+error(CheckSize(fp,@isscalar));
+error(CheckValue(fp,@(x) inrange(x,0,1),'inrange(0,1)'));%fp in [0,1]
 
 
 if exist('w','var')
@@ -33,8 +33,8 @@ end
 
 Wp=triu(W)/fp;
 Wm=tril(W)/(1-fp);
-Wp=Wp-diag(sum(Wp,2));
-Wm=Wm-diag(sum(Wm,2));
+Wp=StochastifyC(Wp);
+Wm=StochastifyC(Wm);
 
 
 end

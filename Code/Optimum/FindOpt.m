@@ -14,6 +14,8 @@ if InitRand
         W=RandTrans(n);
         w=BinaryWeights(n);
         [Wp,Wm]=TriangleDcmp(W,0.5,w,t);
+        Wp=Stochastify(Wp+eye(n));
+        Wm=Stochastify(Wm+eye(n));
     else
         Wp=RandTrans(n);
         Wm=RandTrans(n);
