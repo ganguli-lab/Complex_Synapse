@@ -3,7 +3,7 @@ function [env,whichn,whicht,new_res,snr] = ExtractEnv( res_struct )
 %   Detailed explanation goes here
 
 snr=[res_struct.SNR];
-snr=reshape(snr,[size(res_struct,2) size(res_struct) ]);
+snr=reshape(snr,[length(res_struct(1).SNR) size(res_struct) ]);
 snr=real(snr);
 
 env=snr;
