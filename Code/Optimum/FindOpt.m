@@ -26,7 +26,8 @@ else
 end
 
 try
-    [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
+%     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
+    [Wp,Wm] = GradientModelOpt( Wp,Wm,t,varargin{:});
 catch ME
     return;
 end
