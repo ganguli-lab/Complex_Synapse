@@ -16,17 +16,20 @@ for a=1:length(nrange)
         for qs=qsrange
              for i=1:(n-1)
                 for j=(i+1):n
-                    [nWp,nWm]=OneShortcut(n,i,j,qs);
-                    snew=SNRcurve(trange,nWp,nWm,0.5,w,'UseExpM',true);
-                    if any(snew>1)
-                        continue;
-                    end
+                    for k=1:length(qsrange)
+                        qd=qsrange(k)*(1-qs);
+                        [nWp,nWm]=OneShortcut(n,i,j,qs,qd);
+                        snew=SNRcurve(trange,nWp,nWm,0.5,w,'UseExpM',true);
+                        if any(snew>1)
+                            continue;
+                        end
                         if snew(b)>smax
                             Wp=nWp;
                             Wm=nWm;
                             smax=snew(b);
                             scurve=snew;
-                        end
+                        end%if
+                    end%for k
                 end%for j
             end%for i
         end%for qs

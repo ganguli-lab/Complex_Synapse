@@ -2,11 +2,12 @@ function [ tm ] = TouchEnv( q )
 %t=TOUCHENV(q,n) When does SNR curve touch envelope?
 %   q = vector of nearest neighbour transition rates, or length of chain
 
-if isscalar(q) && isint(q) && q>1
-    q=ones(1,q-1);
-end
-
-[Wp,Wm,w]=MakeSMS(q);
+% if isscalar(q) && isint(q) && q>1
+%     q=ones(1,q-1);
+% end
+% 
+% [Wp,Wm,w]=MakeSMS(q);
+[Wp,Wm,w]=DiffJump(q);
 
 [qa,Ia]=SpectrumWpm(Wp,Wm,0.5,w);
 Ia=Ia.*qa;
