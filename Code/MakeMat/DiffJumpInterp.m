@@ -5,19 +5,30 @@ function [ Wp,Wm,w ] = DiffJumpInterp( n,eps )
 existsAndDefault('eps',1);
 
 q=[ones(1,n/2-1) 0 ones(1,n/2-1)];
-q(end)=eps;
+%
+% q(end)=eps
+%
+% q(n/2-1)=eps;
+%
+q(n/2+1)=eps;
+q(1)=eps;
 
-[Wp,Wm,w]=MakeSMS(q);
+[Wp,~,w]=MakeSMS(q);
 
-% Wp(n/2,n/2+1)=0;
-Wp(n/2,n)=eps;
-Wp(n/2,n-1)=1-eps;
-% Wm(n/2+1,n/2)=0;
-Wm(n/2+1,1)=eps;
-Wm(n/2+1,2)=1-eps;
+%Wp(n/2,n-1)=1-eps
+%
+% Wp(n/2,n)=eps;
+%
+% Wp(n/2-1,n/2)=eps;
+% Wp(n/2-1,n)=1-eps;
+%
+Wp(n/2,n)=1;
+Wp(n/2+1,n/2+3)=1-eps;
+Wp(1,3)=1-eps;
 
 Wp=StochastifyC(Wp);
-Wm=StochastifyC(Wm);
+
+Wm=rot90(Wp,2);
 
 end
 
