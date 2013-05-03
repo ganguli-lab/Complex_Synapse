@@ -27,12 +27,13 @@ options = {...
     varargin{:}};
 
     [x,~,ef] = GradientDescend(x0,eta,A,b,@OptFunGrad,tm,fp,w,options{:});
-[Wp,Wm]=Params2Mats(x);
+[newWp,newWm]=Params2Mats(x);
 
 % [~,~,ix]=SortByEta(0.5*Wp+0.5*Wm,w);
-[~,~,ix]=SortByWt(0.5*Wp+0.5*Wm,w,tm);
-newWp=Wp(ix,ix);
-newWm=Wm(ix,ix);
+% [~,~,ix]=SortByWt(0.5*Wp+0.5*Wm,w,tm);
+% newWp=Wp(ix,ix);
+% newWm=Wm(ix,ix);
+
 
 if DispExit
         switch ef

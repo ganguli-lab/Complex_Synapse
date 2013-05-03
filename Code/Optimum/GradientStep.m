@@ -31,6 +31,7 @@ varargin=assignApplicable(varargin);
 
 
 [~,dx]=fun(x,varargin{:});
+%dx=-dx;
 mu=CalcKTmult(x,dx,eta,A,b);
 
 xnew = x - eta *(dx + (mu*A).');

@@ -21,8 +21,8 @@ if InitRand
         Wm=RandTrans(n);
     end
 else
-    [Wp,Wm]=MakeSMS(ones(1,n-1));
-%     [Wp,Wm]=DiffJump(n);
+%    [Wp,Wm]=MakeSMS(ones(1,n-1));
+     [Wp,Wm]=DiffJump(n);
 end
 
 try
