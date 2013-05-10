@@ -1,0 +1,141 @@
+\documentclass{article} % For LaTeX2e
+\usepackage{nips13submit_e,times}
+\input{sl_preamble.tex}
+\input{sl_graphics_preamble.tex}
+\graphicspath{{"Figs/"}}
+% >> Only for drafts! <<
+\usepackage[notref,notcite]{showkeys}
+% ----------------------------------------------------------------
+%\numberwithin{equation}{section}
+%\renewcommand{\baselinestretch}{1.5}
+% ----------------------------------------------------------------
+% New commands etc.
+\input{sl_definitions.tex}
+\input{sl_symbols.tex}
+%
+%additional symbols:
+%
+\DeclareMathOperator{\SNR}{SNR}
+%matrices
+\newcommand{\inv}{^{-1}}
+\newcommand{\dg}{^\mathrm{dg}}
+\newcommand{\trans}{^\mathrm{T}}
+\newcommand{\I}{\mathbf{I}}
+%vec of ones
+\newcommand{\onev}{\mathbf{e}}
+%mat of ones
+\newcommand{\onem}{\mathbf{E}}
+%Markov matrix
+\newcommand{\MM}{\mathbf{Q}}
+%prob distributions
+\newcommand{\pr}{\mathbf{p}}
+\newcommand{\eq}{\pr^\infty}
+%first passage times
+\newcommand{\fpt}{\mathbf{T}}
+%off-diag first passage times
+\newcommand{\fptb}{\overline{\fpt}}
+%fundamental matrix
+\newcommand{\fund}{\mathbf{Z}}
+%other symbols for matrices
+\newcommand{\Pb}{\mathbf{P}}
+\newcommand{\D}{\mathbf{D}}
+\newcommand{\pib}{\boldsymbol{\pi}}
+\newcommand{\Lb}{\boldsymbol{\Lambda}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\uv}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\enc}{\mathbf{q}}
+\newcommand{\frg}{\W^{\mathrm{F}}}
+\newcommand{\F}{\boldsymbol{\Phi}}
+%superscripts
+\newcommand{\pot}{^{\text{pot}}}
+\newcommand{\dep}{^{\text{dep}}}
+\newcommand{\potdep}{^{\text{pot/dep}}}
+%sets
+\newcommand{\CS}{\mathcal{S}}
+\newcommand{\CA}{\mathcal{A}}
+\newcommand{\CB}{\mathcal{B}}
+\newcommand{\comp}{^\mathrm{c}}
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title info:
+\title{A memory frontier for complex synapses}
+%
+% Author List:
+%
+\author{Subhaneil Lahiri and Surya Ganguli\\
+Applied Physics Department, Stanford University, Stanford CA\\
+\emaillink{sulahiri@stanford.edu}, \emaillink{sulahiri@stanford.edu}
+%
+}
+
+%\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{abstract}
+  Blah blah blah.
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}\label{sec:intro}
+
+
+
+
+
+\section{Mathematical setup}\label{sec:setup}
+
+We use a well established formalism for the study of learning and memory with complex synapses (see \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}).
+In this approach, potentiating and depressing plasticity events occur at random times, with all information about the neural activity and learning rules responsible for them absorbed into their rates.
+
+We make the following assumptions:
+\begin{itemize}
+  \item There are $N$ identical synapses with $M$ internal functional states each.
+  \item There are no spatial or temporal correlations in the pattern of potentiating and depressing event.
+  \item There are no correlations in the states of different synapse.
+  \item Plasticity events occur at random (Poisson distributed) times at rate $r$.
+  \item The fraction of these that are potentiating or depressing are given by $f\pot$ and $f\dep$ respectively.
+\end{itemize}
+
+
+
+\section{Upper bounds}\label{sec:bounds}
+
+
+
+
+
+\section{Memory curve envelope}\label{sec:env}
+
+
+
+
+
+\section{Discussion}\label{sec:disc}
+
+
+
+
+
+%\subsubsection*{Acknowledgements}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{utcaps_sl}
+\bibliography{maths,neuro}
+
+
+\end{document}
