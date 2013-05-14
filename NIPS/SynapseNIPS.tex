@@ -100,7 +100,10 @@ Applied Physics Department, Stanford University, Stanford CA\\
 
 
 
-\section{Mathematical setup}\label{sec:setup}
+\section{Synaptic models and their memory curves}\label{sec:setup}
+
+In this section, we will describe the class of models of synaptic plasticity that we are studying and how we quantify their performance in memory storage.
+In the subsequent sections, we will find upper bounds on this performance.
 
 We use a well established formalism for the study of learning and memory with complex synapses (see \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}).
 In this approach, potentiating and depressing plasticity events occur at random times, with all information about the neural activity and learning rules responsible for them absorbed into their rates.
@@ -143,9 +146,10 @@ $f\potdep$ is the fraction of events that are potentiating/depressing and $\I$ i
 This results in the following SNR
 %
 \begin{equation}\label{eq:SNRcalc}
-  \snr(t) = \sqrt{N}\prn{2 f\pot f\dep} \eq \prn{\M\pot-\M\dep} \e^{rt\frg} \w.
+  \snr(t) = \sqrt{N}\prn{2 f\pot f\dep} \eq \prn{\M\pot-\M\dep} \e^{rt\frg} \w,
 \end{equation}
 %
+where the weight of the synapse when it is in its $i$'th state is given by the corresponding element of the column vector $\w$.
 We will frequently refer to this function as the memory curve.
 
 The parameters must satisfy the following constraints:
@@ -198,8 +202,74 @@ We will find some of these constraints in the next section.
 
 
 \section{Upper bounds}\label{sec:bounds}
+  
+In this section, we will find some upper bounds on certain properties of the memory curve discussed in the previous section, namely its initial value and the area under it.
+We will use these bounds to determine an upper bound on the SNR at finite times in the next section.
 
 
+\subsection{Initial SNR}\label{sec:initial}
+
+Now we will discuss the SNR at $t=0$:
+%
+\begin{equation}\label{eq:init}
+  \snr(0) = \sqrt{N}\prn{2 f\pot f\dep} \eq \prn{\M\pot-\M\dep} \w.
+\end{equation}
+%
+We will find an upper bound on this quantity for \emph{all} possible models and also find the model that saturates this bound.
+
+A useful quantity is the equilibrium probability flux between two disjoint sets of states, $\CA$ and $\CB$:
+%
+\begin{equation}\label{eq:flux}
+  \F_{\CA\CB} = \sum_{i\in\CA} \sum_{j\in\CB} r \eq_i \frg_{ij}.
+\end{equation}
+%
+The initial SNR is closely related to the flux between the states with $\w_i=-1$ and those with $\w_j=+1$:
+%
+\begin{equation}\label{eq:initflux}
+  \snr(0) \leq \frac{4\sqrt{N}\F_{-+}}{r}\,.
+\end{equation}
+%
+This inequality becomes an equality if potentiation never decreases the synaptic weight and depression never increases it, which should be a property of any sensible model.
+
+To maximise this flux, potentiation from a weak state must be guaranteed to end in a strong state, and depression must do the reverse.
+AN example of such a model is shown in \autoref{fig:maxinit}(\ref{fig:max_init_pot},\ref{fig:max_init_dep}).
+These models have a property known as ``lumpability'' (see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time).
+They are completely equivalent (\ie have the same memory curve) as a two state model with transition probabilities equal to 1, as shown in \autoref{fig:maxinit}(\ref{fig:binary_det}).
+
+This two state model has the equilibrium distribution $\eq=(f\dep,f\pot)$ and its flux is given by $\F_{-+} = rf\pot f\dep$. 
+This is maximized when $f\pot=f\dep=\half$, leading to the upper bound:
+%
+\begin{equation}\label{eq:maxinit}
+  \snr(0) \leq \sqrt{N}.
+\end{equation}
+%
+
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\hp\aligntop{\includegraphics[width=0.25\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
+  \item\aligntop{\includegraphics[width=0.25\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
+  \item\aligntop{\includegraphics[width=0.1\linewidth]{binary_det.svg}}\label{fig:binary_det}
+  \end{myenuma}
+ \end{center}
+  \caption{Synaptic models that maximize initial SNR. 
+  (\ref{fig:max_init_pot}) For potentiation, all transitions starting from a weak state lead to a strong state, and the probabilities for all transitions leaving a given weak state sum to 1.
+  (\ref{fig:max_init_pot}) Depression is similar to potentiation, but with strong and weak interchanged. 
+  (\ref{fig:binary_det}) The equivalent two state model, with transition probabilities under potentiation and depression equal to one.
+  }\label{fig:maxinit}
+\end{figure}
+
+
+\subsection{Area}\label{sec:area}
+
+Now consider the area under the memory curve:
+%
+\begin{equation}\label{eq:area}
+  A = \int_0^\infty\!\!\dr t \, \snr(t).
+\end{equation}
+%
+We will find an upper bound on this quantity as well as the model that saturates it.
 
 
 
