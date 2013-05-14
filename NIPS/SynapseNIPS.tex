@@ -16,6 +16,9 @@
 %additional symbols:
 %
 \DeclareMathOperator{\SNR}{SNR}
+\DeclareMathOperator{\snr}{SNR}
+\newcommand{\wv}{\vec{w}}
+\newcommand{\wvi}{\vec{w}_\text{ideal}}
 %matrices
 \newcommand{\inv}{^{-1}}
 \newcommand{\dg}{^\mathrm{dg}}
@@ -42,8 +45,6 @@
 \newcommand{\pib}{\boldsymbol{\pi}}
 \newcommand{\Lb}{\boldsymbol{\Lambda}}
 \newcommand{\w}{\mathbf{w}}
-\newcommand{\uv}{\mathbf{u}}
-\newcommand{\vv}{\mathbf{v}}
 \newcommand{\W}{\mathbf{W}}
 \newcommand{\M}{\mathbf{M}}
 \newcommand{\enc}{\mathbf{q}}
@@ -58,6 +59,10 @@
 \newcommand{\CA}{\mathcal{A}}
 \newcommand{\CB}{\mathcal{B}}
 \newcommand{\comp}{^\mathrm{c}}
+%eigenmodes
+\newcommand{\uv}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\CI}{\mathcal{I}}
 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -99,15 +104,96 @@ Applied Physics Department, Stanford University, Stanford CA\\
 
 We use a well established formalism for the study of learning and memory with complex synapses (see \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}).
 In this approach, potentiating and depressing plasticity events occur at random times, with all information about the neural activity and learning rules responsible for them absorbed into their rates.
+We assume that there are no spatial or temporal correlations in the pattern of potentiating and depressing events, and these events cause Markovian transitions between the internal states of the synapses.
+As a result of these assumptions, the states of different synapses will be independent, and the system can be fully described by the probability distribution across these states, which we will indicate with the row-vector $\pr(t)$.
 
-We make the following assumptions:
-\begin{itemize}
-  \item There are $N$ identical synapses with $M$ internal functional states each.
-  \item There are no spatial or temporal correlations in the pattern of potentiating and depressing event.
-  \item There are no correlations in the states of different synapse.
-  \item Plasticity events occur at random (Poisson distributed) times at rate $r$.
-  \item The fraction of these that are potentiating or depressing are given by $f\pot$ and $f\dep$ respectively.
-\end{itemize}
+We also employ an ``ideal observer'' approach to the memory readout, where the synaptic weights are read directly.
+This provides an upper bound to the quality of any readout using neural activity.
+These synaptic weights will be restricted to two values, which we can shift and scale to $\pm1$.
+
+For any single memory, there will be an ideal pattern of synaptic weights, the $N$-element vector $\wvi$, that is $+1$ at all synapses that were potentiated and $-1$ at all synapses that were depressed.
+The actual pattern of synaptic weights at some later time, $t$, will be $\wv(t)$.
+We can use the overlap between these, $\wvi\cdt\wv(t)$, as a measure of the quality of the memory.
+As $t\to\infty$, the system will return to its steady state distribution which will be uncorrelated with the memory in question.
+The probability distribution of the quantity $\wvi\cdt\wv(\infty)$ can be used as a ``null model'' for comparison.
+
+The extent to which the memory has been stored is described by a signal-to-noise ratio (SNR):
+%
+\begin{equation}\label{eq:SNRdef}
+  \snr(t) = \frac{\av{\wv_\text{ideal}\cdt\wv(t) - \wv_\text{ideal}\cdt\wv(\infty)}}
+     {\sqrt{\var(\wv_\text{ideal}\cdt\wv(\infty))}}.
+\end{equation}
+%
+The noise is essentially $\sqrt{N}$. 
+There is a correction when potentiation and depression are imbalanced, but this will not affect the upper bounds that we will discuss below and will be ignored in the subsequent formulae.
+
+All of the preceding plasticity events will put the system in its steady-state distribution, $\eq$.
+The memory we are tracking at $t=0$ will change this to $\eq\M\pot$ in those synapses that are potentiated and $\eq\M\dep$ in those synapses that are depressed, where $\M\potdep$ are $M\times M$ matrices of transition probabilities for the Markov processes describing potentiation and depression.
+As the potentiating/depressing nature of the subsequent memories is independent of $\wvi$, we can average over all sequences, resulting in the evolution of the probability distribution:
+%
+\begin{equation}\label{eq:evol}
+  \diff{\pr(t)}{t} = r\pr(t)\frg,
+  \qquad \text{where} \quad
+  \frg = f\pot\M\pot + f\dep\M\dep - \I.
+\end{equation}
+%
+Here, $r$ is the rate of the Poisson process describing the timing of plasticity events,
+$f\potdep$ is the fraction of events that are potentiating/depressing and $\I$ is the identity matrix.
+
+This results in the following SNR
+%
+\begin{equation}\label{eq:SNRcalc}
+  \snr(t) = \sqrt{N}\prn{2 f\pot f\dep} \eq \prn{\M\pot-\M\dep} \e^{rt\frg} \w.
+\end{equation}
+%
+We will frequently refer to this function as the memory curve.
+
+The parameters must satisfy the following constraints:
+%
+\begin{equation}\label{eq:constr}
+\begin{aligned}
+  \M\potdep_{ij} &\in [0,1], &\quad
+  f\potdep &\in [0,1], &\quad
+  \eq\frg &= 0, &\quad
+  \w_i &= \pm 1, \\
+  \sum_j \M\potdep_{ij} &= 1, &
+  f\pot + f\dep &= 1, &
+  \sum_i \eq_i &= 1.
+\end{aligned}
+\end{equation}
+%
+The upper bounds on $\M\potdep_{ij}$ and $f\potdep$ follow automatically from the other constraints.
+
+The question is: what do these constraints imply for the memory curve above?
+In practice, to make any statements about finite times, we need to got to the eigenmode description:
+%
+\begin{equation}\label{eq:eigendecomp}
+  \frg = \sum_a -q_a \uv^a \vv^a,
+  \quad
+  \vv^a \uv^b = \delta_{ab},
+  \quad
+  \frg \uv^a = -q_a \uv^a,
+  \quad
+  \vv^a \frg = -q_a \vv^a.
+\end{equation}
+%
+Where $q_a$ are the negative of the eigenvalues, $\uv^a$ are the right (column) eigenvectors and $\vv^a$ are the left (row) eigenvectors.
+This allow us to write
+%
+\begin{equation}\label{eq:SNReigen}
+\begin{aligned}
+  \snr(t) &= \sqrt{N}\sum_a \CI_a \e^{-rt/\tau_a},
+  &\quad \text{where}&\;&
+  \CI_a &= \prn{2 f\pot f\dep} \eq (\M\pot-\M\dep) \uv^a  \vv^a \w,\\&
+  & \text{and}&&
+  \tau_a &= \frac{1}{q_a}.
+\end{aligned}
+\end{equation}
+%
+We can ask then ask the question: what are the constraints on these quantities implied by the constraints \eqref{eq:constr}?
+We will find some of these constraints in the next section.
+
+
 
 
 
