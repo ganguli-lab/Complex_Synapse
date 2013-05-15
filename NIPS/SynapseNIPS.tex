@@ -103,7 +103,7 @@ Applied Physics Department, Stanford University, Stanford CA\\
 
 \section{Synaptic models and their memory curves}\label{sec:setup}
 
-In this section, we will describe the class of models of synaptic plasticity that we are studying and how we quantify their performance in memory storage.
+In this section, we will describe the class of models of synaptic plasticity that we are studying and how we quantify their performance as memory storage devices.
 In the subsequent sections, we will find upper bounds on this performance.
 
 We use a well established formalism for the study of learning and memory with complex synapses (see \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}).
@@ -235,14 +235,14 @@ The initial SNR is closely related to the flux between the states with $\w_i=-1$
 This inequality becomes an equality if potentiation never decreases the synaptic weight and depression never increases it, which should be a property of any sensible model.
 
 To maximize this flux, potentiation from a weak state must be guaranteed to end in a strong state, and depression must do the reverse.
-An example of such a model is shown in \autoref{fig:maxinit}(\ref{fig:max_init_pot},\ref{fig:max_init_dep}).
+An example of such a model is shown in \autoref{fig:max_init}(\ref{fig:max_init_pot},\ref{fig:max_init_dep}).
 These models have a property known as ``lumpability'' (see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time).
-They are completely equivalent (\ie have the same memory curve) as a two state model with transition probabilities equal to 1, as shown in \autoref{fig:maxinit}(\ref{fig:binary_det}).
+They are completely equivalent (\ie have the same memory curve) as a two state model with transition probabilities equal to 1, as shown in \autoref{fig:max_init}(\ref{fig:binary_det}).
 
 This two state model has the equilibrium distribution $\eq=(f\dep,f\pot)$ and its flux is given by $\F_{-+} = rf\pot f\dep$.
 This is maximized when $f\pot=f\dep=\half$, leading to the upper bound:
 %
-\begin{equation}\label{eq:maxinit}
+\begin{equation}\label{eq:max_init}
   \snr(0) \leq \sqrt{N}.
 \end{equation}
 %
@@ -262,7 +262,7 @@ This is not a good design for a synapse, but the resulting bound on the initial 
   (\ref{fig:max_init_pot}) For potentiation, all transitions starting from a weak state lead to a strong state, and the probabilities for all transitions leaving a given weak state sum to 1.
   (\ref{fig:max_init_pot}) Depression is similar to potentiation, but with strong and weak interchanged.
   (\ref{fig:binary_det}) The equivalent two state model, with transition probabilities under potentiation and depression equal to one.
-  }\label{fig:maxinit}
+  }\label{fig:max_init}
 \end{figure}
 
 
@@ -278,7 +278,7 @@ We will find an upper bound on this quantity as well as the model that saturates
 The area is useful as it also provides an upper bound on the lifetime of a memory, $\tau(\epsilon)$, defined as the time at which $\snr(\tau)=\epsilon$:
 %
 \begin{equation}\label{eq:arealife}
-  A = \int_0^\infty\!\!\dr t \, \snr(t) 
+  A = \int_0^\infty\!\!\dr t \, \snr(t)
     > \int_0^{\tau(\epsilon)}\!\!\dr t \, \snr(t)
     > \int_0^{\tau(\epsilon)}\!\!\dr t \, \epsilon
     = \epsilon \tau(\epsilon).
@@ -369,15 +369,90 @@ This is also not a good design for a synapse, but the resulting bound on the are
  \begin{center}
   \includegraphics[width=0.4\linewidth]{multistate_sticky.svg}
  \end{center}
-  \caption{Model that maximizes the area. 
-  Unlabeled transitions have probability 1. 
-  Labeled transitions have probability $\epsilon\to0$.
+  \caption{Model that maximizes the area.
+  Unlabeled transitions have probability 1.
+  Labeled transitions have probability $\varepsilon\to0$.
   }\label{fig:max_area}
 \end{figure}
 
 
 
 \section{Memory curve envelope}\label{sec:env}
+
+Now we will look at the implications of the upper bounds found in the previous section for the SNR at finite times.
+As argued in \eqref{eq:SNReigen}, the memory curve can be written in the form
+%
+\begin{equation}\label{eq:SNRmodes}
+  \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-rt/\tau_a}.
+\end{equation}
+%
+The upper bounds on the initial SNR, \eqref{eq:max_init}, and the area, \eqref{eq:max_area}, imply the following constraints on the parameters $\brc{\CI_a,\tau_a}$:
+%
+\begin{equation}\label{eq:modeconstr}
+  \sum_a \CI_a \leq 1,
+  \qquad\qquad
+  \sum_a \CI_a \tau_a \leq M-1.
+\end{equation}
+%
+We are not claiming that these are a complete set of constraints: not every set $\brc{\CI_a,\tau_a}$ that satisfies these inequalities will actually be achievable by a synaptic model.
+However, any set that violates either inequality will definitely not be achievable.
+
+Now we can pick some fixed time, $t_0$, and maximize the SNR at that time \wrt the parameters $\brc{\CI_a,\tau_a}$, subject to the constraints above.
+This always results in a single nonzero $\CI_a$:
+%
+\begin{equation}\label{eq:env}
+\begin{aligned}
+  t_0 &\leq \frac{M-1}{r} &
+   \implies 
+  \snr(t) &= \sqrt{N}\e^{-rt/(M-1)} &
+   \implies 
+  \snr(t_0) &= \sqrt{N}\e^{-rt_0/(M-1)},\\
+  t_0 &\geq \frac{M-1}{r} &
+   \implies 
+  \snr(t) &= \frac{\sqrt{N}(M-1)\e^{-t/t_0}}{rt_0} &
+   \implies 
+  \snr(t_0) &= \frac{\sqrt{N}(M-1)}{\e rt_0}.
+\end{aligned}
+\end{equation}
+%
+Both the initial SNR bound and the area bound are saturated at early times.
+At late times, only the area bound is saturated.
+The function $\snr(t_0)$, the green curve in \autoref{fig:env}(\ref{fig:envplot}), above forms a memory curve envelope.
+No synaptic model can have an SNR that is greater than this at any time.
+
+This leaves the question of whether this bound is achievable.
+At any time, can we find a model whose memory curve touched the envelope?
+The red curves in \autoref{fig:env}(\ref{fig:envplot}) show the closest we have come to the envelope with actual models, by repeated numerical optimization with random initialization and by hand designed models.
+
+We see that here is a gap between the upper bound that we can prove and what we can achieve with actual models.
+There may be other models we haven't found that could beat the ones we have, but it is probably too much to expect them to reach this envelope.
+That would require saturating the area bound, and we saw that the only model that does that has very low initial SNR.
+It seems that we need to find additional constraints to add to those we have \eqref{eq:modeconstr}, thereby bringing the envelope down.
+We do not necessarily need to find \emph{every} constraint.
+We have already seen that not every constraints is saturated for certain time ranges, so it may be that a small subset of them will be sufficient to find an envelope that is tight.
+
+
+
+
+
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.4\linewidth]{env.eps}}\label{fig:envplot}\hp
+  \item\aligntop{\includegraphics[width=0.3\linewidth]{diffjump.svg}}\label{fig:diffjump}
+ \end{myenuma}
+ \end{center}
+  \caption{The memory curve envelope for $N=100$, $M=12$.
+  (\ref{fig:envplot}) An upper bound on the SNR at any time is shown in green.
+  The red dashed curve shows the result of numerical optimization of synaptic models with random initialization.
+  The solid red curve shows the highest SNR we have found with hand designed models.
+  At early times these models are of the form shown in (\ref{fig:diffjump}) with different numbers of states.
+  At late times they are of the form shown in \autoref{fig:max_area} with different values of $\varepsilon$.
+  }\label{fig:env}
+\end{figure}
+
+
 
 
 
