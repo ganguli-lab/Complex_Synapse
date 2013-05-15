@@ -12,14 +12,23 @@ error(CheckSize(n,@isscalar))
 
 Format=true;
 Parent=gca;
+Constr3=true;
 varargin=assignApplicable(varargin);
 
 [env,bnds]=SNRenvelope(t,n);
 [env2,bnds2]=SNRenvelope2(t,n);
-h=plot(t,env2,'g',t,env,'g--','LineWidth',3,'Parent',Parent,varargin{:});
+if Constr3
+    h=plot(t,env2,'g',t,env,'g--','LineWidth',3,'Parent',Parent,varargin{:});
+else
+    h=plot(t,env2,'g','LineWidth',3,'Parent',Parent,varargin{:});
+end
 hold(Parent,'on');
 yl=[env(end) env2(1)];
-lh1=line([1;1]*bnds',yl'*ones(1,length(bnds)),'Color','k','LineWidth',1.5,'LineStyle',':','Parent',Parent,varargin{:});
+if Constr3
+    lh1=line([1;1]*bnds',yl'*ones(1,length(bnds)),'Color','k','LineWidth',1.5,'LineStyle',':','Parent',Parent,varargin{:});
+else
+    lh1=[];
+end
 lh2=line([1;1]*bnds2',yl'*ones(1,length(bnds2)),'Color','k','LineWidth',1.5,'LineStyle','--','Parent',Parent,varargin{:});
 if Format
     set(Parent,'XScale','log','YScale','log')
