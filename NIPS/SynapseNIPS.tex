@@ -234,8 +234,8 @@ The initial SNR is closely related to the flux between the states with $\w_i=-1$
 %
 This inequality becomes an equality if potentiation never decreases the synaptic weight and depression never increases it, which should be a property of any sensible model.
 
-To maximise this flux, potentiation from a weak state must be guaranteed to end in a strong state, and depression must do the reverse.
-AN example of such a model is shown in \autoref{fig:maxinit}(\ref{fig:max_init_pot},\ref{fig:max_init_dep}).
+To maximize this flux, potentiation from a weak state must be guaranteed to end in a strong state, and depression must do the reverse.
+An example of such a model is shown in \autoref{fig:maxinit}(\ref{fig:max_init_pot},\ref{fig:max_init_dep}).
 These models have a property known as ``lumpability'' (see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time).
 They are completely equivalent (\ie have the same memory curve) as a two state model with transition probabilities equal to 1, as shown in \autoref{fig:maxinit}(\ref{fig:binary_det}).
 
@@ -255,7 +255,7 @@ This is not a good design for a synapse, but the resulting bound on the initial 
  \begin{myenuma}
   \item\hp\aligntop{\includegraphics[width=0.15\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
   \item\aligntop{\includegraphics[width=0.15\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
-  \item\aligntop{\includegraphics[width=0.05\linewidth]{binary_det.svg}}\label{fig:binary_det}
+  \item\hp\aligntop{\includegraphics[width=0.05\linewidth]{binary_det.svg}}\label{fig:binary_det}
   \end{myenuma}
  \end{center}
   \caption{Synaptic models that maximize initial SNR.
@@ -324,10 +324,26 @@ Some of these perturbations are shown in \autoref{fig:perts}.
 The only thing that can prevent these perturbations from increasing the area is when they require the decrease of a matrix element that has already been set to 0.
 This determines the topology (non-zero transition probabilities) of the model with maximal area.
 It is of the form shown in \autoref{fig:max_area}, with potentiation moving one step to the right and depression moving one step to the left.
-Any other topology would allow some perturbation that could increase the area.
+Any other topology would allow some perturbation to further increase the area.
+
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
+  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
+  \item\aligntop{\includegraphics[width=0.2\linewidth]{shortcut.svg}}\label{fig:shortcut}
+ \end{myenuma}
+ \end{center}
+  \caption{Perturbations that increase the area.
+  (\ref{fig:tri_right}) Perturbations that increase elements of $\M\pot$ above the diagonal and decrease the corresponding elements of $\M\dep$. It can no longer be used when $\M\dep$ is lower triangular.
+  (\ref{fig:tri_left}) Perturbations that decrease elements of $\M\pot$ below the diagonal and increase the corresponding elements of $\M\dep$. It can no longer be used when $\M\pot$ is upper triangular.
+  (\ref{fig:shortcut}) Perturbation that decreases ``shortcut'' transitions and increases the bypassed ``direct'' transitions. It can no longer be used when there are only nearest-neighbor ``direct'' transitions.
+  }\label{fig:perts}
+\end{figure}
 
 As these perturbations do not change the equilibrium distribution, this means that the area of \emph{any} model is bounded by that of a linear chain with the same equilibrium distribution.
-This area is given by 
+This area is given by
 %
 \begin{equation}\label{eq:multistatearea}
   A \leq \frac{2\sqrt{N}}{r} \sum_k \brk{k - \sum_j j\eq_j} \eq_k \w_k
@@ -348,21 +364,6 @@ The ``sticky'' end states result in very slow decay, but they also make it diffi
 The memory curve for this model starts off very low, but hovers above zero for a very long time.
 This is also not a good design for a synapse, but the resulting bound on the area will also prove useful in \autoref{sec:env}.
 
-
-\begin{figure}
- \begin{center}
- \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
-  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
-  \item\aligntop{\includegraphics[width=0.2\linewidth]{shortcut.svg}}\label{fig:shortcut}
- \end{myenuma}
- \end{center}
-  \caption{Perturbations that increase the area.
-  (\ref{fig:tri_right}) Perturbations that increase elements of $\M\pot$ above the diagonal and decrease the corresponding elements of $\M\dep$. It can no longer be used when $\M\dep$ is lower triangular.
-  (\ref{fig:tri_left}) Perturbations that decrease elements of $\M\pot$ below the diagonal and increase the corresponding elements of $\M\dep$. It can no longer be used when $\M\pot$ is upper triangular.
-  (\ref{fig:shortcut}) Perturbation that decreases ``shortcut'' transitions and increases the bypassed ``direct'' transitions. It can no longer be used when there are only nearest-neighbor ``direct'' transitions.
-  }\label{fig:perts}
-\end{figure}
 
 \begin{figure}
  \begin{center}
