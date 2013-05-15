@@ -1,3 +1,4 @@
+% -*- TeX -*- -*- US -*-
 \documentclass{article} % For LaTeX2e
 \usepackage{nips13submit_e,times}
 \input{sl_preamble.tex}
@@ -127,7 +128,7 @@ The extent to which the memory has been stored is described by a signal-to-noise
      {\sqrt{\var(\wv_\text{ideal}\cdt\wv(\infty))}}.
 \end{equation}
 %
-The noise is essentially $\sqrt{N}$. 
+The noise is essentially $\sqrt{N}$.
 There is a correction when potentiation and depression are imbalanced, but this will not affect the upper bounds that we will discuss below and will be ignored in the subsequent formulae.
 
 All of the preceding plasticity events will put the system in its steady-state distribution, $\eq$.
@@ -202,7 +203,7 @@ We will find some of these constraints in the next section.
 
 
 \section{Upper bounds}\label{sec:bounds}
-  
+
 In this section, we will find some upper bounds on certain properties of the memory curve discussed in the previous section, namely its initial value and the area under it.
 We will use these bounds to determine an upper bound on the SNR at finite times in the next section.
 
@@ -216,6 +217,8 @@ Now we will discuss the SNR at $t=0$:
 \end{equation}
 %
 We will find an upper bound on this quantity for \emph{all} possible models and also find the model that saturates this bound.
+As maximizing initial SNR does not place any value on later parts of the memory curve, this will produce models with fast decay that may not be good for memory storage.
+Nevertheless, the upper bound will be useful in \autoref{sec:env}.
 
 A useful quantity is the equilibrium probability flux between two disjoint sets of states, $\CA$ and $\CB$:
 %
@@ -236,26 +239,28 @@ AN example of such a model is shown in \autoref{fig:maxinit}(\ref{fig:max_init_p
 These models have a property known as ``lumpability'' (see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time).
 They are completely equivalent (\ie have the same memory curve) as a two state model with transition probabilities equal to 1, as shown in \autoref{fig:maxinit}(\ref{fig:binary_det}).
 
-This two state model has the equilibrium distribution $\eq=(f\dep,f\pot)$ and its flux is given by $\F_{-+} = rf\pot f\dep$. 
+This two state model has the equilibrium distribution $\eq=(f\dep,f\pot)$ and its flux is given by $\F_{-+} = rf\pot f\dep$.
 This is maximized when $f\pot=f\dep=\half$, leading to the upper bound:
 %
 \begin{equation}\label{eq:maxinit}
   \snr(0) \leq \sqrt{N}.
 \end{equation}
 %
-
+Whilst this model has high initial SNR, it also has very fast decay -- with a timescale $\tau\sim\frac{1}{r}$.
+As the synapse is very plastic, the initial memory is encoded very easily, but the subsequent memories also overwrite it easily.
+This is not a good design for a synapse, but the resulting bound on the initial SNR will prove useful in \autoref{sec:env}.
 
 \begin{figure}
  \begin{center}
  \begin{myenuma}
-  \item\hp\aligntop{\includegraphics[width=0.25\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
-  \item\aligntop{\includegraphics[width=0.25\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
-  \item\aligntop{\includegraphics[width=0.1\linewidth]{binary_det.svg}}\label{fig:binary_det}
+  \item\hp\aligntop{\includegraphics[width=0.15\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
+  \item\aligntop{\includegraphics[width=0.15\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
+  \item\aligntop{\includegraphics[width=0.05\linewidth]{binary_det.svg}}\label{fig:binary_det}
   \end{myenuma}
  \end{center}
-  \caption{Synaptic models that maximize initial SNR. 
+  \caption{Synaptic models that maximize initial SNR.
   (\ref{fig:max_init_pot}) For potentiation, all transitions starting from a weak state lead to a strong state, and the probabilities for all transitions leaving a given weak state sum to 1.
-  (\ref{fig:max_init_pot}) Depression is similar to potentiation, but with strong and weak interchanged. 
+  (\ref{fig:max_init_pot}) Depression is similar to potentiation, but with strong and weak interchanged.
   (\ref{fig:binary_det}) The equivalent two state model, with transition probabilities under potentiation and depression equal to one.
   }\label{fig:maxinit}
 \end{figure}
@@ -270,6 +275,104 @@ Now consider the area under the memory curve:
 \end{equation}
 %
 We will find an upper bound on this quantity as well as the model that saturates it.
+The area is useful as it also provides an upper bound on the lifetime of a memory, $\tau(\epsilon)$, defined as the time at which $\snr(\tau)=\epsilon$:
+%
+\begin{equation}\label{eq:arealife}
+  A = \int_0^\infty\!\!\dr t \, \snr(t) 
+    > \int_0^{\tau(\epsilon)}\!\!\dr t \, \snr(t)
+    > \int_0^{\tau(\epsilon)}\!\!\dr t \, \epsilon
+    = \epsilon \tau(\epsilon).
+\end{equation}
+%
+However, the area still receives a contribution from the tail of the memory curve, after the SNR has decayed below any useful value.
+This means that maximizing SNR will favor models with long tails that will not necessarily be good for storing memories.
+
+One important property of the area is that it has a null ``scaling'' degree of freedom.
+If all off-diagonal elements of $\M\potdep$ are multiplied by a constant, with diagonal elements adjusted to keep row-sums fixed, this will have two effects.
+First, it will scale up the initial signal creation.
+Second, it will scale down time.
+Combining these two effects, it will leave the area invariant.
+
+This feature allows us to ignore the lower bound on the diagonal elements, $\M\potdep_{ii}>0$.
+If we maximize the area ignoring this constraint, the ``scaling'' mode can be used to satisfy it without changing the area.
+
+We also develop an important organizing principle using the theory of first passage times.
+The mean first passage time matrix, $\fptb_{ij}$, is defined as the average time it takes to reach state $j$ for the first time, starting from state $j$.
+The diagonal elements are defined to be zero.
+Then the quantity
+%
+\begin{equation}\label{eq:kemenyconst}
+  \eta \equiv \sum_j \fptb_{ij}\eq_j
+\end{equation}
+%
+is independent of the starting state $i$.
+It is known as Kemeny's constant (see \cite[\S4.4]{kemeny1960finite}).
+We can define analogous quantities
+%
+\begin{equation}\label{eq:kemenypm}
+   \eta^+_i = \sum_{j\in+} \fptb_{ij} \eq_j,
+   \qquad
+   \eta^-_i = \sum_{j\in-} \fptb_{ij} \eq_j.
+\end{equation}
+%
+These can be thought of as the average time it takes to reach the strong/weak states respectively.
+We can put the states in order of decreasing $\eta^+_i$ or increasing $\eta^-_i$.
+Because $\eta^+_i+\eta^-_i=\eta$ is independent of $i$, the two orderings are the same.
+
+With the states in this order, we can find perturbations of $\M\potdep$ that will always increase the area, whilst leaving the equilibrium distribution, $\eq$, unchanged.
+Some of these perturbations are shown in \autoref{fig:perts}.
+The only thing that can prevent these perturbations from increasing the area is when they require the decrease of a matrix element that has already been set to 0.
+This determines the topology (non-zero transition probabilities) of the model with maximal area.
+It is of the form shown in \autoref{fig:max_area}, with potentiation moving one step to the right and depression moving one step to the left.
+Any other topology would allow some perturbation that could increase the area.
+
+As these perturbations do not change the equilibrium distribution, this means that the area of \emph{any} model is bounded by that of a linear chain with the same equilibrium distribution.
+This area is given by 
+%
+\begin{equation}\label{eq:multistatearea}
+  A \leq \frac{2\sqrt{N}}{r} \sum_k \brk{k - \sum_j j\eq_j} \eq_k \w_k
+    = \frac{2\sqrt{N}}{r} \sum_k \abs{k - \sum_j j\eq_j} \eq_k ,
+\end{equation}
+%
+where we chose $\w_k=\sgn\brk{k - \sum_j j\eq_j}$.
+We can then maximize this by pushing all of the equilibrium distribution symmetrically to the two end states.
+This can be done by reducing the transition probabilities out of these states, as in \autoref{fig:max_area}.
+This makes it very difficult to get out of the end states once they have been entered.
+The resulting area is
+%
+\begin{equation}\label{eq:max_area}
+  A \leq \frac{\sqrt{N}(M-1)}{r}.
+\end{equation}
+%
+The ``sticky'' end states result in very slow decay, but they also make it difficult to encode the memory in the first place.
+The memory curve for this model starts off very low, but hovers above zero for a very long time.
+This is also not a good design for a synapse, but the resulting bound on the area will also prove useful in \autoref{sec:env}.
+
+
+\begin{figure}
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
+  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
+  \item\aligntop{\includegraphics[width=0.2\linewidth]{shortcut.svg}}\label{fig:shortcut}
+ \end{myenuma}
+ \end{center}
+  \caption{Perturbations that increase the area.
+  (\ref{fig:tri_right}) Perturbations that increase elements of $\M\pot$ above the diagonal and decrease the corresponding elements of $\M\dep$. It can no longer be used when $\M\dep$ is lower triangular.
+  (\ref{fig:tri_left}) Perturbations that decrease elements of $\M\pot$ below the diagonal and increase the corresponding elements of $\M\dep$. It can no longer be used when $\M\pot$ is upper triangular.
+  (\ref{fig:shortcut}) Perturbation that decreases ``shortcut'' transitions and increases the bypassed ``direct'' transitions. It can no longer be used when there are only nearest-neighbor ``direct'' transitions.
+  }\label{fig:perts}
+\end{figure}
+
+\begin{figure}
+ \begin{center}
+  \includegraphics[width=0.4\linewidth]{multistate_sticky.svg}
+ \end{center}
+  \caption{Model that maximizes the area. 
+  Unlabeled transitions have probability 1. 
+  Labeled transitions have probability $\epsilon\to0$.
+  }\label{fig:max_area}
+\end{figure}
 
 
 
