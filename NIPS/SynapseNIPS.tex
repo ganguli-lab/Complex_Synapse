@@ -97,6 +97,48 @@ Applied Physics Department, Stanford University, Stanford CA\\
 
 \section{Introduction}\label{sec:intro}
 
+In the field of theoretical neuroscience there are several classic results regarding the storage capacity of synaptic memory, \eg the Hopfield model's capacity is proportional to the number of neurons, or the Perceptron's capacity is proportional to the number of synapses.
+However, these rely on one unrealistic feature of these models: the synaptic weights are allowed to take a large number of different values.
+
+Measurements of real synapses have shown that the synaptic efficacy can only take a small number of discrete values, possibly as few as two \cite{Bliss1993LTP,Petersen1998allornone,O'Connor2005switch} (see \cite{Enoki2009graded} for dissenting results).
+Restricting synaptic weights to a small set of values has a catastrophic effect on the storage capacity of these theoretical models, growing only logarithmically with the size of the system if all else is held fixed \cite{amit1992constraints,amit1994learning}.
+Due to newer memories overwriting older ones, there is a trade-off between learning and remembering: if synapses are too plastic older memories will be wiped out too easily, if they are too rigid it becomes difficult to learn new memories in the first place.
+
+This can be improved when we take into account the fact that there is a complex dynamical system underlying synaptic plasticity (\eg see \cite{Bliss1993LTP,Bredt2003AMPA,Coba2009phosphorylation}).
+Allowing the synapse to have hidden functional states, with potentiation and depression causing transitions between these states, can dramatically improve their performance.
+
+Much of the previous work on these types of synaptic models has focussed on specific models, to understand their ability to store memories \cite{Fusi2005cascade,Fusi2007multistate,Leibold2008serial}.
+Two examples of these models are shown in \autoref{fig:models}.
+we see that they have different memory properties.
+The serial model has performs very well at one particular timescale, but it performs poorly at other times.
+The cascade model does not perform quite as well at that time, but it maintains it performance over a wider range of timescales.
+
+
+\begin{figure}[tbp]
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.25\linewidth]{cascade.svg}}\label{fig:cascade}
+  \item\aligntop{\includegraphics[width=0.25\linewidth]{multistate.svg}}\label{fig:multistate}
+  \item\aligntop{\includegraphics[width=0.35\linewidth]{cascms.eps}}\label{fig:cascms}
+ \end{myenuma}
+ \end{center}
+  \caption{Models of complex synapse.
+  (\ref{fig:cascade}) The cascade model of \cite{Fusi2005cascade}, showing transitions between states of high/low synaptic weight (red/blue circles) due to potentiation/depression (solid red/dashed blue arrows).
+  (\ref{fig:multistate}) The serial model of \cite{Leibold2008serial}.
+  (\ref{fig:cascms}) The memory curves of these two models, showing the decay of the signal-to-noise ratio (to be defined in \autoref{sec:setup}) as subsequent memories are stored.
+  }\label{fig:models}
+\end{figure}
+
+
+
+We are going to take a different approach.
+We are going to consider the \emph{entire} space of these models to find upper bounds on the capability of \emph{any} of them.
+As the performance of a synaptic model is quantified by a memory curve (describing the decay of a memory trace as more and more subsequent memories are stored) rather than a single number, there is no good notion of optimality.
+What type of memory curve is best will depend on what the synapses are required to do and over what timescales.
+
+We begin in \autoref{sec:setup} by describing the class of models that we will consider and define the memory curve that we use to quantify their performance.
+In \autoref{sec:bounds} we will prove upper bounds on two quantities, the initial value of the memory curve and the area under it, as well as finding the models that saturate them.
+We will use these bounds in \autoref{sec:env} to find an envelope curve -- one that cannot be crossed by the memory curve of any model at any time.
 
 
 
@@ -250,7 +292,7 @@ Whilst this model has high initial SNR, it also has very fast decay -- with a ti
 As the synapse is very plastic, the initial memory is encoded very easily, but the subsequent memories also overwrite it easily.
 This is not a good design for a synapse, but the resulting bound on the initial SNR will prove useful in \autoref{sec:env}.
 
-\begin{figure}
+\begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
   \item\hp\aligntop{\includegraphics[width=0.15\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
@@ -275,7 +317,7 @@ Now consider the area under the memory curve:
 \end{equation}
 %
 We will find an upper bound on this quantity as well as the model that saturates it.
-The area is useful as it also provides an upper bound on the lifetime of a memory, $\tau(\epsilon)$, defined as the time at which $\snr(\tau)=\epsilon$:
+The area is useful as it also provides an upper bound on the lifetime of a memory, $\tau(\epsilon)$, defined as the time at which $\snr(\tau)=\epsilon$ (we often take $\epsilon=1$):
 %
 \begin{equation}\label{eq:arealife}
   A = \int_0^\infty\!\!\dr t \, \snr(t)
@@ -327,7 +369,7 @@ It is of the form shown in \autoref{fig:max_area}, with potentiation moving one 
 Any other topology would allow some perturbation to further increase the area.
 
 
-\begin{figure}
+\begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
   \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
@@ -360,12 +402,14 @@ The resulting area is
   A \leq \frac{\sqrt{N}(M-1)}{r}.
 \end{equation}
 %
+This result is similar to that found numerically by Barrett and van Rossum \cite{Barrett2008discrete} in a slightly different situation.
+
 The ``sticky'' end states result in very slow decay, but they also make it difficult to encode the memory in the first place.
 The memory curve for this model starts off very low, but hovers above zero for a very long time.
 This is also not a good design for a synapse, but the resulting bound on the area will also prove useful in \autoref{sec:env}.
 
 
-\begin{figure}
+\begin{figure}[tbp]
  \begin{center}
   \includegraphics[width=0.4\linewidth]{multistate_sticky.svg}
  \end{center}
@@ -419,6 +463,13 @@ Both the initial SNR bound and the area bound are saturated at early times.
 At late times, only the area bound is saturated.
 The function $\snr(t_0)$, the green curve in \autoref{fig:env}(\ref{fig:envplot}), above forms a memory curve envelope.
 No synaptic model can have an SNR that is greater than this at any time.
+We can use this to find an upper bound on the memory lifetime, $\tau(\epsilon)$, by finding the point at which the envelope crosses $\epsilon$:
+%
+\begin{equation}\label{eq:lifebound}
+  \tau(\epsilon) \leq \frac{\sqrt{N}(M-1)}{\epsilon\e r},
+\end{equation}
+%
+where we assume $N>(\epsilon\e)^2$.
 
 This leaves the question of whether this bound is achievable.
 At any time, can we find a model whose memory curve touched the envelope?

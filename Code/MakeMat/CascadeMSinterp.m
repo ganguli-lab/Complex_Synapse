@@ -38,8 +38,8 @@ Wm(nn+1,nn)=qm(nn)-fp/(1-fp)*qp(nn+1)*lambda;
 Wp(1,nn+1)=qp(1)*lambda;
 Wm(n,nn)=qm(n-1)*lambda;
 
-Wp=Stochastify(Wp);
-Wm=Stochastify(Wm);
+Wp=StochastifyC(Wp);
+Wm=StochastifyC(Wm);
 
 w=[-ones(nn,1);ones(nn,1)];
 
