@@ -95,86 +95,85 @@ Applied Physics Department, Stanford University, Stanford CA\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+% references to add:
+%
+% Hopfield: original paper
+% Somp: memory capacity of Hopfield
+% Gardner: memory capacity of perceptron
+% Madison/Montgomery:  State-dependent heterogeneity in synaptic depression between pyramidal cell pairs. Neuron.
+% Abraham/Bear: Metaplasticity: the plasticity of synaptic plasticity.
+% Grant:  Evolution of synapse complexity and diversity (Ann Rev)
+
+
+
 \section{Introduction}\label{sec:intro}
 
-In the field of theoretical neuroscience there are several classic results regarding the storage capacity of synaptic memory, \eg the Hopfield model's capacity is proportional to the number of neurons, or the Perceptron's capacity is proportional to the number of synapses.
-However, these rely on one unrealistic feature of these models: the synaptic weights are allowed to take a large number of different values.
+It is widely thought that our very ability to remember the past over long time scales depends crucially on our ability to modify synapses in our brain in an experience dependent manner.
+Classical models of synaptic plasticity model synaptic efficacy as an analog scalar value, denoting the size of a post-synaptic potential injected into one neuron from another.
+Theoretical work has shown that such models have a reasonable, extensive memory capacity, in which the number of long term associations that can be stored by a neuron is proportional its number of afferent synapses \cite{Hopfield1982model,Amit1985hopfield,Gardner1988perceptron}.
+However, recent experimental work has shown that many synapses are more digital than analog; they cannot robustly assume an infinite continuum of analog values, but rather can only take on a finite number of distinguishable strengths, a number than can be as small as two \cite{Bliss1993LTP,Petersen1998allornone,O'Connor2005switch} (though see \cite{Enoki2009graded}).
+This one simple modification leads to a catastrophe in memory capacity:  classical models with digital synapses, when operating in a palimpset mode in which the ongoing storage of new memories can overwrite previous memories, have a memory capacity proportional to the logarithm of the number of synapses \cite{amit1992constraints,amit1994learning}.
+Intuitively, when synapses are digital, the storage of a new memory can flip a population of synaptic switches, thereby rapidly erasing previous memories. This result indicates that the dominant theoretical basis for the storage of long term memories in modifiable synaptic switches is flawed.
 
-Measurements of real synapses have shown that the synaptic efficacy can only take a small number of discrete values, possibly as few as two \cite{Bliss1993LTP,Petersen1998allornone,O'Connor2005switch} (see \cite{Enoki2009graded} for dissenting results).
-Restricting synaptic weights to a small set of values has a catastrophic effect on the storage capacity of these theoretical models, growing only logarithmically with the size of the system if all else is held fixed \cite{amit1992constraints,amit1994learning}.
-Due to newer memories overwriting older ones, there is a trade-off between learning and remembering: if synapses are too plastic older memories will be wiped out too easily, if they are too rigid it becomes difficult to learn new memories in the first place.
+Recent work \cite{Fusi2005cascade,Fusi2007multistate,Leibold2008serial} has suggested that a way out of this logarithmic catastrophe is to expand our theoretical conception of a synapse from a single scalar value to an entire stochastic dynamical system in its own right.
+This conceptual expansion is further necessitated by the experimental reality that synapses contain within them immensely complex molecular signaling pathways, with many internal molecular functional states (\eg see \cite{Bliss1993LTP,Bredt2003AMPA,Coba2009phosphorylation}).
+While externally, synaptic efficacy could be digital, candidate patterns of electrical activity leading to potentiation or depression could yield transitions between these internal molecular states without necessarily inducing an associated change in synaptic efficacy.
+This form of synaptic change, known as metaplasticity \cite{Abraham1996metaplasticity,Montgomery2002765}, can allow the probability of synaptic potentiation or depression to acquire a rich dependence on the history of prior changes in efficacy, thereby potentially improving memory capacity.
 
-This can be improved when we take into account the fact that there is a complex dynamical system underlying synaptic plasticity (\eg see \cite{Bliss1993LTP,Bredt2003AMPA,Coba2009phosphorylation}).
-Allowing the synapse to have hidden functional states, with potentiation and depression causing transitions between these states, can dramatically improve their performance.
+Theoretical studies of complex, metaplastic synapses, have focused on analyzing the memory performance of a limited number of very specific, molecular dynamical systems, characterized by a number of internal states in which potentiation and depression each induce a specific set of allowable transitions between states (\eg see \autoref{fig:models} below).
+While these models can vastly outperform simple binary synaptic switches, these analyses leave open several deep and important questions.
+For example, how does the structure of a synaptic dynamical system determine its memory performance?  What are the fundamental limits of memory performance over the space of all possible synaptic dynamical systems?
+What is the structural organization of synaptic dynamical systems that achieve these limits?
+Moreover, from an experimental perspective, it is unlikely to be the case that there is a single canonical synaptic model;  just like the case of neurons, there is an incredible diversity of molecular networks underlying synapses both across species and across brain regions within a single organism \cite{Emes2012synapserev}.
+In order to elucidate the functional contribution of this diverse molecular complexity to learning and memory, it is essential to move beyond the analysis of specific models and instead develop a general theory of learning and memory for complex synapses.
+Moreover, such a general theory of complex synapses could aid in development of novel artificial memory storage devices.  % Sutskever, memory for learning?
 
-Much of the previous work on these types of synaptic models has focussed on specific models, to understand their ability to store memories \cite{Fusi2005cascade,Fusi2007multistate,Leibold2008serial}.
-Two examples of these models are shown in \autoref{fig:models}.
-we see that they have different memory properties.
-The serial model has performs very well at one particular timescale, but it performs poorly at other times.
-The cascade model does not perform quite as well at that time, but it maintains it performance over a wider range of timescales.
-
-
-\begin{figure}[tbp]
- \begin{center}
- \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.25\linewidth]{cascade.svg}}\label{fig:cascade}
-  \item\aligntop{\includegraphics[width=0.25\linewidth]{multistate.svg}}\label{fig:multistate}
-  \item\aligntop{\includegraphics[width=0.35\linewidth]{cascms.eps}}\label{fig:cascms}
- \end{myenuma}
- \end{center}
-  \caption{Models of complex synapse.
-  (\ref{fig:cascade}) The cascade model of \cite{Fusi2005cascade}, showing transitions between states of high/low synaptic weight (red/blue circles) due to potentiation/depression (solid red/dashed blue arrows).
-  (\ref{fig:multistate}) The serial model of \cite{Leibold2008serial}.
-  (\ref{fig:cascms}) The memory curves of these two models, showing the decay of the signal-to-noise ratio (to be defined in \autoref{sec:setup}) as subsequent memories are stored.
-  }\label{fig:models}
-\end{figure}
-
-
-
-We are going to take a different approach.
-We are going to consider the \emph{entire} space of these models to find upper bounds on the capability of \emph{any} of them.
-As the performance of a synaptic model is quantified by a memory curve (describing the decay of a memory trace as more and more subsequent memories are stored) rather than a single number, there is no good notion of optimality.
-What type of memory curve is best will depend on what the synapses are required to do and over what timescales.
-
-We begin in \autoref{sec:setup} by describing the class of models that we will consider and define the memory curve that we use to quantify their performance.
-In \autoref{sec:bounds} we will prove upper bounds on two quantities, the initial value of the memory curve and the area under it, as well as finding the models that saturate them.
-We will use these bounds in \autoref{sec:env} to find an envelope curve -- one that cannot be crossed by the memory curve of any model at any time.
+Here we initiate such a general theory by proving upper bounds on the memory curve associated with any synaptic dynamical system, within the well established ideal
+observer framework of \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}.
+Along the way we develop principles based on first passage time theory to order the structure of synaptic dynamical systems and relate this structure to memory performance.
+We summarize our main results in the \hyperref[sec:disc]{discussion section}.
 
 
 
 
-\section{Synaptic models and their memory curves}\label{sec:setup}
 
-In this section, we will describe the class of models of synaptic plasticity that we are studying and how we quantify their performance as memory storage devices.
+\section{Overall framework: synaptic models and their memory curves}\label{sec:setup}
+
+In this section, we will describe the class of models of synaptic plasticity that we are studying and how we quantify their memory performance.
 In the subsequent sections, we will find upper bounds on this performance.
 
 We use a well established formalism for the study of learning and memory with complex synapses (see \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}).
-In this approach, potentiating and depressing plasticity events occur at random times, with all information about the neural activity and learning rules responsible for them absorbed into their rates.
-We assume that there are no spatial or temporal correlations in the pattern of potentiating and depressing events, and these events cause Markovian transitions between the internal states of the synapses.
-As a result of these assumptions, the states of different synapses will be independent, and the system can be fully described by the probability distribution across these states, which we will indicate with the row-vector $\pr(t)$.
+In this approach, electrical patterns of activity corresponding to candidate potentiating and depressing plasticity events occur randomly and independently at all synapses at a Poisson rate $r$.  These events reflect possible synaptic changes due to either spontaneous network activity, or the storage of new memories.
+We let  $f\pot$ and  $f\dep$ denote the fraction of these events that are candidate potentiating or depressing events respectively.
+Furthermore, we assume our synaptic model has $M$ internal molecular functional states, and that a candidate potentiating (depotentiating) event induces a stochastic transition in the internal state described by an $M \times M$ discrete time Markov transition matrix  $\M\pot$ ($\M\dep$).
+In this framework, the states of different synapses will be independent, and the entire synaptic population can be fully described by the probability distribution across these states, which we will indicate with the row-vector $\pr(t)$.
+Thus the $i$'th component of $\pr(t)$ denotes the fraction of the synaptic population in state $i$.
+Furthermore, each state $i$ has its own synaptic weight, which we take, in the worst case scenario, to be restricted to two values.
+After shifting and scaling these two values,  we can assume they are $\pm1$, without loss of generality.
 
 We also employ an ``ideal observer'' approach to the memory readout, where the synaptic weights are read directly.
-This provides an upper bound to the quality of any readout using neural activity.
-These synaptic weights will be restricted to two values, which we can shift and scale to $\pm1$.
+This provides an upper bound on the quality of any readout using neural activity.
 
-For any single memory, there will be an ideal pattern of synaptic weights, the $N$-element vector $\wvi$, that is $+1$ at all synapses that were potentiated and $-1$ at all synapses that were depressed.
-The actual pattern of synaptic weights at some later time, $t$, will be $\wv(t)$.
+For any single memory, stored at time $t=0$, we assume there will be an ideal pattern of synaptic weights across a population of $N$ synapses, the $N$-element vector $\wvi$, that is $+1$ at all synapses that experience a candidate potentiation event, and $-1$ at all synapses that experienced a candidate depression event at the time of memory storage.
+The actual pattern of synaptic weights at some later time, $t$, will change to $\wv(t)$ due to further modifications from subsequent memories.
 We can use the overlap between these, $\wvi\cdt\wv(t)$, as a measure of the quality of the memory.
-As $t\to\infty$, the system will return to its steady state distribution which will be uncorrelated with the memory in question.
+As $t\to\infty$, the system will return to its steady state distribution which will be uncorrelated with the memory stored at $t=0$.
 The probability distribution of the quantity $\wvi\cdt\wv(\infty)$ can be used as a ``null model'' for comparison.
 
-The extent to which the memory has been stored is described by a signal-to-noise ratio (SNR):
+The extent to which the memory has been stored is described by a signal-to-noise ratio (SNR) \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}:
 %
 \begin{equation}\label{eq:SNRdef}
   \snr(t) = \frac{\av{\wv_\text{ideal}\cdt\wv(t) - \wv_\text{ideal}\cdt\wv(\infty)}}
      {\sqrt{\var(\wv_\text{ideal}\cdt\wv(\infty))}}.
 \end{equation}
 %
-The noise is essentially $\sqrt{N}$.
+The noise in the denominator is essentially $\sqrt{N}$.
 There is a correction when potentiation and depression are imbalanced, but this will not affect the upper bounds that we will discuss below and will be ignored in the subsequent formulae.
 
-All of the preceding plasticity events will put the system in its steady-state distribution, $\eq$.
-The memory we are tracking at $t=0$ will change this to $\eq\M\pot$ in those synapses that are potentiated and $\eq\M\dep$ in those synapses that are depressed, where $\M\potdep$ are $M\times M$ matrices of transition probabilities for the Markov processes describing potentiation and depression.
+A simple mean memory curve can be derived as follows.
+All of the preceding plasticity events, prior to $t=0$, will put the population of synapses in its steady-state distribution, $\eq$.
+The memory we are tracking at $t=0$ will change the internal state distribution to $\eq\M\pot$ in those synapses that are potentiated and $\eq\M\dep$ in those synapses that are depressed.
 As the potentiating/depressing nature of the subsequent memories is independent of $\wvi$, we can average over all sequences, resulting in the evolution of the probability distribution:
 %
 \begin{equation}\label{eq:evol}
@@ -183,8 +182,8 @@ As the potentiating/depressing nature of the subsequent memories is independent 
   \frg = f\pot\M\pot + f\dep\M\dep - \I.
 \end{equation}
 %
-Here, $r$ is the rate of the Poisson process describing the timing of plasticity events,
-$f\potdep$ is the fraction of events that are potentiating/depressing and $\I$ is the identity matrix.
+Here $\frg$ is a continuous time transition matrix that models the process of forgetting the memory stored at time $t=0$ due to random candidate potentiation/depression events occurring at each synapse due to the storage of subsequent memories.
+
 
 This results in the following SNR
 %
@@ -194,8 +193,34 @@ This results in the following SNR
 %
 where the weight of the synapse when it is in its $i$'th state is given by the corresponding element of the column vector $\w$.
 We will frequently refer to this function as the memory curve.
+It can be thought of as the fraction of synapses that maintain the ideal synaptic strength at time $t$, dictated by the stored memory at time $t=0$.
 
-The parameters must satisfy the following constraints:
+
+Much of the previous work on these types of complex synaptic models has focused on understanding the memory curves of specific models, or choices of $\M\potdep$.
+Two examples of these models are shown in \autoref{fig:models}. We see that they have different memory properties.
+The serial model performs relatively well at one particular timescale, but it performs poorly at other times.
+The cascade model does not perform quite as well at that time, but it maintains it performance over a wider range of timescales.
+
+\begin{figure}[tbp]
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.25\linewidth]{cascade-generated.pdf}}\label{fig:cascade}
+  \item\aligntop{\includegraphics[width=0.25\linewidth]{multistate-generated.pdf}}\label{fig:multistate}
+  \item\aligntop{\includegraphics[width=0.35\linewidth]{cascms.eps}}\label{fig:cascms}
+ \end{myenuma}
+ \end{center}
+  \caption{Models of complex synapses.
+  (\ref{fig:cascade}) The cascade model of \cite{Fusi2005cascade}, showing transitions between states of high/low synaptic weight (red/blue circles) due to potentiation/depression (solid red/dashed blue arrows).
+  (\ref{fig:multistate}) The serial model of \cite{Leibold2008serial}.
+  (\ref{fig:cascms}) The memory curves of these two models, showing the decay of the signal-to-noise ratio (to be defined in \autoref{sec:setup}) as subsequent memories are stored.
+  }\label{fig:models}
+\end{figure}
+
+
+In this work, rather than analyzing specific models,  we take a different approach, in order to obtain a more general theory.
+We consider the \emph{entire} space of these models and find upper bounds on the memory capacity of \emph{any} of them.
+The space of models with a fixed number of internal states $M$ is parameterized by the pair of $M \times M$ discrete time stochastic
+transition matrices $\M\pot$ and $\M\dep$, in addition to $f\potdep$.  The parameters must satisfy the following constraints:
 %
 \begin{equation}\label{eq:constr}
 \begin{aligned}
@@ -211,8 +236,8 @@ The parameters must satisfy the following constraints:
 %
 The upper bounds on $\M\potdep_{ij}$ and $f\potdep$ follow automatically from the other constraints.
 
-The question is: what do these constraints imply for the memory curve above?
-In practice, to make any statements about finite times, we need to got to the eigenmode description:
+The critical question is: what do these constraints imply about the space of achievable memory curves in \eqref{eq:SNRcalc}?
+To answer this question, especially for limits on achievable memory at finite times, it will be useful to employ the eigenmode description:
 %
 \begin{equation}\label{eq:eigendecomp}
   \frg = \sum_a -q_a \uv^a \vv^a,
@@ -224,8 +249,8 @@ In practice, to make any statements about finite times, we need to got to the ei
   \vv^a \frg = -q_a \vv^a.
 \end{equation}
 %
-Where $q_a$ are the negative of the eigenvalues, $\uv^a$ are the right (column) eigenvectors and $\vv^a$ are the left (row) eigenvectors.
-This allow us to write
+Here $q_a$ are the negative of the eigenvalues of the forgetting process $\frg$, $\uv^a$ are the right (column) eigenvectors and $\vv^a$ are the left (row) eigenvectors.
+This decomposition allows us to write the memory curve as a sum of exponentials,
 %
 \begin{equation}\label{eq:SNReigen}
 \begin{aligned}
@@ -237,17 +262,17 @@ This allow us to write
 \end{aligned}
 \end{equation}
 %
-We can ask then ask the question: what are the constraints on these quantities implied by the constraints \eqref{eq:constr}?
-We will find some of these constraints in the next section.
+We can then ask the question: what are the constraints on these quantities, namely initial SNR's $\CI_a$ and time constants $\tau_a$ for the modes,  implied by the constraints in \eqref{eq:constr}?
+We will derive some of these constraints in the next section.
 
+\section{Upper bounds on achievable memory capacity}\label{sec:bounds}
 
-
-
-
-\section{Upper bounds}\label{sec:bounds}
-
-In this section, we will find some upper bounds on certain properties of the memory curve discussed in the previous section, namely its initial value and the area under it.
-We will use these bounds to determine an upper bound on the SNR at finite times in the next section.
+In the previous section, in \eqref{eq:SNRcalc} we have described an analytic expression for a memory curve as a function of the structure of a synaptic dynamical system, described by the pair of stochastic transition matrices  $\M\potdep$.
+Since the performance measure for memory is an entire memory curve, and not just a single number, there is no universal scalar notion of optimal memory in the space of synaptic dynamical systems.
+Instead there are tradeoffs between storing proximal and distal memories;  often attempts to increase memory at late (early) times by changing $\M\potdep$, incurs a performance loss in memory at early (late) times in specific models considered so far \cite{Fusi2005cascade,Fusi2007multistate,Leibold2008serial}.
+Thus our goal, achieved in \autoref{sec:env}, is to derive an envelope memory curve in the SNR-time plane, or a curve that forms an upper-bound on the entire memory curve of {\it any} model.
+In order to achieve this goal, in this section, we must first derive upper bounds, over the space of all possible synaptic models, on two different scalar functions of the memory curve: its initial SNR, and the area under the memory curve.
+As a corollary of these results, we also derive an upper-bound on the memory lifetime, or the time at which the SNR drops to a given detection threshold.
 
 
 \subsection{Initial SNR}\label{sec:initial}
@@ -295,9 +320,9 @@ This is not a good design for a synapse, but the resulting bound on the initial 
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\hp\aligntop{\includegraphics[width=0.15\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
-  \item\aligntop{\includegraphics[width=0.15\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
-  \item\hp\aligntop{\includegraphics[width=0.05\linewidth]{binary_det.svg}}\label{fig:binary_det}
+  \item\hp\aligntop{\includegraphics[width=0.15\linewidth]{max_init_pot-generated.pdf}}\label{fig:max_init_pot}\hp
+  \item\aligntop{\includegraphics[width=0.15\linewidth]{max_init_dep-generated.pdf}}\label{fig:max_init_dep}\hp
+  \item\hp\aligntop{\includegraphics[width=0.05\linewidth]{binary_det-generated.pdf}}\label{fig:binary_det}
   \end{myenuma}
  \end{center}
   \caption{Synaptic models that maximize initial SNR.
@@ -372,9 +397,9 @@ Any other topology would allow some perturbation to further increase the area.
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
-  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
-  \item\aligntop{\includegraphics[width=0.2\linewidth]{shortcut.svg}}\label{fig:shortcut}
+  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_right-generated.pdf}}\label{fig:tri_right}\hp
+  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_left-generated.pdf}}\label{fig:tri_left}\hp
+  \item\aligntop{\includegraphics[width=0.2\linewidth]{shortcut-generated.pdf}}\label{fig:shortcut}
  \end{myenuma}
  \end{center}
   \caption{Perturbations that increase the area.
@@ -411,7 +436,7 @@ This is also not a good design for a synapse, but the resulting bound on the are
 
 \begin{figure}[tbp]
  \begin{center}
-  \includegraphics[width=0.4\linewidth]{multistate_sticky.svg}
+  \includegraphics[width=0.4\linewidth]{multistate_sticky-generated.pdf}
  \end{center}
   \caption{Model that maximizes the area.
   Unlabeled transitions have probability 1.
@@ -447,14 +472,14 @@ This always results in a single nonzero $\CI_a$:
 \begin{equation}\label{eq:env}
 \begin{aligned}
   t_0 &\leq \frac{M-1}{r} &
-   \implies 
+   \implies
   \snr(t) &= \sqrt{N}\e^{-rt/(M-1)} &
-   \implies 
+   \implies
   \snr(t_0) &= \sqrt{N}\e^{-rt_0/(M-1)},\\
   t_0 &\geq \frac{M-1}{r} &
-   \implies 
+   \implies
   \snr(t) &= \frac{\sqrt{N}(M-1)\e^{-t/t_0}}{rt_0} &
-   \implies 
+   \implies
   \snr(t_0) &= \frac{\sqrt{N}(M-1)}{\e rt_0}.
 \end{aligned}
 \end{equation}
@@ -491,7 +516,7 @@ We have already seen that not every constraints is saturated for certain time ra
  \begin{center}
  \begin{myenuma}
   \item\aligntop{\includegraphics[width=0.4\linewidth]{env.eps}}\label{fig:envplot}\hp
-  \item\aligntop{\includegraphics[width=0.3\linewidth]{diffjump.svg}}\label{fig:diffjump}
+  \item\aligntop{\includegraphics[width=0.3\linewidth]{diffjump-generated.pdf}}\label{fig:diffjump}
  \end{myenuma}
  \end{center}
   \caption{The memory curve envelope for $N=100$, $M=12$.
