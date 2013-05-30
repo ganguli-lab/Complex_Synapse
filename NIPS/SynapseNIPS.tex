@@ -386,6 +386,17 @@ These can be thought of as the average time it takes to reach the strong/weak st
 We can put the states in order of decreasing $\eta^+_i$ or increasing $\eta^-_i$.
 Because $\eta^+_i+\eta^-_i=\eta$ is independent of $i$, the two orderings are the same.
 
+In terms of these quantities, the area can be written as
+%
+\begin{equation}\label{eq:areaEta}
+\begin{aligned}
+  A &= \sqrt{N}(4f\pot f\dep) \sum_{ij} \eq_i \prn{\M\pot_{ij}-\M\dep_{ij}} \prn{\eta^+_i-\eta^+_j}\\
+    &= \sqrt{N}(4f\pot f\dep) \sum_{ij} \eq_i \prn{\M\pot_{ij}-\M\dep_{ij}} \prn{\eta^-_j-\eta^-_i}.
+\end{aligned}
+\end{equation}
+%
+
+
 With the states in this order, we can find perturbations of $\M\potdep$ that will always increase the area, whilst leaving the equilibrium distribution, $\eq$, unchanged.
 Some of these perturbations are shown in \autoref{fig:perts}.
 The only thing that can prevent these perturbations from increasing the area is when they require the decrease of a matrix element that has already been set to 0.
@@ -536,7 +547,10 @@ We have already seen that not every constraints is saturated for certain time ra
 
 \section{Discussion}\label{sec:disc}
 
+We have developed a general theory of learning and memory with complex synapses, allowing for an exploration of the entire space of models.
+If we are to understand the wealth of data that is arriving regarding the molecular mechanisms of synaptic plasticity \cite{Bliss1993LTP,Bredt2003AMPA,Coba2009phosphorylation}, we will need more of this exploration so that we can build an understanding of the relation between structure and function.
 
+We have begun this exploration by finding upper bounds on the memory storage of these synapses.
 
 
 

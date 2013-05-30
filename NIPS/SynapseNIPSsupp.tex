@@ -1,0 +1,1294 @@
+% -*- TeX -*- -*- US -*-
+\documentclass{article} % For LaTeX2e
+\usepackage{nips13submit_e,times}
+\input{sl_preamble.tex}
+\input{sl_graphics_preamble.tex}
+\graphicspath{{"Figs/"}}
+% >> Only for drafts! <<
+\usepackage[notref,notcite]{showkeys}
+% ----------------------------------------------------------------
+%\numberwithin{equation}{section}
+%\renewcommand{\baselinestretch}{1.5}
+% ----------------------------------------------------------------
+% New commands etc.
+\input{sl_definitions.tex}
+\input{sl_symbols.tex}
+%
+%additional symbols:
+%
+\DeclareMathOperator{\SNR}{SNR}
+\DeclareMathOperator{\snr}{SNR}
+\newcommand{\wv}{\vec{w}}
+\newcommand{\wvi}{\vec{w}_\text{ideal}}
+%matrices
+\newcommand{\inv}{^{-1}}
+\newcommand{\dg}{^\mathrm{dg}}
+\newcommand{\trans}{^\mathrm{T}}
+\newcommand{\I}{\mathbf{I}}
+%vec of ones
+\newcommand{\onev}{\mathbf{e}}
+%mat of ones
+\newcommand{\onem}{\mathbf{E}}
+%Markov matrix
+\newcommand{\MM}{\mathbf{Q}}
+%prob distributions
+\newcommand{\pr}{\mathbf{p}}
+\newcommand{\eq}{\pr^\infty}
+%first passage times
+\newcommand{\fpt}{\mathbf{T}}
+%off-diag first passage times
+\newcommand{\fptb}{\overline{\fpt}}
+%fundamental matrix
+\newcommand{\fund}{\mathbf{Z}}
+%other symbols for matrices
+\newcommand{\Pb}{\mathbf{P}}
+\newcommand{\D}{\mathbf{D}}
+\newcommand{\pib}{\boldsymbol{\pi}}
+\newcommand{\Lb}{\boldsymbol{\Lambda}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\enc}{\mathbf{q}}
+\newcommand{\frg}{\W^{\mathrm{F}}}
+\newcommand{\F}{\boldsymbol{\Phi}}
+%superscripts
+\newcommand{\pot}{^{\text{pot}}}
+\newcommand{\dep}{^{\text{dep}}}
+\newcommand{\potdep}{^{\text{pot/dep}}}
+%sets
+\newcommand{\CS}{\mathcal{S}}
+\newcommand{\CA}{\mathcal{A}}
+\newcommand{\CB}{\mathcal{B}}
+\newcommand{\comp}{^\mathrm{c}}
+%eigenmodes
+\newcommand{\uv}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\CI}{\mathcal{I}}
+% ----------------------------------------------------------------
+\input{sl_theorems_preamble.tex}
+% ----------------------------------------------------------------
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title info:
+\title{A memory frontier for complex synapses: Supplementary material}
+%
+% Author List:
+%
+\author{Subhaneil Lahiri and Surya Ganguli\\
+Applied Physics Department, Stanford University, Stanford CA\\
+\emaillink{sulahiri@stanford.edu}, \emaillink{sulahiri@stanford.edu}
+%
+}
+
+%\nipsfinalcopy % Uncomment for camera-ready version
+
+\begin{document}
+
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Continuous time Markov processes}\label{sec:ContMarkov}
+
+In this section we'll provide a summary of all the relevant properties of ergodic Markov chains in continuous time to define notation and .
+It is a straightforward generalisation of material that can be found in \cite{kemeny1960finite} with some ideas from \cite{hunter2000survey}.
+
+
+\subsection{Notation}\label{sec:not}
+
+For any matrix $\mathbf{A}$, we define matrices $\mathbf{A}\dg$ and $\overline{\mathbf{A}}$ as
+%
+\begin{equation}\label{eq:dgdef}
+  \mathbf{A}\dg_{ij} \equiv \delta_{ij}\mathbf{A}_{ij},
+  \qquad
+  \overline{\mathbf{A}} \equiv \mathbf{A}-\mathbf{A}\dg.
+\end{equation}
+%
+We let $\onev$ denote a column-vector of ones and $\onem=\onev\onev\trans$ denote a matrix of ones.
+
+
+A Markov process is described by a matrix of transitions rates, $\MM_{ij}$, from state $i$ to $j$.
+The probabilities of being in each state at time $t$, the row-vector $\mathbf{p}(t)$, evolve according to
+%
+\begin{equation}\label{eq:rowsum}
+  \diff{\mathbf{p}(t)}{t} = \mathbf{p}(t) \MM,
+  \qquad
+  \mathbf{p}(t)\onev=1,
+  \qquad
+  \MM\onev=0.
+\end{equation}
+%
+In Surya's notes, $\MM=r\frg$.
+
+The equilibrium probabilities, $\eq$, satisfy
+%
+\begin{equation}\label{eq:equilibrium}
+  \eq\MM=0,
+  \qquad
+  \eq\onev=1.
+\end{equation}
+%
+As we assume an ergodic process, this eigenvalue is non-degenerate.
+If all other eigenvalues have strictly negative real parts, the process is regular (aperiodic).
+
+We define additional matrices
+%
+\begin{equation}\label{eq:defDLP}
+  \Lb \equiv (-\MM\dg)\inv,
+  \qquad
+  \Pb \equiv \I + \Lb\MM.
+\end{equation}
+%
+It can be shown that $\Lb_{ii}$ is the mean time it takes to leave state $i$ and $\Pb_{ij}$ is the probability the the next transition from state $i$ goes to state $j$:
+%
+\begin{equation}\label{eq:LamdaPcmpt}
+  \Lb_{ii} = \frac{1}{\sum_{j \neq j} \MM_{ij}},
+  \qquad
+  \Pb_{ij} = %\left\{
+%  \begin{aligned}
+%     &0                                         && \text{if }i=j, \\
+%     &\frac{\MM_{ij}}{\sum_{k \neq j} \MM_{ik}} &&\text{otherwise}.
+%  \end{aligned}
+%  \right.
+  \begin{cases}
+     0                                         &\text{if }i=j, \\
+     \frac{\MM_{ij}}{\sum_{k \neq j} \MM_{ik}} &\text{otherwise}.
+  \end{cases}
+\end{equation}
+%
+Furthermore, we also define
+%
+\begin{equation}\label{eq:pdotD}
+  \D \equiv \operatorname{diag}(\eq)\inv,
+  \qquad\implies\qquad
+  \eq\D=\onev\trans.
+\end{equation}
+%
+
+\subsection{Fundamental matrix}\label{sec:fund}
+
+\begin{defn}[Fundamental matrix]
+  %
+  \begin{equation}\label{eq:funddef}
+    \fund \equiv (-\MM + \onev\pib)\inv,
+  \end{equation}
+  %
+  where $\pib$ is any row-vector with $\pib\onev=1/\tau\neq0$.
+\end{defn}
+Note that the canonical choice for the discrete time version, $\pib=\eq$, is not available here due to problems with units.
+It will be helpful to choose $\pib$ to be independent of $\MM$, \eg $\pib=\onev\trans/(n\tau)$.
+All quantities that we calculate using $\fund$ below will be independent of this choice.
+
+\begin{thm}
+  The definition of $\fund$ is valid, \ie $(-\MM + \onev\pib)$ is invertible.
+\end{thm}
+\begin{proof}
+  Assume there exists an $\mathbf{x}$ such that
+  %
+  \begin{equation}\label{eq:fundinvkern}
+    (-\MM + \onev\pib)\mathbf{x}=0.
+  \end{equation}
+  %
+  Multiplying from the left with $\eq$ gives
+  %
+  \begin{equation}\label{eq:fundinvpix}
+    \pib \mathbf{x} = 0.
+  \end{equation}
+  %
+  Substituting back into \eqref{eq:fundinvkern} gives
+  %
+  \begin{equation*}
+    \MM\mathbf{x}=0.
+  \end{equation*}
+  %
+  As we assume an ergodic process, the zero eigenvalue is non-degenerate.
+  Therefore, $\mathbf{x}=\lambda\onev$.
+  Substituting this into \eqref{eq:fundinvpix} gives
+  %
+  \begin{equation*}
+    \lambda\pib\onev = \frac{\lambda}{\tau} = 0.
+  \end{equation*}
+  %
+  As we defined $\pib$ such that $1/\tau\neq0$, this means $\lambda=0 \implies \mathbf{x}=0$.
+\end{proof}
+
+\begin{cor}
+  %
+  \begin{align}
+    \pib\fund &= \eq, \label{eq:fundprob}\\
+    \fund\onev &= \tau\onev,\label{eq:fundrowsum}\\
+    \I+\MM\fund &= \onev\eq, \label{eq:fundQZ}\\
+    \I+\fund\MM &= \tau\onev\pib. \label{eq:fundZQ}
+  \end{align}
+  %
+\end{cor}
+\begin{proof}
+  We can deduce \eqref{eq:fundprob} and \eqref{eq:fundrowsum} be pre/post-multiplying the following equations by $\fund$:
+  %
+  \begin{equation*}
+    \begin{aligned}
+      \eq(-\MM + \onev\pib) &= \pib, \\
+      (-\MM + \onev\pib)\onev &= \frac{\onev}{\tau}.
+    \end{aligned}
+  \end{equation*}
+  %
+  We can then deduce \eqref{eq:fundQZ} and \eqref{eq:fundZQ} by substituting these into
+  %
+  \begin{equation*}
+    (-\MM + \onev\pib)\fund = \fund(-\MM + \onev\pib) = \I.
+  \end{equation*}
+  %
+\end{proof}
+
+%We will not need to use the concept of a g-inverse anywhere, so you can skip ahead to \sref{sec:fpt} now. For the sake of completeness, we can define $\MM^\#$ as
+%%
+%\begin{equation}\label{eq:ginvdef}
+%  \MM^\# \equiv \tau\onev\eq - \fund
+%\end{equation}
+%%
+%\begin{thm}
+%  The matrix $\MM^\#$ satisfies the following defining properties of a g-inverse of $\MM$:
+%  %
+%  \begin{align}
+%    \MM^\# \MM \MM^\# &= \MM^\#,     \label{eq:ginvpropo} \\
+%    \MM \MM^\# \MM    &= \MM,        \label{eq:ginvpropi} \\
+%    \MM \MM^\#        &= \MM^\# \MM, \label{eq:ginvcomm}
+%  \end{align}
+%  %
+%  with \eqref{eq:ginvcomm} holding iff $\eq$ and $\pib$ are proportional to each other.
+%\end{thm}
+%\begin{proof}
+%  Using \eqref{eq:rowsum}, \eqref{eq:equilibrium}, \eqref{eq:fundprob} and \eqref{eq:fundrowsum}, one can verify
+%  %
+%  \begin{alignat*}{2}
+%    \MM \MM^\# &= -\MM \fund,
+%    &\qquad
+%    \pib \MM^\# &= 0,
+%    \\
+%    \MM^\# \MM &= -\fund \MM,
+%    &
+%    \MM^\# \onev &= 0.
+%  \end{alignat*}
+%  %
+%  Substituting into \eqref{eq:fundQZ} and \eqref{eq:fundZQ} leads to
+%  %
+%  \begin{equation*}
+%    \I - \MM \MM^\# = \onev \eq,
+%    \qquad
+%    \I - \MM^\# \MM = \tau \onev \pib.
+%  \end{equation*}
+%  %
+%  Pre/post-multiplying these by $\MM$ or $\MM^\#$ produces \eqref{eq:ginvpropo} and \eqref{eq:ginvpropi}. Subtracting produces
+%  %
+%  \begin{equation*}
+%    [\MM,\MM^\#] = \onev(\tau\pib-\eq),
+%  \end{equation*}
+%  %
+%  which vanishes iff $\eq$ and $\pib$ are proportional to each other (due to $\pib\onev=1/\tau$ and $\eq\onev=1$, the constant of proportionality could only be $\tau$).
+%\end{proof}
+
+
+\subsection{First passage times}\label{sec:fpt}
+
+\begin{defn}[First passage time matrix]
+ We define $\fptb_{ij}$ as the mean time it takes the process to reach state $j$ for the first time, starting from state $i$.
+ We also define $\fpt\dg_{ii}$ as the mean time it takes the process to return to state $i$.
+ As usual, $\fpt=\fptb+\fpt\dg$.
+\end{defn}
+
+Consider the first time the process leaves state $i$.
+On average, this will take time $\Lb_{ii}$.
+With probability $\Pb_{ij}$, it will go directly to $j$, so the conditional mean time would be $\Lb_{ii}$.
+On the other hand, if it goes to some other state, $k$, with probability $\Pb_{ik}$, the conditional mean time would be $\fptb_{kj}+\Lb_{ii}$.
+Combining these, we get the recursion relation
+%
+\begin{equation}\label{eq:fptrecursion}
+  \begin{aligned}
+  \fpt_{ij} &= \sum_{k\neq j} \Pb_{ik}(\fptb_{kj}+\Lb_{ii}) + \Pb_{ij}\Lb_{ii} \\
+    &= \sum_{k\neq j} \Pb_{ik}\fptb_{kj} + \sum_{k} \Pb_{ik}\Lb_{ii}\\
+    &= \sum_{k\neq j} \Pb_{ik}\fptb_{kj} + \Lb_{ii},\\
+   \fpt &= \Pb \fptb + \Lb\onem,
+  \end{aligned}
+\end{equation}
+%
+or, using \eqref{eq:defDLP},
+%
+\begin{equation}\label{eq:fptrecdg}
+  \fpt\dg = \Lb\MM\fptb+\Lb\onem.
+\end{equation}
+%
+
+\begin{thm}
+  The recurrence times are given by
+  %
+  \begin{equation}\label{eq:recurtime}
+    \fpt\dg = \Lb\D.
+  \end{equation}
+  %
+\end{thm}
+\begin{proof}
+  Pre-multiply \eqref{eq:fptrecdg} by $\eq\Lb\inv$:
+  %
+  \begin{equation*}
+    \eq\Lb\inv\fpt\dg = \onev\trans,
+  \end{equation*}
+  %
+  or in component form
+  %
+  \begin{equation*}
+    \eq_i \Lb_{ii}\inv \fpt\dg_{ii} = 1.
+  \end{equation*}
+  %
+  This is the same as \eqref{eq:recurtime} in component form: $\fpt\dg_{ii} = \Lb_{ii}/\eq_i$.
+\end{proof}
+I think the extra factor of $\Lb_{ii}$, compared to the discrete case \cite[Th.4.4.5]{kemeny1960finite}, occurs because in this case we are demanding that the process leaves the initial state once before returning, whereas in the discrete case we only measure the time it takes to go to the initial state after the first time-step.
+
+We can substitute this into \eqref{eq:fptrecdg} to get a recursion relation for the off diagonal part:
+%
+\begin{equation}\label{eq:fptbrec}
+  \MM\fptb = \D-\onem.
+\end{equation}
+%
+\begin{thm}
+  The off-diagonal solution of \eqref{eq:fptbrec} is unique.
+\end{thm}
+\begin{proof}
+  Suppose we have two solutions for the off-diagonal part, $\fptb$ and $\fptb'$.
+  Subtracting \eqref{eq:fptbrec} for these two solutions gives
+  %
+  \begin{equation*}
+    \MM(\fptb-\fptb')=0.
+  \end{equation*}
+  %
+  As we are assuming an ergodic process, the zero eigenvalue is non-degenerate.
+  Therefore
+  %
+  \begin{equation*}
+    \fptb-\fptb' = \onev\mathbf{y},
+  \end{equation*}
+  %
+  for some row-vector $\mathbf{y}$. Looking at the diagonal components
+  %
+  \begin{equation*}
+    \mathbf{y}_{i} = \fptb_{ii}-\fptb'_{ii} = 0,
+  \end{equation*}
+  %
+  and therefore $\fptb-\fptb'=0$.
+\end{proof}
+
+\begin{thm}
+  The off-diagonal mean first passage times are given by
+  %
+  \begin{equation}\label{eq:fptfund}
+    \fptb = (\onem\fund\dg - \fund)\D.
+  \end{equation}
+  %
+\end{thm}
+\begin{proof}
+  We just need to show that this satisfies \eqref{eq:fptbrec} and that the diagonal elements vanish.
+  Premultiply \eqref{eq:fptfund} by $\MM$:
+  %
+  \begin{equation*}
+  \begin{aligned}
+    \MM\fptb &= -\MM\fund\D\\
+     &= (\I-\onev\eq)\D \\
+     &= \D-\onem,
+  \end{aligned}
+  \end{equation*}
+  %
+  where we used \eqref{eq:fundQZ} and \eqref{eq:pdotD}.
+  The vanishing of the diagonal elements follows trivially from the component form of \eqref{eq:fptfund}:
+%
+\begin{equation}\label{eq:fptfundcmpt}
+  \fptb_{ij} = \frac{\fund_{jj}-\fund_{ij}}{\eq_j}.
+\end{equation}
+%
+
+\end{proof}
+
+
+\subsection{Mixing time (Kemeny's constant)}\label{sec:mixtime}
+
+\begin{thm}\label{th:kemenyconst}
+  The quantity
+  %
+  \begin{equation}\label{eq:mixdef}
+    \eta \equiv \sum_j \fptb_{ij}\eq_j
+  \end{equation}
+  %
+  is independent of $i$.
+\end{thm}
+\begin{proof}
+  We use \eqref{eq:fptfund}, \eqref{eq:fundrowsum} and the transpose of \eqref{eq:pdotD}:
+  %
+  \begin{equation*}
+    \begin{aligned}
+      \fptb (\eq)\trans &= (\onem\fund\dg - \fund) \D (\eq)\trans \\
+        &= (\onev\onev\trans\fund\dg - \fund) \onev \\
+        &= (\onev\trans\fund\dg\onev)\onev - \fund\onev \\
+        &= (\tr\fund - \tau)\onev.
+    \end{aligned}
+  \end{equation*}
+  %
+  which proves \eqref{eq:mixdef} with $\eta = \tr\fund - \tau$.
+\end{proof}
+
+Note that it is essential that we use $\fptb$ and not $\fpt$ here, as that would lead to $\eta_i=\eta+\Lb_{ii}$, unlike the discrete time version \cite{hunter2006mixing} where this would only shift $\eta$ by 1.
+
+\subsection{Sensitivity of equilibrium distribution}\label{sec:sensitivity}
+
+Suppose that the Markov process, defined by $\MM$, depends on some parameter $\alpha$.
+Differentiating \eqref{eq:funddef} gives
+%
+\begin{equation}\label{eq:diffZ}
+  \diff{\fund}{\alpha} = \fund \diff{\MM}{\alpha} \fund.
+\end{equation}
+%
+We can substitute this into the derivative of \eqref{eq:fundprob}:
+%
+\begin{equation}\label{eq:diffp}
+  \diff{\eq}{\alpha} = \pib \fund \diff{\MM}{\alpha} \fund = \eq \diff{\MM}{\alpha} \fund.
+\end{equation}
+%
+We can rewrite this in component form and use the fact that $\MM_{ii} = - \sum_{i\neq j} \MM_{ij}$:
+%
+\begin{equation}\label{eq:diffpT}
+\begin{aligned}
+  \diff{\eq_k}{\alpha} &= \sum_{i,j} \eq_i \diff{\MM_{ij}}{\alpha} \fund_{jk} \\
+    &= \sum_{i\neq j} \eq_i \diff{\MM_{ij}}{\alpha} \fund_{jk} + \sum_i \eq_i \diff{\MM_{ii}}{\alpha} \fund_{ik} \\
+    &= \sum_{i\neq j} \eq_i \diff{\MM_{ij}}{\alpha} (\fund_{jk} - \fund_{ik}) \\
+    &= \sum_{i\neq j} \diff{\MM_{ij}}{\alpha} \eq_i \eq_k (\fptb_{ik} - \fptb_{jk}),
+\end{aligned}
+\end{equation}
+%
+which is the result of \cite{cho2000markov} that we need.
+Note that the summand vanishes for $i=j$, so we can drop the restriction $i\neq j$ from the range of the sum.
+
+\subsection{Subsets and flux}\label{sec:subsets}
+
+Let us denote the set of states by $\CS$.
+Consider a subset $\CA\subset\CS$.
+We can define a projection operator onto this subset:
+%
+\begin{equation}\label{eq:proj}
+  \prn{\I^\CA}_{ij} =
+    \begin{cases}
+      1 &\text{if $i=j\in\CA$,}\\
+      0 &\text{otherwise.}
+    \end{cases}
+\end{equation}
+%
+We will use superscripts/subscripts to denote projection onto/summation over a subset:
+%
+\begin{equation}\label{eq:projsum}
+  \begin{aligned}
+    \pib^\CA &=\pib\I^\CA, &
+    \M^{\cdot\CA}&=\M\I^\CA, &
+    \M^{\CA\cdot}&=\I^\CA\M, &
+    \mathbf{x}^\CA &= \I^\CA\mathbf{x},
+    \\
+    \pib_\CA &=\pib\onev^\CA, &
+    \M_{\cdot\CA}&=\M\onev^\CA, &
+    \M_{\CA\cdot}&=\prn{\onev^\CA}\trans\M, &
+    \mathbf{x}_\CA &= \prn{\onev^\CA}\trans\mathbf{x},
+  \end{aligned}
+\end{equation}
+%
+where $\pib$ is a row vector, $\CM$ is a matrix and $\mathbf{x}$ is a column vector.
+
+We can define a flux matrix, a.k.a.\ ergodic flow:
+%
+\begin{equation}\label{eq:flux}
+  \F = \D\inv\MM,
+  \qquad
+  \F_{ij} = \eq_i \MM_{ij}.
+\end{equation}
+%
+This measures the flow of probability between states in the equilibrium distribution.
+Detailed balance, a.k.a.\ reversibility, is equivalent to $\F=\F\trans$.
+
+The flux between two subsets is a particularly useful quantity:
+%
+\begin{equation}\label{eq:subflux}
+  \F_{\CA\CB} = {\eq}^\CA\MM\onev^\CB.
+\end{equation}
+%
+One can show that
+%
+\begin{equation}\label{eq:compflux}
+  \F_{\CA\CA\comp} = \F_{\CA\comp\CA} = -\F_{\CA\CA} = -\F_{\CA\comp\CA\comp}
+\end{equation}
+%
+using $\prn{{\eq}^\CA + {\eq}^{\CA\comp}}\MM=0$ and $\MM\prn{{\onev}^\CA + {\onev}^{\CA\comp}}=0$.
+
+\subsection{Lumpability}\label{sec:lump}
+
+Suppose we have partitioned the states into disjoint subsets, $\brc{\CA_\alpha}$:
+%
+\begin{equation}\label{eq:partition}
+  \bigcup_\alpha \CA_\alpha = \CS,
+  \qquad
+  \CA_\alpha \cap \CA_\beta = \delta_{\alpha\beta}\CA_\alpha.
+\end{equation}
+%
+We will use $\alpha$ instead of $\CA_\alpha$ in superscripts and subscripts in the following.
+The fact that these subsets are disjoint and exhaustive allows us to define the function
+%
+\begin{equation}\label{eq:whichsey}
+  \sigma(i)=\alpha
+  \qquad\means\qquad
+  i\in\CA_\alpha.
+\end{equation}
+%
+
+We can use this partition to define a new stochastic process associated with the original Markov chain.
+At time $t$, if the state of the original process is $i$, the state of the new process is $\sigma(i)$.
+
+One may ask if this new process is a Markov chain.
+The answer is yes, if the original Markov chain has a property called lumpability \wrt the partition
+(see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time):
+%
+\begin{equation}\label{eq:lump}
+  \sigma(i)=\sigma(j)
+  \quad\implies \quad
+  \MM_{i\alpha}=\MM_{j\alpha} \equiv \sum_{k\in\CA_\alpha} \MM_{jk},
+\end{equation}
+%
+\ie the total transition rate from some state to some subset is the same for all starting states within the same subset.
+This common value is the transition rate for the new lumped Markov chain.
+
+This can be rewritten with the aid of two matrices
+%
+\begin{equation}\label{eq:lumpmats}
+  U_{\alpha i} = \frac{\delta_{\alpha\sigma(i)}}{\abs{\CA_\alpha}},
+  \qquad
+  V_{i\alpha} = \delta_{\sigma(i)\alpha}.
+\end{equation}
+%
+Left multiplication by $U$ averages over subsets, right multiplication by $V$ sums over subsets.
+For $U$, we chose the uniform measure in each subset. Any measure would work equally well, \eg one proportional to the equilibrium distribution:
+%
+\begin{equation}\label{eq:altlumpmats}
+  U_{\alpha i} = \frac{{\eq_i}^\alpha}{\eq_\alpha}.
+\end{equation}
+%
+
+One can show that $(UV)_{\alpha\beta}=\delta_{\alpha\beta}$.
+The matrix $VU$ is also interesting.
+It has a block diagonal structure, with each block corresponding to a subset.
+Each block is a discrete-time ergodic Markov matrix (it is an independent trials process with probabilities given by the measure chosen for $U$).
+This means that the right eigenvectors with eigenvalue 1 will be those that are constant in each subset:
+%
+\begin{equation}\label{eq:setconst}
+  VU\mathbf{x}=\mathbf{x}
+  \qquad\means\qquad
+  \mathbf{x} = \sum_\alpha x_\alpha \onev^\alpha.
+\end{equation}
+%
+
+This allows us to write the lumpability condition \eqref{eq:lump}, and the transition matrix for the lumped process compactly:
+%
+\begin{equation}\label{eq:lumpcompact}
+  VU\MM V = \MM V,
+  \qquad
+  \widehat{\MM} = U\MM V.
+\end{equation}
+%
+By induction, one can show that similar relations hold for all powers:
+%
+\begin{equation}\label{eq:lumppower}
+  VU\MM^nV = \MM^nV,
+  \qquad
+  \widehat{\MM}^n = U\MM^n V,
+\end{equation}
+%
+and, via the Taylor series, for the exponential as well:
+%
+\begin{equation}\label{eq:lumpexp}
+  VU \e^{t\MM} V = \e^{t\MM}V,
+  \qquad
+  \e^{t\widehat{\MM}} = U\e^{t\MM} V.
+\end{equation}
+%
+The equilibrium distribution of the lumped process is given by
+%
+\begin{equation}\label{eq:lumpeq}
+  \widehat{\mathbf{p}}^\infty = \eq V.
+\end{equation}
+%
+\section{Signal-to-Noise ratio (SNR)}\label{sec:SNR}
+
+In this section we will look at the signal-to-noise curve, and put an upper bound on its initial value.
+We will only consider ergodic Markov chains.
+Transient states would be unoccupied in equilibrium and would not be accessed by the signal creation process, therefore they could be removed from the analysis.
+Absorbing chains are degenerate cases: they have zero initial signal but infinite decay times, so they can only be approached as the limit of a sequence of ergodic chains.
+
+\subsection{Framework}\label{sec:framework}
+
+The individual potentiation/depression events will be described by \emph{discrete}-time Markov chains:
+%
+\begin{equation}\label{eq:MWdef}
+  \M\potdep \equiv \I + \W\potdep,
+  \qquad
+  \M\potdep\onev = \onev,
+  \qquad
+  \M\potdep_{ij} \in [0,1].
+\end{equation}
+%
+The initial signal creation event occurs at time $t=0$, but all subsequent potentiation/depression events occur at random times according to Poisson processes with rates $rf\potdep$, where $f\pot +f\dep =1$ are the fraction of plasticity events that are potentiating/depressing respectively.
+This means that the ``forgetting'' process will be described by the \emph{continuous}-time Markov chain:
+%
+\begin{equation}\label{eq:forgetting}
+  \MM = r \frg \equiv r\prn{f\pot\W\pot + f\dep\W\dep}.
+\end{equation}
+%
+We only require that this Markov chain is ergodic. The Markov chains described by $\M\potdep $ need not be.
+
+
+We assume that the probability distribution starts in the equilibrium distribution \eqref{eq:equilibrium}.
+During the initial signal creation, a fraction $f\pot$ will change to $\eq\M\pot$ and a fraction $f\dep$ will change to $\eq\M\dep$.
+After this, probabilities will evolve according to \eqref{eq:rowsum}.
+
+\subsection{SNR curve}\label{sec:SNRcurve}
+
+As discussed in the main text, the signal-to-noise ratio is given by
+%
+\begin{equation}\label{eq:SNRcurve}
+  \SNR(t) = \sqrt{N} (2f\pot f\dep ) \eq (\W\pot  - \W\dep )\e^{rt\frg}\w.
+\end{equation}
+%
+
+We can express this in terms of the one parameter family of transition matrices:
+%
+\begin{equation}\label{eq:Walpha}
+  \begin{aligned}
+  \W(\alpha) &= \alpha\W\pot +(1-\alpha)\W\dep ,
+  &\quad&\implies&
+    \frg&=\W(f\pot ),\\&&&&
+    \W\pot  - \W\dep  &= \diff{\W}{\alpha},\\&&&&
+    \eq \diff{\W}{\alpha} &= -\diff{\eq}{\alpha} \frg.
+  \end{aligned}
+\end{equation}
+%
+Then \eqref{eq:SNRcurve} becomes
+%
+\begin{equation}\label{eq:SNRalpha}
+  \SNR(t) = \sqrt{N} (2f\pot f\dep ) \diff{\eq}{\alpha}(-\frg)\,\e^{rt\frg}\w.
+\end{equation}
+%
+
+
+
+
+\subsection{Lumpability}\label{sec:SNRlump}
+
+Suppose that we have a partition such that $\W\pot $ and $\W\dep $ are simultaneously lumpable, and that all the states in each subset have the same synaptic strength (see \sref{sec:lump}):
+%
+\begin{equation}\label{eq:lumpablesynapse}
+  VU\W\potdep  V = \W\potdep  V,
+  \qquad
+  VU\w=\w.
+\end{equation}
+%
+We can define a new synapse with
+%
+\begin{equation}\label{eq:lumpedsynapse}
+  \widehat{\W}\potdep  = U\W\potdep  V,
+  \qquad
+  \widehat{\w} = U \w,
+  \qquad
+  \widehat{\mathbf{p}}^\infty = \eq V.
+\end{equation}
+%
+This synapse has an SNR curve:
+%
+\begin{equation}\label{eq:lumpedSNR}
+  \begin{aligned}
+    \frac{\SNR(t)}{\sqrt{N} (2f\pot f\dep )} &=  \widehat{\mathbf{p}}^\infty (\widehat{\W}\pot  - \widehat{\W}\dep )\e^{rt\widehat{\W}^F}\widehat{\w}. \\
+      &= \eq VU (\W\pot  - \W\dep ) VU \e^{rt\frg} VU \w. \\
+      &= \eq (\W\pot  - \W\dep ) VU \e^{rt\frg} VU \w. \\
+      &= \eq (\W\pot  - \W\dep )\e^{rt\frg} VU \w. \\
+      &= \eq (\W\pot  - \W\dep )\e^{rt\frg}\w. \\
+  \end{aligned}
+\end{equation}
+%
+\ie the lumped process has exactly the same SNR as the original one.
+
+
+\subsection{Initial SNR and flux}\label{sec:initflux}
+
+Using $\eq\frg=0$, we can write the initial SNR as
+%
+\begin{equation}\label{eq:init}
+  \frac{\SNR(0)}{\sqrt{N}} = I = ({\eq}^++{\eq}^-)(f\pot \W\pot -f\dep \W\dep )(\onev^+-\onev^-).
+\end{equation}
+%
+Using $\W\potdep (\onev^++\onev^-)=0$ and \eqref{eq:compflux}:
+%
+\begin{equation*}
+  r{\eq}^-(f\pot \W\pot +f\dep \W\dep )\onev^+ = \F_{-+} = \F_{+-} = r{\eq}^+(f\pot \W\pot +f\dep \W\dep )\onev^-,
+\end{equation*}
+%
+we can rewrite \eqref{eq:init} as
+%
+\begin{equation}\label{eq:initflux}
+  I = \frac{4\F_{-+}}{r} - 4{\eq}^+f\pot \W\pot \onev^- - 4{\eq}^-f\dep \W\dep \onev^+.
+\end{equation}
+%
+The last two terms are guaranteed to be negative, as the diagonal parts of $\W\potdep $ cannot contribute.
+Therefore
+%
+\begin{equation}\label{eq:initfluxineq}
+  \SNR(0) \leq \frac{4\sqrt{N}\F_{-+}}{r}.
+\end{equation}
+%
+This inequality is saturated if potentiation never takes it from a $+$ state to a $-$ state and depression never takes it from a $-$ state to a $+$ state.
+
+
+\section{Area maximisation}\label{sec:areamax}
+
+In this section we will find an upper bound on the area under the signal-to-noise curve.
+As in \sref{sec:SNR}, we will only consider ergodic Markov chains.
+We will see in \sref{sec:multistate} that the optimal chain is absorbing, so it lies on the boundary of the (open) set of ergodic chains, but it still puts an upper bound on the area.
+
+\subsection{Area under signal-to-noise curve}\label{sec:area}
+
+The signal-to-noise curve is given by \eqref{eq:SNRalpha}.
+%%
+%\begin{equation}\label{eq:SNR}
+%  \SNR(t) = \sqrt{N}(2f^+f\dep ) \diff{\eq}{\alpha} (-\frg) \e^{rt\frg} \w.
+%\end{equation}
+%%
+The area is computed by integrating this
+%
+\begin{equation}\label{eq:area}
+\begin{aligned}
+  A &= \frac{\sqrt{N}(2f\pot f\dep )}{r} \diff{\eq}{\alpha} \brk{-\e^{rt\frg}}_0^\infty \w \\
+    &= \frac{\sqrt{N}(2f\pot f\dep )}{r} \diff{\eq}{\alpha} (\I-\onev\eq) \w \\
+    &= \frac{\sqrt{N}(2f\pot f\dep )}{r} \diff{\eq}{\alpha} \w.
+\end{aligned}
+\end{equation}
+%
+
+We can rewrite this using \eqref{eq:diffpT}, with $A=\sqrt{N}(2f\pot f\dep )\hat{A}$ and $\enc_{ij} \equiv \diff{\frg_{ij}}{\alpha}=\W\pot _{ij}-\W\dep _{ij}$
+%
+\begin{equation}\label{eq:areaT}
+  \hat{A} = \sum_{i,j,k} \eq_i \enc_{ij} (\fptb_{ik} - \fptb_{jk}) \eq_k \w_k.
+\end{equation}
+%
+
+\begin{defn}[Partial mixing times]
+We define the $\pm$ mixing times as
+%
+\begin{equation}\label{eq:mixingpm}
+\begin{aligned}
+  \eta^\pm_i &\equiv \sum_k \fptb_{ik} \eq_k \prn{\frac{1 \pm \w_k}{2}}
+%    &&= \sum_{\set{k}{\w_k=\pm1}} \fptb_{ik} \eq_k \\
+    &&= \sum_{k\in\pm} \fptb_{ik} \eq_k \\
+    &= \sum_k \prn{\fund_{kk}-\fund_{ik}} \prn{\frac{1 \pm \w_k}{2}}
+    &&= \sum_{k\in\pm} \prn{\fund_{kk}-\fund_{ik}} .
+\end{aligned}
+\end{equation}
+%
+We can think of $\eta^+_i$ as a measure of the ``distance'' to the $\w_k=+1$ states and $\eta^-_i$ as the ``distance'' to the $\w_k=-1$ states.
+\end{defn}
+Using \eqref{eq:mixdef}, we can write:
+%
+\begin{equation}\label{eq:mixingrels}
+\begin{aligned}
+  \eta^+_i + \eta^-_i &= \eta,\\
+  2(\eta^+_i - \eta^+_j) &= \sum_k (\fptb_{ik}-\fptb_{jk}) \eq_k \w_k
+    = \sum_k (\fund_{jk}-\fund_{ik}) \w_k.
+\end{aligned}
+\end{equation}
+%
+We could arrange the states in order of decreasing $\eta^+$, which is the same as the order of increasing $\eta^-$.
+
+We can rewrite \eqref{eq:areaT} as
+%
+\begin{equation}\label{eq:areaEta}
+\begin{aligned}
+  \hat{A} &= 2\sum_{i,j} \enc_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}) &
+    &= -2\sum_{i,j} \enc_{ij} \eq_i \eta^+_{j} \\
+    &= 2\sum_{i,j} \enc_{ij} \eq_i (\eta^-_{j} - \eta^-_{i}) &
+    &= 2\sum_{i,j} \enc_{ij} \eq_i \eta^-_{j}.
+\end{aligned}
+\end{equation}
+%
+We can also express it in terms of the fundamental matrix \eqref{eq:funddef} as
+%
+\begin{equation}\label{eq:areaZ}
+  \hat{A} = \sum_{i,j,k,l} \enc_{ij} \pib_{l} \fund_{li} (\fund_{jk}-\fund_{ik}) \w_k
+    = \pib \fund q \fund \w.
+\end{equation}
+%
+
+It is also helpful to define the following quantities:
+%
+\begin{equation}\label{eq:areacoeffs}
+  \begin{aligned}
+    c_k &= \diff{\ln\eq_k}{\alpha}
+      = \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}-\fptb_{jk}}
+      = - \prn{\eq q \fptb}_k
+      = \frac{(\eq q \fund)_k}{\eq_k}, \\
+    a_i &= \sum_j \enc_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}),\\
+    \implies
+    \hat{A} &= \sum_k c_k \eq_k \w_k
+      = 2\sum_i a_i.
+  \end{aligned}
+\end{equation}
+%
+Note that the optimal choice of $\w$ is $\w_k = \sgn(c_k)$.
+
+\subsection{Derivatives \wrt \texorpdfstring{$\W\potdep $}{W+/-}}\label{sec:deriv}
+
+As discussed in the main text,
+we will regard the off-diagonal elements of $\W\potdep _{ij}$ to be the independent variables,
+with $\W\potdep _{ii}=-\sum_{j \neq i} \W\potdep _{ij}$ imposed by hand.
+Thus,
+%
+\begin{equation}\label{eq:basicderivs}
+  \pdiff{\frg_{ij}}{\W\potdep _{gh}} = f\potdep  \delta_{gi}(\delta_{hj}-\delta_{ij}),
+  \qquad
+  \pdiff{\enc_{ij}}{\W\potdep _{gh}} = \pm\delta_{gi}(\delta_{hj}-\delta_{ij}).
+\end{equation}
+%
+The implicit $g \neq h$ that comes with all derivatives is unnecessary, as the derivatives above vanish when $g=h$.
+
+In particular, differentiating \eqref{eq:funddef},
+%
+\begin{equation}\label{eq:derivZ}
+  \pdiff{\fund_{ij}}{\W\potdep _{gh}} = rf\potdep  \fund_{ig} (\fund_{hj}-\fund_{gj}).
+\end{equation}
+%
+We can then differentiate expression \eqref{eq:areaZ} to get
+%
+\begin{equation}\label{eq:derivA}
+  \begin{aligned}
+    \pdiff{\hat{A}}{\W\potdep _{gh}} =&\,
+%      rf\potdep  \sum_{ijkl} \enc_{ij} \w_k \pib_l \brk{
+%         \fund_{lg}(\fund_{hi}-\fund_{gi})(\fund_{jk}-\fund_{ik}) + \fund_{li}(\fund_{jg}-\fund_{ig})(\fund_{hk}-\fund_{gk}) } \\
+%    &\pm \sum_{kl} \w_k \pib_l \fund_{lg} (\fund_{hk} - \fund_{gk}) \\
+%    =&\,
+%      2rf\potdep  \sum_{ij} \enc_{ij} \eq_i \eq_g \brk{
+%         (\fptb_{gi}-\fptb_{hi})(\eta^+_{i}-\eta^+_{j}) +
+%         (\fptb_{ig}-\fptb_{jg})(\eta^+_{g}-\eta^+_{h}) } \\
+%      &\pm 2 \eq_g (\eta^+_g - \eta^+_h) \\
+%    =&\,
+%      2rf\potdep  \sum_{ij} \enc_{ij} \eq_i \eq_g
+%         (\fptb_{gi}-\fptb_{hi})(\eta^+_{i}-\eta^+_{j})
+%      \pm 2 \eq_g (\eta^+_g - \eta^+_h)\brk{1+\pdiff{\ln(\eq_g)}{\,\ln(f\potdep )}} \\
+%    =&\,
+      2rf\potdep  \eq_g \brk{\sum_i a_i (\fptb_{gi}-\fptb_{hi}) + c_g (\eta^+_{g}-\eta^+_{h})}
+      \pm 2 \eq_g (\eta^+_g - \eta^+_h). \\
+  \end{aligned}
+\end{equation}
+%
+where $a_i$ and $c_k$ were defined in \eqref{eq:areacoeffs}.
+
+It is sometimes useful to consider the following derivatives:
+%
+\begin{equation}\label{eq:derivqw}
+  \begin{aligned}
+    \pdiff{}{\frg_{gh}} &\equiv     \pdiff{}{\W\pot _{gh}} +     \pdiff{}{\W\dep _{gh}} ,&\qquad
+    \pdiff{}{\enc_{gh}}    &\equiv f\dep  \pdiff{}{\W\pot _{gh}} - f\pot  \pdiff{}{\W\dep _{gh}} .
+  \end{aligned}
+\end{equation}
+%
+Each of these derivatives behaves as their names suggest:
+%
+\begin{equation}\label{eq:derivqweff}
+  \pdiff{\frg_{ij}}{\frg_{gh}} = \pdiff{\enc_{ij}}{\enc_{gh}}
+  =  \delta_{gi}(\delta_{hj}-\delta_{ij}),
+  \qquad
+  \pdiff{\enc_{ij}}{\frg_{gh}} = \pdiff{\frg_{ij}}{q_{gh}}  = 0.
+\end{equation}
+%
+This is because we could treat $\frg$ and $q$ as the independent variables. However, the boundaries of the allowed region are more easily expressed in terms of $\W\potdep $.
+
+
+\subsubsection{Scaling mode}\label{sec:rescale}
+
+Consider the following differential operator:
+%
+\begin{equation}\label{eq:scaleop}
+  \Delta \equiv \sum_{g,h} \W\pot _{gh}\pdiff{}{\W\pot _{gh}} + \W\dep _{gh}\pdiff{}{\W\dep _{gh}}.
+\end{equation}
+%
+This corresponds to the scaling, $\W\potdep  \to (1+\epsilon)\W\potdep $.
+Intuitively, this has two effects: it scales up the initial potentiation/depression and it scales down all timescales.
+This intuition is confirmed by the following results:
+%
+\begin{equation}\label{eq:scaleeffects}
+  \begin{aligned}
+    \Delta \fund &= \tau\onev\eq - \fund ,&
+    \Delta \eq  &= 0 ,&
+    \Delta \fpt  &= -\fpt ,
+    \\
+    \Delta \eta^\pm_i  &= - \eta^\pm_i ,&
+    \Delta \enc_{ij} &= \enc_{ij} ,&
+    \Delta \hat{A}  &= 0 ,&
+  \end{aligned}
+\end{equation}
+%
+The anomalous bit in the scaling of $\fund$ is due to the lack of dependence of $\pib$ and $\tau$ on $\W\potdep $.
+
+As the area is invariant under this scaling, we can consider the $\W\potdep $ to be projective coordinates.
+Therefore we don't need to enforce the lower bound on the diagonal matrix elements while looking for the maximum area, as we can use this null-mode to enforce it afterwards without changing the area.
+%We also don't have to worry about the boundary at infinity, as sending some of them to infinity is equivalent to sending the rest to zero.
+
+\subsection{Kuhn-Tucker conditions}\label{sec:kuhntucker}
+
+Consider the Lagrangian
+%
+\begin{equation}\label{eq:lagrangian}
+  \CL = \hat{A} + \sum_{\text{pot/dep}}\sum_{i\neq j} \mu\potdep _{ij} \W\potdep _{ij} .%  +\lambda\eq\w.
+\end{equation}
+%
+%The last term ensures that we hold $\eq_\pm$ fixed during this extremisation, so that we can safely ignore the factors that we dropped from the noise in \eqref{eq:noisepm}.
+Necessary conditions for an extremum are
+%
+\begin{equation}\label{eq:extremum}
+  \pdiff{\CL}{\W\potdep _{gh}} = 0,
+  \qquad
+    \mu\potdep _{gh} \geq 0,\quad
+    \W\potdep _{gh} \geq 0,\quad
+    \mu\potdep _{gh}\W\potdep _{gh} = 0.
+\end{equation}
+%
+with $g \neq h$. This enforces the positivity constraints on the off-diagonal elements, but not the diagonals. As discussed in \sref{sec:rescale}, that can be enforced after finding the maximum using the null scaling degree of freedom.
+
+\subsubsection{Triangularity}\label{sec:triangular}
+
+Consider
+%
+\begin{equation}\label{eq:shiftqderiv}
+  \pdiff{\CL}{\enc_{gh}} =
+  f\dep  \pdiff{\CL}{\W\pot _{gh}} - f\pot  \pdiff{\CL}{\W\dep _{gh}}
+   = (f\dep  \mu\pot _{gh} - f\pot  \mu\dep _{gh}) + 2\eq_g (\eta^+_g - \eta^+_h)
+   = 0.
+\end{equation}
+%
+This corresponds to the shift
+%
+\begin{equation}\label{eq:shiftq}
+  \W\pot _{ij} \to \W\pot _{ij} + f\dep \epsilon_{ij},
+  \qquad
+  \W\dep _{ij} \to \W\dep _{ij} - f\pot \epsilon_{ij},
+  \qquad
+  \sum_j \epsilon_{ij} = 0,
+\end{equation}
+%
+which leaves $\frg$ unchanged, and therefore $\eq$, $\fpt$ and $\eta^\pm$ as well.
+
+Assume $\eta^+_g > \eta^+_h$. Then
+%
+\begin{equation}\label{eq:lowertriangular}
+ f\dep  \mu\pot _{gh} - f\pot  \mu\dep _{gh} <0
+ \qquad\implies\qquad
+ \mu\dep _{gh} >0
+ \qquad\implies\qquad
+ \W\dep _{gh}=0.
+\end{equation}
+%
+Similarly, if $\eta^+_g < \eta^+_h$, then
+%
+\begin{equation}\label{eq:uppertriangular}
+ f\dep  \mu\pot _{gh} - f\pot  \mu\dep _{gh} > 0
+ \qquad\implies\qquad
+ \mu\pot _{gh} >0
+ \qquad\implies\qquad
+ \W\pot _{gh}=0.
+\end{equation}
+%
+Thus, if we arrange the states in order of decreasing $\eta^+$, $\W\pot $ is upper-triangular and $\W\dep $ is lower triangular.
+
+We have ignored the possibility that $\eq_g=0$, as this would imply that $\fpt_{ig}=\infty$, which would in turn imply that the Markov process is not ergodic.
+
+%Note that if we multiply \eqref{eq:shiftqderiv} by $\enc_{gh}$ and sum over $(g,h)$, we get
+%%
+%\begin{equation}\label{eq:stupid}
+%  \hat{A} = \sum_\pm\sum_{g\neq h} \mu\potdep _{gh} \frg_{gh},
+%\end{equation}
+%%
+%which is probably useless
+
+\subsubsection{Increasing \texorpdfstring{$c_k$}{c(k)}}\label{sec:areacoeffincr}
+
+Consider the following combinations of derivatives:
+%
+\begin{align}
+%  \begin{aligned}
+\label{eq:areacoeffincrderiv}
+    \Delta_{gh} &\equiv
+      \frac{1}{\eq_{g}} \pdiffc{}{\frg_{gh}}
+      + \frac{1}{\eq_h} \pdiffc{}{\frg_{hg}}, \\
+%  \end{aligned}
+\end{align}
+%
+Note that they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \sref{sec:triangular} about this being satisfied for ergodic chains).
+
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+%
+\begin{equation}\label{eq:sareacoeffincrprob}
+  \Delta_{gh} \eq_i = 0,
+\end{equation}
+%
+which makes it possible to integrate the perturbation:
+%
+\begin{equation}\label{eq:areacoeffincrfinite}
+  \W\potdep  \to \W\potdep  + \D\boldsymbol{\epsilon},
+  \qquad
+  \begin{aligned}
+  \boldsymbol{\epsilon} &= \boldsymbol{\epsilon}\trans,
+  \\
+  \boldsymbol{\epsilon} \onev &= 0.
+  \end{aligned}
+\end{equation}
+%
+But more interestingly:
+%
+\begin{align}
+%  \begin{aligned}
+\label{eq:areacoeffincr}
+    \Delta_{gh}\CL &=
+      \frac{\mu\pot _{gh}+\mu\dep _{gh}}{\eq_g} + \frac{\mu\pot _{hg}+\mu\dep _{hg}}{\eq_h}
+      + 2r\prn{c_g-c_h}\prn{\eta^+_{g} - \eta^+_{h}},\\
+%  \end{aligned}
+\end{align}
+%
+where $c_k$ were defined in \eqref{eq:areacoeffs}.
+
+Using the non-negativity of the Kuhn-Tucker multipliers, $\mu\potdep _{ij}$, \eqref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\eta^+_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\eta^+_k$ are degenerate, we can choose their order to ensure this).
+
+Note that, according to \sref{sec:triangular}, either $\W\pot _{gh}$ or $\W\dep _{gh}$ will be zero at the maximum, therefore we can expect one of $\mu\pot _{gh}+\mu\dep _{gh}$ to be non-zero.
+This would rule out degeneracy of the $c_k$ or $\eta^+_k$.
+Looking at \eqref{eq:shiftqderiv} closely, the only way $\mu\pot _{gh}+\mu\dep _{gh}$ could be zero is if $\eta^+_g=\eta^+_h$ or $\eq_g=0$.
+
+\subsubsection{Shortcuts}\label{sec:shortcuts}
+
+Now consider the following combinations of derivatives for $m>1$:
+%
+\begin{align}
+%  \begin{aligned}
+\label{eq:shortcutderiv}
+    \widetilde{\Delta}\potdep _{g,m} &\equiv
+      \brk{ \sum_{k=0}^{m-1} \frac{1}{\eq_{g\pm k}} \pdiffc{}{\W\potdep _{g\pm k,g\pm(k+1)}} }
+      - \frac{1}{\eq_g} \pdiffc{}{\W\potdep _{g,g\pm m}}.
+%  \end{aligned}
+\end{align}
+%
+Once again, they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \sref{sec:triangular} about this being satisfied for ergodic chains).
+
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+%
+\begin{equation}\label{eq:shortcutprob}
+  \widetilde{\Delta}\potdep _{g,m} \eq_i = 0,
+\end{equation}
+%
+which makes it possible to integrate the perturbation:
+%
+\begin{equation}\label{eq:shortcutfinite}
+  \W\potdep  \to \W\potdep  + \D\boldsymbol{\epsilon}^{\pm(g,m)},
+  \qquad
+  \begin{aligned}
+    &\prn{\boldsymbol{\epsilon}^{\pm(g,m)}}_{g,g\pm m}
+      &\!\!\!\!\!\!&= -\epsilon,\\
+    &\prn{\boldsymbol{\epsilon}^{\pm(g,m)}}_{g\pm k,g\pm(k+1)}
+      &\!\!\!\!\!\!&= \epsilon
+        &\;
+        &\forall\, k \in [0,m-1],\\
+    &\prn{\boldsymbol{\epsilon}^{\pm(g,m)}}_{g\pm k,g\pm k}
+      &\!\!\!\!\!\!&= -\epsilon
+        &
+        &\forall\, k \in [1,m-1].
+  \end{aligned}
+\end{equation}
+%
+But more interestingly for our purposes:
+%
+\begin{align}
+%  \begin{aligned}
+\label{eq:shortcutarea}
+    \widetilde{\Delta}\potdep _{g,m}\CL &=
+      \brk{ \sum_{k=0}^{m-1} \frac{\mu\potdep _{g\pm k,g\pm(k+1)}}{\eq_{g\pm k}}
+      - \frac{\mu\potdep _{g,g\pm m}}{\eq_g}}
+      + 2rf\potdep  \sum_{k=0}^{m-1} \prn{\eta^+_{g\pm k} - \eta^+_{g\pm(k+1)}} \prn{c_{g\pm k} - c_{g}},
+%  \end{aligned}
+\end{align}
+%
+
+If we put the states in order of decreasing $\eta^+_k$, the results of the \sref{sec:areacoeffincr} tell us that the $c_k$ are non-decreasing.
+This implies that the last term of the final expression in \eqref{eq:shortcutarea} is non-negative.
+If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu\potdep _{g,g\pm m}>0$, which in turn implies that $\W\potdep _{g,g\pm m}=0$.
+This would tell us that the process with the maximal area has to have a multi-state topology.
+
+%From the expression for the area in \eqref{eq:areacoeffs}, it will clearly also be optimal to have the $\w_k$ non-decreasing, \ie all the positive $\w_k$ should lie ahead of all the negative $\w_k$.
+
+\subsubsection{Summary}\label{sec:KTsummary}
+
+Using the Kuhn-Tucker formalism, we have shown that,
+with the states arranged in order of non-increasing $\eta^+_i$:
+%
+\begin{itemize}
+  \item There can be no ergodic maximum for which $\W\pot $ contains backwards transitions or $\W\dep $ contains forwards transitions.
+  \item There can be no ergodic maximum with the $c_k$ decreasing.
+  \item The $c_k$ may only be degenerate at an ergodic maximum if the corresponding $\eta^+_k$ are also degenerate.
+  \item If the $c_k$ increase and the $\eta^+_i$ decrease, there can be no ergodic maximum with shortcuts.
+\end{itemize}
+%
+These were shown by finding allowed perturbations that increase the area.
+
+%Suppose we start with some arbitrary ergodic process. If $\W\potdep $ contain backwards/forwards transitions or the $c_k$ decrease, then we can increase the area by applying the perturbations \eqref{eq:shiftqderiv} and \eqref{eq:areacoeffincrderiv}.
+%The second perturbation will generate the unwanted backwards/forwards transitions, requiring subsequent application of first perturbation.
+%The first perturbation will change the $c_k$, possibly changing their order, requiring subsequent application of second perturbation.
+%
+%This procedure can end in several ways:
+%%
+%\begin{itemize}
+%  \item Applying \eqref{eq:areacoeffincrderiv} an infinite amount sends two transition rates to infinity, which due to the scaling mode (\sref{sec:rescale}), is equivalent to sending all other transitions to zero.
+%      Subsequent application of \eqref{eq:shiftqderiv} just removes the backwards transition from $\W\pot $ and the forward transition from $\W\dep $.
+%  \item Applying \eqref{eq:areacoeffincrderiv} ends in a process with degenerate $c_k$ or $\eta^+_k$, and the subsequent application of \eqref{eq:shiftqderiv} doesn't change this degeneracy.
+%  \item As above, but the subsequent application of \eqref{eq:shiftqderiv} lifts the degeneracy, resulting in a chain with increasing $c_k$.
+%\end{itemize}
+%%
+%In the third case, we can then apply the perturbation \eqref{eq:shortcutderiv} to remove all the shortcuts.
+%Either this, or the first case, results in a multi-state topology, possibly disconnected or without the full set of states.
+
+This leaves two possibilities for the maximum area Markov chain.
+Either there is no degeneracy and no shortcuts, which implies the Multi-state/serial topology that we'll discuss in \sref{sec:multistate}, or there is some degeneracy, which would allow shortcuts provided that they do not bypass an entire degenerate set (see \eqref{eq:shortcutarea}).
+
+Degeneracy tends to be very delicate. It is usually hard to arrange without some symmetry relating degenerate states. Such a symmetry would imply lumpability (see \sref{sec:lump}). The lumped chain would not have any shortcuts, as an entire degenerate set cannot be bypassed. As this lumped chain has the same area (see \sref{sec:SNRlump}), we would need only consider the multi-state topology.
+
+
+\subsection{Multi-state/Serial topology}\label{sec:multistate}
+
+The multi-state/serial topology is defined by (see \cite{amit1994learning,Fusi2007multistate,Leibold2008serial}):
+%
+\begin{equation}\label{eq:multistatedef}
+  \W\pot _{ij} = q\pot _i \delta_{i+1,j},
+  \qquad
+  \W\dep _{ij} = q\dep _j \delta_{i,j+1}.
+\end{equation}
+%
+It saturates various inequalities:
+%
+\begin{equation}\label{eq:multistateineq}
+  \begin{aligned}
+    \fptb_{ik} - \fptb_{jk} &=
+      \begin{cases}
+        \fptb_{ij},  &\text{if}\quad i \leq j \leq k \quad\text{or}\quad i \geq j \geq k,\\
+        -\fptb_{ji}, &\text{if}\quad j \leq i \leq k \quad\text{or}\quad j \geq i \geq k,\\
+      \end{cases} \\
+    r\eq_i \frg_{ij} \prn{\fptb_{ij}+\fptb_{ji}} &= 1 \quad\text{if}\quad i=j\pm1,
+  \end{aligned}
+\end{equation}
+%
+and it satisfies detailed balance (a.k.a.\ reversibility a.k.a. $\CL^2_{\eq}$ self-adjointness):
+%
+\begin{equation}\label{eq:multistateprob}
+  f\pot  q\pot _i \eq_i = f\dep  q\dep _i \eq_{i+1},
+\end{equation}
+%
+which means we can always choose the transition rates, $q\potdep _i$, to give any desired equilibrium probabilities, $\eq_i$.
+
+
+This allows us to calculate the $c_k$'s:
+%
+\begin{equation}\label{eq:areacoeffchain}
+\begin{aligned}
+  c_k =&\, \sum_{i<k} \fpt_{i,i+1} \prn{\eq_{i}q\pot _i+\eq_{i+1}q\dep _i}
+    %\\&
+    - \sum_{i\geq k} \fpt_{i+1,i} \prn{\eq_{i}q\pot _i+\eq_{i+1}q\dep _i}
+  ,\\
+  c_{k+1} - c_k =&\, \prn{\fpt_{k,k+1}+\fpt_{k+1,k}} \prn{\frac{\eq_{k}\frg_{k,k+1}}{f\pot }+\frac{\eq_{k+1}\frg_{k+1,k}}{f\dep }}
+    =%\\=&\,
+    \frac{1}{rf\pot f\dep },\\
+  \sum_k c_k \eq_k =&\, \sum_{ij} \eq_i \enc_{ij} (\eta-\eta) = 0,\\
+%  \implies c_k =&\, \frac{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j}{f\pot f\dep },
+  \implies c_k =&\, \frac{k - \sum_j j\eq_j}{rf\pot f\dep },
+\end{aligned}
+\end{equation}
+%
+where we used \eqref{eq:multistateineq} to derive the first two equations respectively and Th.\ref{th:kemenyconst} to derive the third. This allows us to write the area as
+%
+\begin{equation}\label{eq:multistatearea}
+ % A = 2\sqrt{N} \sum_k \brk{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j} \eq_k \w_k.
+  A = \frac{2\sqrt{N}}{r} \sum_k \brk{k - \sum_j j\eq_j} \eq_k \w_k
+    = \frac{2\sqrt{N}}{r} \sum_k \abs{k - \sum_j j\eq_j} \eq_k ,
+\end{equation}
+%
+where we used $\w_k=\sgn(c_k)$, as discussed after \eqref{eq:areacoeffs}.
+%It will also help to define $\eq_\pm = \sum_k \eq_k \prn{\frac{1\pm\w_k}{2}}$.
+%Note that
+%%
+%\begin{equation}\label{eq:allpplusorminus}
+%  \begin{aligned}
+%    \eq_+ &=1
+%     \quad&\implies\quad
+%     \eq_k \w_k &= \eq_k
+%     \quad&\implies\quad
+%     A=0,\\
+%    \eq_- &=1
+%     \quad&\implies\quad
+%     \eq_k \w_k &= -\eq_k
+%     \quad&\implies\quad
+%     A=0,
+%  \end{aligned}
+%\end{equation}
+%%
+%neither of which are optimal.
+%
+%Consider the Lagrangian
+%%
+%\begin{equation}\label{eq:multistatelagrangian}
+%  \CL = \frac{A}{2\sqrt{N}} + \lambda\prn{1-\sum_i \eq_i} + \sum_i \mu_i \eq_i,
+%\end{equation}
+%%
+%where $\lambda$ is a Lagrange multiplier and $\mu_i$ are Kuhn-Tucker multipliers (see \eqref{eq:extremum}). Extremising \wrt $\eq_i$:
+%%
+%\begin{equation}\label{eq:multistateext}
+%%  \pdiff{\CL}{\eq_i} = \brk{\prn{i-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j} \w_i
+%%    - \prn{i-\frac{n+1}{2}}\prn{\eq_+-\eq_-} - \lambda + \mu_i = 0.
+%  \pdiff{\CL}{\eq_i} = \brk{i - \sum_j j\eq_j} \w_i
+%    - i\prn{\eq_+-\eq_-} - \lambda + \mu_i = 0.
+%\end{equation}
+%%
+%Consider an $i$ such that $\w_i=\w_{i+1}$:
+%%
+%\begin{equation}\label{eq:multistatemudiff}
+%  \mu_{i+1} - \mu_i = \prn{\eq_+-\eq_-} - \w_i.
+%\end{equation}
+%%
+%As $\abs{\eq_+-\eq_-}<1$ (unless we want $A=0$, \eqref{eq:allpplusorminus}), this means the $\mu_i$ increase amongst the negative $\w_i$ and decrease amongst the positive $\w_i$.
+%Therefore the only non-zero equilibrium probabilities at optimum are $\eq_1$ and $\eq_n$.
+
+First let us maximise \eqref{eq:multistatearea} at fixed $\eq_\pm = \sum_k \eq_k \prn{\frac{1\pm\w_k}{2}}$.
+Clearly this will happen when we put all of the probability at the ends: $\eq_1=\eq_-$ and $\eq_n=\eq_+$ are the only non-zero $\eq_k$.
+This gives an area of
+%\footnote{Note that including the dropped factors in \eqref{eq:noisepm} would only change this to $A \leq \sqrt{N(4\eq_+\eq_-)}(n-1)/r$, which would have no effect on what follows.}
+
+%
+\begin{equation}\label{eq:multistateextarea}
+  A \leq \frac{\sqrt{N}}{r}(M-1)\prn{4\eq_+\eq_-}.
+\end{equation}
+%
+This is maximised at $\eq_+=\eq_-=\half$:
+%
+\begin{equation}\label{eq:maxarea}
+  A \leq \frac{\sqrt{N}}{r}(M-1).
+\end{equation}
+%
+Note that the chain that achieves this is not ergodic, the two states at each end are absorbing. This is similar to the results found numerically in \cite{Barrett2008discrete} in a slightly different situation.
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{utcaps_sl}
+\bibliography{maths,neuro}
+
+\end{document}
