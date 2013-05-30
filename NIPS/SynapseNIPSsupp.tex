@@ -90,6 +90,8 @@ Applied Physics Department, Stanford University, Stanford CA\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+Although the theory and derivations outlined in the main text are relatively self-contained, here we provide more details for the aid of the reviewer.
+
 \section{Continuous time Markov processes}\label{sec:ContMarkov}
 
 In this section we'll provide a summary of all the relevant properties of ergodic Markov chains in continuous time to define notation and .
@@ -298,116 +300,41 @@ All quantities that we calculate using $\fund$ below will be independent of this
  As usual, $\fpt=\fptb+\fpt\dg$.
 \end{defn}
 
-Consider the first time the process leaves state $i$.
-On average, this will take time $\Lb_{ii}$.
-With probability $\Pb_{ij}$, it will go directly to $j$, so the conditional mean time would be $\Lb_{ii}$.
-On the other hand, if it goes to some other state, $k$, with probability $\Pb_{ik}$, the conditional mean time would be $\fptb_{kj}+\Lb_{ii}$.
-Combining these, we get the recursion relation
+This matrix is given by
 %
-\begin{equation}\label{eq:fptrecursion}
-  \begin{aligned}
-  \fpt_{ij} &= \sum_{k\neq j} \Pb_{ik}(\fptb_{kj}+\Lb_{ii}) + \Pb_{ij}\Lb_{ii} \\
-    &= \sum_{k\neq j} \Pb_{ik}\fptb_{kj} + \sum_{k} \Pb_{ik}\Lb_{ii}\\
-    &= \sum_{k\neq j} \Pb_{ik}\fptb_{kj} + \Lb_{ii},\\
-   \fpt &= \Pb \fptb + \Lb\onem,
-  \end{aligned}
+\begin{equation}\label{eq:fpt}
+  \fpt=(\onem\fund\dg - \fund + \Lb)\D,
 \end{equation}
 %
-or, using \eqref{eq:defDLP},
+see \cite{Yao1985fpt} for a proof.
+We can separate this into its diagonal and off-diagonal pieces.
+
+The recurrence times are given by
 %
-\begin{equation}\label{eq:fptrecdg}
-  \fpt\dg = \Lb\MM\fptb+\Lb\onem.
+\begin{equation}\label{eq:recurtime}
+  \fpt\dg = \Lb\D.
 \end{equation}
 %
-
-\begin{thm}
-  The recurrence times are given by
-  %
-  \begin{equation}\label{eq:recurtime}
-    \fpt\dg = \Lb\D.
-  \end{equation}
-  %
-\end{thm}
-\begin{proof}
-  Pre-multiply \eqref{eq:fptrecdg} by $\eq\Lb\inv$:
-  %
-  \begin{equation*}
-    \eq\Lb\inv\fpt\dg = \onev\trans,
-  \end{equation*}
-  %
-  or in component form
-  %
-  \begin{equation*}
-    \eq_i \Lb_{ii}\inv \fpt\dg_{ii} = 1.
-  \end{equation*}
-  %
-  This is the same as \eqref{eq:recurtime} in component form: $\fpt\dg_{ii} = \Lb_{ii}/\eq_i$.
-\end{proof}
-I think the extra factor of $\Lb_{ii}$, compared to the discrete case \cite[Th.4.4.5]{kemeny1960finite}, occurs because in this case we are demanding that the process leaves the initial state once before returning, whereas in the discrete case we only measure the time it takes to go to the initial state after the first time-step.
-
-We can substitute this into \eqref{eq:fptrecdg} to get a recursion relation for the off diagonal part:
+or in component form
 %
-\begin{equation}\label{eq:fptbrec}
-  \MM\fptb = \D-\onem.
+\begin{equation*}
+  \eq_i \Lb_{ii}\inv \fpt\dg_{ii} = 1.
+\end{equation*}
+%
+The extra factor of $\Lb_{ii}$, compared to the discrete case \cite[Th.4.4.5]{kemeny1960finite}, occurs because in this case we are demanding that the process leaves the initial state once before returning, whereas in the discrete case we only measure the time it takes to go to the initial state after the first time-step.
+
+The off-diagonal mean first passage times are given by
+%
+\begin{equation}\label{eq:fptfund}
+  \fptb = (\onem\fund\dg - \fund)\D.
 \end{equation}
 %
-\begin{thm}
-  The off-diagonal solution of \eqref{eq:fptbrec} is unique.
-\end{thm}
-\begin{proof}
-  Suppose we have two solutions for the off-diagonal part, $\fptb$ and $\fptb'$.
-  Subtracting \eqref{eq:fptbrec} for these two solutions gives
-  %
-  \begin{equation*}
-    \MM(\fptb-\fptb')=0.
-  \end{equation*}
-  %
-  As we are assuming an ergodic process, the zero eigenvalue is non-degenerate.
-  Therefore
-  %
-  \begin{equation*}
-    \fptb-\fptb' = \onev\mathbf{y},
-  \end{equation*}
-  %
-  for some row-vector $\mathbf{y}$. Looking at the diagonal components
-  %
-  \begin{equation*}
-    \mathbf{y}_{i} = \fptb_{ii}-\fptb'_{ii} = 0,
-  \end{equation*}
-  %
-  and therefore $\fptb-\fptb'=0$.
-\end{proof}
-
-\begin{thm}
-  The off-diagonal mean first passage times are given by
-  %
-  \begin{equation}\label{eq:fptfund}
-    \fptb = (\onem\fund\dg - \fund)\D.
-  \end{equation}
-  %
-\end{thm}
-\begin{proof}
-  We just need to show that this satisfies \eqref{eq:fptbrec} and that the diagonal elements vanish.
-  Premultiply \eqref{eq:fptfund} by $\MM$:
-  %
-  \begin{equation*}
-  \begin{aligned}
-    \MM\fptb &= -\MM\fund\D\\
-     &= (\I-\onev\eq)\D \\
-     &= \D-\onem,
-  \end{aligned}
-  \end{equation*}
-  %
-  where we used \eqref{eq:fundQZ} and \eqref{eq:pdotD}.
-  The vanishing of the diagonal elements follows trivially from the component form of \eqref{eq:fptfund}:
+or in component form of \eqref{eq:fptfund}:
 %
 \begin{equation}\label{eq:fptfundcmpt}
   \fptb_{ij} = \frac{\fund_{jj}-\fund_{ij}}{\eq_j}.
 \end{equation}
 %
-
-\end{proof}
-
 
 \subsection{Mixing time (Kemeny's constant)}\label{sec:mixtime}
 
@@ -1030,7 +957,7 @@ Consider the following combinations of derivatives:
 %
 Note that they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \sref{sec:triangular} about this being satisfied for ergodic chains).
 
-One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators using \eqref{eq:diffpT}:
 %
 \begin{equation}\label{eq:sareacoeffincrprob}
   \Delta_{gh} \eq_i = 0,
@@ -1082,7 +1009,7 @@ Now consider the following combinations of derivatives for $m>1$:
 %
 Once again, they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \sref{sec:triangular} about this being satisfied for ergodic chains).
 
-One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators \eqref{eq:diffpT}:
 %
 \begin{equation}\label{eq:shortcutprob}
   \widetilde{\Delta}\potdep _{g,m} \eq_i = 0,
