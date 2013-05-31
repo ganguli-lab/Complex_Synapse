@@ -212,8 +212,8 @@ The cascade model does not perform quite as well at that time, but it maintains 
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.25\linewidth]{cascade-generated.pdf}}\label{fig:cascade}
-  \item\aligntop{\includegraphics[width=0.25\linewidth]{multistate-generated.pdf}}\label{fig:multistate}
+  \item\aligntop{\includegraphics[width=0.25\linewidth]{cascade.svg}}\label{fig:cascade}
+  \item\aligntop{\includegraphics[width=0.25\linewidth]{multistate.svg}}\label{fig:multistate}
   \item\aligntop{\includegraphics[width=0.35\linewidth]{cascms.eps}}\label{fig:cascms}
  \end{myenuma}
  \end{center}
@@ -324,9 +324,9 @@ This is one example of the tradeoff between optimizing memory at early versus la
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\hp\aligntop{\includegraphics[width=0.15\linewidth]{max_init_pot-generated.pdf}}\label{fig:max_init_pot}\hp
-  \item\aligntop{\includegraphics[width=0.15\linewidth]{max_init_dep-generated.pdf}}\label{fig:max_init_dep}\hp
-  \item\hp\aligntop{\includegraphics[width=0.05\linewidth]{binary_det-generated.pdf}}\label{fig:binary_det}
+  \item\hp\aligntop{\includegraphics[width=0.15\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
+  \item\aligntop{\includegraphics[width=0.15\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
+  \item\hp\aligntop{\includegraphics[width=0.05\linewidth]{binary_det.svg}}\label{fig:binary_det}
   \end{myenuma}
  \end{center}
   \caption{Synaptic models that maximize initial SNR.
@@ -341,7 +341,7 @@ This is one example of the tradeoff between optimizing memory at early versus la
 
 
 Our goal of understanding the relationship between structure and function in the space of all possible synaptic models is complicated by the fact that this space contains many different possible network topologies, encoded in the nonzero matrix elements of $\M\potdep$.  To systematically analyze this entire space, we develop an important organizing principle using the theory of first passage times in the stochastic process of forgetting, described by $\frg$.
-The mean first passage time matrix, $\fptb_{ij}$, is defined as the average time it takes to reach state $j$ for the first time, starting from state $j$.
+The mean first passage time matrix, $\fptb_{ij}$, is defined as the average time it takes to reach state $j$ for the first time, starting from state $i$.
 The diagonal elements are defined to be zero.
 
 A remarkable theorem we will exploit is that the quantity
@@ -365,8 +365,8 @@ In the context of complex synapses, we can define the partial sums
 These can be thought of as the average time it takes to reach the strong/weak states respectively.
 Using these definitions, we can then impose an order on the states by arranging them in order of decreasing $\eta^+_i$ or increasing $\eta^-_i$.
 Because $\eta^+_i+\eta^-_i=\eta$ is independent of $i$, the two orderings are the same.
-In this order, which depends sensitively on the structure of $\M\potdep$, states later (to the right in figures below) can be considered to be more potentiated than states earlier (to the left in figures below), despite the fact that they have the same synaptic efficacy.  
-In essence, in this order, a state is considered to be more potentiated if the average time it takes to reach all the strong efficacy states is shorter. 
+In this order, which depends sensitively on the structure of $\M\potdep$, states later (to the right in figures below) can be considered to be more potentiated than states earlier (to the left in figures below), despite the fact that they have the same synaptic efficacy.
+In essence, in this order, a state is considered to be more potentiated if the average time it takes to reach all the strong efficacy states is shorter.
 We will see that synaptic models that optimize various measures of memory have an exceedingly simple structure when, and only when, their states are arranged in this order.
 
 
@@ -405,9 +405,9 @@ Any other topology would allow some perturbation to further increase the area.
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_right-generated.pdf}}\label{fig:tri_right}\hp
-  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_left-generated.pdf}}\label{fig:tri_left}\hp
-  \item\aligntop{\includegraphics[width=0.2\linewidth]{shortcut-generated.pdf}}\label{fig:shortcut}
+  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
+  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
+  \item\aligntop{\includegraphics[width=0.2\linewidth]{shortcut.svg}}\label{fig:shortcut}
  \end{myenuma}
  \end{center}
   \caption{Perturbations that increase the area.
@@ -437,12 +437,12 @@ The resulting area is
 %
 This analytical result is similar to a numerical result found in \cite{Barrett2008discrete} under a slightly different information theoretic measure of memory performance.
 
-The ``sticky'' end states result in very slow decay of memory, but they also make it difficult to encode the memory in the first place, since a small fraction of synapses are able to change synaptic efficacy during the storage of a new memory.  
+The ``sticky'' end states result in very slow decay of memory, but they also make it difficult to encode the memory in the first place, since a small fraction of synapses are able to change synaptic efficacy during the storage of a new memory.
 Thus models that optimize area optimize memory at late times, at the expense of early times.
 
 \begin{figure}[tbp]
  \begin{center}
-  \includegraphics[width=0.35\linewidth]{multistate_sticky-generated.pdf}
+  \includegraphics[width=0.35\linewidth]{multistate_sticky.svg}
  \end{center}
   \caption{Model that maximizes the area.
   Unlabeled transitions have probability 1.
@@ -517,7 +517,7 @@ Nevertheless, we have proven rigorously that no model's memory curve can ever ex
  \begin{center}
  \begin{myenuma}
   \item\aligntop{\includegraphics[width=0.38\linewidth]{env.eps}}\label{fig:envplot}\hp
-  \item\aligntop{\includegraphics[width=0.3\linewidth]{diffjump-generated.pdf}}\label{fig:diffjump}
+  \item\aligntop{\includegraphics[width=0.3\linewidth]{diffjump.svg}}\label{fig:diffjump}
  \end{myenuma}
  \end{center}
   \caption{The memory curve envelope for $N=100$, $M=12$.
@@ -554,6 +554,7 @@ In summary, we hope that a deeper theoretical understanding of the functional ro
 
 %\subsubsection*{Acknowledgements}
 %We thank Sloan, Genenetech, Burroughs-Wellcome, and Swartz foundations for support.
+%We thank larry Abbott, Marcus Benna, Stefano Fusi, Jascha Sohl-Dickstein and David Sussillo for useful discussions.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
