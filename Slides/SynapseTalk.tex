@@ -20,6 +20,7 @@
 \DeclareMathOperator{\SNR}{SNR}
 \DeclareMathOperator{\snr}{SNR}
 %matrices
+\newcommand{\inv}{^{-1}}
 \newcommand{\I}{\mathbf{I}}
 %prob vector
 \newcommand{\pr}{\mathbf{p}}
@@ -93,6 +94,25 @@ Stanford University, Applied Physics
 
  \vp We will study the entire space of a broad class of models of complex synapses to find upper bounds on their performance.
 
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Concepts}
+%
+ \textbf{Learning rule:} how activity $\to$ potentiation/depression.\\
+ \hp \eg Hebb rule, STDP, Hopfield outer product, perceptron rule,\ldots
+ 
+ \vp \textbf{Plasticity mechanism:} how synapse responds to potentiation/depression.\\
+ \hp \eg Binary switch, Cascade model, Multistate model,\ldots
+ 
+ \vp \textbf{Synaptic transmission:} how synaptic state affects neural activity.\\
+ \hp \eg Hopfield attractor,\ldots
+ 
+ \note[item]{Avoid confusion: separate concepts}
+ \note[item]{Talk exclusively about second one.}
+ \note[item]{Abstract away other two.}
 %
 \end{frame}
 
@@ -183,23 +203,28 @@ Stanford University, Applied Physics
 %
 \begin{itemize}
   \item There are $N$ identical synapses with $M$ internal functional states.
-  \item States of different synapses are independent of each other.
+  \item No spatial/temporal correlations in plasticity events.
       %
       \note[item]{allows us to concentrate on synapse, not neuron/network}
       %
   \item Which synapses eligible for plasticity chosen randomly.
       %
+      \note[item]{No filing system}
+      %
+  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
+      %
       \note[item]{don't care if STDP...}
+%      %
+%      \note[item]{$r=$ total rate of plasticity events per synapse, $f\potdep=$ fraction of events that are potentiating/depressing.}
       %
-  \item Potentiating/depressing plasticity events $\sim$ Poisson processes with rates $rf\potdep$, where $f\pot+f\dep=1$.
+  \item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
+%      %
+%      \note[item]{matrix elements: transition prob from $i\to j$, given pot/dep}
       %
-      \note[item]{$r=$ total rate of plasticity events per synapse, $f\potdep=$ fraction of events that are potentiating/depressing.}
+  \item Synaptic weights can only take values $\pm1$.
       %
-  \item Potentiation and depression are described by Markov processes with transition probabilities $\M\potdep$.
-      %
-      \note[item]{matrix elements: transition prob from $i\to j$, given pot/dep}
-      %
-  \item Synaptic weights of the internal states are given by vector $\w$.\\ Can only take values $\pm1$.
+  \item Ideal observer: read weights directly.
+  \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
       %
       \note[item]{looks like binary synapse from outside. Inside...}
       \note[item]{ideal observer reads weights, not electrical activity: don't model neurons/network}
@@ -212,25 +237,39 @@ Stanford University, Applied Physics
 
 \begin{frame}{Dynamics}
 %
- At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
- \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
-
- \vp Forgetting caused by subsequent memories, evolving as
- %
- \begin{equation*}
-   \diff{\pr(t)}{t} = r\pr(t)\frg,
-   \qquad
-   \frg = f\pot\M\pot+f\dep\M\dep-\I,
- \end{equation*}
- %
- \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
- Eventually, this will settle into the equilibrium distribution:
- %
- \begin{equation*}
-   \eq\frg=0.
- \end{equation*}
- %
- \note[item]{In equilibrium prior to memory creation}
+  %
+  \begin{center}
+    \includegraphics[width=0.7\linewidth]{model.svg}
+  \end{center}
+  %
+  \note[item]{stoch process has steady state.}
+  \note[item]{Prior activity puts it in this state. row vec.}
+  \note[item]{plasticity events at rate r}
+  \note[item]{fraction pot/dep}
+  \note[item]{probs changed by Markov matrices, prob $i\to j$}
+  \note[item]{Readout: synaptic weight vec when in each state.}
+  \vp
+% At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
+% \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
+%
+% \vp Forgetting caused by subsequent memories, evolving as
+% 
+  \begin{equation*}
+  \begin{aligned}
+    \diff{\pr(t)}{t} &= r\pr(t)\frg,
+    &\qquad
+    \frg &= f\pot\M\pot+f\dep\M\dep-\I,\\&&
+    \eq\frg &=0.
+  \end{aligned}
+  \end{equation*}
+% 
+  \note[item]{Memory at $t=0$, keep track of pot/dep}
+  \note[item]{subsequent: average over pot/dep}
+% \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
+% Eventually, this will settle into the equilibrium distribution:
+% %
+% %
+% \note[item]{In equilibrium prior to memory creation}
 %
 \end{frame}
 
@@ -247,21 +286,31 @@ Stanford University, Applied Physics
  \begin{equation*}
    \begin{aligned}
      \text{Signal} &= \av{\wv_\text{ideal} \cdot \wv(t) -  \wv_\text{ideal} \cdot \wv(\infty)},\\
-     \text{Noise} &= \sqrt{\var\prn{\wv_\text{ideal} \cdot \wv(\infty)}}.
+     \text{Noise} &= \sqrt{\var\prn{\wv_\text{ideal} \cdot \wv(\infty)}} \sim \sqrt{N}.
    \end{aligned}
  \end{equation*}
  %
  \note[item]{ideal: pot$\to$strong...}
- \note[item]{subtract baseline, some overlap even w/o encoding}
- \note[item]{if we ignore correlations...}
- %
- Related to reconstruction probability of single synapses.
+ \note[item]{use $\wv_\text{ideal} \cdot \wv(\infty)$ as null model}
+ \note[item]{Noise: ignore correction when asymmetric. No effect.}
+% \note[item]{if we ignore correlations...}
+% %
+% Related to reconstruction probability of single synapses.
+% %
+% \begin{equation*}
+%   \SNR(t) \sim \sqrt{N}\,P(\text{strong/weak},t|\text{pot/dep},t=0)-\ldots(t=\infty).
+% \end{equation*}
+% %
+  We find:
  %
  \begin{equation*}
-   \SNR(t) \sim \sqrt{N}\,P(\text{strong/weak},t|\text{pot/dep},t=0)-\ldots(t=\infty).
+   \snr(t) =
+%      \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{4\eq_+\eq_-}}\,
+      \sqrt{N}(2f\pot f\dep)\,
+      \eq \prn{\M\pot-\M\dep} \exp\prn{rt\frg}\w.
  \end{equation*}
  %
-
+ \note[item]{Using $\frg$ averages over pot/dep sequence (proof: expand)}
 %
 \end{frame}
 
@@ -272,20 +321,18 @@ Stanford University, Applied Physics
  Two example models of complex synapses.
  %
  \begin{center}
-% \parbox[t]{30cm}{
-  \aligntop{\includegraphics[width=4cm]{multistate.svg}}
-  \hspace{2cm}
   \aligntop{\includegraphics[width=4cm]{cascade.svg}}
-% }
+  \hspace{2cm}
+  \aligntop{\includegraphics[width=4cm]{multistate.svg}}
  \end{center}
- \citerr{amit1994learning,Fusi2007multistate,Fusi2005cascade}
+ \citerr{Fusi2005cascade,Leibold2008serial}
  %
  \note[item]{previous work, also: Benna-Fusi}
 
  These have different memory storage properties
  %
  \begin{center}
- \includegraphics[width=8cm]{cascms.eps}
+ \includegraphics[width=0.5\linewidth]{cascms.eps}
  \end{center}
  %
  \note[item]{Multistate good at one time, bad at others,}
@@ -311,13 +358,15 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Memory curve 2}
+\begin{frame}{Constraints}
 %
  Memory curve given by
  %
  \begin{equation*}
-   \snr(t) = \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{4\eq_+\eq_-}}\, \eq \prn{\M\pot-\M\dep}
-      \exp\prn{rt\frg}\w.
+   \snr(t) = 
+%      \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{4\eq_+\eq_-}}\,
+      \sqrt{N}(2f\pot f\dep)\,
+      \eq \prn{\M\pot-\M\dep}      \exp\prn{rt\frg}\w.
  \end{equation*}
  %
  \note[item]{prefactors don't do anything, ignore}
@@ -534,7 +583,7 @@ Stanford University, Applied Physics
    \only<1>{\includegraphics[width=8cm]{env2_t1.eps}}
    \only<2>{\includegraphics[width=8cm]{env2_t2.eps}}
    \only<3>{\includegraphics[width=8cm]{env2_all.eps}}
-   \only<4>{\includegraphics[width=8cm]{env2_ex.eps}}
+%   \only<4>{\includegraphics[width=8cm]{env2_ex.eps}}
  \end{overlayarea}
  \end{center}
  %
@@ -551,13 +600,29 @@ Stanford University, Applied Physics
   %
   \note<3->[item]{vary time of max. no curve can cross this.}
   \note<3->[item]{Regions: init(1); area(1,2)}
+  \note<3->[item]{Early: exp; Late: power-law, $\sim t\inv$}
   \note<3->[item]{is it tight? can any constrained set of exps be acheived?}
   %
-  \only<4>{Memory curves of example models.}
-  %
-  \note<4->[item]{no}
-  \note<4->[item]{One exp. discuss models next slide}
+%  \only<4>{Memory curves of example models.}
+%  %
+%  \note<4->[item]{no}
+%  \note<4->[item]{One exp. discuss models next slide}
  \end{overlayarea}
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Achievable envelope}
+%
+ %
+ \begin{center}
+   \includegraphics[width=0.6\linewidth]{env_num.eps}
+ \end{center}
+ %
+ \note[item]{Best we've found, by numerical opt and hand chosen models.}
+ \note[item]{Models on next slide}
 %
 \end{frame}
 
@@ -568,10 +633,12 @@ Stanford University, Applied Physics
  Early times:
  %
  \begin{center}
-   \includegraphics[width=6cm]{multistate_shorten.svg}
+%   \includegraphics[width=6cm]{multistate_shorten.svg}
+   \includegraphics[width=6cm]{diffjump.svg}
  \end{center}
  %
- \note[item]{shorten length of chain, keeping deterministic}
+% \note[item]{shorten length of chain, keeping deterministic}
+ \note[item]{vary length, keeping deterministic}
  %
  Late times:
  %
@@ -580,61 +647,61 @@ Stanford University, Applied Physics
  \end{center}
  %
  \note[item]{Area maximising.}
- \note[item]{two mechs for slowing forgetting: time (lower trans prob) and space (diffusion length)}
+% \note[item]{two mechs for slowing forgetting: time (lower trans prob) and space (diffusion length)}
  %
 %
 \end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Additional constraint}
+%%-------------Slide--------------------------------------------------------
 %
- Conjecture: additional constraint
- %
- \begin{equation*}
-   \initial_a\sqrt{\tau_a} \leq \CO(1).
- \end{equation*}
- %
- \note[item]{Tested experimentally. Discuss later}
- %
- Saturated by a diffusive chain:
- %
- \begin{equation*}
-   \SNR(0) \sim \frac{1}{M},
-   \qquad
-   \text{time-scale} \sim M^2.
- \end{equation*}
- %
+%\begin{frame}{Additional constraint}
+%%
+% Conjecture: additional constraint
+% %
+% \begin{equation*}
+%   \initial_a\sqrt{\tau_a} \leq \CO(1).
+% \end{equation*}
+% %
+% \note[item]{Tested experimentally. Discuss later}
+% %
+% Saturated by a diffusive chain:
+% %
+% \begin{equation*}
+%   \SNR(0) \sim \frac{1}{M},
+%   \qquad
+%   \text{time-scale} \sim M^2.
+% \end{equation*}
+% %
+%%
+%\end{frame}
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Envelope 2}
+%%-------------Slide--------------------------------------------------------
 %
- %
- \begin{center}
-   \includegraphics[width=8cm]{env23.eps}
- \end{center}
- %
- \note[item]{dashed: conjecture. tight.}
-
- %
- \begin{equation*}
- \begin{aligned}
-   rt &< \CO(M^2), &\quad
-   \text{envelope} &\sim (rt)^{-1/2}, \\
-   rt &> \CO(M^2), &
-   \text{envelope} &\sim (rt)^{-1} .
- \end{aligned}
- \end{equation*}
- %
- \note[item]{earlier: diffusion limited. later: stochastic limited.}
- \note[item]{regions: init(1); sqrt(2,3); area(3,4)}
- \note[item]{Benna-Fusi hugs envelope? cascade $\sim t^{-3/4}$}
+%\begin{frame}{Envelope 2}
+%%
+% %
+% \begin{center}
+%   \includegraphics[width=8cm]{env23.eps}
+% \end{center}
+% %
+% \note[item]{dashed: conjecture. tight.}
 %
-\end{frame}
-
+% %
+% \begin{equation*}
+% \begin{aligned}
+%   rt &< \CO(M^2), &\quad
+%   \text{envelope} &\sim (rt)^{-1/2}, \\
+%   rt &> \CO(M^2), &
+%   \text{envelope} &\sim (rt)^{-1} .
+% \end{aligned}
+% \end{equation*}
+% %
+% \note[item]{earlier: diffusion limited. later: stochastic limited.}
+% \note[item]{regions: init(1); sqrt(2,3); area(3,4)}
+% \note[item]{Benna-Fusi hugs envelope? cascade $\sim t^{-3/4}$}
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Lifetime bound}
@@ -643,131 +710,131 @@ Stanford University, Applied Physics
  %
  \begin{equation*}
  \begin{aligned}
-   N &> \CO(M^2) &\implies
+%   N &> \CO(M^2) &\implies
    \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
-   N &< \CO(M^2) &\implies
-   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}.
+%   N &< \CO(M^2) &\implies
+%   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}.
  \end{aligned}
  \end{equation*}
  %
- \note[item]{$\gamma\sim\CO(1)$ constant in additional constaint}
- \note[item]{First $t^{-1}$ assumes M low. Second $t^{-1/2}$ applies to Benna-Fusi.}
+% \note[item]{$\gamma\sim\CO(1)$ constant in additional constaint}
+% \note[item]{First $t^{-1}$ assumes M low. Second $t^{-1/2}$ applies to Benna-Fusi.}
  \note[item]{Independent synapses?}
 %
 \end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Additional constraint: other forms?}
+%%-------------Slide--------------------------------------------------------
 %
- Involving eigenmodes:
- %
- \begin{equation*}
-   \initial_a \sqrt{\tau_a},
-   \qquad
-   \sum_a \initial_a \sqrt{\tau_a},
-   \qquad
-   \sum_a \initial_a^2 {\tau_a}.
- \end{equation*}
- %
- \note[item]{as one-time max only involved one exp, would also work}
- \note[item]{right units}
- %
- Not involving eigenmodes
- %
- \begin{equation*}
-   \area \times \snr(0),
-   \qquad
-   \intd{t} \snr(t)^2.
- \end{equation*}
- %
- \note[item]{easier to work with?}
- \note[item]{L2 doesn't have nice expression in terms of matrices}
+%\begin{frame}{Additional constraint: other forms?}
+%%
+% Involving eigenmodes:
+% %
+% \begin{equation*}
+%   \initial_a \sqrt{\tau_a},
+%   \qquad
+%   \sum_a \initial_a \sqrt{\tau_a},
+%   \qquad
+%   \sum_a \initial_a^2 {\tau_a}.
+% \end{equation*}
+% %
+% \note[item]{as one-time max only involved one exp, would also work}
+% \note[item]{right units}
+% %
+% Not involving eigenmodes
+% %
+% \begin{equation*}
+%   \area \times \snr(0),
+%   \qquad
+%   \intd{t} \snr(t)^2.
+% \end{equation*}
+% %
+% \note[item]{easier to work with?}
+% \note[item]{L2 doesn't have nice expression in terms of matrices}
+%%
+%\end{frame}
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Cheeger inequality}
+%%-------------Slide--------------------------------------------------------
 %
- \parbox{5cm}{
- Cheeger constant:
- %
- \begin{equation*}
-   \phi \equiv \min_\CS \brc{\frac{\operatorname{Perimeter}(\p\CS)}{\operatorname{Area}(\CS)}}.
- \end{equation*}
- %
- \note[item]{split into two pieces. pick smaller. higher dim.}
- \note[item]{bottleneck}
- }
- \parbox{6cm}{
-   \includegraphics[width=5cm]{dumbbell.svg}
- }
- Timescale for diffusion to equilibriate
- %
- \begin{equation*}
-   \frac{1}{D \tau_{\text{diffusion}}} > \CO(1)\, \phi^2.
- \end{equation*}
- %
- \note[item]{if we want slow diffusion, need lhs small $\to$ need bottleneck.}
- \note[item]{purely geometric}
- \note[item]{also inequality in other direction: want slow diffusion $\to$ need bottleneck. Not useful for us}
+%\begin{frame}{Cheeger inequality}
+%%
+% \parbox{5cm}{
+% Cheeger constant:
+% %
+% \begin{equation*}
+%   \phi \equiv \min_\CS \brc{\frac{\operatorname{Perimeter}(\p\CS)}{\operatorname{Area}(\CS)}}.
+% \end{equation*}
+% %
+% \note[item]{split into two pieces. pick smaller. higher dim.}
+% \note[item]{bottleneck}
+% }
+% \parbox{6cm}{
+%   \includegraphics[width=5cm]{dumbbell.svg}
+% }
+% Timescale for diffusion to equilibriate
+% %
+% \begin{equation*}
+%   \frac{1}{D \tau_{\text{diffusion}}} > \CO(1)\, \phi^2.
+% \end{equation*}
+% %
+% \note[item]{if we want slow diffusion, need lhs small $\to$ need bottleneck.}
+% \note[item]{purely geometric}
+% \note[item]{also inequality in other direction: want slow diffusion $\to$ need bottleneck. Not useful for us}
+%%
+%\end{frame}
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Cheeger inequality: Markov chains}
+%%-------------Slide--------------------------------------------------------
 %
- Cheeger constant:
- %
- \begin{equation*}
-   \phi \equiv \min_\CS \brc{\frac{\F_{\CS\CS\comp}}{\eq(\CS)}}.
- \end{equation*}
- %
- \note[item]{split states into two subsets. pick smaller.}
- \note[item]{again bottleneck}
- \note[item]{denominator varies}
- %
- Timescale to equilibriate:
- %
- \begin{equation*}
-   \frac{1}{\max_a\tau_a} > \CO(1)\, \phi^2.
- \end{equation*}
- %
- Simple proof assuming detailed balance. \citerr{Sinclair1989cheeger}\\
- More complicated proof for general case. \citerr{Lawler1988cheeger}
- %
- \note[item]{$\CO(1)$ bit differs}
- \note[item]{bottleneck need not be between strong \& weak.}
+%\begin{frame}{Cheeger inequality: Markov chains}
+%%
+% Cheeger constant:
+% %
+% \begin{equation*}
+%   \phi \equiv \min_\CS \brc{\frac{\F_{\CS\CS\comp}}{\eq(\CS)}}.
+% \end{equation*}
+% %
+% \note[item]{split states into two subsets. pick smaller.}
+% \note[item]{again bottleneck}
+% \note[item]{denominator varies}
+% %
+% Timescale to equilibriate:
+% %
+% \begin{equation*}
+%   \frac{1}{\max_a\tau_a} > \CO(1)\, \phi^2.
+% \end{equation*}
+% %
+% Simple proof assuming detailed balance. \citerr{Sinclair1989cheeger}\\
+% More complicated proof for general case. \citerr{Lawler1988cheeger}
+% %
+% \note[item]{$\CO(1)$ bit differs}
+% \note[item]{bottleneck need not be between strong \& weak.}
+%%
+%\end{frame}
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Counter examples?}
+%%-------------Slide--------------------------------------------------------
 %
- Put bottleneck somewhere else:
- %
- \begin{center}
-   \includegraphics[width=6cm]{multistate_counter.svg}
- \end{center}
- %
- \note[item]{eq prob concentrated near middle. bottleneck at $\epsilon$.}
- %
- Set $\epsilon = 1/M$, see how putative constraints vary:
- %
- \begin{center}
-   \includegraphics[width=6cm]{counter_graph.eps}
- \end{center}
- %
- \note[item]{high inital snr and long timescale in different modes.}
- \note[item]{only eigenmode dependent constraints survive (and L2 - but difficult to work with).}
-
- Also tried: random Markov chains.
+%\begin{frame}{Counter examples?}
+%%
+% Put bottleneck somewhere else:
+% %
+% \begin{center}
+%   \includegraphics[width=6cm]{multistate_counter.svg}
+% \end{center}
+% %
+% \note[item]{eq prob concentrated near middle. bottleneck at $\epsilon$.}
+% %
+% Set $\epsilon = 1/M$, see how putative constraints vary:
+% %
+% \begin{center}
+%   \includegraphics[width=6cm]{counter_graph.eps}
+% \end{center}
+% %
+% \note[item]{high inital snr and long timescale in different modes.}
+% \note[item]{only eigenmode dependent constraints survive (and L2 - but difficult to work with).}
 %
-\end{frame}
-
+% Also tried: random Markov chains.
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Two-time envelope}
@@ -802,7 +869,7 @@ Stanford University, Applied Physics
     \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
     \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
     \item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
-    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
+%    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
   \end{itemize}
 
 %
@@ -826,6 +893,8 @@ Stanford University, Applied Physics
    \item Surya Ganguli
    \item Stefano Fusi
    \item Marcus Benna
+   \item David Sussillo
+   \item Jascha Sohl-Dickstein
  \end{itemize}
  \note[item]{Last slide!}
 %
