@@ -1,4 +1,4 @@
-function [ S1 ] = DoubleEnv_Case2Exp2( t1,t2,S2,n,varargin )
+function [ S1,qc,cc ] = DoubleEnv_Case2Exp2( t1,t2,S2,n,varargin )
 %S1=CASE2EXP2(t1,t2,S2,n,...) Two-time envelope in case 2 with 2
 %exponentials
 %   t1 = time of maximisation
@@ -42,6 +42,9 @@ q1=qc(1);
 q2=qc(2);
 c1=(S2-(n-1)*q2*exp(-q2*t2))/(q1*exp(-q1*t2)-q2*exp(-q2*t2));
 c2=n-1-c1;
+
+qc=qc';
+cc=[c1; c2];
 
 S1=c1*q1*exp(-q1*t)+c2*q2*exp(-q2*t);
 
