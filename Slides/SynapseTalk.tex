@@ -103,13 +103,13 @@ Stanford University, Applied Physics
 %
  \textbf{Learning rule:} how activity $\to$ potentiation/depression.\\
  \hp \eg Hebb rule, STDP, Hopfield outer product, perceptron rule,\ldots
- 
+
  \vp \textbf{Plasticity mechanism:} how synapse responds to potentiation/depression.\\
  \hp \eg Binary switch, Cascade model, Multistate model,\ldots
- 
+
  \vp \textbf{Synaptic transmission:} how synaptic state affects neural activity.\\
  \hp \eg Hopfield attractor,\ldots
- 
+
  \note[item]{Avoid confusion: separate concepts}
  \note[item]{Talk exclusively about second one.}
  \note[item]{Abstract away other two.}
@@ -253,7 +253,7 @@ Stanford University, Applied Physics
 % \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
 %
 % \vp Forgetting caused by subsequent memories, evolving as
-% 
+%
   \begin{equation*}
   \begin{aligned}
     \diff{\pr(t)}{t} &= r\pr(t)\frg,
@@ -262,7 +262,7 @@ Stanford University, Applied Physics
     \eq\frg &=0.
   \end{aligned}
   \end{equation*}
-% 
+%
   \note[item]{Memory at $t=0$, keep track of pot/dep}
   \note[item]{subsequent: average over pot/dep}
 % \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
@@ -363,7 +363,7 @@ Stanford University, Applied Physics
  Memory curve given by
  %
  \begin{equation*}
-   \snr(t) = 
+   \snr(t) =
 %      \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{4\eq_+\eq_-}}\,
       \sqrt{N}(2f\pot f\dep)\,
       \eq \prn{\M\pot-\M\dep}      \exp\prn{rt\frg}\w.
@@ -617,24 +617,21 @@ Stanford University, Applied Physics
 \begin{frame}{Achievable envelope}
 %
  %
- \begin{center}
-   \includegraphics[width=0.6\linewidth]{env_num.eps}
- \end{center}
- %
+% \begin{center}
+  \parbox[c]{0.58\linewidth}{
+   \aligntop{\includegraphics[width=0.99\linewidth]{env_num.eps}}
  \note[item]{Best we've found, by numerical opt and hand chosen models.}
  \note[item]{Models on next slide}
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Best models at single times}
-%
+  }
+% \end{center}
+ \hp
+ %
+  \parbox[c]{0.36\linewidth}{
  Early times:
  %
  \begin{center}
 %   \includegraphics[width=6cm]{multistate_shorten.svg}
-   \includegraphics[width=6cm]{diffjump.svg}
+   \includegraphics[width=0.99\linewidth]{diffjump.svg}
  \end{center}
  %
 % \note[item]{shorten length of chain, keeping deterministic}
@@ -643,15 +640,40 @@ Stanford University, Applied Physics
  Late times:
  %
  \begin{center}
-   \includegraphics[width=6cm]{multistate_sticky.svg}
+   \includegraphics[width=0.99\linewidth]{multistate_sticky.svg}
  \end{center}
  %
  \note[item]{Area maximising.}
-% \note[item]{two mechs for slowing forgetting: time (lower trans prob) and space (diffusion length)}
- %
+  }
 %
 \end{frame}
 
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Best models at single times}
+%%
+% Early times:
+% %
+% \begin{center}
+%%   \includegraphics[width=6cm]{multistate_shorten.svg}
+%   \includegraphics[width=6cm]{diffjump.svg}
+% \end{center}
+% %
+%% \note[item]{shorten length of chain, keeping deterministic}
+% \note[item]{vary length, keeping deterministic}
+% %
+% Late times:
+% %
+% \begin{center}
+%   \includegraphics[width=6cm]{multistate_sticky.svg}
+% \end{center}
+% %
+% \note[item]{Area maximising.}
+%% \note[item]{two mechs for slowing forgetting: time (lower trans prob) and space (diffusion length)}
+% %
+%%
+%\end{frame}
+%
 %%-------------Slide--------------------------------------------------------
 %
 %\begin{frame}{Additional constraint}
@@ -842,7 +864,8 @@ Stanford University, Applied Physics
  Maximise $\snr(t_1)$ subject to constraint $\snr(t_2)=S_2$.
  %
 
- \vp For $t_1$ close to $t_2$, get single exponential. Far away, get two exponentials.
+ \vp For $t_1$ close to $t_2$, get single exponential.\\
+  Far away, get two exponentials.
  %
  \note[item]{Max at multiple times, $\to$ multiple timescales? cascade? Benna-Fusi?}
 
