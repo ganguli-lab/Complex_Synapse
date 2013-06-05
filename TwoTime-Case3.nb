@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       157,          7]
-NotebookDataLength[      9662,        328]
-NotebookOptionsPosition[      8818,        297]
-NotebookOutlinePosition[      9238,        313]
-CellTagsIndexPosition[      9195,        310]
+NotebookDataLength[     13620,        456]
+NotebookOptionsPosition[     12509,        416]
+NotebookOutlinePosition[     12929,        432]
+CellTagsIndexPosition[     12886,        429]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -293,6 +293,125 @@ Cell[BoxData[
   "0"}]], "Output",
  CellChangeTimes->{3.5793745609303455`*^9, 3.5793745983164835`*^9, 
   3.579374751257231*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"FullSimplify", "[", 
+  RowBox[{"eq2", "/.", "q2dq"}], "]"}]], "Input",
+ CellChangeTimes->{{3.5793745340998106`*^9, 3.579374559495263*^9}, {
+   3.5793745931781893`*^9, 3.579374593818226*^9}, {3.5793747447468586`*^9, 
+   3.5793747457909184`*^9}, 3.579374896122517*^9}],
+
+Cell[BoxData[
+ RowBox[{"S2", "\[Equal]", 
+  FractionBox[
+   RowBox[{
+    RowBox[{
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       RowBox[{"-", 
+        RowBox[{"(", 
+         RowBox[{"dq", "+", "q1"}], ")"}]}], " ", "t2"}]], " ", 
+     RowBox[{"(", 
+      RowBox[{"dq", "+", "q1"}], ")"}], " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "+", "q1", "-", 
+       RowBox[{"n", " ", "q1"}]}], ")"}]}], "-", 
+    RowBox[{
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{
+       RowBox[{"-", "q1"}], " ", "t2"}]], " ", "q1", " ", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", "1"}], "+", "n"}], ")"}], " ", 
+        RowBox[{"(", 
+         RowBox[{"dq", "+", "q1"}], ")"}]}]}], ")"}]}]}], "dq"]}]], "Output",
+ CellChangeTimes->{3.5793745609303455`*^9, 3.5793745983164835`*^9, 
+  3.579374751257231*^9, 3.5793748990636854`*^9}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{"S2", "\[Equal]", 
+    FractionBox[
+     RowBox[{
+      RowBox[{
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{
+         RowBox[{"-", 
+          RowBox[{"(", 
+           RowBox[{"dq", "+", "q1"}], ")"}]}], " ", "t2"}]], " ", 
+       RowBox[{"(", 
+        RowBox[{"dq", "+", "q1"}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", "q1", "-", 
+         RowBox[{"n", " ", "q1"}]}], ")"}]}], "-", 
+      RowBox[{
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{
+         RowBox[{"-", "q1"}], " ", "t2"}]], " ", "q1", " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"-", "1"}], "+", "n"}], ")"}], " ", 
+          RowBox[{"(", 
+           RowBox[{"dq", "+", "q1"}], ")"}]}]}], ")"}]}]}], "dq"]}], ",", 
+   "dq"}], "]"}]], "Input",
+ CellChangeTimes->{{3.5793749252941856`*^9, 3.579374947868477*^9}}],
+
+Cell[BoxData[
+ RowBox[{
+  StyleBox[
+   RowBox[{"Solve", "::", "nsmet"}], "MessageName"], 
+  RowBox[{
+  ":", " "}], "\<\"This system cannot be solved with the methods available to \
+Solve. \\!\\(\\*ButtonBox[\\\"\[RightSkeleton]\\\", \
+ButtonStyle->\\\"Link\\\", ButtonFrame->None, \
+ButtonData:>\\\"paclet:ref/Solve\\\", ButtonNote -> \
+\\\"Solve::nsmet\\\"]\\)\"\>"}]], "Message", "MSG",
+ CellChangeTimes->{{3.5793749426651793`*^9, 3.579374948934538*^9}}],
+
+Cell[BoxData[
+ RowBox[{"Solve", "[", 
+  RowBox[{
+   RowBox[{"S2", "\[Equal]", 
+    FractionBox[
+     RowBox[{
+      RowBox[{
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{
+           RowBox[{"-", "dq"}], "-", "q1"}], ")"}], " ", "t2"}]], " ", 
+       RowBox[{"(", 
+        RowBox[{"dq", "+", "q1"}], ")"}], " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", "q1", "-", 
+         RowBox[{"n", " ", "q1"}]}], ")"}]}], "-", 
+      RowBox[{
+       SuperscriptBox["\[ExponentialE]", 
+        RowBox[{
+         RowBox[{"-", "q1"}], " ", "t2"}]], " ", "q1", " ", 
+       RowBox[{"(", 
+        RowBox[{"1", "-", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"-", "1"}], "+", "n"}], ")"}], " ", 
+          RowBox[{"(", 
+           RowBox[{"dq", "+", "q1"}], ")"}]}]}], ")"}]}]}], "dq"]}], ",", 
+   "dq"}], "]"}]], "Output",
+ CellChangeTimes->{{3.579374942666179*^9, 3.5793749489355373`*^9}}]
 }, Open  ]]
 },
 WindowSize->{701, 867},
@@ -328,7 +447,16 @@ Cell[5892, 196, 945, 30, 54, "Output"]
 Cell[6852, 229, 222, 6, 31, "Input"],
 Cell[CellGroupData[{
 Cell[7099, 239, 266, 5, 31, "Input"],
-Cell[7368, 246, 1434, 48, 84, "Output"]
+Cell[7368, 246, 1434, 48, 52, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8839, 299, 290, 5, 31, "Input"],
+Cell[9132, 306, 913, 28, 51, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[10082, 339, 974, 30, 80, "Input"],
+Cell[11059, 371, 456, 10, 21, "Message"],
+Cell[11518, 383, 975, 30, 83, "Output"]
 }, Open  ]]
 }
 ]
