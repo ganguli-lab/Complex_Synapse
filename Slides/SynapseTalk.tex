@@ -88,7 +88,7 @@ Stanford University, Applied Physics
  %
  In reality, there is a complex dynamical system inside a synapse.
 
- \vp Semi-realistic models of synaptic memory have terrible storage without synaptic complexity.
+ \vp Semi-realistic models of synaptic plasticity have terrible memory without synaptic complexity.
  %
  \note[item]{finite number of values.}
 
@@ -107,7 +107,7 @@ Stanford University, Applied Physics
  \vp \textbf{Plasticity mechanism:} how synapse responds to potentiation/depression.\\
  \hp \eg Binary switch, Cascade model, Multistate model,\ldots
 
- \vp \textbf{Synaptic transmission:} how synaptic state affects neural activity.\\
+ \vp \textbf{Memory retrieval:} how synaptic state affects neural activity.\\
  \hp \eg Hopfield attractor,\ldots
 
  \note[item]{Avoid confusion: separate concepts}
@@ -540,6 +540,11 @@ Stanford University, Applied Physics
  %
  \note[item]{Difficult to get out of end state.}
  \note[item]{Area not a good thing to optimise}
+ %
+ \begin{equation*}
+   \lim_{\varepsilon\to0}A=\sqrt{N}(M-1)/r.
+ \end{equation*}
+ %
 %
 \end{frame}
 
@@ -587,7 +592,7 @@ Stanford University, Applied Physics
  \end{overlayarea}
  \end{center}
  %
- \begin{overlayarea}{10cm}{2cm}
+ \begin{overlayarea}{10cm}{3cm}
   \only<1>{Maximise SNR at one time}
   %
   \note<1->[item]{One exp. only constrains SNR at that time, not others}
@@ -601,7 +606,20 @@ Stanford University, Applied Physics
   \note<3->[item]{vary time of max. no curve can cross this.}
   \note<3->[item]{Regions: init(1); area(1,2)}
   \note<3->[item]{Early: exp; Late: power-law, $\sim t\inv$}
+  \note<3->[item]{snr(lifetime)=1. Bounded by envelope=1.}
   \note<3->[item]{is it tight? can any constrained set of exps be acheived?}
+ %
+ \only<3>{
+ \begin{equation*}
+ \begin{aligned}
+%   N &> \CO(M^2) &\implies
+   \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
+%   N &< \CO(M^2) &\implies
+%   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}.
+ \end{aligned}
+ \end{equation*}
+ }
+ %
   %
 %  \only<4>{Memory curves of example models.}
 %  %
@@ -618,33 +636,35 @@ Stanford University, Applied Physics
 %
  %
 % \begin{center}
-  \parbox[c]{0.58\linewidth}{
-   \aligntop{\includegraphics[width=0.99\linewidth]{env_num.eps}}
- \note[item]{Best we've found, by numerical opt and hand chosen models.}
- \note[item]{Models on next slide}
-  }
+ \parbox[c]{0.58\linewidth}{
+   \aligntop{\includegraphics[width=0.95\linewidth]{env_num.eps}}
+   \note[item]{Best we've found, by numerical opt and hand chosen models.}
+% \note[item]{Models on next slide}
+ }
 % \end{center}
  \hp
  %
-  \parbox[c]{0.36\linewidth}{
- Early times:
- %
- \begin{center}
-%   \includegraphics[width=6cm]{multistate_shorten.svg}
-   \includegraphics[width=0.99\linewidth]{diffjump.svg}
- \end{center}
- %
-% \note[item]{shorten length of chain, keeping deterministic}
- \note[item]{vary length, keeping deterministic}
- %
- Late times:
- %
- \begin{center}
-   \includegraphics[width=0.99\linewidth]{multistate_sticky.svg}
- \end{center}
- %
- \note[item]{Area maximising.}
-  }
+ \parbox[c]{0.36\linewidth}{
+   Early times:
+   %
+   \begin{center}
+  %   \includegraphics[width=6cm]{multistate_shorten.svg}
+     \includegraphics[width=0.99\linewidth]{diffjump.svg}
+   \end{center}
+   %
+  % \note[item]{shorten length of chain, keeping deterministic}
+   \note[item]{vary length, keeping deterministic}
+   %
+   Late times:
+   %
+   \begin{center}
+     \includegraphics[width=0.99\linewidth]{multistate_sticky.svg}
+   \end{center}
+   %
+   \note[item]{Area maximising.}
+ }
+ \note[item]{Gap $\sim\CO(\sqrt{N})$.}
+ \note[item]{Area bound active at early times $\implies$ need more constraints.}
 %
 \end{frame}
 
@@ -724,27 +744,27 @@ Stanford University, Applied Physics
 %%
 %\end{frame}
 %
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Lifetime bound}
+%%-------------Slide--------------------------------------------------------
 %
- Lifetime of a memory bounded by where envelope crosses 1
- %
- \begin{equation*}
- \begin{aligned}
-%   N &> \CO(M^2) &\implies
-   \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
-%   N &< \CO(M^2) &\implies
-%   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}.
- \end{aligned}
- \end{equation*}
- %
-% \note[item]{$\gamma\sim\CO(1)$ constant in additional constaint}
-% \note[item]{First $t^{-1}$ assumes M low. Second $t^{-1/2}$ applies to Benna-Fusi.}
- \note[item]{Independent synapses?}
+%\begin{frame}{Lifetime bound}
+%%
+% Lifetime of a memory bounded by where envelope crosses 1
+% %
+% \begin{equation*}
+% \begin{aligned}
+%%   N &> \CO(M^2) &\implies
+%   \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
+%%   N &< \CO(M^2) &\implies
+%%   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}.
+% \end{aligned}
+% \end{equation*}
+% %
+%% \note[item]{$\gamma\sim\CO(1)$ constant in additional constaint}
+%% \note[item]{First $t^{-1}$ assumes M low. Second $t^{-1/2}$ applies to Benna-Fusi.}
+% \note[item]{Independent synapses?}
+%%
+%\end{frame}
 %
-\end{frame}
-
 %%-------------Slide--------------------------------------------------------
 %
 %\begin{frame}{Additional constraint: other forms?}
@@ -857,31 +877,31 @@ Stanford University, Applied Physics
 %%
 %\end{frame}
 %
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Two-time envelope}
+%%-------------Slide--------------------------------------------------------
 %
- Maximise $\snr(t_1)$ subject to constraint $\snr(t_2)=S_2$.
- %
-
- \vp For $t_1$ close to $t_2$, get single exponential.\\
-  Far away, get two exponentials.
- %
- \note[item]{Max at multiple times, $\to$ multiple timescales? cascade? Benna-Fusi?}
-
- \vp See tradeoff between $\snr(t_1)$ and $\snr(t_2)$.
- %
-
- %
- \begin{center}
-   \includegraphics[width=5cm]{two_time_env.eps}
- \end{center}
- %
-\note[item]{only implemented first 2 constraints}
-  \note[item]{numerics not working. 2 exp solution need to solve 2 transcendental equations.}
+%\begin{frame}{Two-time envelope}
+%%
+% Maximise $\snr(t_1)$ subject to constraint $\snr(t_2)=S_2$.
+% %
 %
-\end{frame}
-
+% \vp For $t_1$ close to $t_2$, get single exponential.\\
+%  Far away, get two exponentials.
+% %
+% \note[item]{Max at multiple times, $\to$ multiple timescales? cascade? Benna-Fusi?}
+%
+% \vp See tradeoff between $\snr(t_1)$ and $\snr(t_2)$.
+% %
+%
+% %
+% \begin{center}
+%   \includegraphics[width=5cm]{two_time_env.eps}
+% \end{center}
+% %
+%\note[item]{only implemented first 2 constraints}
+%  \note[item]{numerics not working. 2 exp solution need to solve 2 transcendental equations.}
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Summary}
@@ -891,7 +911,9 @@ Stanford University, Applied Physics
 %    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
     \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
     \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
-    \item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
+    \item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M)$.
+    \item Gap between envelope and what we can achieve at early times?
+    \item Trade-off between SNR at different times?
 %    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
   \end{itemize}
 
