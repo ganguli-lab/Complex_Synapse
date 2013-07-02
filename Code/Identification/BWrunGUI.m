@@ -9,6 +9,7 @@ S.num_BW=50;
 S.fp=0.5;
 AxFontSize=12;
 BtFontSize=16;
+cmapname='Hot';
 
 %-------------------------------------------------------------------------
 %Create figure
@@ -45,8 +46,8 @@ ax_est(1) = axes('Parent',model_est,'OuterPosition',[0 0.6 1 0.4]);%left bottom 
 ax_est(2) = axes('Parent',model_est,'OuterPosition',[0 0.2 1 0.4]);%left bottom width height
 ax_est(3) = axes('Parent',model_est,'OuterPosition',[0 0 1 0.2]);%left bottom width height
 %
-potdepwt = axes('Parent',simulation,'OuterPosition',[0 0.8 1 0.2]);%left bottom width height
-statepr  = axes('Parent',simulation,'OuterPosition',[0 0 1 0.8]);%left bottom width height
+potdepwt = axes('Parent',simulation,'OuterPosition',[0 0.8 0.9 0.2]);%left bottom width height
+statepr  = axes('Parent',simulation,'OuterPosition',[0 0 0.95 0.8]);%left bottom width height
 %
 mets_true(1)=axes('Parent',metrics,'OuterPosition',[0 0.5 1 0.5]);%left bottom width height
 mets_true(2)=axes('Parent',metrics,'OuterPosition',[0 0.5 1 0.5],'Color','none','YAxisLocation','right');%left bottom width height
@@ -56,6 +57,23 @@ mets_est(2)=axes('Parent',metrics,'OuterPosition',[0 0 1 0.5],'Color','none','YA
 %where buttons and edit-boxes will be
 edpos={0.0,0.0,0.5,1};%left bottom width height
 btpos={0.5,0.0,0.5,1};%left bottom width height
+
+pdleg=axes('Parent',simulation,'Position',[0.9 0.93 0.1 0.04]);
+imagesc([1 -1],'Parent',pdleg);
+set(pdleg,'XAxisLocation','top','XTick',[1 2],'YTick',[],'XTickLabel',{'pot','dep'});
+wtleg=axes('Parent',simulation,'Position',[0.9 0.89 0.1 0.04]);
+imagesc([1 -1],'Parent',wtleg);
+set(wtleg,'XAxisLocation','bottom','XTick',[1 2],'YTick',[],'XTickLabel',{'strong','weak'});
+
+colormap(pdleg,'jet')
+freezeColors(pdleg);
+colormap(wtleg,'jet')
+freezeColors(wtleg);
+
+
+colormap(potdepwt,'jet');
+freezeColors(potdepwt);
+colormap(statepr,cmapname);
 
 %-------------------------------------------------------------------------
 outProj={WeightProj(1,w),WeightProj(-1,w)};
@@ -155,6 +173,9 @@ MakeButton(3,'Update',@Update);
         imagesc(wt,'Parent',potdepwt);
         set(potdepwt,'YTick',[1 2],'YTickLabel',{'pot/dep','weight'});
         xlabel(potdepwt,'Time','FontSize',AxFontSize);
+        colormap(potdepwt,'jet');
+        freezeColors(potdepwt);
+        colormap(statepr,cmapname);
 %         cla(statepr);
 %         plot(st,'g','LineWidth',3,'Parent',statepr);
 %         xlabel(statepr,'Time','FontSize',AxFontSize);
@@ -247,17 +268,19 @@ MakeButton(3,'Update',@Update);
         ylabel(mets_true(2),'KL divergence','FontSize',AxFontSize);
         FixDoublePlots(mets_true);
         set(hl(1),'LineStyle','--');
-        legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','best');
+        legend(hl,{'likelihood(true)','likelihood(est)'},'location','west');
+        legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
         cla(mets_est(1));
         cla(mets_est(2));
-        plot(mets_est(1),(1:upno-1)',squeeze(diff(metvals(1:upno,2,1))),'k');
+        hl=plot(mets_est(1),(1:upno-1)',squeeze(diff(metvals(1:upno,2,1))),'k');
         title(mets_est(1),'Comparison with previous estimate','FontSize',AxFontSize);
         xlabel(mets_est(1),'Update #','FontSize',AxFontSize);
         ylabel(mets_est(1),'\Delta Likelihood','FontSize',AxFontSize);
         hkl=plot(mets_est(2),(1:upno)',squeeze(metvals(1:upno,2,2:4)));
         ylabel(mets_est(2),'KL divergence','FontSize',AxFontSize);
         FixDoublePlots(mets_est);
-        legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','best');
+        legend(hl,{'\Delta likelihood'},'location','west');
+        legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
     end
 
     function FixDoublePlots(ax)

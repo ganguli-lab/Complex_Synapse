@@ -8,6 +8,7 @@ S.num_t=100;
 S.fp=0.5;
 AxFontSize=12;
 BtFontSize=16;
+cmapname='Hot';
 
 %-------------------------------------------------------------------------
 %Create figure
@@ -50,6 +51,23 @@ statepr  = axes('Parent',simulation,'OuterPosition',[0 0 1 0.8]);%left bottom wi
 %where buttons and edit-boxes will be
 edpos={0.0,0.0,0.5,1};%left bottom width height
 btpos={0.5,0.0,0.5,1};%left bottom width height
+
+pdleg=axes('Parent',simulation,'Position',[0.9 0.93 0.1 0.04]);
+imagesc([1 -1],'Parent',pdleg);
+set(pdleg,'XAxisLocation','top','XTick',[1 2],'YTick',[],'XTickLabel',{'pot','dep'});
+wtleg=axes('Parent',simulation,'Position',[0.9 0.89 0.1 0.04]);
+imagesc([1 -1],'Parent',wtleg);
+set(wtleg,'XAxisLocation','bottom','XTick',[1 2],'YTick',[],'XTickLabel',{'strong','weak'});
+
+colormap(pdleg,'jet')
+freezeColors(pdleg);
+colormap(wtleg,'jet')
+freezeColors(wtleg);
+
+
+colormap(potdepwt,'jet');
+freezeColors(potdepwt);
+colormap(statepr,cmapname);
 
 %-------------------------------------------------------------------------
 outProj={WeightProj(1,w),WeightProj(-1,w)};
@@ -159,6 +177,9 @@ UpdateMets;
         imagesc(wt,'Parent',potdepwt);
         set(potdepwt,'YTick',[1 2],'YTickLabel',{'pot/dep','weight'});
         xlabel(potdepwt,'Time','FontSize',AxFontSize);
+        colormap(potdepwt,'jet');
+        freezeColors(potdepwt);
+        colormap(statepr,cmapname);
 %         cla(statepr);
 %         plot(st,'g','LineWidth',3,'Parent',statepr);
 %         xlabel(statepr,'Time','FontSize',AxFontSize);
