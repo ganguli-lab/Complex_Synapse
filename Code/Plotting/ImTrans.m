@@ -1,4 +1,4 @@
-function [ ih ] = ImTrans( Wp,Wm,Parent)
+function [ ih ] = ImTrans( Wp,Wm,Parent,axp,axm)
 %IMTRANS Summary of this function goes here
 %   Detailed explanation goes here
 

@@ -10,7 +10,7 @@ function [ states,potdep ] = StateSequence( initial,M,randno,fp )
 %               first row controls whether transition is pot/dep
 %               second row controls which transition is used
 %   fp      =  fraction of transitions that are potentiating
-%ot
+%or
 %   M       = Markov matrix
 %   randno  = matrix(1,n) of random numbers in [0,1], controls which
 %               transition is used .
@@ -39,6 +39,7 @@ else
     Mpot=cumsum(M,2);
     potdep=ones(1,size(randno,2)-1);
 end
+error(CheckSize(initial,@(x) length(x)==length(Mpot),'samesize(Mpot)'));
 initial=cumsum(initial);%change pdf -> cdf
 
 states=zeros(1,size(randno,2));

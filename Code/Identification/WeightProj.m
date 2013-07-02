@@ -3,8 +3,8 @@ function [ proj ] = WeightProj( val,w )
 %   w   = vector of weights of states
 %   val = wieght value to project onto
 
-error(ChackSize(val,@isscalar));
-error(ChackSize(w,@isvector));
+error(CheckSize(val,@isscalar));
+error(CheckSize(w,@isvector));
 
 
 
