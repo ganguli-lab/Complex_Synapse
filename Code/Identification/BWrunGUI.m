@@ -279,17 +279,21 @@ MakeButton(3,'Update',@Update);
         hkl=plot(mets_est(2),(1:upno)',squeeze(metvals(1:upno,2,2:4)));
         ylabel(mets_est(2),'KL divergence','FontSize',AxFontSize);
         FixDoublePlots(mets_est);
-        legend(hl,{'\Delta likelihood'},'location','west');
+        if upno>1
+            legend(hl,{'\Delta likelihood'},'location','west');
+        end
         legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
     end
 
     function FixDoublePlots(ax)
         xlim(ax(1),[0 S.num_BW]);
         xlim(ax(2),get(ax(1),'XLim'));
-        ylimits=get(ax(2),'YLim');
-        ytix=length(get(ax(1),'YTick'))-1;
-        yinc=(ylimits(2)-ylimits(1))/ytix;
-        set(ax(2),'Color','none','YAxisLocation','right','XTick',[],'YTick',ylimits(1):yinc:ylimits(2),'Position',get(ax(1),'Position'));
+%         ylimits=get(ax(2),'YLim');
+%         ytix=length(get(ax(1),'YTick'))-1;
+%         yinc=(ylimits(2)-ylimits(1))/ytix;
+        set(ax(1),'box','off');
+        set(ax(2),'Color','none','YAxisLocation','right','XTick',[],'box','off','Position',get(ax(1),'Position'));
+%         set(ax(2),'Color','none','YAxisLocation','right','XTick',[],'YTick',ylimits(1):yinc:ylimits(2),'Position',get(ax(1),'Position'));
     end
 
     function UpdateMets(upno)
