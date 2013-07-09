@@ -1,0 +1,104 @@
+% -*- TeX -*- -*- UK -*- -*- BMR -*-
+% ----------------------------------------------------------------
+% Beamer presentation ************************************************
+% **** -----------------------------------------------------------
+\documentclass{beamer}%[hyperref={backref=slide}]
+
+\input{sl_slide_preamble.tex}
+%\input{sl_slide_preamble_nonotes.tex}
+\input{sl_slide_graphics_preamble.tex}
+\input{sl_definitions.tex}
+\input{sl_slide_symbols.tex}
+%
+\graphicspath{{"Figures/"}}
+\DeclareMathOperator{\SNR}{SNR}
+\DeclareMathOperator{\snr}{SNR}
+%matrices
+\newcommand{\inv}{^{-1}}
+\newcommand{\I}{\mathbf{I}}
+%prob vector
+\newcommand{\pr}{\mathbf{p}}
+%equilibrium distribution
+\newcommand{\eq}{\pr^\infty}
+%first passage times
+\newcommand{\fpt}{\mathbf{T}}
+%off-diag first passage times
+\newcommand{\fptb}{\overline{\fpt}}
+%other symbols
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\frg}{\W^\mathrm{F}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\F}{\boldsymbol{\Phi}}
+\newcommand{\wv}{\vec{w}}
+%super/subscripts
+\newcommand{\pot}{^{\text{pot}}}
+\newcommand{\dep}{^{\text{dep}}}
+\newcommand{\potdep}{^{\text{pot/dep}}}
+\newcommand{\lmax}{_{\text{max}}}
+\newcommand{\lmin}{_{\text{min}}}
+%quantities
+\newcommand{\initial}{\mathcal{I}}
+\newcommand{\area}{\mathcal{A}}
+\newcommand{\CS}{\mathcal{S}}
+\newcommand{\comp}{^\mathrm{c}}
+\renewcommand{\e}{\mathsf{e}}
+%---------Title-----------------------------------------------------------
+
+\title[Impaired learning with enhanced plasticity]{A saturation model for impaired learning with enhanced plasticity}
+%
+\subtitle{\small{based on work in preparation by: T.D. Barbara Nguyen-Vu, Grace Q. Zhao, Han-Mi Lee, SL, Surya Ganguli, Carla J. Shatz, Jennifer L. Raymond
+}}
+%
+\author{Subhaneil Lahiri%\inst{1}
+}
+%
+\institute[Stanford]{%
+%\inst{1}
+Stanford University, Applied Physics
+}
+%
+%\slideCaption{}
+
+%---------Beginning--------------------------------------------------------
+
+\begin{document}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}
+%
+ \titlepage
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Outline}
+%
+ \tableofcontents[hideallsubsections]
+ %
+ \note[item]{review terrible properties of simple synapses.}
+ \note[item]{mathematical formalism of model, quantify performance (memory decay over time)}
+ \note[item]{upper bounds on single numbers that depend on whole memory curve (decay over time)}
+ \note[item]{upper bounds at finite times}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}[allowframebreaks]{References}
+%
+
+ {\small
+ \bibliographystyle{unsrt_slides}
+ \bibliography{maths,neuro}
+ }
+%
+\end{frame}
+
+
+%-----End----------------------------------------------------------------
+
+\end{document}
+
