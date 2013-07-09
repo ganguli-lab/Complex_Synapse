@@ -22,15 +22,20 @@ if DoPrint
     fig3(2)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
     fig3(3)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
     fig3(4)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
+    axFontSize=40;
 else
     fig=figure('WindowStyle','docked','PaperPositionMode','auto');
     figs=figure('WindowStyle','docked','PaperPositionMode','auto');
     altfig=figure('WindowStyle','docked','PaperPositionMode','auto');
     fig3=figure('WindowStyle','docked','PaperPositionMode','auto');
+    axFontSize=20;
 end
 
 if strncmpi(prefix,'cascade',3)
     modelname='cascade';
+    n=10;
+elseif strncmpi(prefix,'nonuni',3)
+    modelname='nonuni';
     n=10;
 elseif strncmpi(prefix,'multistate',3)
     modelname='multistate';
@@ -51,13 +56,13 @@ t=0:(T_train+T_pre)/numpts:(T_train+T_pre);
 figure(fig);
 
 MakeVORcomparison(paramWT,paramKn,df,n,modelname,'t',t,'tchange',T_pre,...
-    'Superpose',false,'fig',fig,'altfig',altfig,'fig3',fig3,varargin{:})
+    'Superpose',false,'fig',fig,'altfig',altfig,'fig3',fig3,'axFontSize',axFontSize,varargin{:})
 
 t=0:T_train/numpts:T_train;
 t=[t T_pre+t(t>T_train-T_pre)];
 
 MakeVORcomparison(paramWT,paramKn,df,n,modelname,'t',t,'tchange',T_pre,...
-    'Superpose',true,'fig',figs,varargin{:})
+    'Superpose',true,'fig',figs,'axFontSize',axFontSize,varargin{:})
 
 if DoPrint
     print(fig,[prefix '_learn.eps'],'-depsc');

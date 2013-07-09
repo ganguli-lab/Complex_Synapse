@@ -31,6 +31,9 @@ if strcmpi(modelname,'multistate')
 elseif strcmpi(modelname,'cascade')
     [Wp,Wm,w]=CascadeOriginal(paramWT,paramWT,n);
     [~,WmKn]=CascadeOriginal(paramKn,paramKn,n);
+elseif strcmpi(modelname,'nonuni')
+    [Wp,Wm,w]=CascadeOriginal(paramWT,paramWT,n,0);
+    [~,WmKn]=CascadeOriginal(paramKn,paramKn,n,0);
 elseif strcmpi(modelname,'pooled')
     w=(-1:2/(n-1):1)';
     q=(paramWT(1):diff(paramWT)/(n-2):paramWT(2)).*(n-1:-1:1)/(n-1);
