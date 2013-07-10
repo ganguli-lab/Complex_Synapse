@@ -263,7 +263,7 @@ This is because the mutation is well localised to the Purkinje cells, so the act
 Therefore the rates of potentiation and depression should not change very much either.
 This implies that the mean synaptic weight in equilibrium differs between the mutant and wild type, but that is also suggested by the data regarding basal levels of phospho-GluR2 at serine 880.
 As the mutation produces no change in baseline performance, there must be a compensatory mechanism somewhere else.
-We will model this compensation as a simple linear offset, as could be produced by another population of neurons/synapses whose effect cancels with these neurons/synapses. 
+We will model this compensation as a simple linear offset, as could be produced by another population of neurons/synapses whose effect cancels with these neurons/synapses.
 
 We are also assuming that the relation between VOR gain and mean synaptic weight is the same for mutant ant wild-type, except for a linear offset to compensate for the difference in equilibrium weights mentioned above.
 
@@ -317,6 +317,7 @@ The values of all these parameters are listed in \autoref{tab:params}.
                                           & -0.1 & 70 & 70 &\label{tr:pooled_plenty}\\
     Pooled        & 10 & $q\in[0.1,0.4]$  & $q\in[0.2,0.8]$
                                           & -0.1 & 70 & 70 &\label{tr:pooled_scarce}\\
+    Non-uniform MS       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 150 &\label{tr:nonuni} \\
     \cline{1-7}
 %   \hline
 %    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
@@ -835,6 +836,12 @@ Gain-decrease pre-training lessens the second effect, and results in the mutant 
 Gain-decrease pre-training will shift the distribution to the potentiated site, where there are more synapses available for depression and resources are more plentiful, for both the mutant and wild type.
 This means that the pre-trained animal will learn faster then the untrained one for both mutant and wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learnS}).
 This differs from what is seen experimentally, where the pre-trained wild-type learns slower than the untrained one.
+
+\subsubsection{Non-uniform linear multistate model}\label{sec:nonuni}
+
+
+\resultsfign{Simulation results for a non-uniform linear multistate model}{nonuni}
+
 
 
 
