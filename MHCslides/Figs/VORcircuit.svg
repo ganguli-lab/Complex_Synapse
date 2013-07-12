@@ -176,29 +176,6 @@
          sodipodi:role="line"
          id="tspan318">input</tspan>
     </text>
-    <g
-       id="g5970">
-      <path
-         inkscape:connector-curvature="0"
-         id="path320"
-         style="fill:#0b8ed8;fill-opacity:1;fill-rule:nonzero;stroke:none"
-         d="m 168.75512,405.39646 6.41625,10.7275" />
-      <path
-         d="m 168.75512,405.39646 6.41625,10.7275"
-         style="fill:#3b4ca7;fill-opacity:1;fill-rule:nonzero;stroke:#2f3591;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-         id="path324"
-         inkscape:connector-curvature="0" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path326"
-         style="fill:#3b4ca7;fill-opacity:1;fill-rule:nonzero;stroke:none"
-         d="m 163.62024,414.85146 9.96625,-1.37875 5.9275,-8.12625 3.3175,23.585 -19.21125,-14.08 z" />
-      <path
-         d="m 163.62024,414.85146 9.96625,-1.37875 5.9275,-8.12625 3.3175,23.585 -19.21125,-14.08 z"
-         style="fill:none;stroke:#2f3591;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-         id="path330"
-         inkscape:connector-curvature="0" />
-    </g>
     <path
        inkscape:connector-curvature="0"
        id="path334"
@@ -544,29 +521,17 @@
          sodipodi:role="line"
          id="tspan1314">movement</tspan>
     </text>
-    <g
-       transform="matrix(1,0,0,-1,-3.0409668,1019.1382)"
-       id="g5970-1">
-      <path
-         inkscape:connector-curvature="0"
-         id="path320-3"
-         style="fill:#0b8ed8;fill-opacity:1;fill-rule:nonzero;stroke:none"
-         d="m 168.75512,405.39646 6.41625,10.7275" />
-      <path
-         d="m 168.75512,405.39646 6.41625,10.7275"
-         style="fill:#3b4ca7;fill-opacity:1;fill-rule:nonzero;stroke:#2f3591;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-         id="path324-1"
-         inkscape:connector-curvature="0" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path326-3"
-         style="fill:#3b4ca7;fill-opacity:1;fill-rule:nonzero;stroke:none"
-         d="m 163.62024,414.85146 9.96625,-1.37875 5.9275,-8.12625 3.3175,23.585 -19.21125,-14.08 z" />
-      <path
-         d="m 163.62024,414.85146 9.96625,-1.37875 5.9275,-8.12625 3.3175,23.585 -19.21125,-14.08 z"
-         style="fill:none;stroke:#2f3591;stroke-width:1.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-         id="path330-9"
-         inkscape:connector-curvature="0" />
-    </g>
+    <path
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.35264775px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 167.36684,406.21096 -12.34266,0 7.05295,8.8162 -3.52648,0 7.05295,7.05295 -3.52647,0 15.86915,10.57944 -7.05296,-10.57944 3.52648,0 -5.28972,-7.05295 3.52648,0 z"
+       id="path6508"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccc" />
+    <path
+       style="fill:#0000ff;stroke:#0000ff;stroke-width:0.35264775px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 169.39569,548.69353 -12.34266,0 7.05295,8.8162 -3.52648,0 7.05295,7.05295 -3.52647,0 15.86915,10.57944 -7.05296,-10.57944 3.52648,0 -5.28972,-7.05295 3.52648,0 z"
+       id="path6508-1"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccccccccccc" />
   </g>
 </svg>

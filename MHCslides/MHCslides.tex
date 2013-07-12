@@ -5,7 +5,11 @@
 \documentclass{beamer}%[hyperref={backref=slide}]
 
 \usepackage{array}
+\usepackage{cancel}
 \input{sl_slide_preamble.tex}
+%\usecolortheme[named=darkblue]{structure}
+\usecolortheme[rgb={0.6372549 0.27843137 0.27058824}]{structure}
+%\setbeamercolor{alerted text}{fg=blue!80!black}
 %\input{sl_slide_preamble_nonotes.tex}
 \input{sl_slide_graphics_preamble.tex}
 \input{sl_definitions.tex}
@@ -70,6 +74,21 @@ Stanford University, Applied Physics
 \begin{frame}
 %
  \titlepage
+ \note[item]{Acknowledge Barbara and Grace}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Introduction}
+%
+ One might expect enhanced plasticity to enhance learning.
+ \note[item]{It does help in some cases}
+ But often it actually causes impairment.
+ 
+ \vp We argue that this impaired learning is due to basal activity biasing the synapses prior to learning, leaving fewer synapses available for further plasticity.
+ 
+ \vp By analysing several models of complex synapses, we see that the behaviour of enhanced LTD mice in a motor learning task can constrain the synaptic structure.
 %
 \end{frame}
 
@@ -94,11 +113,13 @@ Stanford University, Applied Physics
  \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.99\linewidth]{VOR.svg}}}
  \parbox[t]{0.59\linewidth}{%
  Eye movements compensate for head movements to maintain fixation.
- 
+
  \vp Requires control of $\text{VOR gain} = \frac{\text{eye velocity}}{\text{head velocity}}$.
- 
+
  \vp Needs to be adjusted as eye muscles age, \etc
  }
+ 
+ \citerr{duLac1995review,Boyden2004review}
 %
 \end{frame}
 
@@ -107,20 +128,29 @@ Stanford University, Applied Physics
 
 \begin{frame}{VOR training}
 %
- \parbox[t]{0.2\linewidth}{\aligntop{\includegraphics[width=0.99\linewidth]{VORinc.svg}}\\[1cm]
-   \note[item]{trick brain into thinking VOR gain needs adjusting my moving visual stimulus}
-   \note[item]{anti-phase \lto increase gain}
- \aligntop{\includegraphics[width=0.99\linewidth]{VORdec.svg}}}
- \note[item]{in phase \lto decrease gain}
+ \parbox[t]{0.2\linewidth}{%
+   \aligntop{\includegraphics[width=0.99\linewidth]{VORinc.svg}}\\[1cm]
+     \note[item]{trick brain into thinking VOR gain needs adjusting my moving visual stimulus}
+     \note[item]{anti-phase \lto increase gain}
+   \aligntop{\includegraphics[width=0.99\linewidth]{VORdec.svg}}
+     \note[item]{in phase \lto decrease gain}
+   }
  \hspace{0.15\linewidth}
- \parbox[t]{0.59\linewidth}{\aligntop{\includegraphics[width=0.99\linewidth]{VORcircuit.svg}}}
- \note[item]{Gain change involves cerebellum}
- \note[item]{Marr-Albus-Ito: Pf-Pk synapses}
- \note[item]{Lisberger-Miles: Vestibular input-VN synapses}
- \note[item]{Different mechs for different freq, head angle, gain up/down.}
- \note[item]{Different Pk cells have different tunings.}
- \note[item]{Gain up in case of interest: LTD in Pf-Pk in flucculus}
- \note[item]{Gain down: uses different mech for behaviour, but does reverse LTD in Pf-Pk in flucculus}
+ \parbox[t]{0.59\linewidth}{%
+   \aligntop{\includegraphics[width=0.99\linewidth]{VORcircuit.svg}}
+   
+   \vp PF-Pk: \parbox[t]{0.5\linewidth}{PF+CF \lto LTD, \\
+              PF+\cancel{CF} \lto LTP.}
+ }
+   \note[item]{Gain change involves cerebellum}
+   \note[item]{Marr-Albus-Ito: Pf-Pk synapses}
+   \note[item]{Lisberger-Miles: Vestibular input-VN synapses}
+   \note[item]{Different mechs for different freq, head angle, gain up/down.}
+   \note[item]{Different Pk cells have different tunings.}
+   \note[item]{Gain up in case of interest: LTD in Pf-Pk in flocculus}
+   \note[item]{Gain down: uses different mech for behaviour, but does reverse LTD in Pf-Pk in flocculus}
+   
+   \citerr{Marr1969cerebellum,Albus1971cerebellum,ito1972cerebellum,Ito1982VOR,Miles1981VOR}
 %
 \end{frame}
 
@@ -128,6 +158,114 @@ Stanford University, Applied Physics
 
 \section{The effects of enhanced plasticity and saturation}
 
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{MHC-I D$^\mathrm{b}$K$^\mathrm{b} -/-$ knockout}
+%
+ Knockout of molecule lowers threshold for LTD in PF-Pk synapses.\\
+ \citerr{McConnell2009MHCcerebellum}
+ \note[item]{Easier LTD \lto expect better learning}
+ 
+ \vp \begin{center}
+ \begin{tabular}{ccc}
+   Baseline & \hspace{0.1\linewidth} & Gain increase at $1.0\,\mathrm{Hz}$ \\
+   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} && 
+   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}} 
+ \end{tabular}
+ \end{center}
+ \note[item]{No difference at baseline}
+ \note[item]{Impairment of learning}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Saturation hypothesis}
+%
+ \begin{center}
+ \begin{tabular}{ccc}
+   Error model & \hspace{0.1\linewidth} & Saturation model \\[1cm]
+   \alignmid{\includegraphics[width=0.3\linewidth]{err_model.svg}} &&
+   \alignmid{\includegraphics[width=0.3\linewidth]{sat_model.svg}}
+ \end{tabular}
+ \end{center}
+ \note[item]{Older explanation: error model}
+ \note[item]{Our model: baseline activity \lto saturation \lto less depression possible}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Evidence: level of depression}
+%
+ \aligntop{\includegraphics[width=0.3\linewidth]{pSer880.svg}}
+ \hp
+ \parbox[t]{0.6\linewidth}{%
+ Basal level of GluR2 phosphorylation at serine 880 in AMPA receptor.
+ 
+ \vp Biochemical signature of PF-Pk LTD.
+ 
+ \vp Shows that \# depressed synapses in flocculus is larger in KO than WT.
+ \note[item]{Predicted by saturation hypothesis}
+ }
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Evidence: saturation by CF stimulation}
+%
+ Use Channelrhodopsin to stimulate CF \parbox[t]{0.45\linewidth}{%
+ \lto increase LTD in PF-Pk synapses \\
+ \lto simulate saturation in WT.
+ }
+ \note[item]{should result in similar behaviour to KO}
+ 
+ \vp\begin{center}
+   \alignmid{\includegraphics[width=0.4\linewidth]{CFstim.svg}}
+   \hspace{0.1\linewidth}
+   \alignmid{\includegraphics[width=0.4\linewidth]{CFstim_results.svg}}
+ \end{center}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Evidence: desaturation by gain-decrease pretraining}
+%
+ %
+ \begin{center}
+   \includegraphics[width=0.7\linewidth]{desat.svg}
+
+   \vp \includegraphics[width=0.7\linewidth]{gain_dec.svg}
+ \end{center}
+ %
+ \note[item]{gain dec reverses LTD}
+ \note[item]{but behaviour from elsewhere}
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Summary of training results}
+%
+ \begin{center}
+   \alignmid{\includegraphics[width=0.6\linewidth]{data_shifted.svg}}
+   \hspace{0.05\linewidth}
+   \alignmid{\includegraphics[width=0.3\linewidth]{comparisons.svg}}
+ \end{center}
+ \note[item]{Restricted to gain inc for comparison}
+ \note[item]{Black: WT. Red: KO}
+ \note[item]{Solid: no pre. Dashed: with pre}
+ \note[item]{Horz and vert comparisons: conceptual}
+ \note[item]{Diagonal comparisons: paramter fitting. Depend on size of KO vs.\ pretraining}
+ \note[item]{KO hurts w/o, but helps w/}
+ \note[item]{pre helps KO but hurts WT}
+ \note[item]{top and left most restrictive}
+%
+\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
@@ -167,6 +305,23 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
+\begin{frame}{Complex synapses}
+%
+  \aligntop{\includegraphics[width=5cm]{synapse.svg}}\hp
+  %
+  \note[item]{functional states, not molecules}
+  \note[item]{synaptic weight depends on state}
+  \note[item]{many states can have same weight}
+  %
+  \hp\aligntop{\includegraphics[width=2cm]{pot.svg}}
+  \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
+  %
+  \note[item]{stochastic transitions}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
 \begin{frame}{Simplifying assumptions}
 %
 \begin{itemize}
@@ -192,17 +347,17 @@ Stanford University, Applied Physics
 %      \note[item]{upper bound on electrical activity readout}
 %      %
 %  \item Synaptic weights can only take values $\pm1$.
+%      %
+%      \note[item]{looks like binary synapse from outside. Inside...}
       %
   \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
-      %
-      \note[item]{looks like binary synapse from outside. Inside...}
 \end{itemize}
 %
 \end{frame}
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Dynamics}
+\begin{frame}{Synaptic dynamics}
 %
   There are $N$ identical synapses with $M$ internal functional states.
   %
@@ -256,11 +411,13 @@ Stanford University, Applied Physics
     Changes statistics of LTP/LTD  &
     change $r,f\pot,f\dep$.
     \note[item]{Only parameters we have. Don't care about $r$.}
+    \note[item]{Same PF+CF input \lto same $r,f\pot,f\dep$ in each case.}
  \\[1cm]
     Learning: &
     Change in VOR gain &
-    decrease in $\av{\w}$.
+    fn.\ of decrease in $\av{\w}$.
     \note[item]{Only output we have. Don't keep track of synaptic identity.}
+    \note[item]{Input to Pk, some linear combination of $\w$'s. }
 \end{tabular}
 %
 \end{frame}
@@ -333,7 +490,8 @@ Stanford University, Applied Physics
 %
  %
  \begin{center}
-   \includegraphics[width=0.5\linewidth]{serial.svg} \\[1cm]
+   \includegraphics[width=0.5\linewidth]{serial.svg}\\
+   \citerr{Leibold2008serial} \\[1cm]
  \note[item]{Still looks binary from outside. Hidden states (not essential).}
  \note[item]{Only see $\Delta w$ at boundary.}
    \aligntop{\includegraphics[width=0.35\linewidth]{serial_learnS.eps}}
@@ -341,7 +499,7 @@ Stanford University, Applied Physics
    \aligntop{\includegraphics[width=0.35\linewidth]{comparisons_serial.svg}}
  \end{center}
  %
- 
+
  \note[item]{understand why next slide}
 %
 \end{frame}
@@ -382,13 +540,13 @@ Stanford University, Applied Physics
 \begin{frame}{Mathematical explanation}
 %
  Serial synapse: $\eq_i \sim \CN \prn{\frac{q\pot}{q\dep}}^i$.
- 
+
  \vp Learning rate $\sim \eq_{M/2}\prn{\frac{q\dep}{q\pot}} = \CN \prn{\frac{q\pot}{q\dep}}^{\frac{M}{2}-1}$.
  \note[item]{Detailed balance. Exponential decay.}
- 
+
  \vp For $M>2$: larger $q\dep \implies$ slower learning.
  \note[item]{for large enough $M,q\pot$, overcome $\CN$}
- 
+
  \vp For $M=2$: larger $q\dep \implies$ larger $\CN \implies$ faster learning.
  \note[item]{Other factor in $\eq$ smaller $\implies \CN$ larger.}
 %
@@ -435,7 +593,7 @@ Stanford University, Applied Physics
     \note[item]{solid curves succeed: enhanced saturation}
     \note[item]{black curves fail: opposite metaplasticity, pot makes dep easier}
  \end{tabular}
- 
+
  \citerr{amit1994learning}
 %
 \end{frame}
@@ -456,7 +614,7 @@ Stanford University, Applied Physics
  \note[item]{Enhanced saturation and metaplasticity}
  \note[item]{Pushing to end makes pot and dep harder}
  \note[item]{Note: hidden states not necessary}
- 
+
  \citerr{Fusi2005cascade}
 %
 \end{frame}
@@ -472,7 +630,7 @@ Stanford University, Applied Physics
    \item A little reverse bias can help, but too much hurts, if repeated potentiation makes depression harder.
    \alert{Requires metaplasticity}
    \note[item]{\eg moving away from weight boundary, or weaker transitions.}
-   \item We can find a purely synaptic explanation of VOR behaviour, iff the synapses have these features. 
+   \item We can find a purely synaptic explanation of VOR behaviour, iff the synapses have these features.
    \note[item]{Other explanations? Non-linearity in PK cell?}
    \item We used behaviour to constrain molecular structure of synapses!
    \item Can we constrain it further with more experiments?
@@ -480,6 +638,14 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Acknowledgements}
+%%
+% 
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}[allowframebreaks]{References}

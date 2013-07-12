@@ -61,7 +61,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -480,7 +480,7 @@
          id="tspan6485"
          x="-52.46875"
          y="182.36218"
-         style="font-size:32px;fill:#800080;stroke:#800080">Pf</tspan></text>
+         style="font-size:32px;fill:#800080;stroke:#800080">PF</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:14px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#800080;fill-opacity:1;stroke:#800080;font-family:Sans"
@@ -492,7 +492,7 @@
          id="tspan6485-4"
          x="178.625"
          y="177.36218"
-         style="font-size:32px;fill:#800080;stroke:#800080">Pf</tspan></text>
+         style="font-size:32px;fill:#800080;stroke:#800080">PF</tspan></text>
     <path
        style="fill:#0000ff;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="m -20.5,402.86218 35,0 -20,25 10,0 -20,20 10,0 -45,30 20,-30 -10,0 15,-20 -10,0 z"
