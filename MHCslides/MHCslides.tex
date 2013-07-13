@@ -85,9 +85,9 @@ Stanford University, Applied Physics
  One might expect enhanced plasticity to enhance learning.
  \note[item]{It does help in some cases}
  But often it actually causes impairment.
- 
+
  \vp We argue that this impaired learning is due to basal activity biasing the synapses prior to learning, leaving fewer synapses available for further plasticity.
- 
+
  \vp By analysing several models of complex synapses, we see that the behaviour of enhanced LTD mice in a motor learning task can constrain the synaptic structure.
 %
 \end{frame}
@@ -118,7 +118,7 @@ Stanford University, Applied Physics
 
  \vp Needs to be adjusted as eye muscles age, \etc
  }
- 
+
  \citerr{duLac1995review,Boyden2004review}
 %
 \end{frame}
@@ -138,7 +138,7 @@ Stanford University, Applied Physics
  \hspace{0.15\linewidth}
  \parbox[t]{0.59\linewidth}{%
    \aligntop{\includegraphics[width=0.99\linewidth]{VORcircuit.svg}}
-   
+
    \vp PF-Pk: \parbox[t]{0.5\linewidth}{PF+CF \lto LTD, \\
               PF+\cancel{CF} \lto LTP.}
  }
@@ -149,7 +149,7 @@ Stanford University, Applied Physics
    \note[item]{Different Pk cells have different tunings.}
    \note[item]{Gain up in case of interest: LTD in Pf-Pk in flocculus}
    \note[item]{Gain down: uses different mech for behaviour, but does reverse LTD in Pf-Pk in flocculus}
-   
+
    \citerr{Marr1969cerebellum,Albus1971cerebellum,ito1972cerebellum,Ito1982VOR,Miles1981VOR}
 %
 \end{frame}
@@ -166,12 +166,12 @@ Stanford University, Applied Physics
  Knockout of molecules lowers threshold for LTD in PF-Pk synapses.\\
  \citerr{McConnell2009MHCcerebellum}
  \note[item]{Easier LTD \lto expect better learning}
- 
+
  \vp \begin{center}
  \begin{tabular}{ccc}
    Baseline & \hspace{0.1\linewidth} & Gain increase at $1.0\,\mathrm{Hz}$ \\
-   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} && 
-   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}} 
+   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} &&
+   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}
  \end{tabular}
  \end{center}
  \note[item]{No difference at baseline}
@@ -221,9 +221,9 @@ Stanford University, Applied Physics
  \hp
  \parbox[t]{0.6\linewidth}{%
  Basal level of GluR2 phosphorylation at serine 880 in AMPA receptor.
- 
+
  \vp Biochemical signature of PF-Pk LTD.
- 
+
  \vp Shows that \# depressed synapses in flocculus is larger in KO than WT.
  \note[item]{Predicted by saturation hypothesis}
  }
@@ -239,7 +239,7 @@ Stanford University, Applied Physics
  \lto simulate saturation in WT.
  }
  \note[item]{should result in similar behaviour to KO}
- 
+
  \vp\begin{center}
    \alignmid{\includegraphics[width=0.4\linewidth]{CFstim.svg}}
    \hspace{0.1\linewidth}
@@ -354,13 +354,13 @@ Stanford University, Applied Physics
       %
       \note[item]{No filing system}
       %
-  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
+  \vp\item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
       %
       \note[item]{don't care if STDP...}
 %      %
 %      \note[item]{$r=$ total rate of plasticity events per synapse, $f\potdep=$ fraction of events that are potentiating/depressing.}
       %
-  \item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
+  \vp\item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
 %      %
 %      \note[item]{matrix elements: transition prob from $i\to j$, given pot/dep}
 %  \item Ideal observer: read weights directly.
@@ -371,7 +371,7 @@ Stanford University, Applied Physics
 %      %
 %      \note[item]{looks like binary synapse from outside. Inside...}
       %
-  \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
+  \vp\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
 \end{itemize}
 %
 \end{frame}
@@ -543,11 +543,9 @@ Stanford University, Applied Physics
  \end{tabular}
  \end{center}
  %
- \note[item]{WT: start with everything equal -- just for illustration, not essential}
- \note[item]{WT: during training, increase $f\dep$ (green arrow) $\to$ weakening.}
+ \note[item]{Now only get signal from crossing boundary}
  \note[item]{KO: inc $q\pot\to$ bias, now exponential}
- \note[item]{KO: comp. between inc prob trans \& dec prob ready, now only at bndry}
- \note[item]{KO: second one wins, now exponential}
+ \note[item]{KO: prob ready wins over prob trans, now exponential}
  \note[item]{pre: reduces/reverses bias.}
  \note[item]{pre: little reverse bias repopulates bndry, helps.}
  \note[item]{pre: too much reverse bias moves away from bndry, hurts.}
@@ -560,7 +558,12 @@ Stanford University, Applied Physics
 
 \begin{frame}{Mathematical explanation}
 %
- Serial synapse: $\eq_i \sim \CN \prn{\frac{q\pot}{q\dep}}^i$.
+ %
+ \begin{center}
+   \includegraphics[width=0.4\linewidth]{serial_label.svg}
+ \end{center}
+ %
+ \vp Serial synapse: $\eq_i \sim \CN \prn{\frac{q\pot}{q\dep}}^i$.
 
  \vp Learning rate $\sim \eq_{M/2}\prn{\frac{q\dep}{q\pot}} = \CN \prn{\frac{q\pot}{q\dep}}^{\frac{M}{2}-1}$.
  \note[item]{Detailed balance. Exponential decay.}
@@ -577,18 +580,18 @@ Stanford University, Applied Physics
 
 \begin{frame}{Essential features}
 %
- The success of the serial model relies on two features:
+ %
+ \begin{center}
+   \includegraphics[width=0.4\linewidth]{serial.svg}
+ \end{center}
+ %
+ \vp The success of the serial model relies on two features:
  \begin{itemize}
    \item Enhancing the effect of saturation,
    \note[item]{due to exponential decay}
    \item Metaplasticity -- repeated potentiation makes subsequent depression harder.
    \note[item]{push away from boundary where signal generated}
  \end{itemize}
- %
- \begin{center}
-   \includegraphics[width=0.4\linewidth]{serial.svg}
- \end{center}
- %
  \note[item]{borne out by other models that fail/succeed}
 %
 \end{frame}
