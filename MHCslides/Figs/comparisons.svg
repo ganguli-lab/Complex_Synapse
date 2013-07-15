@@ -25,7 +25,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.2552713"
-     inkscape:cx="68.049687"
+     inkscape:cx="-56.226236"
      inkscape:cy="-4.6226187"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -94,7 +94,7 @@
            sodipodi:role="line">w/o pre-training</tspan></text>
     </g>
     <rect
-       style="fill:none;stroke:#c0504d;stroke-width:3.50000000000000000;stroke-miterlimit:4;stroke-dasharray:3.50000000000000000, 3.50000000000000000;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:none;stroke:#c0504d;stroke-width:3.5;stroke-miterlimit:4;stroke-dasharray:10.5,10.5;stroke-dashoffset:0;stroke-opacity:1"
        id="rect2991-7"
        width="160"
        height="160"
@@ -110,11 +110,7 @@
          sodipodi:role="line"
          id="tspan2995-0"
          x="430"
-         y="432.36218">D<tspan
-   id="tspan3028"
-   style="font-size:65.00091553%;baseline-shift:super">b</tspan>K<tspan
-   id="tspan3030"
-   style="font-size:65.00091553%;baseline-shift:super">b</tspan> -/-</tspan><tspan
+         y="432.36218">KO</tspan><tspan
          sodipodi:role="line"
          x="430"
          y="457.36218"
@@ -136,17 +132,13 @@
          sodipodi:role="line"
          id="tspan2995-2"
          x="429.99997"
-         y="152.36218">D<tspan
-   id="tspan3069"
-   style="font-size:65.00091553%;baseline-shift:super">b</tspan>K<tspan
-   id="tspan3071"
-   style="font-size:65.00091553%;baseline-shift:super">b</tspan> -/-</tspan><tspan
+         y="152.36218">KO</tspan><tspan
          sodipodi:role="line"
          x="429.99997"
          y="177.36218"
          id="tspan2997-4">w/o pre-training</tspan></text>
     <rect
-       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-miterlimit:4;stroke-dasharray:3.5,3.5;stroke-dashoffset:0"
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-miterlimit:4;stroke-dasharray:10.5,10.5;stroke-dashoffset:0"
        id="rect2991-5"
        width="160"
        height="160"

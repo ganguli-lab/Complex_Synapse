@@ -207,7 +207,7 @@
      id="namedview4"
      showgrid="false"
      inkscape:zoom="2.4550502"
-     inkscape:cx="431.84481"
+     inkscape:cx="368.30232"
      inkscape:cy="227.67484"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
@@ -464,10 +464,11 @@
    style="fill:none;stroke:#7d60a0;stroke-width:0.86562002;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
    id="path226"
    inkscape:connector-curvature="0" /><g
-   id="g228"><path
+   id="g228"
+   style="stroke-width:4.8088;stroke-miterlimit:10;stroke-dasharray:14.4264,14.4264;stroke-dashoffset:0"><path
      inkscape:connector-curvature="0"
      id="path236"
-     style="fill:none;stroke:#000000;stroke-width:4.80900002;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80900002,4.80900002;stroke-dashoffset:0"
+     style="fill:none;stroke:#000000;stroke-width:4.8088;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:14.4264,14.4264;stroke-dashoffset:0"
      d="m 139.01,240.38 181.98,17.12 182.07,28.42 182.07,65.94" /></g><path
    d="m 144.77,240.55 c 0,-3.27 -2.65,-5.92 -5.92,-5.92 -3.27,0 -5.91,2.65 -5.91,5.92 0,3.26 2.64,5.91 5.91,5.91 3.27,0 5.92,-2.65 5.92,-5.91 z"
    style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
@@ -502,7 +503,7 @@
    id="path252"
    inkscape:connector-curvature="0" /><path
    d="m 139.01,240.38 181.98,99.06 182.07,40.25 182.07,31.42"
-   style="fill:none;stroke:#c00000;stroke-width:4.80900002000000000;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80900002000000000, 4.80900002000000000;stroke-dashoffset:0"
+   style="fill:none;stroke:#c00000;stroke-width:4.8088;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:14.4264,14.4264;stroke-dashoffset:0"
    id="path262"
    inkscape:connector-curvature="0" /><path
    d="m 144.77,240.55 c 0,-3.27 -2.65,-5.92 -5.92,-5.92 -3.27,0 -5.91,2.65 -5.91,5.92 0,3.26 2.64,5.91 5.91,5.91 3.27,0 5.92,-2.65 5.92,-5.91 z"
@@ -552,6 +553,7 @@
 
 
 
+
 </g></g><g
    id="g304"><g
      id="g306"
@@ -563,6 +565,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan314">25%</tspan></text>
+
 
 
 
@@ -584,6 +587,7 @@
 
 
 
+
 </g></g><g
    id="g328"><g
      id="g330"
@@ -594,6 +598,7 @@
      x="0"
      y="0"
      id="tspan338">0</tspan></text>
+
 
 
 
@@ -615,6 +620,7 @@
 
 
 
+
 </g></g><g
    id="g352"><g
      id="g354"
@@ -631,6 +637,7 @@
 
 
 
+
 </g></g><g
    id="g364"><g
      id="g366"
@@ -642,6 +649,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan374">30</tspan></text>
+
 
 
 
@@ -671,6 +679,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan404">WT  w/ pre training</tspan></text>
+
 
 
 
@@ -707,6 +716,7 @@
 
 
 
+
 </g></g><path
    d="m 166.52804,439.46047 23.08,0"
    style="fill:none;stroke:#000000;stroke-width:4.80880013;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:4.80880013,14.42640038;stroke-dashoffset:0"
@@ -731,6 +741,7 @@
      y="0"
      sodipodi:role="line"
      id="tspan440">WT w/o pre training</tspan></text>
+
 
 
 
@@ -765,6 +776,7 @@
 
 
 
+
 </g></g><path
    d="m 51.002413,183.90037 690.169177,0 0,363.49722 -690.169177,0 0,-363.49722 z"
    style="fill:none;stroke:none;stroke-width:0.78251588000000005;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
@@ -786,6 +798,7 @@
 
 
 
+
 <g
    id="g3215"><text
    transform="matrix(0,1,1,0,0,0)"
@@ -800,6 +813,7 @@
      id="tspan3213"
      sodipodi:role="line"
      style="font-size:22.39999962px">Learning (Δ VOR gain)</tspan></text>
+
 
 
 

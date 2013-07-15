@@ -14,7 +14,7 @@
    id="svg5250"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 5">
+   sodipodi:docname="gain_dec.svg">
   <defs
      id="defs5252" />
   <sodipodi:namedview
@@ -47,7 +47,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -150,92 +150,6 @@
          sodipodi:role="line"
          id="tspan310">WT</tspan>
     </text>
-    <text
-       style="font-size:15px"
-       id="text312"
-       x="154.24609"
-       y="399.13306">
-      <tspan
-         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#c01e24;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="154.24609"
-         y="399.13306"
-         id="tspan314">D</tspan>
-    </text>
-    <path
-       inkscape:connector-curvature="0"
-       id="path318"
-       style="fill:none;stroke:#c01e24;stroke-width:0.0775;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
-       d="m 155.33109,399.13194 4.08,0 c 0.8,0 1.44,-0.0762 1.91875,-0.2275 0.64,-0.205 1.1475,-0.49 1.52375,-0.85625 0.4975,-0.48375 0.88125,-1.11625 1.15,-1.8975 0.21875,-0.63875 0.32875,-1.40125 0.32875,-2.285 0,-1.00625 -0.1175,-1.85 -0.35125,-2.53875 -0.235,-0.685 -0.57625,-1.265 -1.025,-1.73875 -0.45,-0.47375 -0.98875,-0.8025 -1.61875,-0.98875 -0.46875,-0.13625 -1.15,-0.205 -2.04375,-0.205 l -3.9625,0 0,10.7375 z m 3.1425,-8.92125 c 0.88375,0 1.47625,0.035 1.78,0.1025 0.405,0.0888 0.73875,0.25625 1.0025,0.50625 0.26375,0.24875 0.46875,0.595 0.615,1.04 0.1475,0.44375 0.22,1.08125 0.22,1.91125 0,0.83 -0.0725,1.48375 -0.22,1.96625 -0.14625,0.48125 -0.335,0.82625 -0.5675,1.03625 -0.23125,0.21 -0.52375,0.35875 -0.875,0.4475 -0.26875,0.0675 -0.705,0.1025 -1.31125,0.1025 l -1.61875,0 0,-7.1125 0.975,0 z" />
-    <text
-       style="font-size:15px"
-       id="text320"
-       x="165.07973"
-       y="391.63193">
-      <tspan
-         style="font-size:11.25px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#c01e24;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="165.07973"
-         y="391.63193"
-         id="tspan322">b</tspan>
-    </text>
-    <path
-       inkscape:connector-curvature="0"
-       id="path326"
-       style="fill:none;stroke:#c01e24;stroke-width:0.0775;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
-       d="m 167.25435,391.63194 0,-0.8575 c 0.235,0.32625 0.51375,0.57125 0.8375,0.73875 0.325,0.1675 0.6525,0.25 0.98625,0.25 0.6775,0 1.25375,-0.2675 1.7275,-0.8075 0.475,-0.5375 0.71125,-1.305 0.71125,-2.30125 0,-0.9625 -0.2325,-1.7025 -0.6975,-2.215 -0.46625,-0.515 -1.0525,-0.77125 -1.76375,-0.77125 -0.65125,0 -1.21375,0.2675 -1.69125,0.81125 l 0,-2.89875 -1.5425,0 0,8.05125 1.4325,0 z m 0.46625,-4.3525 c 0.245,-0.2875 0.5525,-0.4325 0.9225,-0.4325 0.3775,0 0.6875,0.14875 0.92875,0.44125 0.2425,0.29625 0.36375,0.77625 0.36375,1.44375 0,0.6275 -0.12,1.08625 -0.36125,1.375 -0.23875,0.2925 -0.52875,0.4375 -0.87,0.4375 -0.4425,0 -0.79875,-0.20625 -1.065,-0.61375 -0.19125,-0.29125 -0.28625,-0.7375 -0.28625,-1.34375 0,-0.5825 0.12375,-1.02 0.3675,-1.3075 z" />
-    <text
-       style="font-size:15px"
-       id="text328"
-       x="171.95222"
-       y="399.13193">
-      <tspan
-         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#c01e24;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="171.95222"
-         y="399.13193"
-         id="tspan330">K</tspan>
-    </text>
-    <text
-       style="font-size:15px"
-       id="text332"
-       x="182.78473"
-       y="391.63193">
-      <tspan
-         style="font-size:11.25px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#c01e24;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="182.78473"
-         y="391.63193"
-         id="tspan334">b</tspan>
-    </text>
-    <path
-       inkscape:connector-curvature="0"
-       id="path338"
-       style="fill:none;stroke:#c01e24;stroke-width:0.0775;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
-       d="m 184.95947,391.63194 0,-0.8575 c 0.235,0.32625 0.51375,0.57125 0.8375,0.73875 0.32625,0.1675 0.6525,0.25 0.98625,0.25 0.6775,0 1.25375,-0.2675 1.7275,-0.8075 0.47625,-0.5375 0.7125,-1.305 0.7125,-2.30125 0,-0.9625 -0.23375,-1.7025 -0.69875,-2.215 -0.46625,-0.515 -1.05125,-0.77125 -1.76375,-0.77125 -0.65125,0 -1.21375,0.2675 -1.69125,0.81125 l 0,-2.89875 -1.5425,0 0,8.05125 1.4325,0 z m 0.46625,-4.3525 c 0.245,-0.2875 0.5525,-0.4325 0.9225,-0.4325 0.3775,0 0.6875,0.14875 0.92875,0.44125 0.2425,0.29625 0.36375,0.77625 0.36375,1.44375 0,0.6275 -0.12,1.08625 -0.36125,1.375 -0.23875,0.2925 -0.52875,0.4375 -0.86875,0.4375 -0.4425,0 -0.8,-0.20625 -1.06625,-0.61375 -0.19,-0.29125 -0.28625,-0.7375 -0.28625,-1.34375 0,-0.5825 0.12375,-1.02 0.3675,-1.3075 z" />
-    <text
-       style="font-size:15px"
-       id="text340"
-       x="189.6561"
-       y="399.13193">
-      <tspan
-         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#c01e24;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="189.6561 194.65111 198.82111"
-         y="399.13193"
-         sodipodi:role="line"
-         id="tspan342">-/-</tspan>
-    </text>
-    <path
-       d="m 194.54085,394.20981 -4.0425,0 0,2.0575 4.0425,0 0,-2.0575 z"
-       style="fill:none;stroke:#c01e24;stroke-width:0.0775;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
-       id="path344"
-       inkscape:connector-curvature="0" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path348"
-       style="fill:none;stroke:#c01e24;stroke-width:0.0775;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
-       d="m 196.14597,399.31494 2.68625,-11.10375 -1.54375,0 -2.65875,11.10375 1.51625,0 z" />
-    <path
-       d="m 203.70335,394.20981 -4.0425,0 0,2.0575 4.0425,0 0,-2.0575 z"
-       style="fill:none;stroke:#c01e24;stroke-width:0.0775;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:10;stroke-opacity:1;stroke-dasharray:none"
-       id="path350"
-       inkscape:connector-curvature="0" />
     <text
        style="font-size:15px"
        id="text352"
@@ -1088,5 +1002,17 @@
          x="-484.98401"
          y="94.708252"
          style="font-size:16px;font-weight:bold;-inkscape-font-specification:Arial Bold">(Δ gain)</tspan></text>
+    <text
+       style="font-size:15px;fill:#c01e24"
+       id="text308-1"
+       x="152.64417"
+       y="396.31595">
+      <tspan
+         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#c01e24;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
+         sodipodi:role="line"
+         id="tspan310-7"
+         x="152.64417"
+         y="396.31595">KO</tspan>
+    </text>
   </g>
 </svg>

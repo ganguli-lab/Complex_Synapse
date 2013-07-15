@@ -1,4 +1,4 @@
-MakeVORfigs('multistate_med',0.3,0.4,-0.17,5,20,'print')
+MakeVORfigs('multistate_med',0.3,0.4,-0.3,5,20,'print')
 MakeVORfigs('multistate_strong',0.3,0.4,-0.45,5,30,'print')
 MakeVORfigs('multistate_weak',0.3,0.4,-0.1,5,20,'print')
 MakeVORfigs('binary',0.1,0.2,-0.1,5,5,'print')

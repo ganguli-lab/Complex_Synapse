@@ -82,11 +82,12 @@ Stanford University, Applied Physics
 
 \begin{frame}{Introduction}
 %
- One might expect enhanced plasticity to enhance learning.
+ Expect enhanced plasticity \lto\ enhance learning.\\
  \note[item]{It does help in some cases}
- But often it actually causes impairment.
+ But often: \lto\ impairment.
 
- \vp We argue that this impaired learning is due to basal activity biasing the synapses prior to learning, leaving fewer synapses available for further plasticity.
+ \vp Claim: due to basal activity \lto\ biased synaptic population \\
+ \lto\ fewer synapses available for learning.
 
  \vp By analysing several models of complex synapses, we see that the behaviour of enhanced LTD mice in a motor learning task can constrain the synaptic structure.
 %
@@ -118,7 +119,6 @@ Stanford University, Applied Physics
  \vp Needs to be adjusted as eye muscles age, \etc
  }
 
- \citerr{duLac1995review,Boyden2004review}
 %
 \end{frame}
 
@@ -138,18 +138,22 @@ Stanford University, Applied Physics
  \parbox[t]{0.59\linewidth}{%
    \aligntop{\includegraphics[width=0.99\linewidth]{VORcircuit.svg}}
 
-   \vp PF-Pk: \parbox[t]{0.5\linewidth}{PF+CF \lto\ LTD, \\
-              PF+\cancel{CF} \lto\ LTP.}
+   \vp \begin{tabular}{ll}
+   Gain increase: & LTD in PF-Pk synapses.\\
+   Gain decrease: & different mechanism,\\
+    & also reverses LTD in PF-Pk.
+   \end{tabular}
  }
    \note[item]{Gain change involves cerebellum}
    \note[item]{Marr-Albus-Ito: Pf-Pk synapses}
    \note[item]{Lisberger-Miles: Vestibular input-VN synapses}
    \note[item]{Different mechs for different freq, head angle, gain up/down.}
    \note[item]{Different Pk cells have different tunings.}
-   \note[item]{Gain up in case of interest: LTD in Pf-Pk in flocculus}
-   \note[item]{Gain down: uses different mech for behaviour, but does reverse LTD in Pf-Pk in flocculus}
+%   \note[item]{Gain up in case of interest: LTD in Pf-Pk in flocculus}
+%   \note[item]{Gain down: uses different mech for behaviour, but does reverse LTD in Pf-Pk in flocculus}
+   \note[item]{PF-Pk:PF+CF \lto\ LTD, PF+\cancel{CF} \lto\ LTP.}
 
-   \citerr{Marr1969cerebellum,Albus1971cerebellum,ito1972cerebellum,Ito1982VOR,Miles1981VOR}
+ \citerr{duLac1995review,Boyden2004review}
 %
 \end{frame}
 
@@ -173,9 +177,9 @@ Stanford University, Applied Physics
    \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}
  \end{tabular}
  \end{center}
- \note[item]{No difference at baseline}
+ \note[item]{No difference in baseline occulomotor performance}
  \note[item]{Impairment of learning}
- \note[item]{Lookng at change of VOR gain during gain-up training}
+ \note[item]{Looking at change of VOR gain during gain-up training}
 %
 \end{frame}
 
@@ -303,11 +307,11 @@ Stanford University, Applied Physics
  \note[item]{Pay attention to solid: black above red}
  \note[item]{Pay attention to black: solid above dashed}
  \note[item]{Concentrate on initial slope}
- 
+
  Questions:
 %
  \begin{itemize}
-   \item Can the saturation effect overcome the enhanced plasticity?
+   \item Can the saturation effect overcome faster depression?
    \note[item]{in competition}
    \item How can a little reverse bias help, but too much hurt?
    \note[item]{first makes sense, but second?}
@@ -368,19 +372,20 @@ Stanford University, Applied Physics
   \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
   %
   \note[item]{stochastic transitions}
-  
-  \vp Simplifying assumptions:  
+
+  \vp Simplifying assumptions:
 \begin{itemize}
-  \item No spatial/temporal correlations in plasticity events.
+  \item No spatial/temporal patterns in plasticity events.
       %
       \note[item]{allows us to concentrate on synapse, not neuron/network}
       %
-  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
-      %
-      \note[item]{don't care if STDP...}
-      %
-  \item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
-      %
+  \item \rule{0mm}{0mm}\cancel{Synaptic identity} \lto\ synaptic distribution.
+%  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
+%      %
+%      \note[item]{don't care if STDP...}
+%      %
+%  \item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
+%      %
   \vp\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
 \end{itemize}
 %
@@ -428,7 +433,8 @@ Stanford University, Applied Physics
 %  There are $N$ identical synapses with $M$ internal functional states.
   %
   \begin{center}
-    \includegraphics[width=0.7\linewidth]{model.svg}
+    \only<1>{\includegraphics[width=0.9\linewidth]{synapse_model_1.svg}}
+    \only<2>{\includegraphics[width=0.9\linewidth]{synapse_model_2.svg}}
   \end{center}
   %
   \note[item]{stoch process has steady state.}
@@ -437,7 +443,11 @@ Stanford University, Applied Physics
   \note[item]{fraction pot/dep}
   \note[item]{probs changed by Markov matrices, prob $i\to j$}
   \note[item]{Readout: synaptic weight vec when in each state.}
-  \vp
+    \note<2>[item]{Mutation: lower threshold \lto\ increase transition probs}
+    \note<2>[item]{Training: Changes statistics of LTP/LTD. Only parameters we have. Don't care about $r$.}
+    \note<2>[item]{Learning: Only output we have. Don't keep track of synaptic identity.}
+    \note<2>[item]{Same PF+CF input \lto\ same $r,f\pot,f\dep$ in each case.}
+    \note<2>[item]{Input to Pk, some linear combination of $\w$'s. }
 % At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
 % \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
 %
@@ -510,45 +520,45 @@ Stanford University, Applied Physics
 %%
 %\end{frame}
 %
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Binary synapse}
+%%-------------Slide--------------------------------------------------------
 %
- %
-\adjustbox{valign=m}{\parbox[t]{0.4\linewidth}{
-  \begin{raggedleft}
-  Learning rate: \phantom{rate of events} \\
-  \hp\hp\parbox{0.75\linewidth}{%
-  $\sim$ rate of events\\
-  $\times$ prob.\ of transition\\
-  $\times$ prob.\ ready for $\Delta w$\\
-  $\times$ (-$\Delta w$)}
-  \end{raggedleft}
-}}
-% \begin{center}
-\alignmid{\parbox[t]{0.5\linewidth}{
- \begin{tabular}{ccc}
-   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_wt_wo.svg}}
-   & \alignmid{\includegraphics[height=0.12\linewidth]{left_bad.svg}} &
-   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_ko_wo.svg}}
-   \\[1.5cm] \alignmid{\includegraphics[height=0.12\linewidth]{up_bad.svg}}
-   && \alignmid{\includegraphics[height=0.12\linewidth]{up_good.svg}}\\[0.5cm]
-   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_wt_w.svg}}
-   & \alignmid{\includegraphics[height=0.12\linewidth]{left_good.svg}} &
-   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_ko_w.svg}}
- \end{tabular}
-}}
-% \end{center}
- %
- \note[item]{WT: start with everything equal -- just for illustration, not essential}
- \note[item]{WT: during training, increase $f\dep$ (green arrow) $\to$ weakening.}
- \note[item]{KO: inc $q\pot\to$ bias}
- \note[item]{KO: competition between inc prob trans \& dec prob ready}
- \note[item]{KO: first one wins. see why after next model}
- \note[item]{pre: reduces/reverses bias. always helps.}
+%\begin{frame}{Binary synapse}
+%%
+% %
+%\adjustbox{valign=m}{\parbox[t]{0.4\linewidth}{
+%  \begin{raggedleft}
+%  Learning rate: \phantom{rate of events} \\
+%  \hp\hp\parbox{0.75\linewidth}{%
+%  $\sim$ rate of events\\
+%  $\times$ prob.\ of transition\\
+%  $\times$ prob.\ ready for $\Delta w$\\
+%  $\times$ (-$\Delta w$)}
+%  \end{raggedleft}
+%}}
+%% \begin{center}
+%\alignmid{\parbox[t]{0.5\linewidth}{
+% \begin{tabular}{ccc}
+%   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_wt_wo.svg}}
+%   & \alignmid{\includegraphics[height=0.12\linewidth]{left_bad.svg}} &
+%   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_ko_wo.svg}}
+%   \\[1.5cm] \alignmid{\includegraphics[height=0.12\linewidth]{up_bad.svg}}
+%   && \alignmid{\includegraphics[height=0.12\linewidth]{up_good.svg}}\\[0.5cm]
+%   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_wt_w.svg}}
+%   & \alignmid{\includegraphics[height=0.12\linewidth]{left_good.svg}} &
+%   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_ko_w.svg}}
+% \end{tabular}
+%}}
+%% \end{center}
+% %
+% \note[item]{WT: start with everything equal -- just for illustration, not essential}
+% \note[item]{WT: during training, increase $f\dep$ (green arrow) $\to$ weakening.}
+% \note[item]{KO: inc $q\pot\to$ bias}
+% \note[item]{KO: competition between inc prob trans \& dec prob ready}
+% \note[item]{KO: first one wins. see why after next model}
+% \note[item]{pre: reduces/reverses bias. always helps.}
+%%
+%\end{frame}
 %
-\end{frame}
-
 %%-------------Slide--------------------------------------------------------
 %
 %\begin{frame}{Serial synapse}
@@ -569,36 +579,35 @@ Stanford University, Applied Physics
 %%
 %\end{frame}
 %
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Serial synapse}
+%%-------------Slide--------------------------------------------------------
 %
-   \citerr{Leibold2008serial} \\
- %
- \begin{center}
- \begin{tabular}{ccc}
-   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_wt_wo.svg}}
-   & \alignmid{\includegraphics[height=0.05\linewidth]{right_good.svg}} &
-   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_ko_wo.svg}}
-   \\[1.5cm] \alignmid{\includegraphics[height=0.05\linewidth]{down_good.svg}}
-   && \alignmid{\includegraphics[height=0.05\linewidth]{up_good.svg}}\\[0.5cm]
-   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_wt_w.svg}}
-   & \alignmid{\includegraphics[height=0.05\linewidth]{left_good.svg}} &
-   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_ko_w.svg}}
- \end{tabular}
- \end{center}
- %
- \note[item]{Now only get signal from crossing boundary}
- \note[item]{KO: inc $q\pot\to$ bias, now exponential}
- \note[item]{KO: prob ready wins over prob trans, now exponential}
- \note[item]{pre: reduces/reverses bias.}
- \note[item]{pre: little reverse bias repopulates bndry, helps.}
- \note[item]{pre: too much reverse bias moves away from bndry, hurts.}
- \note[item]{maths next slide}
+%\begin{frame}{Serial synapse}
+%%
+%   \citerr{Leibold2008serial} \\
+% %
+% \begin{center}
+% \begin{tabular}{ccc}
+%   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_wt_wo.svg}}
+%   & \alignmid{\includegraphics[height=0.05\linewidth]{right_good.svg}} &
+%   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_ko_wo.svg}}
+%   \\[1.5cm] \alignmid{\includegraphics[height=0.05\linewidth]{down_good.svg}}
+%   && \alignmid{\includegraphics[height=0.05\linewidth]{up_good.svg}}\\[0.5cm]
+%   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_wt_w.svg}}
+%   & \alignmid{\includegraphics[height=0.05\linewidth]{left_good.svg}} &
+%   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_ko_w.svg}}
+% \end{tabular}
+% \end{center}
+% %
+% \note[item]{Now only get signal from crossing boundary}
+% \note[item]{KO: inc $q\pot\to$ bias, now exponential}
+% \note[item]{KO: prob ready wins over prob trans, now exponential}
+% \note[item]{pre: reduces/reverses bias.}
+% \note[item]{pre: little reverse bias repopulates bndry, helps.}
+% \note[item]{pre: too much reverse bias moves away from bndry, hurts.}
+% \note[item]{maths next slide}
+%%
+%\end{frame}
 %
-\end{frame}
-
-
 %%-------------Slide--------------------------------------------------------
 %
 %\begin{frame}{Mathematical explanation}
@@ -623,6 +632,48 @@ Stanford University, Applied Physics
 %
 %-------------Slide--------------------------------------------------------
 
+\begin{frame}{Model results}
+%
+ \begin{center}
+ \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+   Binary model & Serial Model \\[0.5cm]
+   \alignmid{\includegraphics[height=0.07\linewidth]{binary.svg}} &
+   \alignmid{\includegraphics[height=0.07\linewidth]{serial.svg}}\\[1cm]
+   \aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}} &
+   \aligntop{\includegraphics[height=0.35\linewidth]{serial_learnS.svg}}
+ \end{tabular}
+ \end{center}
+ \note[item]{Binary fails}
+ \note[item]{KO: faster depression wins over bias}
+ \note[item]{pre: reduces/reverses bias. always helps.}
+ \note[item]{Serial: still only two weights. Works.}
+ \note[item]{Understand by looking at distributions before training}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Initial distributions}
+%
+ %
+ \begin{center}
+   \alignmid{\includegraphics[height=0.3\linewidth]{binary_bar_ko_wo_s.svg}} \hspace{0.1\linewidth}
+   \only<1>{\alignmid{\includegraphics[height=0.3\linewidth]{serial_bar_ko_wo_s.svg}}}
+   \only<2>{\alignmid{\includegraphics[height=0.3\linewidth]{serial_bar_ko_w_s.svg}}}
+   \only<3>{\alignmid{\includegraphics[height=0.3\linewidth]{serial_bar_wt_w_s.svg}}}
+ \end{center}
+ \note[item]{Binary: enhanced plasticity \lto\ bias}
+ \note[item]{Not enough to overcome faster depression}
+ \note[item]{Serial: Only get signal from boundary}
+ \note[item]{Exponential decay depopulates boundary, enhances effect of bias}
+ \note<2->[item]{Pretraining: little repopulates boundary}
+ \note<3>[item]{Too much pushes to other side, depopulates boundary}
+ %
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
 \begin{frame}{Essential features}
 %
  %
@@ -638,13 +689,13 @@ Stanford University, Applied Physics
    \note[item]{push away from boundary where signal generated}
  \end{itemize}
  \note[item]{borne out by other models that fail/succeed}
- 
- \vp 
+
+ \visible<2>{
  \begin{center}
  \parbox[t]{0.3\linewidth}{\centering
     Fail:\\
     \vp\aligntop{\includegraphics[width=0.9\linewidth]{multistate_s.svg}}\\
-    \vp\aligntop{\includegraphics[width=0.9\linewidth]{pooled_s.svg}} 
+    \vp\aligntop{\includegraphics[width=0.9\linewidth]{pooled_s.svg}}
  }
  \hp
  \parbox[t]{0.3\linewidth}{\centering
@@ -653,6 +704,7 @@ Stanford University, Applied Physics
     \vp\aligntop{\includegraphics[width=0.9\linewidth]{cascade_s.svg}}
  }
  \end{center}
+ \citerr{amit1994learning,Fusi2005cascade}}
 %
 \end{frame}
 
@@ -708,7 +760,7 @@ Stanford University, Applied Physics
 \begin{frame}{Conclusions and further questions}
 %
  \begin{itemize}
-   \item The saturation effect overcome the enhanced plasticity, if it is enhanced.
+   \item The saturation effect can overcome faster depression, if it is enhanced.
    \alert{Requires complexity}
    \note[item]{\eg exponential deacy, resource depletion,\ldots}
    \item A little reverse bias can help, but too much hurts, if repeated potentiation makes depression harder.
@@ -730,9 +782,9 @@ Stanford University, Applied Physics
    \textbf{Surya Ganguli} & \textbf{Jennifer Raymond} & \textbf{Carla Shatz} \\
    Madhu Advani & Barbara Nguyen-Vu & Han-Mi Lee \\
    Pairan Gao & Grace Zhao & \\
-   Niru Maheswaranathan
+   Niru Maheswaranathan & Aparna Suvrathan
  \end{tabular}
- 
+
  \vp\textbf{Funding}: Swartz Founsation, Stanford Bio-X Genetech fellowship.
 %
 \end{frame}

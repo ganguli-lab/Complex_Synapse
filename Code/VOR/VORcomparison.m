@@ -15,7 +15,7 @@ FontSize=20;
 EqFontSize=20;
 txFontSize=20;
 Pooled=false;
-mutant='D^bK^b-/-';
+mutant='KO';
 red=[192 0 0]/255;
 varargin=assignApplicable(varargin);
 
@@ -84,7 +84,7 @@ else
     annotation('doublearrow',x,y);
     pos=dsxy2figxy([0.6*tchange+0.4*xl(2) (0.95*yl(1)+0.05*yl(2)) 0.2*(xl(2)-tchange) 0.05*(yl(2)-yl(1))]);
     annotation('textbox',pos,'String','training','VerticalAlignment','bottom','LineStyle','none','HorizontalAlignment','center','FontSize',txFontSize);
-    legend([phWT(1);phKn(1)],{'WT';'D^bK^b-/-'},'Location','Best')
+    legend([phWT(1);phKn(1)],{'WT'; mutant},'Location','Best')
     drawnow;
     
     if isscalar(fig3)
