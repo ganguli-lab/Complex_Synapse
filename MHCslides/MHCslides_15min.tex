@@ -145,13 +145,13 @@ Stanford University, Applied Physics
    \end{tabular}
  }
    \note[item]{Gain change involves cerebellum}
-   \note[item]{Marr-Albus-Ito: Pf-Pk synapses}
-   \note[item]{Lisberger-Miles: Vestibular input-VN synapses}
+%   \note[item]{Marr-Albus-Ito: Pf-Pk synapses}
+%   \note[item]{Lisberger-Miles: Vestibular input-VN synapses}
    \note[item]{Different mechs for different freq, head angle, gain up/down.}
-   \note[item]{Different Pk cells have different tunings.}
+%   \note[item]{Different Pk cells have different tunings.}
 %   \note[item]{Gain up in case of interest: LTD in Pf-Pk in flocculus}
 %   \note[item]{Gain down: uses different mech for behaviour, but does reverse LTD in Pf-Pk in flocculus}
-   \note[item]{PF-Pk:PF+CF \lto\ LTD, PF+\cancel{CF} \lto\ LTP.}
+%   \note[item]{PF-Pk:PF+CF \lto\ LTD, PF+\cancel{CF} \lto\ LTP.}
 
  \citerr{duLac1995review,Boyden2004review}
 %
@@ -163,7 +163,7 @@ Stanford University, Applied Physics
 %
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{MHC-I D$^\mathrm{b}$K$^\mathrm{b} -/-$ knockout}
+\begin{frame}{MHC-I \texorpdfstring{D$^\mathrm{b}$K$^\mathrm{b} -/-$}{DbKb -/-} knockout}
 %
  \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
  Knockout of molecules lowers threshold for LTD in PF-Pk synapses.\\
@@ -300,23 +300,22 @@ Stanford University, Applied Physics
  \note[item]{Black: WT. Red: KO}
  \note[item]{Solid: no pre. Dashed: with pre}
  \note[item]{Horz and vert comparisons: conceptual}
- \note[item]{Diagonal comparisons: paramter fitting. Depend on size of KO vs.\ pretraining}
  \note[item]{KO hurts w/o, but helps w/}
  \note[item]{pre helps KO but hurts WT}
- \note[item]{top and left most restrictive}
- \note[item]{Pay attention to solid: black above red}
- \note[item]{Pay attention to black: solid above dashed}
- \note[item]{Concentrate on initial slope}
+ \note[item]{Diagonal comparisons: parameter fitting. Depend on size of KO vs.\ pretraining}
+% \note[item]{top and left most restrictive}
+% \note[item]{Pay attention to solid: black above red}
+% \note[item]{Pay attention to black: solid above dashed}
+% \note[item]{Concentrate on initial slope}
 
  Questions:
 %
  \begin{itemize}
    \item Can the saturation effect overcome faster depression?
-   \note[item]{in competition}
+%   \note[item]{in competition}
    \item How can a little reverse bias help, but too much hurt?
-   \note[item]{first makes sense, but second?}
+%   \note[item]{first makes sense, but second?}
 %   \item Can we find a purely synaptic explanation of these results?
-   \note[item]{This is a question about synaptic populations after all.}
  \end{itemize}
 %
 %
@@ -378,6 +377,7 @@ Stanford University, Applied Physics
   \item No spatial/temporal patterns in plasticity events.
       %
       \note[item]{allows us to concentrate on synapse, not neuron/network}
+   \note[item]{This is a question about synaptic populations after all.}
       %
   \item \rule{0mm}{0mm}\cancel{Synaptic identity} \lto\ synaptic distribution.
 %  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
@@ -648,6 +648,7 @@ Stanford University, Applied Physics
  \note[item]{pre: reduces/reverses bias. always helps.}
  \note[item]{Serial: still only two weights. Works.}
  \note[item]{Understand by looking at distributions before training}
+ \citerr{Leibold2008serial}
 %
 \end{frame}
 
@@ -688,7 +689,7 @@ Stanford University, Applied Physics
    \item Metaplasticity -- repeated potentiation makes subsequent depression harder.
    \note[item]{push away from boundary where signal generated}
  \end{itemize}
- \note[item]{borne out by other models that fail/succeed}
+ \note<2>[item]{borne out by other models that fail/succeed}
 
  \visible<2>{
  \begin{center}
@@ -760,16 +761,17 @@ Stanford University, Applied Physics
 \begin{frame}{Conclusions and further questions}
 %
  \begin{itemize}
-   \item The saturation effect can overcome faster depression, if it is enhanced.
-   \alert{Requires complexity}
-   \note[item]{\eg exponential deacy, resource depletion,\ldots}
-   \item A little reverse bias can help, but too much hurts, if repeated potentiation makes depression harder.
-   \alert{Requires metaplasticity}
-   \note[item]{\eg moving away from weight boundary, or weaker transitions.}
-   \item We can find a purely synaptic explanation of VOR behaviour, iff the synapses have these features.
+%   \item The saturation effect can overcome faster depression, if it is enhanced.
+%   \alert{Requires complexity}
+%   \note[item]{\eg exponential deacy, resource depletion,\ldots}
+%   \item A little reverse bias can help, but too much hurts, if repeated potentiation makes depression harder.
+%   \alert{Requires metaplasticity}
+%   \note[item]{\eg moving away from weight boundary, or weaker transitions.}
+   \item We can find a purely synaptic explanation of impaired learning,\\
+    iff the synapses have two features.
    \note[item]{Other explanations? Non-linearity in PK cell?}
-   \item We used behaviour to constrain molecular structure of synapses!
-   \item Can we constrain it further with more experiments?
+   \vp \item We used behaviour to constrain molecular structure of synapses!
+   \vp \item Can we constrain it further with more experiments?
  \end{itemize}
 %
 \end{frame}
