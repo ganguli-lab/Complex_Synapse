@@ -82,19 +82,33 @@ Stanford University, Applied Physics
 
 \begin{frame}{Introduction}
 %
+\parbox[t]{0.69\linewidth}{%
  Learning requires synaptic plasticity.\\
- Expect enhanced plasticity \lto\ enhance learning.\\
+ Expect enhanced plasticity \lto\ enhance learning.
+}
+\parbox[t]{0.29\linewidth}{%
+ \hfill\onslide<3->{\alignmid{\includegraphics[width=0.4\linewidth]{the_brain_by_lonewolf16.jpg}}}
+}
+ \\
  \citerr{Tang1999enhancedLearning,Malleret2001enhancedLearning,Guan2009enhancedLearning}\\
  \note[item]{It does help in some cases}
- \onslide<2->But often: \lto\ impairment.\\
+\parbox[t]{0.69\linewidth}{%
+ \onslide<2->But often: \lto\ impairment.
+}
+\parbox[t]{0.29\linewidth}{%
+ \hfill\onslide<3->{\alignmid{\includegraphics[width=0.4\linewidth]{pinky_by_lonewolf16.jpg}}}
+}
+ \\
  \citerr{Migaud1998impairedLearning,Uetani2000impairedLearning,Hayashi2004impairedConsolidation}\\
  \citerr{Cox2003impairedLearning,Rutten2008impairedLearning,Koekkoek2005impairedConditioning}
  \note[item]{Want to understand when and why}
 
- \onslide<3->\vp Mice with enhanced cerebellar plasticity can show both impaired and enhanced learning.
+ \onslide<4->\vp Mice with enhanced cerebellar plasticity can show both impaired and enhanced learning.
+ \note[item]{Depends on circumstance. Rich pattern of behaviour}
 
- \vp Analysis of models of complex synapses:\\ 
-Find necessary and sufficient conditions to reproduce behaviour.
+ \vp Analysis of models of complex synapses:\\
+ Find necessary and sufficient conditions to reproduce behaviour.
+ \note[item]{Develop understanding of when and why learning is enhanced/impaired}
 %
 \end{frame}
 
@@ -104,9 +118,9 @@ Find necessary and sufficient conditions to reproduce behaviour.
 %
  %\tableofcontents[hideallsubsections]
  \begin{itemize}
-   \item Overview of motor learning of mice with enhanced plasticity
-   
-   \vp\item Modelling with complex synapses
+   \item Cerebellar learning of mice with enhanced plasticity
+
+   \vp\item Complex synaptic models
  \end{itemize}
  %
 %
@@ -141,7 +155,7 @@ Find necessary and sufficient conditions to reproduce behaviour.
    \aligntop{\includegraphics[width=0.99\linewidth]{VORinc.svg}}
      \note[item]{trick brain into thinking VOR gain needs adjusting my moving visual stimulus}
      \note[item]{anti-phase \lto\ increase gain}
-   
+
    \vp\aligntop{\includegraphics[width=0.99\linewidth]{VORdec.svg}}
      \note[item]{in phase \lto\ decrease gain}
    }
@@ -186,7 +200,7 @@ Find necessary and sufficient conditions to reproduce behaviour.
 
  \begin{center}
 % \begin{tabular}{ccc}
-%   Baseline & \hspace{0.1\linewidth} & 
+%   Baseline & \hspace{0.1\linewidth} &
 %   Gain increase \\[0.5cm]
 %   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} &&
    \alignmid{\includegraphics[width=0.2\linewidth]{VORinc.svg}}
@@ -329,8 +343,10 @@ Find necessary and sufficient conditions to reproduce behaviour.
  \note[item]{Black: WT. Red: Enh.Plas}
  \note[item]{Solid: no pre. Dashed: with pre}
 % \note[item]{Horz and vert comparisons: conceptual}
- \note[item]<2->{Enh.Plas. hurts w/o, but helps w/}
- \note[item]<4->{pre helps Enh.Plas. but hurts WT}
+ \note[item]<2->{Enh.Plas. hurts w/o. Competition?}
+ \note[item]<3->{Enh.Plas. helps w/. Expected}
+ \note[item]<4->{now we can compare w/o,w/ rev}
+ \note[item]<4->{rev helps Enh.Plas. but hurts WT}
 % \note[item]{Diagonal comparisons: parameter fitting. Depend on size of KO vs.\ pretraining}
 % \note[item]{top and left most restrictive}
 % \note[item]{Pay attention to solid: black above red}
@@ -411,19 +427,21 @@ Find necessary and sufficient conditions to reproduce behaviour.
   \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
  \end{center}
   %
-  \note[item]{Not just synaptic weight}
+  \note[item]{Not just synaptic weight, internal dynamical system}
+  \note[item]{Important for memory: simple synapses -- terrible storage, rescued by complexity}
   \note[item]{Multiple functional states w/ different weights}
   \note[item]{Stochastic transitions between states}
-  \note[item]{Important for memory: simple synapses -- terrible storage, rescued by complexity}
 
   \vp Simplifying assumptions:
 \begin{itemize}
   \item No spatial/temporal patterns in plasticity events.
       %
-      \note[item]{allows us to concentrate on synapse, not neuron/network}
-   \note[item]{This is a question about synaptic populations after all.}
+      \note[item]{pot/dep occur randomly}
       %
   \item \rule{0mm}{0mm}\cancel{Synaptic identity} \lto\ synaptic distribution.
+      %
+      \note[item]{allows us to concentrate on synapse, not neuron/network}
+      \note[item]{This is a question about synaptic populations after all.}
 %  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
 %      %
 %      \note[item]{don't care if STDP...}
@@ -705,7 +723,7 @@ Find necessary and sufficient conditions to reproduce behaviour.
    {\includegraphics[height=0.3\linewidth]{binary_bar_ko_wo_s.svg}}&
    {\includegraphics[height=0.3\linewidth]{serial_bar_ko_wo_s.svg}}\\[1cm]
    Intrinsic plasticity  &
-   depletion dominates \\
+   Depletion dominates \\
    dominates depletion &
    intrinsic plasticity
  \end{tabular}
@@ -727,9 +745,9 @@ Find necessary and sufficient conditions to reproduce behaviour.
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
    {\includegraphics[height=0.2\linewidth]{serial_bar_wt_w_s.svg}}&
    {\includegraphics[height=0.2\linewidth]{serial_bar_ko_w_s.svg}}\\[1cm]
-   reverse-training & 
+   reverse-training &
    reverse-training \\
-   depopulates boundary & 
+   depopulates boundary &
    repopulates boundary
  \end{tabular}
  \end{center}
@@ -759,17 +777,14 @@ Find necessary and sufficient conditions to reproduce behaviour.
 
  %\visible<2>{
  \begin{center}
- \parbox[t]{0.3\linewidth}{\centering
-    Fail:\\
-    \vp\aligntop{\includegraphics[width=0.9\linewidth]{multistate_s.svg}}\\
-    \vp\aligntop{\includegraphics[width=0.9\linewidth]{pooled_s.svg}}
- }
- \hp
- \parbox[t]{0.3\linewidth}{\centering
-    Succeed:\\
-    \vp\aligntop{\includegraphics[width=0.9\linewidth]{multistate_nonuni_s.svg}}\\
-    \vp\aligntop{\includegraphics[width=0.9\linewidth]{cascade_s.svg}}
- }
+ \begin{tabular}{c@{\hp}c}
+    Fail:&
+    Succeed:\\[0.3cm]
+    \aligntop{\includegraphics[width=0.3\linewidth]{pooled_s.svg}}&
+    \aligntop{\includegraphics[width=0.3\linewidth]{cascade_s.svg}}\\[1.5cm]
+    \aligntop{\includegraphics[width=0.3\linewidth]{multistate_s.svg}}&
+    \aligntop{\includegraphics[width=0.3\linewidth]{multistate_nonuni_s.svg}}
+ \end{tabular}
  \end{center}
  \citerr{amit1994learning,Fusi2005cascade}
  %}

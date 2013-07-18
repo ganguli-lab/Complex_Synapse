@@ -223,20 +223,24 @@
        inkscape:connector-curvature="0" />
     <g
        transform="matrix(1.25,0,0,-1.25,143.55064,1075.6723)"
-       id="g534">
+       id="g534"
+       style="stroke:#800000">
       <g
          id="g536"
-         clip-path="url(#clipPath538)">
+         clip-path="url(#clipPath538)"
+         style="stroke:#800000">
         <g
            id="g542"
-           clip-path="url(#clipPath544)">
+           clip-path="url(#clipPath544)"
+           style="stroke:#800000">
           <g
              id="g548"
-             transform="translate(190.3711,410.5811)">
+             transform="translate(190.3711,410.5811)"
+             style="stroke:#800000">
             <path
                inkscape:connector-curvature="0"
                d="m 0,0 c -3.43,-1.934 -7.76,-0.729 -9.674,2.69 -1.913,3.42 -0.683,7.759 2.745,9.692 3.43,1.934 7.762,0.729 9.675,-2.691 C 4.659,6.272 3.43,1.933 0,0 z"
-               style="fill:none;stroke:#231f20;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+               style="fill:none;stroke:#800000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
                id="path550" />
           </g>
         </g>
@@ -244,7 +248,7 @@
     </g>
     <path
        d="m 381.81414,551.75266 3.73,1.42 3.6125,-1.6975 -3.3425,8.84126 -4,-8.56376 z"
-       style="fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       style="fill:#800000;fill-opacity:1;fill-rule:nonzero;stroke:none"
        id="path560"
        inkscape:connector-curvature="0" />
   </g>
