@@ -974,12 +974,12 @@
          id="tspan2995-2"
          x="257.78738"
          y="338.74716"
-         style="font-size:14px">KO</tspan><tspan
+         style="font-size:14px">Enh.Plas.</tspan><tspan
          sodipodi:role="line"
          x="257.78738"
-         y="363.74716"
+         y="356.24716"
          id="tspan2997-4"
-         style="font-size:14px">w/o pre-training</tspan></text>
+         style="font-size:14px">w/o rev-training</tspan></text>
     <rect
        style="fill:none;stroke:#c0504d;stroke-width:1.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect3113"
@@ -988,5 +988,15 @@
        x="102.36394"
        y="-0.8692081"
        transform="translate(84.00428,321.24385)" />
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#008000;stroke-width:1.5;stroke-miterlimit:4;stroke-dasharray:4.5, 4.5;stroke-dashoffset:0"
+       id="path3119"
+       sodipodi:cx="157.43102"
+       sodipodi:cy="88.661369"
+       sodipodi:rx="25.675444"
+       sodipodi:ry="12.837722"
+       d="m 183.10646,88.661369 c 0,7.090078 -11.49529,12.837721 -25.67544,12.837721 -14.18016,0 -25.67545,-5.747643 -25.67545,-12.837721 0,-7.090078 11.49529,-12.837722 25.67545,-12.837722 14.18015,0 25.67544,5.747644 25.67544,12.837722 z"
+       transform="translate(99.488116,317.62464)" />
   </g>
 </svg>

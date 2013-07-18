@@ -14,7 +14,7 @@
    id="svg5961"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="New document 8">
+   sodipodi:docname="desat.svg">
   <defs
      id="defs5963" />
   <sodipodi:namedview
@@ -25,7 +25,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.0765208"
-     inkscape:cx="273.05288"
+     inkscape:cx="242.07915"
      inkscape:cy="58.386829"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -38,7 +38,11 @@
      inkscape:window-height="1522"
      inkscape:window-x="1280"
      inkscape:window-y="0"
-     inkscape:window-maximized="0" />
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3051" />
+  </sodipodi:namedview>
   <metadata
      id="metadata5966">
     <rdf:RDF>
@@ -47,7 +51,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -58,27 +62,15 @@
      transform="translate(-304.08997,-239.68964)">
     <text
        style="font-size:15px"
-       id="text30"
-       x="492.92401"
-       y="353.1918">
-      <tspan
-         style="font-size:15px;font-style:italic;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldItalicMT"
-         x="492.92401 502.92902 508.76401 517.104 522.099 527.09399 532.92902 541.26898 545.43903 554.604 558.77399 567.93903"
-         y="353.1918"
-         sodipodi:role="line"
-         id="tspan32">Pre-training</tspan>
-    </text>
-    <text
-       style="font-size:15px"
        id="text38"
        x="409.64151"
        y="250.61005">
       <tspan
          style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="409.64151 419.64651 427.98648 432.98151 442.14648 447.98151 456.3215 461.3165 469.65649"
-         y="250.61005"
          sodipodi:role="line"
-         id="tspan40">Saturated</tspan>
+         id="tspan40"
+         x="409.64151"
+         y="250.61005">Depleted</tspan>
     </text>
     <text
        style="font-size:15px"
@@ -144,10 +136,10 @@
        y="250.61005">
       <tspan
          style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="584.73737 595.56738 604.73236 613.07239 621.41235 626.40735 635.57239 641.40735 649.74738 654.74237 663.08234"
-         y="250.61005"
          sodipodi:role="line"
-         id="tspan96">Unsaturated</tspan>
+         id="tspan96"
+         x="584.73737"
+         y="250.61005">Replenished</tspan>
     </text>
     <text
        style="font-size:15px"
@@ -249,9 +241,9 @@
        inkscape:connector-curvature="0"
        id="path168"
        style="fill:none;stroke:#231f20;stroke-width:5;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 368.82124,309.99355 18.8,0" />
+       d="m 370.82124,309.99355 18.8,0" />
     <path
-       d="m 379.89487,316.77818 6.785,-6.78375 -6.785,-6.785 5.755,0 6.785,6.785 -6.785,6.78375 -5.755,0 z"
+       d="m 381.89487,316.77818 6.785,-6.78375 -6.785,-6.785 5.755,0 6.785,6.785 -6.785,6.78375 -5.755,0 z"
        style="fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
        id="path170"
        inkscape:connector-curvature="0" />
@@ -265,95 +257,6 @@
        style="fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
        id="path180"
        inkscape:connector-curvature="0" />
-    <text
-       style="font-size:15px"
-       id="text190"
-       x="308.34598"
-       y="305.42093">
-      <tspan
-         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="308.34598"
-         y="305.42093"
-         id="tspan192">M</tspan>
-    </text>
-    <text
-       style="font-size:15px"
-       id="text194"
-       x="323.36099"
-       y="305.42093">
-      <tspan
-         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="323.36099"
-         y="305.42093"
-         id="tspan196">H</tspan>
-    </text>
-    <text
-       style="font-size:15px"
-       id="text198"
-       x="336.41098"
-       y="305.42093">
-      <tspan
-         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="336.41098"
-         y="305.42093"
-         id="tspan200">C</tspan>
-    </text>
-    <text
-       style="font-size:15px"
-       id="text202"
-       x="303.00598"
-       y="323.4209">
-      <tspan
-         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="303.00598"
-         y="323.4209"
-         id="tspan204">D</tspan>
-    </text>
-    <text
-       style="font-size:15px"
-       id="text206"
-       x="313.83774"
-       y="318.43292">
-      <tspan
-         style="font-size:11.25px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="313.83774"
-         y="318.43292"
-         id="tspan208">b</tspan>
-    </text>
-    <text
-       style="font-size:15px"
-       id="text210"
-       x="320.70963"
-       y="323.43292">
-      <tspan
-         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="320.70963"
-         y="323.43292"
-         id="tspan212">K</tspan>
-    </text>
-    <text
-       style="font-size:15px"
-       id="text214"
-       x="331.54211"
-       y="318.43292">
-      <tspan
-         style="font-size:11.25px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="331.54211"
-         y="318.43292"
-         id="tspan216">b</tspan>
-    </text>
-    <text
-       style="font-size:15px"
-       id="text218"
-       x="338.41412"
-       y="323.43292">
-      <tspan
-         style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#110f0d;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="338.41412 343.40912 347.57913"
-         y="323.43292"
-         sodipodi:role="line"
-         id="tspan220">-/-</tspan>
-    </text>
     <path
        inkscape:connector-curvature="0"
        id="path224"
@@ -371,15 +274,44 @@
        y="353.30655">
       <tspan
          style="font-size:15px;font-variant:normal;font-weight:bold;writing-mode:lr-tb;fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none;font-family:Arial;-inkscape-font-specification:Arial-BoldMT"
-         x="664.00378 668.17377 677.33875 685.67877 691.51373 699.85376 708.19373 716.53375 724.87372 729.04376 738.20874 744.04376 752.38373 756.55371 765.71875 769.88873 779.05377"
+         x="664.00378"
          y="353.30655"
          sodipodi:role="line"
-         id="tspan230">Increase Training</tspan>
+         id="tspan230">Increase training</tspan>
     </text>
-    <path
-       inkscape:connector-curvature="0"
-       id="path234"
-       style="fill:none;stroke:#231f20;stroke-width:0.9375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 492.17512,355.08818 85,0" />
+    <g
+       id="g3053"
+       transform="translate(0,1.9169617)">
+      <path
+         sodipodi:nodetypes="cc"
+         d="m 478.01375,353.38959 125,0"
+         style="fill:none;stroke:#231f20;stroke-width:0.9375;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+         id="path234"
+         inkscape:connector-curvature="0" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text3173"
+         y="351.38959"
+         x="477.53217"
+         style="font-size:15px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
+         xml:space="preserve"><tspan
+           style="font-style:oblique;-inkscape-font-specification:Arial Bold Oblique"
+           y="351.38959"
+           x="477.53217"
+           id="tspan3175"
+           sodipodi:role="line">Decrease training</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:15px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
+       x="303.63043"
+       y="314.0224"
+       id="text3173-9"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3175-4"
+         x="303.63043"
+         y="314.0224"
+         style="font-style:oblique;fill:#d40000;-inkscape-font-specification:Arial Bold Oblique">Mutation</tspan></text>
   </g>
 </svg>

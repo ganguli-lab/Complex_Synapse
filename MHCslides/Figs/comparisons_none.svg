@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="comparisons.svg">
+   sodipodi:docname="comparisons_all.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -28,7 +28,7 @@
      inkscape:cx="101.25306"
      inkscape:cy="76.18109"
      inkscape:document-units="px"
-     inkscape:current-layer="g3016-1"
+     inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:snap-global="true"
      fit-margin-top="0"
@@ -58,7 +58,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -210,131 +210,12 @@
          x="-331.31726"
          y="-391.25485"
          style="font-size:108px">&gt;</tspan></text>
-    <g
-       id="g3016"
-       transform="translate(-8.0651399,-15.551499)">
-      <text
-         transform="translate(47.479294,78.058472)"
-         sodipodi:linespacing="125%"
-         id="text3008"
-         y="-20.144791"
-         x="240.58585"
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
-         xml:space="preserve"><tspan
-           style="font-size:20px;text-align:center;text-anchor:middle"
-           y="-20.144791"
-           x="240.58585"
-           id="tspan3010"
-           sodipodi:role="line">enhanced plasticity</tspan><tspan
-           id="tspan3012"
-           style="font-size:20px;text-align:center;text-anchor:middle"
-           y="4.8552094"
-           x="240.58585"
-           sodipodi:role="line">impairs learning</tspan></text>
-      <path
-         transform="translate(47.479294,78.058472)"
-         d="m 342.52071,-15.69629 c 0,18.4094909 -44.77153,33.333332 -100,33.333332 -55.22848,0 -100,-14.9238411 -100,-33.333332 0,-18.409491 44.77152,-33.333332 100,-33.333332 55.22847,0 100,14.923841 100,33.333332 z"
-         sodipodi:ry="33.333332"
-         sodipodi:rx="100"
-         sodipodi:cy="-15.69629"
-         sodipodi:cx="242.52071"
-         id="path3014"
-         style="fill:none;stroke:#008000;stroke-width:5;stroke-miterlimit:10;stroke-dasharray:15, 15;stroke-dashoffset:0"
-         sodipodi:type="arc" />
-    </g>
-    <g
-       transform="translate(-8.0651399,494.4485)"
-       id="g3016-1">
-      <text
-         transform="translate(47.479294,78.058472)"
-         sodipodi:linespacing="125%"
-         id="text3008-7"
-         y="-20.144791"
-         x="240.58585"
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
-         xml:space="preserve"><tspan
-           style="font-size:20px;text-align:center;text-anchor:middle"
-           y="-20.144791"
-           x="240.58585"
-           id="tspan3010-4"
-           sodipodi:role="line">enhanced plasticity</tspan><tspan
-           id="tspan3012-0"
-           style="font-size:20px;text-align:center;text-anchor:middle"
-           y="4.8552094"
-           x="240.58585"
-           sodipodi:role="line">enhances learning</tspan></text>
-      <path
-         transform="translate(47.479294,78.058472)"
-         d="m 354.45557,-15.69629 c 0,18.4094909 -50.11495,33.333332 -111.93486,33.333332 -61.81992,0 -111.93486,-14.9238411 -111.93486,-33.333332 0,-18.409491 50.11494,-33.333332 111.93486,-33.333332 61.81991,0 111.93486,14.923841 111.93486,33.333332 z"
-         sodipodi:ry="33.333332"
-         sodipodi:rx="111.93486"
-         sodipodi:cy="-15.69629"
-         sodipodi:cx="242.52071"
-         id="path3014-9"
-         style="fill:none;stroke:#008000;stroke-width:5;stroke-miterlimit:10;stroke-dasharray:15, 15;stroke-dashoffset:0"
-         sodipodi:type="arc" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text3008-7-4"
-         y="-202.08632"
-         x="578.06512"
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
-         xml:space="preserve"><tspan
-           style="font-size:20px;text-align:center;text-anchor:middle"
-           y="-202.08632"
-           x="578.06512"
-           id="tspan3010-4-8"
-           sodipodi:role="line">reverse-training</tspan><tspan
-           id="tspan3012-0-8"
-           style="font-size:20px;text-align:center;text-anchor:middle"
-           y="-177.08632"
-           x="578.06512"
-           sodipodi:role="line">enhances learning</tspan></text>
-      <path
-         transform="translate(337.47928,-181.94154)"
-         d="m 354.45557,-15.69629 c 0,18.4094909 -50.11495,33.333332 -111.93486,33.333332 -61.81992,0 -111.93486,-14.9238411 -111.93486,-33.333332 0,-18.409491 50.11494,-33.333332 111.93486,-33.333332 61.81991,0 111.93486,14.923841 111.93486,33.333332 z"
-         sodipodi:ry="33.333332"
-         sodipodi:rx="111.93486"
-         sodipodi:cy="-15.69629"
-         sodipodi:cx="242.52071"
-         id="path3014-9-2"
-         style="fill:none;stroke:#008000;stroke-width:5;stroke-miterlimit:10;stroke-dasharray:15, 15;stroke-dashoffset:0"
-         sodipodi:type="arc" />
-      <text
-         sodipodi:linespacing="125%"
-         id="text3008-7-4-4"
-         y="-202.08632"
-         x="-1.9348601"
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
-         xml:space="preserve"><tspan
-           style="font-size:20px;text-align:center;text-anchor:middle"
-           y="-202.08632"
-           x="-1.9348601"
-           id="tspan3010-4-8-5"
-           sodipodi:role="line">reverse-training</tspan><tspan
-           id="tspan3012-0-8-5"
-           style="font-size:20px;text-align:center;text-anchor:middle"
-           y="-177.08632"
-           x="-1.9348601"
-           sodipodi:role="line">impairs learning</tspan></text>
-      <path
-         transform="translate(-242.5207,-181.94154)"
-         d="m 334.45557,-15.69629 c 0,19.0253736 -41.16064,34.448486 -91.93486,34.448486 -50.77423,0 -91.93487,-15.4231124 -91.93487,-34.448486 0,-19.025374 41.16064,-34.448486 91.93487,-34.448486 50.77422,0 91.93486,15.423112 91.93486,34.448486 z"
-         sodipodi:ry="34.448486"
-         sodipodi:rx="91.934868"
-         sodipodi:cy="-15.69629"
-         sodipodi:cx="242.52071"
-         id="path3014-9-2-1"
-         style="fill:none;stroke:#008000;stroke-width:5;stroke-miterlimit:10;stroke-dasharray:15, 15;stroke-dashoffset:0"
-         sodipodi:type="arc" />
-      <rect
-         style="fill:none;stroke:none"
-         id="rect3106"
-         width="800"
-         height="590"
-         x="-157.47929"
-         y="-65.696289"
-         transform="translate(55.544434,-416.39003)" />
-    </g>
+    <rect
+       y="12.362181"
+       x="-110"
+       height="590"
+       width="800"
+       id="rect3106"
+       style="fill:none;stroke:none" />
   </g>
 </svg>

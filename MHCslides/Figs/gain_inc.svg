@@ -24,8 +24,8 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.9062468"
-     inkscape:cx="425.37283"
+     inkscape:zoom="5.6875185"
+     inkscape:cx="381.69095"
      inkscape:cy="520"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -383,16 +383,16 @@
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Arial"
-       x="-542.08136"
+       x="-564.08136"
        y="313.27756"
        id="text5225"
        sodipodi:linespacing="125%"
        transform="matrix(0,-1,1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan5227"
-         x="-542.08136"
+         x="-564.08136"
          y="313.27756"
-         style="font-size:16px;font-weight:bold;-inkscape-font-specification:Arial Bold">(Δ gain)</tspan></text>
+         style="font-size:16px;font-weight:bold;-inkscape-font-specification:Arial Bold">(Δ VOR gain)</tspan></text>
     <text
        style="font-size:15px"
        transform="matrix(0,-1,1,0,0,0)"
@@ -416,7 +416,7 @@
          sodipodi:role="line"
          id="tspan310-7"
          x="371.45123"
-         y="453.62469">KO</tspan>
+         y="453.62469">Enh.Plas.</tspan>
     </text>
   </g>
 </svg>

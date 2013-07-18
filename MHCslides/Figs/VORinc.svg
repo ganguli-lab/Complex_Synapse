@@ -123,22 +123,25 @@
     </text>
     <path
        d="m 397.25789,507.41479 -0.76375,-5.65125 3.53875,-4.475 -13.38625,1.77625 10.61125,8.35 z"
-       style="fill:#231f20;fill-opacity:1;fill-rule:nonzero;stroke:none"
+       style="fill:#008000;fill-opacity:1;fill-rule:nonzero;stroke:none"
        id="path380"
        inkscape:connector-curvature="0" />
     <g
        transform="matrix(1.25,0,0,-1.25,143.55064,1075.6723)"
-       id="g382">
+       id="g382"
+       style="stroke:#008000">
       <g
          id="g384"
-         clip-path="url(#clipPath386)">
+         clip-path="url(#clipPath386)"
+         style="stroke:#008000">
         <g
            id="g390"
-           transform="translate(146.4761,430.168)">
+           transform="translate(146.4761,430.168)"
+           style="stroke:#008000">
           <path
              inkscape:connector-curvature="0"
              d="m 0,0 c -7.449,-23.132 4.822,-47.782 27.407,-55.055 22.586,-7.272 46.934,5.587 54.383,28.72 C 89.239,-3.201 76.968,21.448 54.382,28.722 31.797,35.994 7.449,23.135 0,0 z"
-             style="fill:none;stroke:#231f20;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+             style="fill:none;stroke:#008000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
              id="path392" />
         </g>
       </g>

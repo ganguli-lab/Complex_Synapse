@@ -580,12 +580,12 @@
          id="tspan2995-2"
          x="247.81392"
          y="339.07025"
-         style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">KO</tspan><tspan
+         style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">Enh.Plas.</tspan><tspan
          sodipodi:role="line"
          x="247.81392"
          y="351.57025"
          id="tspan2997-4"
-         style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">w/o pre-training</tspan></text>
+         style="font-size:10px;font-weight:normal;-inkscape-font-specification:Sans">w/o rev-training</tspan></text>
     <rect
        style="fill:none;stroke:#c0504d;stroke-width:1.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
        id="rect3057"
@@ -606,5 +606,51 @@
          x="-419.50568"
          y="197.54037"
          style="font-size:12px">Initial distribution</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:15px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
+       x="198.75346"
+       y="443.90942"
+       id="text3065"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3067"
+         x="198.75346"
+         y="443.90942"
+         style="font-size:10px;font-weight:normal;-inkscape-font-specification:Arial">weak</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:15px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
+       x="261.34146"
+       y="443.65808"
+       id="text3069"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3071"
+         x="261.34146"
+         y="443.65808"
+         style="font-size:10px;font-weight:normal;-inkscape-font-specification:Arial">strong</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
+       x="251.53853"
+       y="428.82797"
+       id="text3075"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3077"
+         x="251.53853"
+         y="428.82797">pot</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
+       x="212.32677"
+       y="458.23679"
+       id="text3079"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3081"
+         x="212.32677"
+         y="458.23679">dep</tspan></text>
   </g>
 </svg>
