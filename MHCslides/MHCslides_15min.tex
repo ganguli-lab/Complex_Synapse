@@ -87,23 +87,24 @@ Stanford University, Applied Physics
  Expect enhanced plasticity \lto\ enhance learning.
 }
 \parbox[t]{0.29\linewidth}{%
- \hfill\onslide<3->{\alignmid{\includegraphics[width=0.4\linewidth]{the_brain_by_lonewolf16.jpg}}}
+ \hfill{\alignmid{\includegraphics[width=0.4\linewidth]{the_brain_by_lonewolf16.jpg}}}
 }
  \\
  \citerr{Tang1999enhancedLearning,Malleret2001enhancedLearning,Guan2009enhancedLearning}\\
  \note[item]{It does help in some cases}
+\onslide<2->
 \parbox[t]{0.69\linewidth}{%
- \onslide<2->But often: \lto\ impairment.
+ But often: \lto\ impairment.
 }
 \parbox[t]{0.29\linewidth}{%
- \hfill\onslide<3->{\alignmid{\includegraphics[width=0.4\linewidth]{pinky_by_lonewolf16.jpg}}}
+ \hfill{\alignmid{\includegraphics[width=0.4\linewidth]{pinky_by_lonewolf16.jpg}}}
 }
  \\
  \citerr{Migaud1998impairedLearning,Uetani2000impairedLearning,Hayashi2004impairedConsolidation}\\
  \citerr{Cox2003impairedLearning,Rutten2008impairedLearning,Koekkoek2005impairedConditioning}
  \note[item]{Want to understand when and why}
 
- \onslide<4->\vp Mice with enhanced cerebellar plasticity can show both impaired and enhanced learning.
+ \onslide<3->\vp Mice with enhanced cerebellar plasticity can show both impaired and enhanced learning.
  \note[item]{Depends on circumstance. Rich pattern of behaviour}
 
  \vp Analysis of models of complex synapses:\\
@@ -347,7 +348,7 @@ Stanford University, Applied Physics
  \note[item]<3->{Enh.Plas. helps w/. Expected}
  \note[item]<4->{now we can compare w/o,w/ rev}
  \note[item]<4->{rev helps Enh.Plas. but hurts WT}
-% \note[item]{Diagonal comparisons: parameter fitting. Depend on size of KO vs.\ pretraining}
+ \note[item]{Diagonal comparisons: parameter fitting. Depend on size of KO vs.\ pretraining}
 % \note[item]{top and left most restrictive}
 % \note[item]{Pay attention to solid: black above red}
 % \note[item]{Pay attention to black: solid above dashed}
@@ -691,22 +692,58 @@ Stanford University, Applied Physics
 %%
 %\end{frame}
 %
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Model results}
+%%
+% \begin{center}
+% \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+%   Binary model & Serial Model \\[0.5cm]
+%   \alignmid{\includegraphics[height=0.07\linewidth]{binary.svg}} &
+%   \alignmid{\includegraphics[height=0.07\linewidth]{serial.svg}}\\[1cm]
+%   \aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}} &
+%   \aligntop{\includegraphics[height=0.35\linewidth]{serial_learnS.svg}}
+% \end{tabular}
+% \end{center}
+% \note[item]{Binary fails -- mathematical prrof for any params}
+% \note[item]{Enh.Plas: faster depression wins over bias}
+% \note[item]{pre: reduces/reverses bias. always helps.}
+% \note[item]{Serial: still only two weights. Works.}
+% \note[item]{Understand by looking at distributions before training}
+% \citerr{Leibold2008serial}
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Model results}
+\begin{frame}{Simple synapses cannot explain the data}
 %
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
-   Binary model & Serial Model \\[0.5cm]
-   \alignmid{\includegraphics[height=0.07\linewidth]{binary.svg}} &
-   \alignmid{\includegraphics[height=0.07\linewidth]{serial.svg}}\\[1cm]
+   \aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}} &
+   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
    \aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}} &
-   \aligntop{\includegraphics[height=0.35\linewidth]{serial_learnS.svg}}
+   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted.svg}}
  \end{tabular}
  \end{center}
- \note[item]{Binary fails -- mathematical prrof for any params}
+ \note[item]{Binary fails -- mathematical proof for any params}
  \note[item]{Enh.Plas: faster depression wins over bias}
  \note[item]{pre: reduces/reverses bias. always helps.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Complex synapses can explain the data}
+%
+ \begin{center}
+ \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+   \aligntop{\includegraphics[height=0.15\linewidth]{serial.svg}} &
+   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
+   \aligntop{\includegraphics[height=0.35\linewidth]{serial_learnS.svg}} &
+   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted.svg}}
+ \end{tabular}
+ \end{center}
  \note[item]{Serial: still only two weights. Works.}
  \note[item]{Understand by looking at distributions before training}
  \citerr{Leibold2008serial}
