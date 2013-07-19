@@ -790,6 +790,7 @@ Stanford University, Applied Physics
  \end{center}
  \note[item]{rev-training: little repopulates boundary}
  \note[item]{Too much pushes to other side, depopulates boundary}
+ \note[item]{this effect is absent in any simple synapse}
  %
 %
 \end{frame}
@@ -800,7 +801,7 @@ Stanford University, Applied Physics
 %
  %
  \begin{center}
-   \includegraphics[width=0.4\linewidth]{serial.svg}
+   \includegraphics[width=0.4\linewidth]{serial_s.svg}
  \end{center}
  %
  \vp The success of the serial model relies on two features:
@@ -899,6 +900,29 @@ Stanford University, Applied Physics
 
    \item  We used behaviour to constrain the dynamics of synaptic plasticity
 \end{itemize}
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Tradeoff: learning vs.\ remembering}
+%
+ What about memory?
+ \begin{itemize}
+   \vp\item Simple synapses have poor memory storage capacity. \\
+   Synaptic complexity is needed for rescue.
+   
+   \vp\item Trade-off between learning and remembering:\\
+   Too rigid \lto\ difficult to learn new memories.\\
+   Too plastic \lto\ new memories quickly overwrite old.
+   
+   \vp\item Exploring the \emph{entire} space of complex synaptic models \\
+   \lto\ upper bounds on their storage ability \\
+   \& the models that saturate them.
+ \end{itemize}
+ 
+ \rref{Lahiri and Ganguli (submitted)}
 %
 \end{frame}
 
