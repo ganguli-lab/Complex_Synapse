@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="800"
+   height="590"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="comparisons_leftright.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.2552713"
+     inkscape:cx="101.25306"
+     inkscape:cy="76.18109"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:snap-global="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="2560"
+     inkscape:window-height="1538"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid2987"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       originx="110px"
+       originy="-450px" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(110,-12.362181)">
+    <g
+       id="g2999"
+       transform="translate(0,-2.5537109)">
+      <rect
+         y="82.362183"
+         x="49.229294"
+         height="160"
+         width="160"
+         id="rect2991"
+         style="fill:none;stroke:#000000;stroke-width:3.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0" />
+      <text
+         sodipodi:linespacing="125%"
+         id="text2993"
+         y="154.91589"
+         x="129.87383"
+         style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           y="154.91589"
+           x="129.87383"
+           id="tspan2995"
+           sodipodi:role="line">WT</tspan><tspan
+           id="tspan2997"
+           y="179.91589"
+           x="129.87383"
+           sodipodi:role="line">w/o rev-training</tspan></text>
+    </g>
+    <rect
+       style="fill:none;stroke:#c0504d;stroke-width:3.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:10.5, 10.5;stroke-dashoffset:0"
+       id="rect2991-7"
+       width="160"
+       height="160"
+       x="349.35547"
+       y="359.80847" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="430"
+       y="432.36218"
+       id="text2993-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2995-0"
+         x="430"
+         y="432.36218">Enh.Plas</tspan><tspan
+         sodipodi:role="line"
+         x="430"
+         y="457.36218"
+         id="tspan2997-9">w/ rev-training</tspan></text>
+    <rect
+       style="fill:none;stroke:#c0504d;stroke-width:3.5;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect2991-8"
+       width="160"
+       height="160"
+       x="349.35544"
+       y="79.808472" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="429.99997"
+       y="152.36218"
+       id="text2993-8"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2995-2"
+         x="429.99997"
+         y="152.36218">Enh.Plas.</tspan><tspan
+         sodipodi:role="line"
+         x="429.99997"
+         y="177.36218"
+         id="tspan2997-4">w/o rev-training</tspan></text>
+    <rect
+       style="fill:none;stroke:#000000;stroke-width:3.5;stroke-miterlimit:4;stroke-dasharray:10.5, 10.5;stroke-dashoffset:0"
+       id="rect2991-5"
+       width="160"
+       height="160"
+       x="49.229294"
+       y="359.80847" />
+    <text
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="129.87383"
+       y="432.36218"
+       id="text2993-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan2995-7"
+         x="129.87383"
+         y="432.36218">WT</tspan><tspan
+         sodipodi:role="line"
+         x="129.87383"
+         y="457.36218"
+         id="tspan2997-1">w/ rev-training</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="247.78357"
+       y="197.90906"
+       id="text3065"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3067"
+         x="247.78357"
+         y="197.90906"
+         style="font-size:108px">&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-310.80115"
+       y="477.90906"
+       id="text3065-1"
+       sodipodi:linespacing="125%"
+       transform="scale(-1,1)"><tspan
+         sodipodi:role="line"
+         id="tspan3067-5"
+         x="-310.80115"
+         y="477.90906"
+         style="font-size:108px">&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="268.29968"
+       y="-91.128708"
+       id="text3065-2"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,1,-1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3067-7"
+         x="268.29968"
+         y="-91.128708"
+         style="font-size:108px">&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:30px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-331.31726"
+       y="-391.25485"
+       id="text3065-2-6"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,-1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3067-7-1"
+         x="-331.31726"
+         y="-391.25485"
+         style="font-size:108px">&gt;</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
+       x="570"
+       y="292.36218"
+       id="text3008-7-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3010-4-8"
+         x="570"
+         y="292.36218"
+         style="font-size:20px;text-align:center;text-anchor:middle">reverse-training</tspan><tspan
+         sodipodi:role="line"
+         x="570"
+         y="317.36218"
+         style="font-size:20px;text-align:center;text-anchor:middle"
+         id="tspan3012-0-8">enhances learning</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#008000;stroke-width:5;stroke-miterlimit:10;stroke-dasharray:15, 15;stroke-dashoffset:0"
+       id="path3014-9-2"
+       sodipodi:cx="242.52071"
+       sodipodi:cy="-15.69629"
+       sodipodi:rx="111.93486"
+       sodipodi:ry="33.333332"
+       d="m 354.45557,-15.69629 a 111.93486,33.333332 0 1 1 -223.86972,0 111.93486,33.333332 0 1 1 223.86972,0 z"
+       transform="translate(329.41414,312.50696)" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Arial;-inkscape-font-specification:Sans"
+       x="-10"
+       y="292.36218"
+       id="text3008-7-4-4"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3010-4-8-5"
+         x="-10"
+         y="292.36218"
+         style="font-size:20px;text-align:center;text-anchor:middle">reverse-training</tspan><tspan
+         sodipodi:role="line"
+         x="-10"
+         y="317.36218"
+         style="font-size:20px;text-align:center;text-anchor:middle"
+         id="tspan3012-0-8-5">impairs learning</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:none;stroke:#008000;stroke-width:5;stroke-miterlimit:10;stroke-dasharray:15, 15;stroke-dashoffset:0"
+       id="path3014-9-2-1"
+       sodipodi:cx="242.52071"
+       sodipodi:cy="-15.69629"
+       sodipodi:rx="91.934868"
+       sodipodi:ry="34.448486"
+       d="m 334.45557,-15.69629 a 91.934868,34.448486 0 1 1 -183.86973,0 91.934868,34.448486 0 1 1 183.86973,0 z"
+       transform="translate(-250.58584,312.50696)" />
+    <rect
+       y="12.362181"
+       x="-110"
+       height="590"
+       width="800"
+       id="rect3106"
+       style="fill:none;stroke:none" />
+  </g>
+</svg>

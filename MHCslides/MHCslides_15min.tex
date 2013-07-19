@@ -9,7 +9,7 @@
 \input{sl_slide_preamble.tex}
 %\usecolortheme[named=darkblue]{structure}
 \usecolortheme[rgb={0.6372549 0.27843137 0.27058824}]{structure}
-%\setbeamercolor{alerted text}{fg=blue!80!black}
+\setbeamercolor{alerted text}{fg=red!80!black}
 %\input{sl_slide_preamble_nonotes.tex}
 \input{sl_slide_graphics_preamble.tex}
 \input{sl_definitions.tex}
@@ -101,14 +101,14 @@ Stanford University, Applied Physics
 }
  \\
  \citerr{Migaud1998impairedLearning,Uetani2000impairedLearning,Hayashi2004impairedConsolidation}\\
- \citerr{Cox2003impairedLearning,Rutten2008impairedLearning,Koekkoek2005impairedConditioning}
+ \citerr{Cox2003impairedLearning,Rutten2008impairedLearning,Koekkoek2005impairedConditioning}\\
  \note[item]{Want to understand when and why}
 
  \onslide<3->\vp Mice with enhanced cerebellar plasticity can show both impaired and enhanced learning.
  \note[item]{Depends on circumstance. Rich pattern of behaviour}
 
- \vp Analysis of models of complex synapses:\\
- Find necessary and sufficient conditions to reproduce behaviour.
+ \vp Simple synapses cannot explain behaviour.\\
+ \lto\ Necessary \& sufficient conditions on complex synapses to replicate this.
  \note[item]{Develop understanding of when and why learning is enhanced/impaired}
 %
 \end{frame}
@@ -119,9 +119,13 @@ Stanford University, Applied Physics
 %
  %\tableofcontents[hideallsubsections]
  \begin{itemize}
-   \item Cerebellar learning of mice with enhanced plasticity
+   \item Motor learning
+ \begin{itemize}
+   \vp\item Cerebellar learning of mice with enhanced plasticity
 
    \vp\item Complex synaptic models
+ \end{itemize}
+   \vp\item (Memory capacity of complex synapses)
  \end{itemize}
  %
 %
@@ -194,20 +198,24 @@ Stanford University, Applied Physics
 %
  \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
  Knockout of MHC-I D$^\mathrm{b}$K$^\mathrm{b}$ molecules in PF-Pk synapses\\
- \lto\ lower threshold for LTD
- \lto\ enhanced plasticity.\\
- \citerr{McConnell2009MHCcerebellum}
+ \citerr{McConnell2009MHCcerebellum}\\
+ \begin{tabular}{r@{ }c}
+ \lto\ lower threshold for LTD &
+ \lto\ enhanced plasticity\\
+  & $\downarrow$\\
+ \alert{Hypothesis:} & enhanced learning.
+ \end{tabular}
  \note[item]{Easier LTD \lto\ expect better learning}
 
  \begin{center}
-% \begin{tabular}{ccc}
+ \begin{tabular}{lr}
 %   Baseline & \hspace{0.1\linewidth} &
 %   Gain increase \\[0.5cm]
 %   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} &&
-   \alignmid{\includegraphics[width=0.2\linewidth]{VORinc.svg}}
-   \hspace{0.3\linewidth}
-   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}
-% \end{tabular}
+   \alignmid{\includegraphics[width=0.2\linewidth]{VORinc.svg}}&
+   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}\\
+   &\alert{Experiment:} enhanced plasticity \lto\ impaired learning.
+ \end{tabular}
  \end{center}
 % \note[item]{No difference in baseline occulomotor performance}
  \note[item]{Impairment of learning}
@@ -236,6 +244,7 @@ Stanford University, Applied Physics
 
 \begin{frame}{Depletion hypothesis}
 %
+ Learning rate $\sim$ intrinsic plasticity rate $\times$ \# synapses available for LTD.
  \begin{center}
 % \begin{tabular}{ccc}
 %   Error model & \hspace{0.1\linewidth} & Saturation model \\[1cm]
@@ -337,7 +346,7 @@ Stanford University, Applied Physics
    \only<2>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_top.svg}}}%
    \only<3>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_bottom.svg}}}%
    \only<4>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_right.svg}}}%
-   \only<5>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_left.svg}}}%
+   \only<5>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_leftright.svg}}}%
    \only<6>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_all.svg}}}
  \end{center}
  \note[item]{Restricted to gain inc for comparison}
@@ -347,14 +356,16 @@ Stanford University, Applied Physics
  \note[item]<2->{Enh.Plas. hurts w/o. Competition?}
  \note[item]<3->{Enh.Plas. helps w/. Expected}
  \note[item]<4->{now we can compare w/o,w/ rev}
- \note[item]<4->{rev helps Enh.Plas. but hurts WT}
- \note[item]{Diagonal comparisons: parameter fitting. Depend on size of KO vs.\ pretraining}
+ \note[item]<4->{rev helps Enh.Plas. as expected}
+ \note[item]<5->{but rev hurts WT. Question}
+ \note[item]<6>{Summarize: Enh.Plas. can impair/enhance. Rev can impair/enhance}
+ \note[item]<6>{Diagonal comparisons: parameter fitting. Depend on size of mut vs.\ rev}
 % \note[item]{top and left most restrictive}
 % \note[item]{Pay attention to solid: black above red}
 % \note[item]{Pay attention to black: solid above dashed}
 % \note[item]{Concentrate on initial slope}
 
- Questions:
+ \onslide<2->Questions:
 %
  \begin{itemize}
    \item<2-> Can the depletion effect overcome intrinsic plasticity?
@@ -435,11 +446,13 @@ Stanford University, Applied Physics
 
   \vp Simplifying assumptions:
 \begin{itemize}
-  \item No spatial/temporal patterns in plasticity events.
+%  \item No spatial/temporal patterns in plasticity events.
+  \item Different synapses are statistically independent of each other.
       %
       \note[item]{pot/dep occur randomly}
       %
-  \item \rule{0mm}{0mm}\cancel{Synaptic identity} \lto\ synaptic distribution.
+%  \item \rule{0mm}{0mm}\cancel{Synaptic identity} \lto\ synaptic distribution.
+  \item Keep track of distribution of synapses across states.
       %
       \note[item]{allows us to concentrate on synapse, not neuron/network}
       \note[item]{This is a question about synaptic populations after all.}
@@ -449,8 +462,8 @@ Stanford University, Applied Physics
 %      %
 %  \item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
 %      %
-  \vp\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
 \end{itemize}
+  \vp\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
 %
 \end{frame}
 
@@ -499,6 +512,13 @@ Stanford University, Applied Physics
     \only<1>{\includegraphics[width=0.9\linewidth]{synapse_model_1.svg}}
     \only<2>{\includegraphics[width=0.9\linewidth]{synapse_model_2.svg}}
   \end{center}
+  
+  \onslide<2>\hfill
+  \parbox[t]{0.3\linewidth}{PF+\cancel{CF} \lto\ LTP, \\
+              PF+CF \lto\ LTD.}            
+  \parbox[t]{0.27\linewidth}{Lower threshold\\ for LTD}
+  \parbox[t]{0.25\linewidth}{VOR gain increase}
+  
   %
   \note[item]{stoch process has steady state distribution.}
   \note[item]{Prior activity puts it in this state. row vec.}
@@ -509,8 +529,8 @@ Stanford University, Applied Physics
     \note<2>[item]{Mutation: lower threshold \lto\ increase transition probs}
     \note<2>[item]{Training: Changes statistics of LTP/LTD. Only parameters we have. Don't care about $r$.}
     \note<2>[item]{Learning: Only output we have. Don't keep track of synaptic identity.}
-    \note<2>[item]{Same PF+CF input \lto\ same $r,f\pot,f\dep$ in each case.}
-    \note<2>[item]{Input to Pk, some linear combination of $\w$'s. }
+%    \note<2>[item]{Same PF+CF input \lto\ same $r,f\pot,f\dep$ in each case.}
+%    \note<2>[item]{Input to Pk, some linear combination of $\w$'s. }
 % At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
 % \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
 %
@@ -759,10 +779,11 @@ Stanford University, Applied Physics
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
    {\includegraphics[height=0.3\linewidth]{binary_bar_ko_wo_s.svg}}&
    {\includegraphics[height=0.3\linewidth]{serial_bar_ko_wo_s.svg}}\\[1cm]
-   Intrinsic plasticity  &
-   Depletion dominates \\
-   dominates depletion &
-   intrinsic plasticity
+   Intrinsic plasticity  & Depletion dominates \\
+   dominates depletion & intrinsic plasticity\\
+   $\downarrow$ & $\downarrow$ \\
+   enhanced plasticity & enhanced plasticity \\
+   enhances learning & impairs learning
  \end{tabular}
  \end{center}
  \note[item]{Binary: enhanced plasticity \lto\ bias}
@@ -785,7 +806,9 @@ Stanford University, Applied Physics
    reverse-training &
    reverse-training \\
    depopulates boundary &
-   repopulates boundary
+   repopulates boundary \\
+   $\downarrow$ & $\downarrow$ \\
+   impaired learning & enhanced learning
  \end{tabular}
  \end{center}
  \note[item]{rev-training: little repopulates boundary}
@@ -889,14 +912,14 @@ Stanford University, Applied Physics
 %   \note[item]{\eg moving away from weight boundary, or weaker transitions.}
    \item We find diverse behavioural patterns:\\
 
-   Enhanced plasticity \lto\ enhance/impair learning depending on prior experience.\\
-   Reverse-training \lto\ enhance/impair learning depending on plasticity rates.
+   \alert{Enhanced plasticity \lto\ enhance/impair} learning depending on prior experience.\\
+   \alert{Reverse-training \lto\ enhance/impair} learning depending on plasticity rates.
 
    \item We can explain these behavioural patterns using synaptic models.
 
    \item Key required synaptic properties are:\\
-   Synaptic complexity: necessary to amplify depletion.\\
-   Synaptic stubborness: repeated potentiation makes subsequent depression harder.
+   \alert{Synaptic complexity:} necessary to amplify depletion.\\
+   \alert{Synaptic stubborness:} repeated potentiation makes subsequent depression harder.
 
    \item  We used behaviour to constrain the dynamics of synaptic plasticity
 \end{itemize}
@@ -934,7 +957,9 @@ Stanford University, Applied Physics
    \textbf{Surya Ganguli} & \textbf{Jennifer Raymond} & \textbf{Carla Shatz} \\
    Madhu Advani & Barbara Nguyen-Vu & Han-Mi Lee \\
    Peiran Gao & Grace Zhao & \\
-   Niru Maheswaranathan & Aparna Suvrathan
+   Niru Maheswaranathan & Aparna Suvrathan \\
+   Ben Poole \\
+   Jascha Sohl-Dickstein
  \end{tabular}
 
  \vp\textbf{Funding}: Swartz Foundation, Stanford Bio-X Genentech fellowship.
