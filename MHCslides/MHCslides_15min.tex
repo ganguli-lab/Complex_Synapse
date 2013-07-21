@@ -512,13 +512,13 @@ Stanford University, Applied Physics
     \only<1>{\includegraphics[width=0.9\linewidth]{synapse_model_1.svg}}
     \only<2>{\includegraphics[width=0.9\linewidth]{synapse_model_2.svg}}
   \end{center}
-  
+
   \onslide<2>\hfill
   \parbox[t]{0.3\linewidth}{PF+\cancel{CF} \lto\ LTP, \\
-              PF+CF \lto\ LTD.}            
+              PF+CF \lto\ LTD.}
   \parbox[t]{0.27\linewidth}{Lower threshold\\ for LTD}
   \parbox[t]{0.25\linewidth}{VOR gain increase}
-  
+
   %
   \note[item]{stoch process has steady state distribution.}
   \note[item]{Prior activity puts it in this state. row vec.}
@@ -935,17 +935,36 @@ Stanford University, Applied Physics
  \begin{itemize}
    \vp\item Simple synapses have poor memory storage capacity. \\
    Synaptic complexity is needed for rescue.
-   
+
    \vp\item Trade-off between learning and remembering:\\
    Too rigid \lto\ difficult to learn new memories.\\
    Too plastic \lto\ new memories quickly overwrite old.
-   
+
    \vp\item Exploring the \emph{entire} space of complex synaptic models \\
    \lto\ upper bounds on their storage ability \\
    \& the models that saturate them.
  \end{itemize}
- 
+
  \rref{Lahiri and Ganguli (submitted)}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{The frontiers of complex synaptic memory}
+%
+ We have $N$ synapses with $M$ internal states each.
+ 
+ \vp We study the decay of one memory over time due to corruption by subsequent memories.
+ 
+ \vp We prove that, no matter what the structure, no synaptic model can have:\\
+ \begin{itemize}
+   \item initial fidelity (SNR) greater than $\sqrt{N}$.
+   \item memory lifetime greater than $\sqrt{N}M$.
+   \item fidelity decay slower than $\sqrt{N}M/rt$.
+ \end{itemize}
+ 
+ \vp At late times, fidelity is maximised by a model with a simple chain structure.
 %
 \end{frame}
 
