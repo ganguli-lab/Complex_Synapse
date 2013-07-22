@@ -132,12 +132,13 @@ The MHC mutant has a lower threshold for depression.
 We can model this by changing $\M\dep\wt$ to $\M\dep\ko$, which should have larger off-diagonal matrix elements.
 
 We will look at several different models,
-the multistate model\footnote{The original definition of the multistate model had a synaptic weight that varied linearly along the chain. We will refer to this as the linear multistate model. We will also look at the step-multistate model, for which the synaptic weight takes only two values.} (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate_model}),
-the two-state model (which can be thought of as a special case of the multistate model, see \autoref{fig:models}\ref{fig:binary_model}),
+the serial model (see \cite{Leibold2008serial} and \autoref{fig:models}\ref{fig:serial_model}) which has only two values for the synaptic weight,
+the two-state model (which can be thought of as a special case of the serial model, see \autoref{fig:models}\ref{fig:binary_model}),
+the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate_model}) which has a linearly varying synaptic weight,
 and the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}).
-We will also look at a new, pooled resource model that we will define below in \autoref{sec:pooledmodel}.
+We will also look at a new, pooled resource model that we will define below in \autoref{sec:pooledmodel} and a non-uniform version of the multistate model that we will describe in \autoref{sec:nonunimodel}.
 
-For the multistate and two state models, we will use the same value for the transition probabilities, $q$, for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
+For the serial, multistate and two state models, we will use the same value for the transition probabilities, $q$, for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
 We will use a larger value for $q$ for depression in the \KO\ mutant.
 
 For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
@@ -147,17 +148,24 @@ The values used for all these parameters in simulations are listed in \autoref{t
 
 \begin{figure}
  \begin{center}
+ \parbox{0.8\linewidth}{%
  \begin{myenuma}
+  \item\aligntop{\includegraphics[height=1.7cm]{serial.svg}}\label{fig:serial_model}\hspace{0.5cm}
+  \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary_model}\hspace{0.5cm}\\[1cm]
   \item\aligntop{\includegraphics[height=1.7cm]{multistate.svg}}\label{fig:multistate_model}\hspace{0.5cm}
-  \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary_model}\hspace{0.5cm}
-  \item\aligntop{\includegraphics[height=2.2cm]{cascade.svg}}\label{fig:cascade_model}
+  \item\aligntop{\includegraphics[height=2.5cm]{cascade.svg}}\label{fig:cascade_model}
  \end{myenuma}
+ }
  \end{center}
   \caption[Transition probabilities for different models]{Transition probabilities for different models.
-  Potentiation induces transitions indicated by solid red arrows, depression indicated by dashed blue arrows.
-  States of strong/weak synaptic weight indicated by red/blue circles.
-  (\ref{fig:multistate_model}) In the multistate model the transition probabilities for potentiation/depression are all equal and it is parameterised by these two values.
+  Potentiation induces transitions indicated by orange arrows, depression indicated by blue arrows.
+  States of strong/weak synaptic weight indicated by orange/blue circles.
+  (\ref{fig:serial_model}) In the serial model the transition probabilities for potentiation/depression are all equal and it is parameterised by these two values.
+  The synaptic weight takes only two values, $\pm1$.
   (\ref{fig:binary_model}) The two-state model is parameterised by the two transition probabilities.
+  (\ref{fig:multistate_model}) In the multistate model the transition probabilities for potentiation/depression are all equal and it is parameterised X
+  by these two values.
+  The synaptic weight varies linearly in the interval $[-1,1]$.
   (\ref{fig:cascade_model}) In the cascade model, the transition probabilities decay geometrically with a parameter $x$ (see \cite{Fusi2005cascade}) and synaptic weight takes only two values.
   } \label{fig:models}
 \end{figure}
@@ -230,6 +238,35 @@ The values of these parameters are listed in \autoref{tab:params}.
 \end{figure}
 
 
+\subsubsection{Non-uniform multistate model}\label{sec:nonunimodel}
+
+This model is similar to the multistate model (see \autoref{fig:models}\ref{fig:multistate_model})), as it only has transitions between adjacent states and a linearly varying synaptic weight.
+However, like the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}), the transition probabilities decay exponentially away from the central transition.
+More precisely:
+%
+\begin{equation}\label{eq:nonunidef}
+    \M\pot_{ii+1} = \M\dep_{i+1i} =  x^{\abs{\frac{M+1}{2}-i}+\half},
+      \quad i = 1 \ldots M-1,
+\end{equation}
+%
+with all other off-diagonal elements equal to zero.
+The diagonal elements are chosen so that the rows sum to one.
+
+This model is parameterised by the values of $x$ chosen for potentiation and depression.
+We will use a larger value for depression in the \KO\ mutant.
+The values used are listed in \autoref{tab:params}.
+
+
+
+\begin{figure}
+ \begin{center}
+  \aligntop{\includegraphics[height=3cm]{multistate_nonuni.svg}}
+ \end{center}
+  \caption[The non-uniform multistate model]{The non-uniform multistate model.
+  Similar to the multistate model, \autoref{fig:models}\ref{fig:multistate_model}), the synaptic weight varies linearly in the interval $[-1,1]$, but the transition probabilities between adjacent states decays exponentially away from the central transition for both potentiation and depression.} \label{fig:nonuni_model}
+\end{figure}
+
+
 
 \subsection{Model of VOR learning experiment}\label{sec:learning}
 
@@ -240,7 +277,7 @@ We will model this by changing $f\potdep$, leaving $\M\potdep$ unchanged.
 
 The untrained case will be described by $f\dep=f\dep\norm$.
 Gain-increase training  will be described by $f\dep=f\dep\inc>f\dep\norm$, and
-gain-decrease training  will be described by $f\dep=f\dep\dec<f\dep\norm$. 
+gain-decrease training  will be described by $f\dep=f\dep\dec<f\dep\norm$.
 Note that the forgetting matrix \eqref{eq:evolve} and the equilibrium distribution \eqref{eq:eqprob} depend on $f\dep$, which we will indicate with subscripts.
 
 Before training, the synaptic distribution will be in the equilibrium distribution corresponding to $f\dep\norm$.
@@ -277,7 +314,7 @@ We will model this compensation as a simple linear offset, as could be produced 
 For the most part, we set $f\dep\norm=\half$, $f\dep\inc=f\dep\norm+\Delta f$ and $f\dep\dec=f\dep\norm-\Delta f$, with $\Delta f>0$.
 We use the same values for wild-type and mutant for the reasons discussed above.
 We will mostly treat gain-increase and decrease symmetrically, but this is not necessary.
-We could adjust $r$ to keep $r\pot$ unchanged, if so desired, but this would only change the overall timescale and would not affect any of the qualitative comparisons that we are concerned with here. 
+We could adjust $r$ to keep $r\pot$ unchanged, if so desired, but this would only change the overall timescale and would not affect any of the qualitative comparisons that we are concerned with here.
 The values of these parameters are listed in \autoref{tab:params}.
 
 We are also assuming that the relation between VOR gain and mean synaptic weight is the same for mutant ant wild-type, except for a linear offset to compensate for the difference in equilibrium weights mentioned above.
@@ -318,17 +355,18 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
     Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $r\ttrain$ & $r\tpre$ \\
     \cline{1-7}
-    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & 0.1  & 5 & 20  &\label{tr:multistate_weak} \\
-    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & 0.3  & 5 & 20  &\label{tr:multistate_med} \\
-    Step-multistate    & 10 & $q=0.3$  & $q=0.4$  & 0.45 & 5 & 30  &\label{tr:multistate_strong} \\
-    Two-state          & 2  & $q=0.1$  & $q=0.2$  & 0.1  & 5 & 5   &\label{tr:binary} \\
-    Linear Multistate  & 10 & $q=0.3$  & $q=0.4$  & 0.3  & 5 & 5   &\label{tr:multistate_lin} \\
+    Serial        & 10 & $q=0.3$  & $q=0.4$  & 0.1  & 5 & 20  &\label{tr:multistate_weak} \\
+    Serial        & 10 & $q=0.3$  & $q=0.4$  & 0.3  & 5 & 20  &\label{tr:multistate_med} \\
+    Serial        & 10 & $q=0.3$  & $q=0.4$  & 0.45 & 5 & 30  &\label{tr:multistate_strong} \\
+    Two-state     & 2  & $q=0.1$  & $q=0.2$  & 0.1  & 5 & 5   &\label{tr:binary} \\
+    Multistate    & 10 & $q=0.3$  & $q=0.4$  & 0.3  & 5 & 5   &\label{tr:multistate_lin} \\
     Pooled        & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
                                           & 0.1 & 5 & 20 &\label{tr:pooled_plenty}\\
     Pooled        & 10 & $q\in[0.05,0.4]$  & $q\in[0.1,0.8]$
                                           & 0.1 & 5 & 20 &\label{tr:pooled_scarce}\\
     Cascade       & 10 & $x=0.25$ & $x=0.33$ & 0.3  & 5 & 20  &\label{tr:cascade_short} \\
     Cascade       & 10 & $x=0.25$ & $x=0.33$ & 0.3  & 5 & 100 &\label{tr:cascade_long} \\
+    Non-uniform MS       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 150 &\label{tr:nonuni} \\
     \cline{1-7}
 %   \hline
 %    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
@@ -403,16 +441,16 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
 
 
 
-\subsection{Step-multistate model}\label{sec:multistate}
+\subsection{Serial model}\label{sec:multistate}
 
-\resultsfig{step-multistate}{weak training}{($\Delta f=-0.1$)}{multistate_weak}
+\resultsfig{serial}{weak training}{($\Delta f=-0.1$)}{multistate_weak}
 
-\resultsfig{step-multistate}{moderate training}{($\Delta f=-0.3$)}{multistate_med}
+\resultsfig{serial}{moderate training}{($\Delta f=-0.3$)}{multistate_med}
 
-\resultsfig{step-multistate}{strong training}{($\Delta f=-0.45$)}{multistate_strong}
+\resultsfig{serial}{strong training}{($\Delta f=-0.45$)}{multistate_strong}
 
 
-The results of simulations of the step-multistate model can be seen in \autoref{fig:multistate_weak}, \autoref{fig:multistate_med} and \autoref{fig:multistate_strong}.
+The results of simulations of the serial model can be seen in \autoref{fig:multistate_weak}, \autoref{fig:multistate_med} and \autoref{fig:multistate_strong}.
 However, we can get some insight into this model analytically.
 
 
@@ -512,7 +550,7 @@ As we see in \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS} (black 
   \caption[The functions $\beta^*(M)$ and $\Delta f^*(\beta,M)$]{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the mutant has impaired learning, and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
 \end{figure}
 
-In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f < \Delta f^*(1,M)$ and look at intermediate time-scales, we will see that the mutant learns slower than wild-type without pre-training, and that pre-training speeds up learning in the mutant but slows it down in the wild-type.
+In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f > \Delta f^*(1,M)$ and look at intermediate time-scales, we will see that the mutant learns slower than wild-type without pre-training, and that pre-training speeds up learning in the mutant but slows it down in the wild-type.
 However, in this case pre-training proceeds much faster in the mutant than wild-type (see \autoref{fig:multistate_med}\ref{fig:multistate_med_learn} and \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learn}, lower curves), which is \emph{not} seen in the experiment.
 
 Now consider what would happen if we did not treat gain-increase and gain-decrease symmetrically.
@@ -600,7 +638,7 @@ which is always larger that \eqref{eq:binWTnopre}, unlike what is seen in the ex
 This is also seen in \autoref{fig:binary}\ref{fig:binary_learn},\ref{fig:binary_learnS} (solid curves).
 As discussed above (below \eqref{eq:multiKOnopre}), the larger value of $q\dep=q/\beta$ has two effects.
 Smaller $\beta$ will increase the probability of depression, speeding up learning, but it will also decrease the probability of being ready for depression, slowing down learning.
-For the step-multistate model, we argued that the first effect goes like $1/\beta$, whereas the second goes like $\beta^{M/2}$ to leading order.
+For the serial model, we argued that the first effect goes like $1/\beta$, whereas the second goes like $\beta^{M/2}$ to leading order.
 Here $M=2$, so the leading part of the two effects will cancel.
 The subleading effects (the normalisation of the probabilities) are responsible for the faster learning in the mutant.
 
@@ -641,9 +679,9 @@ In the data, it looks like that timescale is longer than the gaps between succes
 
 
 
-\subsection{Linear multistate model}\label{sec:multistate_lin}
+\subsection{Multistate model}\label{sec:multistate_lin}
 
-\resultsfign{linear multistate model}{multistate_lin}
+\resultsfign{multistate model}{multistate_lin}
 
 
 In this section, we will consider the multistate model as originally defined in \cite{amit1994learning}, \ie with linearly varying synaptic weight:
@@ -653,7 +691,7 @@ In this section, we will consider the multistate model as originally defined in 
 \end{equation}
 %
 The numerical results can be seen in \autoref{fig:multistate_lin}, but we can get some analytic insight into this model as well.
-In essence, this model is like a series of two-state models attached to each other, in contrast to the step-multistate model for which the synaptic weight only changes between one of the pairs of states.
+In essence, this model is like a series of two-state models attached to each other, in contrast to the serial model for which the synaptic weight only changes between one of the pairs of states.
 
 
 The equilibrium distribution, \eqref{eq:mutltieq}, still applies.
@@ -740,7 +778,7 @@ However, when resource depletion is more severe, the second effect dominates and
 
 Gain-decrease pre-training lessens the second effect, and results in the mutant learning faster than wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learn},\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learn},\ref{fig:pooled_scarce_learnS}), as seen in the experiment.
 
-Gain-decrease pre-training will shift the distribution to the potentiated site, where there are more synapses available for depression and resources are more plentiful, for both the mutant and wild type (see \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_eq}, red traces).
+Gain-decrease pre-training will shift the distribution to the potentiated side, where there are more synapses available for depression and resources are more plentiful, for both the mutant and wild type (see \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_eq}, red traces).
 This means that the pre-trained animal will learn faster then the untrained one for both mutant and wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learnS}).
 This differs from what is seen experimentally, where the pre-trained wild-type learns slower than the untrained one.
 
@@ -768,6 +806,28 @@ We can see from \autoref{fig:cascade_long}\ref{fig:cascade_long_pr}\ref{fig:casc
 This effect is weaker for the mutant, as the equilibrium distribution is not as heavily concentrated at the end (see \autoref{fig:cascade_long}\ref{fig:cascade_long_eq}\ref{fig:cascade_long_eq_KO}).
 
 
+\subsection{Non-uniform multistate model}\label{sec:nonuni}
+
+\resultsfign{non-uniform multistate}{nonuni}
+
+
+
+The results of simulations of the non-uniform multistate model can be seen in \autoref{fig:nonuni}.
+It is difficult to study this model analytically.
+However, the numerical results can helps us understand it qualitatively.
+
+First, we see that the mutant is slower than wild-type without pre-training, as seen experimentally.
+This seems to be because the enhanced depression results in a greater fraction of synapses begin in states of weaker synaptic weight (see \autoref{fig:nonuni}\ref{fig:nonuni_eq}\ref{fig:nonuni_eq_KO}) where the depressing transitions have lower probability (see \autoref{fig:nonuni_model}).
+
+However, gain-decrease pre-training will push synapses towards the states of stronger synaptic weight.
+The wild-type will be pushed further that the mutant, as the latter started further to the weaker side as explained above (compare \autoref{fig:nonuni}\ref{fig:nonuni_eq}\ref{fig:nonuni_eq_WT} and \ref{fig:nonuni_eq_KO}).
+As the depressing transitions have lower probability for the strongest states (see \autoref{fig:nonuni_model}), this, in addition to the enhanced depression of the mutant, will result in the mutant learning faster than wild-type, as seen experimentally.
+
+When comparing learning with and without gain-decrease pretraining, there are two effects to consider.
+First, the pushing synapses towards the states of stronger synaptic weight, resulting in more synapses being available for depression, speeding up learning.
+Second, it will also place synapses in states where transitions have lower probability, slowing down learning.
+The second effect will be weaker in the mutant than in wild-type, as they started further to the weaker side as explained above.
+This means that, for appropriate parameter choices, gain-decrease pretraining can speed up learning in the mutant, but also slow down learning in wild-type, as seen experimentally.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
