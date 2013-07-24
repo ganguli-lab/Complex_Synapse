@@ -197,7 +197,7 @@ Stanford University, Applied Physics
 \begin{frame}{Enhanced plasticity impairs learning}
 %
  \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
- Knockout of MHC-I D$^\mathrm{b}$K$^\mathrm{b}$ molecules in PF-Pk synapses\\
+ Knockout of MHC-I D$^\mathsf{b}$K$^\mathsf{b}$ molecules in PF-Pk synapses\\
  \citerr{McConnell2009MHCcerebellum}\\
  \begin{tabular}{r@{ }c}
  \lto\ lower threshold for LTD &
@@ -447,9 +447,11 @@ Stanford University, Applied Physics
   \vp Simplifying assumptions:
 \begin{itemize}
 %  \item No spatial/temporal patterns in plasticity events.
-  \item Different synapses are statistically independent of each other.
+  \item Candidate plasticity events occur independently at each synapse,
+
+  \item Each synapse responds with the same state-dependent rules,
       %
-      \note[item]{pot/dep occur randomly}
+%      \note[item]{pot/dep occur randomly}
       %
 %  \item \rule{0mm}{0mm}\cancel{Synaptic identity} \lto\ synaptic distribution.
   \item Keep track of distribution of synapses across states.
@@ -901,7 +903,7 @@ Stanford University, Applied Physics
 %
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Conclusions and further questions}
+\begin{frame}{Conclusions}
 %
  \begin{itemize}
 %   \item The saturation effect can overcome faster depression, if it is enhanced.
@@ -934,7 +936,8 @@ Stanford University, Applied Physics
  What about memory?
  \begin{itemize}
    \vp\item Simple synapses have poor memory storage capacity. \\
-   Synaptic complexity is needed for rescue.
+   Synaptic complexity is needed for rescue.\\
+   \citerr{amit1992constraints,amit1994learning}
 
    \vp\item Trade-off between learning and remembering:\\
    Too rigid \lto\ difficult to learn new memories.\\
@@ -960,8 +963,8 @@ Stanford University, Applied Physics
  \vp We prove that, no matter what the structure, no synaptic model can have:\\
  \begin{itemize}
    \item initial fidelity (SNR) greater than $\sqrt{N}$.
-   \item memory lifetime greater than $\sqrt{N}M$.
-   \item fidelity decay slower than $\sqrt{N}M/rt$.
+   \item memory lifetime greater than $\sim\sqrt{N}M$.
+   \item fidelity decay slower than $\sim\sqrt{N}M/t$.
  \end{itemize}
 
  \vp At late times, fidelity is maximised by a model with a simple chain structure.
