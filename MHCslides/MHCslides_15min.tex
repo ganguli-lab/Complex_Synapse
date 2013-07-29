@@ -2,7 +2,7 @@
 % ----------------------------------------------------------------
 % Beamer presentation ************************************************
 % **** -----------------------------------------------------------
-\documentclass{beamer}%[hyperref={backref=slide}]
+\documentclass{beamer}%[handout][hyperref={backref=slide}]
 
 \usepackage{array}
 \usepackage{cancel}
@@ -350,8 +350,9 @@ Stanford University, Applied Physics
    \only<6>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_all.svg}}}
  \end{center}
  \note[item]{Restricted to gain inc for comparison}
- \note[item]{Black: WT. Red: Enh.Plas}
+% \note[item]{Black: WT. Red: Enh.Plas}
  \note[item]{Solid: no pre. Dashed: with pre}
+ \note[item]{Initial slope only}
 % \note[item]{Horz and vert comparisons: conceptual}
  \note[item]<2->{Enh.Plas. hurts w/o. Competition?}
  \note[item]<3->{Enh.Plas. helps w/. Expected}
@@ -444,7 +445,7 @@ Stanford University, Applied Physics
   \note[item]{Multiple functional states w/ different weights}
   \note[item]{Stochastic transitions between states}
 
-  \vp Simplifying assumptions:
+  \vp Assumptions:
 \begin{itemize}
 %  \item No spatial/temporal patterns in plasticity events.
   \item Candidate plasticity events occur independently at each synapse,
@@ -506,7 +507,7 @@ Stanford University, Applied Physics
 %
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Synaptic dynamics}
+\begin{frame}{Models of synaptic dynamics}
 %
 %  There are $N$ identical synapses with $M$ internal functional states.
   %
@@ -912,7 +913,7 @@ Stanford University, Applied Physics
 %   \item A little reverse bias can help, but too much hurts, if repeated potentiation makes depression harder.
 %   \alert{Requires metaplasticity}
 %   \note[item]{\eg moving away from weight boundary, or weaker transitions.}
-   \item We find diverse behavioural patterns:\\
+   \item We find diverse behavioural patterns in these mutant mice:\\
 
    \alert{Enhanced plasticity \lto\ enhance/impair} learning depending on prior experience.\\
    \alert{Reverse-training \lto\ enhance/impair} learning depending on plasticity rates.
@@ -921,7 +922,7 @@ Stanford University, Applied Physics
 
    \item Key required synaptic properties are:\\
    \alert{Synaptic complexity:} necessary to amplify depletion.\\
-   \alert{Synaptic stubborness:} repeated potentiation makes subsequent depression harder.
+   \alert{Synaptic stubbornness:} repeated potentiation makes subsequent depression harder.
 
    \item  We used behaviour to constrain the dynamics of synaptic plasticity
 \end{itemize}
