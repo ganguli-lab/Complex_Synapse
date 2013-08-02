@@ -1,10 +1,13 @@
 
 Reviewer 1: We briefly discussed a suggestion for biological
-experiments to test the theory in lines 428. We could expand on
+experiments to test the theory in line 428. We could expand on
 this. If we measured pre and post-synaptic spike trains, and also
 recorded changes in post-synaptic potentials to measure changes in
-synaptic weight, we could use hidden Markov model techniques to find the best-fit Markov
-
+synaptic weight, we could use hidden Markov model techniques to
+find the best-fit synaptic model. However, as shown in this paper,
+which model is best depends on the range of time-scales of
+interest, so any predictions would also require understanding of
+what timescales the particular synapse needs to operate on.
 Regarding the discrepancy between the envelope and the
 numerical results: the envelope is just an upper bound and we do
 not claim that it is a tight bound. The reason is that equation
@@ -17,6 +20,15 @@ hand designed models can outperform the numerical methods at late
 times. In fact, the apparent drop-off of the solid red curve at
 very late times comes from not allowing small enough epsilon. This
 should be fixed in fig5.
+Yes, the level of noise tolerance is an important consideration.
+Note that the stochasticity of the models is an expression of
+biological noise. In fact, the type of noise described by the
+reviewer could be included by adding extra states to the model with
+the different transition rates. However, the synapses should not be
+allowed to optimise all of this noise away. It would be interesting
+to see how our results change if we put lower limits on the noise
+levels. I think this would be beyond the scope of this work, but
+should be added to the discussion section.
 
 Reviewer 2: We'll add a derivation of equation 3 to the supplement.
 We could add a description in the main text along the lines of:
@@ -39,7 +51,15 @@ could be related to optimisation for different timescales, but
 anything more than speculation would require a better understanding
 of the relation between structure and function (which is what we
 intend to begin with this work).
-line 220:
+line 220: Yes, fig2a,b is an example of why it is difficult to map
+molecular states to functional states as, despite appearances,
+these models actually only have two functional states due to their
+equivalence to fig 2c. One experimental investigation of this could
+be along the lines of the experiment described in line 428 (see
+first paragraph of our reply to reviewer 1 above for elaboration).
+Presumably we will find fewer functional states than molecular
+states. Making the link between molecular and functional states
+will, unfortunately, be much harder
 line 294: agreed.
 line 299: The fact that eta_i depends on M^pot/dep is taken into
 account. In equation (57) of the supplement, the term involving c_g
