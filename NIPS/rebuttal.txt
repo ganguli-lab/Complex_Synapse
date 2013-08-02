@@ -1,0 +1,41 @@
+
+Reviewer 1:
+Regarding the discrepancy between the envelope and the numerical results: the envelope is just an upper bound and we 
+do not claim that it is a tight bound. The reason is that equation (18) is not aa complete set of constraints, as 
+discussed below it. In the paragraph from line 377 to 400, we discuss this point further. Note that the numerical 
+results are not always instructive as the numerical procedures can be prevented from reaching the global maximum by 
+local maxima. This is shown by the fact that our hand designed models can outperform the numerical methods at late 
+times. In fact, the apparent drop-off of the solid red curve at very late times comes from not allowing small enough 
+epsilon. This should be fixed in fig5.
+
+Reviewer 2:
+We'll add a derivation of equation 3 to the supplement. We could add a description in the main text along
+the lines of: "The factor of p^infinity describes the synapses being in the steady-state distribution before the
+memory is encoded. The factor of (M^pot-M^dep) comes from the encoding of the memory at t=0, with w_ideal being +/-1 
+in synapses that are potentiated/depotentiated. The factor of exp(rt W^F) describes the subsequent evolution of the
+probability distribution, averaged over all sequences of plasticity events and the factor of w indicates the readout 
+via the synaptic weight."
+I think we referred to all of the original parts of the supplement in the main paper. I'm not sure how we could
+incorporate it into the main paper without exceeding the page limit.
+
+Reviewer 3:
+line 195: in the introduction, we cited [17], which describes diversity in synaptic structure across the vertebrate 
+brain. This could be related to optimisation for different timescales, but anything more than speculation would 
+require a better understanding of the relation between structure and function (which is what we intend to begin with 
+this work).
+line 220:
+line 294: agreed.
+line 299: The fact that eta_i depends on M^pot/dep is taken into account. In equation (57) of the supplement, the 
+term involving c_g comes from this dependence. If the reviewer is concerned that tho order of the eta_i could change 
+during the maximisation procedure: note that necessary conditions for a maximum only require that there is no 
+infinitesimal perturbation that increases the area. Therefor we need only consider an infinitesimal neighbourhood of 
+the model, in which the order will not change.
+line 304: Yes. We'll add this phrase to the text.
+line 326: In fig2(a,b), we need not have an equal number of w=+/-1 states (we could change the figure to reflect 
+this), but those states are not functionally relevant, as shown by their equivalence to fig2c. The model in fig2c, of 
+course, has no room for such asymmetry. The models in figs4,5b do need to have equal numbers of +/- states, asymmetry 
+would make them worse. For fig4, the effect of the asymmetry would be reduced in the limit as epsilon -> 0, as all
+states other than the end states would have very small p^infinity.
+line 415: It is only for t_0 > sqrt(N)M that the models that nearly touch the envelope are linear chains. The model 
+in fig5b is not a linear chain, as it has shortcut transitions, but they are only the best models (that we have 
+found) for times t_0 < sqrt(N)M. Would it help if we repeated fig4 as fig5c?
