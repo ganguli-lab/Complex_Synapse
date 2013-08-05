@@ -1,13 +1,18 @@
 
-Reviewer 1: We briefly discussed a suggestion for biological
-experiments to test the theory in line 428. We could expand on
-this. If we measured pre and post-synaptic spike trains, and also
-recorded changes in post-synaptic potentials to measure changes in
-synaptic weight, we could use hidden Markov model techniques to
-find the best-fit synaptic model. However, as shown in this paper,
-which model is best depends on the range of time-scales of
-interest, so any predictions would also require understanding of
-what timescales the particular synapse needs to operate on.
+Reviewer 1:
+We would like to link our theory to experiment, but we don't think
+that the necessary experiments have been performed yet. We briefly
+discussed a suggestion for biological experiments to test the
+theory in line 428. We could expand on this. If we measured pre and
+post-synaptic spike trains, and also recorded changes in
+post-synaptic potentials/currents from a single synapse to measure
+changes in synaptic weight, we could use hidden Markov model
+techniques to find the best-fit synaptic model. However, as shown
+in this paper, which model is best depends on the range of
+time-scales of interest, so any predictions would also require
+understanding of what timescales the particular synapse needs to
+operate on. We'd also need to cut something else to stay within the
+page limit.
 Regarding the discrepancy between the envelope and the
 numerical results: the envelope is just an upper bound and we do
 not claim that it is a tight bound. The reason is that equation
@@ -19,18 +24,21 @@ global maximum by local maxima. This is shown by the fact that our
 hand designed models can outperform the numerical methods at late
 times. In fact, the apparent drop-off of the solid red curve at
 very late times comes from not allowing small enough epsilon. This
-should be fixed in fig5.
-Yes, the level of noise tolerance is an important consideration.
-Note that the stochasticity of the models is an expression of
-biological noise. In fact, the type of noise described by the
-reviewer could be included by adding extra states to the model with
-the different transition rates. However, the synapses should not be
-allowed to optimise all of this noise away. It would be interesting
-to see how our results change if we put lower limits on the noise
-levels. I think this would be beyond the scope of this work, but
-should be added to the discussion section.
+should be fixed in fig5, showing the solid red curve hugging the
+green one at late times.
+We agree that the level of noise tolerance is an important
+consideration. Note that the stochasticity of the models is an
+expression of biological noise. In fact, the type of noise
+described by the reviewer could be included by adding extra states
+to the model with the different transition rates. However, the
+synapses should not be allowed to optimise this noise away.
+It would be interesting to see how our results change if we put
+lower limits on the noise levels, or incorporated noise in the
+manner suggested by the reviewer. I think this would be beyond the
+scope of this work, but could be mentioned in the discussion section.
 
-Reviewer 2: We'll add a derivation of equation 3 to the supplement.
+Reviewer 2:
+We'll add a derivation of equation 3 to the supplement.
 We could add a description in the main text along the lines of:
 "The factor of p^infinity describes the synapses being in the
 steady-state distribution before the memory is encoded. The factor
@@ -42,7 +50,11 @@ events and the factor of w indicates the readout via the synaptic
 weight."
 I think we referred to all of the original parts of the supplement
 in the main paper. I'm not sure how we could incorporate more into
-the main paper without exceeding the page limit.
+the main paper without exceeding the page limit. Section 1 of the
+supplement consists of simple generalisations of discrete time
+results to continuous time, so it doesn't really merit inclusion in
+the main text. We put references at the start of the section. Would
+it make it clearer if we added these references throughout the section?
 
 Reviewer 3:
 line 195: in the introduction, we cited [17], which describes
@@ -59,16 +71,17 @@ be along the lines of the experiment described in line 428 (see
 first paragraph of our reply to reviewer 1 above for elaboration).
 Presumably we will find fewer functional states than molecular
 states. Making the link between molecular and functional states
-will, unfortunately, be much harder
+will, unfortunately, be much harder.
 line 294: agreed.
 line 299: The fact that eta_i depends on M^pot/dep is taken into
 account. In equation (57) of the supplement, the term involving c_g
-comes from this dependence. If the reviewer is concerned that tho
+comes from this dependence. If the reviewer is concerned that the
 order of the eta_i could change during the maximisation procedure:
 note that necessary conditions for a maximum only require that
 there is no infinitesimal perturbation that increases the area.
 Therefor we need only consider an infinitesimal neighbourhood of
-the model, in which the order will not change.
+the model, in which the order will not change. Should this be
+mentioned in section 3.2?
 line 304: Yes. We'll add this phrase to the text.
 line 326: In fig2(a,b), we need not have an equal number of w=+/-1
 states (we could change the figure to reflect this), but those
@@ -76,11 +89,11 @@ states are not functionally relevant, as shown by their equivalence
 to fig2c. The model in fig2c, of course, has no room for such
 asymmetry. The models in figs4,5b do need to have equal numbers of
 +/- states, asymmetry would make them worse. For fig4, the effect
-of the asymmetry would be reduced in the limit as epsilon -> 0, as
+of the asymmetry would go away in the limit as epsilon -> 0, as
 all states other than the end states would have very small
-p^infinity.
+p^infinity. Should this be mentioned in section 4?
 line 415: It is only for t_0 > sqrt(N)M that the models that nearly
-touch the envelope are linear chains. The model in fig5b is not a
-linear chain, as it has shortcut transitions, but they are only the
+touch the envelope are linear chains. The models in fig5b is not a
+linear chain, as it has shortcut transitions, but these are only the
 best models (that we have found) for times t_0 < sqrt(N)M. Would it
 help if we repeated fig4 as fig5c?
