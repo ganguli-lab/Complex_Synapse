@@ -69,7 +69,7 @@
 \institute[Stanford]{%
 Department of Applied Physics, Stanford University, Stanford CA
 }
-\date{June 27, 2012}
+%\date{June 27, 2012}
 \titlegraphicl{\includegraphics[height=5cm]{SU_Seal_Card_pos.eps}}
 \titlegraphic{\includegraphics[height=5cm]{bio-x.eps}%
     \hspace{0.5cm}\includegraphics[height=5cm]{swartz.eps}}
@@ -122,13 +122,13 @@ Department of Applied Physics, Stanford University, Stanford CA
  \begin{minipage}[t]{14.5cm}
    In reality, a synapse is a complex dynamical system.
 
-   \vp We will describe a synapse by stochastic processes on a finite number of states, $n$.
+   \vp We will describe a synapse by stochastic processes on a finite number of states, $M$.
 
    \vp Potentiation and depression cause transitions between these states.
 
    \vp
    \begin{center}
-     \aligntop{\includegraphics[width=11cm]{synapse.eps}}
+     \aligntop{\includegraphics[width=11cm]{synapse.svg}}
    \end{center}
  \end{minipage}
  %
@@ -141,9 +141,9 @@ Department of Applied Physics, Stanford University, Stanford CA
     \citerr{Coba2009phosphorylation}
 
    \begin{center}
-   \aligntop{\includegraphics[width=5cm]{pot.eps}}
+   \aligntop{\includegraphics[width=5cm]{pot.svg}}
    \hspace{2cm}
-   \aligntop{\includegraphics[width=5cm]{dep.eps}}
+   \aligntop{\includegraphics[width=5cm]{dep.svg}}
    \end{center}
  \end{minipage}
 %
@@ -151,21 +151,21 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Cascade and multistate models}
+\begin{block}{Cascade and serial models}
 %
  Two example models of complex synapses.
  \begin{center}
 % \parbox[t]{30cm}{
-  \aligntop{\includegraphics[width=12cm]{cascade.eps}}
+  \aligntop{\includegraphics[width=11cm]{cascade.svg}}
   \hspace{2cm}
-  \aligntop{\includegraphics[width=12cm]{multistate.eps}}
+  \aligntop{\includegraphics[width=11cm]{serial.svg}}
 % }
  \end{center}
- \citerr{Fusi2005cascade,amit1994learning,Fusi2007multistate}
+ \citerr{Fusi2005cascade,Leibold2008serial}
 
  These have different memory storage properties
  \begin{center}
- \includegraphics[width=15cm]{cascms.eps}
+ \includegraphics[width=13cm]{cascms.eps}
  \end{center}
 %
 \end{block}
@@ -210,6 +210,8 @@ Department of Applied Physics, Stanford University, Stanford CA
  \end{equation*}
  %
  This will eventually return it to the equilibrium distribution, $\eq$.
+
+ \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
 %
 \end{block}
 
@@ -287,7 +289,7 @@ Department of Applied Physics, Stanford University, Stanford CA
   We can show that this area has an upper bound:
   %
   \begin{equation*}
-    A \leq \sqrt{N}(n-1)/r.
+    A \leq \sqrt{N}(M-1)/r.
   \end{equation*}
   %
   This is saturated by a transition diagram with a linear chain topology.
@@ -345,7 +347,7 @@ Department of Applied Physics, Stanford University, Stanford CA
  \parbox[c]{15cm}{
   %
   \begin{center}
-    \includegraphics[width=6cm]{shortcut.eps}
+    \includegraphics[width=6cm]{shortcut.svg}
   \end{center}
   %
  }
@@ -373,6 +375,43 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{column}{0.32\linewidth}
 
 
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Initial SNR}
+%
+ Initial SNR is closely related to equilibrium flux between strong \& weak states
+ %
+ \begin{equation*}
+   \SNR(0) \leq \frac{4\sqrt{N}}{r}\,\F_{-+}.
+ \end{equation*}
+ %
+ Max when %\parbox[t]{0.7\linewidth}{
+ potentiation guarantees $\w\to$ strong, %\\
+ depression guarantees $\w\to$ weak.
+ %                                                                                                                  }
+% %
+% \begin{center}
+%   \includegraphics[height=3cm]{max_init_pot.svg}
+%   \hspace{2cm}
+%   \includegraphics[height=3cm]{max_init_dep.svg}
+% \end{center}
+
+ \vp \lto\ Equivalent to two-state model 
+  \begin{center}
+  Transitions:
+   \parbox{2cm}{\includegraphics[height=4cm]{binary_det.svg}}
+   $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
+  \end{center}
+  \note[item]{decays very quickly}
+
+ \vp Maximal initial SNR:\hspace{2cm}
+ %
+ $
+   \snr(0) \leq \sqrt{N}.
+ $
+%
+\end{block}
+
 
 \section{The memory envelope}
 
@@ -390,66 +429,84 @@ Department of Applied Physics, Stanford University, Stanford CA
  (optimizing at two or more well separated times requires multiple exponentials).
 
  \vp Varying $t_0$ yields a memory envelope curve with a power law tail.
-\parbox[c]{15.5cm}{
+
+\vp
+\parbox[c]{0.45\linewidth}{
  \begin{center}
-   \aligntop{\includegraphics[width=15cm]{env.eps}}
+   \aligntop{\includegraphics[width=15cm]{env.svg}}
  \end{center}
 }
 \hspace{0.5cm}
-\parbox[c]{14cm}{
+\parbox[c]{0.45\linewidth}{
  %
-% Proven:
- \begin{equation*}
-  \begin{aligned}
-   \text{Proven envelope} &\sim \sqrt{N}
-     \begin{cases}
-       \CO(1)                  & rt_0 <\CO(n),\\
-       \CO\prn{\frac{n}{rt_0}} & rt_0 >\CO(n).
-     \end{cases}
-   \\
-%  \end{aligned}
-% \end{equation*}
-% %
-% Conjectured:
-% %
+   Early times: (varying $M$)
+   %
+   \begin{center}
+  %   \includegraphics[width=6cm]{multistate_shorten.svg}
+     \includegraphics[width=0.7\linewidth]{diffjump.svg}
+   \end{center}
+   %
+  % \note[item]{shorten length of chain, keeping deterministic}
+
+   %
+   \vp Late times: (varying $\epsilon$)
+   %
+   \begin{center}
+     \includegraphics[width=0.7\linewidth]{multistate_sticky.svg}
+   \end{center}
+   %
+%% Proven:
 % \begin{equation*}
 %  \begin{aligned}
-   \text{Conj.\ envelope} &\sim \sqrt{N}
-     \begin{cases}
-       \CO\prn{\frac{1}{\sqrt{rt_0}}}  & rt_0 <\CO(n^2),\\
-       \CO\prn{\frac{n}{rt_0}}         & rt_0 >\CO(n^2).
-     \end{cases}
-  \end{aligned}
- \end{equation*}
+%   \text{Proven envelope} &\sim \sqrt{N}
+%     \begin{cases}
+%       \CO(1)                  & rt_0 <\CO(n),\\
+%       \CO\prn{\frac{n}{rt_0}} & rt_0 >\CO(n).
+%     \end{cases}
+%   \\
+%%  \end{aligned}
+%% \end{equation*}
+%% %
+%% Conjectured:
+%% %
+%% \begin{equation*}
+%%  \begin{aligned}
+%   \text{Conj.\ envelope} &\sim \sqrt{N}
+%     \begin{cases}
+%       \CO\prn{\frac{1}{\sqrt{rt_0}}}  & rt_0 <\CO(n^2),\\
+%       \CO\prn{\frac{n}{rt_0}}         & rt_0 >\CO(n^2).
+%     \end{cases}
+%  \end{aligned}
+% \end{equation*}
  %
 }
 %
 \end{block}
-
-%-------------Box--------------------------------------------------------
-
-\begin{block}{Extra constraint: limits of diffusive learning and forgetting}
 %
- The envelope above may not be tight.
- We conjecture an additional constraint, which would yield a tight envelope (dashed line above).
- Schematically, mode by mode:
- %
- \begin{equation*}
-   \SNR(0)\sqrt{\text{time-scale}} \leq \sqrt{N}\cdot \CO(1).
- \end{equation*}
- %
- We have found no model that can exceed this bound.
- It is saturated by a diffusive chain:
- %
- \begin{equation*}
-   \SNR(0) \sim \frac{1}{n},
-   \qquad
-   \text{time-scale} \sim n^2.
- \end{equation*}
- %
+%%-------------Box--------------------------------------------------------
 %
-\end{block}
-
+%\begin{block}{Extra constraint: limits of diffusive learning and forgetting}
+%%
+% The envelope above may not be tight.
+% We conjecture an additional constraint, which would yield a tight envelope (dashed line above).
+% Schematically, mode by mode:
+% %
+% \begin{equation*}
+%   \SNR(0)\sqrt{\text{time-scale}} \leq \sqrt{N}\cdot \CO(1).
+% \end{equation*}
+% %
+% We have found no model that can exceed this bound.
+% It is saturated by a diffusive chain:
+% %
+% \begin{equation*}
+%   \SNR(0) \sim \frac{1}{n},
+%   \qquad
+%   \text{time-scale} \sim n^2.
+% \end{equation*}
+% %
+%%
+%\end{block}
+%
 %%-------------Box--------------------------------------------------------
 %
 %\begin{block}{Maximum lifetime}
@@ -477,8 +534,8 @@ Department of Applied Physics, Stanford University, Stanford CA
     \item We can impose an order on the internal states of a synapse through the theory of first passage times.
     \item The area under the memory curve of any synaptic transition diagram cannot exceed that of a linear chain with the same equilibrium probability distribution.
     \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
-        Synaptic complexity ($n$ internal states) raises the memory envelope linearly in $n$ for times $> \CO(n^2)$.
-    \item For times $< \CO(n^2)$ we conjecture the close to optimal synaptic model that reaches the envelope exploits deterministic transitions, resulting in diffusive forgetting.
+        Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $n$ for times $> \CO(M)$.
+%    \item For times $< \CO(n^2)$ we conjecture the close to optimal synaptic model that reaches the envelope exploits deterministic transitions, resulting in diffusive forgetting.
   \end{itemize}
 %
 \end{block}
@@ -487,7 +544,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{References}
 %
- {\small
+ {\tiny
  \bibliographystyle{unsrt_poster}
  \bibliography{neuro,maths}
  }
@@ -498,7 +555,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Acknowledgements}
 %
- SL and SG thank the Swartz Foundation, Burroughs Wellcome Foundation, Stanford Bio-X Neuroventures and DARPA for funding, and Larry Abbott and Stefano Fusi for useful conversations.
+ SL and SG thank the Swartz Foundation, Burroughs Wellcome Foundation, Stanford Bio-X Neuroventures, Genentech and DARPA for funding, and Larry Abbott, Stefano Fusi, Marcus Benna, David Sussillo and Jascha Sohl-Dickstein for useful conversations.
 
 %
 \end{block}
