@@ -377,7 +377,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Initial SNR}
+\begin{block}{Initial SNR bound}
 %
  Initial SNR is closely related to equilibrium flux between strong \& weak states
  %
@@ -385,6 +385,8 @@ Department of Applied Physics, Stanford University, Stanford CA
    \SNR(0) \leq \frac{4\sqrt{N}}{r}\,\F_{-+}.
  \end{equation*}
  %
+ 
+ \vp
  Max when %\parbox[t]{0.7\linewidth}{
  potentiation guarantees $\w\to$ strong, %\\
  depression guarantees $\w\to$ weak.
@@ -395,14 +397,23 @@ Department of Applied Physics, Stanford University, Stanford CA
 %   \hspace{2cm}
 %   \includegraphics[height=3cm]{max_init_dep.svg}
 % \end{center}
-
- \vp \lto\ Equivalent to two-state model 
-  \begin{center}
-  Transitions:
-   \parbox{2cm}{\includegraphics[height=4cm]{binary_det.svg}}
+%
+% \vp \lto\ Equivalent to two-state model
+%  \begin{center}
+%  Transitions:
+%   \parbox{2cm}{\includegraphics[height=4cm]{binary_det.svg}}
+%   $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
+%  \end{center}
+ \begin{center}
+   \alignmid{\includegraphics[height=3cm]{max_init_pot.svg}}
+   \hspace{1cm}
+   \alignmid{\includegraphics[height=3cm]{max_init_dep.svg}}
+   \hspace{2cm}
+  \lto\ Equivalent to:
+   \hspace{1cm}
+   \alignmid{\includegraphics[height=4cm]{binary_det.svg}}
    $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
   \end{center}
-  \note[item]{decays very quickly}
 
  \vp Maximal initial SNR:\hspace{2cm}
  %
@@ -449,7 +460,7 @@ Department of Applied Physics, Stanford University, Stanford CA
   % \note[item]{shorten length of chain, keeping deterministic}
 
    %
-   \vp Late times: (varying $\epsilon$)
+   \vp Late times: (varying $\varepsilon$)
    %
    \begin{center}
      \includegraphics[width=0.7\linewidth]{multistate_sticky.svg}
