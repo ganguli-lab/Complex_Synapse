@@ -225,19 +225,19 @@ Department of Applied Physics, Stanford University, Stanford CA
  The reconstruction probability of a single synapse is:
  %
  \begin{equation*}
-   s(t) = f\pot P(\text{strong},t|\text{pot},0) + f\dep P(\text{weak},t|\text{dep},0)
+   s(t) = f\pot P(\text{strong},t\mid\text{pot},0) + f\dep P(\text{weak},t\mid\text{dep},0)
  \end{equation*}
  %
  Alternatively, if $\W$ is an $N$-element vector of synaptic strengths,
  %
  \begin{equation*}
    \begin{aligned}
-     \text{Signal} &= \av{\W_\text{ideal} \cdot \W(t) -  \W_\text{ideal} \cdot \W(\infty)}\\
-     \text{Noise} &= \var\prn{\W_\text{ideal} \cdot \W(\infty)}
+     \text{Signal} &= \av{\W_\text{ideal} \cdot \W(t) -  \W_\text{ideal} \cdot \W(\infty)}, \\
+     \text{Noise} &= \sqrt{\var\prn{\W_\text{ideal} \cdot \W(\infty)}}.
    \end{aligned}
  \end{equation*}
  %
- If we ignore correlations between different synapses, the signal-to-noise ratio is:
+ If we assume there are no correlations between different synapses, the signal-to-noise ratio is:
  %
  \begin{equation*}
    \SNR(t) \sim \sqrt{N}(s(t)-s(\infty)).
@@ -385,11 +385,11 @@ Department of Applied Physics, Stanford University, Stanford CA
    \SNR(0) \leq \frac{4\sqrt{N}}{r}\,\F_{-+}.
  \end{equation*}
  %
- 
+
  \vp
- Max when %\parbox[t]{0.7\linewidth}{
- potentiation guarantees $\w\to$ strong, %\\
- depression guarantees $\w\to$ weak.
+ Maximized when %\parbox[t]{0.7\linewidth}{
+ potentiation guarantees $\W\to$ strong, %\\
+ depression guarantees $\W\to$ weak.
  %                                                                                                                  }
 % %
 % \begin{center}

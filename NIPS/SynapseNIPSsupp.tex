@@ -172,6 +172,8 @@ Furthermore, we also define
 \subsection{Fundamental matrix}\label{sec:fund}
 
 \begin{defn}[Fundamental matrix]
+  For discrete time, the generalized fundamental matrix was defined in \cite{Kemeny1981const}.
+  For continuous time, we define:
   %
   \begin{equation}\label{eq:funddef}
     \fund \equiv (-\MM + \onev\pib)\inv,
@@ -338,7 +340,7 @@ or in component form:
 
 \subsection{Mixing time (Kemeny's constant)}\label{sec:mixtime}
 
-\begin{thm}\label{th:kemenyconst}
+\begin{thm} \mbox{}\label{th:kemenyconst}
   The quantity
   %
   \begin{equation}\label{eq:mixdef}
@@ -348,7 +350,8 @@ or in component form:
   is independent of $i$.
 \end{thm}
 \begin{proof}
-  We use \eqref{eq:fptfund}, \eqref{eq:fundrowsum} and the transpose of \eqref{eq:pdotD}:
+  For discrete time, a proof can be found in \cite[Th.4.4.10]{kemeny1960finite}.
+  For continuous time, we use \eqref{eq:fptfund}, \eqref{eq:fundrowsum} and the transpose of \eqref{eq:pdotD}:
   %
   \begin{equation*}
     \begin{aligned}
@@ -362,7 +365,7 @@ or in component form:
   which proves \eqref{eq:mixdef} with $\eta = \tr\fund - \tau$.
 \end{proof}
 
-Note that it is essential that we use $\fptb$ and not $\fpt$ here, as that would lead to $\eta_i=\eta+\Lb_{ii}$, unlike the discrete time version \cite{hunter2006mixing} where this would only shift $\eta$ by 1.
+Note that it is essential that we use $\fptb$ and not $\fpt$ here, as that would lead to $\eta_i=\eta+\Lb_{ii}$, unlike the discrete time version, where this would only shift $\eta$ by 1.
 
 \subsection{Sensitivity of equilibrium distribution}\label{sec:sensitivity}
 
@@ -582,8 +585,102 @@ After this, probabilities will evolve according to \eqref{eq:rowsum}.
 
 As discussed in the main text, the signal-to-noise ratio is given by
 %
+\begin{equation}\label{eq:SNRdef}
+  \snr(t) = \frac{\av{\wv_\text{ideal}\cdt\wv(t)} - \av{\wv_\text{ideal}\cdt\wv(\infty)}}
+     {\sqrt{\var(\wv_\text{ideal}\cdt\wv(\infty))}}.
+\end{equation}
+%
+First, let's look at the denominator, remembering that the states and plasticity events of each synapse are independent and identically distributed:
+%
+\begin{equation}\label{eq:noise}
+\begin{aligned}
+  \var(\wv_\text{ideal}\cdt\wv(\infty))
+    &= \sum_{\alpha\beta} \av{\wv^\alpha_\text{ideal}\wv^\alpha(\infty) \wv^\beta_\text{ideal}\wv^\beta(\infty)}
+    - \prn{\sum_\alpha \av{\wv^\alpha_\text{ideal}\wv^\alpha(\infty)}}^2 \\
+    &= \sum_{\alpha} \av{(\wv^\alpha_\text{ideal})^2(\wv^\alpha(\infty))^2}
+    + \sum_{\alpha\neq\beta} \av{\wv^\alpha_\text{ideal}\wv^\alpha(\infty)}\av{\smash{\wv^\beta}_\text{ideal}\smash{\wv^\beta}(\infty)}
+    \\&\phantom{= \sum_{\alpha}  \av{(\wv^\alpha_\text{ideal})^2(\wv^\alpha(\infty))^2}}
+    - \prn{\sum_\alpha \av{\wv^\alpha_\text{ideal}\wv^\alpha(\infty)}}^2  \\
+    &= N\av{1}
+    + N(N-1)\av{\wv^1_\text{ideal}\wv^1(\infty)}^2
+    - N^2\av{\wv^1_\text{ideal}\wv^1(\infty)}^2 \\
+    &= N(1-\av{\wv^1_\text{ideal}\wv^1(\infty)}^2),
+\end{aligned}
+\end{equation}
+%
+where we used $\wv^\alpha=\pm1$.
+
+For the numerator, we can write
+%
+\begin{equation}\label{eq:overlapex}
+  \av{\wv_\text{ideal}\cdt\wv(t)} = \sum_\alpha\av{\wv^\alpha_\text{ideal}\wv^\alpha(t)}
+   = N \av{\wv^1_\text{ideal}\wv^1(t)},
+\end{equation}
+%
+Noting that $\wvi=\pm1$ with probability $f\potdep$,
+%
+\begin{equation}\label{eq:overlapstate}
+\begin{aligned}
+  \av{\wv^1_\text{ideal}\wv^1(t)} &= f\pot \av{\wv^1(t)}_{\text{pot},t=0} - f\dep \av{\wv^1(t)}_{\text{dep},t=0} \\
+   &= f\pot \sum_i P(\text{state}=i,t \mid \text{pot},0) \w_i - f\dep \sum_i P(\text{state}=i,t \mid \text{dep},0) \w_i.
+\end{aligned}
+\end{equation}
+%
+From the previous section,
+%
+\begin{equation}\label{eq:stateprob}
+  P(\text{state}=i,t \mid \text{pot/dep},0) = \brk{ \eq \M\potdep\, \e^{rt\frg} }_i,
+\end{equation}
+%
+which describes the synapses starting in the equilibrium distribution, changing state due to the plasticity event at $t=0$ and subsequent evolution according to \eqref{eq:rowsum} due to plasticity events uncorrelated with the special event at $t=0$.%
+\footnote{Note that expanding the exponential gives
+%
+\begin{equation*}
+  \e^{rt\frg} =  \sum_{n=0}^\infty \frac{(rt)^n\,\e^{-rt}}{n!} \sum_{m=0}^n (f\pot)^m (f\dep)^{n-m}
+  \brk{ \M\pot \M\dep \M\pot \M\pot \ldots + \text{permutations}}.
+\end{equation*}
+%
+Thus, evolving according to \eqref{eq:rowsum} results in averaging over all sequences of plasticity events,
+as we only need linear expectations of $\wv(t)$ in the end.}
+This results in
+%
+\begin{equation}\label{eq:overlapwt}
+\begin{aligned}
+  \av{\wv^1_\text{ideal}\wv^1(t)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \e^{rt\frg} \w, \\
+  \av{\wv^1_\text{ideal}\wv^1(\infty)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \onev\eq \w \\
+         &= \eq (f\pot\onev-f\dep\onev)\, \eq \w \\
+         &=  (f\pot-f\dep)\, \eq \w \\
+         &=  (f\pot-f\dep)\, \eq \e^{rt\frg} \w .
+\end{aligned}
+\end{equation}
+%
+Combining these allows us to write the numerator as
+%
+\begin{equation}\label{eq:signal}
+\begin{aligned}
+  \av{\wv_\text{ideal}\cdt\wv(t)} - \av{\wv_\text{ideal}\cdt\wv(\infty)}
+    &= N \eq (f\pot(\M\pot-\I)-f\dep(\M\dep-\I))\, \e^{rt\frg} \w \\
+    &= N \eq (f\pot(\W\pot-\frg)-f\dep(\W\dep-\frg))\, \e^{rt\frg} \w \\
+%    &= N \eq (f\pot(f\dep\W\pot-f\dep\W\dep)-f\dep(f\pot\W\dep-f\pot\W\pot))\,\e^{rt\frg}\w \\
+    &= N (2f\pot f\dep)\eq (\W\pot  - \W\dep )\,\e^{rt\frg}\w.
+\end{aligned}
+\end{equation}
+%
+where we used $\eq\frg=0$ in going from the first to second lines.
+Combining with \eqref{eq:noise} gives
+%
+\begin{equation}\label{eq:SNRcurveExact}
+  \SNR(t) = \frac{\sqrt{N} (2f\pot f\dep ) \eq (\W\pot  - \W\dep )\,\e^{rt\frg}\w}
+                 {\sqrt{1-(f\pot-f\dep)^2(\eq_+-\eq_-)^2}}.
+\end{equation}
+%
+The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with $f\pot=f\dep$ or $\eq_+=\eq_-$.
+We can set the denominator to 1 without changing any of our results.
+
+Which results in our final formula:
+%
 \begin{equation}\label{eq:SNRcurve}
-  \SNR(t) = \sqrt{N} (2f\pot f\dep ) \eq (\W\pot  - \W\dep )\e^{rt\frg}\w.
+  \SNR(t) = \sqrt{N} (2f\pot f\dep )\, \eq (\W\pot  - \W\dep )\,\e^{rt\frg}\w.
 \end{equation}
 %
 
@@ -609,7 +706,7 @@ Then \eqref{eq:SNRcurve} becomes
 
 
 
-\subsection{Lumpability}\label{sec:SNRlump}
+\subsection{Lumpability and the SNR curve}\label{sec:SNRlump}
 
 Suppose that we have a partition such that $\W\pot $ and $\W\dep $ are simultaneously lumpable, and that all the states in each subset have the same synaptic strength (see \sref{sec:lump}):
 %
@@ -646,7 +743,7 @@ This synapse has an SNR curve:
 
 \subsection{Initial SNR and flux}\label{sec:initflux}
 
-Using $\eq\frg=0$, we can write the initial SNR as
+Using $\eq\frg=0$ and the first line of \eqref{eq:signal}, we can write the initial SNR as
 %
 \begin{equation}\label{eq:init}
   \frac{\SNR(0)}{\sqrt{N}} = I = ({\eq}^++{\eq}^-)(f\pot \W\pot -f\dep \W\dep )(\onev^+-\onev^-).
