@@ -60,7 +60,7 @@
 
 %---------Title-----------------------------------------------------------
 
-\title{Learning and memory with complex synapses}
+\title{A memory frontier for complex synapses}
 %
 %\subtitle{\small{based on \texttt{arXiv: [hep-th]} with }}
 %
@@ -69,7 +69,7 @@
 \institute[Stanford]{%
 Department of Applied Physics, Stanford University, Stanford CA
 }
-%\date{June 27, 2012}
+\date{August 26, 2013}
 \titlegraphicl{\includegraphics[height=5cm]{SU_Seal_Card_pos.eps}}
 \titlegraphic{\includegraphics[height=5cm]{bio-x.eps}%
     \hspace{0.5cm}\includegraphics[height=5cm]{swartz.eps}}
@@ -88,7 +88,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 %-------------Beginning--------------------------------------------------------
 
 %-------------Column--------------------------------------------------------
-\begin{column}{0.27\linewidth}
+\begin{column}{0.26\linewidth}
 
 \section{Background}
 
@@ -107,7 +107,8 @@ Department of Applied Physics, Stanford University, Stanford CA
  A classical perceptron, when used as a recognition memory device, has a memory capacity proportional to the number of synapses, $N$.
 
  \vp However, this requires synapses to have a dynamic range also $\propto N$.
- If synaptic efficacies are limited to a fixed dynamic range, this introduces a strong tradeoff between learning and forgetting due to new memories overwriting old.
+ 
+ \vp If synaptic efficacies are limited to a fixed dynamic range, this introduces a strong tradeoff between learning and forgetting due to new memories overwriting old.
  If we wish to store new memories rapidly, then memory capacity is $\CO(\log N)$.
  \\ \citerr{amit1992constraints,amit1994learning}
 
@@ -119,7 +120,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Complex synapses}
 %
- \begin{minipage}[t]{14.5cm}
+ \begin{minipage}[t]{0.47\linewidth}
    In reality, a synapse is a complex dynamical system.
 
    \vp We will describe a synapse by stochastic processes on a finite number of states, $M$.
@@ -128,22 +129,22 @@ Department of Applied Physics, Stanford University, Stanford CA
 
    \vp
    \begin{center}
-     \aligntop{\includegraphics[width=11cm]{synapse.svg}}
+     \aligntop{\includegraphics[width=0.76\linewidth]{synapse.svg}}
    \end{center}
  \end{minipage}
  %
  %\hspace{1cm}
  %
- \begin{minipage}[t]{15.5cm}
+ \begin{minipage}[t]{0.49\linewidth}
    \begin{center}
-    \aligntop{\includegraphics[width=15cm]{2000102CobaFig4.pdf}}
+    \aligntop{\includegraphics[width=0.96\linewidth]{2000102CobaFig4.pdf}}
    \end{center}
     \citerr{Coba2009phosphorylation}
 
    \begin{center}
-   \aligntop{\includegraphics[width=5cm]{pot.svg}}
+   \aligntop{\includegraphics[width=0.32\linewidth]{pot.svg}}
    \hspace{2cm}
-   \aligntop{\includegraphics[width=5cm]{dep.svg}}
+   \aligntop{\includegraphics[width=0.32\linewidth]{dep.svg}}
    \end{center}
  \end{minipage}
 %
@@ -156,16 +157,16 @@ Department of Applied Physics, Stanford University, Stanford CA
  Two example models of complex synapses.
  \begin{center}
 % \parbox[t]{30cm}{
-  \aligntop{\includegraphics[width=11cm]{cascade.svg}}
+  \aligntop{\includegraphics[width=0.35\linewidth]{cascade.svg}}
   \hspace{2cm}
-  \aligntop{\includegraphics[width=11cm]{serial.svg}}
+  \aligntop{\includegraphics[width=0.35\linewidth]{serial.svg}}
 % }
  \end{center}
  \citerr{Fusi2005cascade,Leibold2008serial}
 
  These have different memory storage properties
  \begin{center}
- \includegraphics[width=13cm]{cascms.eps}
+ \includegraphics[width=0.5\linewidth]{cascms.eps}
  \end{center}
 %
 \end{block}
@@ -189,7 +190,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 \end{column}
 
 %-------------Column--------------------------------------------------------
-\begin{column}{0.37\linewidth}
+\begin{column}{0.415\linewidth}
 
 \section{Framework}
 
@@ -253,7 +254,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Area bound}
 %
- \parbox[c]{26cm}{
+ \parbox[c]{0.6\linewidth}{
  % We can show that the area under the SNR curve is bounded:
  % %
  % \begin{equation*}
@@ -295,10 +296,10 @@ Department of Applied Physics, Stanford University, Stanford CA
   This is saturated by a transition diagram with a linear chain topology.
  }
  \hfill
- \parbox[c]{16cm}{
+ \parbox[c]{0.37\linewidth}{
   %
   \begin{center}
-    \includegraphics[width=15cm]{lifetime.eps}
+    \includegraphics[width=0.9375\linewidth]{lifetime.eps}
   \end{center}
   %
  }
@@ -337,17 +338,17 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{block}{Maximal area}
 %
  Given any synaptic model, we can construct one with a linear chain topology that has
- \parbox[c]{15cm}{
+ \parbox[c]{0.34\linewidth}{
   \begin{itemize}
     \item the same state order,
     \item the same equilibrium distribution,
     \item a larger area.
   \end{itemize}
  }
- \parbox[c]{15cm}{
+ \parbox[c]{0.34\linewidth}{
   %
   \begin{center}
-    \includegraphics[width=6cm]{shortcut.svg}
+    \includegraphics[width=0.4\linewidth]{shortcut.svg}
   \end{center}
   %
  }
@@ -372,7 +373,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 \end{column}
 
 %-------------Column--------------------------------------------------------
-\begin{column}{0.32\linewidth}
+\begin{column}{0.3\linewidth}
 
 
 %-------------Box--------------------------------------------------------
@@ -405,13 +406,13 @@ Department of Applied Physics, Stanford University, Stanford CA
 %   $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
 %  \end{center}
  \begin{center}
-   \alignmid{\includegraphics[height=3cm]{max_init_pot.svg}}
+   \alignmid{\includegraphics[height=0.08\linewidth]{max_init_pot.svg}}
+   \hspace{0.5cm}
+   \alignmid{\includegraphics[height=0.08\linewidth]{max_init_dep.svg}}
    \hspace{1cm}
-   \alignmid{\includegraphics[height=3cm]{max_init_dep.svg}}
-   \hspace{2cm}
   \lto\ Equivalent to:
-   \hspace{1cm}
-   \alignmid{\includegraphics[height=4cm]{binary_det.svg}}
+   \hspace{0.5cm}
+   \alignmid{\includegraphics[height=0.1\linewidth]{binary_det.svg}}
    $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
   \end{center}
 
@@ -444,7 +445,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 \vp
 \parbox[c]{0.45\linewidth}{
  \begin{center}
-   \aligntop{\includegraphics[width=15cm]{env.svg}}
+   \aligntop{\includegraphics[width=0.89\linewidth]{env.svg}}
  \end{center}
 }
 \hspace{0.5cm}
@@ -545,7 +546,7 @@ Department of Applied Physics, Stanford University, Stanford CA
     \item We can impose an order on the internal states of a synapse through the theory of first passage times.
     \item The area under the memory curve of any synaptic transition diagram cannot exceed that of a linear chain with the same equilibrium probability distribution.
     \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
-        Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $n$ for times $> \CO(M)$.
+    \item    Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $n$ for times $> \CO(M)$.
 %    \item For times $< \CO(n^2)$ we conjecture the close to optimal synaptic model that reaches the envelope exploits deterministic transitions, resulting in diffusive forgetting.
   \end{itemize}
 %
