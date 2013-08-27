@@ -168,7 +168,7 @@ We can use the overlap between these, $\wvi\cdt\wv(t)$, as a measure of the qual
 As $t\to\infty$, the system will return to its steady state distribution which will be uncorrelated with the memory stored at $t=0$.
 The probability distribution of the quantity $\wvi\cdt\wv(\infty)$ can be used as a ``null model'' for comparison.
 
-The extent to which the memory has been stored is described by a signal-to-noise ratio (SNR) \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}:
+The extent to which the memory has been stored is described by a signal-to-noise ratio (SNR) \cite{Fusi2005cascade,Fusi2007multistate}:
 %
 \begin{equation}\label{eq:SNRdef}
   \snr(t) = \frac{\av{\wv_\text{ideal}\cdt\wv(t)} - \av{\wv_\text{ideal}\cdt\wv(\infty)}}
@@ -396,11 +396,12 @@ First passage time theory introduced in the \hyperref[sec:order]{previous sectio
 
 
 With the states in the order described above, we can find perturbations of $\M\potdep$ that will always increase the area, whilst leaving the equilibrium distribution, $\eq$, unchanged.
-Some of these perturbations are shown in \autoref{fig:perts}.
-For example, in \autoref{fig:perts}\ref{fig:tri_right}, for two states $i$ on the left and $j$ on the right, with $j$ being more ``potentiated" than $i$ (i.e. $\eta^+_i > \eta^+_j$), we have proven that increasing $\M\pot_{ij}$ and decreasing $\M\dep_{ij}$ leads to an increase in area.
+Some of these perturbations are shown in \autoref{fig:perts}, see supplementary material for details.
+For example, in \autoref{fig:perts}(\ref{fig:tri_right}), for two states $i$ on the left and $j$ on the right, with $j$ being more ``potentiated" than $i$ (i.e. $\eta^+_i > \eta^+_j$), we have proven that increasing $\M\pot_{ij}$ and decreasing $\M\dep_{ij}$ leads to an increase in area.
 The only thing that can prevent these perturbations from increasing the area is when they require the decrease of a matrix element that has already been set to 0.
 This determines the topology (non-zero transition probabilities) of the model with maximal area.
-It is of the form shown in \autoref{fig:max_area}, with potentiation moving one step to the right and depression moving one step to the left.
+It is of the form shown in \autoref{fig:env}(\ref{fig:sticky}),%\autoref{fig:max_area}, 
+with potentiation moving one step to the right and depression moving one step to the left.
 Any other topology would allow some perturbation to further increase the area.
 
 
@@ -429,7 +430,7 @@ The area of a linear chain model can be expressed directly in terms of its equil
 %
 where we chose $\w_k=\sgn\brk{k - \sum_j j\eq_j}$.
 We can then maximize this by pushing all of the equilibrium distribution symmetrically to the two end states.
-This can be done by reducing the transition probabilities out of these states, as in \autoref{fig:max_area}.
+This can be done by reducing the transition probabilities out of these states, as in \autoref{fig:env}(\ref{fig:sticky}).%\autoref{fig:max_area}.
 This makes it very difficult to get out of the end states once they have been entered.
 The resulting area is
 %
@@ -440,17 +441,17 @@ The resulting area is
 This analytical result is similar to a numerical result found in \cite{Barrett2008discrete} under a slightly different information theoretic measure of memory performance.
 
 The ``sticky'' end states result in very slow decay of memory, but they also make it difficult to encode the memory in the first place, since a small fraction of synapses are able to change synaptic efficacy during the storage of a new memory.
-Thus models that optimize area optimize memory at late times, at the expense of early times.
+Thus models that maximize area optimize memory at late times, at the expense of early times.
 
-\begin{figure}[tbp]
- \begin{center}
-  \includegraphics[width=0.35\linewidth]{multistate_sticky.svg}
- \end{center}
-  \caption{Model that maximizes the area.
-  Unlabeled transitions have probability 1.
-  Labeled transitions have probability $\varepsilon\to0$.
-  }\label{fig:max_area}
-\end{figure}
+%\begin{figure}[tbp]
+% \begin{center}
+%  \includegraphics[width=0.35\linewidth]{multistate_sticky.svg}
+% \end{center}
+%  \caption{Model that maximizes the area.
+%  Unlabeled transitions have probability 1.
+%  Labeled transitions have probability $\varepsilon\to0$.
+%  }\label{fig:max_area}
+%\end{figure}
 
 
 
@@ -512,8 +513,9 @@ The red curves in \autoref{fig:env}(\ref{fig:envplot}) show the closest we have 
 We see that at early, but not late times, there is a gap between the upper bound that we can prove and what we can achieve with actual models.
 There may be other models we haven't found that could beat the ones we have, and come closer to our proven envelope.
 However, we suspect that the area constraint is not the bottleneck for optimizing memory at times less than  $\CO(\frac{M}{r})$.
-We believe there is some other constraint that prevents models from approaching the envelope, and currently are exploring several mathematical conjectures for the precise form of this constraint, in order to obtain a potentially tighter envelope.
-Nevertheless, we have proven rigorously that no model's memory curve can ever exceed this envelope, and that it is at least tight for late times, longer than $\CO(\frac{M}{r})$, where models of the form in \autoref{fig:max_area} can come close to the envelope.
+We believe there is some other constraint that prevents models from approaching the envelope, and currently are exploring several mathematical conjectures for the precise form of this constraint in order to obtain a potentially tighter envelope.
+Nevertheless, we have proven rigorously that no model's memory curve can ever exceed this envelope, and that it is at least tight for late times, longer than $\CO(\frac{M}{r})$, where models of the form in \autoref{fig:env}(\ref{fig:sticky})%\autoref{fig:max_area}
+ can come close to the envelope.
 
 \begin{figure}
  \begin{center}
@@ -533,6 +535,7 @@ Nevertheless, we have proven rigorously that no model's memory curve can ever ex
   The solid red curve shows the highest SNR we have found with hand designed models.
   At early times these models are of the form shown in (\ref{fig:diffjump}) with different numbers of states, and all transition probabilities equal to $1$.
   At late times they are of the form shown in (\ref{fig:sticky}) with different values of $\varepsilon$.
+  The model shown in (\ref{fig:sticky}) also saturates the area bound \eqref{eq:max_area} in the limit $\varepsilon\to0$.
   }\label{fig:env}
 \end{figure}
 
@@ -554,13 +557,13 @@ We have also derived memory constrained envelopes, by asking in the space of mod
 If these two times are beyond a threshold separation, optimal constrained models require two exponentials.
 It would be interesting to systematically analyze the space of models that achieve good memory at multiple times, and understand their structural organization, and how they give rise to multiple exponentials, leading to power law memory decays.
 
-Another important consideration is the level of noise tolerance of the synapse. 
-Note that the stochasticity of the models is an expression of biological noise. 
-However, the synapses should not be allowed to optimize all of this noise away. 
+Another important consideration is the level of noise tolerance of the synapse.
+Note that the stochasticity of the models is an expression of biological noise.
+However, the synapses should not be allowed to optimize all of this noise away.
 It would be interesting to consider such limits on the noise levels.
 
 Finally, it would be interesting to design physiological experiments in order to perform optimal systems identification of potential Markovian dynamical systems hiding within biological synapses.
-If we measured pre and post-synaptic spike trains, and also recorded changes in post-synaptic potentials to measure changes in synaptic weight, we could use hidden Markov model techniques to find the best-fit synaptic model. 
+If we measured pre and post-synaptic spike trains, and also recorded changes in post-synaptic potentials to measure changes in synaptic weight, we could use hidden Markov model techniques to find the best-fit synaptic model.
 Then given our theory, we could match this measured synaptic model to optimal models to infer which timescales the synapse operates on.
 
 In summary, we hope that a deeper theoretical understanding of the functional role of synaptic complexity, initiated here, will help advance our understanding of the neurobiology of learning and memory, aid in the design of engineered memory circuits, and lead to new mathematical theorems about stochastic processes.
