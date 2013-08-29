@@ -38,11 +38,15 @@ for i=1:numel(outProj)
     error(CheckSize(outProj{i},@(x) samesize(x,M{1}),'samesize(M)'));
 end
 
+if any(potdep==0)
+    potdep=2-potdep;
+end
+
 alpha=zeros(t,length(initial));
 alpha(1,:)=initial*outProj{readouts(1)};
 
 for i=2:t
-    alpha(i,:)=alpha(i-1,:)*M{2-potdep(i-1)}*outProj{readouts(i)};
+    alpha(i,:)=alpha(i-1,:)*M{potdep(i-1)}*outProj{readouts(i)};
 end
 
 end

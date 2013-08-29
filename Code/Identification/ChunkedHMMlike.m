@@ -1,8 +1,10 @@
-function [ beta ] = BWbeta( t,readouts,outProj,M,potdep )
-%alpha=BWBETA(t,readouts,initial,outProj,M,potdep) forward variables for Baum-Welch algorithm
-%   alpha    = forward variables
-%   t        = time-step from which we want forward variables
+function [ like ] = ChunkedHMMlike( chunks,readouts,initial,outProj,M,potdep )
+%like=CHUNKEDHMMLIKE(readouts,initial,outProj,M,potdep) likelihood of outputs fo
+%Hidden-Markov-Model
+%   like     = likelihood
+%   chunks   = 2-by-K matrix of starts and ends of each chunk.
 %   readouts = which output was seen before each time-step 
+%   initial  = prob dist of iniitial state (row vec)
 %   outProj  = cell of diagonal matrices for each possible value of
 %               output, with elements equal to prob of output
 %either
@@ -11,11 +13,9 @@ function [ beta ] = BWbeta( t,readouts,outProj,M,potdep )
 %or
 %   M        = Markov matrix
 
-
-error(CheckSize(t,@isscalar));
-error(CheckValue(t,@isint));
 error(CheckSize(readouts,@isvector));
 error(CheckValue(readouts,@(x) all(isint(x)),'isint'));
+error(CheckSize(initial,@isprob));
 error(CheckType(outProj,'cell'));
 error(CheckSize(outProj,@(x) numel(x)>=max(readouts),'numel>=max(readouts)'));
 if iscell(M)
@@ -31,6 +31,7 @@ else
     M={M};
     potdep=ones(1,size(readouts,2)-1);
 end
+error(CheckSize(initial,@(x) length(x)==length(M{1}),'samesize(M)'));
 for i=1:numel(outProj)
     error(CheckSize(outProj{i},@(x) samesize(x,M{1}),'samesize(M)'));
 end
@@ -39,11 +40,12 @@ if any(potdep==0)
     potdep=2-potdep;
 end
 
-beta=ones(length(M{1}),length(readouts)-t+1);
-
-for i=length(readouts):-1:t+1
-    beta(:,i-t)=M{potdep(i-1)}*outProj{readouts(i)}*beta(:,i-t+1);
+like=1;
+for i=1:size(chunks,2)
+    range=chunks(1,i):chunks(2,i);
+    like=like*HMMlike(readouts(range),initial,outProj,M,potdep(range(1:end-1)));
 end
+
 
 end
 

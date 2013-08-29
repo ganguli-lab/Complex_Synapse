@@ -34,6 +34,7 @@ for i=1:numel(outProj)
     error(CheckSize(outProj{i},@(x) samesize(x,M{1}),'samesize(M)'));
 end
 
+
 p=zeros(length(initial),length(readouts));
 alpha=BWalpha(length(readouts),readouts,initial,outProj,M,potdep);
 beta=BWbeta(1,readouts,outProj,M,potdep);

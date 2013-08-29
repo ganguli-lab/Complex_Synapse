@@ -35,10 +35,14 @@ for i=1:numel(outProj)
     error(CheckSize(outProj{i},@(x) samesize(x,M{1}),'samesize(M)'));
 end
 
+if any(potdep==0)
+    potdep=2-potdep;
+end
+
 like=initial*outProj{readouts(1)};
 
 for i=2:length(readouts)
-    like=like*M{2-potdep(i-1)}*outProj{readouts(i)};
+    like=like*M{potdep(i-1)}*outProj{readouts(i)};
 end
 
 like=sum(like);

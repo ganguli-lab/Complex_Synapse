@@ -1,9 +1,11 @@
-function [ M_new,initial_new,pstate ] = BWupdate( readouts,initial,outProj,M,potdep,varargin )
-%[M_new,initial_new,pstate]=BWUPDATE(readouts,initial,outProj,M,potdep)
-%Baum-Welch update of estiamted HMM
+function [ M_new,initial_new,pstate,like ] = RJupdate( chunks,readouts,initial,outProj,M,potdep )
+%[M_new,initial_new,pstate]=RJUPDATE(chunks,readouts,initial,outProj,M,potdep)
+%Rabiner-Juang update of estiamted HMM
 %   M_new       = updated Markov matrix/cell {Mpot,Mdep}
 %   initial_new = updated prob dist of iniitial state (row vec)
 %   pstate      = posterior prob of HMM being in each state at each time
+%   like        = likelihood of readouts under old model (prod over chunks)
+%   chunks   = 2-by-K matrix of starts and ends of each chunk.
 %   readouts = which output was seen before each time-step 
 %   initial  = prob dist of iniitial state (row vec)
 %   outProj  = cell of diagonal matrices for each possible value of
@@ -15,8 +17,6 @@ function [ M_new,initial_new,pstate ] = BWupdate( readouts,initial,outProj,M,pot
 %   M        = Markov matrix
 
 
-Normalise=true;
-varargin=assignApplicable(varargin);
 
 error(CheckSize(readouts,@isvector));
 error(CheckValue(readouts,@(x) all(isint(x)),'isint'));
@@ -40,40 +40,37 @@ error(CheckSize(initial,@(x) length(x)==length(M{1}),'samesize(M)'));
 for i=1:numel(outProj)
     error(CheckSize(outProj{i},@(x) samesize(x,M{1}),'samesize(M)'));
 end
-
+error(CheckSize(chunks,@ismatrix));
+error(CheckSize(chunks,@(x) size(x,1)==2,'2-by-K'));
+error(CheckValue(chunks,@(x) all(all(isint(x))),'2-by-K'));
 
 pstate=zeros(length(initial),length(readouts));
-alpha=BWalpha(length(readouts),readouts,initial,outProj,M,potdep);
-beta=BWbeta(1,readouts,outProj,M,potdep);
 M_new={zeros(length(M{1}))};
 if numel(M)==2
     M_new{2}=M_new{1};
 end
+initial_new=zeros(size(initial));
+like=1;
 
-if any(potdep==0)
-    potdep=2-potdep;
-end
-
-for t=1:length(readouts)-1
-    pstate(:,t)=alpha(t,:)'.*beta(:,t);
-%     pstate(:,t)=pstate(:,t)/sum(pstate(:,t));
-    M_new{potdep(t)}=M_new{potdep(t)} + (beta(:,t+1)*alpha(t,:))' .* (M{potdep(t)}*outProj{readouts(t+1)});
-end
-    pstate(:,end)=alpha(end,:)'.*beta(:,end);
-%     pstate(:,end)=pstate(:,t)./sum(pstate(:,t));
-
-
-if Normalise
-    pstate=pstate*diag(1./sum(pstate,1));
-    M_new{1}=StochastifyD(M_new{1});
-    if numel(M)==2
-        M_new{2}=StochastifyD(M_new{2});
-    else
-        M_new=M_new{1};
+for i=1:size(chunks,2)
+    range=chunks(1,i):chunks(2,i);
+    Weight=1/HMMlike(readouts(range),initial,outProj,M,potdep(range(1:end-1)));
+    [chunkM,chunkInitial,chunkPs]=BWupdate(readouts(range),initial,outProj,M,potdep(range(1:end-1)),'Normalise',false);
+    for j=1:length(chunkM)
+        M_new{j}=M_new{j}+Weight*chunkM{j};
     end
+    initial_new=initial_new+Weight*chunkInitial;
+    pstate(:,range)=chunkPs*diag(1./sum(chunkPs,1));
+    like=like/Weight;
 end
-
-initial_new=pstate(:,1)';
+    
+initial_new=initial_new/sum(initial_new);
+M_new{1}=StochastifyD(M_new{1});
+if numel(M)==2
+    M_new{2}=StochastifyD(M_new{2});
+else
+    M_new=M_new{1};
+end
 
 
 end
