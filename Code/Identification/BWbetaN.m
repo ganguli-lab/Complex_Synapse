@@ -1,6 +1,7 @@
-function [ beta ] = BWbeta( t,readouts,outProj,M,potdep )
-%beta=BWBETA(t,readouts,initial,outProj,M,potdep) backward variables for Baum-Welch algorithm
-%   beta     = backward variables
+function [ beta ] = BWbetaN( eta,t,readouts,outProj,M,potdep )
+%beta=BWBETA(t,readouts,initial,outProj,M,potdep) normalised backward variables for Baum-Welch algorithm
+%   beta     = normalised backward variables
+%   eta      = normalisation factor
 %   t        = time-step after which we want forward variables
 %   readouts = which output was seen before each time-step 
 %   outProj  = cell of diagonal matrices for each possible value of
@@ -42,7 +43,7 @@ end
 beta=ones(length(M{1}),length(readouts)-t+1);
 
 for i=length(readouts):-1:t+1
-    beta(:,i-t)=M{potdep(i-1)}*outProj{readouts(i)}*beta(:,i-t+1);
+    beta(:,i-t)=M{potdep(i-1)}*outProj{readouts(i)}*beta(:,i-t+1)*eta(i);
 end
 
 end

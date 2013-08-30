@@ -36,8 +36,10 @@ end
 
 
 p=zeros(length(initial),length(readouts));
-alpha=BWalpha(length(readouts),readouts,initial,outProj,M,potdep);
-beta=BWbeta(1,readouts,outProj,M,potdep);
+% alpha=BWalpha(length(readouts),readouts,initial,outProj,M,potdep);
+% beta=BWbeta(1,readouts,outProj,M,potdep);
+[alpha,eta]=BWalphaN(length(readouts),readouts,initial,outProj,M,potdep);
+beta=BWbetaN(eta,1,readouts,outProj,M,potdep);
 
 for t=1:length(readouts)
     p(:,t)=alpha(t,:)'.*beta(:,t);

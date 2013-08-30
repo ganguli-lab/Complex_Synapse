@@ -43,8 +43,10 @@ end
 
 
 pstate=zeros(length(initial),length(readouts));
-alpha=BWalpha(length(readouts),readouts,initial,outProj,M,potdep);
-beta=BWbeta(1,readouts,outProj,M,potdep);
+% alpha=BWalpha(length(readouts),readouts,initial,outProj,M,potdep);
+% beta=BWbeta(1,readouts,outProj,M,potdep);
+[alpha,eta]=BWalphaN(length(readouts),readouts,initial,outProj,M,potdep);
+beta=BWbetaN(eta,1,readouts,outProj,M,potdep);
 M_new={zeros(length(M{1}))};
 if numel(M)==2
     M_new{2}=M_new{1};
@@ -57,7 +59,8 @@ end
 for t=1:length(readouts)-1
     pstate(:,t)=alpha(t,:)'.*beta(:,t);
 %     pstate(:,t)=pstate(:,t)/sum(pstate(:,t));
-    M_new{potdep(t)}=M_new{potdep(t)} + (beta(:,t+1)*alpha(t,:))' .* (M{potdep(t)}*outProj{readouts(t+1)});
+%     M_new{potdep(t)}=M_new{potdep(t)} + (beta(:,t+1)*alpha(t,:))' .* (M{potdep(t)}*outProj{readouts(t+1)});
+    M_new{potdep(t)}=M_new{potdep(t)} + (beta(:,t+1)*alpha(t,:))' .* (M{potdep(t)}*outProj{readouts(t+1)}) * eta(t+1);
 end
     pstate(:,end)=alpha(end,:)'.*beta(:,end);
 %     pstate(:,end)=pstate(:,t)./sum(pstate(:,t));
