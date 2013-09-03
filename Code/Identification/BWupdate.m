@@ -79,7 +79,7 @@ end
 
 initial_new=pstate(:,1)';
 
-loglike = sum(log(eta));
+loglike = -sum(log(eta));
 
 
 end

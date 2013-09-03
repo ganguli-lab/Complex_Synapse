@@ -277,12 +277,12 @@ MakeButton(3,'Update',@Update);
         hl=plot(mets_est(1),(1:upno-1)',squeeze(diff(metvals(1:upno,2,1))),'k');
         title(mets_est(1),'Comparison with previous estimate','FontSize',AxFontSize);
         xlabel(mets_est(1),'Update #','FontSize',AxFontSize);
-        ylabel(mets_est(1),'\Delta Likelihood','FontSize',AxFontSize);
+        ylabel(mets_est(1),'\Delta Log Likelihood','FontSize',AxFontSize);
         hkl=plot(mets_est(2),(1:upno)',squeeze(metvals(1:upno,2,2:4)));
         ylabel(mets_est(2),'KL divergence','FontSize',AxFontSize);
         FixDoublePlots(mets_est);
         if upno>1
-            legend(hl,{'\Delta likelihood'},'location','west');
+            legend(hl,{'\Delta loglikelihood'},'location','west');
         end
         legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
     end

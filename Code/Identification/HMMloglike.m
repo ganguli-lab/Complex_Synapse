@@ -41,7 +41,7 @@ end
 
 
 [~,eta]=BWalphaN(length(readouts),readouts,initial,outProj,M,potdep);
-loglike = sum(log(eta));
+loglike = -sum(log(eta));
 
 end
 

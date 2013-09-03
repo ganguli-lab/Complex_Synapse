@@ -1,4 +1,4 @@
-function [ M_new,initial_new,pstate,loglike ] = RJupdate( chunks,readouts,initial,outProj,M,potdep )
+function [ M_new,initial_new,pstate,loglike ] = RJupdate( chunks,readouts,initial,outProj,M,potdep,varargin )
 %[M_new,initial_new,pstate,loglike]=RJUPDATE(chunks,readouts,initial,outProj,M,potdep)
 %Rabiner-Juang update of estiamted HMM
 %   M_new       = updated Markov matrix/cell {Mpot,Mdep}
@@ -16,7 +16,8 @@ function [ M_new,initial_new,pstate,loglike ] = RJupdate( chunks,readouts,initia
 %or
 %   M        = Markov matrix
 
-
+lloffset=0;%avoid underflow by making this more negative
+varargin=assignApplicable(varargin);
 
 error(CheckSize(readouts,@isvector));
 error(CheckValue(readouts,@(x) all(isint(x)),'isint'));
@@ -56,7 +57,7 @@ for i=1:size(chunks,2)
     range=chunks(1,i):chunks(2,i);
 %    Weight=1/HMMlike(readouts(range),initial,outProj,M,potdep(range(1:end-1)));
     [chunkM,chunkInitial,chunkPs,chunkll]=BWupdate(readouts(range),initial,outProj,M,potdep(range(1:end-1)),'Normalise',false);
-    Weight=exp(-chunkll);
+    Weight=exp(lloffset-chunkll);
     for j=1:length(chunkM)
         M_new{j}=M_new{j}+Weight*chunkM{j};
     end
