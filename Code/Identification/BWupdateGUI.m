@@ -100,7 +100,7 @@ MakeButton(3,'Update',@Update)
 nummet=4;
 MakeTextBox(2,1,'True');
 MakeTextBox(3,1,'Est');
-MakeTextBox(1,2,'Likelihood');
+MakeTextBox(1,2,'Log Likelihood');
 MakeTextBox(1,3,'KL: pot');
 MakeTextBox(1,4,'KL: dep');
 MakeTextBox(1,5,'KL: init');
@@ -248,8 +248,8 @@ UpdateMets;
 
     function mets=CalcMets
         if ~isempty(rd)
-            mets(1,1)=HMMlike(rd,init_obs,outProj,M,pd);
-            mets(2,1)=HMMlike(rd,init_new,outProj,M_new,pd);
+            mets(1,1)=HMMloglike(rd,init_obs,outProj,M,pd);
+            mets(2,1)=HMMloglike(rd,init_new,outProj,M_new,pd);
         else
             mets(1:2,1)=NaN(2,1);
         end

@@ -246,8 +246,8 @@ MakeButton(3,'Update',@Update);
 
     function mets=CalcMets
         if ~isempty(rd)
-            mets(1,1)=HMMlike(rd,init_obs,outProj,M,pd);
-            mets(2,1)=HMMlike(rd,init_new,outProj,M_new,pd);
+            mets(1,1)=HMMloglike(rd,init_obs,outProj,M,pd);
+            mets(2,1)=HMMloglike(rd,init_new,outProj,M_new,pd);
         else
             mets(1:2,1)=NaN(2,1);
         end
@@ -265,12 +265,12 @@ MakeButton(3,'Update',@Update);
         hl=plot(mets_true(1),(1:upno)',squeeze(metvals(1:upno,:,1)),'k');
         title(mets_true(1),'Comparison with true model','FontSize',AxFontSize);
         xlabel(mets_true(1),'Update #','FontSize',AxFontSize);
-        ylabel(mets_true(1),'Likelihood','FontSize',AxFontSize);
+        ylabel(mets_true(1),'Log Likelihood','FontSize',AxFontSize);
         hkl=plot(mets_true(2),(1:upno)',squeeze(metvals(1:upno,1,2:4)));
         ylabel(mets_true(2),'KL divergence','FontSize',AxFontSize);
         FixDoublePlots(mets_true);
         set(hl(1),'LineStyle','--');
-        legend(hl,{'likelihood(true)','likelihood(est)'},'location','west');
+        legend(hl,{'loglikelihood(true)','loglikelihood(est)'},'location','west');
         legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
         cla(mets_est(1));
         cla(mets_est(2));

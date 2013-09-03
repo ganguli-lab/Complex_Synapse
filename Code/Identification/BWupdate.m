@@ -1,9 +1,10 @@
-function [ M_new,initial_new,pstate ] = BWupdate( readouts,initial,outProj,M,potdep,varargin )
-%[M_new,initial_new,pstate]=BWUPDATE(readouts,initial,outProj,M,potdep)
+function [ M_new,initial_new,pstate,loglike ] = BWupdate( readouts,initial,outProj,M,potdep,varargin )
+%[M_new,initial_new,pstate,loglike]=BWUPDATE(readouts,initial,outProj,M,potdep)
 %Baum-Welch update of estiamted HMM
 %   M_new       = updated Markov matrix/cell {Mpot,Mdep}
 %   initial_new = updated prob dist of iniitial state (row vec)
 %   pstate      = posterior prob of HMM being in each state at each time
+%   loglike     = log likelihood of readout given current model
 %   readouts = which output was seen before each time-step 
 %   initial  = prob dist of iniitial state (row vec)
 %   outProj  = cell of diagonal matrices for each possible value of
@@ -77,6 +78,8 @@ if Normalise
 end
 
 initial_new=pstate(:,1)';
+
+loglike = sum(log(eta));
 
 
 end

@@ -1,10 +1,10 @@
-function [ M_new,initial_new,pstate,like ] = RJupdate( chunks,readouts,initial,outProj,M,potdep )
-%[M_new,initial_new,pstate]=RJUPDATE(chunks,readouts,initial,outProj,M,potdep)
+function [ M_new,initial_new,pstate,loglike ] = RJupdate( chunks,readouts,initial,outProj,M,potdep )
+%[M_new,initial_new,pstate,loglike]=RJUPDATE(chunks,readouts,initial,outProj,M,potdep)
 %Rabiner-Juang update of estiamted HMM
 %   M_new       = updated Markov matrix/cell {Mpot,Mdep}
 %   initial_new = updated prob dist of iniitial state (row vec)
 %   pstate      = posterior prob of HMM being in each state at each time
-%   like        = likelihood of readouts under old model (prod over chunks)
+%   loglike     = log likelihood of readouts under old model (prod over chunks)
 %   chunks   = 2-by-K matrix of starts and ends of each chunk.
 %   readouts = which output was seen before each time-step 
 %   initial  = prob dist of iniitial state (row vec)
@@ -50,18 +50,19 @@ if numel(M)==2
     M_new{2}=M_new{1};
 end
 initial_new=zeros(size(initial));
-like=1;
+loglike=0;
 
 for i=1:size(chunks,2)
     range=chunks(1,i):chunks(2,i);
-    Weight=1/HMMlike(readouts(range),initial,outProj,M,potdep(range(1:end-1)));
-    [chunkM,chunkInitial,chunkPs]=BWupdate(readouts(range),initial,outProj,M,potdep(range(1:end-1)),'Normalise',false);
+%    Weight=1/HMMlike(readouts(range),initial,outProj,M,potdep(range(1:end-1)));
+    [chunkM,chunkInitial,chunkPs,chunkll]=BWupdate(readouts(range),initial,outProj,M,potdep(range(1:end-1)),'Normalise',false);
+    Weight=exp(-chunkll);
     for j=1:length(chunkM)
         M_new{j}=M_new{j}+Weight*chunkM{j};
     end
     initial_new=initial_new+Weight*chunkInitial;
     pstate(:,range)=chunkPs*diag(1./sum(chunkPs,1));
-    like=like/Weight;
+    loglike=loglike+chunkll;
 end
     
 initial_new=initial_new/sum(initial_new);

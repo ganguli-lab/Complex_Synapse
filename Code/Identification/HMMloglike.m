@@ -1,7 +1,7 @@
-function [ like ] = HMMlike( readouts,initial,outProj,M,potdep )
-%like=HMMLIKE(readouts,initial,outProj,M,potdep) likelihood of outputs for
-%Hidden-Markov-Model
-%   like     = likelihood
+function [ loglike ] = HMMloglike( readouts,initial,outProj,M,potdep )
+%like=HMMLOGLIKE(readouts,initial,outProj,M,potdep) log likelihood of
+%outputs for Hidden-Markov-Model
+%   loglike  = log likelihood
 %   readouts = which output was seen before each time-step 
 %   initial  = prob dist of iniitial state (row vec)
 %   outProj  = cell of diagonal matrices for each possible value of
@@ -39,14 +39,9 @@ if any(potdep==0)
     potdep=2-potdep;
 end
 
-like=initial*outProj{readouts(1)};
 
-for i=2:length(readouts)
-    like=like*M{potdep(i-1)}*outProj{readouts(i)};
-end
-
-like=sum(like);
-
+[~,eta]=BWalphaN(length(readouts),readouts,initial,outProj,M,potdep);
+loglike = sum(log(eta));
 
 end
 

@@ -1,7 +1,8 @@
-function [ like ] = HMMlike( readouts,initial,outProj,M,potdep )
-%like=HMMLIKE(readouts,initial,outProj,M,potdep) likelihood of outputs for
+function [ loglike ] = ChunkedHMMloglike( chunks,readouts,initial,outProj,M,potdep )
+%loglike=CHUNKEDHMMLOGLIKE(readouts,initial,outProj,M,potdep) likelihood of outputs fo
 %Hidden-Markov-Model
-%   like     = likelihood
+%   loglike  = log likelihood
+%   chunks   = 2-by-K matrix of starts and ends of each chunk.
 %   readouts = which output was seen before each time-step 
 %   initial  = prob dist of iniitial state (row vec)
 %   outProj  = cell of diagonal matrices for each possible value of
@@ -39,13 +40,11 @@ if any(potdep==0)
     potdep=2-potdep;
 end
 
-like=initial*outProj{readouts(1)};
-
-for i=2:length(readouts)
-    like=like*M{potdep(i-1)}*outProj{readouts(i)};
+loglike=0;
+for i=1:size(chunks,2)
+    range=chunks(1,i):chunks(2,i);
+    loglike=loglike+HMMloglike(readouts(range),initial,outProj,M,potdep(range(1:end-1)));
 end
-
-like=sum(like);
 
 
 end
