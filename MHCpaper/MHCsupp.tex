@@ -39,8 +39,10 @@
 \newcommand{\dec}{_{\text{dec}}}
 \newcommand{\incdec}{_{\text{inc/dec}}}
 \newcommand{\wt}{_{\text{WT}}}
-\newcommand{\ko}{_{\text{D$^\mathrm{b}$K$^\mathrm{b}$-/-}}}
-\newcommand{\KO}{D$^\mathrm{b}$K$^\mathrm{b}$-/-}
+%\newcommand{\ko}{_{\text{D$^\mathrm{b}$K$^\mathrm{b}$-/-}}}
+%\newcommand{\KO}{D$^\mathrm{b}$K$^\mathrm{b}$-/-}
+\newcommand{\ko}{_{\text{MHC}}}
+\newcommand{\KO}{MHC}
 \newcommand{\tpre}{t_{\text{pre}}}
 \newcommand{\ttrain}{t_{\text{train}}}
 \newcommand{\lmax}{_{\text{max}}}
@@ -224,6 +226,8 @@ The diagonal elements are chosen so that the rows sum to one.
 This model is parameterised by the range of values, $q\in[q\lmin,q\lmax]$, for potentiation and depression.
 We will use the same values for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
 We will use larger values for depression in the \KO\ mutant.
+In the main text, we consider a version of this model that has resource depletion for depression only, so that potentiation transition probabilities are unaffected by the number of potentiated synapses.
+This is done by setting $q\pot\lmax=q\pot\lmin$.
 The values of these parameters are listed in \autoref{tab:params}.
 
 
@@ -353,20 +357,22 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
   \begin{tabularn}{|l|c|c|c|c|c|c|}
     \cline{1-7}
     % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-    Model & \# states & pot,WT dep & \KO\ dep & $\Delta f$ & $r\ttrain$ & $r\tpre$ \\
+    Model & \# states & pot & WT dep & \KO\ dep & $\Delta f$ & $r\tpre$ \\
     \cline{1-7}
-    Serial        & 10 & $q=0.3$  & $q=0.4$  & 0.1  & 5 & 20  &\label{tr:multistate_weak} \\
-    Serial        & 10 & $q=0.3$  & $q=0.4$  & 0.3  & 5 & 20  &\label{tr:multistate_med} \\
-    Serial        & 10 & $q=0.3$  & $q=0.4$  & 0.45 & 5 & 30  &\label{tr:multistate_strong} \\
-    Two-state     & 2  & $q=0.1$  & $q=0.2$  & 0.1  & 5 & 5   &\label{tr:binary} \\
-    Multistate    & 10 & $q=0.3$  & $q=0.4$  & 0.3  & 5 & 5   &\label{tr:multistate_lin} \\
-    Pooled        & 10 & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
-                                          & 0.1 & 5 & 20 &\label{tr:pooled_plenty}\\
-    Pooled        & 10 & $q\in[0.05,0.4]$  & $q\in[0.1,0.8]$
-                                          & 0.1 & 5 & 20 &\label{tr:pooled_scarce}\\
-    Cascade       & 10 & $x=0.25$ & $x=0.33$ & 0.3  & 5 & 20  &\label{tr:cascade_short} \\
-    Cascade       & 10 & $x=0.25$ & $x=0.33$ & 0.3  & 5 & 100 &\label{tr:cascade_long} \\
-    Non-uniform MS       & 10 & $x=0.25$ & $x=0.33$ & -0.3  & 50 & 150 &\label{tr:nonuni} \\
+    Serial        & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.1  & 20  &\label{tr:multistate_weak} \\
+    Serial        & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.3  & 20  &\label{tr:multistate_med} \\
+    Serial        & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.45 & 30  &\label{tr:multistate_strong} \\
+    Two-state     & 2  & $q=0.1$  & $q=0.1$  & $q=0.2$  & 0.1  & 5   &\label{tr:binary} \\
+    Multistate    & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.3  & 5   &\label{tr:multistate_lin} \\
+    Pooled        & 10 & $q\in[0.3,0.4]$  & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
+                                          & 0.1 & 20 &\label{tr:pooled_plenty}\\
+    Pooled        & 10 & $q\in[0.05,0.4]$ & $q\in[0.05,0.4]$  & $q\in[0.1,0.8]$
+                                          & 0.1 & 20 &\label{tr:pooled_scarce}\\
+    Pooled        & 7  & $q=0.008$        & $q\in[0.0006,0.6]$  & $q\in[0.001,1]$
+                                          & 0.4 & 20 &\label{tr:pooled_deponly}\\
+    Cascade       & 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 20  &\label{tr:cascade_short} \\
+    Cascade       & 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 100 &\label{tr:cascade_long} \\
+    Non-uniform MS& 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 150 &\label{tr:nonuni} \\
     \cline{1-7}
 %   \hline
 %    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
@@ -500,6 +506,11 @@ Pre-training has two effects: it produces a slope in the right direction (see \a
 For small $\Delta f$, the first effect is stronger and learning speeds up.
 For larger $\Delta f$, the second effect wins and learning slows down.
 
+This impaired learning after pre-training in the wild-type is caused by the excessive potentiation pushing the synapses away from the central transition that generates the learning signal.
+Essentially, this model has a form of metaplasticity where repeated potentiation makes subsequent depression harder.
+This allows excessive pre-training to impair learning, despite increasing the number of potentiated synapses.
+
+
 Now, consider the mutant, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
 Without pre-training:
 %
@@ -513,6 +524,8 @@ This function is plotted in \autoref{fig:multistate_star}\ref{fig:multistate_bet
 There are two effects here as well.
 Smaller $\beta$ will increase the probability of crossing the centre of the chain, speeding up learning, but it will also concentrate probability at the ends of the chain, depleting the centre and slowing down learning (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}\ref{fig:multistate_strong_eq_KO}, blue trace).
 The first effect goes like $1/\beta$, whereas the second goes like $\beta^{M/2}$ and will be more significant for smaller $\beta$ or in a longer chain.
+This exponential decay in the initial distribution is what allows the saturation bias to overwhelm the increases intrinsic plasticity rate and lead to impaired learning with enhanced plasticity.
+It is important that a learning signal is only generated by the central transition so that the exponential decay can take effect.
 
 With pre-training:
 %
@@ -677,6 +690,9 @@ If this happens early enough, the initial period, where the mutant learns faster
 However, the timescale for this crossover would be similar to the timescale of the exponentials.
 In the data, it looks like that timescale is longer than the gaps between successive measurements, so we needn't worry about this.
 
+Intuitively, this model is missing two features of the \hyperref[sec:multistate]{multistate model}.
+First, it does not have the exponential amplification of the effect of initial saturation bias as this model does not have a chain of states for the distribution to decay across.
+Second, it does not have the metaplastic effect where repeated potentiation makes future depression harder, as potentiation will merely increase the number of potentiated synapses.
 
 
 \subsection{Multistate model}\label{sec:multistate_lin}
@@ -757,6 +773,10 @@ which is always greater than 1.
 Therefore, pre-training will always enhance learning, for both mutant and wild-type, as seen in \autoref{fig:multistate_lin}\ref{fig:multistate_lin_learnS}.
 
 
+Like the \hyperref[sec:binary]{two state model}, this model is missing two features of the \hyperref[sec:multistate]{multistate model}.
+First, it does not have the amplification of the effect of initial saturation bias as every transition contributes to the learning signal, so the exponentially decaying distribution has no effect.
+Second, it does not have the metaplastic effect where repeated potentiation makes future depression harder, as potentiation will merely increase the number of potentiated synapses without pushing them away from any boundary between strong and weak states.
+
 
 
 \subsection{Pooled resource model}\label{sec:pooled}
@@ -765,6 +785,8 @@ Therefore, pre-training will always enhance learning, for both mutant and wild-t
 \resultsfig{pooled resource}{light depletion}{($q\lmin/q\lmax=0.75$)}{pooled_plenty}
 
 \resultsfig{pooled resource}{heavy depletion}{($q\lmin/q\lmax=0.125$)}{pooled_scarce}
+
+\resultsfig{pooled resource}{unaffected potentiation}{($q\pot\lmax=q\pot\lmin$)}{pooled_deponly}
 
 
 The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}.
@@ -781,6 +803,14 @@ Gain-decrease pre-training lessens the second effect, and results in the mutant 
 Gain-decrease pre-training will shift the distribution to the potentiated side, where there are more synapses available for depression and resources are more plentiful, for both the mutant and wild type (see \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_eq}, red traces).
 This means that the pre-trained animal will learn faster then the untrained one for both mutant and wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learnS}).
 This differs from what is seen experimentally, where the pre-trained wild-type learns slower than the untrained one.
+
+The situation discussed in the main text, with resource depletion for depression only and potentiating transitions  unaffected, is shown in \autoref{fig:pooled_deponly}.
+It shows the same learning patterns as the more symmetric versions.
+
+This model shares one feature of the \hyperref[sec:multistate]{multistate model}.
+The effect of initial saturation bias is amplified by resource depletion, allowing for impaired learning with enhanced plasticity.
+However, it does not have the metaplastic effect where repeated potentiation makes future depression harder, in fact it shows the opposite effect due to resource replenishment, so it can never show impaired learning after pre-training.
+
 
 
 \subsection{Cascade model}\label{sec:cascade}
@@ -806,6 +836,11 @@ We can see from \autoref{fig:cascade_long}\ref{fig:cascade_long_pr}\ref{fig:casc
 This effect is weaker for the mutant, as the equilibrium distribution is not as heavily concentrated at the end (see \autoref{fig:cascade_long}\ref{fig:cascade_long_eq}\ref{fig:cascade_long_eq_KO}).
 
 
+This model shares both features of the \hyperref[sec:multistate]{multistate model}.
+First, the effect of initial saturation bias is amplified by the exponential decay of transition probabilities away from the middle.
+Second, it has the metaplastic effect where repeated potentiation makes future depression harder, also due to he exponential decay of transition probabilities.
+
+
 \subsection{Non-uniform multistate model}\label{sec:nonuni}
 
 \resultsfign{non-uniform multistate}{nonuni}
@@ -829,7 +864,11 @@ Second, it will also place synapses in states where transitions have lower proba
 The second effect will be weaker in the mutant than in wild-type, as they started further to the weaker side as explained above.
 This means that, for appropriate parameter choices, gain-decrease pretraining can speed up learning in the mutant, but also slow down learning in wild-type, as seen experimentally.
 
+Like the \hyperref[sec:cascade]{cascade model}, this model also shares both features of the \hyperref[sec:multistate]{multistate model}.
+First, the effect of initial saturation bias is amplified by the exponential decay of transition probabilities away from the middle.
+Second, it has the metaplastic effect where repeated potentiation makes future depression harder, also due to he exponential decay of transition probabilities.
 
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{utcaps_sl}

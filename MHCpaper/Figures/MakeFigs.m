@@ -8,3 +8,4 @@ MakeVORfigs('pooled_scarce',[0.05 0.4],[0.1 0.8],-0.1,5,20,'print','Pooled',true
 MakeVORfigs('cascade_short',0.25,0.33,-0.3,5,20,'print')
 MakeVORfigs('cascade_long',0.25,0.33,-0.3,5,100,'print')
 MakeVORfigs('nonuni',0.25,0.33,-0.3,5,100,'print','LinWeights',true)
+MakeVORfigs('pooled_deponly',[0.6 0.0006 0.008],[1 0.001],-0.4,5,20,'print','Pooled',true)
