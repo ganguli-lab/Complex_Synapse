@@ -36,6 +36,8 @@ simobj=simobj.setStateSeq(states);
 wvalInds=obj.GetWValInds;
 simobj=simobj.setReadouts(wvalInds(states));
 
+assert(simobj.isvalid,'simobj invalid');
+assert(obj.iscompatible(simobj),'simobj incompatible with modelobj');
 
 end
 

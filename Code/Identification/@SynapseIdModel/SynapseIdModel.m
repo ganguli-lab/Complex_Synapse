@@ -40,6 +40,7 @@ classdef SynapseIdModel
     
     methods%validity etc.
         newobj=Normalise(obj)
+        newobj=Zero(obj)
         tf=isvalid(obj)
         tf=iscompatible(obj,simulationobj)
     end
@@ -55,6 +56,7 @@ classdef SynapseIdModel
         wvals=GetWVals(obj)
         wvalinds=GetWValInds(obj)
         simobj=Simulate(obj,fp,randno)
+        imh=image(obj,axInitial,axM,varargin)
     end
     
     methods (Access=private)%for calculation
