@@ -41,6 +41,7 @@ classdef SynapsePlastSeq
     methods (Access=private)%for constructiuon
         %called by constructor
         copy=CopyProps(original,copy)
+        [s,x] = assignToObject(s, x)
     end%methods
     
     methods%constructor

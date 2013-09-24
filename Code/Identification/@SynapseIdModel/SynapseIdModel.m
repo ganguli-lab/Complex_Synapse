@@ -3,28 +3,28 @@ classdef SynapseIdModel
     %   Detailed explanation goes here
     
     properties (SetAccess=protected)%data
-        %cell of Markov matrices. default: {Mpot,Mdep} 
-        M={[1 0; 0 1], [1 0; 0 1]},
         %prob dist of iniitial state, row vec. default: [0.5 0.5]
-        initial=[0.5 0.5];
+        Initial=[0.5 0.5];
+        %cell of Markov matrices. default: {Mpot,Mdep} 
+        M={[1 0; 0 1], [1 0; 0 1]};
         %synaptic weights. default: [-1; 1]
         w=[-1; 1];
         %cell of diagonal matrices for each possible value of
         %output(low to high), with elements equal to prob of output
-        outProj={[1 0; 0 0],[0 0; 0 1]}
+        outProj={[1 0; 0 0],[0 0; 0 1]};
     end
     
     methods %setting data
+        %
+        function newobj=setInitial(obj,newInitial)
+            newobj=obj;
+            newobj.Initial=newInitial;
+        end            
         %
         function newobj=setM(obj,newM)
             newobj=obj;
             newobj.M=newM;
         end
-        %
-        function newobj=setInitial(obj,newInitial)
-            newobj=obj;
-            newobj.initial=newInitial;
-        end            
         %
         function newobj=setW(obj,newW)
             newobj=obj;
@@ -35,7 +35,7 @@ classdef SynapseIdModel
         function newobj=setOutProj(obj,newOutProj)
             newobj=obj;
             newobj.outProj=newOutProj;
-        end            
+        end
     end
     
     methods%validity etc.
@@ -64,9 +64,14 @@ classdef SynapseIdModel
         obj=CalcOutProj(obj)
     end%methods
     
+    methods (Static=true) %for construction
+        newobj=Build(func,fp,varargin)
+    end
+    
     methods (Access=private)%for constructiuon
         %called by constructor
         copy=CopyProps(original,copy)
+        [s,x] = assignToObject(s, x)
     end%methods
     
     methods%constructor

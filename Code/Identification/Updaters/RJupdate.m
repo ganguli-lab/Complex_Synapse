@@ -1,5 +1,5 @@
 function [ newmodelobj,pstate,loglike ] = RJupdate( modelobj,simobj,chunks,varargin )
-%[M_new,initial_new,pstate,loglike]=RJUPDATE(chunks,readouts,initial,outProj,M,potdep)
+%[M_new,Initial_new,pstate,loglike]=RJUPDATE(chunks,readouts,Initial,outProj,M,potdep)
 %Rabiner-Juang update of estiamted HMM
 %   newmodelobj = updated SynapseIdModel
 %   pstate      = posterior prob of HMM being in each state at each time
@@ -12,7 +12,7 @@ lloffset=0;%avoid overflow by making this more positive
 varargin=assignApplicable(varargin);
 
 
-pstate=zeros(length(modelobj.initial),length(simobj.readouts));
+pstate=zeros(length(modelobj.Initial),length(simobj.readouts));
 newmodelobj=modelobj.Zero;
 loglike=0;
 

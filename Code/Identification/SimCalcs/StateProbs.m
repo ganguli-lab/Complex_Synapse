@@ -5,8 +5,8 @@ function [ p ] = StateProbs( modelobj,simobj )
 
 
 
-p=zeros(length(modelobj.initial),length(readouts));
-% alpha=BWalpha(length(readouts),readouts,initial,outProj,M,potdep);
+p=zeros(length(modelobj.Initial),length(readouts));
+% alpha=BWalpha(length(readouts),readouts,Initial,outProj,M,potdep);
 % beta=BWbeta(1,readouts,outProj,M,potdep);
 [alpha,eta]=BWalphaN(length(readouts),modelobj,simobj);
 beta=BWbetaN(eta,1,modelobj,simobj);

@@ -10,9 +10,9 @@ function [ alpha,eta ] = BWalphaN( t,modelobj,simobj )
 error(CheckSize(t,@isscalar));
 error(CheckValue(t,@isint));
 
-alpha=zeros(t,length(modelobj.initial));
+alpha=zeros(t,length(modelobj.Initial));
 eta=zeros(t,1);
-alpha(1,:) = modelobj.initial * modelobj.outProj{simobj.readouts(1)};
+alpha(1,:) = modelobj.Initial * modelobj.outProj{simobj.readouts(1)};
 eta(1) = 1 / sum(alpha(1,:));
 alpha(1,:) = alpha(1,:) * eta(1);
 

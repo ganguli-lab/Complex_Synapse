@@ -1,9 +1,9 @@
 function [ newobj ] = Normalise( obj )
-%newobj=NORMALISE(obj) normalise probs in obj (M & initial)
+%newobj=NORMALISE(obj) normalise probs in obj (M & Initial)
 
 newobj=obj;
 
-newobj.initial=newobj.initial/sum(newobj.initial);
+newobj.Initial=newobj.Initial/sum(newobj.Initial);
 for i=1:length(newobj.M)
     newobj.M{i}=StochastifyD(newobj.M{i});
 end

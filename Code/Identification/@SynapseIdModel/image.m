@@ -1,8 +1,8 @@
 function imh=image(obj,axMInitial,axMM,varargin)
 %imh=IMAGE(obj,axMInitial,axMM,varargin) image plots of probs
-%   imh = image handles [initial,M{1},...]
+%   imh = image handles [Initial,M{1},...]
 %   obj = SynapseIdModel
-%   axMInitial = axMes handle for initial (empty to not plot)
+%   axMInitial = axMes handle for Initial (empty to not plot)
 %   axMM       = [axMes handles] for M{:} (empty to not plot)
 
 if length(obj.M)==2
@@ -14,7 +14,7 @@ varargin=assignApplicable(varargin);
 
 imh=[];
 if ~isempty(axMInitial)
-    imh=imagesc(obj.initial,'Parent',axMInitial);
+    imh=imagesc(obj.Initial,'Parent',axMInitial);
     title(axMInitial,'Initial',varargin{:});
     xlabel(axMInitial,'State',varargin{:});
     set(axMInitial,'CLim',[0 1]);
