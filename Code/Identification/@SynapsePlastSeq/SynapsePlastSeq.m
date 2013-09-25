@@ -6,9 +6,9 @@ classdef SynapsePlastSeq
         %seq of plast types (indices of SynapseIdModel.M). default: []
         potdep=[],
         %sequence of synaptic states. default: [1]
-        stateseq=1;
+        stateseq=[];
         %sequence synaptic weights (indices of SynapseIdModel.outProj). default: [1]
-        readouts=1;
+        readouts=[];
     end
     
     methods (Access=?SynapseIdModel) %setting data

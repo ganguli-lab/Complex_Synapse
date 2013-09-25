@@ -7,6 +7,8 @@ function [ alpha,eta ] = BWalphaN( t,modelobj,simobj )
 %   simobj   = SynapsePlastSeq
 
 
+error(CheckSize(modelobj,@isscalar));
+error(CheckSize(simobj,@isscalar));
 error(CheckSize(t,@isscalar));
 error(CheckValue(t,@isint));
 

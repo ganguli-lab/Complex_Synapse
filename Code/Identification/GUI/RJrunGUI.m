@@ -8,7 +8,6 @@ S.num_ch=7;
 S.num_t=100;
 S.num_BW=50;
 S.fp=0.5;
-chunks=[S.num_t*(0:S.num_ch-1)+1;S.num_t*(1:S.num_ch)];
 AxFontSize=12;
 BtFontSize=16;
 cmapname='Hot';
@@ -81,7 +80,7 @@ colormap(statepr,cmapname);
 truemodel=truemodel.Sort(S.fp);
 stpr=[];
 Id=eye(length(truemodel.w));
-simobj=SynapsePlastSeq;
+simobj=SynapsePlastSeq(1,S.num_ch);
 newmodel=SynapseIdModel;
 InitRand;
 PlotModel(truemodel,ax_true);
@@ -163,7 +162,7 @@ MakeButton(3,'Update',@Update);
     end%function MakeEditBox
 
     function PlotSim
-        wt=[3-2*simobj.potdep 1; 2*simobj.readouts-3];
+        wt=[3-2*[simobj.potdep]; 2*[simobj.readouts]-3];
         cla(potdepwt);
         imagesc(wt,'Parent',potdepwt);
         set(potdepwt,'YTick',[1 2],'YTickLabel',{'pot/dep','weight'});
@@ -179,12 +178,12 @@ MakeButton(3,'Update',@Update);
 
     function PlotStatePr
         cla(statepr);
-        imagesc(stpr,'Parent',statepr);
+        imagesc([stpr{:}],'Parent',statepr);
         set(statepr,'CLim',[0 1]);
         cb=colorbar('peer',statepr);
         cblabel(cb,'Probability','FontSize',AxFontSize,'Rotation',270,'VerticalAlignment','bottom');
         hold(statepr,'on');
-        plot(simobj.stateseq,'g','LineWidth',3,'Parent',statepr);
+        plot([simobj.stateseq],'g','LineWidth',3,'Parent',statepr);
         xlabel(statepr,'Time','FontSize',AxFontSize);
         ylabel(statepr,'State','FontSize',AxFontSize);
         hold(statepr,'off');
@@ -200,8 +199,10 @@ MakeButton(3,'Update',@Update);
     end
 
     function Simulate(~,~)
-        chunks=[S.num_t*(0:S.num_ch-1)+1;S.num_t*(1:S.num_ch)];
-        simobj=truemodel.Simulate(S.fp,rand(2,S.num_t*S.num_t));
+        simobj=SynapsePlastSeq(1,S.num_ch);
+        for jj=1:S.num_ch
+            simobj(jj)=truemodel.Simulate(S.fp,rand(2,S.num_t));
+        end
         PlotSim;
         PlotModel(truemodel,ax_true);
         %InitRand;
@@ -219,16 +220,16 @@ MakeButton(3,'Update',@Update);
         newmodel=SynapseIdModel(truemodel,'M',M_new,'Initial',init_new);
         newmodel=newmodel.Sort(S.fp);
         PlotModel(newmodel,ax_est);
-        if ~isempty(simobj.potdep)
+        if ~isempty(simobj(1).potdep)
             stpr=StateProbs(newmodel,simobj);
             PlotStatePr;
         end
     end
 
     function mets=CalcMets
-        if ~isempty(simobj.potdep)
-            mets(1,1)=ChunkedHMMloglike(chunks,truemodel,simobj);
-            mets(2,1)=ChunkedHMMloglike(chunks,newmodel,simobj);
+        if ~isempty(simobj(1).potdep)
+            mets(1,1)=HMMloglike(truemodel,simobj);
+            mets(2,1)=HMMloglike(newmodel,simobj);
         else
             mets(1:2,1)=NaN(2,1);
         end
@@ -281,7 +282,7 @@ MakeButton(3,'Update',@Update);
 
     function UpdateStep(upno)
         prevmodel=newmodel;
-        [newmodel,stpr]=RJupdate(newmodel,simobj,chunks);
+        [newmodel,stpr]=RJweight(newmodel,simobj);
         newmodel=newmodel.Sort(S.fp);
         UpdateMets(upno);
         PlotMets(upno);
@@ -292,7 +293,7 @@ MakeButton(3,'Update',@Update);
     end
 
     function Update(~,~)
-       if ~isempty(simobj.potdep)
+       if ~isempty(simobj(1).potdep)
         for upno=1:S.num_BW
             UpdateStep(upno);
         end

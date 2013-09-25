@@ -5,9 +5,17 @@ function [ loglike ] = HMMloglike( modelobj,simobj )
 %   simobj   = SynapsePlastSeq
 
 
+error(CheckSize(modelobj,@isscalar));
 
-[~,eta]=BWalphaN(length(simobj.readouts),modelobj,simobj);
-loglike = -sum(log(eta));
+if isscalar(simobj)
+    [~,eta]=BWalphaN(length(simobj.readouts),modelobj,simobj);
+    loglike = -sum(log(eta));
+else
+    loglike=0;
+    for i=1:numel(simobj)
+        loglike=loglike+HMMloglike(modelobj,simobj(i));
+    end
+end
 
 end
 

@@ -13,7 +13,7 @@ error(CheckSize(fp,@(x) length(x)==length(obj.M)-1,'length(fp)==length(obj.M)-1'
 fp(fp==0)=1e-10;
 
 simobj=SynapsePlastSeq;
-simobj=simobj.setPotDep(WhichBin([0,cumsum(fp),1],randno(1,1:end-1)));
+simobj=simobj.setPotDep(WhichBin([0,cumsum(fp),1],randno(1,:)));
 randno=randno(2,:);
 
 %change pdf -> cdf
