@@ -6,7 +6,7 @@ function [ loglike ] = HMMloglike( modelobj,simobj )
 
 
 
-[~,eta]=BWalphaN(length(readouts),modelobj,simobj);
+[~,eta]=BWalphaN(length(simobj.readouts),modelobj,simobj);
 loglike = -sum(log(eta));
 
 end

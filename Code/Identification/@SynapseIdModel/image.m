@@ -1,9 +1,9 @@
-function imh=image(obj,axMInitial,axMM,varargin)
-%imh=IMAGE(obj,axMInitial,axMM,varargin) image plots of probs
+function imh=image(obj,axMInitial,axM,varargin)
+%imh=IMAGE(obj,axMInitial,axM,varargin) image plots of probs
 %   imh = image handles [Initial,M{1},...]
 %   obj = SynapseIdModel
 %   axMInitial = axMes handle for Initial (empty to not plot)
-%   axMM       = [axMes handles] for M{:} (empty to not plot)
+%   axM        = [axMes handles] for M{:} (empty to not plot)
 
 if length(obj.M)==2
     Mlabels={'pot','dep'};
@@ -19,7 +19,7 @@ if ~isempty(axMInitial)
     xlabel(axMInitial,'State',varargin{:});
     set(axMInitial,'CLim',[0 1]);
 end
-for i=1:length(axMM)
+for i=1:length(axM)
     imh(end+1)=imagesc(obj.M{i},'Parent',axM(i));
     title(axM(i),['M^{' Mlabels{i} '}'],varargin{:});
     xlabel(axM(i),'To',varargin{:});

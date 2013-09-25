@@ -41,6 +41,7 @@ classdef SynapseIdModel
     methods%validity etc.
         newobj=Normalise(obj)
         newobj=Zero(obj)
+        [newobj,ix]=Sort(obj,fp)
         tf=isvalid(obj)
         tf=iscompatible(obj,simulationobj)
     end
@@ -59,9 +60,11 @@ classdef SynapseIdModel
         imh=image(obj,axInitial,axM,varargin)
     end
     
-    methods (Access=private)%for calculation
-        %called by constructor
+    methods (Access=private)%for calculation of properties
+        %called when changing w
         obj=CalcOutProj(obj)
+        %set Initial to eq dist
+        newobj=CalcEqProb(obj,fp)
     end%methods
     
     methods (Static=true) %for construction
