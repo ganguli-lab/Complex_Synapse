@@ -1,24 +1,24 @@
-function [ newobj ] = Build( func,fp,varargin )
-%newobj=BUILD(func,fp,varargin) build SynapseIdModel from function
+function [ newobj ] = Rand( w,varargin )
+%newobj=Rand(obj,func,fp,varargin) build SynapseIdModel from function
 %   [Wp,Wm,newobj.w]=func(varargin{:})
 %   newobj.Initial=EqProb(fp*Wp+(1-fp)*Wm)
 %   newobj.M={Wp+eye,Wm+eye}
 
 
 ScaleW=1;
+sparsity=1;
 varargin=assignApplicable(varargin);
 
-if ischar(func)
-    func=str2func(func);
-end
+Wp=RandTrans(length(w),sparsity);
+Wm=RandTrans(length(w),sparsity);
+p=rand(1,length(w));
 
-[Wp,Wm,w]=func(varargin{:});
 
 newobj=SynapseIdModel;
 
 newobj=newobj.setM({ScaleW*Wp+eye(length(Wp)),ScaleW*Wm+eye(length(Wp))});
 newobj=newobj.setW(w);
-newobj=newobj.CalcEqProb(fp);
+newobj=newobj.setInitial(p/sum(p));
 
 
 end
