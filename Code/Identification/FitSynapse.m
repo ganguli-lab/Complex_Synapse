@@ -1,39 +1,70 @@
-function [ fitmodel,loglike,exitflag,output ] = FitSynapse( simobj,guessmodel,options )
+function [ fitmodel,fval,exitflag,output ] = FitSynapse( simobj,guessmodel,options )
 %FITSYNAPSE Summary of this function goes here
 %   Detailed explanation goes here
 
-defoptions=struct('MaxIter',1000,'TolFun',-1e-6,'TolX',1e-6,'TolFunChange',1e-6,...
-    'Algorithm','BW','Weighter','RJ','ExtraOpts',{},...
+defoptions=struct('MaxIter',1000,'TolFun',NaN,'TolX',1e-6,'TolFunChange',1e-6,...
+    'Algorithm','BW','Weighter','RJ','ExtraParams',{{}},...
     'Display','off','OutputFcn',[],'PlotFcn',[],...
-    'GroundTruth',[]);
+    'fp',0.5,'GroundTruth',[]);
 if isscalar(simobj)
     defoptions.Weighter='Uni';
 end
-defoptions=UpdateOptions(defoptions,options);
+if exist('options','var')
+    [defoptions,unused]=UpdateOptions(defoptions,options);
+    defoptions.ExtraParams=[defoptions.ExtraParams unused];
+end
 
-fitmodel=guessmodel.Sort;
-loglike=HMMloglike(fitmodel,simobj);
+optimValues=struct('iteration',0,'procedure',[defoptions.Algorithm ',' defoptions.Weighter],'funcCount',0,...
+    'fval',[],'prev',[],'truth',[],'stateProb',{{}});
+state='init';
+
+fitmodel=guessmodel.Sort(defoptions.fp);
+optimValues.fval=HMMloglike(fitmodel,simobj);
 
 weighter=str2func([defoptions.Weighter 'weight']);
 
 exitflag=0;
 msg=['Exceeded max iterations: ' int2str(defoptions.MaxIter)];
 
+optimValues.prev=struct('model',[],'fval',[],'dfval',[],'KLInitial',[],'KLM',[]);
 if ~isempty(defoptions.GroundTruth)
-    trueloglike=HMMloglike(defoptions.GroundTruth,simobj);
+    optimValues.truth=struct('model',defoptions.GroundTruth,'fval',[],'dfval',[],'KLInitial',[],'KLM',[]);
+    optimValues.truth.fval=HMMloglike(defoptions.GroundTruth,simobj);
+    optimValues.truth.dfval=optimValues.truth.fval-optimValues.fval;
 end
 
+CallOutFcns;
+
 for i=1:defoptions.MaxIter
-    prevmodel=fitmodel;
-    prevloglike=loglike;
-    [fitmodel,~,loglike]=weighter(prevmodel,simobj,'Algorithm',defoptions.Algorithm,defoptions.ExtraOpts{:});
-    [kli,klm]=prevmodel.KLDivs(fitmodel);
     %
-    if ~isempty(defoptions.GroundTruth)
-        [truekli,trueklm]=defoptions.GroundTruth.KLDivs(fitmodel);
-        if trueloglike-loglike < defoptions.TolFun
-            if mean(trueklm) < defoptions.TolX
-                if truekli < defoptions.TolX
+    state='interrupt';
+    stop=CallOutFcns;
+    if stop
+        exitflag=-5;
+        msg='Stopped by OuputFcn or PlotFcn';
+        break;
+    end
+    %
+    optimValues.iteration=i;
+    optimValues.prev.model=fitmodel;
+    optimValues.prev.fval=optimValues.fval;
+    %
+    [fitmodel,optimValues.fval,optimValues.stateProb]=weighter(optimValues.prev.model,simobj,...
+        'Algorithm',defoptions.Algorithm,defoptions.ExtraParams{:});
+    fitmodel=fitmodel.Sort(defoptions.fp);
+    %
+    [optimValues.prev.KLInitial,optimValues.prev.KLM]=optimValues.prev.model.KLdivs(fitmodel);
+    optimValues.prev.dfval=optimValues.fval-optimValues.prev.fval;
+    optimValues.funcCount=i;
+    %
+    if ~isempty(optimValues.truth)
+        %
+        optimValues.truth.dfval=optimValues.truth.fval-optimValues.fval;
+        [optimValues.truth.KLInitial,optimValues.truth.KLM]=optimValues.truth.model.KLdivs(fitmodel);
+        %
+        if optimValues.truth.dfval < defoptions.TolFun
+            if mean(optimValues.truth.KLM) < defoptions.TolX
+                if optimValues.truth.KLInitial < defoptions.TolX
                     exitflag=1;
                     msg=['Success. trueloglike - loglike < ' num2str(defoptions.TolFun)...
                         ' and KLdiv from true model to fit model < ' num2str(defoptions.TolX)];
@@ -54,38 +85,68 @@ for i=1:defoptions.MaxIter
         end
     end
     %
-    if loglike > defoptions.TolFun
+    if optimValues.fval > defoptions.TolFun
         exitflag=1;
         msg=['Success. loglike > ' num2str(defoptions.TolFun)];
         break;
-    elseif mean([kli klm]) < defoptions.TolX && abs(loglike-prevloglike) < defoptions.TolFunChange
-        exitflag=-2;
+    elseif mean([optimValues.prev.KLInitial optimValues.prev.KLM]) < defoptions.TolX && abs(optimValues.prev.dfval) < defoptions.TolFunChange
+        if isnan(defoptions.TolFun)
+            exitflag=1;
+        else
+            exitflag=-2;
+        end
         msg=['Reached local maximum. Change in loglike < ' num2str(defoptions.TolFunChange)...
             '. KL-div due to change in model < ' num2str(defoptions.TolX)];
         break;
     end
+    %
+    state='iter';
+    stop=CallOutFcns;
+    if stop
+        exitflag=-5;
+        msg='Stopped by OuputFcn or PlotFcn';
+        break;
+    end
 end
 
-
+fval=optimValues.fval;
 output=struct('message',msg,'algortihm',defoptions.Algorithm,'weighter',defoptions.Weighter,...
-    'iterations',i,'KLstepInitial',kli,'KLstepM',klm);
+    'iterations',i,'prev',optimValues.prev,'truth',optimValues.truth);
+state='done';
+CallOutFcns;
 
-if ~isempty(defoptions.GroundTruth)
-    output.groundTruth=defoptions.GroundTruth;
-    output.trueloglike=trueloglike;
-    output.KLtrueInitial=truekli;
-    output.KLtrueM=trueklm;
-end
 
-    function opt=UpdateOptions(oldopt,newopt)
+    function [opt,unused]=UpdateOptions(oldopt,newopt)
         opt=oldopt;
         pr=fields(newopt);
+        unused=cell(1,2*length(pr));
+        nextun=1;
         for ii=1:length(pr)
-            if isfield(opt,pr{ii}) && ~isempty(newopt.(pr{ii}))
-                opt.(pr{ii})=newopt.(pr{ii});
-            end
+            if ~isempty(newopt.(pr{ii}))
+                if isfield(opt,pr{ii})
+                    opt.(pr{ii})=newopt.(pr{ii});
+                else
+                    unused{nextun}=pr(ii);
+                    unused{nextun+1}=newopt.(pr{ii});
+                    nextun=nextun+2;
+                end%if isfield
+            end%if ~isempty
+        end%for ii
+        unused(nextun:end)=[];
+    end
+
+    function stopv=CallOutFcns
+        %
+        stopv=false;
+        if ~isempty(defoptions.OutputFcn)
+            stopv = defoptions.OutputFcn(fitmodel, optimValues, state);
+        end
+        %
+        if ~isempty(defoptions.PlotFcn)
+            stopv = defoptions.PlotFcn(fitmodel, optimValues, state);
         end
     end
+
 
 end
 
