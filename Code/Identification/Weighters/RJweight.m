@@ -1,8 +1,8 @@
-function [ newmodelobj,pstate,loglike ] = RJweight( modelobj,simobj,varargin )
-%[newmodelobj,pstate,loglike]=RJUPDATE(modelobj,simobj) Rabiner-Juang update of estimated HMM
+function [ newmodelobj,loglike,pstate ] = RJweight( modelobj,simobj,varargin )
+%[newmodelobj,loglike,pstate]=RJUPDATE(modelobj,simobj) Rabiner-Juang update of estimated HMM
 %   newmodelobj = updated SynapseIdModel
-%   pstate      = posterior prob of HMM being in each state at each time (cell, one element for each simobj)
 %   loglike     = log likelihood of readouts under old model (prod over simobj)
+%   pstate      = posterior prob of HMM being in each state at each time (cell, one element for each simobj)
 %   modelobj = SynapseIdModel
 %   simobj   = vector of SynapsePlastSeq
 
@@ -20,7 +20,7 @@ newmodelobj=modelobj.Zero;
 loglike=0;
 
 for i=1:length(simobj)
-    [chunkModel,chunkPs,chunkll]=updater(modelobj,simobj(i),'Normalise',Normalise,varargin{:});
+    [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',Normalise,varargin{:});
     Weight=exp(-lloffset-chunkll);
     newmodelobj=newmodelobj+Weight*chunkModel;
     pstate{i}=chunkPs*diag(1./sum(chunkPs,1));
