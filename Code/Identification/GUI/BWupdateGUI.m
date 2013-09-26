@@ -73,7 +73,6 @@ colormap(statepr,cmapname);
 truemodel=truemodel.Sort(S.fp);
 temptruemodel=truemodel;
 stpr=[];
-Id=eye(length(truemodel.w));
 simobj=SynapsePlastSeq;
 newmodel=SynapseIdModel;
 InitRand;
@@ -166,7 +165,7 @@ UpdateMets;
     end%function MakeEditBox
 
     function PlotSim
-        wt=[3-2*simobj.potdep 1; 2*simobj.readouts-3];
+        wt=[3-2*simobj.potdep; 2*simobj.readouts-3];
         cla(potdepwt);
         imagesc(wt,'Parent',potdepwt);
         set(potdepwt,'YTick',[1 2],'YTickLabel',{'pot/dep','weight'});
@@ -216,11 +215,7 @@ UpdateMets;
     end
 
     function InitRand(~,~)
-        n=length(truemodel.w);
-        M_new={RandTrans(n)+Id,RandTrans(n)+Id};
-        init_new=RandTrans(n)+Id;
-        init_new=init_new(1,:);
-        newmodel=SynapseIdModel(truemodel,'M',M_new,'Initial',init_new);
+        newmodel=SynapseIdModel.Rand(truemodel.w);
         newmodel=newmodel.Sort(S.fp);
         PlotModel(newmodel,ax_est);
         if ~isempty(simobj.potdep)
@@ -252,7 +247,7 @@ UpdateMets;
     function Update(~,~)
        if ~isempty(simobj.potdep)
            prevmodel=newmodel;
-           [newmodel,stpr]=BWupdate(newmodel,simobj);
+           [newmodel,~,stpr]=BWupdate(newmodel,simobj);
            newmodel=newmodel.Sort(S.fp);
            UpdateMets;
            PlotStatePr;

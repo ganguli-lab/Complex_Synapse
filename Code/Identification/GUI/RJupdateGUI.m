@@ -74,7 +74,6 @@ colormap(statepr,cmapname);
 %-------------------------------------------------------------------------
 truemodel=truemodel.Sort(S.fp);
 stpr={};
-Id=eye(length(truemodel.w));
 simobj=SynapsePlastSeq(1,S.num_ch);
 newmodel=SynapseIdModel;
 InitRand;
@@ -217,11 +216,7 @@ UpdateMets;
     end
 
     function InitRand(~,~)
-        n=length(truemodel.w);
-        M_new={RandTrans(n)+Id,RandTrans(n)+Id};
-        init_new=RandTrans(n)+Id;
-        init_new=init_new(1,:);
-        newmodel=SynapseIdModel(truemodel,'M',M_new,'Initial',init_new);
+        newmodel=SynapseIdModel.Rand(truemodel.w);
         newmodel=newmodel.Sort(S.fp);
         PlotModel(newmodel,ax_est);
         if ~isempty(simobj(1).potdep)
@@ -253,7 +248,7 @@ UpdateMets;
     function Update(~,~)
        if ~isempty(simobj(1).potdep)
            prevmodel=newmodel;
-           [newmodel,stpr,like]=RJweight(newmodel,simobj);
+           [newmodel,like,stpr]=RJweight(newmodel,simobj);
            newmodel=newmodel.Sort(S.fp);
            UpdateMets;
            PlotStatePr;
