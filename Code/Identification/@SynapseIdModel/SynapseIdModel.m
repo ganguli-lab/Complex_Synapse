@@ -46,6 +46,23 @@ classdef SynapseIdModel
         tf=iscompatible(obj,simulationobj)
     end
     
+    methods %size info
+        %
+        function val=NumStates(obj)
+            val=length(obj.Initial);
+        end
+        %
+        function val=NumPlast(obj)
+            val=length(obj.M);
+        end
+        %
+        function val=NumWvals(obj)
+            val=length(obj.outProj);
+        end
+        %
+        tf=SameSizes(obj,otherobj)
+    end
+    
     methods%calculations etc.
         [initdiv,Mdivs]=KLdivs(obj1,obj2)
         obj3=plus(obj1,obj2)

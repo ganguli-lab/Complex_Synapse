@@ -34,8 +34,30 @@ classdef SynapsePlastSeq
         tf=iscompatible(obj,modelobj)
     end
     
+    methods %size info
+        %
+        function val=NumT(obj)
+            val=length(obj.stateseq);
+        end
+        %
+        function val=NumStates(obj)
+            val=max(obj.stateseq);
+        end
+        %
+        function val=NumPlast(obj)
+            val=max(obj.potdep);
+        end
+        %
+        function val=NumWvals(obj)
+            val=max(obj.readouts);
+        end
+        %
+        tf=SameSizes(obj,otherobj)
+    end
+    
     methods
         newobj=GetRange(obj,range)
+        obj3=plus(obj1,obj2)
     end
     
     methods (Access=private)%for constructiuon

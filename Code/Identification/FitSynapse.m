@@ -15,6 +15,7 @@ if exist('options','var')
 end
 
 optimValues=struct('iteration',0,'procedure',[defoptions.Algorithm ',' defoptions.Weighter],'funcCount',0,...
+    'NumStates',guessmodel.NumStates,...
     'fval',[],'prev',[],'truth',[],'stateProb',{{}});
 state='init';
 
@@ -63,7 +64,7 @@ for i=1:defoptions.MaxIter
         [optimValues.truth.KLInitial,optimValues.truth.KLM]=optimValues.truth.model.KLdivs(fitmodel);
         %
         if optimValues.truth.dfval < defoptions.TolFun
-            if mean(optimValues.truth.KLM) < defoptions.TolX
+            if mean(optimValues.truth.KLM/optimValues.NumStates) < defoptions.TolX
                 if optimValues.truth.KLInitial < defoptions.TolX
                     exitflag=1;
                     msg=['Success. trueloglike - loglike < ' num2str(defoptions.TolFun)...
@@ -89,7 +90,7 @@ for i=1:defoptions.MaxIter
         exitflag=1;
         msg=['Success. loglike > ' num2str(defoptions.TolFun)];
         break;
-    elseif mean([optimValues.prev.KLInitial optimValues.prev.KLM]) < defoptions.TolX && abs(optimValues.prev.dfval) < defoptions.TolFunChange
+    elseif mean([optimValues.prev.KLInitial optimValues.prev.KLM/optimValues.NumStates]) < defoptions.TolX && abs(optimValues.prev.dfval) < defoptions.TolFunChange
         if isnan(defoptions.TolFun)
             exitflag=1;
         else
