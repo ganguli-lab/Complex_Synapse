@@ -15,7 +15,7 @@ FontSize=20;
 EqFontSize=20;
 txFontSize=20;
 Pooled=false;
-mutant='KO';
+mutant='D^bK^{b-/-}';
 red=[192 0 0]/255;
 varargin=assignApplicable(varargin);
 
