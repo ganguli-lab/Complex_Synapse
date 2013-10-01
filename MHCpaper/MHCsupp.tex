@@ -40,9 +40,9 @@
 \newcommand{\incdec}{_{\text{inc/dec}}}
 \newcommand{\wt}{_{\text{WT}}}
 %\newcommand{\ko}{_{\text{D$^\mathrm{b}$K$^\mathrm{b}$-/-}}}
-%\newcommand{\KO}{D$^\mathrm{b}$K$^\mathrm{b}$-/-}
+\newcommand{\KO}{D$^\mathrm{b}$K$^{\mathrm{b}-/-}$}
 \newcommand{\ko}{_{\text{MHC}}}
-\newcommand{\KO}{MHC}
+%\newcommand{\KO}{MHC}
 \newcommand{\tpre}{t_{\text{pre}}}
 \newcommand{\ttrain}{t_{\text{train}}}
 \newcommand{\lmax}{_{\text{max}}}
@@ -111,7 +111,7 @@ The quantities $f\potdep$ measure the fraction of candidate plasticity events th
 
 The independence and identicalness of synapses means that the state of the system can be completely described by the probability distribution of the internal states, the row vector $\pr(t)$.
 
-The evolution of this probability is described by a forgetting matrix, $\frg$:
+The evolution of this probability is described by a continuous time Markov matrix matrix, $\frg$:
 %
 \begin{equation}\label{eq:evolve}
   \diff{\pr(t)}{t} = r\pr(t)\frg,
@@ -130,7 +130,7 @@ Eventually, this will settle into the equilibrium distribution:
 For models with only two possible synaptic weights, the distribution of synaptic weights is completely described by the mean, $\pr(t)\w$.
 
 
-The MHC mutant has a lower threshold for depression.
+The \KO\ mice have a lower threshold for depression.
 We can model this by changing $\M\dep\wt$ to $\M\dep\ko$, which should have larger off-diagonal matrix elements.
 
 We will look at several different models,
@@ -140,11 +140,11 @@ the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autore
 and the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}).
 We will also look at a new, pooled resource model that we will define below in \autoref{sec:pooledmodel} and a non-uniform version of the multistate model that we will describe in \autoref{sec:nonunimodel}.
 
-For the serial, multistate and two state models, we will use the same value for the transition probabilities, $q$, for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
-We will use a larger value for $q$ for depression in the \KO\ mutant.
+For the serial, multistate and two state models, we will use the same value for the transition probabilities, $q$, for potentiation and depression in the wild-type as well as potentiation in the \KO\ mice.
+We will use a larger value for $q$ for depression in the \KO\ mice.
 
-For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
-We will use a larger value for $x$ for depression in the \KO\ mutant.
+For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \KO\ mice.
+We will use a larger value for $x$ for depression in the \KO\ mice.
 
 The values used for all these parameters in simulations are listed in \autoref{tab:params}.
 
@@ -224,8 +224,8 @@ with all other off-diagonal elements equal to zero.
 The diagonal elements are chosen so that the rows sum to one.
 
 This model is parameterised by the range of values, $q\in[q\lmin,q\lmax]$, for potentiation and depression.
-We will use the same values for potentiation and depression in the wild-type as well as potentiation in the \KO\ mutant.
-We will use larger values for depression in the \KO\ mutant.
+We will use the same values for potentiation and depression in the wild-type as well as potentiation in the \KO\ mice.
+We will use larger values for depression in the \KO\ mice.
 In the main text, we consider a version of this model that has resource depletion for depression only, so that potentiation transition probabilities are unaffected by the number of potentiated synapses.
 This is done by setting $q\pot\lmax=q\pot\lmin$.
 The values of these parameters are listed in \autoref{tab:params}.
@@ -257,7 +257,7 @@ with all other off-diagonal elements equal to zero.
 The diagonal elements are chosen so that the rows sum to one.
 
 This model is parameterised by the values of $x$ chosen for potentiation and depression.
-We will use a larger value for depression in the \KO\ mutant.
+We will use a larger value for depression in the \KO\ mice.
 The values used are listed in \autoref{tab:params}.
 
 
@@ -278,6 +278,7 @@ Training the animal will not change the internal dynamics of a synapse under pot
 It will change the environment, which will lead to a change in how often potentiation and depression occur.
 It could be manifested in a change in which synapses are potentiated/depressed, but this could not be captured in this type of model.
 We will model this by changing $f\potdep$, leaving $\M\potdep$ unchanged.
+This approach was used to model motor learning in \cite{Smith2006savings}.
 
 The untrained case will be described by $f\dep=f\dep\norm$.
 Gain-increase training  will be described by $f\dep=f\dep\inc>f\dep\norm$, and
@@ -311,17 +312,17 @@ The behavioural output (VOR gain) will be some unknown, non-linear function of t
 We will assume $f\dep\wt=f\dep\ko$.
 This is because the effects of the mutation are well localised to the Purkinje cells, so the activity of the parallel and climbing fibres should not change very much.
 Therefore the rates of potentiation and depression should not change very much either.
-This implies that the mean synaptic weight in equilibrium differs between the mutant and wild type, but that is also suggested by the data regarding basal levels of phospho-GluR2 at serine 880.
+This implies that the mean synaptic weight in equilibrium differs between the \KO\ mice and wild type, but that is also suggested by the data regarding basal levels of phospho-GluR2 at serine 880.
 As the mutation produces no change in baseline performance, there must be a compensatory mechanism somewhere else.
 We will model this compensation as a simple linear offset, as could be produced by another population of neurons/synapses whose effect cancels with these neurons/synapses.
 
 For the most part, we set $f\dep\norm=\half$, $f\dep\inc=f\dep\norm+\Delta f$ and $f\dep\dec=f\dep\norm-\Delta f$, with $\Delta f>0$.
-We use the same values for wild-type and mutant for the reasons discussed above.
+We use the same values for wild-type and \KO\ mice for the reasons discussed above.
 We will mostly treat gain-increase and decrease symmetrically, but this is not necessary.
 We could adjust $r$ to keep $r\pot$ unchanged, if so desired, but this would only change the overall timescale and would not affect any of the qualitative comparisons that we are concerned with here.
 The values of these parameters are listed in \autoref{tab:params}.
 
-We are also assuming that the relation between VOR gain and mean synaptic weight is the same for mutant ant wild-type, except for a linear offset to compensate for the difference in equilibrium weights mentioned above.
+We are also assuming that the relation between VOR gain and mean synaptic weight is the same for \KO\ mice ant wild-type, except for a linear offset to compensate for the difference in equilibrium weights mentioned above.
 This ensures that the qualitative questions mentioned above (enhancement or impairment of learning) will not be affected.
 
 
@@ -331,10 +332,10 @@ This ensures that the qualitative questions mentioned above (enhancement or impa
 
 The features of the actual experiments that we'd like to capture are:
 \begin{enumerate}
-  \item Without pre-training, gain-increase learning is significantly faster in the wild-type than in the mutant.
+  \item Without pre-training, gain-increase learning is significantly faster in the wild-type than in the \KO\ mice.
   \item For the wild-type, gain-increase learning is significantly faster without pre-training than with it.
-  \item For the mutant, gain-increase learning is significantly faster with pre-training than without it.
-  \item After pre-training, gain-increase learning is significantly faster in the mutant than in the wild-type.
+  \item For the \KO\ mice, gain-increase learning is significantly faster with pre-training than without it.
+  \item After pre-training, gain-increase learning is significantly faster in the \KO\ mice than in the wild-type.
   \item Gain-decrease pre-training is slightly faster in the wild-type, but not significantly so.\label{it:gaindown}
 \end{enumerate}
 These questions will not be affected by any output nonlinearity, as long as it is monotonic and fixed.
@@ -342,12 +343,12 @@ We will not worry too much about \autoref{it:gaindown}, as gain-decrease learnin
 We are only modelling the effect of gain-decrease training on \emph{these} synapses.
 
 We will not worry too much about the curvature of the learning curves, as this can be changed by the nonlinear relation between synaptic weight and VOR gain.
-However, both the wild-type and mutant should be affected in the same way, so the difference in the curvature of the mutant and wild-type curves after pre-training would be nice to capture.
+However, both the wild-type and \KO\ mice should be affected in the same way, so the difference in the curvature of the \KO\ mice and wild-type curves after pre-training would be nice to capture.
 
 We will try to gain some analytic insight to some of these models by looking at the slope of the learning curve at the start of gain-increase training.
 This is proportional to the net-flux from the states with strong synaptic weight to the weaker states, measured using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
 This should be multiplied by the difference in synaptic weights.
-But, as this quantity is constant within a model and doesn't change when comparing wild-type and mutant or with/without pre-training, it can be ignored.
+But, as this quantity is constant within a model and doesn't change when comparing wild-type and \KO\ mice or with/without pre-training, it can be ignored.
 
 The values for all parameters we will use can be found in \autoref{tab:params}.
 
@@ -364,15 +365,15 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
     Serial        & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.45 & 30  &\label{tr:multistate_strong} \\
     Two-state     & 2  & $q=0.1$  & $q=0.1$  & $q=0.2$  & 0.1  & 5   &\label{tr:binary} \\
     Multistate    & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.3  & 5   &\label{tr:multistate_lin} \\
-    Pooled        & 10 & $q\in[0.3,0.4]$  & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
-                                          & 0.1 & 20 &\label{tr:pooled_plenty}\\
-    Pooled        & 10 & $q\in[0.05,0.4]$ & $q\in[0.05,0.4]$  & $q\in[0.1,0.8]$
-                                          & 0.1 & 20 &\label{tr:pooled_scarce}\\
-    Pooled        & 7  & $q=0.008$        & $q\in[0.0006,0.6]$  & $q\in[0.001,1]$
+%    Pooled        & 10 & $q\in[0.3,0.4]$  & $q\in[0.3,0.4]$  & $q\in[0.6,0.8]$
+%                                          & 0.1 & 20 &\label{tr:pooled_plenty}\\
+%    Pooled        & 10 & $q\in[0.05,0.4]$ & $q\in[0.05,0.4]$  & $q\in[0.1,0.8]$
+%                                          & 0.1 & 20 &\label{tr:pooled_scarce}\\
+    Pooled res. & 7  & $q=0.008$        & $q\in[0.0006,0.6]$  & $q\in[0.001,1]$
                                           & 0.4 & 20 &\label{tr:pooled_deponly}\\
     Cascade       & 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 20  &\label{tr:cascade_short} \\
     Cascade       & 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 100 &\label{tr:cascade_long} \\
-    Non-uniform MS& 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 150 &\label{tr:nonuni} \\
+    Non-uni. MS& 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 150 &\label{tr:nonuni} \\
     \cline{1-7}
 %   \hline
 %    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
@@ -421,11 +422,11 @@ The values for all parameters we will use can be found in \autoref{tab:params}.
 
 \newcommand{\captiontext}[1]{ can be found in \autoref{tr:#1} of \autoref{tab:params}.
   Time is measured in units of $1/r$, the mean time between plasticity events.
-  (\ref{fig:#1_learn}) Learning curves for wild-type and \KO\ mutant with and without pre-training.
+  (\ref{fig:#1_learn}) Learning curves for wild-type and \KO\ mice with and without pre-training.
   (\ref{fig:#1_learnS}) Learning curves restricted to gain-increase training.
-  (\ref{fig:#1_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#1_eq_WT}) wild-type and (\ref{fig:#1_eq_KO}) \KO\ mutant,
+  (\ref{fig:#1_eq}) Equilibrium distributions without training or with gain-increase/decrease training for (\ref{fig:#1_eq_WT}) wild-type and (\ref{fig:#1_eq_KO}) \KO\ mice,
   with states of weak synaptic strength to the left and strong states to the right.
-  (\ref{fig:#1_pr}) Evolution of probability distributions for (\ref{fig:#1_pr_WT_nopre},\ref{fig:#1_pr_WT_pre}) wild-type and  (\ref{fig:#1_pr_KO_nopre},\ref{fig:#1_pr_KO_pre}) \KO\ mutant without (\ref{fig:#1_pr_WT_nopre},\ref{fig:#1_pr_KO_nopre}) and with (\ref{fig:#1_pr_WT_pre},\ref{fig:#1_pr_KO_pre}) pre-training,
+  (\ref{fig:#1_pr}) Evolution of probability distributions for (\ref{fig:#1_pr_WT_nopre},\ref{fig:#1_pr_WT_pre}) wild-type and  (\ref{fig:#1_pr_KO_nopre},\ref{fig:#1_pr_KO_pre}) \KO\ mice without (\ref{fig:#1_pr_WT_nopre},\ref{fig:#1_pr_KO_nopre}) and with (\ref{fig:#1_pr_WT_pre},\ref{fig:#1_pr_KO_pre}) pre-training,
   with states of weak synaptic strength at the top and strong states underneath. }
 
 \newcommand{\captionstart}[2]{Simulation results for the \textbf{#1} model with #2}
@@ -511,7 +512,7 @@ Essentially, this model has a form of metaplasticity where repeated potentiation
 This allows excessive pre-training to impair learning, despite increasing the number of potentiated synapses.
 
 
-Now, consider the mutant, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
+Now, consider the \KO\ mice, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiKOnopre}
@@ -542,15 +543,15 @@ Once again, we see that pre-training will speed up learning when $\Delta f$ is s
 
 Let us define $\Delta f^*(\beta,M)$ to be the value at which \eqref{eq:multiKOnopre} and \eqref{eq:multiKOpre} are equal.
 Values of $\Delta f$ that are larger than this (stronger training) will correspond to slower learning after pre-training.
-As we would like pre-training to slow down learning in the wild-type but speed it up in the mutant, it would seem that we require $\Delta f^*(1,M) < \Delta f < \Delta f^*(\beta,M)$ (remembering that the wild-type corresponds to $\beta=1$).
+As we would like pre-training to slow down learning in the wild-type but speed it up in the \KO\ mice, it would seem that we require $\Delta f^*(1,M) < \Delta f < \Delta f^*(\beta,M)$ (remembering that the wild-type corresponds to $\beta=1$).
 As we see in \autoref{fig:multistate_star}\ref{fig:multistate_deltafstar}, $\Delta f^*(\beta,M) > \Delta f^*(1,M)$, so this range always exists.
 We can see an example of this in \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS}.
 
 However, this is only the initial, instantaneous rate of change.
-Let's look at \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}, for which $\Delta f > \Delta f^*(\beta,M)$, so that pre-training initially slows down learning for both wild-type and mutant.
+Let's look at \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}, for which $\Delta f > \Delta f^*(\beta,M)$, so that pre-training initially slows down learning for both wild-type and \KO\ mice.
 We see that the pre-trained curve can rapidly catch up with the un-pre-trained one, due to the mass of probability concentrated at the end of the chain (see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}, red trace) drifting to the centre.
-This happens sooner for the mutant than the wild-type, due to the stronger depressing transitions.
-This means that there is an intermediate range of time-scales over which pre-training does slow down learning in the wild-type but speed it up in the mutant, even outside the desired range of values for $\Delta f$.
+This happens sooner for the \KO\ mice than the wild-type, due to the stronger depressing transitions.
+This means that there is an intermediate range of time-scales over which pre-training does slow down learning in the wild-type but speed it up in the \KO\ mice, even outside the desired range of values for $\Delta f$.
 As we see in \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS} (black curves), even when we are in this range, the period of time for which pre-training impairs learning in the wild-type can be very small.
 
 \begin{figure}
@@ -560,11 +561,11 @@ As we see in \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS} (black 
   \item\aligntop{\includegraphics[width=7cm]{multistate_deltafstar.eps}}\label{fig:multistate_deltafstar}
  \end{myenuma}
  \end{center}
-  \caption[The functions $\beta^*(M)$ and $\Delta f^*(\beta,M)$]{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the mutant has impaired learning, and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
+  \caption[The functions $\beta^*(M)$ and $\Delta f^*(\beta,M)$]{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the \KO\ mice have impaired learning, and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
 \end{figure}
 
-In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f > \Delta f^*(1,M)$ and look at intermediate time-scales, we will see that the mutant learns slower than wild-type without pre-training, and that pre-training speeds up learning in the mutant but slows it down in the wild-type.
-However, in this case pre-training proceeds much faster in the mutant than wild-type (see \autoref{fig:multistate_med}\ref{fig:multistate_med_learn} and \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learn}, lower curves), which is \emph{not} seen in the experiment.
+In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f > \Delta f^*(1,M)$ and look at intermediate time-scales, we will see that the \KO\ mice learn slower than wild-type without pre-training, and that pre-training speeds up learning in the \KO\ mice but slows it down in the wild-type.
+However, in this case pre-training proceeds much faster in the \KO\ mice than wild-type (see \autoref{fig:multistate_med}\ref{fig:multistate_med_learn} and \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learn}, lower curves), which is \emph{not} seen in the experiment.
 
 Now consider what would happen if we did not treat gain-increase and gain-decrease symmetrically.
 Let us set $f\pot\dec = f\pot\norm - \overline{\Delta f}$.
@@ -591,12 +592,12 @@ We can then look at the wild-type by setting $\beta=1$:
 \end{equation}
 %
 
-We can see from these formulae that, if we want pre-training to impair learning in wild-type, but enhance it in the mutant, the important thing is to have \emph{strong pre-training}, not strong training.
-Thus, removing the symmetry between gain-increase and gain-decrease will not help with the most unrealistic feature of this model -- the fact that pre-training proceeds much faster in the mutant than wild-type.
+We can see from these formulae that, if we want pre-training to impair learning in wild-type, but enhance it in the \KO\ mice, the important thing is to have \emph{strong pre-training}, not strong training.
+Thus, removing the symmetry between gain-increase and gain-decrease will not help with the most unrealistic feature of this model -- the fact that pre-training proceeds much faster in the \KO\ mice than wild-type.
 
-Finally, we note that, in the case of medium or strong pre-training, we see positive curvature in the learning curve after pre-training for a longer time in wild-type than in the mutant (see \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS} and \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}, dashed curves).
+Finally, we note that, in the case of medium or strong pre-training, we see positive curvature in the learning curve after pre-training for a longer time in wild-type than in the \KO\ mice (see \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS} and \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}, dashed curves).
 This is due to the mass of probability at the right end of the chain (see \autoref{fig:multistate_med}\ref{fig:multistate_med_eq} and \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}, red trace) that is unable to contribute to change in synaptic weight until it has drifted to the centre.
-This will last for a shorter time in the mutant, due to the enhanced transitions.
+This will last for a shorter time in the \KO\ mice, due to the enhanced transitions.
 This will not be a feature of any of the other models that we study here.
 Now, the curvature can be changed by the nonlinear relation between synaptic weight and VOR gain, but both curves would be affected in the same way.
 The difference in these two curvatures is therefore a good feature of this model.
@@ -640,7 +641,7 @@ With pre-training:
 So, we see that pre-training will always speed up learning, unlike what is seen in the experiment.
 This can be seen in \autoref{fig:binary}\ref{fig:binary_learnS} (black curves).
 
-Now, consider the mutant, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
+Now, consider the \KO\ mice, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:binKOnopre}
@@ -653,7 +654,7 @@ As discussed above (below \eqref{eq:multiKOnopre}), the larger value of $q\dep=q
 Smaller $\beta$ will increase the probability of depression, speeding up learning, but it will also decrease the probability of being ready for depression, slowing down learning.
 For the serial model, we argued that the first effect goes like $1/\beta$, whereas the second goes like $\beta^{M/2}$ to leading order.
 Here $M=2$, so the leading part of the two effects will cancel.
-The subleading effects (the normalisation of the probabilities) are responsible for the faster learning in the mutant.
+The subleading effects (the normalisation of the probabilities) are responsible for the faster learning in the \KO\ mice.
 
 With pre-training:
 %
@@ -670,8 +671,8 @@ We made a number of assumptions in our analysis so far.
 Before we declare this model to be falsified, we should think about what would happen if we relaxed these assumptions and explored a larger parameter space.
 
 First, we assumed that the wild type had symmetric potentiation and depression.
-Relaxing this assumption would correspond modelling the wild-type like the mutant, but with a different value for $\beta$.
-We will still have $\beta\ko<\beta\wt$, and looking at \eqref{eq:binKOnopre} tell us that we would still have faster learning in the mutant.
+Relaxing this assumption would correspond modelling the wild-type like the \KO\ mice, but with a different value for $\beta$.
+We will still have $\beta\ko<\beta\wt$, and looking at \eqref{eq:binKOnopre} tell us that we would still have faster learning in the \KO\ mice.
 
 Secondly, we assumed that there would be equal rates of potentiation and depression in the untrained situation.
 However, relaxing this assumption merely changes \eqref{eq:binKOnopre} to
@@ -684,14 +685,14 @@ This will not change our conclusions either.
 
 As we didn't need the pre-training paradigm to rule out this model, we don't need to look at removing the symmetry between gain-increase and decrease.
 
-The only thing we have to worry about is when the wild-type catches up with the mutant.
-As the total change will be larger for the wild-type than mutant, it must overtake eventually.
-If this happens early enough, the initial period, where the mutant learns faster than wild-type, would not be seen in the experiment.
+The only thing we have to worry about is when the wild-type catches up with the \KO\ mice.
+As the total change will be larger for the wild-type than \KO\ mice, it must overtake eventually.
+If this happens early enough, the initial period, where the \KO\ mice learns faster than wild-type, would not be seen in the experiment.
 However, the timescale for this crossover would be similar to the timescale of the exponentials.
 In the data, it looks like that timescale is longer than the gaps between successive measurements, so we needn't worry about this.
 
-Intuitively, this model is missing two features of the \hyperref[sec:multistate]{multistate model}.
-First, it does not have the exponential amplification of the effect of initial saturation bias as this model does not have a chain of states for the distribution to decay across.
+Intuitively, this model is missing two features of the \hyperref[sec:multistate]{serial model}.
+First, it does not have the exponential amplification of the effect of initial saturation bias because this model does not have a chain of states for the distribution to decay across.
 Second, it does not have the metaplastic effect where repeated potentiation makes future depression harder, as potentiation will merely increase the number of potentiated synapses.
 
 
@@ -741,7 +742,7 @@ With pre-training:
 \end{equation}
 %
 
-Now, consider the mutant, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
+Now, consider the \KO\ mice, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiLinKOnopre}
@@ -749,7 +750,7 @@ Without pre-training:
 \end{equation}
 %
 This decreases monotonically in the interval $\beta\in[0,1]$, therefore this will always be greater than \eqref{eq:multiLinWTnopre}.
-This means that the mutant will initially learn faster than the wild-type.
+This means that the \KO\ mice will initially learn faster than the wild-type.
 However, as the wild-type will eventually catch up, and this can happen very quickly, as seen in \autoref{fig:multistate_lin}\ref{fig:multistate_lin_learn},\ref{fig:multistate_lin_learnS} (solid curves).
 
 With pre-training:
@@ -770,44 +771,39 @@ The ratio of this to \eqref{eq:multiLinKOnopre} takes its minimum value at the u
 \end{equation}
 %
 which is always greater than 1.
-Therefore, pre-training will always enhance learning, for both mutant and wild-type, as seen in \autoref{fig:multistate_lin}\ref{fig:multistate_lin_learnS}.
+Therefore, pre-training will always enhance learning, for both \KO\ mice and wild-type, as seen in \autoref{fig:multistate_lin}\ref{fig:multistate_lin_learnS}.
 
 
-Like the \hyperref[sec:binary]{two state model}, this model is missing two features of the \hyperref[sec:multistate]{multistate model}.
+Like the \hyperref[sec:binary]{two state model}, this model is missing two features of the \hyperref[sec:multistate]{serial model}.
 First, it does not have the amplification of the effect of initial saturation bias as every transition contributes to the learning signal, so the exponentially decaying distribution has no effect.
 Second, it does not have the metaplastic effect where repeated potentiation makes future depression harder, as potentiation will merely increase the number of potentiated synapses without pushing them away from any boundary between strong and weak states.
 
 
 
 \subsection{Pooled resource model}\label{sec:pooled}
+%
+%
+%\resultsfig{pooled resource}{light depletion}{($q\lmin/q\lmax=0.75$)}{pooled_plenty}
+%
+%\resultsfig{pooled resource}{heavy depletion}{($q\lmin/q\lmax=0.125$)}{pooled_scarce}
+
+\resultsfign{pooled resource}{pooled_deponly}
 
 
-\resultsfig{pooled resource}{light depletion}{($q\lmin/q\lmax=0.75$)}{pooled_plenty}
-
-\resultsfig{pooled resource}{heavy depletion}{($q\lmin/q\lmax=0.125$)}{pooled_scarce}
-
-\resultsfig{pooled resource}{unaffected potentiation}{($q\pot\lmax=q\pot\lmin$)}{pooled_deponly}
-
-
-The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_plenty} and \autoref{fig:pooled_scarce}.
+The results of simulations of the pooled resource model can be seen in \autoref{fig:pooled_deponly}.
 It is difficult to study this model analytically.
 However, the numerical results can helps us understand it qualitatively.
 
-If we compare gain-increase learning in the mutant to wild-type, there are two effects: the increased transition rates speed up learning, but the equilibrium distribution is shifted to the depressed side (compare \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_eq}: \ref{fig:pooled_plenty_eq_WT} and \ref{fig:pooled_plenty_eq_KO} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_eq}: \ref{fig:pooled_scarce_eq_WT} and \ref{fig:pooled_scarce_eq_KO}, blue traces), where there are fewer synapses available for depression and resources are depleted.
-When resource depletion is less severe, the first effect dominates and the mutant learns faster than wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learn},\ref{fig:pooled_plenty_learnS}, solid curves).
-This is reasonable, as when resource depletion is removed it will reduce to the two-state model, which showed this behaviour.
-However, when resource depletion is more severe, the second effect dominates and the mutant learns slower than wild-type (see \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learn},\ref{fig:pooled_scarce_learnS}, solid curves), which matches what is seen in the experiment.
+If we compare gain-increase learning in the \KO\ mice to wild-type, there are two effects: the increased transition rates speed up learning, but the equilibrium distribution is shifted to the depressed side (compare \autoref{fig:pooled_deponly}\ref{fig:pooled_deponly_eq}: \ref{fig:pooled_deponly_eq_WT} and \ref{fig:pooled_deponly_eq_KO}, blue traces), where there are fewer synapses available for depression and resources are depleted.
+When resource depletion is sufficiently severe, the second effect dominates and the \KO\ mice learn slower than wild-type (see \autoref{fig:pooled_deponly}\ref{fig:pooled_deponly_learn},\ref{fig:pooled_deponly_learnS}, solid curves), which matches what is seen in the experiment.
 
-Gain-decrease pre-training lessens the second effect, and results in the mutant learning faster than wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learn},\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learn},\ref{fig:pooled_scarce_learnS}), as seen in the experiment.
+Gain-decrease pre-training lessens the second effect, and results in the \KO\ mice learning faster than wild-type (see \autoref{fig:pooled_deponly}\ref{fig:pooled_deponly_learn},\ref{fig:pooled_deponly_learnS}), as seen in the experiment.
 
-Gain-decrease pre-training will shift the distribution to the potentiated side, where there are more synapses available for depression and resources are more plentiful, for both the mutant and wild type (see \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_eq}, red traces).
-This means that the pre-trained animal will learn faster then the untrained one for both mutant and wild-type (see \autoref{fig:pooled_plenty}\ref{fig:pooled_plenty_learnS} or \autoref{fig:pooled_scarce}\ref{fig:pooled_scarce_learnS}).
+Gain-decrease pre-training will shift the distribution to the potentiated side, where there are more synapses available for depression and resources are more plentiful, for both the \KO\ mice and wild type (see \autoref{fig:pooled_deponly}\ref{fig:pooled_deponly_eq}, red traces).
+This means that the pre-trained animals will learn faster then the untrained one for both \KO\ mice and wild-type (see \autoref{fig:pooled_deponly}\ref{fig:pooled_deponly_learnS}).
 This differs from what is seen experimentally, where the pre-trained wild-type learns slower than the untrained one.
 
-The situation discussed in the main text, with resource depletion for depression only and potentiating transitions  unaffected, is shown in \autoref{fig:pooled_deponly}.
-It shows the same learning patterns as the more symmetric versions.
-
-This model shares one feature of the \hyperref[sec:multistate]{multistate model}.
+This model shares one feature of the \hyperref[sec:multistate]{serial model}.
 The effect of initial saturation bias is amplified by resource depletion, allowing for impaired learning with enhanced plasticity.
 However, it does not have the metaplastic effect where repeated potentiation makes future depression harder, in fact it shows the opposite effect due to resource replenishment, so it can never show impaired learning after pre-training.
 
@@ -825,18 +821,18 @@ The results of simulations of the cascade model can be seen in \autoref{fig:casc
 It is difficult to study this model analytically.
 However, the numerical results can helps us understand it qualitatively.
 
-In both of these, we see that the mutant is slower than wild-type without pre-training but faster with it.
+In both of these, we see that the \KO\ mice are slower than wild-type without pre-training but faster with it.
 This seems to be due to the fact that, without pre-training, very few synapses will be available for depression as most of them are already depressed (\autoref{fig:cascade_short}\ref{fig:cascade_short_eq}\ref{fig:cascade_short_eq_KO} and \ref{fig:cascade_short_pr}\ref{fig:cascade_short_pr_KO_nopre}).
 With pre-training, some of them will now be potentiated (\autoref{fig:cascade_short}\ref{fig:cascade_short_eq}\ref{fig:cascade_short_eq_KO} and \ref{fig:cascade_short_pr}\ref{fig:cascade_short_pr_KO_pre}), and the enhanced depression can speed up learning.
 
-With shorter pre-training, we see that it speeds up learning in both wild-type and mutant (see \autoref{fig:cascade_short}\ref{fig:cascade_short_learnS}), whereas experimentally this only happens for the mutant.
+With shorter pre-training, we see that it speeds up learning in both wild-type and \KO\ mice (see \autoref{fig:cascade_short}\ref{fig:cascade_short_learnS}), whereas experimentally this only happens for the \KO\ mice.
 This is due to the fact that pre-training results in more synapses being potentiated, and thus ready for depression, but does not push them far enough down the cascade for the lower transition probabilities to slow down learning (see \autoref{fig:cascade_short}\ref{fig:cascade_short_pr}\ref{fig:cascade_short_pr_WT_pre}).
 
 We can see from \autoref{fig:cascade_long}\ref{fig:cascade_long_pr}\ref{fig:cascade_long_pr_WT_pre} that longer pre-training pushes the synapses further down the cascade, slowing down learning for the wild-type.
-This effect is weaker for the mutant, as the equilibrium distribution is not as heavily concentrated at the end (see \autoref{fig:cascade_long}\ref{fig:cascade_long_eq}\ref{fig:cascade_long_eq_KO}).
+This effect is weaker for the \KO\ mice, as the equilibrium distribution is not as heavily concentrated at the end (see \autoref{fig:cascade_long}\ref{fig:cascade_long_eq}\ref{fig:cascade_long_eq_KO}).
 
 
-This model shares both features of the \hyperref[sec:multistate]{multistate model}.
+This model shares both features of the \hyperref[sec:multistate]{serial model}.
 First, the effect of initial saturation bias is amplified by the exponential decay of transition probabilities away from the middle.
 Second, it has the metaplastic effect where repeated potentiation makes future depression harder, also due to he exponential decay of transition probabilities.
 
@@ -851,24 +847,24 @@ The results of simulations of the non-uniform multistate model can be seen in \a
 It is difficult to study this model analytically.
 However, the numerical results can helps us understand it qualitatively.
 
-First, we see that the mutant is slower than wild-type without pre-training, as seen experimentally.
+First, we see that the \KO\ mice are slower than wild-type without pre-training, as seen experimentally.
 This seems to be because the enhanced depression results in a greater fraction of synapses begin in states of weaker synaptic weight (see \autoref{fig:nonuni}\ref{fig:nonuni_eq}\ref{fig:nonuni_eq_KO}) where the depressing transitions have lower probability (see \autoref{fig:nonuni_model}).
 
 However, gain-decrease pre-training will push synapses towards the states of stronger synaptic weight.
-The wild-type will be pushed further that the mutant, as the latter started further to the weaker side as explained above (compare \autoref{fig:nonuni}\ref{fig:nonuni_eq}\ref{fig:nonuni_eq_WT} and \ref{fig:nonuni_eq_KO}).
-As the depressing transitions have lower probability for the strongest states (see \autoref{fig:nonuni_model}), this, in addition to the enhanced depression of the mutant, will result in the mutant learning faster than wild-type, as seen experimentally.
+The wild-type will be pushed further that the \KO\ mice, as the latter started further to the weaker side as explained above (compare \autoref{fig:nonuni}\ref{fig:nonuni_eq}\ref{fig:nonuni_eq_WT} and \ref{fig:nonuni_eq_KO}).
+As the depressing transitions have lower probability for the strongest states (see \autoref{fig:nonuni_model}), this, in addition to the enhanced depression of the \KO\ mice, will result in the \KO\ mice learning faster than wild-type, as seen experimentally.
 
 When comparing learning with and without gain-decrease pretraining, there are two effects to consider.
 First, the pushing synapses towards the states of stronger synaptic weight, resulting in more synapses being available for depression, speeding up learning.
 Second, it will also place synapses in states where transitions have lower probability, slowing down learning.
-The second effect will be weaker in the mutant than in wild-type, as they started further to the weaker side as explained above.
-This means that, for appropriate parameter choices, gain-decrease pretraining can speed up learning in the mutant, but also slow down learning in wild-type, as seen experimentally.
+The second effect will be weaker in the \KO\ mice than in wild-type, as they started further to the weaker side as explained above.
+This means that, for appropriate parameter choices, gain-decrease pretraining can speed up learning in the \KO\ mice, but also slow down learning in wild-type, as seen experimentally.
 
-Like the \hyperref[sec:cascade]{cascade model}, this model also shares both features of the \hyperref[sec:multistate]{multistate model}.
+Like the \hyperref[sec:cascade]{cascade model}, this model also shares both features of the \hyperref[sec:multistate]{serial model}.
 First, the effect of initial saturation bias is amplified by the exponential decay of transition probabilities away from the middle.
 Second, it has the metaplastic effect where repeated potentiation makes future depression harder, also due to he exponential decay of transition probabilities.
 
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{utcaps_sl}
