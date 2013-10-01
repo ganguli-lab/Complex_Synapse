@@ -5,7 +5,7 @@
 \input{sl_graphics_preamble.tex}
 \graphicspath{{"Figs/"}}
 % >> Only for drafts! <<
-\usepackage[notref,notcite]{showkeys}
+%\usepackage[notref,notcite]{showkeys}
 % ----------------------------------------------------------------
 %\numberwithin{equation}{section}
 %\renewcommand{\baselinestretch}{1.5}
@@ -81,7 +81,7 @@ Applied Physics Department, Stanford University, Stanford CA\\
 %
 }
 
-%\nipsfinalcopy % Uncomment for camera-ready version
+\nipsfinalcopy % Uncomment for camera-ready version
 
 \begin{document}
 
@@ -122,7 +122,6 @@ The probabilities of being in each state at time $t$, the row-vector $\mathbf{p}
   \MM\onev=0.
 \end{equation}
 %
-In Surya's notes, $\MM=r\frg$.
 
 The equilibrium probabilities, $\eq$, satisfy
 %
@@ -683,6 +682,7 @@ Which results in our final formula:
   \SNR(t) = \sqrt{N} (2f\pot f\dep )\, \eq (\W\pot  - \W\dep )\,\e^{rt\frg}\w.
 \end{equation}
 %
+The factor of $\eq$ describes the synapses being in the steady-state distribution before the memory is encoded. The factor of $(\M\pot-\M\dep)$ comes from the encoding of the memory at $t=0$, with $\wvi$ being $\pm1$ in synapses that are potentiated/depotentiated. The factor of $\e^{rt\frg}$ describes the subsequent evolution of the probability distribution, averaged over all sequences of plasticity events, and the factor of $\w$ indicates the readout via the synaptic weight.
 
 We can express this in terms of the one parameter family of transition matrices:
 %

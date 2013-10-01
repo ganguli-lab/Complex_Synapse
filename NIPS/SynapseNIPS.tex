@@ -199,8 +199,8 @@ This results in the following SNR
   \snr(t) = \sqrt{N}\prn{2 f\pot f\dep} \eq \prn{\M\pot-\M\dep} \e^{rt\frg} \w.
 \end{equation}
 %
-The factor of $\eq$ describes the synapses being in the steady-state distribution before the memory is encoded. The factor of $(\M\pot-\M\dep)$ comes from the encoding of the memory at $t=0$, with $\wvi$ being $\pm1$ in synapses that are potentiated/depotentiated. The factor of $\e^{rt\frg}$ describes the subsequent evolution of the probability distribution, averaged over all sequences of plasticity events, and the factor of $\w$ indicates the readout via the synaptic weight.
-A detailed derivation can be found in the supplementary material.
+%The factor of $\eq$ describes the synapses being in the steady-state distribution before the memory is encoded. The factor of $(\M\pot-\M\dep)$ comes from the encoding of the memory at $t=0$, with $\wvi$ being $\pm1$ in synapses that are potentiated/depotentiated. The factor of $\e^{rt\frg}$ describes the subsequent evolution of the probability distribution, averaged over all sequences of plasticity events, and the factor of $\w$ indicates the readout via the synaptic weight.
+A detailed derivation of this formula can be found in the supplementary material.
 We will frequently refer to this function as the memory curve.
 It can be thought of as the excess fraction of synapses (relative to equilibrium) that maintain their ideal synaptic strength at time $t$, as dictated by the stored memory at time $t=0$.
 
@@ -215,7 +215,7 @@ The cascade model does not perform quite as well at that time, but it maintains 
  \begin{myenuma}
   \item\aligntop{\includegraphics[width=0.25\linewidth]{cascade.svg}}\label{fig:cascade}
   \item\aligntop{\includegraphics[width=0.25\linewidth]{multistate.svg}}\label{fig:multistate}
-  \item\aligntop{\includegraphics[width=0.35\linewidth]{cascms.eps}}\label{fig:cascms}
+  \item\aligntop{\includegraphics[width=0.3\linewidth]{cascms.eps}}\label{fig:cascms}
  \end{myenuma}
  \end{center}
   \caption{Models of complex synapses.
@@ -264,14 +264,15 @@ This decomposition allows us to write the memory curve as a sum of exponentials,
 \begin{equation}\label{eq:SNReigen}
 \begin{aligned}
   \snr(t) &= \sqrt{N}\sum_a \CI_a \e^{-rt/\tau_a},
-  &\quad \text{where}&\;&
-  \CI_a &= \prn{2 f\pot f\dep} \eq (\M\pot-\M\dep) \uv^a  \vv^a \w,\\&
-  & \text{and}&&
-  \tau_a &= \frac{1}{q_a}.
+%  &\quad \text{where}&\;&
+%  \CI_a &= \prn{2 f\pot f\dep} \eq (\M\pot-\M\dep) \uv^a  \vv^a \w,\\&
+%  & \text{and}&&
+%  \tau_a &= \frac{1}{q_a}.
 \end{aligned}
 \end{equation}
 %
-We can then ask the question: what are the constraints on these quantities, namely initial SNR's, $\CI_a$, and time constants, $\tau_a$, for the modes,  implied by the constraints in \eqref{eq:constr}?
+where $\;\CI_a = (2 f\pot f\dep) \eq (\M\pot-\M\dep) \uv^a  \vv^a \w\;$ and $\;\tau_a = {1}/{q_a}$.
+We can then ask the question: what are the constraints on these quantities, namely eigenmode initial SNR's, $\CI_a$, and time constants, $\tau_a$, implied by the constraints in \eqref{eq:constr}?
 We will derive some of these constraints in the next section.
 
 \section{Upper bounds on achievable memory capacity}\label{sec:bounds}
@@ -325,8 +326,8 @@ This is one example of the tradeoff between optimizing memory at early versus la
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\hp\aligntop{\includegraphics[width=0.15\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
-  \item\aligntop{\includegraphics[width=0.15\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
+  \item\hp\aligntop{\includegraphics[width=0.12\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
+  \item\aligntop{\includegraphics[width=0.12\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
   \item\hp\aligntop{\includegraphics[width=0.05\linewidth]{binary_det.svg}}\label{fig:binary_det}
   \end{myenuma}
  \end{center}
@@ -342,7 +343,7 @@ This is one example of the tradeoff between optimizing memory at early versus la
 
 
 Our goal of understanding the relationship between structure and function in the space of all possible synaptic models is complicated by the fact that this space contains many different possible network topologies, encoded in the nonzero matrix elements of $\M\potdep$.  To systematically analyze this entire space, we develop an important organizing principle using the theory of first passage times in the stochastic process of forgetting, described by $\frg$.
-The mean first passage time matrix, $\fptb_{ij}$, is defined as the average time it takes to reach state $j$ for the first time, starting from state $i$.
+The mean first passage time matrix, $\smash{\fptb_{ij}}$, is defined as the average time it takes to reach state $j$ for the first time, starting from state $i$.
 The diagonal elements are defined to be zero.
 
 A remarkable theorem we will exploit is that the quantity
@@ -364,8 +365,8 @@ In the context of complex synapses, we can define the partial sums
 \end{equation}
 %
 These can be thought of as the average time it takes to reach the strong/weak states respectively.
-Using these definitions, we can then impose an order on the states by arranging them in order of decreasing $\eta^+_i$ or increasing $\eta^-_i$.
-Because $\eta^+_i+\eta^-_i=\eta$ is independent of $i$, the two orderings are the same.
+Using these definitions, we can then impose an order on the states by arranging them in order of decreasing $\smash{\eta^+_i}$ or increasing $\smash{\eta^-_i}$.
+Because $\smash{\eta^+_i+\eta^-_i=\eta}$ is independent of $i$, the two orderings are the same.
 In this order, which depends sensitively on the structure of $\M\potdep$, states later (to the right in figures below) can be considered to be more potentiated than states earlier (to the left in figures below), despite the fact that they have the same synaptic efficacy.
 In essence, in this order, a state is considered to be more potentiated if the average time it takes to reach all the strong efficacy states is shorter.
 We will see that synaptic models that optimize various measures of memory have an exceedingly simple structure when, and only when, their states are arranged in this order.%
@@ -397,10 +398,10 @@ First passage time theory introduced in the \hyperref[sec:order]{previous sectio
 
 With the states in the order described above, we can find perturbations of $\M\potdep$ that will always increase the area, whilst leaving the equilibrium distribution, $\eq$, unchanged.
 Some of these perturbations are shown in \autoref{fig:perts}, see supplementary material for details.
-For example, in \autoref{fig:perts}(\ref{fig:tri_right}), for two states $i$ on the left and $j$ on the right, with $j$ being more ``potentiated" than $i$ (i.e. $\eta^+_i > \eta^+_j$), we have proven that increasing $\M\pot_{ij}$ and decreasing $\M\dep_{ij}$ leads to an increase in area.
+For example, in \autoref{fig:perts}(\ref{fig:tri_right}), for two states $i$ on the left and $j$ on the right, with $j$ being more ``potentiated" than $i$ (i.e. $\smash{\eta^+_i > \eta^+_j}$), we have proven that increasing $\smash{\M\pot_{ij}}$ and decreasing $\smash{\M\dep_{ij}}$ leads to an increase in area.
 The only thing that can prevent these perturbations from increasing the area is when they require the decrease of a matrix element that has already been set to 0.
 This determines the topology (non-zero transition probabilities) of the model with maximal area.
-It is of the form shown in \autoref{fig:env}(\ref{fig:sticky}),%\autoref{fig:max_area}, 
+It is of the form shown in \autoref{fig:env}(\ref{fig:sticky}),%\autoref{fig:max_area},
 with potentiation moving one step to the right and depression moving one step to the left.
 Any other topology would allow some perturbation to further increase the area.
 
@@ -408,9 +409,9 @@ Any other topology would allow some perturbation to further increase the area.
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
-  \item\aligntop{\includegraphics[width=0.1\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
-  \item\aligntop{\includegraphics[width=0.2\linewidth]{shortcut.svg}}\label{fig:shortcut}
+  \item\aligntop{\includegraphics[width=0.07\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
+  \item\aligntop{\includegraphics[width=0.07\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
+  \item\aligntop{\includegraphics[width=0.14\linewidth]{shortcut.svg}}\label{fig:shortcut}
  \end{myenuma}
  \end{center}
   \caption{Perturbations that increase the area.
@@ -428,7 +429,7 @@ The area of a linear chain model can be expressed directly in terms of its equil
     = \frac{2\sqrt{N}}{r} \sum_k \abs{k - \sum_j j\eq_j} \eq_k ,
 \end{equation}
 %
-where we chose $\w_k=\sgn\brk{k - \sum_j j\eq_j}$.
+where we chose $\w_k=\sgn[{k - \sum_j j\eq_j}]$.
 We can then maximize this by pushing all of the equilibrium distribution symmetrically to the two end states.
 This can be done by reducing the transition probabilities out of these states, as in \autoref{fig:env}(\ref{fig:sticky}).%\autoref{fig:max_area}.
 This makes it very difficult to get out of the end states once they have been entered.
@@ -475,8 +476,8 @@ The upper bounds on the initial SNR, \eqref{eq:max_init}, and the area, \eqref{e
 We are not claiming that these are a complete set of constraints: not every set $\brc{\CI_a,\tau_a}$ that satisfies these inequalities will actually be achievable by a synaptic model.
 However, any set that violates either inequality will definitely not be achievable.
 
-Now we can pick some fixed time, $t_0$, and maximize the SNR at that time \wrt the parameters $\brc{\CI_a,\tau_a}$, subject to the constraints above.
-This always results in a single nonzero $\CI_a$; in essence, optimizing memory at a single time requires a single exponential.  The resulting optimal memory curve, along with the achieved memory at the chosen time, depends on $t_0$ as follows:
+Now we can pick some fixed time, $\smash{t_0}$, and maximize the SNR at that time \wrt the parameters $\smash{\brc{\CI_a,\tau_a}}$, subject to the constraints above.
+This always results in a single nonzero $\smash{\CI_a}$; in essence, optimizing memory at a single time requires a single exponential.  The resulting optimal memory curve, along with the achieved memory at the chosen time, depends on $t_0$ as follows:
 %
 \begin{equation}\label{eq:env}
 \begin{aligned}
@@ -495,7 +496,7 @@ This always results in a single nonzero $\CI_a$; in essence, optimizing memory a
 %
 Both the initial SNR bound and the area bound are saturated at early times.
 At late times, only the area bound is saturated.
-The function $\snr(t_0)$, the green curve in \autoref{fig:env}(\ref{fig:envplot}), above forms a memory curve envelope with late-time power-law decay $\sim t_0\inv$.
+The function $\snr(t_0)$, the green curve in \autoref{fig:env}(\ref{fig:envplot}), above forms a memory curve envelope with late-time power-law decay $\sim \smash{t_0\inv}$.
 No synaptic model can have an SNR that is greater than this at any time.
 We can use this to find an upper bound on the memory lifetime, $\tau(\epsilon)$, by finding the point at which the envelope crosses $\epsilon$:
 %
@@ -520,7 +521,7 @@ Nevertheless, we have proven rigorously that no model's memory curve can ever ex
 \begin{figure}
  \begin{center}
  \begin{myenuma}
- \parbox[t]{0.45\linewidth}{
+ \parbox[t]{0.44\linewidth}{
   \item\aligntop{\includegraphics[width=0.95\linewidth]{env.svg}}\label{fig:envplot}
   }\hp
   \parbox[t]{0.45\linewidth}{
@@ -549,7 +550,7 @@ Nevertheless, we have proven rigorously that no model's memory curve can ever ex
 
 We have initiated the development of  a general theory of learning and memory with complex synapses, allowing for an exploration of the entire space of complex synaptic models, rather than analyzing individual models one at a time.
 In doing so, we have obtained several new mathematical results delineating the functional limits of memory achievable by synaptic complexity, and the structural characterization of synaptic dynamical systems that achieve these limits.
-In particular, operating within the ideal observer framework of \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}, we have shown that for a population of $N$ synapses with $M$ internal states, (a) the initial SNR of any synaptic model cannot exceed $\sqrt{N}$, and any model that achieves this bound is equivalent to a binary synapse, (b) the area under the memory curve of any model cannot exceed that of a linear chain model with the same equilibrium distribution, (c) both the area and memory lifetime of any model cannot exceed $\CO(\sqrt{N}M)$, and the model that achieves this limit has a linear chain topology, (d) we have derived an envelope memory curve in the SNR-time plane that cannot be exceeded by the memory curve of any model, and models that approach this envelope for times greater than $\CO(\frac{M}{r})$ are linear chain models, and (e) this late-time envelope is a power-law proportional to $O({\sqrt{N} M}/{rt})$, indicating that synaptic complexity can strongly enhance the limits of achievable memory.
+In particular, operating within the ideal observer framework of \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}, we have shown that for a population of $N$ synapses with $M$ internal states, (a) the initial SNR of any synaptic model cannot exceed $\sqrt{N}$, and any model that achieves this bound is equivalent to a binary synapse, (b) the area under the memory curve of any model cannot exceed that of a linear chain model with the same equilibrium distribution, (c) both the area and memory lifetime of any model cannot exceed $\CO(\sqrt{N}M)$, and the model that achieves this limit has a linear chain topology with only nearest neighbor transitions, (d) we have derived an envelope memory curve in the SNR-time plane that cannot be exceeded by the memory curve of any model, and models that approach this envelope for times greater than $\CO(\frac{M}{r})$ are linear chain models, and (e) this late-time envelope is a power-law proportional to $\smash{\CO({\sqrt{N} M}/{rt})}$, indicating that synaptic complexity can strongly enhance the limits of achievable memory.
 
 This theoretical study opens up several avenues for further inquiry.
 In particular, the tightness of our envelope for early times, less than $\CO(\frac{M}{r})$, remains an open question, and we are currently pursuing several conjectures.
@@ -557,13 +558,9 @@ We have also derived memory constrained envelopes, by asking in the space of mod
 If these two times are beyond a threshold separation, optimal constrained models require two exponentials.
 It would be interesting to systematically analyze the space of models that achieve good memory at multiple times, and understand their structural organization, and how they give rise to multiple exponentials, leading to power law memory decays.
 
-Another important consideration is the level of noise tolerance of the synapse.
-Note that the stochasticity of the models is an expression of biological noise.
-However, the synapses should not be allowed to optimize all of this noise away.
-It would be interesting to consider such limits on the noise levels.
-
-Finally, it would be interesting to design physiological experiments in order to perform optimal systems identification of potential Markovian dynamical systems hiding within biological synapses.
-If we measured pre and post-synaptic spike trains, and also recorded changes in post-synaptic potentials to measure changes in synaptic weight, we could use hidden Markov model techniques to find the best-fit synaptic model.
+%Another important consideration is the tolerance of the synapses to biological noise, which could be investigated by imposing lower limits on the level of stochasticity of the models.
+Finally, it would be interesting to design physiological experiments in order to perform optimal systems identification of potential Markovian dynamical systems hiding within biological synapses,
+given measurements of pre and post-synaptic spike trains along with changes in post-synaptic potentials.
 Then given our theory, we could match this measured synaptic model to optimal models to infer which timescales the synapse operates on.
 
 In summary, we hope that a deeper theoretical understanding of the functional role of synaptic complexity, initiated here, will help advance our understanding of the neurobiology of learning and memory, aid in the design of engineered memory circuits, and lead to new mathematical theorems about stochastic processes.
