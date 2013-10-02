@@ -7,7 +7,7 @@ assert(ismat(W));%matrix
 assert(issquare(W));%square
 assert(iscol(w));%row
 assert(length(w)==length(W));%same size
-assert(all(abs(w)==1));%+/-1
+%assert(all(abs(w)==1));%+/-1
 
 % n=size(W,1);
 % assert(mod(n,2)==0)

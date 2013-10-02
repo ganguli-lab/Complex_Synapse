@@ -13,10 +13,12 @@ if isscalar(simobj)
     [alpha,eta]=BWalphaN(length(simobj.readouts),modelobj,simobj);
     beta=BWbetaN(eta,1,modelobj,simobj);
 
-    for t=1:length(simobj.readouts)
-        p(:,t)=alpha(t,:)'.*beta(:,t);
-        p(:,t)=p(:,t)/sum(p(:,t));
-    end
+%     for t=1:length(simobj.readouts)
+%         p(:,t)=alpha(t,:)'.*beta(:,t);
+%         p(:,t)=p(:,t)/sum(p(:,t));
+%     end
+    p=alpha'.*beta;
+    p=p*diag(1./sum(p,1));
 else
     p=cell(size(simobj));
     for i=1:numel(simobj)

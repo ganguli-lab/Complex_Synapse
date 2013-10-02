@@ -7,16 +7,19 @@ function [ newobj ] = Rand( w,varargin )
 
 ScaleW=1;
 sparsity=1;
+NumPlastTypes=2;
 varargin=assignApplicable(varargin);
 
-Wp=RandTrans(length(w),sparsity);
-Wm=RandTrans(length(w),sparsity);
+M=cell(1,NumPlastTypes);
+for i=1:NumPlastTypes
+    M{i}=ScaleW*RandTrans(length(w),sparsity)+eye(length(w));
+end
 p=rand(1,length(w));
 
 
 newobj=SynapseIdModel;
 
-newobj=newobj.setM({ScaleW*Wp+eye(length(Wp)),ScaleW*Wm+eye(length(Wp))});
+newobj=newobj.setM(M);
 newobj=newobj.setW(w);
 newobj=newobj.setInitial(p/sum(p));
 

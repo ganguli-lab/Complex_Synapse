@@ -1,5 +1,5 @@
 function [ newmodelobj,loglike,pstate ] = BWupdate( modelobj,simobj,varargin )
-%[M_new,Initial_new,loglike,pstate]=BWUPDATE(modelobj,simobj) Baum-Welch update of estimated HMM
+%[newmodelobj,loglike,pstate]=BWUPDATE(modelobj,simobj) Baum-Welch update of estimated HMM
 %   newmodelobj = updated SynapseIdModel
 %   loglike     = log likelihood of readout given current model
 %   pstate      = posterior prob of HMM being in each state at each time

@@ -77,7 +77,7 @@ classdef SynapseIdModel
         imh=image(obj,axInitial,axM,varargin)
     end
     
-    methods (Access=private)%for calculation of properties
+    methods%for calculation of properties
         %called when changing w
         obj=CalcOutProj(obj)
         %set Initial to eq dist
