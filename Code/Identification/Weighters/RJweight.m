@@ -21,7 +21,11 @@ loglike=0;
 
 for i=1:length(simobj)
     [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',Normalise,varargin{:});
-    Weight=exp(-lloffset-chunkll);
+    if strcmpi(Algorithm,'BW')
+        Weight=1;
+    else
+        Weight=exp(-lloffset-chunkll);
+    end
     newmodelobj=newmodelobj+Weight*chunkModel;
     pstate{i}=chunkPs*diag(1./sum(chunkPs,1));
     loglike=loglike+chunkll;
