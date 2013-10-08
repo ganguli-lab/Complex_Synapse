@@ -1,5 +1,5 @@
-function [ newmodelobj,loglike,pstate ] = RJweight( modelobj,simobj,varargin )
-%[newmodelobj,loglike,pstate]=RJWEIGHT(modelobj,simobj) Rabiner-Juang update of estimated HMM
+function [ newmodelobj,loglike,pstate ] = Mackayweight( modelobj,simobj,varargin )
+%[newmodelobj,loglike,pstate]=MACKAYWEIGHT(modelobj,simobj) Mackay update of estimated HMM
 %   newmodelobj = updated SynapseIdModel
 %   loglike     = log likelihood of readouts under old model (prod over simobj)
 %   pstate      = posterior prob of HMM being in each state at each time (cell, one element for each simobj)
@@ -8,10 +8,23 @@ function [ newmodelobj,loglike,pstate ] = RJweight( modelobj,simobj,varargin )
 
 lloffset=0;%avoid overflow by making this more positive
 Algorithm='BW';%algorithm to apply to each chunk of data
-Normalise=false;
+HoldBack=-0.25;
+Normalise=true;
 varargin=assignApplicable(varargin);
 
 updater=str2func([Algorithm 'update']);
+
+if isscalar(HoldBack) && HoldBack <0
+    HoldBack=-HoldBack;
+    if ~isint(HoldBack)
+        HoldBack=ceil(HoldBack*length(simobj));
+    end%isint
+    HoldBack=randperm(length(simobj),HoldBack);
+end
+
+weightsim=simobj(HoldBack);
+simobj(HoldBack)=[];
+
 
 error(CheckSize(simobj,@isvector));
 
@@ -21,9 +34,7 @@ loglike=0;
 
 for i=1:length(simobj)
     [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',Normalise,varargin{:});
-    if ~strcmpi(Algorithm,'BW')
-        chunkModel=exp(-lloffset-chunkll)*chunkModel;
-    end
+    chunkModel=exp(lloffset+HMMloglike(modelobj,weightsim))*chunkModel;
     newmodelobj=newmodelobj+chunkModel;
     pstate{i}=chunkPs*diag(1./sum(chunkPs,1));
     loglike=loglike+chunkll;

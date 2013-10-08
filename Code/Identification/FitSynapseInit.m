@@ -130,7 +130,7 @@ CallOutFcns;
                 if isfield(opt,pr{ii})
                     opt.(pr{ii})=newopt.(pr{ii});
                 else
-                    unused{nextun}=pr(ii);
+                    unused{nextun}=pr{ii};
                     unused{nextun+1}=newopt.(pr{ii});
                     nextun=nextun+2;
                 end%if isfield
