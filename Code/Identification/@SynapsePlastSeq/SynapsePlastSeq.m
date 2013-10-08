@@ -37,19 +37,19 @@ classdef SynapsePlastSeq
     methods %size info
         %
         function val=NumT(obj)
-            val=length(obj.stateseq);
+            val=length([obj.stateseq]);
         end
         %
         function val=NumStates(obj)
-            val=max(obj.stateseq);
+            val=max([obj.stateseq]);
         end
         %
         function val=NumPlast(obj)
-            val=max(obj.potdep);
+            val=max([obj.potdep]);
         end
         %
         function val=NumWvals(obj)
-            val=max(obj.readouts);
+            val=max([obj.readouts]);
         end
         %
         tf=SameSizes(obj,otherobj)
@@ -78,6 +78,9 @@ classdef SynapsePlastSeq
                     if varargin{2}<1
                         obj(:,1)=[];
                     end
+                elseif nargin==1 && isnumeric(varargin{1}) && isrow(varargin{1})
+                    siz=num2cell(varargin{1});
+                    obj(siz{:})=SynapsePlastSeq;
                 else
                     %
                     %default parameters:
@@ -92,6 +95,9 @@ classdef SynapsePlastSeq
                     %
                     if nargin>=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
                         obj(varargin{1},varargin{2})=SynapsePlastSeq;
+                    elseif nargin>=1 && isnumeric(varargin{1}) && isrow(varargin{1})
+                        siz=num2cell(varargin{1});
+                        obj(siz{:})=SynapsePlastSeq;
                     end%if nargin>=2
                     %
                     %set parameter values:

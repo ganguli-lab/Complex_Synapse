@@ -6,38 +6,56 @@ function simobj=Simulate(obj,fp,randno)
 %               second row controls which transition is used
 %   fp      =  fraction of transitions that are potentiating
 
-error(CheckValue(randno,@(x) all(all(inrange(x,0,1))),'inrange(0,1)'));
-error(CheckValue(fp,@(x) all(all(inrange(x,0,1))),'inrange(0,1)'));
-error(CheckSize(fp,@(x) length(x)==length(obj.M)-1,'length(fp)==length(obj.M)-1'));
+if ismatrix(randno)
 
-fp(fp==0)=1e-10;
+    error(CheckValue(randno,@(x) all(all(inrange(x,0,1))),'inrange(0,1)'));
+    error(CheckValue(fp,@(x) all(all(inrange(x,0,1))),'inrange(0,1)'));
+    error(CheckSize(fp,@(x) length(x)==length(obj.M)-1,'length(fp)==length(obj.M)-1'));
 
-simobj=SynapsePlastSeq;
-simobj=simobj.setPotDep(WhichBin([0,cumsum(fp),1],randno(1,:)));
-randno=randno(2,:);
+    fp(fp==0)=1e-10;
 
-%change pdf -> cdf
-obj.Initial=cumsum(obj.Initial);
-for i=1:length(obj.M)
-    obj.M{i}=cumsum(obj.M{i},2);
-end
+    simobj=SynapsePlastSeq;
+    simobj=simobj.setPotDep(WhichBin([0,cumsum(fp),1],randno(1,:)));
+    randno=randno(2,:);
 
-states=zeros(1,size(randno,2));
+    %change pdf -> cdf
+    obj.Initial=cumsum(obj.Initial);
+    for i=1:length(obj.M)
+        obj.M{i}=cumsum(obj.M{i},2);
+    end
 
-% states(1)=WhichBin(Initial,randno(1));
-states(1)=find(obj.Initial>randno(1),1,'first');
+    states=zeros(1,size(randno,2));
 
-for i=2:length(states)
-    states(i)=find(obj.M{simobj.potdep(i-1)}(states(i-1),:)>randno(i),1,'first');
-end
+    % states(1)=WhichBin(Initial,randno(1));
+    states(1)=find(obj.Initial>randno(1),1,'first');
 
-simobj=simobj.setStateSeq(states);
+    for i=2:length(states)
+        states(i)=find(obj.M{simobj.potdep(i-1)}(states(i-1),:)>randno(i),1,'first');
+    end
 
-wvalInds=obj.GetWValInds;
-simobj=simobj.setReadouts(wvalInds(states)');
+    simobj=simobj.setStateSeq(states);
 
-assert(simobj.isvalid,'simobj invalid');
-assert(obj.iscompatible(simobj),'simobj incompatible with modelobj');
+    wvalInds=obj.GetWValInds;
+    simobj=simobj.setReadouts(wvalInds(states)');
+
+    assert(simobj.isvalid,'simobj invalid');
+    assert(obj.iscompatible(simobj),'simobj incompatible with modelobj');
+
+
+else
+    if ndims(randno)==3
+        simobj=SynapsePlastSeq(1,size(randno,3));
+    else
+        siz=size(randno);
+        simobj=SynapsePlastSeq(siz(3:end));
+        randno=reshape(randno,siz(1),siz(2),[]);
+    end
+    
+    for i=1:numel(simobj)
+        simobj(i)=obj.Simulate(fp,squeeze(randno(:,:,i)));
+    end    
+
+end%if ismatrix
 
 end
 
