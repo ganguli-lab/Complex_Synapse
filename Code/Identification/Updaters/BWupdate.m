@@ -11,7 +11,6 @@ Normalise=true;
 varargin=assignApplicable(varargin);
 
 
-pstate=zeros(length(modelobj.Initial),length(simobj.readouts));
 [alpha,eta]=BWalphaN(length(simobj.readouts),modelobj,simobj);
 beta=BWbetaN(eta,1,modelobj,simobj);
 M_new={zeros(length(modelobj.M{1}))};
@@ -21,11 +20,10 @@ end
 
 
 for t=1:length(simobj.readouts)-1
-    pstate(:,t)=alpha(t,:)'.*beta(:,t);
     M_new{simobj.potdep(t)}=M_new{simobj.potdep(t)} + (beta(:,t+1)*alpha(t,:))' .*...
         (modelobj.M{simobj.potdep(t)}*modelobj.outProj{simobj.readouts(t+1)}) * eta(t+1);
 end
-    pstate(:,end)=alpha(end,:)'.*beta(:,end);
+pstate=alpha'.*beta;
 
 newmodelobj=SynapseIdModel(modelobj,'M',M_new,'Initial',pstate(:,1)');
 

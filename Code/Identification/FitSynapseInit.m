@@ -1,14 +1,17 @@
 function [ fitmodel,fval,exitflag,output ] = FitSynapseInit( simobj,guessmodel,options )
-%FITSYNAPSEINIT Summary of this function goes here
-%   Detailed explanation goes here
+%[fitmodel,fval,exitflag,output]=FITSYNAPSEINIT(simobj,guessmodel,options) 
+%Fitting Initial of SynapseIdModel (fitmodel) to SynapsePlastSeq simobj,
+%without updating M.
+%   fval     = log likelihood of fitmodel
+%   exitflag = describes the exit condition (1=success, 0=max iterationsm <0=failure) 
+%   output   = struct that contains information about the optimization 
+%   guessmodel = initial guess SynapseIdModel
+%   options    = struct of options
 
-defoptions=struct('MaxIter',1000,'TolFun',NaN,'TolX',1e-6,'TolFunChange',1e-6,...
+defoptions=struct('MaxIter',1000,'TolFun',NaN,'TolX',1e-4,'TolFunChange',1,...
     'Algorithm','BW','Weighter','RJ','ExtraParams',{{}},...
     'Display','off','OutputFcn',[],'PlotFcn',[],...
     'fp',0.5,'GroundTruth',[]);
-if isscalar(simobj)
-    defoptions.Weighter='Uni';
-end
 if exist('options','var')
     [defoptions,unused]=UpdateOptions(defoptions,options);
     defoptions.ExtraParams=[defoptions.ExtraParams unused];
@@ -90,7 +93,7 @@ for i=1:defoptions.MaxIter
         exitflag=1;
         msg=['Success. loglike > ' num2str(defoptions.TolFun)];
         break;
-    elseif mean([optimValues.prev.KLInitial optimValues.prev.KLM/optimValues.NumStates]) < defoptions.TolX && abs(optimValues.prev.dfval) < defoptions.TolFunChange
+    elseif optimValues.prev.KLInitial < defoptions.TolX && abs(optimValues.prev.dfval) < defoptions.TolFunChange
         if isnan(defoptions.TolFun)
             exitflag=1;
         else

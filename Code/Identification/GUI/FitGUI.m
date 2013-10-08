@@ -3,7 +3,7 @@ function [ newmodel,loglike ] = FitGUI( truemodel )
 %   Detailed explanation goes here
 
 
-S=struct('MaxIter',100,'TolFun',NaN,'TolX',1e-6,'TolFunChange',1e-6,...
+S=struct('MaxIter',100,'TolFun',NaN,'TolX',1e-4,'TolFunChange',1,...
     'fp',0.5,'num_ch',30,'num_t',50);
 AxFontSize=12;
 BtFontSize=16;
@@ -47,10 +47,11 @@ ax_est(3) = axes('Parent',model_est,'OuterPosition',[0 0 1 0.2]);%left bottom wi
 potdepwt = axes('Parent',simulation,'OuterPosition',[0 0.8 0.9 0.2]);%left bottom width height
 statepr  = axes('Parent',simulation,'OuterPosition',[0 0 0.95 0.8]);%left bottom width height
 %
-mets_true(1)=axes('Parent',metrics,'OuterPosition',[0 0.5 1 0.5]);%left bottom width height
-mets_true(2)=axes('Parent',metrics,'OuterPosition',[0 0.5 1 0.5],'Color','none','YAxisLocation','right');%left bottom width height
-mets_est(1)=axes('Parent',metrics,'OuterPosition',[0 0 1 0.5]);%left bottom width height
-mets_est(2)=axes('Parent',metrics,'OuterPosition',[0 0 1 0.5],'Color','none','YAxisLocation','right');%left bottom width height
+mets_true(2)=axes('Parent',metrics,'OuterPosition',[0 0.5 1 0.5],'YAxisLocation','right');%left bottom width height
+mets_true(1)=axes('Parent',metrics,'OuterPosition',[0 0.5 1 0.5],'Color','none');%left bottom width height
+mets_est(2)=axes('Parent',metrics,'OuterPosition',[0 0 1 0.5],'YAxisLocation','right');%left bottom width height
+mets_est(1)=axes('Parent',metrics,'OuterPosition',[0 0 1 0.5],'Color','none');%left bottom width height
+
 
 %where buttons and edit-boxes will be
 edpos={0.0,0.0,0.5,1};%left bottom width height
@@ -238,29 +239,36 @@ MakeButton(4,'Stop',@Stop);
     function PlotMets(upno)
         cla(mets_true(1));
         cla(mets_true(2));
+        %
         hl=plot(mets_true(1),(1:upno)',squeeze(metvals(1:upno,:,1)),'k');
         title(mets_true(1),'Comparison with true model','FontSize',AxFontSize);
-        xlabel(mets_true(1),'Update #','FontSize',AxFontSize);
         ylabel(mets_true(1),'Log Likelihood','FontSize',AxFontSize);
-        hkl=plot(mets_true(2),(1:upno)',squeeze(metvals(1:upno,1,2:4)));
-        ylabel(mets_true(2),'KL divergence','FontSize',AxFontSize);
-        FixDoublePlots(mets_true);
         set(hl(1),'LineStyle','--','LineWidth',2);
         legend(hl,{'loglikelihood(true)','loglikelihood(est)'},'location','west');
+        %
+        hkl=plot(mets_true(2),(1:upno)',squeeze(metvals(1:upno,1,2:4)));
+        ylabel(mets_true(2),'KL divergence','FontSize',AxFontSize);
         legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
+        %
+        xlabel(mets_true(1),'Update #','FontSize',AxFontSize);
+        FixDoublePlots(mets_true);
+        %
         cla(mets_est(1));
         cla(mets_est(2));
+        %
         hl=plot(mets_est(1),(1:upno-1)',squeeze(diff(metvals(1:upno,2,1))),'k');
         title(mets_est(1),'Comparison with previous estimate','FontSize',AxFontSize);
-        xlabel(mets_est(1),'Update #','FontSize',AxFontSize);
         ylabel(mets_est(1),'\Delta Log Likelihood','FontSize',AxFontSize);
-        hkl=plot(mets_est(2),(1:upno)',squeeze(metvals(1:upno,2,2:4)));
-        ylabel(mets_est(2),'KL divergence','FontSize',AxFontSize);
-        FixDoublePlots(mets_est);
         if upno>1
             legend(hl,{'\Delta loglikelihood'},'location','west');
         end
+        %
+        hkl=plot(mets_est(2),(1:upno)',squeeze(metvals(1:upno,2,2:4)));
+        ylabel(mets_est(2),'KL divergence','FontSize',AxFontSize);
         legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
+        %
+        xlabel(mets_est(1),'Update #','FontSize',AxFontSize);
+        FixDoublePlots(mets_est);
     end
 
     function FixDoublePlots(ax)
@@ -269,8 +277,8 @@ MakeButton(4,'Stop',@Stop);
 %         ylimits=get(ax(2),'YLim');
 %         ytix=length(get(ax(1),'YTick'))-1;
 %         yinc=(ylimits(2)-ylimits(1))/ytix;
-        set(ax(1),'box','off');
-        set(ax(2),'Color','none','YAxisLocation','right','XTick',[],'box','off','Position',get(ax(1),'Position'));
+        set(ax(1),'box','off','Color','none');
+        set(ax(2),'YAxisLocation','right','XTick',[],'box','off','Position',get(ax(1),'Position'));
 %         set(ax(2),'Color','none','YAxisLocation','right','XTick',[],'YTick',ylimits(1):yinc:ylimits(2),'Position',get(ax(1),'Position'));
     end
 

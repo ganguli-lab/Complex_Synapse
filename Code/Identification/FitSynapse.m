@@ -1,14 +1,16 @@
 function [ fitmodel,fval,exitflag,output ] = FitSynapse( simobj,guessmodel,options )
-%FITSYNAPSE Summary of this function goes here
-%   Detailed explanation goes here
+%[fitmodel,fval,exitflag,output]=FITSYNAPSE(simobj,guessmodel,options)
+%Fitting a SynapseIdModel (fitmodel) to SynapsePlastSeq simobj
+%   fval     = log likelihood of fitmodel
+%   exitflag = describes the exit condition (1=success, 0=max iterationsm <0=failure) 
+%   output   = struct that contains information about the optimization 
+%   guessmodel = initial guess SynapseIdModel
+%   options    = struct of options
 
-defoptions=struct('MaxIter',1000,'TolFun',NaN,'TolX',1e-6,'TolFunChange',1e-6,...
+defoptions=struct('MaxIter',1000,'TolFun',NaN,'TolX',1e-4,'TolFunChange',1,...
     'Algorithm','BW','Weighter','RJ','ExtraParams',{{}},...
     'Display','off','OutputFcn',[],'PlotFcn',[],...
     'fp',0.5,'GroundTruth',[]);
-if isscalar(simobj)
-    defoptions.Weighter='Uni';
-end
 if exist('options','var')
     [defoptions,unused]=UpdateOptions(defoptions,options);
     defoptions.ExtraParams=[defoptions.ExtraParams unused];

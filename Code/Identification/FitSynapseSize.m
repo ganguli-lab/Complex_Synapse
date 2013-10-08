@@ -1,22 +1,30 @@
-function [ fitmodel,graphinfo ] = FitSynapseSize( fitsim,testsim,numWvals,varargin )
-%FITSYNAPSESIZE Summary of this function goes here
-%   Detailed explanation goes here
+function [ fitmodel,like_n ] = FitSynapseSize( fitsim,testsim,varargin )
+%[fitmodel,like_n]=FitSynapseSize(fitsim,testsim,varargin)
+%Determinig number of states needed for SynapseIdModel (fitmodel) to fit
+%SypssePlastSeq (fitsim,testsim)
+%   like_n = struct(numstates,loglike)
+%   fitsim  = used to fit fitmodel.M
+%   testsim = used to evaluate models, after refitting fitmodel.Initial
 
 MaxStates=6;%maximum number of states with each value of w
-MinLogLikeInc=0;%carry on adding states if increase of log likelihood is greater than this
+MinLogLikeInc=chi2inv(0.95,1)/2;%carry on adding states if increase of log likelihood is greater than this
 NumReps=10;%number of attempts for each w
+Display=true;
 varargin=assignApplicable(varargin);
 
 NumPlastTypes=max(fitsim.NumPlast,testsim.NumPlast);
+numWvals=max(fitsim.NumWvals,testsim.NumWvals);
 
-graphinfo=struct('numstates',1:(numWvals*MaxStates),'loglike',NaN(1,numWvals*MaxStates));
+like_n=struct('numstates',1:(numWvals*MaxStates),'loglike',NaN(1,numWvals*MaxStates));
 
 w=(1:numWvals)';
 
 [fitmodel,loglike]=TryNewW(w);
-graphinfo.loglike(length(w))=loglike;
+like_n.loglike(length(w))=loglike;
 %
-disp(length(w));
+if Display
+    disp(length(w));
+end
 contadding=true;
 
 while contadding
@@ -31,17 +39,19 @@ while contadding
                 w=neww;
                 fitmodel=newmodel;
                 loglike=newloglike;
-                graphinfo.loglike(length(w))=loglike;
+                like_n.loglike(length(w))=loglike;
                 %
-                disp(length(w));
+                if Display
+                    disp(length(w));
+                end
                 contadding=true;
             end%if MinLogLikeInc
         end%if MaxStates
     end%for j
 end%while
 
-graphinfo.numstates(isnan(graphinfo.loglike))=[];
-graphinfo.loglike(isnan(graphinfo.loglike))=[];
+like_n.numstates(isnan(like_n.loglike))=[];
+like_n.loglike(isnan(like_n.loglike))=[];
 
     function neww=AddState(oldw,wval)
         i=find(oldw==wval,1,'first');
