@@ -5,7 +5,7 @@ function [ num_data ] = HowMuchData( truemodel,varargin )
 
 DataPerChunk=50;
 TestDataPerChunk=20;
-KLdivThresh=1e-2;
+KLdivThresh=1e-1;
 fp=0.5;
 Display=true;
 StartLen=0;
