@@ -1,4 +1,4 @@
-function [ newmodelobj,loglike,pstate ] = Viterbiupdate( modelobj,simobj,varargin )
+function [ newmodelobj,loglike,pstate ] = InitViterbiupdate( modelobj,simobj,varargin )
 %[newmodelobj,loglike,pstate]=VITERBIUPDATE(modelobj,simobj) Viterbi update of estimated HMM
 %   newmodelobj = updated SynapseIdModel
 %   loglike     = log likelihood of readout given current model for most likely path
@@ -10,11 +10,6 @@ function [ newmodelobj,loglike,pstate ] = Viterbiupdate( modelobj,simobj,varargi
 Normalise=true;
 varargin=assignApplicable(varargin);
 
-
-M_new={zeros(length(modelobj.M{1}))};
-for i=2:numel(modelobj.M)
-    M_new{i}=M_new{1};
-end
 
 loglike=log(modelobj.Initial*modelobj.outProj{simobj.readouts(1)});
 
@@ -31,17 +26,10 @@ LikelyPath(:,end)=n;
 [loglike,ix]=max(loglike);
 LikelyPath=LikelyPath(ix,:);
 
-for t=1:simobj.NumT-1
-    M_new{simobj.potdep(t)}(LikelyPath(t),LikelyPath(t+1))=M_new{simobj.potdep(t)}(LikelyPath(t),LikelyPath(t+1)) + 1;
-end
-
-for i=1:length(M_new)
-    M_new{i}=M_new{i}+diag(sum(M_new{i},2)==0);
-end
 
 pstate(sub2ind(size(pstate),LikelyPath,1:simobj.NumT))=1;
 
-newmodelobj=SynapseIdModel(modelobj,'M',M_new,'Initial',pstate(:,1)');
+newmodelobj=SynapseIdModel(modelobj,'Initial',pstate(:,1)');
 
 if Normalise
     newmodelobj=newmodelobj.Normalise;

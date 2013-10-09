@@ -6,7 +6,7 @@ function [ newmodelobj,loglike,pstate ] = RJweight( modelobj,simobj,varargin )
 %   modelobj = SynapseIdModel
 %   simobj   = vector of SynapsePlastSeq
 
-lloffset=0;%avoid overflow by making this more positive
+% lloffset=0;%avoid overflow by making this more positive
 Algorithm='BW';%algorithm to apply to each chunk of data
 Normalise=false;
 varargin=assignApplicable(varargin);
@@ -14,6 +14,8 @@ varargin=assignApplicable(varargin);
 updater=str2func([Algorithm 'update']);
 
 error(CheckSize(simobj,@isvector));
+
+lloffset=-HMMloglike(modelobj,simobj)/length(simobj);
 
 pstate=cell(1,length(simobj));
 newmodelobj=modelobj.Zero;

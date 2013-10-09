@@ -6,7 +6,7 @@ function [ newmodelobj,loglike,pstate ] = Mackayweight( modelobj,simobj,varargin
 %   modelobj = SynapseIdModel
 %   simobj   = vector of SynapsePlastSeq
 
-lloffset=0;%avoid overflow by making this more positive
+% lloffset=0;%avoid overflow by making this more positive
 Algorithm='BW';%algorithm to apply to each chunk of data
 HoldBack=-0.25;
 Normalise=true;
@@ -25,6 +25,8 @@ end
 weightsim=simobj(HoldBack);
 simobj(HoldBack)=[];
 
+lloffset=-HMMloglike(modelobj,weightsim)/length(weightsim);
+
 
 error(CheckSize(simobj,@isvector));
 
@@ -34,7 +36,7 @@ loglike=0;
 
 for i=1:length(simobj)
     [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',Normalise,varargin{:});
-    chunkModel=exp(lloffset+HMMloglike(modelobj,weightsim))*chunkModel;
+    chunkModel=exp(lloffset+HMMloglike(chunkModel,weightsim))*chunkModel;
     newmodelobj=newmodelobj+chunkModel;
     pstate{i}=chunkPs*diag(1./sum(chunkPs,1));
     loglike=loglike+chunkll;
