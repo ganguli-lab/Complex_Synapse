@@ -52,9 +52,15 @@ for i=1:defoptions.MaxIter
     optimValues.prev.model=fitmodel;
     optimValues.prev.fval=optimValues.fval;
     %
+    try
     [fitmodel,optimValues.fval,optimValues.stateProb]=weighter(optimValues.prev.model,simobj,...
         'Algorithm',defoptions.Algorithm,defoptions.ExtraParams{:});
     fitmodel=fitmodel.Sort(defoptions.fp);
+    catch ME
+        exitflag=-1;
+        msg=['Error: ' ME.message];
+        break;
+    end
     %
     [optimValues.prev.KLInitial,optimValues.prev.KLM]=optimValues.prev.model.KLdivs(fitmodel);
     optimValues.prev.dfval=optimValues.fval-optimValues.prev.fval;

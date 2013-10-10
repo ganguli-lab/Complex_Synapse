@@ -5,8 +5,9 @@ function [ newmodel,loglike ] = FitGUI( truemodel )
 
 S=struct('MaxIter',100,'TolFun',NaN,'TolX',1e-4,'TolFunChange',1,...
     'fp',0.5,'num_ch',30,'num_t',50);
+T=struct('Algorithm','BW','Weighter','RJ');
 AxFontSize=12;
-BtFontSize=16;
+BtFontSize=12;
 cmapname='Hot';
 
 %-------------------------------------------------------------------------
@@ -54,7 +55,8 @@ mets_est(1)=axes('Parent',metrics,'OuterPosition',[0 0 1 0.5],'Color','none');%l
 
 
 %where buttons and edit-boxes will be
-edpos={0.0,0.0,0.5,1};%left bottom width height
+edpos={0.0,0.5,0.5,0.5};%left bottom width height
+edtpos={0.0,0.0,0.5,0.5};%left bottom width height
 btpos={0.5,0.0,0.5,1};%left bottom width height
 
 pdleg=axes('Parent',simulation,'Position',[0.9 0.93 0.1 0.04]);
@@ -88,6 +90,10 @@ Sprops=fieldnames(S);
 for i =1:length(Sprops)
     MakeEditBox(i,Sprops{i});
 end
+Tprops=fieldnames(T);
+for i =1:length(Tprops)
+    MakeEditBoxT(i,Tprops{i});
+end
 numbt=4;
 MakeButton(1,'Simulate',@Simulate);
 MakeButton(2,'Initialise',@InitRand);
@@ -116,7 +122,10 @@ MakeButton(4,'Stop',@Stop);
     %callback for edit-boxes
     function edb_callback(source,~,varname)
         S.(varname)=(str2double(get(source,'String')));
-%         S.(varname)=str2double(get(source,'String'));
+%         MakePlot;
+    end
+    function edbt_callback(source,~,varname)
+        T.(varname)=get(source,'String');
 %         MakePlot;
     end
 %-------------------------------------------------------------------------
@@ -147,6 +156,21 @@ MakeButton(4,'Stop',@Stop);
             'String',varname,...
             'Units','normalized','FontSize',BtFontSize,...
             'Position',CalcPosHorz(2*which-1,2*length(Sprops),edpos{:}));
+    end%function MakeEditBox
+
+    function MakeEditBoxT(which,varname)
+        %control
+        uicontrol(controls,'Style','edit',...
+            'String',T.(varname),...
+            'Max',1,'Min',0,...
+            'Units','normalized','FontSize',BtFontSize,...
+            'Position',CalcPosHorz(2*which,2*length(Tprops),edtpos{:}),...
+            'Callback',{@edbt_callback,varname});
+        %labels
+        uicontrol(controls,'Style','text',...
+            'String',varname,...
+            'Units','normalized','FontSize',BtFontSize,...
+            'Position',CalcPosHorz(2*which-1,2*length(Tprops),edtpos{:}));
     end%function MakeEditBox
 
     function MakeButton(which,varname,func)
@@ -318,7 +342,7 @@ MakeButton(4,'Stop',@Stop);
     function Update(~,~)
        if ~isempty(simobj(1).potdep)
            options=struct('PlotFcn',@PlotFcn,'GroundTruth',truemodel);
-           [newmodel,loglike,exitflag,output]=FitSynapse(simobj,newmodel,catstruct(options,S));
+           [newmodel,loglike,exitflag,output]=FitSynapse(simobj,newmodel,catstruct(options,S,T));
            warndlg(['Exit flag: ' int2str(exitflag) '. ' output.message]);
            stopbtn=false;
        end
