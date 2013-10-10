@@ -1,6 +1,7 @@
-function [ fitmodel,fval,exitflag,output ] = FitSynapse( simobj,guessmodel,options )
-%[fitmodel,fval,exitflag,output]=FITSYNAPSE(simobj,guessmodel,options)
-%Fitting a SynapseIdModel (fitmodel) to SynapsePlastSeq simobj
+function [ fitmodel,fval,exitflag,output ] = FitSynapseM( simobj,guessmodel,options )
+%[fitmodel,fval,exitflag,output]=FITSYNAPSEM(simobj,guessmodel,options)
+%Fitting a SynapseIdModel (fitmodel) to SynapsePlastSeq simobj, doesn't
+%worry about how well SynapseIdModel.Initial fits
 %   fval     = log likelihood of fitmodel
 %   exitflag = describes the exit condition (1=success, 0=max iterationsm <0=failure) 
 %   output   = struct that contains information about the optimization 
@@ -67,18 +68,10 @@ for i=1:defoptions.MaxIter
         %
         if optimValues.truth.dfval < defoptions.TolFun
             if mean(optimValues.truth.KLM/optimValues.NumStates) < defoptions.TolX
-                if optimValues.truth.KLInitial < defoptions.TolX
                     exitflag=1;
                     msg=['Success. trueloglike - loglike < ' num2str(defoptions.TolFun)...
                         ' and KLdiv from true model to fit model < ' num2str(defoptions.TolX)];
                     break;
-                else
-                    exitflag=-4;
-                    msg=['Not enough data? trueloglike - loglike < ' num2str(defoptions.TolFun)...
-                        ' and KLdiv from true M to fit M > ' num2str(defoptions.TolX)...
-                        ' but not Initial'];
-                    break;
-                end
             else
                 exitflag=-3;
                 msg=['Not enough data? trueloglike - loglike < ' num2str(defoptions.TolFun)...
@@ -92,8 +85,7 @@ for i=1:defoptions.MaxIter
         exitflag=1;
         msg=['Success. loglike > ' num2str(defoptions.TolFun)];
         break;
-    elseif sum([optimValues.prev.KLInitial optimValues.prev.KLM])/(1+fitmodel.NumPlast*optimValues.NumStates) < defoptions.TolX ...
-            && abs(optimValues.prev.dfval) < defoptions.TolFunChange
+    elseif mean(optimValues.prev.KLM)/(optimValues.NumStates) < defoptions.TolX && abs(optimValues.prev.dfval) < defoptions.TolFunChange
         if isnan(defoptions.TolFun)
             exitflag=1;
         else

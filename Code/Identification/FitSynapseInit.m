@@ -67,7 +67,6 @@ for i=1:defoptions.MaxIter
         [optimValues.truth.KLInitial,optimValues.truth.KLM]=optimValues.truth.model.KLdivs(fitmodel);
         %
         if optimValues.truth.dfval < defoptions.TolFun
-            if mean(optimValues.truth.KLM/optimValues.NumStates) < defoptions.TolX
                 if optimValues.truth.KLInitial < defoptions.TolX
                     exitflag=1;
                     msg=['Success. trueloglike - loglike < ' num2str(defoptions.TolFun)...
@@ -76,16 +75,9 @@ for i=1:defoptions.MaxIter
                 else
                     exitflag=-4;
                     msg=['Not enough data? trueloglike - loglike < ' num2str(defoptions.TolFun)...
-                        ' and KLdiv from true M to fit M > ' num2str(defoptions.TolX)...
-                        ' but not Initial'];
+                        ' but KLdiv from true Initial to fit Initial > ' num2str(defoptions.TolX)];
                     break;
                 end
-            else
-                exitflag=-3;
-                msg=['Not enough data? trueloglike - loglike < ' num2str(defoptions.TolFun)...
-                    ' despite KLdiv from true M to fit M > ' num2str(defoptions.TolX)];
-                break;
-            end
         end
     end
     %

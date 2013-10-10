@@ -68,7 +68,7 @@ like_n.loglike(isnan(like_n.loglike))=[];
         testloglike=HMMloglike(newmodel,fitsim);
         for i=1:NumReps
             guessmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes);
-            [guessmodel,guessloglike]=FitSynapse(fitsim,guessmodel,struct(varargin{:}));
+            [guessmodel,guessloglike]=FitSynapseM(fitsim,guessmodel,struct(varargin{:}));
             if guessloglike > testloglike
                 newmodel=guessmodel;
                 testloglike=guessloglike;
