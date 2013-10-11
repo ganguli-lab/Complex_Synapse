@@ -65,7 +65,9 @@ classdef SynapseIdModel
     
     methods%calculations etc.
         [initdiv,Mdivs]=KLdivs(obj1,obj2)
+        [initnrm,Mnrm]=LnNorm(obj1,n,obj2)
         obj3=plus(obj1,obj2)
+        obj3=minus(obj1,obj2)
         obj3=mtimes(obj1,obj2)
         obj3=mrdivide(obj1,obj2)
     end
