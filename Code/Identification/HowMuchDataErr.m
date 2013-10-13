@@ -9,22 +9,23 @@ Display=true;
 StartLen=1;
 MaxLen=512;
 NumReps=10;
-SuccessFrac=0.5;
+SuccessFrac=0.2;
 varargin=assignApplicable(varargin);
 TestDataPerChunk=DataPerChunk;
 varargin=assignApplicable(varargin);
 
 
 
-err_data = struct('num_data',zeros(1,ceil(log2(MaxLen/StartLen))));
+err_data = struct('num_data',zeros(1,1+floor(log2(MaxLen/StartLen))));
 err_data.KLdiv_mean=NaN(size(err_data.num_data));
 err_data.KLdiv_err=err_data.KLdiv_mean;
 err_data.L2_mean=err_data.KLdiv_mean;
 err_data.L2_err=err_data.KLdiv_mean;
+err_data.num_srates=err_data.KLdiv_mean;
 
 StartLen=StartLen/2;
 
-for i=1:ceil(log2(MaxLen/StartLen))
+for i=1:length(err_data.num_data)
     StartLen=StartLen*2;
     if Display
         disp(StartLen);
@@ -47,6 +48,7 @@ for i=1:ceil(log2(MaxLen/StartLen))
     end%for j
     klv(isnan(klv))=[];
     L2v(isnan(L2v))=[];
+    err_data.num_srates=length(klv);
     if length(klv)>=SuccessFrac*NumReps
         err_data.KLdiv_mean(i)=mean(klv);
         err_data.KLdiv_err(i)=std(klv)/sqrt(length(klv));
