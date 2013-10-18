@@ -16,9 +16,9 @@ varargin=assignApplicable(varargin);
 
 
 
-err_data = struct('num_data',zeros(1,1+floor(log2(MaxLen/StartLen))));
+err_data = struct('num_data',zeros(1,1+floor(log2(MaxLen/StartLen))),'NumReps',NumReps);
 err_data.KLdiv=NaN(NumReps,length(err_data.num_data));
-err_data.L2=err_data.KLdiv_mean;
+err_data.L2=err_data.KLdiv;
 err_data.KLdiv_mean=NaN(size(err_data.num_data));
 err_data.KLdiv_err=err_data.KLdiv_mean;
 err_data.L2_mean=err_data.KLdiv_mean;
