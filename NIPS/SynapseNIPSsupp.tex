@@ -547,6 +547,8 @@ The equilibrium distribution of the lumped process is given by
   \widehat{\mathbf{p}}^\infty = \eq V.
 \end{equation}
 %
+
+
 \section{Signal-to-Noise ratio (SNR)}\label{sec:SNR}
 
 In this section we will look at the signal-to-noise curve, and put an upper bound on its initial value.
@@ -573,7 +575,8 @@ This means that the ``forgetting'' process will be described by the \emph{contin
   \MM = r \frg \equiv r\prn{f\pot\W\pot + f\dep\W\dep}.
 \end{equation}
 %
-We only require that this Markov chain is ergodic. The Markov chains described by $\M\potdep $ need not be.
+We only require that this Markov chain is ergodic. 
+The Markov chains described by $\M\potdep $ need not be.
 
 
 We assume that the probability distribution starts in the equilibrium distribution \eqref{eq:equilibrium}.
@@ -676,7 +679,7 @@ Combining with \eqref{eq:noise} gives
 The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with $f\pot=f\dep$ or $\eq_+=\eq_-$.
 We can set the denominator to 1 without changing any of our results.
 
-Which results in our final formula:
+This results in our final formula:
 %
 \begin{equation}\label{eq:SNRcurve}
   \SNR(t) = \sqrt{N} (2f\pot f\dep )\, \eq (\W\pot  - \W\dep )\,\e^{rt\frg}\w.
