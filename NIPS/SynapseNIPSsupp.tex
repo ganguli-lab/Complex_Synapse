@@ -90,12 +90,12 @@ Department of Applied Physics, Stanford University, Stanford CA\\
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Although the theory and derivations outlined in the main text are relatively self-contained, here we provide more details for the aid of the reviewer.
+Here we provide more details underlying the derivations of results in the main paper.
 
 \section{Continuous time Markov processes}\label{sec:ContMarkov}
 
-In this section we'll provide a summary of all the relevant properties of ergodic Markov chains in continuous time to define notation and .
-It is a straightforward generalisation of material that can be found in \cite{kemeny1960finite} with some ideas from \cite{hunter2000survey}.
+In this section we'll provide a summary of all the relevant properties of ergodic Markov chains in continuous time to define notation.
+It is a generalization of material that can be found in \cite{kemeny1960finite} with some ideas from \cite{hunter2000survey}.
 
 
 \subsection{Notation}\label{sec:not}
@@ -111,17 +111,14 @@ For any matrix $\mathbf{A}$, we define matrices $\mathbf{A}\dg$ and $\overline{\
 We let $\onev$ denote a column-vector of ones and $\onem=\onev\onev\trans$ denote a matrix of ones.
 
 
-A Markov process is described by a matrix of transitions rates, $\MM_{ij}$, from state $i$ to $j$.
+A continuous time Markov process is described by a matrix of transitions rates, $\MM_{ij}$, from state $i$ to $j$ with row sums equal to zero ($\MM\onev=0$).
 The probabilities of being in each state at time $t$, the row-vector $\mathbf{p}(t)$, evolve according to
 %
 \begin{equation}\label{eq:rowsum}
   \diff{\mathbf{p}(t)}{t} = \mathbf{p}(t) \MM,
-  \qquad
-  \mathbf{p}(t)\onev=1,
-  \qquad
-  \MM\onev=0.
 \end{equation}
 %
+where $\mathbf{p}(t)\onev=1$.
 
 The equilibrium probabilities, $\eq$, satisfy
 %
@@ -169,6 +166,12 @@ Furthermore, we also define
 %
 
 \subsection{Fundamental matrix}\label{sec:fund}
+
+For our results below regarding the integral of the memory curve, it can be useful to invert the stochastic transition matrix, $\MM$.
+However, since $\MM$ has a zero eigenvalue, it cannot be inverted.
+For this reason, the fundamental matrix arises as a useful surrogate for the inverse of $\MM$.
+It is related to the first passage times, as we will see in the \hyperref[sec:fpt]{next subsection}.
+Here we define the fundamental matrix and review its properties.
 
 \begin{defn}[Fundamental matrix]
   For discrete time, the generalized fundamental matrix was defined in \cite{Kemeny1981const}.
@@ -388,11 +391,11 @@ We can rewrite this in component form and use the fact that $\MM_{ii} = - \sum_{
   \diff{\eq_k}{\alpha} &= \sum_{i,j} \eq_i \diff{\MM_{ij}}{\alpha} \fund_{jk} \\
     &= \sum_{i\neq j} \eq_i \diff{\MM_{ij}}{\alpha} \fund_{jk} + \sum_i \eq_i \diff{\MM_{ii}}{\alpha} \fund_{ik} \\
     &= \sum_{i\neq j} \eq_i \diff{\MM_{ij}}{\alpha} (\fund_{jk} - \fund_{ik}) \\
-    &= \sum_{i\neq j} \diff{\MM_{ij}}{\alpha} \eq_i \eq_k (\fptb_{ik} - \fptb_{jk}),
+    &= \sum_{i\neq j} \diff{\MM_{ij}}{\alpha} \eq_i \eq_k (\fptb_{ik} - \fptb_{jk}).
 \end{aligned}
 \end{equation}
 %
-which is the result of \cite{cho2000markov} that we need.
+This is a generalization of a result of \cite{cho2000markov} from discrete to continuous time that we will need below.
 Note that the summand vanishes for $i=j$, so we can drop the restriction $i\neq j$ from the range of the sum.
 
 \subsection{Subsets and flux}\label{sec:subsets}
@@ -552,7 +555,7 @@ The equilibrium distribution of the lumped process is given by
 \section{Signal-to-Noise ratio (SNR)}\label{sec:SNR}
 
 In this section we will look at the signal-to-noise curve, and put an upper bound on its initial value.
-We will only consider ergodic Markov chains.
+We need only consider ergodic Markov chains.
 Transient states would be unoccupied in equilibrium and would not be accessed by the signal creation process, therefore they could be removed from the analysis.
 Absorbing chains are degenerate cases: they have zero initial signal but infinite decay times, so they can only be approached as the limit of a sequence of ergodic chains.
 
@@ -575,7 +578,7 @@ This means that the ``forgetting'' process will be described by the \emph{contin
   \MM = r \frg \equiv r\prn{f\pot\W\pot + f\dep\W\dep}.
 \end{equation}
 %
-We only require that this Markov chain is ergodic. 
+We only require that this Markov chain is ergodic.
 The Markov chains described by $\M\potdep $ need not be.
 
 
@@ -778,7 +781,7 @@ This inequality is saturated if potentiation never takes it from a $+$ state to 
 
 In this section we will find an upper bound on the area under the signal-to-noise curve.
 As in \sref{sec:SNR}, we will only consider ergodic Markov chains.
-We will see in \sref{sec:multistate} that the optimal chain is absorbing, so it lies on the boundary of the (open) set of ergodic chains, but it still puts an upper bound on the area.
+We will see in \sref{sec:multistate} that the optimal chain is absorbing, so it lies on the boundary of the (open) set of ergodic chains, but it still puts an upper bound on the area for any chain in the interior.
 
 \subsection{Area under signal-to-noise curve}\label{sec:area}
 
@@ -858,8 +861,8 @@ It is also helpful to define the following quantities:
   \begin{aligned}
     c_k &= \diff{\ln\eq_k}{\alpha}
       = \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}-\fptb_{jk}}
-      = - \prn{\eq q \fptb}_k
-      = \frac{(\eq q \fund)_k}{\eq_k}, \\
+      = - \prn{\eq \enc \fptb}_k
+      = \frac{(\eq \enc \fund)_k}{\eq_k}, \\
     a_i &= \sum_j \enc_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}),\\
     \implies
     \hat{A} &= \sum_k c_k \eq_k \w_k
@@ -870,6 +873,9 @@ It is also helpful to define the following quantities:
 Note that the optimal choice of $\w$ is $\w_k = \sgn(c_k)$.
 
 \subsection{Derivatives \wrt \texorpdfstring{$\W\potdep $}{W(pot/dep)}}\label{sec:deriv}
+
+In the following, we will mathematically define the classes of perturbations pictorially described in Figure 3 of the main paper.
+In order to do so, we will need to consider expressions for derivatives of various quantities with respect to $\W\potdep_{ij}$.
 
 As discussed in the main text,
 we will regard the off-diagonal elements of $\W\potdep _{ij}$ to be the independent variables,
@@ -989,6 +995,8 @@ with $g \neq h$. This enforces the positivity constraints on the off-diagonal el
 
 \subsubsection{Triangularity}\label{sec:triangular}
 
+Here we describe the perturbations corresponding to Figure 3(a,b) of the main paper.
+
 Consider
 %
 \begin{equation}\label{eq:shiftqderiv}
@@ -1042,59 +1050,9 @@ We have ignored the possibility that $\eq_g=0$, as this would imply that $\fpt_{
 %%
 %which is probably useless
 
-\subsubsection{Increasing \texorpdfstring{$c_k$}{c(k)}}\label{sec:areacoeffincr}
-
-Consider the following combinations of derivatives:
-%
-\begin{align}
-%  \begin{aligned}
-\label{eq:areacoeffincrderiv}
-    \Delta_{gh} &\equiv
-      \frac{1}{\eq_{g}} \pdiffc{}{\frg_{gh}}
-      + \frac{1}{\eq_h} \pdiffc{}{\frg_{hg}}, \\
-%  \end{aligned}
-\end{align}
-%
-Note that they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \sref{sec:triangular} about this being satisfied for ergodic chains).
-
-One can show that the equilibrium probabilities, $\eq$, are invariant under these operators using \eqref{eq:diffpT}:
-%
-\begin{equation}\label{eq:sareacoeffincrprob}
-  \Delta_{gh} \eq_i = 0,
-\end{equation}
-%
-which makes it possible to integrate the perturbation:
-%
-\begin{equation}\label{eq:areacoeffincrfinite}
-  \W\potdep  \to \W\potdep  + \D\boldsymbol{\epsilon},
-  \qquad
-  \begin{aligned}
-  \boldsymbol{\epsilon} &= \boldsymbol{\epsilon}\trans,
-  \\
-  \boldsymbol{\epsilon} \onev &= 0.
-  \end{aligned}
-\end{equation}
-%
-But more interestingly:
-%
-\begin{align}
-%  \begin{aligned}
-\label{eq:areacoeffincr}
-    \Delta_{gh}\CL &=
-      \frac{\mu\pot _{gh}+\mu\dep _{gh}}{\eq_g} + \frac{\mu\pot _{hg}+\mu\dep _{hg}}{\eq_h}
-      + 2r\prn{c_g-c_h}\prn{\eta^+_{g} - \eta^+_{h}},\\
-%  \end{aligned}
-\end{align}
-%
-where $c_k$ were defined in \eqref{eq:areacoeffs}.
-
-Using the non-negativity of the Kuhn-Tucker multipliers, $\mu\potdep _{ij}$, \eqref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\eta^+_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\eta^+_k$ are degenerate, we can choose their order to ensure this).
-
-Note that, according to \sref{sec:triangular}, either $\W\pot _{gh}$ or $\W\dep _{gh}$ will be zero at the maximum, therefore we can expect one of $\mu\pot _{gh}+\mu\dep _{gh}$ to be non-zero.
-This would rule out degeneracy of the $c_k$ or $\eta^+_k$.
-Looking at \eqref{eq:shiftqderiv} closely, the only way $\mu\pot _{gh}+\mu\dep _{gh}$ could be zero is if $\eta^+_g=\eta^+_h$ or $\eq_g=0$.
-
 \subsubsection{Shortcuts}\label{sec:shortcuts}
+
+In this subsection we will define perturbations corresponding to Figure 3(c) of the main text.
 
 Now consider the following combinations of derivatives for $m>1$:
 %
@@ -1147,10 +1105,66 @@ But more interestingly for our purposes:
 \end{align}
 %
 
-If we put the states in order of decreasing $\eta^+_k$, the results of the \sref{sec:areacoeffincr} tell us that the $c_k$ are non-decreasing.
+In the \hyperref[sec:areacoeffincr]{section below}, we will show that the $c_k$ are non-decreasing, if we put the states in order of decreasing $\eta^+_k$.
 This implies that the last term of the final expression in \eqref{eq:shortcutarea} is non-negative.
 If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu\potdep _{g,g\pm m}>0$, which in turn implies that $\W\potdep _{g,g\pm m}=0$.
 This would tell us that the process with the maximal area has to have a multi-state topology.
+
+\subsubsection{Increasing \texorpdfstring{$c_k$}{c(k)}}\label{sec:areacoeffincr}
+
+In the \hyperref[sec:shortcuts]{previous subsection} we defined perturbations corresponding to Figure 3(c) of the main text.
+In order to show that those perturbations increase the area, we must now show that the $c_k$ are non-decreasing, if we put the states in order of decreasing $\eta^+_k$.
+
+Consider the following combinations of derivatives:
+%
+\begin{align}
+%  \begin{aligned}
+\label{eq:areacoeffincrderiv}
+    \Delta_{gh} &\equiv
+      \frac{1}{\eq_{g}} \pdiffc{}{\frg_{gh}}
+      + \frac{1}{\eq_h} \pdiffc{}{\frg_{hg}}, \\
+%  \end{aligned}
+\end{align}
+%
+Note that they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \sref{sec:triangular} about this being satisfied for ergodic chains).
+
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators using \eqref{eq:diffpT}:
+%
+\begin{equation}\label{eq:sareacoeffincrprob}
+  \Delta_{gh} \eq_i = 0,
+\end{equation}
+%
+which makes it possible to integrate the perturbation:
+%
+\begin{equation}\label{eq:areacoeffincrfinite}
+  \W\potdep  \to \W\potdep  + \D\boldsymbol{\epsilon},
+  \qquad
+  \begin{aligned}
+  \boldsymbol{\epsilon} &= \boldsymbol{\epsilon}\trans,
+  \\
+  \boldsymbol{\epsilon} \onev &= 0.
+  \end{aligned}
+\end{equation}
+%
+But more interestingly:
+%
+\begin{align}
+%  \begin{aligned}
+\label{eq:areacoeffincr}
+    \Delta_{gh}\CL &=
+      \frac{\mu\pot _{gh}+\mu\dep _{gh}}{\eq_g} + \frac{\mu\pot _{hg}+\mu\dep _{hg}}{\eq_h}
+      + 2r\prn{c_g-c_h}\prn{\eta^+_{g} - \eta^+_{h}},\\
+%  \end{aligned}
+\end{align}
+%
+where $c_k$ were defined in \eqref{eq:areacoeffs}.
+
+Using the non-negativity of the Kuhn-Tucker multipliers, $\mu\potdep _{ij}$, \eqref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\eta^+_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\eta^+_k$ are degenerate, we can choose their order to ensure this).
+
+Note that, according to \sref{sec:triangular}, either $\W\pot _{gh}$ or $\W\dep _{gh}$ will be zero at the maximum, therefore we can expect one of $\mu\pot _{gh}+\mu\dep _{gh}$ to be non-zero.
+This would rule out degeneracy of the $c_k$ or $\eta^+_k$.
+Looking at \eqref{eq:shiftqderiv} closely, the only way $\mu\pot _{gh}+\mu\dep _{gh}$ could be zero is if $\eta^+_g=\eta^+_h$ or $\eq_g=0$.
+
 
 %From the expression for the area in \eqref{eq:areacoeffs}, it will clearly also be optimal to have the $\w_k$ non-decreasing, \ie all the positive $\w_k$ should lie ahead of all the negative $\w_k$.
 
@@ -1192,6 +1206,9 @@ Degeneracy tends to be very delicate. It is usually hard to arrange without some
 
 \subsection{Multi-state/Serial topology}\label{sec:multistate}
 
+The previous results indicate that the area under the memory curve of any model is bounded by the area under the memory curve of a model with the serial/multistate topology having the same equilibrium distribution.
+Here we compute this area, which we will see depends only on this equilibrium distribution.
+
 The multi-state/serial topology is defined by (see \cite{amit1994learning,Fusi2007multistate,Leibold2008serial}):
 %
 \begin{equation}\label{eq:multistatedef}
@@ -1200,7 +1217,7 @@ The multi-state/serial topology is defined by (see \cite{amit1994learning,Fusi20
   \W\dep _{ij} = q\dep _j \delta_{i,j+1}.
 \end{equation}
 %
-It saturates various inequalities:
+Because it has no shortcuts, it saturates various inequalities:
 %
 \begin{equation}\label{eq:multistateineq}
   \begin{aligned}
@@ -1248,6 +1265,8 @@ where we used \eqref{eq:multistateineq} to derive the first two equations respec
 \end{equation}
 %
 where we used $\w_k=\sgn(c_k)$, as discussed after \eqref{eq:areacoeffs}.
+This reproduces equation (15) of the main paper.
+
 %It will also help to define $\eq_\pm = \sum_k \eq_k \prn{\frac{1\pm\w_k}{2}}$.
 %Note that
 %%
@@ -1292,6 +1311,7 @@ where we used $\w_k=\sgn(c_k)$, as discussed after \eqref{eq:areacoeffs}.
 %As $\abs{\eq_+-\eq_-}<1$ (unless we want $A=0$, \eqref{eq:allpplusorminus}), this means the $\mu_i$ increase amongst the negative $\w_i$ and decrease amongst the positive $\w_i$.
 %Therefore the only non-zero equilibrium probabilities at optimum are $\eq_1$ and $\eq_n$.
 
+In order to obtain an upper bound on the area under the memory curve of any model, we now maximise the area of the serial model with respect to its equilibrium distribution.
 First let us maximise \eqref{eq:multistatearea} at fixed $\eq_\pm = \sum_k \eq_k \prn{\frac{1\pm\w_k}{2}}$.
 Clearly this will happen when we put all of the probability at the ends: $\eq_1=\eq_-$ and $\eq_n=\eq_+$ are the only non-zero $\eq_k$.
 This gives an area of
@@ -1308,6 +1328,8 @@ This is maximised at $\eq_+=\eq_-=\half$:
   A \leq \frac{\sqrt{N}}{r}(M-1).
 \end{equation}
 %
+This yields the area bound of equation (16) of the main text.
+
 Note that the chain that achieves this is not ergodic, the two states at each end are absorbing. This is similar to the results found numerically in \cite{Barrett2008discrete} in a slightly different situation.
 
 

@@ -128,7 +128,7 @@ This conceptual expansion is further necessitated by the experimental reality th
 While externally, synaptic efficacy could be digital, candidate patterns of electrical activity leading to potentiation or depression could yield transitions between these internal molecular states without necessarily inducing an associated change in synaptic efficacy.
 This form of synaptic change, known as metaplasticity \cite{Abraham1996metaplasticity,Montgomery2002765}, can allow the probability of synaptic potentiation or depression to acquire a rich dependence on the history of prior changes in efficacy, thereby potentially improving memory capacity.
 
-Theoretical studies of complex, metaplastic synapses, have focused on analyzing the memory performance of a limited number of very specific, molecular dynamical systems, characterized by a number of internal states in which potentiation and depression each induce a specific set of allowable transitions between states (\eg see \autoref{fig:models} below).
+Theoretical studies of complex, metaplastic synapses have focused on analyzing the memory performance of a limited number of very specific molecular dynamical systems, characterized by a number of internal states in which potentiation and depression each induce a specific set of allowable transitions between states (\eg see \autoref{fig:models} below).
 While these models can vastly outperform simple binary synaptic switches, these analyses leave open several deep and important questions.
 For example, how does the structure of a synaptic dynamical system determine its memory performance?  What are the fundamental limits of memory performance over the space of all possible synaptic dynamical systems?
 What is the structural organization of synaptic dynamical systems that achieve these limits?
@@ -178,9 +178,9 @@ The extent to which the memory has been stored is described by a signal-to-noise
 The noise in the denominator is essentially $\sqrt{N}$.
 There is a correction when potentiation and depression are imbalanced, but this will not affect the upper bounds that we will discuss below and will be ignored in the subsequent formulae.
 
-A simple mean memory curve can be derived as follows.
+A simple average memory curve can be derived as follows.
 All of the preceding plasticity events, prior to $t=0$, will put the population of synapses in its steady-state distribution, $\eq$.
-The memory we are tracking at $t=0$ will change the internal state distribution to $\eq\M\pot$ in those synapses that are potentiated and $\eq\M\dep$ in those synapses that are depressed.
+The memory we are tracking at $t=0$ will change the internal state distribution to $\eq\M\pot$ (or $\eq\M\dep$) in those synapses that experience a candidate potentiation (or depression) event.
 As the potentiating/depressing nature of the subsequent memories is independent of $\wvi$, we can average over all sequences, resulting in the evolution of the probability distribution:
 %
 \begin{equation}\label{eq:evol}
@@ -208,7 +208,7 @@ It can be thought of as the excess fraction of synapses (relative to equilibrium
 Much of the previous work on these types of complex synaptic models has focused on understanding the memory curves of specific models, or choices of $\M\potdep$.
 Two examples of these models are shown in \autoref{fig:models}. We see that they have different memory properties.
 The serial model performs relatively well at one particular timescale, but it performs poorly at other times.
-The cascade model does not perform quite as well at that time, but it maintains it performance over a wider range of timescales.
+The cascade model does not perform quite as well at that time, but it maintains its performance over a wider range of timescales.
 
 \begin{figure}[tbp]
  \begin{center}
@@ -293,7 +293,7 @@ We now give an upper bound on the initial SNR,
   \snr(0) = \sqrt{N}\prn{2 f\pot f\dep} \eq \prn{\M\pot-\M\dep} \w,
 \end{equation}
 %
-over \emph{all} possible models and also find the model that saturates this bound.
+over \emph{all} possible models and also find the class of models that saturate this bound.
 A useful quantity is the equilibrium probability flux between two disjoint sets of states, $\CA$ and $\CB$:
 %
 \begin{equation}\label{eq:flux}
@@ -382,7 +382,7 @@ Now consider the area under the memory curve:
   A = \int_0^\infty\!\!\dr t \, \snr(t).
 \end{equation}
 %
-We will find an upper bound on this quantity as well as the model that saturates it.
+We will find an upper bound on this quantity as well as the model that saturates this bound.
 
 
 First passage time theory introduced in the \hyperref[sec:order]{previous section} becomes useful because the area has a simple expression in terms of quantities introduced in \eqref{eq:kemenypm} (see supplementary material):
@@ -403,7 +403,7 @@ The only thing that can prevent these perturbations from increasing the area is 
 This determines the topology (non-zero transition probabilities) of the model with maximal area.
 It is of the form shown in \autoref{fig:env}(\ref{fig:sticky}),%\autoref{fig:max_area},
 with potentiation moving one step to the right and depression moving one step to the left.
-Any other topology would allow some perturbation to further increase the area.
+Any other topology would allow some class of perturbations (\eg\ in \autoref{fig:perts}) to further increase the area.
 
 
 \begin{figure}[tbp]
@@ -431,8 +431,8 @@ The area of a linear chain model can be expressed directly in terms of its equil
 %
 where we chose $\w_k=\sgn[{k - \sum_j j\eq_j}]$.
 We can then maximize this by pushing all of the equilibrium distribution symmetrically to the two end states.
-This can be done by reducing the transition probabilities out of these states, as in \autoref{fig:env}(\ref{fig:sticky}).%\autoref{fig:max_area}.
-This makes it very difficult to get out of the end states once they have been entered.
+This can be done by reducing the transition probabilities out of these states, as in \autoref{fig:env}(\ref{fig:sticky}). %\autoref{fig:max_area}.
+This makes it very difficult to exit these states once they have been entered.
 The resulting area is
 %
 \begin{equation}\label{eq:max_area}
@@ -508,7 +508,7 @@ where we assume $N>(\epsilon\e)^2$.
 Intriguingly, both the lifetime and memory envelope expand linearly with the number of internal states $M$, and increase as the square root of the number of synapses $N$.
 
 This leaves the question of whether this bound is achievable.
-At any time, can we find a model whose memory curve touched the envelope?
+At any time, can we find a model whose memory curve touches the envelope?
 The red curves in \autoref{fig:env}(\ref{fig:envplot}) show the closest we have come to the envelope with actual models, by repeated numerical optimization of $\SNR(t_0)$ over $\M\potdep$ with random initialization and by hand designed models.
 
 We see that at early, but not late times, there is a gap between the upper bound that we can prove and what we can achieve with actual models.
@@ -561,7 +561,7 @@ It would be interesting to systematically analyze the space of models that achie
 %Another important consideration is the tolerance of the synapses to biological noise, which could be investigated by imposing lower limits on the level of stochasticity of the models.
 Finally, it would be interesting to design physiological experiments in order to perform optimal systems identification of potential Markovian dynamical systems hiding within biological synapses,
 given measurements of pre and post-synaptic spike trains along with changes in post-synaptic potentials.
-Then given our theory, we could match this measured synaptic model to optimal models to infer which timescales the synapse operates on.
+Then given our theory, we could match this measured synaptic model to optimal models to understand for which timescales of memory, if any, biological synaptic dynamics may be tuned.
 
 In summary, we hope that a deeper theoretical understanding of the functional role of synaptic complexity, initiated here, will help advance our understanding of the neurobiology of learning and memory, aid in the design of engineered memory circuits, and lead to new mathematical theorems about stochastic processes.
 
