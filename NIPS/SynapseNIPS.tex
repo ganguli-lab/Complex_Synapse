@@ -147,7 +147,7 @@ We summarize our main results in the \hyperref[sec:disc]{discussion section}.
 
 \section{Overall framework: synaptic models and their memory curves}\label{sec:setup}
 
-In this section, we will describe the class of models of synaptic plasticity that we are studying and how we quantify their memory performance.
+In this section, we describe the class of models of synaptic plasticity that we are studying and how we quantify their memory performance.
 In the subsequent sections, we will find upper bounds on this performance.
 
 We use a well established formalism for the study of learning and memory with complex synapses (see \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}).
@@ -162,8 +162,9 @@ After shifting and scaling these two values,  we can assume they are $\pm1$, wit
 We also employ an ``ideal observer'' approach to the memory readout, where the synaptic weights are read directly.
 This provides an upper bound on the quality of any readout using neural activity.
 
-For any single memory, stored at time $t=0$, we assume there will be an ideal pattern of synaptic weights across a population of $N$ synapses, the $N$-element vector $\wvi$, that is $+1$ at all synapses that experience a candidate potentiation event, and $-1$ at all synapses that experienced a candidate depression event at the time of memory storage.
-The actual pattern of synaptic weights at some later time, $t$, will change to $\wv(t)$ due to further modifications from subsequent memories.
+For any single memory, stored at time $t=0$, we assume there will be an ideal pattern of synaptic weights across a population of $N$ synapses, the $N$-element vector $\wvi$, that is $+1$ at all synapses that experience a candidate potentiation event, and $-1$ at all synapses that experience a candidate depression event at the time of memory storage.
+We assume that any pattern of synaptic weights close to $\wvi$ is sufficient to recall the memory.
+However, the actual pattern of synaptic weights at some later time, $t$, will change to $\wv(t)$ due to further modifications from the storage of subsequent memories.
 We can use the overlap between these, $\wvi\cdt\wv(t)$, as a measure of the quality of the memory.
 As $t\to\infty$, the system will return to its steady state distribution which will be uncorrelated with the memory stored at $t=0$.
 The probability distribution of the quantity $\wvi\cdt\wv(\infty)$ can be used as a ``null model'' for comparison.
@@ -349,11 +350,10 @@ The diagonal elements are defined to be zero.
 A remarkable theorem we will exploit is that the quantity
 %
 \begin{equation}\label{eq:kemenyconst}
-  \eta \equiv \sum_j \fptb_{ij}\eq_j
+  \eta \equiv \sum_j \fptb_{ij}\eq_j,
 \end{equation}
 %
-is independent of the starting state $i$.
-It is known as Kemeny's constant (see \cite[\S4.4]{kemeny1960finite}).
+known as Kemeny's constant (see \cite[\S4.4]{kemeny1960finite}), is independent of the starting state $i$.
 Intuitively, \eqref{eq:kemenyconst} states that the average time it takes to reach any state, weighted by its equilibrium probability, is independent of the starting state, implying a hidden constancy inherent in any stochastic process.
 
 In the context of complex synapses, we can define the partial sums
