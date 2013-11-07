@@ -920,7 +920,7 @@ The area is computed by integrating this
 \end{equation}
 %
 
-We can rewrite this using \eqref{eq:diffpT}, with $A=\sqrt{N}(2f^+f^-)\hat{A}$ and $\enc_{ij} \equiv \diff{\frg_{ij}}{\alpha}=\W^+_{ij}-\W^-_{ij}$
+We can rewrite this using \eqref{eq:diffpT}, with $rA=\sqrt{N}(2f^+f^-)\hat{A}$ and $\enc_{ij} \equiv \diff{\frg_{ij}}{\alpha}=\W^+_{ij}-\W^-_{ij}$
 %
 \begin{equation}\label{eq:areaT}
   \hat{A} = \sum_{i,j,k} \eq_i \enc_{ij} (\fptb_{ik} - \fptb_{jk}) \eq_k \w_k.
@@ -1555,9 +1555,127 @@ which corresponds to the shift considered in \S\ref{sec:triangular}. We can see 
 \end{equation}
 %
 
+\section{Laplace transform}\label{sec:laplace}
+
+\subsection{Fundamental matrix \etc}\label{sec:lfund}
+
+In analogy to \eqref{eq:funddef}, define
+%
+\begin{equation}\label{eq:lfund}
+  \fund(s) = (s\I +\onev\pib -\MM)\inv.
+\end{equation}
+%
+This reduces to the fundamental matrix at $s=0$.
+The analogous result to \eqref{eq:fundrowsum} is
+%
+\begin{equation}\label{eq:lfundrowsum}
+  \fund(s)\onev = \frac{\tau}{1+s\tau}\onev.
+\end{equation}
+%
+The analogues of \eqref{eq:fundprob}, \eqref{eq:fundQZ} and \eqref{eq:fundZQ} are much uglier, but luckily we won't need them.
+Supose we have some row vector $\mathbf{a}$ such that $\mathbf{a}\onev=0$.
+Then $\mathbf{a}\fund(s)$ is independent of $\pib$:
+%
+\begin{equation}\label{eq:alfund}
+  \pdiff{(\mathbf{a}\fund(s))_i}{\pib_k} = (\mathbf{a}\fund(s)\onev) \fund_{ki}(s) = \frac{\tau}{1+s\tau} (\mathbf{a}\onev) \fund_{ki}(s) = 0.
+\end{equation}
+%
 
 
+Then we also define
+%
+\begin{equation}\label{eq:lfptb}
+  \fptb(s) = (\onem\fund\dg(s)-\fund(s))\D,
+  \qquad
+  \fptb_{ij}(s) = \frac{\fund_{jj}(s)-\fund_{ij}(s)}{\eq_j}.
+\end{equation}
+%
+This reduces to the first passage time matrix at $s=0$, but at other $s$ there is (probably) no relation.
 
+Using the exact same proof as \autoref{th:kemenyconst}, we see that the quantity
+%
+\begin{equation}\label{eq:lkemeny}
+  \eta(s) = \sum_j \fptb_{ij}(s)\eq_j
+\end{equation}
+%
+is independent of the starting state $i$, but now $\eta(s) = \tr\fund(s) - \frac{\tau}{1+s\tau}$.
+We can the define 
+%
+\begin{equation}\label{eq:lpmixtime}
+  \eta^{\pm}_i(s) = \sum_j \fptb_{ij}(s)\eq_j \prn{\frac{1\pm\w_j}{2}} =  \sum_{j\in\pm} \fptb_{ij}(s)\eq_j.
+\end{equation}
+%
+We can arrange the states in order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
+
+
+\subsection{Laplace transform of SNR curve}\label{sec:laplaceSNR}
+
+Consider the Laplace transform of the evolution operator:
+%
+\begin{equation}\label{eq:levol}
+  \mathbf{G}(s) = \int_0^{\infty}\dr t\, \e^{(\MM-s) t}.
+\end{equation}
+%
+For $\Re s>0$, we have 
+%
+\begin{equation}\label{eq:levolcalc}
+  (s-\MM)\mathbf{G}(s) = \int_0^{\infty}\dr t\, (s-\MM)\e^{(\MM-s) t} = \brk{-\e^{(\MM-s) t}}_0^{\infty} = \I.
+\end{equation}
+%
+As $(s-\MM)$ is invertible for $\Re s>0$, because all eigenvalues of $\MM$ are nonpositive, we have 
+%
+\begin{equation}\label{eq:levolres}
+  \mathbf{G}(s) = (s-\MM)\inv.
+\end{equation}
+%
+For $s=0$, we can avoid our problems by replacing $\mathbf{G}(s) \to \fund(s)$.
+
+Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurve}
+%
+\begin{equation}\label{eq:lsnr}
+\begin{aligned}
+  A(s) &= \int_0^{\infty}\dr t \e^{-st}\SNR(t) \\
+   &= \int_0^{\infty}\dr t\, \sqrt{N}(2f^+f^-) \eq \enc \e^{(r\frg-s)t} \w \\
+   &= \frac{\sqrt{N}(2f^+f^-)}{r} \eq \enc \prn{s - r\frg}\inv \w.
+\end{aligned}
+\end{equation}
+%
+Note that $A(0)=A$, the area, and $\lim_{s\to\infty} \brc{sA(s)} = \SNR(0)$, the initial SNR.
+
+Thanks to \eqref{eq:alfund}, we can replace $\mathbf{G}(s) \to \fund(s)$, as $\enc\onev=0$.
+%
+\begin{equation}\label{eq:larea}
+\begin{aligned}
+  \hat{A}(s) = \frac{rA(s)}{\sqrt{N}(2f^+f^-)} &=  \eq \enc \fund(s) \w \\
+    &= \sum_{ijk} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \eq_k \w_k \\
+    &= 2\sum_{ij}  \eq_i \enc_{ij} (\eta^+_{i}(s) - \eta^+_{j}(s)).
+\end{aligned}
+\end{equation}
+%
+In analogy with \eqref{eq:areacoeffs}, we define
+%
+\begin{equation}\label{eq:lareacoeffs}
+  \begin{aligned}
+    c_k(s) &= \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \\
+    a_i(s) &= \sum_j \eq_i \enc_{ij} (\eta^+_{i}(s) - \eta^+_{j}(s)),\\
+    \implies
+    \hat{A}(s) &= \sum_k c_k(s) \eq_k \w_k
+      = 2\sum_i a_i(s).
+  \end{aligned}
+\end{equation}
+%
+
+\subsection{Perturbation analysis}\label{sec:lpert}
+
+Using the same approach as the area bound, we find that the derivatives are
+%
+\begin{equation}\label{eq:lAdiff}
+  \pdiff{\hat{A}(s)}{\W^\pm_{gh}} = 2rf^\pm \eq_g \brk{ \sum_i a_i(s) (\fptb_{gi}(0)-\fptb_{hi}(0))
+     +c_g(s) (\eta^+_g(s) - \eta^+_h(s)) } \pm 2\eq_g (\eta^+_g(s) - \eta^+_h(s)).
+\end{equation}
+%
+This is exactly the same as \eqref{eq:derivA}.
+It follows that, using exactly the same perturbations, that the Laplace transform of the SNR curve for \emph{any} model is lower than that of some model with the serial topology having the same equilibrium distribution.
 
 \appendix
 \section{Other quantities}
@@ -1624,7 +1742,7 @@ These derivatives of $q$ will vanish.
 
 This means that the derivatives of the area are:
 %
-\begin{equation}\label{derivTarea}
+\begin{equation}\label{eq:derivTarea}
   \pdiff{\hat{A}}{\fptb_{gh}} = -\eq_h\brk{
     \sum_i \eq_i \enc_{ig} \w_h
     + r\sum_{ijk} \prn{\frg_{ig}+\frg_{kg}} \eq_i \enc_{ij} \prn{\fptb_{ik}-\fptb_{jk}} \eq_k \w_k
