@@ -63,6 +63,8 @@
 \newcommand{\frg}{\W^{\mathrm{F}}}
 \newcommand{\F}{\boldsymbol{\Phi}}
 \DeclareMathOperator{\SNR}{SNR}
+\DeclareMathOperator{\snr}{SNR}
+\newcommand{\CI}{\mathcal{I}}
 \newcommand{\CS}{\mathcal{S}}
 \newcommand{\CA}{\mathcal{A}}
 \newcommand{\CB}{\mathcal{B}}
@@ -1640,9 +1642,8 @@ Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurve}
 \end{aligned}
 \end{equation}
 %
-Note that $A(0)=A$, the area, and $\lim_{s\to\infty} \brc{sA(s)} = \SNR(0)$, the initial SNR.
-
-Thanks to \eqref{eq:alfund}, we can replace $\mathbf{G}(s) \to \fund(s)$, as $\enc\onev=0$.
+This expression is ill-behaved at $s=0$.
+Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s) \to \fund(s)$, as $\enc\onev=0$.
 %
 \begin{equation}\label{eq:larea}
 \begin{aligned}
@@ -1652,6 +1653,8 @@ Thanks to \eqref{eq:alfund}, we can replace $\mathbf{G}(s) \to \fund(s)$, as $\e
 \end{aligned}
 \end{equation}
 %
+Note that $A(0)=A$, the area, and $\lim_{s\to\infty} \brc{sA(s)} = \SNR(0)$, the initial SNR.
+
 In analogy with \eqref{eq:areacoeffs}, we define
 %
 \begin{equation}\label{eq:lareacoeffs}
@@ -1670,12 +1673,131 @@ In analogy with \eqref{eq:areacoeffs}, we define
 Using the same approach as the area bound, we find that the derivatives are
 %
 \begin{equation}\label{eq:lAdiff}
-  \pdiff{\hat{A}(s)}{\W^\pm_{gh}} = 2rf^\pm \eq_g \brk{ \sum_i a_i(s) (\fptb_{gi}(0)-\fptb_{hi}(0))
-     +c_g(s) (\eta^+_g(s) - \eta^+_h(s)) } \pm 2\eq_g (\eta^+_g(s) - \eta^+_h(s)).
+\begin{aligned}
+  \pdiff{\hat{A}(s)}{\W^\pm_{gh}} 
+     =&\, 2rf^\pm \eq_g \brk{ \sum_i a_i(s) (\fptb_{gi}(0)-\fptb_{hi}(0))
+     +c_g(s) (\eta^+_g(s) - \eta^+_h(s)) } \\
+     &\pm 2\eq_g (\eta^+_g(s) - \eta^+_h(s)).
+\end{aligned}
 \end{equation}
 %
 This is exactly the same as \eqref{eq:derivA}.
-It follows that, using exactly the same perturbations, that the Laplace transform of the SNR curve for \emph{any} model is lower than that of some model with the serial topology having the same equilibrium distribution.
+It follows that, using exactly the same perturbations, that the Laplace transform of the SNR curve for \emph{any} model is lower than that of a certain model with the serial topology having the same equilibrium distribution.
+
+
+
+\subsection{Envelope}\label{sec:env}
+
+Hopefully we can prove an upper bound on the Laplace transform of the memory curve:
+%
+\begin{equation}\label{eq:lbound}
+  A(s) \leq \sqrt{N}B(s) = \frac{\sqrt{N}}{C(s)}.
+\end{equation}
+%
+We will assume that $C(s)$ is a concave function.
+We already know that $C(0)=\frac{1}{M-1}$ and $C(s) \to s$ as $s\to\infty$.
+
+In the eigenmode decomposition, this reads
+%
+\begin{equation}\label{eq:lboundeig}
+  \sum_a \frac{\CI_a}{q_a+s} \leq B(s).
+\end{equation}
+%
+Now let's maximise $\snr(t_0)$ with respect to $\brc{\CI_a,q_a}$.
+Consider the Lagrangian
+%
+\begin{equation}\label{eq:envlagrange}
+  \CL = \sum_a \CI_a \e^{-q_a t_0} +\intd[_0^\infty]{s} \mu(s)\brk{B(s)-\sum_a\frac{\CI_a}{q_a+s}}.
+\end{equation}
+%
+Necessary conditions for a maximum are
+%
+\begin{alignat}{3}
+  \pdiff{\CL}{\CI_a} &= \e^{-q_a t_0} - \intd{s} \frac{\mu(s)}{q_a+s} = 0, \label{eq:envI}\\
+  \pdiff{\CL}{q_a} &= \CI_a\brk{-t_0\e^{-q_a t_0} + \intd{s} \frac{\mu(s)}{(q_a+s)^2}} = 0, \label{eq:envq}\\
+  \mu(s)\fdf{\CL}{\mu(s)} &= \mu(s)\brk{B(s)-\sum_a\frac{\CI_a}{q_a+s}} = 0, \label{eq:envKT}\\
+  \mu(s) &\geq 0, \label{eq:envKTm}\\
+  \fdf{\CL}{\mu(s)} &= B(s)-\sum_a\frac{\CI_a}{q_a+s} \geq 0 \label{eq:envKTbnd}.
+\end{alignat}
+%
+If we assume $\CI_a \neq0$ for some $a$, then \eqref{eq:envI} and \eqref{eq:envq} read
+%
+\begin{equation}\label{eq:envnumexp}
+\begin{aligned}
+  \e^{-q_a t_0} &= \intd{s} \frac{\mu(s)}{q_a+s}, \\
+  t_0\e^{-q_a t_0} &= \intd{s} \frac{\mu(s)}{(q_a+s)^2}.
+\end{aligned}
+\end{equation}
+%
+The second of these is the derivative of the first with respect to $q$, therefore the two curves in the first must touch each other tangentially at $q_a$.
+As both curves are decreasing convex functions, it seems unlikely that this could happen at multiple values of $q$.
+We will assume that there is a single non-zero $\CI_a=\CI$, with the corresponding $q_a=q$, in the following.
+
+For \eqref{eq:envI} to have a solution, $\mu(s)$ must be nonzero for at least one value of $s$.
+Then, by \eqref{eq:envKT}, we must saturate \eqref{eq:envKTbnd} at those values of $s$.
+If there were more than two such values, $\CI$ and $q$ would be overconstrained.
+Assume there are two such values, $s=s_0$ and $s=s_1$.
+%
+\begin{equation}\label{eq:sattwice}
+\begin{aligned}
+  \CI &= B(s_0)(q+s_0) = B(s_1)(q+s_1) \qquad
+  \implies q &= \frac{s_0 B(s_0) - s_1 B(s_1)}{B(s_1)-B(s_0)}.
+\end{aligned}
+\end{equation}
+%
+Now the bound \eqref{eq:envKTbnd} reads
+%
+\begin{equation}\label{eq:satwicebnd}
+\begin{aligned}
+  B(s) \geq \frac{B(s_0)(q+s_0)}{q+s} &= \frac{s_0-s_1}{(s-s_1)C(s_0)+(s_0-s)C(s_1)}, \\
+  xC(s_0)+(1-x)C(s_1) &\geq C(xs_0+(1-x)s_1),
+\end{aligned}
+\end{equation}
+%
+where we substituted $s=xs_0+(1-x)s_1$.
+As we assumed that $C(s)$ is concave, this is impossible.
+
+Therefore the bound must be saturated exactly once and $\mu(s)=\mu_0\delta(s-s_0)$.
+Now \eqref{eq:envI}, \eqref{eq:envq} and \eqref{eq:envKT} read
+%
+\begin{equation}\label{eq:satonce}
+  \mu_0 = (q+s_0)\e^{-qt_0},
+  \qquad
+  (q+s_0)t_0 = 1,
+  \qquad
+  \CI = \frac{B(s_0)}{t_0}.
+\end{equation}
+%
+This satisfies \eqref{eq:envKTm}.
+Now \eqref{eq:envKTbnd} tells us
+%
+\begin{equation}\label{eq:satoncebnd}
+\begin{aligned}
+  B(s) &\geq \frac{B(s_0)}{(q+s)t_0}, 
+  \qquad\text{or}\qquad
+  1 + (s-s_0)t_0 &\geq \frac{C(s)}{C(s_0)}.
+\end{aligned}
+\end{equation}
+%
+As the two sides are equal at $s=s_0$, it is necessary that they touch tangentially for this bound to be true elsewhere.
+The linearity of the LHS and concavity of the RHS ensure that this is sufficient for the bound to be satisfied for all $s$.
+This condition is
+%
+\begin{equation}\label{eq:envs0t0}
+  t_0 = \frac{C'(s_0)}{C(s_0)}.
+\end{equation}
+%
+
+The resulting SNR curve and envelope are
+%
+\begin{equation}\label{eq:env}
+  \snr(t) = \frac{\e^{(s_0-1/t_0)t}}{C'(s_0)},
+  \qquad
+  \snr(t_0) = \frac{\e^{s_0t_0-1}}{C'(s_0)},
+\end{equation}
+%
+where $s_0$ is determined as a function of $t_0$ by \eqref{eq:envs0t0}.
+
 
 \appendix
 \section{Other quantities}
