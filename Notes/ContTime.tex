@@ -960,18 +960,18 @@ We can rewrite \eqref{eq:areaT} as
 %
 \begin{equation}\label{eq:areaEta}
 \begin{aligned}
-  \hat{A} &= 2\sum_{i,j} \enc_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}) &
-    &= -2\sum_{i,j} \enc_{ij} \eq_i \eta^+_{j} \\
-    &= 2\sum_{i,j} \enc_{ij} \eq_i (\eta^-_{j} - \eta^-_{i}) &
-    &= 2\sum_{i,j} \enc_{ij} \eq_i \eta^-_{j}.
+  \hat{A} &= 2\sum_{i,j} \eq_i \enc_{ij} (\eta^+_{i} - \eta^+_{j}) &
+    &= -2\sum_{i,j} \eq_i \enc_{ij} \eta^+_{j} \\
+    &= 2\sum_{i,j} \eq_i \enc_{ij} (\eta^-_{j} - \eta^-_{i}) &
+    &= 2\sum_{i,j} \eq_i \enc_{ij} \eta^-_{j}.
 \end{aligned}
 \end{equation}
 %
 We can also express it in terms of the fundamental matrix \eqref{eq:funddef} as
 %
 \begin{equation}\label{eq:areaZ}
-  \hat{A} = \sum_{i,j,k,l} \enc_{ij} \pib_{l} \fund_{li} (\fund_{jk}-\fund_{ik}) \w_k
-    = \pib \fund q \fund \w.
+  \hat{A} = \sum_{i,j,k,l} \pib_{l} \fund_{li} \enc_{ij} (\fund_{jk}-\fund_{ik}) \w_k
+    = \pib \fund \enc \fund \w.
 \end{equation}
 %
 
@@ -981,9 +981,9 @@ It is also helpful to define the following quantities:
   \begin{aligned}
     c_k &= \diff{\ln\eq_k}{\alpha}
       = \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}-\fptb_{jk}}
-      = - \prn{\eq q \fptb}_k
-      = \frac{(\eq q \fund)_k}{\eq_k}, \\
-    a_i &= \sum_j \enc_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}),\\
+      = - \prn{\eq \enc \fptb}_k
+      = \frac{(\eq \enc \fund)_k}{\eq_k}, \\
+    a_i &= \sum_j \eq_i \enc_{ij} (\eta^+_{i} - \eta^+_{j}),\\
     \implies
     \hat{A} &= \sum_k c_k \eq_k \w_k
       = 2\sum_i a_i.
@@ -1448,7 +1448,7 @@ We will consider the independent parameters to be the off-diagonal elements of $
 Consider the Lagrangian
 %
 \begin{equation}\label{eq:finlagrangian}
-  \CL = \eq \enc\e^{rt\frg}\w + \sum_\pm \sum_{ij} \mu^\pm_{ij} \M^\pm_{ij}.
+  \CL = \eq \enc\, \e^{rt\frg}\w + \sum_\pm \sum_{ij} \mu^\pm_{ij} \M^\pm_{ij}.
 \end{equation}
 %
 Necessary conditions for an extremum are
@@ -1507,7 +1507,7 @@ we get
   \pdiff{\CL}{\M^\pm_{gh}} =&\,
     f^\pm \eq_g \prn{\brk{\fund \, \enc \, \e^{rt\frg} \w}_h - \brk{\fund \, \enc \, \e^{rt\frg} \w}_g} \\
     &\pm \eq_g \prn{\brk{\e^{rt\frg} \w}_h - \brk{\e^{rt\frg} \w}_g} \\
-    &+ \sum_{ab} F_{ab} (\eq\enc\uv^a) \vv^a_g (\uv^b_h-\uv^b_g) (\vv^a\w) \\
+    &+ f^\pm \sum_{ab} F_{ab} (\eq\enc\uv^a) \vv^a_g (\uv^b_h-\uv^b_g) (\vv^a\w) \\
     &+ \mu^\pm_{gh} - \mu^\pm_{gg}.
 \end{aligned}
 \end{equation}
@@ -1615,29 +1615,29 @@ We can arrange the states in order of decreasing $\eta^{+}_i(s)$ or increasing $
 Consider the Laplace transform of the evolution operator:
 %
 \begin{equation}\label{eq:levol}
-  \mathbf{G}(s) = \int_0^{\infty}\dr t\, \e^{(\MM-s) t}.
+  \mathbf{G}(s) = \intd[_0^{\infty}]{t} \e^{(\MM-s) t}.
 \end{equation}
 %
 For $\Re s>0$, we have 
 %
 \begin{equation}\label{eq:levolcalc}
-  (s-\MM)\mathbf{G}(s) = \int_0^{\infty}\dr t\, (s-\MM)\e^{(\MM-s) t} = \brk{-\e^{(\MM-s) t}}_0^{\infty} = \I.
+  (s-\MM)\mathbf{G}(s) = \intd[_0^{\infty}]{t} (s-\MM)\e^{(\MM-s) t} = \brk{-\e^{(\MM-s) t}}_0^{\infty} = \I.
 \end{equation}
 %
-As $(s-\MM)$ is invertible for $\Re s>0$, because all eigenvalues of $\MM$ are nonpositive, we have 
+As $(s-\MM)$ is invertible for $\Re s>0$, because the real part of all eigenvalues of $\MM$ are nonpositive, we have
 %
 \begin{equation}\label{eq:levolres}
   \mathbf{G}(s) = (s-\MM)\inv.
 \end{equation}
 %
-For $s=0$, we can avoid our problems by replacing $\mathbf{G}(s) \to \fund(s)$.
+For $s=0$, we can avoid problems by replacing $\mathbf{G}(s) \to \fund(s)$.
 
 Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurve}
 %
 \begin{equation}\label{eq:lsnr}
 \begin{aligned}
-  A(s) &= \int_0^{\infty}\dr t \e^{-st}\SNR(t) \\
-   &= \int_0^{\infty}\dr t\, \sqrt{N}(2f^+f^-) \eq \enc \e^{(r\frg-s)t} \w \\
+  A(s) &= \intd[_0^{\infty}]{t} \e^{-st}\SNR(t) \\
+   &= \intd[_0^{\infty}]{t} \sqrt{N}(2f^+f^-) \eq \enc \e^{(r\frg-s)t} \w \\
    &= \frac{\sqrt{N}(2f^+f^-)}{r} \eq \enc \prn{s - r\frg}\inv \w.
 \end{aligned}
 \end{equation}
@@ -1695,9 +1695,17 @@ Hopefully we can prove an upper bound on the Laplace transform of the memory cur
 \end{equation}
 %
 We will assume that $C(s)$ is a concave function.
-We already know that $C(0)=\frac{1}{M-1}$ and $C(s) \to s$ as $s\to\infty$.
+We already know that $C(0)=\frac{r}{M-1}$ and $C(s) \to s$ as $s\to\infty$.
 
-In the eigenmode decomposition, this reads
+In the eigenmode decomposition \eqref{eq:eigendecomp}:
+%
+\begin{equation}\label{eq:eigenmode}
+  \snr(t) = \sqrt{N}\sum_a \CI_a\, \e^{-q_a t},
+  \qquad
+  \CI_a = (2f^+f^-) (\eq \enc \uv^a) (\vv^a \w)
+\end{equation}
+%
+the upper bound reads
 %
 \begin{equation}\label{eq:lboundeig}
   \sum_a \frac{\CI_a}{q_a+s} \leq B(s).
@@ -1707,14 +1715,14 @@ Now let's maximise $\snr(t_0)$ with respect to $\brc{\CI_a,q_a}$.
 Consider the Lagrangian
 %
 \begin{equation}\label{eq:envlagrange}
-  \CL = \sum_a \CI_a \e^{-q_a t_0} +\intd[_0^\infty]{s} \mu(s)\brk{B(s)-\sum_a\frac{\CI_a}{q_a+s}}.
+  \CL = \sum_a \CI_a\, \e^{-q_a t_0} +\intd[_0^\infty]{s} \mu(s)\brk{B(s)-\sum_a\frac{\CI_a}{q_a+s}}.
 \end{equation}
 %
 Necessary conditions for a maximum are
 %
 \begin{alignat}{3}
   \pdiff{\CL}{\CI_a} &= \e^{-q_a t_0} - \intd{s} \frac{\mu(s)}{q_a+s} = 0, \label{eq:envI}\\
-  \pdiff{\CL}{q_a} &= \CI_a\brk{-t_0\e^{-q_a t_0} + \intd{s} \frac{\mu(s)}{(q_a+s)^2}} = 0, \label{eq:envq}\\
+  \pdiff{\CL}{q_a} &= \CI_a\brk{-t_0\,\e^{-q_a t_0} + \intd{s} \frac{\mu(s)}{(q_a+s)^2}} = 0, \label{eq:envq}\\
   \mu(s)\fdf{\CL}{\mu(s)} &= \mu(s)\brk{B(s)-\sum_a\frac{\CI_a}{q_a+s}} = 0, \label{eq:envKT}\\
   \mu(s) &\geq 0, \label{eq:envKTm}\\
   \fdf{\CL}{\mu(s)} &= B(s)-\sum_a\frac{\CI_a}{q_a+s} \geq 0 \label{eq:envKTbnd}.
@@ -1725,7 +1733,7 @@ If we assume $\CI_a \neq0$ for some $a$, then \eqref{eq:envI} and \eqref{eq:envq
 \begin{equation}\label{eq:envnumexp}
 \begin{aligned}
   \e^{-q_a t_0} &= \intd{s} \frac{\mu(s)}{q_a+s}, \\
-  t_0\e^{-q_a t_0} &= \intd{s} \frac{\mu(s)}{(q_a+s)^2}.
+  t_0\,\e^{-q_a t_0} &= \intd{s} \frac{\mu(s)}{(q_a+s)^2}.
 \end{aligned}
 \end{equation}
 %
@@ -1740,8 +1748,9 @@ Assume there are two such values, $s=s_0$ and $s=s_1$.
 %
 \begin{equation}\label{eq:sattwice}
 \begin{aligned}
-  \CI &= B(s_0)(q+s_0) = B(s_1)(q+s_1) \qquad
-  \implies q &= \frac{s_0 B(s_0) - s_1 B(s_1)}{B(s_1)-B(s_0)}.
+  \CI = B(s_0)(q+s_0) = B(s_1)(q+s_1) 
+  \qquad
+  \implies q = \frac{s_0 B(s_0) - s_1 B(s_1)}{B(s_1)-B(s_0)}.
 \end{aligned}
 \end{equation}
 %
@@ -1757,11 +1766,11 @@ Now the bound \eqref{eq:envKTbnd} reads
 where we substituted $s=xs_0+(1-x)s_1$.
 As we assumed that $C(s)$ is concave, this is impossible.
 
-Therefore the bound must be saturated exactly once and $\mu(s)=\mu_0\delta(s-s_0)$.
+Therefore the bound must be saturated exactly once and $\mu(s)=\mu_0\,\delta(s-s_0)$.
 Now \eqref{eq:envI}, \eqref{eq:envq} and \eqref{eq:envKT} read
 %
 \begin{equation}\label{eq:satonce}
-  \mu_0 = (q+s_0)\e^{-qt_0},
+  \mu_0 = (q+s_0)\,\e^{-qt_0},
   \qquad
   (q+s_0)t_0 = 1,
   \qquad
@@ -1773,9 +1782,9 @@ Now \eqref{eq:envKTbnd} tells us
 %
 \begin{equation}\label{eq:satoncebnd}
 \begin{aligned}
-  B(s) &\geq \frac{B(s_0)}{(q+s)t_0}, 
+  B(s) \geq \frac{B(s_0)}{(q+s)t_0}, 
   \qquad\text{or}\qquad
-  1 + (s-s_0)t_0 &\geq \frac{C(s)}{C(s_0)}.
+  1 + (s-s_0)t_0 \geq \frac{C(s)}{C(s_0)}.
 \end{aligned}
 \end{equation}
 %
@@ -1791,12 +1800,12 @@ This condition is
 The resulting SNR curve and envelope are
 %
 \begin{equation}\label{eq:env}
-  \snr(t) = \frac{\e^{(s_0-1/t_0)t}}{C'(s_0)},
+  \snr(t) = \frac{\sqrt{N}\,\e^{(s_0-1/t_0)t}}{C'(s_0)},
   \qquad
-  \snr(t_0) = \frac{\e^{s_0t_0-1}}{C'(s_0)},
+  \snr(t_0) = \frac{\sqrt{N}\,\e^{s_0t_0-1}}{C'(s_0)},
 \end{equation}
 %
-where $s_0$ is determined as a function of $t_0$ by \eqref{eq:envs0t0}.
+where $s_0$ is a function of $t_0$ determined by \eqref{eq:envs0t0}.
 
 
 \appendix
