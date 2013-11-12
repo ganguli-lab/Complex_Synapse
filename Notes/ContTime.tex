@@ -64,6 +64,8 @@
 \newcommand{\F}{\boldsymbol{\Phi}}
 \DeclareMathOperator{\SNR}{SNR}
 \DeclareMathOperator{\snr}{SNR}
+\DeclareMathOperator{\env}{Env}
+\newcommand{\rh}{\hat{r}}
 \newcommand{\CI}{\mathcal{I}}
 \newcommand{\CS}{\mathcal{S}}
 \newcommand{\CA}{\mathcal{A}}
@@ -1601,7 +1603,7 @@ Using the exact same proof as \autoref{th:kemenyconst}, we see that the quantity
 \end{equation}
 %
 is independent of the starting state $i$, but now $\eta(s) = \tr\fund(s) - \frac{\tau}{1+s\tau}$.
-We can the define 
+We can the define
 %
 \begin{equation}\label{eq:lpmixtime}
   \eta^{\pm}_i(s) = \sum_j \fptb_{ij}(s)\eq_j \prn{\frac{1\pm\w_j}{2}} =  \sum_{j\in\pm} \fptb_{ij}(s)\eq_j.
@@ -1618,7 +1620,7 @@ Consider the Laplace transform of the evolution operator:
   \mathbf{G}(s) = \intd[_0^{\infty}]{t} \e^{(\MM-s) t}.
 \end{equation}
 %
-For $\Re s>0$, we have 
+For $\Re s>0$, we have
 %
 \begin{equation}\label{eq:levolcalc}
   (s-\MM)\mathbf{G}(s) = \intd[_0^{\infty}]{t} (s-\MM)\e^{(\MM-s) t} = \brk{-\e^{(\MM-s) t}}_0^{\infty} = \I.
@@ -1674,7 +1676,7 @@ Using the same approach as the area bound, we find that the derivatives are
 %
 \begin{equation}\label{eq:lAdiff}
 \begin{aligned}
-  \pdiff{\hat{A}(s)}{\W^\pm_{gh}} 
+  \pdiff{\hat{A}(s)}{\W^\pm_{gh}}
      =&\, 2rf^\pm \eq_g \brk{ \sum_i a_i(s) (\fptb_{gi}(0)-\fptb_{hi}(0))
      +c_g(s) (\eta^+_g(s) - \eta^+_h(s)) } \\
      &\pm 2\eq_g (\eta^+_g(s) - \eta^+_h(s)).
@@ -1748,7 +1750,7 @@ Assume there are two such values, $s=s_0$ and $s=s_1$.
 %
 \begin{equation}\label{eq:sattwice}
 \begin{aligned}
-  \CI = B(s_0)(q+s_0) = B(s_1)(q+s_1) 
+  \CI = B(s_0)(q+s_0) = B(s_1)(q+s_1)
   \qquad
   \implies q = \frac{s_0 B(s_0) - s_1 B(s_1)}{B(s_1)-B(s_0)}.
 \end{aligned}
@@ -1782,7 +1784,7 @@ Now \eqref{eq:envKTbnd} tells us
 %
 \begin{equation}\label{eq:satoncebnd}
 \begin{aligned}
-  B(s) \geq \frac{B(s_0)}{(q+s)t_0}, 
+  B(s) \geq \frac{B(s_0)}{(q+s)t_0},
   \qquad\text{or}\qquad
   1 + (s-s_0)t_0 \geq \frac{C(s)}{C(s_0)}.
 \end{aligned}
@@ -1793,7 +1795,7 @@ The linearity of the LHS and concavity of the RHS ensure that this is sufficient
 This condition is
 %
 \begin{equation}\label{eq:envs0t0}
-  t_0 = \frac{C'(s_0)}{C(s_0)}.
+  t_0 = \frac{C'(s_0)}{C(s_0)} = -\frac{B'(s_0)}{B(s_0)}.
 \end{equation}
 %
 
@@ -1802,10 +1804,80 @@ The resulting SNR curve and envelope are
 \begin{equation}\label{eq:env}
   \snr(t) = \frac{\sqrt{N}\,\e^{(s_0-1/t_0)t}}{C'(s_0)},
   \qquad
-  \snr(t_0) = \frac{\sqrt{N}\,\e^{s_0t_0-1}}{C'(s_0)},
+  \snr(t_0) = \sqrt{N}\env(t_0) = \frac{\sqrt{N}\,\e^{s_0t_0-1}}{C'(s_0)}
+   = \frac{\sqrt{N}\,B(s)\e^{s_0t_0-1}}{t_0},
 \end{equation}
 %
 where $s_0$ is a function of $t_0$ determined by \eqref{eq:envs0t0}.
+
+\subsection{Bootstrap}\label{sec:boot}
+
+Using the upper bounds on initial SNR and area, we can derive the following envelope:
+%
+\begin{equation}\label{sec:envinitarea}
+  \env_0(t_0) =
+    \begin{cases}
+    \e^{-rt_0/(M-1)},    & rt_0 \leq M-1,\\
+    \frac{M-1}{\e rt_0}, & rt_0 \geq M-1.
+    \end{cases}
+    =
+    \begin{cases}
+    \e^{-\rh t_0},        & \rh t_0 \leq 1,\\
+    \frac{1}{\e \rh t_0}, & \rh t_0 \geq 1.
+    \end{cases}
+\end{equation}
+%
+We will use the notation $\rh=r/(M-1)$ in this subsection.
+As no memory curve can cross this, the Laplace transform of any model's memory curve must be smaller than
+%
+\begin{equation}\label{eq:envlt}
+\begin{aligned}
+  \frac{A(s)}{\sqrt{N}} \leq B(s) < B_0(s) &= \intd[_0^\infty]{t_0} \e^{-st_0}\env(t_0) \\
+   &= \intd[_0^{1/\rh}]{t_0} \e^{-(s+\rh)t_0}
+   + \intd[_{1/\rh}^\infty]{t_0} \frac{\e^{-st_0-1}}{\rh t_0} \\
+   &= \frac{1-\e^{-s/\rh-1}}{s+\rh} + \ldots
+\end{aligned}
+\end{equation}
+%
+This loose bound can be used to derive a new envelope
+%
+\begin{equation}\label{eq:envb0}
+  \env_1(t_0) = \frac{B_0(s_0) \e^{s_0t_0-1}}{t_0} = \ldots
+  \qquad t_0 = -\frac{B_0'(s_0)}{B_0(s_0)}. 
+\end{equation}
+%
+As there are additional constraints, $\env_1(t_0) \leq \env_0(t_0)$.
+This can be Laplace-transformed to get a better bound, $B_1(s) \leq B_0(s)$, which can then be used to get an even better envelope.
+
+This procedure can be iterated an arbitrary number of times
+%
+\begin{equation}\label{eq:bootiter}
+  B_k(s) = \intd[_0^\infty]{t_0} \e^{-st_0}\env_k(t_0),
+  \qquad
+  \env_{k+1}(t_0)=\frac{B_k(s_0) \e^{s_0t_0-1}}{t_0},
+  \quad t_0 = -\frac{B_k'(s_0)}{B_k(s_0)}.
+\end{equation}
+%
+This will end at the fixed point
+%
+\begin{equation}\label{eq:bootfixedpt}
+  B_\infty(s) = \intd[_0^\infty]{t_0} \e^{-st_0}\env_\infty(t_0),
+  \qquad
+  \env_\infty(t_0)=\frac{B_\infty(s_0) \e^{s_0t_0-1}}{t_0},
+  \quad t_0 = -\frac{B_\infty'(s_0)}{B_\infty(s_0)}.
+\end{equation}
+%
+We can eliminate $\env_\infty$ and $t_0$ (assuming that $s_0\to \infty$ as $t_0 \to 0$ and vice versa) to get the following integro-differential equation:
+%
+\begin{equation}\label{eq:bootbnd}
+  B_\infty(s) = \intd[_0^\infty]{s_0} \e^{(s-s_0)B'_\infty(s_0)/B_\infty(s_0)} 
+      \brk{B'_\infty(s_0)-\frac{B_\infty(s_0)B''_\infty(s_0)}{B'_\infty(s_0)}}.
+\end{equation}
+%
+
+Because actual memory curves can, at best, touch the envelope at one time, there will always be a significant gap between the laplace transforms of the memory curves and of the envelope.
+Therefore both the bound $B_\infty(s)$ and the envelope $\env_\infty(t_0)$ will be loose.
+
 
 
 \appendix
