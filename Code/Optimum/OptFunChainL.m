@@ -12,7 +12,7 @@ p=p/sum(p);
 q=Wp-Wm;
 A=0.5 * p*q * ((s*eye(length(Wp))+ones(length(Wp))-Wm-0.5*q)\w);
 
-
+A=-A;
 
 end
 

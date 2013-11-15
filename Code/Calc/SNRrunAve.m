@@ -1,7 +1,8 @@
-function [ A ] = Laplace( s,Wp,Wm,fp,w )
-%A=LAPLACE(s,Wp,Wm,fp,w) Laplace transform of SNR curve for complex synapse (cts time)
+function [ A ] = SNRrunAve( t,Wp,Wm,fp,w )
+%A=SNRLAPLACE(s,Wp,Wm,fp,w) running maverage of SNR curve for complex
+%synapse (cts time), i.e. (Laplace Transform @ s=1/t)/t.
 %   A(s) = int exp(-s*t)*SNR(t) dt
-%   s  = parameter of Laplace transform
+%   t  = time = 1/parameter of Laplace transform
 %   WP = potentiation transition rates
 %   WM = depression transition rates
 %   FP = Fraction of potentiation transitions
@@ -15,16 +16,7 @@ error(CheckSize(w,@iscol));
 error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
 error(CheckSize(w,@samelength,'samelength(Wp)',Wp));%same size
 
-if isscalar(s)
-    q=Wp-Wm;
-    Zinv=ones(length(Wp))-Wm-fp*q;
-    A=(2*fp*(1-fp)) * sum( (Zinv\q) * ((s*eye(length(Wp))+Zinv)\w));
-else
-    A=zeros(size(s));
-    for i=1:numel(s)
-        A(i)=Laplace(s(i),Wp,Wm,fp,w);
-    end
-end
+A = SNRlaplace(1./t,Wp,Wm,fp,w)./t;
 
 
 end

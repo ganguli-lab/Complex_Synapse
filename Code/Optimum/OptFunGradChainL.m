@@ -29,5 +29,8 @@ A=0.5*p*a;
 %dA/dWp_(i,i+1)+dA/dWm_(n-i+1,n-i)
 gr= p(1:end-1).*diff(Zinv\a)' + (2*p(1:end-1)+c(1:end-1)).*diff(Zinvs\w)';
 
+A=-A;
+gr=-gr;
+
 end
 
