@@ -1843,7 +1843,7 @@ This loose bound can be used to derive a new envelope
 %
 \begin{equation}\label{eq:envb0}
   \env_1(t_0) = \frac{B_0(s_0) \e^{s_0t_0-1}}{t_0} = \ldots
-  \qquad t_0 = -\frac{B_0'(s_0)}{B_0(s_0)}. 
+  \qquad t_0 = -\frac{B_0'(s_0)}{B_0(s_0)}.
 \end{equation}
 %
 As there are additional constraints, $\env_1(t_0) \leq \env_0(t_0)$.
@@ -1870,7 +1870,7 @@ This will end at the fixed point
 We can eliminate $\env_\infty$ and $t_0$ (assuming that $s_0\to \infty$ as $t_0 \to 0$ and vice versa) to get the following integro-differential equation:
 %
 \begin{equation}\label{eq:bootbnd}
-  B_\infty(s) = \intd[_0^\infty]{s_0} \e^{(s-s_0)B'_\infty(s_0)/B_\infty(s_0)} 
+  B_\infty(s) = \intd[_0^\infty]{s_0} \e^{(s-s_0)B'_\infty(s_0)/B_\infty(s_0)-1}
       \brk{B'_\infty(s_0)-\frac{B_\infty(s_0)B''_\infty(s_0)}{B'_\infty(s_0)}}.
 \end{equation}
 %
