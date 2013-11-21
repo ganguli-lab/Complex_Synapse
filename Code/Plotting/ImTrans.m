@@ -1,6 +1,7 @@
 function [ ih ] = ImTrans( Wp,Wm,Parent,axp,axm)
-%IMTRANS Summary of this function goes here
-%   Detailed explanation goes here
+%ih=IMTRANS(Wp,Wm,Parent,axp,axm) image transition probs
+%   ih = vector of image handles
+%   Parent = figure handle
 
 if ~exist('Parent','var')
     Parent=figure('WindowStyle','docked');
@@ -12,13 +13,15 @@ if ~exist('axm','var')
     axm=subplot(1,2,2,'Parent',Parent);
 end
 
-ih(1)=imagesc(Wp+eye(length(Wp)),'Parent',axp);
+cla(axp);
+ih(1)=imagesc(Wp+eye(length(Wp)),'Parent',axp,[0 1]);
 title(axp,'M^{pot}');
 xlabel(axp,'To');
 ylabel(axp,'From');
 colorbar('peer',axp);
 
-ih(2)=imagesc(Wm+eye(length(Wm)),'Parent',axm);
+cla(axm);
+ih(2)=imagesc(Wm+eye(length(Wm)),'Parent',axm,[0 1]);
 title(axm,'M^{dep}');
 xlabel(axm,'To');
 ylabel(axm,'From');
