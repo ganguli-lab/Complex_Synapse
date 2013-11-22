@@ -1684,8 +1684,16 @@ Using the same approach as the area bound, we find that the derivatives are
 \end{equation}
 %
 This is exactly the same as \eqref{eq:derivA}.
-It follows that, using exactly the same perturbations, that the Laplace transform of the SNR curve for \emph{any} model is lower than that of a certain model with the serial topology having the same equilibrium distribution.
+Everything about the perturbation analysis carries over from the proof of the area bound, except for the \hyperref[sec:rescale]{scaling mode} that allowed us to ignore constraints \eqref{eq:Wmax}.
+If we could find a way around this, It would follow, using exactly the same perturbations, that the Laplace transform of the SNR curve for \emph{any} model is lower than that of a certain model with the serial topology having the same equilibrium distribution.
 
+In this case,
+%
+\begin{equation}\label{eq:scaleLaplace}
+  \sum_\pm\sum_{ij} \W^\pm_{ij} \, \pdiff{A(s)}{\W^\pm_{ij}} = -s A'(s).
+\end{equation}
+%
+The scaling mode essentially scales $s$ in the opposite direction.
 
 
 \subsection{Envelope}\label{sec:env}
