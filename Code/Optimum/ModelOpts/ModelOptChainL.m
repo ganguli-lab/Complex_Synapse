@@ -1,7 +1,10 @@
-function [ newqv,A ] = ModelOptChainL( qv,sm,varargin)
-%[newqv]=MODELOPTCHAINL(qv,tm) run gradient descent on model
+function [ newqv,A,ef ] = ModelOptChainL( qv,sm,varargin)
+%[newqv,A,ef]=MODELOPTCHAINL(qv,sm) run gradient descent on model to
+%maximise A(s)
 %   sm = Laplace param value
 %   qv = nearest neighbour transition rates
+%   A  = Laplace Transf value
+%   ef = exit flag
 
 UseDerivs=true;
 Algorithm='interior-point';

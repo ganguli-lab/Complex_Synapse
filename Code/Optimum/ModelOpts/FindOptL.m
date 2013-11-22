@@ -1,9 +1,12 @@
 function [ Wp,Wm,A ] = FindOptL( sm,n,reps,varargin )
-%[Wp,Wm]=FINDOPT(t,n) Find synapse model that maximises SNR(t)
-%   t = time value
-%   n = #states
+%[Wp,Wm]=FINDOPT(sm,n,reps) Find synapse model that maximises SNR(t)
+%   t    = time value
+%   n    = #states
+%   reps = number of attempts we max over
 %   Wp = potentiation transition rates
 %   Wm = depression transition rates
+%   A  = Laplace Transf value
+
 existsAndDefault('reps',1);
 
 if reps==1
@@ -32,6 +35,7 @@ if reps==1
     %     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
         [Wp,Wm,A] = ModelOptL( Wp,Wm,sm,varargin{:});
     catch ME
+        A=SNRlaplace(s,Wp,Wm,fp,w);
         disp(ME.message);
         disp(['In function: ' ME.stack(1).name ' at line ' int2str(ME.stack(1).line) ' of ' ME.stack(1).file]);
         return;
@@ -39,6 +43,8 @@ if reps==1
     
 else
     
+    DispReps=false;
+    varargin=assignApplicable(varargin);
     Wp=[];
     Wm=[];
     A=0;
@@ -49,7 +55,9 @@ else
             Wm=Wmt;
             A=At;
         end
-        disp([int2str(i) '/' int2str(reps)]);
+        if DispReps
+            disp([int2str(i) '/' int2str(reps)]);
+        end
     end
     
 end

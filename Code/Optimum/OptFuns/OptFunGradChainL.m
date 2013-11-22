@@ -14,7 +14,7 @@ q=Wp-Wm;
 Zinv=ones(length(Wp))-Wm-0.5*q;
 Zinvs=s*eye(length(Wp))+Zinv;
 
-a=0.5*q*(Zinvs\w);
+a=q*(Zinvs\w);
 c=(p*q)/Zinvs;
 
 A=0.5*p*a;
@@ -27,7 +27,7 @@ A=0.5*p*a;
 % gr = 2*dAdq+dAdW;
 
 %dA/dWp_(i,i+1)+dA/dWm_(n-i+1,n-i)
-gr= p(1:end-1).*diff(Zinv\a)' + (p(1:end-1)+0.5*c(1:end-1)).*diff(Zinvs\w)';
+gr= p(1:end-1).*diff(Zinv\a)' + (2*p(1:end-1)+c(1:end-1)).*diff(Zinvs\w)';
 
 A=-A;
 gr=-gr;

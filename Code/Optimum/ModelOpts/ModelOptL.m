@@ -1,10 +1,13 @@
 function [ newWp,newWm,A,ef ] = ModelOptL( Wp,Wm,sm,varargin)
-%[newWp,newWm]=MODELOPTL(Wp,Wm,sm) run gradient descent on model
-%   T = time value
+%[newWp,newWm,A,ef]=MODELOPTL(Wp,Wm,sm) run gradient descent on model to
+%maximise A(s)
+%   sm = time value
 %   WP = potentiation transition rates
 %   WM = depression transition rates
+%   A  = Laplace Transf value
+%   ef = exit flag
 
-UseDerivs=false;
+UseDerivs=true;
 Algorithm='interior-point';
 Display='off';
 TolFun=1e-6;
@@ -46,7 +49,7 @@ end
 A=-A;
 
 if DispExit
-        disp(ExitFlagMsg(ef));
+    disp(ExitFlagMsg(ef));
 end
 
 end
