@@ -51,6 +51,7 @@
 \newcommand{\W}{\vec{w}}
 \newcommand{\M}{\mathbf{M}}
 \newcommand{\F}{\boldsymbol{\Phi}}
+\newcommand{\CI}{\mathcal{I}}
 \newcommand{\CS}{\mathcal{S}}
 \newcommand{\CA}{\mathcal{A}}
 \newcommand{\CB}{\mathcal{B}}
@@ -70,9 +71,9 @@
 Department of Applied Physics, Stanford University, Stanford CA
 }
 \date{August 26, 2013}
-\titlegraphicl{\includegraphics[height=5cm]{SU_Seal_Card_pos.eps}}
-\titlegraphic{\includegraphics[height=5cm]{bio-x.eps}%
-    \hspace{0.5cm}\includegraphics[height=5cm]{swartz.eps}}
+\titlegraphicl{\includegraphics[height=10cm]{SU_Seal_Card_pos.eps}}
+\titlegraphic{\includegraphics[height=10cm]{bio-x.eps}%
+    \hspace{1cm}\includegraphics[height=10cm]{swartz.eps}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -88,7 +89,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 %-------------Beginning--------------------------------------------------------
 
 %-------------Column--------------------------------------------------------
-\begin{column}{0.26\linewidth}
+\begin{column}{0.36\linewidth}
 
 \section{Background}
 
@@ -120,7 +121,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Complex synapses}
 %
- \begin{minipage}[t]{0.47\linewidth}
+ \begin{minipage}[t]{0.49\linewidth}
    In reality, a synapse is a complex dynamical system.
 
    \vp We will describe a synapse by stochastic processes on a finite number of states, $M$.
@@ -129,22 +130,23 @@ Department of Applied Physics, Stanford University, Stanford CA
 
    \vp
    \begin{center}
-     \aligntop{\includegraphics[width=0.76\linewidth]{synapse.svg}}
+    \aligntop{\includegraphics[width=0.6\linewidth]{2000102CobaFig4.pdf}}
    \end{center}
+    \citerr{Coba2009phosphorylation}
  \end{minipage}
  %
  %\hspace{1cm}
  %
- \begin{minipage}[t]{0.49\linewidth}
+ \begin{minipage}[t]{0.47\linewidth}
    \begin{center}
-    \aligntop{\includegraphics[width=0.96\linewidth]{2000102CobaFig4.pdf}}
+     \aligntop{\includegraphics[width=0.5\linewidth]{synapse.svg}}
    \end{center}
-    \citerr{Coba2009phosphorylation}
 
+   \vspace{1cm}
    \begin{center}
-   \aligntop{\includegraphics[width=0.32\linewidth]{pot.svg}}
+   \aligntop{\includegraphics[width=0.2\linewidth]{pot.svg}}
    \hspace{2cm}
-   \aligntop{\includegraphics[width=0.32\linewidth]{dep.svg}}
+   \aligntop{\includegraphics[width=0.2\linewidth]{dep.svg}}
    \end{center}
  \end{minipage}
 %
@@ -154,20 +156,25 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Cascade and serial models}
 %
- Two example models of complex synapses.
+ Two example models of complex synapses with different memory storage properties.
+% \begin{center}
+ \parbox[t]{0.47\linewidth}{
  \begin{center}
-% \parbox[t]{30cm}{
-  \aligntop{\includegraphics[width=0.35\linewidth]{cascade.svg}}
-  \hspace{2cm}
-  \aligntop{\includegraphics[width=0.35\linewidth]{serial.svg}}
-% }
+  \aligntop{\includegraphics[width=0.4\linewidth]{cascade.svg}}
+  \\%\hspace{2cm}
+  \vp\vp\aligntop{\includegraphics[width=0.4\linewidth]{serial.svg}}
  \end{center}
+ }
+% \end{center}
+% These have different memory storage properties
+ \parbox[t]{0.47\linewidth}{
+ \begin{center}
+ \aligntop{\includegraphics[width=0.6\linewidth]{cascms.eps}}
+ \end{center}
+}
+
  \citerr{Fusi2005cascade,Leibold2008serial}
 
- These have different memory storage properties
- \begin{center}
- \includegraphics[width=0.5\linewidth]{cascms.eps}
- \end{center}
 %
 \end{block}
 
@@ -185,13 +192,6 @@ Department of Applied Physics, Stanford University, Stanford CA
 %
 \end{block}
 
-
-%-------------Column--------------------------------------------------------
-\end{column}
-
-%-------------Column--------------------------------------------------------
-\begin{column}{0.415\linewidth}
-
 \section{Framework}
 
 %-------------Box--------------------------------------------------------
@@ -200,18 +200,31 @@ Department of Applied Physics, Stanford University, Stanford CA
 %
 % We have $N$ synapses with $n$ internal states.
 %
- We have two Markov processes describing transition probabilities for potentiation, $\M\pot$, and depression, $\M\dep$.
-
- \vp Plasticity events are potentiating with probability $f\pot$ and depressing with probability $f\dep$.
-
- \vp After the memory we are tracking, subsequent plasticity events occur at rate $r$, with transition probabilities
- %
- \begin{equation*}
-   \M\frg = f\pot\M\pot + f\dep\M\dep.
- \end{equation*}
- %
- This will eventually return it to the equilibrium distribution, $\eq$.
-
+%
+\parbox[c]{0.45\linewidth}{
+  \aligntop{\includegraphics[width=0.9\linewidth]{synapse_model_1.svg}}
+}%
+%
+% We have two Markov processes describing transition probabilities for potentiation, $\M\pot$, and depression, $\M\dep$.
+%
+% \vp Plasticity events are potentiating with probability $f\pot$ and depressing with probability $f\dep$.
+%
+% \vp After the memory we are tracking, subsequent plasticity events occur at rate $r$, with transition probabilities
+% %
+% \begin{equation*}
+%   \M\frg = f\pot\M\pot + f\dep\M\dep.
+% \end{equation*}
+% %
+% This will eventually return it to the equilibrium distribution, $\eq$.
+\parbox[c]{0.54\linewidth}{Assumptions:
+\begin{itemize}
+  \item Candidate plasticity events occur independently at each synapse,
+  \item Each synapse responds with the same state-dependent rules,
+  \item Synaptic weight takes only two values, $\pm1$.
+%  \item Keep track of distribution of synapses across states.
+ \end{itemize}
+ }
+ 
  \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
 %
 \end{block}
@@ -223,32 +236,91 @@ Department of Applied Physics, Stanford University, Stanford CA
  We use the ideal observer approach: read synaptic weights directly.
  This is an upper bound on what could be read from network activity.
 
- The reconstruction probability of a single synapse is:
- %
- \begin{equation*}
-   s(t) = f\pot P(\text{strong},t\mid\text{pot},0) + f\dep P(\text{weak},t\mid\text{dep},0)
- \end{equation*}
- %
- Alternatively, if $\W$ is an $N$-element vector of synaptic strengths,
+% The reconstruction probability of a single synapse is:
+% %
+% \begin{equation*}
+%   s(t) = f\pot P(\text{strong},t\mid\text{pot},0) + f\dep P(\text{weak},t\mid\text{dep},0)
+% \end{equation*}
+% %
+% Alternatively, if $\W$ is an $N$-element vector of synaptic strengths,
+ To measure memory quality, let $\W$ be an $N$-element vector of synaptic strengths,
  %
  \begin{equation*}
    \begin{aligned}
-     \text{Signal} &= \av{\W_\text{ideal} \cdot \W(t) -  \W_\text{ideal} \cdot \W(\infty)}, \\
-     \text{Noise} &= \sqrt{\var\prn{\W_\text{ideal} \cdot \W(\infty)}}.
+%     \text{Signal} &= \av{\W_\text{ideal} \cdot \W(t) -  \W_\text{ideal} \cdot \W(\infty)}, \\
+%     \text{Noise} &= \sqrt{\var\prn{\W_\text{ideal} \cdot \W(\infty)}}.
+     \SNR(t) = \frac{\av{\W_\text{ideal} \cdot \W(t)} -  \av{\W_\text{ideal} \cdot \W(\infty)} }{ \sqrt{\var\prn{\W_\text{ideal} \cdot \W(\infty)}} }.
    \end{aligned}
  \end{equation*}
  %
- If we assume there are no correlations between different synapses, the signal-to-noise ratio is:
- %
- \begin{equation*}
-   \SNR(t) \sim \sqrt{N}(s(t)-s(\infty)).
- \end{equation*}
- %
+% If we assume there are no correlations between different synapses, the signal-to-noise ratio is:
+% %
+% \begin{equation*}
+%%   \SNR(t) \sim \sqrt{N}(s(t)-s(\infty)).
+%   \SNR(t) = \sqrt{N}\prn{2 f\pot f\dep} \eq \prn{\M\pot-\M\dep} \exp\brk{rt\prn{f\pot\M\pot-f\dep\M\dep-\I}} \w.
+% \end{equation*}
+% %
 %
 \end{block}
 
 
+%-------------Column--------------------------------------------------------
+\end{column}
+
+%-------------Column--------------------------------------------------------
+\begin{column}{0.28\linewidth}
+
+
 \section{Upper bounds on performance}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Initial SNR bound}
+%
+ Initial SNR is closely related to equilibrium flux between strong \& weak states
+ %
+ \begin{equation*}
+   \SNR(0) \leq \frac{4\sqrt{N}}{r}\,\F_{-+}.
+ \end{equation*}
+ %
+
+ \vp
+ Maximized when \parbox[t]{0.7\linewidth}{
+ potentiation guarantees $\W\to$ strong, \\
+ depression guarantees $\W\to$ weak.
+ }
+ %
+ \begin{center}
+   \includegraphics[height=3cm]{max_init_pot.svg}
+   \hspace{2cm}
+   \includegraphics[height=3cm]{max_init_dep.svg}
+ \end{center}
+
+ \vp \lto\ Equivalent to two-state model
+  \begin{center}
+  Transitions:\hspace{1cm}
+   \parbox{2cm}{\includegraphics[height=4cm]{binary_det.svg}}
+   $\qquad\implies\qquad\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
+  \end{center}
+% \begin{center}
+%   \alignmid{\includegraphics[height=0.08\linewidth]{max_init_pot.svg}}
+%   \hspace{0.5cm}
+%   \alignmid{\includegraphics[height=0.08\linewidth]{max_init_dep.svg}}
+%   \hspace{1cm}
+%  \lto\ Equivalent to:
+%   \hspace{0.5cm}
+%   \alignmid{\includegraphics[height=0.1\linewidth]{binary_det.svg}}
+%   $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
+%  \end{center}
+
+ \vp Maximal initial SNR:\hspace{2cm}
+ %
+ $
+   \snr(0) \leq \sqrt{N}.
+ $
+%
+\end{block}
+
 
 %-------------Box--------------------------------------------------------
 
@@ -293,7 +365,7 @@ Department of Applied Physics, Stanford University, Stanford CA
     A \leq \sqrt{N}(M-1)/r.
   \end{equation*}
   %
-  This is saturated by a transition diagram with a linear chain topology.
+  This is saturated by a transition diagram with the serial topology.
  }
  \hfill
  \parbox[c]{0.37\linewidth}{
@@ -353,7 +425,7 @@ Department of Applied Physics, Stanford University, Stanford CA
   %
  }
 
- Uses a deformation that reduces ``shortcut'' transition probabilities and increases the bypassed ``direct'' ones.
+ \vp Uses a deformation that reduces ``shortcut'' transition probabilities and increases the bypassed ``direct'' ones.
 
  \vp The area of this model is
  %
@@ -361,10 +433,43 @@ Department of Applied Physics, Stanford University, Stanford CA
    A = \frac{2\sqrt{N}}{r}\sum_k \eq_k \abs{k-\av{k}}.
  \end{equation*}
  %
- This is maximized when the equilibrium probability distribution is concentrated at both ends.
+ 
+ \vp This is maximized when the equilibrium probability distribution is concentrated at both ends.
+ 
+   %
+   \vp
+   \begin{center}
+     \includegraphics[width=0.4\linewidth]{multistate_sticky.svg}
+   \end{center}
+   %
+   In the limit $\varepsilon\to0$.
 %
 \end{block}
 
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Eigenmode decomposition}
+%
+ We can split the system along eigenvectors of the stochastic forgetting process:
+ %
+ \begin{equation*}
+   \SNR(t) = \sqrt{N} \, \sum_a \, \CI_a \, \e^{rt/\tau_a}.
+ \end{equation*}
+ %
+ 
+ \vp The upper bounds on initial SNR and area tell us:
+ %
+ \begin{equation*}
+   \sum_a \, \CI_a \leq 1,
+   \qquad
+   \sum_a \, \CI_a \, \tau_a \leq M-1.
+ \end{equation*}
+ %
+ 
+ \vp Are there any other important constraints?
+%
+\end{block}
 
 
 
@@ -373,56 +478,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 \end{column}
 
 %-------------Column--------------------------------------------------------
-\begin{column}{0.3\linewidth}
-
-
-%-------------Box--------------------------------------------------------
-
-\begin{block}{Initial SNR bound}
-%
- Initial SNR is closely related to equilibrium flux between strong \& weak states
- %
- \begin{equation*}
-   \SNR(0) \leq \frac{4\sqrt{N}}{r}\,\F_{-+}.
- \end{equation*}
- %
-
- \vp
- Maximized when %\parbox[t]{0.7\linewidth}{
- potentiation guarantees $\W\to$ strong, %\\
- depression guarantees $\W\to$ weak.
- %                                                                                                                  }
-% %
-% \begin{center}
-%   \includegraphics[height=3cm]{max_init_pot.svg}
-%   \hspace{2cm}
-%   \includegraphics[height=3cm]{max_init_dep.svg}
-% \end{center}
-%
-% \vp \lto\ Equivalent to two-state model
-%  \begin{center}
-%  Transitions:
-%   \parbox{2cm}{\includegraphics[height=4cm]{binary_det.svg}}
-%   $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
-%  \end{center}
- \begin{center}
-   \alignmid{\includegraphics[height=0.08\linewidth]{max_init_pot.svg}}
-   \hspace{0.5cm}
-   \alignmid{\includegraphics[height=0.08\linewidth]{max_init_dep.svg}}
-   \hspace{1cm}
-  \lto\ Equivalent to:
-   \hspace{0.5cm}
-   \alignmid{\includegraphics[height=0.1\linewidth]{binary_det.svg}}
-   $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
-  \end{center}
-
- \vp Maximal initial SNR:\hspace{2cm}
- %
- $
-   \snr(0) \leq \sqrt{N}.
- $
-%
-\end{block}
+\begin{column}{0.33\linewidth}
 
 
 \section{The memory envelope}
@@ -494,6 +550,50 @@ Department of Applied Physics, Stanford University, Stanford CA
 }
 %
 \end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Envelope for running average memory curve}
+%
+ We define the running average SNR:
+ %
+ \begin{equation*}
+   \widehat{\SNR}(\tau) = \frac{1}{\tau}\intd[_0^\infty]{t}\e^{-t/\tau}\,\SNR(t)
+     \sim \frac{1}{\tau}\intd[_0^\tau]{t}\SNR(t)
+ \end{equation*}
+ %
+ For any $\tau$, this is maximized by a model with the serial topology.
+ 
+\vp
+\parbox[c]{0.45\linewidth}{
+ \begin{center}
+   \aligntop{\includegraphics[width=0.89\linewidth]{RunningAveEnv.svg}}
+ \end{center}
+}
+\hspace{0.5cm}
+\parbox[c]{0.45\linewidth}{
+ %
+   Earlier times: shorten the chain
+   %
+   \begin{center}
+     \includegraphics[width=0.7\linewidth]{multistate_shorten.svg}
+  %   \includegraphics[width=0.7\linewidth]{diffjump.svg}
+   \end{center}
+   %
+  % \note[item]{shorten length of chain, keeping deterministic}
+
+   %
+   \vp Later times: make end state ``sticky''
+   %
+   \begin{center}
+     \includegraphics[width=0.7\linewidth]{multistate_sticky.svg}
+   \end{center}
+   %
+ %
+}
+%
+\end{block}
+
 %
 %%-------------Box--------------------------------------------------------
 %
@@ -556,7 +656,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{References}
 %
- {\tiny
+ {\small
  \bibliographystyle{unsrt_poster}
  \bibliography{neuro,maths}
  }
