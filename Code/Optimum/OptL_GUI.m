@@ -2,6 +2,7 @@ function OptL_GUI( fp,w,Aenv,srange )
 %OPTL_GUI Summary of this function goes here
 %   Detailed explanation goes here
 
+partitions=num2cell(1:length(w));
 
 %-------------------------------------------------------------------------
 %Create figure
@@ -10,21 +11,27 @@ figure1 = figure('Units','normalized','WindowStyle','docked');
 
 %Create panels
 model=uipanel(figure1,'Units','normalized',...
-        'Position',[0 0.7 1 0.3]);%left bottom width height
+        'Position',[0.5 0.66 0.5 0.33]);%left bottom width height
 set(model,'Title','Model');
+lumptest=uipanel(figure1,'Units','normalized',...
+        'Position',[0.5 0.33 0.5 0.33]);%left bottom width height
+set(lumptest,'Title','Lumapbility');
+lumpmodel=uipanel(figure1,'Units','normalized',...
+        'Position',[0.5 0 0.5 0.33]);%left bottom width height
+set(lumpmodel,'Title','Lumped model');
 
 %Create axes
-%Create axes
 
-ax = axes('Parent',figure1,'OuterPosition',[0 0 1 0.7]);%left bottom width height
+ax = axes('Parent',figure1,'OuterPosition',[0 0 0.5 1]);%left bottom width height
 set(ax,'ButtonDownFcn',@replot);
 %
 replot(ax,1);
 
 
-    function PlotModel(Wp,Wm)
-        delete(findobj(model,'type','axes'))
-        ImTrans(Wp,Wm,model);
+    function PlotModel(Wp,Wm,panel,varargin)
+        delete(findobj(panel,'type','axes'))
+        ih=ImTrans(Wp,Wm,panel,[],[],varargin{:});
+        set(ih,'ButtonDownFcn',@Lump);
     end
 
     function PlotLaplace(Wp,Wm,sm)
@@ -54,9 +61,34 @@ replot(ax,1);
         sm=ginput(1);
         sm(2)=[];
         [Wp,Wm]=FindOptModel(sm);
-        PlotModel(Wp,Wm);
+        PlotModel(Wp,Wm,model);
+        TestLump(Wp,Wm);
+        PlotLump(Wp,Wm);
         PlotLaplace(Wp,Wm,sm);
     end
+
+    function Lump(~,~)
+        part_str=inputdlg({'Separate partitions with ;'},'Enter partitions',1,{int2str(1:length(w))});
+        partitions=Str2partitions(part_str{1});
+        ih=findobj(model,'type','image');
+        Wp=get(ih(4),'CData')-eye(length(w));
+        Wm=get(ih(3),'CData')-eye(length(w));
+        TestLump(Wp,Wm);
+        PlotLump(Wp,Wm);
+    end
+
+    function TestLump(Wp,Wm)
+        Wptest=LumpTest(Wp+eye(length(Wp)),partitions);
+        Wmtest=LumpTest(Wm+eye(length(Wm)),partitions);
+        PlotModel(Wptest-eye(size(Wptest)),Wmtest-eye(size(Wmtest)),lumptest,'CLim',[]);
+    end
+        
+    function PlotLump(Wp,Wm)
+        Wptest=LumpedMat(Wp,partitions);
+        Wmtest=LumpedMat(Wm,partitions);
+        PlotModel(Wptest,Wmtest,lumpmodel);
+    end
+        
 
 end
 

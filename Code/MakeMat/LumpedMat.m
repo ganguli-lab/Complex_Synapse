@@ -3,9 +3,9 @@ function [ Wlumped ] = LumpedMat( W,partitions )
 %   Wlumped = lumped version of W
 %   W = stochastic matrix /  function (column vec) / measure (row vec)
 %   partitions = cell array of vectors containing indices of states in each
-%   partition
+%                partition
 
-error(CHeckSize(W,@ismatrix));
+error(CheckSize(W,@ismatrix));
 
 [U,V]=LumpProj(partitions);
 

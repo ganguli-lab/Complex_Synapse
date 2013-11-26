@@ -3,9 +3,9 @@ function [ Wtest ] = LumpTest( W,partitions )
 %   Wtest = quantity that should be all zeros
 %   W = stochastic matrix /  function (column vector)
 %   partitions = cell array of vectors containing indices of states in each
-%   partition
+%                partition
 
-error(CHeckSize(W,@ismatrix));
+error(CheckSize(W,@ismatrix));
 
 [U,V]=LumpProj(partitions);
 

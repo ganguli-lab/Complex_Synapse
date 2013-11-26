@@ -4,10 +4,8 @@ function [ U,V ] = LumpProj( partitions )
 %   U: Ux = average x over subsets
 %   V: pV = sum of p over subsets
 %   partitions = cell array of vectors containing indices of states in each
-%   partition
+%                partition
 
-error(CheckSize(num_states,@isscalar));
-error(CheckValue(num_states,@isint));
 error(CheckType(partitions,'cell'));
 
 V=zeros(max([partitions{:}]),length(partitions));
