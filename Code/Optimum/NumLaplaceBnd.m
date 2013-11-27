@@ -1,6 +1,13 @@
 function [ chains ] = NumLaplaceBnd( srange,nstates,trange,varargin )
-%NUMLAPLACEBND Summary of this function goes here
-%   Detailed explanation goes here
+%chains=NUMLAPLACEBND(srange,nstates,trange) numeric laplace bound
+%   chains  = struct array (size=[1 length(srange)])
+%   srange  = values of Laplace parameter at which we maximise
+%   nstates = number of states in chain
+%   trange  = values of time for snr curve
+%   chains.s   = value of Laplace parameter at which we optimised
+%   chains.qv  = nearest neighbour transitions of optimal model
+%   chains.A   = value of Laplace transform at s for optimal model
+%   chains.snr = snr curve of optimal model
 
 chains(1,length(srange))=struct('s',[],'qv',[],'A',[],'snr',[]);
 
