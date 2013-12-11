@@ -11,7 +11,7 @@ varargin=assignApplicable(varargin);
 Zinv=ones(length(W)) - W;
 
 if rcond(Zinv)>RCondThresh
-    pinf = ones(1,size(W,1))/(ones(size(W)) - W);
+    pinf = ones(1,size(W,1))/(Zinv);
 else
     [v,qb]=eig(-W');
     qb=diag(qb);

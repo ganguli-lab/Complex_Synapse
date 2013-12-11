@@ -1,92 +1,87 @@
-classdef SynapseIdModel
-    %SYNAPSEIDMODEL Model of complex synapse. Used for Identification
+classdef SynapseMemoryModel
+    %SYNAPSEMEMORYMODEL Model of complex synapse. For computing memory
+    %curves, etc.
     %   Detailed explanation goes here
     
     properties (SetAccess=protected)%data
-        %cts time Markov matrix for potentiation
-        Wp=zeros(2);
-        %cts time Markov matrix for depression
-        Wm=zeros(2);
+        %prob dist of iniitial state, row vec. default: [0.5 0.5]
+        Initial=[0.5 0.5];
+        %cell of Markov matrices. default: {Mpot,Mdep} 
+        M={[1 0; 0 1], [1 0; 0 1]};
         %synaptic weights. default: [-1; 1]
         w=[-1; 1];
-        %fraction of candidate plasticity events that are potentiating
-        fp=0.5;
+        %cell of diagonal matrices for each possible value of
+        %output(low to high), with elements equal to prob of output
+        outProj={[1 0; 0 0],[0 0; 0 1]};
     end
     
     methods %setting data
         %
-        function newobj=setInitial(obj,newInitial)
+        function newobj=setWp(obj,newWp)
             newobj=obj;
-            newobj.Initial=newInitial;
+            newobj.Wp=newWp;
         end            
         %
-        function newobj=setM(obj,newM)
+        function newobj=setWm(obj,newWm)
             newobj=obj;
-            newobj.M=newM;
+            newobj.Wm=newWm;
         end
         %
         function newobj=setW(obj,newW)
             newobj=obj;
             newobj.w=newW;
-            newobj=newobj.CalcOutProj;
         end            
         %
-        function newobj=setOutProj(obj,newOutProj)
+        function newobj=setFp(obj,newFp)
             newobj=obj;
-            newobj.outProj=newOutProj;
+            newobj.fp=newFp;
         end
     end
     
     methods%validity etc.
         newobj=Normalise(obj)
         newobj=Zero(obj)
-        [newobj,ix]=Sort(obj,fp)
+        [newobj,ix]=Sort(obj)
         tf=isvalid(obj)
     end
     
     methods %size info
         %
         function val=NumStates(obj)
-            val=length(obj.Initial);
-        end
-        %
-        function val=NumPlast(obj)
-            val=length(obj.M);
-        end
-        %
-        function val=NumWvals(obj)
-            val=length(obj.outProj);
+            val=length(obj.w);
         end
         %
         tf=SameSizes(obj,otherobj)
     end
     
     methods%calculations etc.
-        [initdiv,Mdivs]=KLdivs(obj1,obj2)
-        [initnrm,Mnrm]=LnNorm(obj1,n,obj2)
         obj3=plus(obj1,obj2)
         obj3=minus(obj1,obj2)
         obj3=mtimes(obj1,obj2)
         obj3=mrdivide(obj1,obj2)
     end
     
-    methods%for simulations
-        wvals=GetWVals(obj)
-        wvalinds=GetWValInds(obj)
-        simobj=Simulate(obj,fp,randno)
-        imh=image(obj,axInitial,axM,varargin)
+    methods%associated matrices
+        Wf=GetWf(obj)
+        q=GetEnc(obj)
+        [Zinv,piv]=GetZinv(obj,piv)
+        p=EqProb(obj,varargin)
     end
     
-    methods%for calculation of properties
-        %called when changing w
-        obj=CalcOutProj(obj)
-        %set Initial to eq dist
-        newobj=CalcEqProb(obj,fp)
-    end%methods
+    methods%for memory curves etc
+        [qa,ca]=Spectrum(obj,varargin)
+        S=SNRcurve(obj,t,varargin)
+        area=SNRarea(obj)
+        A=SNRlaplace(obj,s)
+        A=SNRrunAve(obj,t)
+        T=FPT(obj)
+        deta=DeltaEta(obj)
+        tau=MixTime(obj)
+    end
     
     methods (Static=true) %for construction
         newobj=Build(func,fp,varargin)
-        newobj=Rand(w,varargin)
+        newobj=Rand(w,fp,varargin)
     end
     
     methods (Access=private)%for constructiuon
@@ -96,11 +91,11 @@ classdef SynapseIdModel
     end%methods
     
     methods%constructor
-        function obj=SynapseIdModel(varargin)
+        function obj=SynapseMemoryModel(varargin)
             if nargin ~=0%false -> default constructor does nothing
                 if nargin==2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
                     %true -> preallocate with default constructor doing nothing
-                    obj(max(varargin{1},1),max(varargin{2},1))=SynapseIdModel;
+                    obj(max(varargin{1},1),max(varargin{2},1))=SynapseMemoryModel;
                     if varargin{1}<1
                         obj(1,:)=[];
                     end
@@ -111,7 +106,7 @@ classdef SynapseIdModel
                     %
                     %default parameters:
                     %if we're copying another obj
-                    [tempobj,varargin]=extractArgOfType(varargin,'SynapseIdModel');
+                    [tempobj,varargin]=extractArgOfType(varargin,'SynapseMemoryModel');
                     %otherwise
                     if isempty(tempobj)
                         tempobj=obj;
@@ -120,7 +115,7 @@ classdef SynapseIdModel
                     %Set size of object:
                     %
                     if nargin>=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
-                        obj(varargin{1},varargin{2})=SynapseIdModel;
+                        obj(varargin{1},varargin{2})=SynapseMemoryModel;
                     end%if nargin>=2
                     %
                     %set parameter values:
@@ -135,4 +130,5 @@ classdef SynapseIdModel
     end%methods constructor
     
 end
+
 
