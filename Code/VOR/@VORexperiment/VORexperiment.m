@@ -16,7 +16,7 @@ classdef VORexperiment
     
     properties %labels
         WTlabel='WT';
-        KOLabel='D^bK^{b-/-}';
+        KOlabel='D^bK^{b-/-}';
         noprelabel='No Pre-training';
         withprelabel='w/ Pre-training';
         WTcolor='k';
@@ -29,6 +29,8 @@ classdef VORexperiment
         txFontSize=10;
         EqFontSize=20;
         ProbFontSize=10;
+        %
+        numpts=100;
     end
     
     methods
@@ -39,6 +41,12 @@ classdef VORexperiment
         ViewFigs( obj )
         PrintFigs( obj,prefix )
     end
+    
+    methods (Access=private)%for constructiuon
+        %called by constructor
+        copy=CopyProps(original,copy)
+        [s,x] = assignToObject(s, x)
+    end%methods
     
     methods%constructor
         function obj=VORexperiment(varargin)

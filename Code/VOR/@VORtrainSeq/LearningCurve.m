@@ -1,4 +1,4 @@
-function [ S,Pt,t ] = LearningCurve( obj,modelobj )
+function [ S,Pt,t ] = LearningCurve( obj,modelobj,dt )
 %S=LEARNINGCURVE(W0,w,t,W1,...) mean synaptic weight as function of time,
 %starting in equilibrium state for W0, then evolving according to W1
 %   S(t)=p(t)w
@@ -10,9 +10,9 @@ error(CheckType(modelobj,'SynapseMemoryModel'));
 error(CheckSize(modelobj,@isvalid));
 
 tchanges=[0 obj.tTrain];
-t=0:tchanges(end);
+t=0:dt:tchanges(end);
 
-modelobj=modelobj.SetFp(obj.fps(1));
+modelobj=modelobj.setFp(obj.fps(1));
 %p0: ind(1,which state).
 p0=modelobj.EqProb;
 %pt: ind(what time,which state).
@@ -23,7 +23,7 @@ Pt=pt;
 
 for i=1:obj.numTrain
     %
-    modelobj=modelobj.SetFp(obj.fps(i+1));
+    modelobj=modelobj.setFp(obj.fps(i+1));
 
     valid=t>tchanges(i);
     ix=find(~valid,1,'last');

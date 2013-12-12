@@ -5,17 +5,16 @@ function PlotLearn( obj,varargin )
 Parent=gca;
 varargin=assignApplicable(varargin);
 
+dt=obj.nopre.tTrain(end)/obj.numpts;
 
-
-[S,~,t]=obj.nopre.LearningCurve(obj.WT);
+[S,~,t]=obj.nopre.LearningCurve(obj.WT,dt);
 ph(1)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',Parent,varargin{:});
 hold(Parent,'on');
-[S]=obj.nopre.LearningCurve(obj.KO);
+[S]=obj.nopre.LearningCurve(obj.KO,dt);
 ph(2)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',Parent,varargin{:});
-[S]=obj.withpre.LearningCurve(obj.WT);
+[S]=obj.withpre.LearningCurve(obj.WT,dt);
 ph(3)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',Parent,varargin{:});
-hold(Parent,'on');
-[S]=obj.withpre.LearningCurve(obj.KO);
+[S]=obj.withpre.LearningCurve(obj.KO,dt);
 ph(4)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',Parent,varargin{:});
 
 axes(Parent);

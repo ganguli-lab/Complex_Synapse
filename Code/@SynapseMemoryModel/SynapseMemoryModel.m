@@ -4,15 +4,14 @@ classdef SynapseMemoryModel
     %   Detailed explanation goes here
     
     properties (SetAccess=protected)%data
-        %prob dist of iniitial state, row vec. default: [0.5 0.5]
-        Initial=[0.5 0.5];
-        %cell of Markov matrices. default: {Mpot,Mdep} 
-        M={[1 0; 0 1], [1 0; 0 1]};
+        %cts time Markov matrix for potentiation
+        Wp=zeros(2);
+        %cts time Markov matrix for depression
+        Wm=zeros(2);
         %synaptic weights. default: [-1; 1]
         w=[-1; 1];
-        %cell of diagonal matrices for each possible value of
-        %output(low to high), with elements equal to prob of output
-        outProj={[1 0; 0 0],[0 0; 0 1]};
+        %fraction of candidate plasticity events that are potentiating
+        fp=0.5;
     end
     
     methods %setting data

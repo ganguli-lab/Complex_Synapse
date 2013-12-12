@@ -27,7 +27,7 @@ classdef VORtrainSeq
             val=length(obj.tTrain);
         end
         [tf]=isvalid(obj)
-        [S,Pt,t]=LearningCurve(obj,modelobj)
+        [S,Pt,t]=LearningCurve(obj,modelobj,dt)
     end
     
     methods (Access=private)%for constructiuon

@@ -5,7 +5,7 @@ function [ pinf ] = EqProb( obj,varargin )
 RCondThresh=1e-3;
 varargin=assignApplicable(varargin);
 
-[Zinv,piv]=obj.Zinv;
+[Zinv,piv]=obj.GetZinv;
 
 if rcond(Zinv)>RCondThresh
     pinf = piv/Zinv;

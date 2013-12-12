@@ -18,8 +18,10 @@ obj.ProbFontSize=4*obj.ProbFontSize;
     figEv(4)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
     
     Parent=axes('Parent',fig);
+    axes(Parent);
     obj.PlotLearn('LineWidth',2,'Parent',Parent);
     Parent=axes('Parent',figs);
+    axes(Parent);
     obj.PlotLearnS('LineWidth',2,'Parent',Parent);
 
     obj.EqProbPlots(figEq,'LineWidth',2);

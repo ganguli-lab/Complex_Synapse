@@ -13,11 +13,12 @@ else
     xlab='State';
 end
 
+dt=obj.nopre.tTrain(end)/obj.numpts;
 
-[~,P_WT_nopre,t]=obj.nopre.LearningCurve(obj.WT);
-[~,P_KO_nopre]=obj.nopre.LearningCurve(obj.KO);
-[~,P_WT_pre]=obj.withpre.LearningCurve(obj.WT);
-[~,P_KO_pre]=obj.withpre.LearningCurve(obj.WT);
+[~,P_WT_nopre,t]=obj.nopre.LearningCurve(obj.WT,dt);
+[~,P_KO_nopre]=obj.nopre.LearningCurve(obj.KO,dt);
+[~,P_WT_pre]=obj.withpre.LearningCurve(obj.WT,dt);
+[~,P_KO_pre]=obj.withpre.LearningCurve(obj.WT,dt);
 
 
 if isscalar(fh)
@@ -40,7 +41,7 @@ PlotProbEvol(P_KO_nopre,[obj.KOlabel ' ' obj.noprelabel],h(2));
 PlotProbEvol(P_WT_pre,[obj.WTlabel ' ' obj.withprelabel],h(3));
 PlotProbEvol(P_KO_pre,[obj.KOlabel ' ' obj.withprelabel],h(4));
 
-
+drawnow;
     function PlotProbEvol( Pt,titletext,Parent )
 
     cla(Parent);
@@ -49,9 +50,9 @@ PlotProbEvol(P_KO_pre,[obj.KOlabel ' ' obj.withprelabel],h(4));
     ylabel(Parent,xlab,'FontSize',obj.ProbFontSize);
     xlabel(Parent,'Training time','FontSize',obj.ProbFontSize);
     title(Parent,titletext,'FontSize',obj.ProbFontSize);
-    h=colorbar('peer',Parent);
+    ch=colorbar('peer',Parent);
     % set(get(h,'YLabel'),'String','Probability','Rotation',270,'VerticalAlignment','bottom','FontSize',FontSize);
-    colorbarlabel(h,'Probability','FontSize',obj.ProbFontSize);
+    colorbarlabel(ch,'Probability','FontSize',obj.ProbFontSize);
 
     end
 
