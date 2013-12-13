@@ -1,5 +1,6 @@
 function ViewFigs( obj )
-%VIEWFIGS Summary of this function goes here
+%VORexperiment.VIEWFIGS viewing VOR comparisons between WT/KO
+%with/without pretraining
 %   Detailed explanation goes here
 
 

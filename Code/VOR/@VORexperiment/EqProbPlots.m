@@ -1,6 +1,7 @@
 function EqProbPlots( obj,fh,varargin )
-%EQPROBPLOTS Summary of this function goes here
-%   Detailed explanation goes here
+%VORexperiment.EQPROBPLOTS(fh) plot equilibrium distributions for baseline,
+%gain-increase, gain-decrease for WT/KO
+%   fh = figure handle(s) for plots
 
 Pooled=false;
 
@@ -19,6 +20,7 @@ if isscalar(fh)
     h(1)=subplot(1,2,1,'Parent',fh,'FontSize',obj.EqFontSize);
     h(2)=subplot(1,2,2,'Parent',fh,'FontSize',obj.EqFontSize);
 elseif numel(fh)==2
+    clf(fh(1));clf(fh(2));
     h(1)=axes('Parent',fh(1),'FontSize',obj.EqFontSize);
     h(2)=axes('Parent',fh(2),'FontSize',obj.EqFontSize);
 else

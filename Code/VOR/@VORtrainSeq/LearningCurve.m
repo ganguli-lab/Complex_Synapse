@@ -1,9 +1,11 @@
 function [ S,Pt,t ] = LearningCurve( obj,modelobj,dt )
-%S=LEARNINGCURVE(W0,w,t,W1,...) mean synaptic weight as function of time,
-%starting in equilibrium state for W0, then evolving according to W1
+%[S,p,t]=VORtrainSeq.LEARNINGCURVE(SynapseMemoryModel,dt) mean synaptic
+%weight as function of time, starting in equilibrium state for
+%VORtrainSeq.fps(1), then evolving according to VORtrainSeq.fps(2)...
+%   dt = spacing of t values
 %   S(t)=p(t)w
-%   dp/dt = pW
-%   p(0)W_0=0
+%   dp/dt = pW(fps(2))
+%   p(0)W(fps(1))=0
 %   actually uses max(t<t_n) in place of t_n.
 
 error(CheckType(modelobj,'SynapseMemoryModel'));

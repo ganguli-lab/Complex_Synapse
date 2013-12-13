@@ -1,6 +1,16 @@
 function [ exptobj ] = VORbuilder( builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,fpDec,t_inc,t_dec )
-%VORBUILDER Summary of this function goes here
-%   Detailed explanation goes here
+%VORexptobj=VORBUILDER(builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,fpDec,t_inc,t_dec)
+%building a VORexperiment object
+%   builder_h  = function handle [Wp,Wm,w]=builder_h(numStates,param)
+%   num_states = number of synaptic states
+%   paramPot   = paramter for Wp for both WT/KO
+%   paramWT    = paramter for Wm for WT
+%   paramKO    = paramter for Wm for KO
+%   fpNorm     = fraction of potentiating events at baseline
+%   fpInc      = fraction of potentiating events during gain-increase training
+%   fpDec      = fraction of potentiating events during gain-decrease pre-training
+%   t_inc      = duration of gain-increase training
+%   t_dec      = duration of gain-decrease pre-training
 
 
 

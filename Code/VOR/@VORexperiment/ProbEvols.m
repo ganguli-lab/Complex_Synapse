@@ -1,6 +1,7 @@
 function ProbEvols( obj,fh,varargin )
-%PROBEVOLS Summary of this function goes here
-%   Detailed explanation goes here
+%VORexperiment.PROBEVOLS(fh) plot evolution of distributions during taining
+%and pre-training for WT/KO
+%   fh = figure handle(s) for plots
 
 Pooled=false;
 varargin=assignApplicable(varargin);
@@ -28,6 +29,7 @@ if isscalar(fh)
     h(3)=subplot(2,2,3,'Parent',fh);
     h(4)=subplot(2,2,4,'Parent',fh);
 elseif numel(fh)==4
+    clf(fh(1));clf(fh(2));clf(fh(3));clf(fh(4));
     h(1)=axes('Parent',fh(1));
     h(2)=axes('Parent',fh(2));
     h(3)=axes('Parent',fh(3));

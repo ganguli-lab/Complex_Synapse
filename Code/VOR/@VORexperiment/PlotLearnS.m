@@ -1,10 +1,11 @@
 function PlotLearnS( obj,varargin )
-%PLOTLEARNS Summary of this function goes here
-%   Detailed explanation goes here
+%VORexperiment.PLOTLEARNS plot learning curves during taining
+%and pre-training for WT/KO
 
 Parent=gca;
 
 varargin=assignApplicable(varargin);
+cla(Parent);
 
 tchange=obj.withpre.tTrain(1);
 

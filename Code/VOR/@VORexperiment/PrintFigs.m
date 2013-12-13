@@ -1,6 +1,7 @@
 function PrintFigs( obj,prefix )
-%PRINTFIGS Summary of this function goes here
-%   Detailed explanation goes here
+%VORexperiment.PRINTFIGS(prefix) printing VOR comparisons between WT/KO
+%with/without pretraining
+%   prefix = string to prepend to eps file names
 
 obj.LabFontSize=2*obj.LabFontSize;
 obj.txFontSize=2*obj.txFontSize;
@@ -18,10 +19,10 @@ obj.ProbFontSize=4*obj.ProbFontSize;
     figEv(4)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
     
     Parent=axes('Parent',fig);
-    axes(Parent);
+%     axes(Parent);
     obj.PlotLearn('LineWidth',2,'Parent',Parent);
     Parent=axes('Parent',figs);
-    axes(Parent);
+%     axes(Parent);
     obj.PlotLearnS('LineWidth',2,'Parent',Parent);
 
     obj.EqProbPlots(figEq,'LineWidth',2);
