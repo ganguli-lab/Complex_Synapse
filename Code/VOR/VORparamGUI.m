@@ -1,17 +1,14 @@
 function VORparamGUI(varargin)
 
 %initial params
-% nstates=4;
-% varargin=assignApplicable(varargin);
-% % 
-% %check validity of params
-% assert(isscalar(nstates));
-% assert(isint(nstates));
+builder_h=@SerialBuilder;
+varargin=assignApplicable(varargin);
 % 
-
+%check validity of params
+assert(isa(builder_h,'function_handle'));
 
 %Initialise data (put them in a global struct)
-S.builder_h=@SerialBuilder;
+S.builder_h=builder_h;
 S.numStates=10;
 S.paramPot=0.5;
 S.paramWT=0.5;
