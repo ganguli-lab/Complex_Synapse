@@ -72,7 +72,7 @@ MakePlot;
     %callback for push-buttons in slider panels
     function pb_callback(~,~,which,varname,val)
         set(slh(which),'Value',val);
-        sl_callback(slh(which),0,varname);
+        sl_callback(slh(which),0,which,varname);
     end
 
     %callback for edit-boxes
