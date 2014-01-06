@@ -7,9 +7,10 @@ function [ Wp,Wm,w ] = NonuniBuilder( n,x )
 %   w  = Weights of states (+/-1)
 
 
-[Wp,Wm,w]=CascadeOriginal(x,x,n,0);
+[Wp,Wm]=CascadeOriginal(x,x,n,0);
 Wp=(1-x)*Wp;
 Wm=(1-x)*Wm;
+w=LinearWeights(n);
 
 end
 
