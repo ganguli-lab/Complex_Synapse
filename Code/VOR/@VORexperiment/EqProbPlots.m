@@ -36,9 +36,9 @@ PlotEqProbs(obj.KO,obj.KOlabel,h(2));
     function PlotEqProbs(modelobj,titletext,Parent)
         modelobj=modelobj.setFp(obj.withpre.fps(1));
         p=modelobj.EqProb;
-        modelobj=modelobj.setFp(obj.withpre.fps(2));
+        modelobj=modelobj.setFp(obj.withpre.fps(3));
         p=[p;modelobj.EqProb];
-        modelobj=modelobj.setFp(obj.withpre.fps(1));
+        modelobj=modelobj.setFp(obj.withpre.fps(2));
         p=[p;modelobj.EqProb]';
         %if we're using stairs:
         p=[p;p(end,:)];
