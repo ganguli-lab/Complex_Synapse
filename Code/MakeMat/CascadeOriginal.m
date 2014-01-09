@@ -8,9 +8,9 @@ function [Wp,Wm,w]= CascadeOriginal( xp,xm,n,lambda )
 %   w  = Weights of states (+/-1)
 
 error(CheckSize(xp,@isscalar));
-error(CheckValue(xp,@(x) inrange(x,0,0.5)));
+% error(CheckValue(xp,@(x) inrange(x,0,0.5)));
 error(CheckSize(xm,@isscalar));
-error(CheckValue(xm,@(x) inrange(x,0,0.5)));
+% error(CheckValue(xm,@(x) inrange(x,0,0.5)));
 error(CheckSize(n,@isscalar));
 error(CheckValue(n,@isint));
 existsAndDefault('lambda',1);

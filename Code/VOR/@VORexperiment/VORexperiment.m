@@ -40,6 +40,7 @@ classdef VORexperiment
         PlotLearnS( obj,varargin )
         ViewFigs( obj )
         PrintFigs( obj,prefix )
+        St=LearnSdata(obj,varargin);
     end
     
     methods (Access=private)%for constructiuon
