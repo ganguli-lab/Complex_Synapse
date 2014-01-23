@@ -1,6 +1,8 @@
-Complex_Synapse
-===============
+# Complex_Synapse
 
-Complex Synapse Project: notes, Matlab code, poster, slides
+Complex Synapse Project: LaTeX notes, Matlab code, poster, slides
 
-Depends on repo: MikTeX-local
+## Depends on repos: 
+
+subhylahiri/MikTeX-local for LaTeX notes  
+subhylahiri/Subhy-Matlab-Basic for Matlab code
