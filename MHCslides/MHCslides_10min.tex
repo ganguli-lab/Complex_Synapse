@@ -1,0 +1,1033 @@
+% -*- TeX -*- -*- UK -*- -*- BMR -*-
+% ----------------------------------------------------------------
+% Beamer presentation ************************************************
+% **** -----------------------------------------------------------
+\documentclass{beamer}%[handout][hyperref={backref=slide}]
+
+\usepackage{array}
+\usepackage{cancel}
+\input{sl_slide_preamble.tex}
+%\input{sl_slide_preamble_nonotes.tex}
+%\usecolortheme[named=darkblue]{structure}
+\usecolortheme[rgb={0.6372549 0.27843137 0.27058824}]{structure}
+\setbeamercolor{alerted text}{fg=red!80!black}
+\input{sl_slide_graphics_preamble.tex}
+\input{sl_definitions.tex}
+\input{sl_slide_symbols.tex}
+%
+\graphicspath{{"Figs/"}}
+\DeclareMathOperator{\SNR}{SNR}
+\DeclareMathOperator{\snr}{SNR}
+%matrices
+\newcommand{\inv}{^{-1}}
+\newcommand{\I}{\mathbf{I}}
+%prob vector
+\newcommand{\pr}{\mathbf{p}}
+%equilibrium distribution
+\newcommand{\eq}{\pr^\infty}
+%first passage times
+\newcommand{\fpt}{\mathbf{T}}
+%off-diag first passage times
+\newcommand{\fptb}{\overline{\fpt}}
+%other symbols
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\frg}{\W^\mathrm{F}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\F}{\boldsymbol{\Phi}}
+\newcommand{\wv}{\vec{w}}
+%super/subscripts
+\newcommand{\pot}{^{\text{pot}}}
+\newcommand{\dep}{^{\text{dep}}}
+\newcommand{\potdep}{^{\text{pot/dep}}}
+\newcommand{\lmax}{_{\text{max}}}
+\newcommand{\lmin}{_{\text{min}}}
+%quantities
+\newcommand{\initial}{\mathcal{I}}
+\newcommand{\area}{\mathcal{A}}
+\newcommand{\CS}{\mathcal{S}}
+\newcommand{\comp}{^\mathrm{c}}
+\renewcommand{\e}{\mathsf{e}}
+%---------Title-----------------------------------------------------------
+
+\title[Impaired learning with enhanced plasticity]{Understanding impaired learning with enhanced plasticity}
+%
+\subtitle{\small{based on work in preparation with: T.D. Barbara Nguyen-Vu, Grace Q. Zhao, Aparna Suvrathan, Han-Mi Lee, Surya Ganguli, Carla J. Shatz, Jennifer L. Raymond
+}}
+%
+\author{Subhaneil Lahiri%\inst{1}
+}
+%
+\institute[Stanford]{%
+%\inst{1}
+Stanford University, Applied Physics
+}
+%
+%\slideCaption{}
+
+%---------Beginning--------------------------------------------------------
+
+\begin{document}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}
+%
+ \titlepage
+ \note[item]{Acknowledge Barbara and Grace}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Introduction}
+%
+\parbox[t]{0.69\linewidth}{%
+ Learning requires synaptic plasticity.\\
+ Expect enhanced plasticity \lto\ enhance learning.
+}
+\parbox[t]{0.29\linewidth}{%
+ \hfill{\alignmid{\includegraphics[width=0.4\linewidth]{the_brain_by_lonewolf16.jpg}}}
+}
+ \\
+ \citerr{Tang1999enhancedLearning,Malleret2001enhancedLearning,Guan2009enhancedLearning}\\
+ \note[item]{It does help in some cases}
+\onslide<2->
+\parbox[t]{0.69\linewidth}{%
+ But often: \lto\ impairment.
+}
+\parbox[t]{0.29\linewidth}{%
+ \hfill{\alignmid{\includegraphics[width=0.4\linewidth]{pinky_by_lonewolf16.jpg}}}
+}
+ \\
+ \citerr{Migaud1998impairedLearning,Uetani2000impairedLearning,Hayashi2004impairedConsolidation}\\
+ \citerr{Cox2003impairedLearning,Rutten2008impairedLearning,Koekkoek2005impairedConditioning}\\
+ \note[item]{Want to understand when and why}
+
+ \onslide<3->\vp Mice with enhanced cerebellar plasticity can show both impaired and enhanced learning.
+ \note[item]{Depends on circumstance. Rich pattern of behaviour}
+
+ \vp Simple synapses cannot explain behaviour.\\
+ \lto\ Necessary \& sufficient conditions on complex synapses to replicate this.
+ \note[item]{Develop understanding of when and why learning is enhanced/impaired}
+%
+\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Outline}
+%%
+% %\tableofcontents[hideallsubsections]
+% \begin{itemize}
+%   \item Motor learning
+% \begin{itemize}
+%   \vp\item Cerebellar learning of mice with enhanced plasticity
+%
+%   \vp\item Complex synaptic models
+% \end{itemize}
+%   \vp\item (Memory capacity of complex synapses)
+% \end{itemize}
+% %
+%%
+%\end{frame}
+%
+%%%-------------Section--------------------------------------------------------
+%%
+%%\section{VOR learning and the cerebellum}
+%%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Vestibulo-Occular Reflex}
+%%
+% \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.99\linewidth]{VOR.svg}}}
+% \parbox[t]{0.59\linewidth}{%
+% Eye movements compensate for head movements to maintain fixation.
+%
+% \vp Requires control of $\text{VOR gain} = \frac{\text{eye velocity}}{\text{head velocity}}$.
+%
+% \vp Needs to be adjusted as eye muscles age, \etc
+% }
+%
+%%
+%\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Vestibulo-Occular Reflex training}
+%
+\note[item]{Explain what VOR gain is}
+ \parbox[t]{0.2\linewidth}{%
+   \aligntop{\includegraphics[width=0.99\linewidth]{VORinc.svg}}
+     \note[item]{trick brain into thinking VOR gain needs adjusting my moving visual stimulus}
+     \note[item]{anti-phase \lto\ increase gain}
+
+   \vp\aligntop{\includegraphics[width=0.99\linewidth]{VORdec.svg}}
+     \note[item]{in phase \lto\ decrease gain}
+   }
+ \hspace{0.15\linewidth}
+ \parbox[t]{0.59\linewidth}{%
+   \aligntop{\includegraphics[width=0.99\linewidth]{VORcircuit.svg}}
+
+   \vp \begin{tabular}{ll}
+   Gain increase: & LTD in PF-Pk synapses.\\
+   Gain decrease: & different mechanism,\\
+    & also reverses LTD in PF-Pk.
+   \end{tabular}
+ }
+   \note[item]{Gain change involves cerebellum}
+   \note[item]{If we enhanced plasticity here: expect enhanced learning}
+%   \note[item]{Marr-Albus-Ito: Pf-Pk synapses}
+%   \note[item]{Lisberger-Miles: Vestibular input-VN synapses}
+%   \note[item]{Different mechs for different freq, head angle, gain up/down.}
+%   \note[item]{Different Pk cells have different tunings.}
+%   \note[item]{Gain up in case of interest: LTD in Pf-Pk in flocculus}
+%   \note[item]{Gain down: uses different mech for behaviour, but does reverse LTD in Pf-Pk in flocculus}
+%   \note[item]{PF-Pk:PF+CF \lto\ LTD, PF+\cancel{CF} \lto\ LTP.}
+
+ \citerr{duLac1995review,Boyden2004review}
+%
+\end{frame}
+
+%%-------------Section--------------------------------------------------------
+%
+%\section{The effects of enhanced plasticity and saturation}
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Enhanced plasticity impairs learning}
+%
+ \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
+ Knockout of MHC-I D$^\mathsf{b}$K$^\mathsf{b}$ molecules in PF-Pk synapses\\
+ \citerr{McConnell2009MHCcerebellum}\\
+ \begin{tabular}{r@{ }c}
+ \lto\ lower threshold for LTD &
+ \lto\ enhanced plasticity\\
+  & $\downarrow$\\
+ \alert{Hypothesis:} & enhanced learning.
+ \end{tabular}
+ \note[item]{Easier LTD \lto\ expect better learning}
+
+ \begin{center}
+ \begin{tabular}{lr}
+%   Baseline & \hspace{0.1\linewidth} &
+%   Gain increase \\[0.5cm]
+%   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} &&
+   \alignmid{\includegraphics[width=0.2\linewidth]{VORinc.svg}}&
+   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}\\
+   &\alert{Experiment:} enhanced plasticity \lto\ impaired learning.
+ \end{tabular}
+ \end{center}
+% \note[item]{No difference in baseline occulomotor performance}
+ \note[item]{Impairment of learning}
+ \note[item]{Looking at change of VOR gain during gain-up training}
+%
+\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Viral rescue removes defect}
+%%
+% Local injection of Pk specific virus used to restore the knocked-out molecules.
+%
+% \vp\begin{center}
+%   \alignmid{\includegraphics[width=0.3\linewidth]{rescue.svg}}
+%   \hspace{0.1\linewidth}
+%   \alignmid{\includegraphics[width=0.5\linewidth]{rescue_results.svg}}
+% \end{center}
+% \note[item]{removes defect}
+% \note[item]{tells us that it is these PF-Pk synapses that are important}
+% \note[item]{But what mechanism?}
+%%
+%\end{frame}
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Depletion hypothesis}
+%
+ Learning rate $\sim$ intrinsic plasticity rate $\times$ \# synapses available for LTD.
+ \begin{center}
+% \begin{tabular}{ccc}
+%   Error model & \hspace{0.1\linewidth} & Saturation model \\[1cm]
+%   \alignmid{\includegraphics[width=0.3\linewidth]{err_model.svg}} &&
+   \aligntop{\includegraphics[width=0.25\linewidth]{sat_model.svg}}
+   \hspace{0.1\linewidth}
+   \parbox[t]{0.6\linewidth}{%
+   \begin{itemize}
+   \visible<2>{
+     \item Mimic depletion with ChR2 stim of CF
+     \item Biochemical marker of LTD
+   \end{itemize}
+   
+   \vp
+   \aligntop{\includegraphics[width=0.99\linewidth]{desat.svg}}}
+   }
+   
+   \vp\alert{Question 1:} Can depletion effect overcome enhanced intrinsic plasticity? 
+   
+% \end{tabular}
+   \vp    
+
+ \end{center}
+% \note[item]{Older explanation: error model}
+ \note[item]{Our model: baseline activity \lto\ saturation \lto\ less depression possible}
+ \note[item]{Saturation has to compete with enhanced plsaticity. Which will win?}
+ \note[item]<2>{Prediction: replenish with rev-training \lto\ rescue}
+%
+\end{frame}
+
+%%%-------------Slide--------------------------------------------------------
+%%
+%%\begin{frame}{Evidence}
+%%%
+%% \begin{itemize}
+%%   \item Elevated pSer880 - biochemical signature of LTD in region.
+%%   \note[item]{predicted by saturation}
+%%
+%%   \vp \item Local, targeted viral rescue restores WT learning.
+%%   \note[item]{must be these synapses}
+%%
+%%   \vp \item CF stimulation  \lto\ KO learning.
+%%   \note[item]{using ChR2 \lto\ saturation by different mechanism}
+%% \end{itemize}
+%%%
+%%\end{frame}
+%%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Evidence: level of depression}
+%%
+% \aligntop{\includegraphics[width=0.3\linewidth]{pSer880.svg}}
+% \hp
+% \parbox[t]{0.6\linewidth}{%
+% Basal level of GluR2 phosphorylation at serine 880 in AMPA receptor.
+%
+% \vp Biochemical signature of PF-Pk LTD.
+%
+% \vp Shows that \# depressed synapses in flocculus is larger in KO than WT.
+% \note[item]{Predicted by saturation hypothesis}
+% }
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Evidence: saturation by CF stimulation}
+%%
+% Use Channelrhodopsin to stimulate CF \parbox[t]{0.45\linewidth}{%
+% \lto\ increase LTD in PF-Pk synapses \\
+% \lto\ simulate saturation in WT.
+% }
+% \note[item]{should result in similar behaviour to KO}
+%
+% \vp\begin{center}
+%   \alignmid{\includegraphics[width=0.4\linewidth]{CFstim.svg}}
+%   \hspace{0.1\linewidth}
+%   \alignmid{\includegraphics[width=0.4\linewidth]{CFstim_results.svg}}
+% \end{center}
+%%
+%\end{frame}
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Replenishment by reverse-training}
+%
+ %
+ \begin{center}
+%   \includegraphics[width=0.7\linewidth]{desat.svg}
+%
+   %\vp 
+   \includegraphics[width=0.6\linewidth]{gain_dec.svg}
+   
+   \vp
+   \visible<2->{
+   \alignmid{\includegraphics[width=0.2\linewidth]{data_shifted_WT.svg}}
+   \hspace{0.2\linewidth}
+   \alignmid{\includegraphics[width=0.2\linewidth]{data_shifted_KO.svg}}
+   }
+ \end{center}
+ 
+ \visible<2->{\alert{Question 2:} How can \emph{too much} replenishment impair learning?}
+ %
+ \note[item]{precede gain inc training w/ gain dec rev-training: reverses LTD}
+ \note[item]{but behaviour from elsewhere \lto\ not modelled}
+ \note[item]{Focus on gain inc part}
+%
+\end{frame}
+
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Summary of training results}
+%%
+% \begin{center}
+%   \only<1,6>{\alignmid{\includegraphics[width=0.29\linewidth]{data_shifted.svg}}}%
+%   \only<2>{\alignmid{\includegraphics[width=0.29\linewidth]{data_shifted_top.svg}}}%
+%   \only<3>{\alignmid{\includegraphics[width=0.29\linewidth]{data_shifted_bottom.svg}}}%
+%   \only<4>{\alignmid{\includegraphics[width=0.29\linewidth]{data_shifted_right.svg}}}%
+%   \only<5>{\alignmid{\includegraphics[width=0.29\linewidth]{data_shifted_left.svg}}}
+%   \hspace{0.05\linewidth}
+%   \only<1>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_none.svg}}}%
+%   \only<2>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_top.svg}}}%
+%   \only<3>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_bottom.svg}}}%
+%   \only<4>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_right.svg}}}%
+%   \only<5>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_leftright.svg}}}%
+%   \only<6>{\alignmid{\includegraphics[width=0.55\linewidth]{comparisons_all.svg}}}
+% \end{center}
+% \note[item]{Restricted to gain inc for comparison}
+%% \note[item]{Black: WT. Red: Enh.Plas}
+% \note[item]{Solid: no pre. Dashed: with pre}
+% \note[item]{Initial slope only}
+%% \note[item]{Horz and vert comparisons: conceptual}
+% \note[item]<2->{Enh.Plas. hurts w/o. Competition?}
+% \note[item]<3->{Enh.Plas. helps w/. Expected}
+% \note[item]<4->{now we can compare w/o,w/ rev}
+% \note[item]<4->{rev helps Enh.Plas. as expected}
+% \note[item]<5->{but rev hurts WT. Question}
+% \note[item]<6>{Summarize: Enh.Plas. can impair/enhance. Rev can impair/enhance}
+% \note[item]<6>{Diagonal comparisons: parameter fitting. Depend on size of mut vs.\ rev}
+%% \note[item]{top and left most restrictive}
+%% \note[item]{Pay attention to solid: black above red}
+%% \note[item]{Pay attention to black: solid above dashed}
+%% \note[item]{Concentrate on initial slope}
+%
+% \onslide<2->Questions:
+%%
+% \begin{itemize}
+%   \item<2-> Can the depletion effect overcome enhanced intrinsic plasticity?
+%%   \note[item]{in competition}
+%   \item<5-> How can a little replenishment help, but too much hurt?
+%%   \note[item]{first makes sense, but second?}
+%%   \item Can we find a purely synaptic explanation of these results?
+% \end{itemize}
+%%
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Questions}
+%%
+% \begin{itemize}
+%   \item Can the saturation effect overcome the enhanced plasticity?
+%   \note[item]{in competition}
+%   \item How can a little reverse bias help, but too much hurt?
+%   \note[item]{first makes sense, but second?}
+%   \item Can we find a purely synaptic explanation of these results?
+%   \note[item]{This is a question about synaptic populations after all.}
+% \end{itemize}
+%%
+%\end{frame}
+%
+%%-------------Section--------------------------------------------------------
+%
+%\section{Modelling approach}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Model of circuit}
+%%
+% %
+% \begin{center}
+%   \includegraphics[width=0.9\linewidth]{VORmodel.svg}
+% \end{center}
+% %
+% \note[item]{Contralateral baseline shift compensates for Our baseline shift}
+% \note[item]{Gain increase due to LTD at lightning}
+% \note[item]{Gain decease due to plasticity elsewhere, but also reverses LTD at lightning.}
+% \note[item]{Nonlinearity here won't affect our questions, as long as it doesn't change}
+% \note[item]{Nonlinearity before compensation could change things}
+%%
+%\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Behaviour to synapses}
+%%
+%\begin{center}
+% \alignmid{\includegraphics[width=0.3\linewidth]{VORinc.svg}}
+% \hspace{0.2\linewidth}
+% \alignmid{\includegraphics[width=0.4\linewidth]{VORcircuit.svg}}
+% \note[item]{Focus on synapses. See if we can understand this behaviour.}
+%\end{center}
+%%
+%\end{frame}
+%%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Complex synapses}
+%
+ \begin{center}
+  \aligntop{\includegraphics[width=4cm]{synapse.svg}}\hp
+  %
+  %
+  \hp\aligntop{\includegraphics[width=2cm]{pot.svg}}
+  \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
+ \end{center}
+  %
+  \note[item]{Not just synaptic weight, internal dynamical system}
+  \note[item]{Important for memory: simple synapses -- terrible storage, rescued by complexity}
+  \note[item]{Multiple functional states w/ different weights}
+  \note[item]{Stochastic transitions between states}
+
+  \vp Assumptions:
+\begin{itemize}
+%  \item No spatial/temporal patterns in plasticity events.
+  \item Candidate plasticity events occur independently at each synapse,
+
+  \item Each synapse responds with the same state-dependent rules,
+      %
+%      \note[item]{pot/dep occur randomly}
+      %
+%  \item \rule{0mm}{0mm}\cancel{Synaptic identity} \lto\ synaptic distribution.
+  \item Keep track of distribution of synapses across states.
+      %
+      \note[item]{allows us to concentrate on synapse, not neuron/network}
+      \note[item]{This is a question about synaptic populations after all.}
+%  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
+%      %
+%      \note[item]{don't care if STDP...}
+%      %
+%  \item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
+%      %
+\end{itemize}
+  \vp\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
+%
+\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Simplifying assumptions}
+%%
+%\begin{itemize}
+%  \item No spatial/temporal correlations in plasticity events.
+%      %
+%      \note[item]{allows us to concentrate on synapse, not neuron/network}
+%      %
+%%  \item Which synapses eligible for plasticity chosen randomly.
+%      %
+%      \note[item]{No filing system}
+%      %
+%  \vp\item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
+%      %
+%      \note[item]{don't care if STDP...}
+%%      %
+%%      \note[item]{$r=$ total rate of plasticity events per synapse, $f\potdep=$ fraction of events that are potentiating/depressing.}
+%      %
+%  \vp\item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
+%%      %
+%%      \note[item]{matrix elements: transition prob from $i\to j$, given pot/dep}
+%%  \item Ideal observer: read weights directly.
+%%      \note[item]{not electrical activity: don't model neurons/network}
+%%      \note[item]{upper bound on electrical activity readout}
+%%      %
+%%  \item Synaptic weights can only take values $\pm1$.
+%%      %
+%%      \note[item]{looks like binary synapse from outside. Inside...}
+%      %
+%  \vp\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
+%\end{itemize}
+%%
+%\end{frame}
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Models of synaptic dynamics}
+%
+%  There are $N$ identical synapses with $M$ internal functional states.
+  %
+  \begin{center}
+    \only<1>{\includegraphics[width=0.9\linewidth]{synapse_model_1.svg}}
+    \only<2>{\includegraphics[width=0.9\linewidth]{synapse_model_2.svg}}
+  \end{center}
+
+  \onslide<2>\hfill
+  \parbox[t]{0.3\linewidth}{PF+\cancel{CF} \lto\ LTP, \\
+              PF+CF \lto\ LTD.}
+  \parbox[t]{0.27\linewidth}{Lower threshold\\ for LTD}
+  \parbox[t]{0.25\linewidth}{VOR gain increase}
+
+  %
+  \note[item]{stoch process has steady state distribution.}
+  \note[item]{Prior activity puts it in this state. row vec.}
+  \note[item]{plasticity events at rate r}
+  \note[item]{fraction pot/dep}
+  \note[item]{probs changed by Markov matrices, prob $i\to j$}
+  \note[item]{Readout: synaptic weight vec when in each state.}
+    \note<2>[item]{Mutation: lower threshold \lto\ increase transition probs}
+    \note<2>[item]{Training: Changes statistics of LTP/LTD. Only parameters we have. Don't care about $r$.}
+    \note<2>[item]{Learning: Only output we have. Don't keep track of synaptic identity.}
+%    \note<2>[item]{Same PF+CF input \lto\ same $r,f\pot,f\dep$ in each case.}
+%    \note<2>[item]{Input to Pk, some linear combination of $\w$'s. }
+% At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
+% \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
+%
+% \vp Forgetting caused by subsequent memories, evolving as
+%
+%  \begin{equation*}
+%  \begin{aligned}
+%    \diff{\pr(t)}{t} &= r\pr(t)\frg,
+%    &\qquad
+%    \frg &= f\pot\M\pot+f\dep\M\dep-\I,\\&&
+%    \eq\frg &=0.
+%  \end{aligned}
+%  \end{equation*}
+%%
+%  \note[item]{Memory at $t=0$, keep track of pot/dep}
+%  \note[item]{subsequent: average over pot/dep}
+% \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
+% Eventually, this will settle into the equilibrium distribution:
+% %
+% %
+% \note[item]{In equilibrium prior to memory creation}
+%
+\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Modelling VOR learning}
+%%
+%\begin{tabular}{>{\bfseries}ll>{\impl}l}
+%    Mutation: &
+%    Changes mechanism of LTD  &
+%    change $\M\dep$.
+%    \note[item]{lower threshold \lto\ increase off-diagonal elements.}
+% \\[1cm]
+%    Training: &
+%    Changes statistics of LTP/LTD  &
+%    change $r,f\pot,f\dep$.
+%    \note[item]{Only parameters we have. Don't care about $r$.}
+%    \note[item]{Same PF+CF input \lto\ same $r,f\pot,f\dep$ in each case.}
+% \\[1cm]
+%    Learning: &
+%    Change in VOR gain &
+%    fn.\ of decrease in $\av{\w}$.
+%    \note[item]{Only output we have. Don't keep track of synaptic identity.}
+%    \note[item]{Input to Pk, some linear combination of $\w$'s. }
+%\end{tabular}
+%%
+%\end{frame}
+%
+%%-------------Section--------------------------------------------------------
+%
+%\section{Modelling results}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Binary synapse}
+%%
+% %
+% \begin{center}
+%   \includegraphics[width=0.15\linewidth]{binary.svg} \\[1cm]
+%   \aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS.eps}}
+%   \hspace{2cm}
+%   \aligntop{\includegraphics[width=0.35\linewidth]{comparisons_binary.svg}}
+% \end{center}
+% %
+% \note[item]{Compare solid curves}
+% \note[item]{Compare black curves}
+% \note[item]{understand why next slide}
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Binary synapse}
+%%
+% %
+%\adjustbox{valign=m}{\parbox[t]{0.4\linewidth}{
+%  \begin{raggedleft}
+%  Learning rate: \phantom{rate of events} \\
+%  \hp\hp\parbox{0.75\linewidth}{%
+%  $\sim$ rate of events\\
+%  $\times$ prob.\ of transition\\
+%  $\times$ prob.\ ready for $\Delta w$\\
+%  $\times$ (-$\Delta w$)}
+%  \end{raggedleft}
+%}}
+%% \begin{center}
+%\alignmid{\parbox[t]{0.5\linewidth}{
+% \begin{tabular}{ccc}
+%   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_wt_wo.svg}}
+%   & \alignmid{\includegraphics[height=0.12\linewidth]{left_bad.svg}} &
+%   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_ko_wo.svg}}
+%   \\[1.5cm] \alignmid{\includegraphics[height=0.12\linewidth]{up_bad.svg}}
+%   && \alignmid{\includegraphics[height=0.12\linewidth]{up_good.svg}}\\[0.5cm]
+%   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_wt_w.svg}}
+%   & \alignmid{\includegraphics[height=0.12\linewidth]{left_good.svg}} &
+%   \alignmid{\includegraphics[height=0.5\linewidth]{binary_bar_ko_w.svg}}
+% \end{tabular}
+%}}
+%% \end{center}
+% %
+% \note[item]{WT: start with everything equal -- just for illustration, not essential}
+% \note[item]{WT: during training, increase $f\dep$ (green arrow) $\to$ weakening.}
+% \note[item]{KO: inc $q\pot\to$ bias}
+% \note[item]{KO: competition between inc prob trans \& dec prob ready}
+% \note[item]{KO: first one wins. see why after next model}
+% \note[item]{pre: reduces/reverses bias. always helps.}
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Serial synapse}
+%%
+% %
+% \begin{center}
+%   \includegraphics[width=0.5\linewidth]{serial.svg}\\
+%   \citerr{Leibold2008serial} \\[1cm]
+% \note[item]{Still looks binary from outside. Hidden states (not essential).}
+% \note[item]{Only see $\Delta w$ at boundary.}
+%   \aligntop{\includegraphics[width=0.35\linewidth]{serial_learnS.eps}}
+%   \hspace{2cm}
+%   \aligntop{\includegraphics[width=0.35\linewidth]{comparisons_serial.svg}}
+% \end{center}
+% %
+%
+% \note[item]{understand why next slide}
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Serial synapse}
+%%
+%   \citerr{Leibold2008serial} \\
+% %
+% \begin{center}
+% \begin{tabular}{ccc}
+%   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_wt_wo.svg}}
+%   & \alignmid{\includegraphics[height=0.05\linewidth]{right_good.svg}} &
+%   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_ko_wo.svg}}
+%   \\[1.5cm] \alignmid{\includegraphics[height=0.05\linewidth]{down_good.svg}}
+%   && \alignmid{\includegraphics[height=0.05\linewidth]{up_good.svg}}\\[0.5cm]
+%   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_wt_w.svg}}
+%   & \alignmid{\includegraphics[height=0.05\linewidth]{left_good.svg}} &
+%   \alignmid{\includegraphics[height=0.19\linewidth]{serial_bar_ko_w.svg}}
+% \end{tabular}
+% \end{center}
+% %
+% \note[item]{Now only get signal from crossing boundary}
+% \note[item]{KO: inc $q\pot\to$ bias, now exponential}
+% \note[item]{KO: prob ready wins over prob trans, now exponential}
+% \note[item]{pre: reduces/reverses bias.}
+% \note[item]{pre: little reverse bias repopulates bndry, helps.}
+% \note[item]{pre: too much reverse bias moves away from bndry, hurts.}
+% \note[item]{maths next slide}
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Mathematical explanation}
+%%
+% %
+% \begin{center}
+%   \includegraphics[width=0.4\linewidth]{serial_label.svg}
+% \end{center}
+% %
+% \vp Serial synapse: $\eq_i \sim \CN \prn{\frac{q\pot}{q\dep}}^i$.
+%
+% \vp Learning rate $\sim \eq_{M/2}\prn{\frac{q\dep}{q\pot}} = \CN \prn{\frac{q\pot}{q\dep}}^{\frac{M}{2}-1}$.
+% \note[item]{Detailed balance. Exponential decay.}
+%
+% \vp For $M>2$: larger $q\dep \implies$ slower learning.
+% \note[item]{for large enough $M,q\pot$, overcome $\CN$}
+%
+% \vp For $M=2$: larger $q\dep \implies$ larger $\CN \implies$ faster learning.
+% \note[item]{Other factor in $\eq$ smaller $\implies \CN$ larger.}
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Model results}
+%%
+% \begin{center}
+% \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+%   Binary model & Serial Model \\[0.5cm]
+%   \alignmid{\includegraphics[height=0.07\linewidth]{binary.svg}} &
+%   \alignmid{\includegraphics[height=0.07\linewidth]{serial.svg}}\\[1cm]
+%   \aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}} &
+%   \aligntop{\includegraphics[height=0.35\linewidth]{serial_learnS.svg}}
+% \end{tabular}
+% \end{center}
+% \note[item]{Binary fails -- mathematical prrof for any params}
+% \note[item]{Enh.Plas: faster depression wins over bias}
+% \note[item]{pre: reduces/reverses bias. always helps.}
+% \note[item]{Serial: still only two weights. Works.}
+% \note[item]{Understand by looking at distributions before training}
+% \citerr{Leibold2008serial}
+%%
+%\end{frame}
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Simple synapses cannot explain the data}
+%
+ \begin{center}
+ \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+   \aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}} &
+   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
+   \aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}} &
+   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted.svg}}
+ \end{tabular}
+ \end{center}
+ \note[item]{Binary fails -- mathematical proof for any params}
+ \note[item]{Enh.Plas: faster depression wins over bias}
+ \note[item]{pre: reduces/reverses bias. always helps.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Complex synapses can explain the data}
+%
+ \begin{center}
+ \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+   \aligntop{\includegraphics[height=0.15\linewidth]{serial.svg}} &
+   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
+   \aligntop{\includegraphics[height=0.35\linewidth]{serial_learnS.svg}} &
+   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted.svg}}
+ \end{tabular}
+ \end{center}
+ \note[item]{Serial: still only two weights. Works.}
+ \note[item]{Understand by looking at distributions before training}
+ \citerr{Leibold2008serial}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Enhanced plasticity can enhance or impair learning}
+%
+ %
+ \begin{center}
+ \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+   {\includegraphics[height=0.3\linewidth]{binary_bar_ko_wo_s.svg}}&
+   {\includegraphics[height=0.3\linewidth]{serial_bar_ko_wo_s.svg}}\\[1cm]
+   Intrinsic plasticity  & Depletion dominates \\
+   dominates depletion & intrinsic plasticity\\
+   $\downarrow$ & $\downarrow$ \\
+   enhanced plasticity & enhanced plasticity \\
+   enhances learning & impairs learning
+ \end{tabular}
+ \end{center}
+ \note[item]{Binary: enhanced plasticity \lto\ bias}
+ \note[item]{Not enough to overcome faster depression}
+ \note[item]{Serial: Only get signal from boundary}
+ \note[item]{Exponential decay depopulates boundary, enhances effect of bias}
+ %
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Reverse-training can impair or enhance learning}
+%
+ %
+ \begin{center}
+ \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+   {\includegraphics[height=0.2\linewidth]{serial_bar_wt_w_s.svg}}&
+   {\includegraphics[height=0.2\linewidth]{serial_bar_ko_w_s.svg}}\\[1cm]
+   reverse-training &
+   reverse-training \\
+   depopulates boundary &
+   repopulates boundary \\
+   $\downarrow$ & $\downarrow$ \\
+   impaired learning & enhanced learning
+ \end{tabular}
+ \end{center}
+ \note[item]{rev-training: little repopulates boundary}
+ \note[item]{Too much pushes to other side, depopulates boundary}
+ \note[item]{this effect is absent in any simple synapse}
+ %
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Essential features}
+%
+ %
+ \begin{center}
+   \includegraphics[width=0.4\linewidth]{serial_s.svg}
+ \end{center}
+ %
+ \vp The success of the serial model relies on two features:
+ \begin{itemize}
+   \item Complexity - needed to amplify the effect of depletion,
+   \note[item]{due to exponential decay}
+   \item Metaplasticity -- repeated potentiation makes subsequent depression harder.
+   \note[item]{push away from boundary where signal generated}
+ \end{itemize}
+ \note[item]{borne out by other models that fail/succeed}
+
+ %\visible<2>{
+ \begin{center}
+ \begin{tabular}{c@{\hp}c}
+    Fail:&
+    Succeed:\\[0.3cm]
+    \aligntop{\includegraphics[width=0.3\linewidth]{pooled_s.svg}}&
+    \aligntop{\includegraphics[width=0.3\linewidth]{cascade_s.svg}}\\[1.5cm]
+    \aligntop{\includegraphics[width=0.3\linewidth]{multistate_s.svg}}&
+    \aligntop{\includegraphics[width=0.3\linewidth]{multistate_nonuni_s.svg}}
+ \end{tabular}
+ \end{center}
+ \citerr{amit1994learning,Fusi2005cascade}
+ %}
+%
+\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Other models that fail}
+%%
+% \begin{tabular}{ll}
+%   % & for next tab, \\ for new line...
+%    \aligntop{\includegraphics[width=0.4\linewidth]{multistate.svg}}\hspace{1.5cm} &
+%    \aligntop{\includegraphics[width=0.28\linewidth]{multistate_learnS.eps}}
+%    \note[item]{MS: linear weights, unlike serial.}
+%    \note[item]{like bunch of binary synapses in series.}
+%    \note[item]{solid curves: fails early on , but catches up quickly}
+%    \note[item]{black curves: fails badly}
+%    \note[item]{No real enhancement of saturation, no metaplasticity.}
+%    \note[item]{All transitions contribute: pushing to end has little effect.}
+%    \\[2cm]
+%    \aligntop{\includegraphics[width=0.4\linewidth]{pooled.svg}} &
+%    \aligntop{\includegraphics[width=0.28\linewidth]{pooled_scarce_learnS.eps}}
+%    \note[item]{Pooled: resource depleted by pot/dep. replenished by reverse.}
+%    \note[item]{solid curves succeed: enhanced saturation}
+%    \note[item]{black curves fail: opposite metaplasticity, pot makes dep easier}
+% \end{tabular}
+%
+% \citerr{amit1994learning}
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Other models that work}
+%%
+% \begin{tabular}{ll}
+%   % & for next tab, \\ for new line...
+%    \aligntop{\includegraphics[width=0.4\linewidth]{multistate_nonuni.svg}}\hspace{1.5cm} &
+%    \aligntop{\includegraphics[width=0.28\linewidth]{nonuni_learnS.eps}} \\[2cm]
+%    \aligntop{\includegraphics[width=0.4\linewidth]{cascade.svg}} &
+%    \aligntop{\includegraphics[width=0.28\linewidth]{cascade_long_learnS.eps}}
+% \end{tabular}
+% \note[item]{Both models, trans probs decay exponentially from centre.}
+% \note[item]{Nonuni: linear weights. Cascade: binary weights.}
+% \note[item]{Enhanced saturation and metaplasticity}
+% \note[item]{Pushing to end makes pot and dep harder}
+% \note[item]{Note: hidden states not necessary}
+%
+% \citerr{Fusi2005cascade}
+%%
+%\end{frame}
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Conclusions}
+%
+ \begin{itemize}
+%   \item The saturation effect can overcome faster depression, if it is enhanced.
+%   \alert{Requires complexity}
+%   \note[item]{\eg exponential deacy, resource depletion,\ldots}
+%   \item A little reverse bias can help, but too much hurts, if repeated potentiation makes depression harder.
+%   \alert{Requires metaplasticity}
+%   \note[item]{\eg moving away from weight boundary, or weaker transitions.}
+   \item We find diverse behavioural patterns in these mutant mice:\\
+
+   \alert{Enhanced plasticity \lto\ enhance/impair} learning depending on prior experience.\\
+   \alert{Reverse-training \lto\ enhance/impair} learning depending on plasticity rates.
+
+   \item We can explain these behavioural patterns using synaptic models.
+
+   \item Key required synaptic properties are:\\
+   \alert{Synaptic complexity:} necessary to amplify depletion.\\
+   \alert{Synaptic stubbornness:} repeated potentiation makes subsequent depression harder.
+
+   \item  We used behaviour to constrain the dynamics of synaptic plasticity
+\end{itemize}
+%
+\end{frame}
+
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Tradeoff: learning vs.\ remembering}
+%%
+% What about memory?
+% \begin{itemize}
+%   \vp\item Simple synapses have poor memory storage capacity. \\
+%   Synaptic complexity is needed for rescue.\\
+%   \citerr{amit1992constraints,amit1994learning}
+%
+%   \vp\item Trade-off between learning and remembering:\\
+%   Too rigid \lto\ difficult to learn new memories.\\
+%   Too plastic \lto\ new memories quickly overwrite old.
+%
+%   \vp\item Exploring the \emph{entire} space of complex synaptic models \\
+%   \lto\ upper bounds on their storage ability \\
+%   \& the models that saturate them.
+% \end{itemize}
+%
+% \rref{Lahiri and Ganguli (submitted)}
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{The frontiers of complex synaptic memory}
+%%
+% We have $N$ synapses with $M$ internal states each.
+%
+% \vp We study the decay of one memory over time due to corruption by subsequent memories.
+%
+% \vp We prove that, no matter what the structure, no synaptic model can have:\\
+% \begin{itemize}
+%   \item initial fidelity (SNR) greater than $\sqrt{N}$.
+%   \item memory lifetime greater than $\sim\sqrt{N}M$.
+%   \item fidelity decay slower than $\sim\sqrt{N}M/t$.
+% \end{itemize}
+%
+% \vp At late times, fidelity is maximised by a model with a simple chain structure.
+%%
+%\end{frame}
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Acknowledgements}
+%
+ \begin{tabular}{lll}
+   \textbf{Surya Ganguli} & \textbf{Jennifer Raymond} & \textbf{Carla Shatz} \\
+   Madhu Advani & Barbara Nguyen-Vu & Han-Mi Lee \\
+   Peiran Gao & Grace Zhao & \\
+   Niru Maheswaranathan & Aparna Suvrathan \\
+   Ben Poole \\
+   Jascha Sohl-Dickstein
+ \end{tabular}
+
+ \vp\textbf{Funding}: Swartz Foundation, Stanford Bio-X Genentech fellowship.
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}[allowframebreaks]{References}
+%
+
+ {\small
+ \bibliographystyle{unsrt_slides}
+ \bibliography{maths,neuro}
+ }
+%
+\end{frame}
+
+
+%-----End----------------------------------------------------------------
+
+\end{document}
+
