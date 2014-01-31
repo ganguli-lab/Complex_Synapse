@@ -50,9 +50,9 @@
 \renewcommand{\e}{\mathsf{e}}
 %---------Title-----------------------------------------------------------
 
-\title[Impaired learning with enhanced plasticity]{Understanding impaired learning with enhanced plasticity}
+\title[Impaired/enhanced learning w/ enhanced plasticity]{Modeling impaired  and enhanced learning with enhanced plasticity}
 %
-\subtitle{\small{based on work in preparation with: T.D. Barbara Nguyen-Vu, Grace Q. Zhao, Aparna Suvrathan, Han-Mi Lee, Surya Ganguli, Carla J. Shatz, Jennifer L. Raymond
+\subtitle{\small{based on work with: T.D. Barbara Nguyen-Vu, Grace Q. Zhao, Aparna Suvrathan, Han-Mi Lee, Surya Ganguli, Carla J. Shatz, Jennifer L. Raymond
 }}
 %
 \author{Subhaneil Lahiri%\inst{1}
@@ -258,15 +258,15 @@ Stanford University, Applied Physics
      \item Mimic depletion with ChR2 stim of CF
      \item Biochemical marker of LTD
    \end{itemize}
-   
+
    \vp
    \aligntop{\includegraphics[width=0.99\linewidth]{desat.svg}}}
    }
-   
-   \vp\alert{Question 1:} Can depletion effect overcome enhanced intrinsic plasticity? 
-   
+
+   \vp\alert{Question 1:} Can depletion effect overcome enhanced intrinsic plasticity?
+
 % \end{tabular}
-   \vp    
+   \vp
 
  \end{center}
 % \note[item]{Older explanation: error model}
@@ -336,18 +336,21 @@ Stanford University, Applied Physics
  \begin{center}
 %   \includegraphics[width=0.7\linewidth]{desat.svg}
 %
-   %\vp 
-   \includegraphics[width=0.6\linewidth]{gain_dec.svg}
-   
-   \vp
-   \visible<2->{
-   \alignmid{\includegraphics[width=0.2\linewidth]{data_shifted_WT.svg}}
-   \hspace{0.2\linewidth}
-   \alignmid{\includegraphics[width=0.2\linewidth]{data_shifted_KO.svg}}
+   %\vp
+   \only<1>{\includegraphics[width=0.7\linewidth]{gain_dec.svg}}%
+%
+%   \vp
+   \only<2->{
+   \begin{tabular}{c@{\hspace{0.2\linewidth}}c}
+   WT &  \color{red!60!black}{Enh.\ Plast.}\\[0.2cm]
+   \aligntop{\includegraphics[width=0.3\linewidth]{data_shifted_WT.svg}}
+   &
+   \aligntop{\includegraphics[width=0.3\linewidth]{data_shifted_KO.svg}}
+   \end{tabular}
    }
  \end{center}
- 
- \visible<2->{\alert{Question 2:} How can \emph{too much} replenishment impair learning?}
+
+ \visible<2->{\vp\alert{Question 2:} How can \emph{too much} replenishment impair learning?}
  %
  \note[item]{precede gain inc training w/ gain dec rev-training: reverses LTD}
  \note[item]{but behaviour from elsewhere \lto\ not modelled}
@@ -453,48 +456,48 @@ Stanford University, Applied Physics
 %%
 %\end{frame}
 %%
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Complex synapses}
+%%-------------Slide--------------------------------------------------------
 %
- \begin{center}
-  \aligntop{\includegraphics[width=4cm]{synapse.svg}}\hp
-  %
-  %
-  \hp\aligntop{\includegraphics[width=2cm]{pot.svg}}
-  \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
- \end{center}
-  %
-  \note[item]{Not just synaptic weight, internal dynamical system}
-  \note[item]{Important for memory: simple synapses -- terrible storage, rescued by complexity}
-  \note[item]{Multiple functional states w/ different weights}
-  \note[item]{Stochastic transitions between states}
-
-  \vp Assumptions:
-\begin{itemize}
-%  \item No spatial/temporal patterns in plasticity events.
-  \item Candidate plasticity events occur independently at each synapse,
-
-  \item Each synapse responds with the same state-dependent rules,
-      %
-%      \note[item]{pot/dep occur randomly}
-      %
-%  \item \rule{0mm}{0mm}\cancel{Synaptic identity} \lto\ synaptic distribution.
-  \item Keep track of distribution of synapses across states.
-      %
-      \note[item]{allows us to concentrate on synapse, not neuron/network}
-      \note[item]{This is a question about synaptic populations after all.}
-%  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
-%      %
-%      \note[item]{don't care if STDP...}
-%      %
-%  \item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
-%      %
-\end{itemize}
-  \vp\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
+%\begin{frame}{Complex synapses}
+%%
+% \begin{center}
+%  \aligntop{\includegraphics[width=4cm]{synapse.svg}}\hp
+%  %
+%  %
+%  \hp\aligntop{\includegraphics[width=2cm]{pot.svg}}
+%  \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
+% \end{center}
+%  %
+%  \note[item]{Not just synaptic weight, internal dynamical system}
+%  \note[item]{Important for memory: simple synapses -- terrible storage, rescued by complexity}
+%  \note[item]{Multiple functional states w/ different weights}
+%  \note[item]{Stochastic transitions between states}
 %
-\end{frame}
-
+%  \vp Assumptions:
+%\begin{itemize}
+%%  \item No spatial/temporal patterns in plasticity events.
+%  \item Candidate plasticity events occur independently at each synapse,
+%
+%  \item Each synapse responds with the same state-dependent rules,
+%      %
+%%      \note[item]{pot/dep occur randomly}
+%      %
+%%  \item \rule{0mm}{0mm}\cancel{Synaptic identity} \lto\ synaptic distribution.
+%  \item Keep track of distribution of synapses across states.
+%      %
+%      \note[item]{allows us to concentrate on synapse, not neuron/network}
+%      \note[item]{This is a question about synaptic populations after all.}
+%%  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
+%%      %
+%%      \note[item]{don't care if STDP...}
+%%      %
+%%  \item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
+%%      %
+%\end{itemize}
+%  \vp\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
+%%
+%\end{frame}
+%
 %%-------------Slide--------------------------------------------------------
 %
 %\begin{frame}{Simplifying assumptions}
@@ -532,25 +535,37 @@ Stanford University, Applied Physics
 %
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Models of synaptic dynamics}
+\begin{frame}{Models of complex synaptic dynamics}
 %
 %  There are $N$ identical synapses with $M$ internal functional states.
+  \begin{itemize}
+    \item Internal functional state of synapse \lto\ synaptic weight.
+    \item Candidate plasticity events \lto\ transitions between states
+  \end{itemize}
   %
   \begin{center}
-    \only<1>{\includegraphics[width=0.9\linewidth]{synapse_model_1.svg}}
-    \only<2>{\includegraphics[width=0.9\linewidth]{synapse_model_2.svg}}
+  \begin{overlayarea}{0.7\linewidth}{0.3\linewidth}
+    \only<1>{\includegraphics[width=0.99\linewidth]{synapse_model_1.svg}}%
+    \only<2>{\includegraphics[width=0.99\linewidth]{synapse_model_2.svg}}
+  \end{overlayarea}
   \end{center}
 
-  \onslide<2>\hfill
+  \onslide<2>{\hfill
   \parbox[t]{0.3\linewidth}{PF+\cancel{CF} \lto\ LTP, \\
               PF+CF \lto\ LTD.}
   \parbox[t]{0.27\linewidth}{Lower threshold\\ for LTD}
-  \parbox[t]{0.25\linewidth}{VOR gain increase}
+  \parbox[t]{0.27\linewidth}{VOR gain increase}}
 
+  \vp
+  \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
+  
+  \onslide<2>{\citerr{Smith2006savings}}
   %
-  \note[item]{stoch process has steady state distribution.}
-  \note[item]{Prior activity puts it in this state. row vec.}
-  \note[item]{plasticity events at rate r}
+  \note[item]{complex synapse: not just synaptic weight. dynamical system}
+  \note[item]{important for memory with bounded synapses}
+%  \note[item]{stoch process has steady state distribution.}
+%  \note[item]{Prior activity puts it in this state. row vec.}
+  \note[item]{plasticity events at rate r. indep at each synapse.}
   \note[item]{fraction pot/dep}
   \note[item]{probs changed by Markov matrices, prob $i\to j$}
   \note[item]{Readout: synaptic weight vec when in each state.}
@@ -763,38 +778,61 @@ Stanford University, Applied Physics
 %\end{frame}
 %
 %-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Simple synapses cannot explain the data}
+%%
+% \begin{center}
+% \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+%   \aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}} &
+%   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
+%   \aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}} &
+%   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted.svg}}
+% \end{tabular}
+% \end{center}
+% \note[item]{Binary fails -- mathematical proof for any params}
+% \note[item]{Enh.Plas: faster depression wins over bias}
+% \note[item]{pre: reduces/reverses bias. always helps.}
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Complex synapses can explain the data}
+%%
+% \begin{center}
+% \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+%   \aligntop{\includegraphics[height=0.15\linewidth]{serial.svg}} &
+%   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
+%   \aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS.svg}} &
+%   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted.svg}}
+% \end{tabular}
+% \end{center}
+% \note[item]{Serial: still only two weights. Works.}
+% \note[item]{Understand by looking at distributions before training}
+% \citerr{Leibold2008serial}
+%%
+%\end{frame}
+%
+%-------------Slide--------------------------------------------------------
 
-\begin{frame}{Simple synapses cannot explain the data}
+\begin{frame}{Complex synapses are required to explain the data}
 %
  \begin{center}
- \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
-   \aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}} &
-   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
-   \aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}} &
-   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted.svg}}
+ \begin{tabular}{c@{\hspace{0.05\linewidth}}c@{\hspace{0.05\linewidth}}c}
+   \aligntop{\includegraphics[height=0.12\linewidth]{binary.svg}} &
+   \aligntop{\includegraphics[height=0.12\linewidth]{serial.svg}} &
+   \aligntop{\includegraphics[height=0.2\linewidth]{VORinc.svg}}\\[2.5cm]
+   \aligntop{\includegraphics[height=0.27\linewidth]{binary_learnS.svg}} &
+   \aligntop{\includegraphics[height=0.27\linewidth]{serial_fit_learnS.svg}} &
+   \aligntop{\includegraphics[height=0.27\linewidth]{data_shifted.svg}}
  \end{tabular}
  \end{center}
  \note[item]{Binary fails -- mathematical proof for any params}
  \note[item]{Enh.Plas: faster depression wins over bias}
  \note[item]{pre: reduces/reverses bias. always helps.}
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Complex synapses can explain the data}
-%
- \begin{center}
- \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
-   \aligntop{\includegraphics[height=0.15\linewidth]{serial.svg}} &
-   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
-   \aligntop{\includegraphics[height=0.35\linewidth]{serial_learnS.svg}} &
-   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted.svg}}
- \end{tabular}
- \end{center}
  \note[item]{Serial: still only two weights. Works.}
  \note[item]{Understand by looking at distributions before training}
- \citerr{Leibold2008serial}
+ \citerr{Leibold2008serial,Ben-DayanRubin2007sparse}
 %
 \end{frame}
 
@@ -805,8 +843,8 @@ Stanford University, Applied Physics
  %
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
-   {\includegraphics[height=0.3\linewidth]{binary_bar_ko_wo_s.svg}}&
-   {\includegraphics[height=0.3\linewidth]{serial_bar_ko_wo_s.svg}}\\[1cm]
+   {\includegraphics[height=0.2\linewidth]{binary_bar_ko_wo_s.svg}}&
+   {\includegraphics[height=0.2\linewidth]{serial_bar_ko_wo_s.svg}}\\[1cm]
    Intrinsic plasticity  & Depletion dominates \\
    dominates depletion & intrinsic plasticity\\
    $\downarrow$ & $\downarrow$ \\
@@ -819,6 +857,9 @@ Stanford University, Applied Physics
  \note[item]{Serial: Only get signal from boundary}
  \note[item]{Exponential decay depopulates boundary, enhances effect of bias}
  %
+ 
+ \vp\alert{Key feature 1:} Synaptic complexity that amplifies depletion effect.
+ \note[item]{borne out by other models}
 %
 \end{frame}
 
@@ -842,45 +883,49 @@ Stanford University, Applied Physics
  \note[item]{rev-training: little repopulates boundary}
  \note[item]{Too much pushes to other side, depopulates boundary}
  \note[item]{this effect is absent in any simple synapse}
- %
-%
-\end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Essential features}
-%
+ \vp\alert{Key feature 2:} ``Stubborn'' metaplasticity.
+ \note[item]{repeated potentiation makes subsequent depression harder}
+ \note[item]{borne out by other models}
  %
- \begin{center}
-   \includegraphics[width=0.4\linewidth]{serial_s.svg}
- \end{center}
- %
- \vp The success of the serial model relies on two features:
- \begin{itemize}
-   \item Complexity - needed to amplify the effect of depletion,
-   \note[item]{due to exponential decay}
-   \item Metaplasticity -- repeated potentiation makes subsequent depression harder.
-   \note[item]{push away from boundary where signal generated}
- \end{itemize}
- \note[item]{borne out by other models that fail/succeed}
-
- %\visible<2>{
- \begin{center}
- \begin{tabular}{c@{\hp}c}
-    Fail:&
-    Succeed:\\[0.3cm]
-    \aligntop{\includegraphics[width=0.3\linewidth]{pooled_s.svg}}&
-    \aligntop{\includegraphics[width=0.3\linewidth]{cascade_s.svg}}\\[1.5cm]
-    \aligntop{\includegraphics[width=0.3\linewidth]{multistate_s.svg}}&
-    \aligntop{\includegraphics[width=0.3\linewidth]{multistate_nonuni_s.svg}}
- \end{tabular}
- \end{center}
- \citerr{amit1994learning,Fusi2005cascade}
- %}
 %
 \end{frame}
 
 %%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Essential features}
+%%
+% %
+% \begin{center}
+%   \includegraphics[width=0.4\linewidth]{serial_s.svg}
+% \end{center}
+% %
+% \vp The success of the serial model relies on two features:
+% \begin{itemize}
+%   \item Complexity - needed to amplify the effect of depletion,
+%   \note[item]{due to exponential decay}
+%   \item Metaplasticity -- repeated potentiation makes subsequent depression harder.
+%   \note[item]{push away from boundary where signal generated}
+% \end{itemize}
+% \note[item]{borne out by other models that fail/succeed}
+%
+% %\visible<2>{
+% \begin{center}
+% \begin{tabular}{c@{\hp}c}
+%    Fail:&
+%    Succeed:\\[0.3cm]
+%    \aligntop{\includegraphics[width=0.3\linewidth]{pooled_s.svg}}&
+%    \aligntop{\includegraphics[width=0.3\linewidth]{cascade_s.svg}}\\[1.5cm]
+%    \aligntop{\includegraphics[width=0.3\linewidth]{multistate_s.svg}}&
+%    \aligntop{\includegraphics[width=0.3\linewidth]{multistate_nonuni_s.svg}}
+% \end{tabular}
+% \end{center}
+% \citerr{amit1994learning,Fusi2005cascade}
+% %}
+%%
+%\end{frame}
+%
+%%%-------------Slide--------------------------------------------------------
 %
 %\begin{frame}{Other models that fail}
 %%
@@ -1011,20 +1056,86 @@ Stanford University, Applied Physics
  \end{tabular}
 
  \vp\textbf{Funding}: Swartz Foundation, Stanford Bio-X Genentech fellowship.
+%    \stoppagecounthere
 %
 \end{frame}
 
 %-------------Slide--------------------------------------------------------
-
+\appendix
 \begin{frame}[allowframebreaks]{References}
 %
 
- {\small
+ {\tiny
  \bibliographystyle{unsrt_slides}
  \bibliography{maths,neuro}
  }
 %
 \end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Model of circuit}
+%
+ %
+ \begin{center}
+   \includegraphics[width=0.9\linewidth]{VORmodel.svg}
+ \end{center}
+ %
+ \note[item]{Contralateral baseline shift compensates for Our baseline shift}
+ \note[item]{Gain increase due to LTD at lightning}
+ \note[item]{Gain decease due to plasticity elsewhere, but also reverses LTD at lightning.}
+ \note[item]{Nonlinearity here won't affect our questions, as long as it doesn't change}
+ \note[item]{Nonlinearity before compensation could change things}
+%
+\end{frame}
+%%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Other models that fail}
+%
+ \begin{tabular}{ll}
+   % & for next tab, \\ for new line...
+    \aligntop{\includegraphics[width=0.4\linewidth]{multistate.svg}}\hspace{1.5cm} &
+    \aligntop{\includegraphics[width=0.28\linewidth]{multistate_learnS.eps}}
+    \note[item]{MS: linear weights, unlike serial.}
+    \note[item]{like bunch of binary synapses in series.}
+    \note[item]{solid curves: fails early on , but catches up quickly}
+    \note[item]{black curves: fails badly}
+    \note[item]{No real enhancement of saturation, no metaplasticity.}
+    \note[item]{All transitions contribute: pushing to end has little effect.}
+    \\[2cm]
+    \aligntop{\includegraphics[width=0.4\linewidth]{pooled.svg}} &
+    \aligntop{\includegraphics[width=0.28\linewidth]{pooled_scarce_learnS.eps}}
+    \note[item]{Pooled: resource depleted by pot/dep. replenished by reverse.}
+    \note[item]{solid curves succeed: enhanced saturation}
+    \note[item]{black curves fail: opposite metaplasticity, pot makes dep easier}
+ \end{tabular}
+
+ \citerr{amit1994learning}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Other models that work}
+%
+ \begin{tabular}{ll}
+   % & for next tab, \\ for new line...
+    \aligntop{\includegraphics[width=0.4\linewidth]{multistate_nonuni.svg}}\hspace{1.5cm} &
+    \aligntop{\includegraphics[width=0.28\linewidth]{nonuni_fit_learnS.eps}} \\[2cm]
+    \aligntop{\includegraphics[width=0.4\linewidth]{cascade.svg}} &
+    \aligntop{\includegraphics[width=0.28\linewidth]{cascade_fit_learnS.eps}}
+ \end{tabular}
+ \note[item]{Both models, trans probs decay exponentially from centre.}
+ \note[item]{Nonuni: linear weights. Cascade: binary weights.}
+ \note[item]{Enhanced saturation and metaplasticity}
+ \note[item]{Pushing to end makes pot and dep harder}
+ \note[item]{Note: hidden states not necessary}
+
+ \citerr{Fusi2005cascade}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
 
 
 %-----End----------------------------------------------------------------
