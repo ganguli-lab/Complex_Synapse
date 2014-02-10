@@ -686,6 +686,13 @@ This will not change our conclusions either.
 
 As we didn't need the pre-training paradigm to rule out this model, we don't need to look at removing the symmetry between gain-increase and decrease.
 
+Because for this simple binary synapse model, the ratio of the numbers of potentiated and depressed synapses is equal to the ratio of the potentiating and depressing transition rates. 
+This means that the leading effects of enhanced intrinsic plasticity rates and saturation bias cancel each other. 
+This is eve true as the number of synapses available for further plasticity approaches zero, which requires that the depressing transition be infinitely stronger than the potentiating transition, compensating for the saturation. 
+There is a requirement that the total number of synapses, potentiated and depressed, is fixed. 
+This normalization effect always dampens the effect of saturation bias, so that the effect of enhanced intrinsic plasticity rates always dominates. 
+Thus, we always see enhanced learning with enhanced plasticity with the binary synapse model.
+
 The only thing we have to worry about is when the wild-type catches up with the \KO\ models.
 As the total change will be larger for the wild-type than \KO\ models, it must overtake eventually.
 If this happens early enough, the initial period, where the \KO\ models learns faster than wild-type, would not be seen in the experiment.
