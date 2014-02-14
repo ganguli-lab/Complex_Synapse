@@ -1,0 +1,137 @@
+\begin{figure}[p]
+ \begin{center}
+ \parbox{0.8\linewidth}{%
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[height=1.7cm]{serial.svg}}\label{fig:serial_model}\hspace{0.5cm}
+  \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary_model}\hspace{0.5cm}\\[1cm]
+  \item\aligntop{\includegraphics[height=1.7cm]{multistate.svg}}\label{fig:multistate_model}\hspace{0.5cm}
+  \item\aligntop{\includegraphics[height=2.5cm]{cascade.svg}}\label{fig:cascade_model}
+ \end{myenuma}
+ }
+ \end{center}
+  \caption[Transition probabilities for different models]{Transition probabilities for different models.
+  Potentiation induces transitions indicated by orange arrows, depression indicated by blue arrows.
+  States of strong/weak synaptic weight indicated by orange/blue circles.
+  (\ref{fig:serial_model}) In the serial model the transition probabilities for potentiation/depression are all equal and it is parameterised by these two values.
+  The synaptic weight takes only two values, $\pm1$.
+  (\ref{fig:binary_model}) The two-state model is parameterised by the two transition probabilities.
+  (\ref{fig:multistate_model}) In the multistate model the transition probabilities for potentiation/depression are all equal and it is parameterised X
+  by these two values.
+  The synaptic weight varies linearly in the interval $[-1,1]$.
+  (\ref{fig:cascade_model}) In the cascade model, the transition probabilities decay geometrically with a parameter $x$ (see \cite{Fusi2005cascade}) and synaptic weight takes only two values.
+  } \label{fig:models}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[p]
+ \begin{center}
+  \aligntop{\includegraphics[height=4cm]{pooled.svg}}
+ \end{center}
+  \caption[The pooled resource model]{The pooled resource model.
+  Several two-state synapses share resources that are required for potentiation and depression.
+  These resources are depleted as more synapses are potentiated or depressed.
+  This pool of synapses can be modelled as one compound synapse.} \label{fig:pooled_model}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[p]
+ \begin{center}
+  \aligntop{\includegraphics[height=3cm]{multistate_nonuni.svg}}
+ \end{center}
+  \caption[The non-uniform multistate model]{The non-uniform multistate model.
+  Similar to the multistate model, \autoref{fig:models}\ref{fig:multistate_model}), the synaptic weight varies linearly in the interval $[-1,1]$, but the transition probabilities between adjacent states decays exponentially away from the central transition for both potentiation and depression.} \label{fig:nonuni_model}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[p]
+\begin{myenuma}
+  \begin{tabular}{l@{\hspace{0.05\linewidth}}l@{\hspace{0.05\linewidth}}l}
+      \item\label{fig:seial_sim}
+      \aligntop{\includegraphics[width=0.25\linewidth]{serial.svg}}
+      &
+      \item\label{fig:binary_sim}
+      \hspace{0.05\linewidth}\aligntop{\includegraphics[width=0.125\linewidth]{binary.svg}}
+      &
+      \item\label{fig:multistate_sim}
+      \aligntop{\includegraphics[width=0.25\linewidth]{multistate.svg}}
+      \\[1.5cm]
+      \aligntop{\includegraphics[width=0.3\linewidth]{multistate_med_learnS.eps}}
+      &
+      \aligntop{\includegraphics[width=0.3\linewidth]{binary_learnS.eps}}
+      &
+      \aligntop{\includegraphics[width=0.3\linewidth]{multistate_lin_learnS.eps}}
+      \\[5.5cm]
+      \item\label{fig:pooled_sim}
+      \aligntop{\includegraphics[width=0.3\linewidth]{pooled_deponly.svg}}
+      &
+      \item\label{fig:cascade_sim}
+      \aligntop{\includegraphics[width=0.25\linewidth]{cascade.svg}}
+      &
+      \item\label{fig:nonuni_sim}
+      \aligntop{\includegraphics[width=0.25\linewidth]{multistate_nonuni.svg}}
+      \\[2cm]
+      \aligntop{\includegraphics[width=0.3\linewidth]{pooled_deponly_learnS.eps}}
+      &
+      \aligntop{\includegraphics[width=0.3\linewidth]{cascade_long_learnS.eps}}
+      &
+      \aligntop{\includegraphics[width=0.3\linewidth]{nonuni_learnS.eps}}
+  \end{tabular}
+
+  \vspace{1cm}\item\label{tab:params}\aligntop{
+  \begin{tabularn}{|l|c|c|c|c|c|c|}
+    \cline{1-7}
+    Model & \# states & pot & WT dep & \KO\ dep & $\Delta f$ & $r\tpre$ \\
+    \cline{1-7}
+    Serial        & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.3  & 20  &\label{tr:multistate_med} \\
+    Two-state     & 2  & $q=0.1$  & $q=0.1$  & $q=0.2$  & 0.1  & 5   &\label{tr:binary} \\
+    Multistate    & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.3  & 5   &\label{tr:multistate_lin} \\
+    Pooled res. & 7  & $q=0.008$        & $q\in[0.0006,0.6]$  & $q\in[0.001,1]$
+                                          & 0.4 & 20 &\label{tr:pooled_deponly}\\
+    Cascade       & 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 100 &\label{tr:cascade_long} \\
+    Non-uni. MS& 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 150 &\label{tr:nonuni} \\
+    \cline{1-7}
+  \end{tabularn}}
+  \end{myenuma}
+  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models. (\ref{tab:params}) Parameters used for simulations.}\label{fig:sim_results}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[p]
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=7cm]{multistate_betastar.eps}}\label{fig:multistate_betastar}
+  \item\aligntop{\includegraphics[width=7cm]{multistate_deltafstar.eps}}\label{fig:multistate_deltafstar}
+ \end{myenuma}
+ \end{center}
+  \caption[The functions $\beta^*(M)$ and $\Delta f^*(\beta,M)$]{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the \KO\ models have impaired learning, and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[p]
+ \begin{center}
+ \begin{myenuma}
+  \item\aligntop{\includegraphics[width=4.5cm]{serial_fit_learnS.eps}}\label{fig:serial_fit}
+  \item\aligntop{\includegraphics[width=4.5cm]{cascade_fit_learnS.eps}}\label{fig:cascade_fit}
+  \item\aligntop{\includegraphics[width=4.5cm]{nonuni_fit_learnS.eps}}\label{fig:nonuni_fit}
+
+  \vspace{1cm}\item\label{tab:fit}\aligntop{
+  \begin{tabularn}{|l|c|c|c|c|c|c|c|c|c|}
+    \cline{1-10}
+    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+    Model & \#  & \multicolumn{3}{c|}{parameter} & \multicolumn{3}{c|}{$f\dep$} & \multicolumn{2}{c|}{$rt$} \\
+    \cline{3-10}
+    & states & pot & WT dep & {\footnotesize\KO} dep & base & inc & dec & train & pre \\
+
+    \cline{1-10}
+    Serial   & 10 & $0.12$  & $0.14$  & $0.2$  & 0.5 & 0.11 & 0.89 & 5  & 100  &\label{tr:serial_fit} \\
+    Cascade  & 14 & $0.386$  & $0.398$  & $0.466$  & 0.522 & 0.63 & 0.002 & 1.5  & 200  &\label{tr:cascade_fit} \\
+    Non-uni. & 12 & $0.4$    & $0.4$    & $0.53$   & 0.5 & 0.7 & 0.1 & 5  & 500  &\label{tr:nonuni_fit} \\
+    \cline{1-10}
+  \end{tabularn}}
+ \end{myenuma}
+ \end{center}
+  \caption[Learning curves for models after parameter fitting]{Learning curves restricted to gain-increase training, for (\ref{fig:serial_fit}) the serial model, (\ref{fig:cascade_fit}) the cascade model, and (\ref{fig:nonuni_fit}) the non-uniform multistate model.
+  (\ref{tab:fit}) Parameters used to reproduce detailed experimental results. For the serial model, the parameter listed is the transition probability between adjacent states. For the cascade and non-uniform multistate models, the parameter is the ratio of adjacent transition probabilities.}\label{fig:fit}
+\end{figure}
+\efloatseparator
+ 

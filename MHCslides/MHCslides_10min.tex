@@ -841,7 +841,10 @@ Stanford University, Applied Physics
    \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
    \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
    &
-   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}
+   \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
+   \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
+   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_right_nl.svg}}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
  \end{tabular}
  \end{center}
  \note[item]{Serial: still only two weights. Works.}
@@ -1170,6 +1173,27 @@ Stanford University, Applied Physics
 \end{frame}
 
 %-------------Slide--------------------------------------------------------
+
+\begin{frame}{Mathematical explanation}
+%
+ %
+ \begin{center}
+   \includegraphics[width=0.4\linewidth]{serial_label.svg}
+ \end{center}
+ %
+ \vp Serial synapse: $\eq_i \sim \CN \prn{\frac{q\pot}{q\dep}}^i$.
+
+ \vp Learning rate $\sim \eq_{M/2}\prn{\frac{q\dep}{q\pot}} = \CN \prn{\frac{q\pot}{q\dep}}^{\frac{M}{2}-1}$.
+ \note[item]{Detailed balance. Exponential decay.}
+
+ \vp For $M>2$: larger $q\dep \implies$ slower learning.
+ \note[item]{for large enough $M,q\pot$, overcome $\CN$}
+
+ \vp For $M=2$: larger $q\dep \implies$ larger $\CN \implies$ faster learning.
+ \note[item]{Other factor in $\eq$ smaller $\implies \CN$ larger.}
+%
+\end{frame}
+
 
 
 %-----End----------------------------------------------------------------
