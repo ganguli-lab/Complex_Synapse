@@ -192,7 +192,7 @@ Stanford University, Applied Physics
    \vp \begin{tabular}{ll}
    Gain increase: & LTD in PF-Pk synapses.\\
    \end{tabular}
-   
+
    \vp  \aligntop{\includegraphics[width=0.8\linewidth]{ltd.svg}}
 
  }
@@ -271,7 +271,7 @@ Stanford University, Applied Physics
 %   Error model & \hspace{0.1\linewidth} & Saturation model \\[1cm]
 %   \alignmid{\includegraphics[width=0.3\linewidth]{err_model.svg}} &&
    \only<1>{\aligntop{\includegraphics[width=0.25\linewidth]{sat_model_1.svg}}}%
-   \only<2>{\aligntop{\includegraphics[width=0.25\linewidth]{sat_model_2.svg}}}%   
+   \only<2>{\aligntop{\includegraphics[width=0.25\linewidth]{sat_model_2.svg}}}%
    \only<3>{\aligntop{\includegraphics[width=0.25\linewidth]{sat_model_3.svg}}}%
    \hspace{0.1\linewidth}
    \parbox[t]{0.6\linewidth}{%
@@ -812,10 +812,14 @@ Stanford University, Applied Physics
    \aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}} &
    \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}}}%
-   \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_ko_wo_s.svg}}}%
-   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
+   \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS_top.svg}}}%
+   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_ko_wo_s.svg}}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS_left.svg}}}%
+   \only<5>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
    &
-   \aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}
+   \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
+   \only<2-3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
+   \only<4-5>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
  \end{tabular}
  \end{center}
  \note[item]{Binary fails -- mathematical proof for any params}
