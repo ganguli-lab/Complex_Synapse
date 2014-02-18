@@ -218,7 +218,7 @@ Stanford University, Applied Physics
 
 \begin{frame}{Enhanced plasticity impairs learning}
 %
- \alert{Expectaton:} enhanced LTD \lto\ enhanced learning.
+ \alert{Expectation:} enhanced LTD \lto\ enhanced learning.
 
  \begin{center}
  \begin{tabular}{lr}
@@ -566,12 +566,17 @@ Stanford University, Applied Physics
     \item Candidate plasticity events \lto\ transitions between states
   \end{itemize}
   %
+  \vp
   \begin{center}
 %  \begin{overlayarea}{0.7\linewidth}{0.3\linewidth}
 %    \only<1>{\includegraphics[width=0.99\linewidth]{synapse_model_1.svg}}%
 %    \only<2>{\includegraphics[width=0.99\linewidth]{synapse_model_2.svg}}
 %  \end{overlayarea}
-    \movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}
+    \aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
+    \hspace{0.05\linewidth}\parbox[t]{0.32\linewidth}{\raggedright
+    Mutation: trans.\ probs. \\ \vp
+    Training: event rates \\ \vp
+    Learning: $\av{\text{weight}}$.}
   \end{center}
 
 %  \onslide<2>{\hfill
@@ -581,9 +586,8 @@ Stanford University, Applied Physics
 %  \parbox[t]{0.27\linewidth}{VOR gain increase}}
 
   \vp
-  \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
+  \footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}\\\citerr{Smith2006savings,Lahiri2013synapse}
 
-  {\citerr{Smith2006savings}}
   %
   \note[item]{complex synapse: not just synaptic weight. dynamical system}
   \note[item]{important for memory with bounded synapses}
@@ -809,17 +813,20 @@ Stanford University, Applied Physics
 %
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
-   \aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}} &
-   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
-   \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}}}%
-   \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS_top.svg}}}%
-   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_ko_wo_s.svg}}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS_left.svg}}}%
-   \only<5>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
+   \only<1>{\aligntop{\includegraphics[height=0.15\linewidth]{multistate.svg}}}%
+   \only<2-6>{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
    &
-   \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
-   \only<2-3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
-   \only<4-5>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
+   \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{blank_learnS.svg}}}%
+   \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}}}%
+   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS_top.svg}}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_ko_wo_s.svg}}}%
+   \only<5>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS_left.svg}}}%
+   \only<6>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
+   &
+   \only<1-2>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
+   \only<3-4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
+   \only<5-6>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
  \end{tabular}
  \end{center}
  \note[item]{Binary fails -- mathematical proof for any params}
@@ -838,18 +845,20 @@ Stanford University, Applied Physics
    \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS.svg}}}%
    \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_wo_s.svg}}}%
-   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
+%   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
+   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
    &
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
    \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
-   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_right_nl.svg}}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+%   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_right_nl.svg}}}%
+   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
  \end{tabular}
  \end{center}
+  \visible<3>{\alert{Key:} ``Stubborn'' metaplasticity}\\
+ \citerr{Leibold2008serial,Ben-DayanRubin2007sparse}
+
  \note[item]{Serial: still only two weights. Works.}
  \note[item]{Understand by looking at distributions before training}
- \citerr{Leibold2008serial}
 %
 \end{frame}
 
