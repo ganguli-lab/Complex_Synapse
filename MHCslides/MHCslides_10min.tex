@@ -50,12 +50,12 @@
 \renewcommand{\e}{\mathsf{e}}
 %---------Title-----------------------------------------------------------
 
-\title[Imp./enh.\ learning w/ enh.\ plasticity]{Modelling impaired  and enhanced learning with enhanced plasticity}
+\title[Impaired/enhanced learning w/ enhanced plasticity]{Modelling impaired  and enhanced learning with enhanced plasticity}
 %
-\subtitle{\small{based on work with: Barbara Nguyen-Vu, Grace Zhao, Aparna Suvrathan, Han-Mi Lee, Surya Ganguli, Carla Shatz and Jennifer Raymond
-}}
+%\subtitle{\small{based on work with: Barbara Nguyen-Vu, Grace Zhao, Aparna Suvrathan, Han-Mi Lee, Surya Ganguli, Carla Shatz and Jennifer Raymond
+%}}
 %
-\author{Subhaneil Lahiri%\inst{1}
+\author[S.~Lahiri et al.]{Subhaneil Lahiri, Barbara Nguyen-Vu, Grace Zhao, Aparna Suvrathan, Han-Mi Lee, Surya Ganguli, Carla Shatz and Jennifer Raymond%\inst{1}
 }
 %
 \institute[Stanford]{%
@@ -265,28 +265,29 @@ Stanford University, Applied Physics
 \begin{frame}{Depletion hypothesis}
 %
 {}
- {\color{darkgrey} Learning rate} $\sim$ {\color{darkblue}intrinsic plasticity rate} $\times$ {\color{darkred}\# synapses available for LTD}.
+ {\color{darkgrey} Learning rate} $\sim$ {\color{darkgreen}intrinsic plasticity rate} $\times$ {\color{darkblue}\# synapses available for LTD}.
+ 
+ \vp
  \begin{center}
-% \begin{tabular}{ccc}
-%   Error model & \hspace{0.1\linewidth} & Saturation model \\[1cm]
-%   \alignmid{\includegraphics[width=0.3\linewidth]{err_model.svg}} &&
+
+   \parbox[t]{0.3\linewidth}{%\raggedright
+     \visible<1,2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_wt_wo_n.svg}}}
+   }
+   %
    \only<1>{\aligntop{\includegraphics[width=0.25\linewidth]{sat_model_1.svg}}}%
    \only<2>{\aligntop{\includegraphics[width=0.25\linewidth]{sat_model_2.svg}}}%
-   \only<3>{\aligntop{\includegraphics[width=0.25\linewidth]{sat_model_3.svg}}}%
+   %
    \hspace{0.1\linewidth}
-   \parbox[t]{0.6\linewidth}{%
-   \raggedleft
-     \aligntop{\includegraphics[height=0.5\linewidth]{binary_bar_wt_wo_n.svg}}
-     \hspace{0.1\linewidth}
-     \visible<2->{
-     \aligntop{\includegraphics[height=0.5\linewidth]{binary_bar_ko_wo_n.svg}}}
+   %
+   \parbox[t]{0.3\linewidth}{%\raggedleft
+     \visible<2->{\aligntop{\includegraphics[height=\linewidth]{binary_bar_ko_wo_n.svg}}}
    }
 
-   \vp\visible<3>{\alert{Question 1:} {\color{darkred}depletion effect} competes with {\color{darkblue}enhanced intrinsic plasticity}.
+   \vp\visible<2>{\alert{Question 1:} {\color{darkblue}depletion effect} competes with {\color{darkgreen}enhanced intrinsic plasticity}.
    Which effect is stronger?}
 
 % \end{tabular}
-   \vp
+%   \vp
 
  \end{center}
 % \note[item]{Older explanation: error model}
@@ -572,11 +573,28 @@ Stanford University, Applied Physics
 %    \only<1>{\includegraphics[width=0.99\linewidth]{synapse_model_1.svg}}%
 %    \only<2>{\includegraphics[width=0.99\linewidth]{synapse_model_2.svg}}
 %  \end{overlayarea}
-    \aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
-    \hspace{0.05\linewidth}\parbox[t]{0.32\linewidth}{\raggedright
+%    \aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
+    \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+    \only<2>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
+    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
+    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
+    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
+    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
+    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
+    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
+    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
+    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
+    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
+    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
+    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
+    \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
+    \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+    %
+    \hspace{0.05\linewidth}\parbox[t]{0.4\linewidth}{\raggedright
+    \visible<15>{
     Mutation: trans.\ probs. \\ \vp
-    Training: event rates \\ \vp
-    Learning: $\av{\text{weight}}$.}
+    Training: plast. event rates \\ \vp
+    Learning: synaptic weight}}
   \end{center}
 
 %  \onslide<2>{\hfill
@@ -816,17 +834,21 @@ Stanford University, Applied Physics
    \only<1>{\aligntop{\includegraphics[height=0.15\linewidth]{multistate.svg}}}%
    \only<2-6>{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
    &
-   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
-   \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{blank_learnS.svg}}}%
-   \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS.svg}}}%
-   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS_top.svg}}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_ko_wo_s.svg}}}%
-   \only<5>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_learnS_left.svg}}}%
-   \only<6>{\aligntop{\includegraphics[height=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
+   \visible<1-3,5>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
+   \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{blank_learnS.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS.svg}}}%
+   \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_top.svg}}}%
+   \only<4>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_ko_wo_s.svg}}}%
+   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_left.svg}}}%
+   \only<6>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
    &
-   \only<1-2>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
-   \only<3-4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
-   \only<5-6>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+   \only<1-2>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_nl.svg}}}%
+   \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_top_nl.svg}}}%
+   \only<4>{\parbox[t]{0.35\linewidth}{\centering \vp depletion effect\\ $<$ \\ enhanced plasticity \\
+   \vp $\implies$  enhanced learning}}%
+   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+   \only<6>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $\implies$ \\ replenishment \\
+    $\implies$ \\ enhanced learning}}%
  \end{tabular}
  \end{center}
  \note[item]{Binary fails -- mathematical proof for any params}
@@ -842,19 +864,25 @@ Stanford University, Applied Physics
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
    \aligntop{\includegraphics[height=0.15\linewidth]{serial.svg}} &
-   \aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}\\[2cm]
+   \visible<1,2,4>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS.svg}}}%
-   \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_wo_s.svg}}}%
+   \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_top.svg}}}%
+   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_wo_s.svg}}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_left.svg}}}%
 %   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
-   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
+   \only<5>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
    &
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
    \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
+   \only<3>{\parbox[t]{0.35\linewidth}{\centering \vp amplified depletion\\ $>$ \\ enhanced plasticity \\
+   \vp $\implies$  impaired learning}}%
 %   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_right_nl.svg}}}%
-   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+   \only<5>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $+$ \\ ``stubborn'' metaplasticity \\
+   \vp $\implies$  impaired learning}}%
  \end{tabular}
  \end{center}
-  \visible<3>{\alert{Key:} ``Stubborn'' metaplasticity}\\
+%  \visible<3>{\alert{Key:} ``Stubborn'' metaplasticity}\\
  \citerr{Leibold2008serial,Ben-DayanRubin2007sparse}
 
  \note[item]{Serial: still only two weights. Works.}

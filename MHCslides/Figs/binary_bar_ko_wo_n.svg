@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="101.65875"
-   height="132.31264"
+   width="122.76557"
+   height="132.31265"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
@@ -22,19 +22,19 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.9783986"
-     inkscape:cx="18.889833"
-     inkscape:cy="66.081323"
+     inkscape:zoom="9.2371173"
+     inkscape:cx="61.382786"
+     inkscape:cy="66.156324"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:snap-global="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="1264"
-     inkscape:window-height="742"
-     inkscape:window-x="0"
-     inkscape:window-y="780"
+     inkscape:window-width="463"
+     inkscape:window-height="453"
+     inkscape:window-x="100"
+     inkscape:window-y="100"
      inkscape:window-maximized="0"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -47,15 +47,43 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-191.51283px"
+       originx="-191.61269px"
        originy="-591.61185px" />
     <sodipodi:guide
        orientation="1,0"
-       position="189.24139,-46.775692"
+       position="189.14153,-46.775688"
        id="guide3093" />
   </sodipodi:namedview>
   <defs
      id="defs4">
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend"
+       style="overflow:visible">
+      <path
+         id="path4020"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend"
+       style="overflow:visible">
+      <path
+         id="path4014"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
     <marker
        inkscape:stockid="Arrow2Send"
        orient="auto"
@@ -457,7 +485,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -465,7 +493,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-191.51283,-328.43772)">
+     transform="translate(-191.61269,-328.43771)">
     <path
        inkscape:connector-curvature="0"
        id="path130"
@@ -532,12 +560,12 @@
     <text
        xml:space="preserve"
        style="font-size:20px;font-style:normal;font-weight:normal;text-align:center;line-height:125%;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="249.81392"
+       x="255.8139"
        y="347.07025"
        id="text2993-8"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
-         x="249.81392"
+         x="255.8139"
          y="347.07025"
          id="tspan2997-4"
          style="font-size:18px;font-weight:normal;fill:#800000;stroke:none;-inkscape-font-specification:Sans">Enh.Plas.</tspan></text>
@@ -546,7 +574,56 @@
        id="rect3057"
        width="78.207344"
        height="22.758905"
-       x="210.19647"
+       x="216.19647"
        y="329.18771" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-419.32208"
+       y="204.71718"
+       id="text3123"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan3125"
+         x="-419.32208"
+         y="204.71718"
+         style="font-size:18px"># synapses</tspan></text>
+    <path
+       d="m 252.90546,418.36412 6.2083,0 0,-44.02075 -6.2083,0 0,44.02075 z"
+       style="fill:none;stroke:#d40000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:1, 1;stroke-dashoffset:0"
+       id="path170"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Mend)"
+       d="m 64.503668,45.873716 0.100161,15.024146"
+       id="path4005"
+       inkscape:connector-curvature="0"
+       transform="translate(191.51283,328.43772)" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="71.114288"
+       y="55.989975"
+       id="text4749"
+       sodipodi:linespacing="125%"
+       transform="translate(191.51283,328.43772)"><tspan
+         sodipodi:role="line"
+         id="tspan4751"
+         x="71.114288"
+         y="55.989975"
+         style="font-size:16px">impair</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="62.099804"
+       y="130.50974"
+       id="text4753"
+       sodipodi:linespacing="125%"
+       transform="translate(191.51283,328.43772)"><tspan
+         sodipodi:role="line"
+         id="tspan4755"
+         x="62.099804"
+         y="130.50974">enhance</tspan></text>
   </g>
 </svg>
