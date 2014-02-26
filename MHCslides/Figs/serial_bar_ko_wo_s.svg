@@ -26,7 +26,7 @@
      inkscape:cx="105.26563"
      inkscape:cy="139.02165"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g3141"
      showgrid="true"
      inkscape:snap-global="false"
      showguides="true"
@@ -986,7 +986,26 @@
            y="111.39893"
            x="-443.40765"
            id="tspan3122"
-           sodipodi:role="line">State porobability</tspan></text>
+           sodipodi:role="line">State probability</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         x="299.10812"
+         y="391.82935"
+         id="text3121"
+         sodipodi:linespacing="125%"><tspan
+           sodipodi:role="line"
+           id="tspan3123"
+           x="299.10812"
+           y="391.82935"
+           style="font-size:18px">depletion</tspan></text>
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="M 198.30902,135.81486 170.9444,148.99042"
+         id="path3125"
+         inkscape:connector-curvature="0"
+         transform="translate(99.447755,250.94696)"
+         sodipodi:nodetypes="cc" />
     </g>
     <g
        id="g3204"

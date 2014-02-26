@@ -60,7 +60,7 @@
 %
 \institute[Stanford]{%
 %\inst{1}
-Stanford University, Applied Physics
+Stanford University
 }
 %
 \date{March 1, 2014}
@@ -193,7 +193,7 @@ Stanford University, Applied Physics
    VOR increase: & LTD in PF-Pk synapses.\\
    \end{tabular}
 
-   \vp  \aligntop{\includegraphics[width=0.8\linewidth]{ltd.svg}}
+%   \vp  \aligntop{\includegraphics[width=0.8\linewidth]{ltd.svg}}
 
  }
    \note[item]{Gain change involves cerebellum}
@@ -582,10 +582,13 @@ Stanford University, Applied Physics
 \begin{frame}{Models of complex synaptic dynamics}
 %
 %  There are $N$ identical synapses with $M$ internal functional states.
+\parbox[c]{0.82\linewidth}{%
   \begin{itemize}
     \item Internal functional state of synapse \lto\ synaptic weight.
     \item Candidate plasticity events \lto\ transitions between states
   \end{itemize}
+}\hfill
+\alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
   %
   \vp
   \begin{center}
@@ -619,10 +622,10 @@ Stanford University, Applied Physics
     \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
     \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
     %
-    \hspace{0.05\linewidth}\parbox[t]{0.4\linewidth}{\raggedright
+    \hspace{0.05\linewidth}\parbox[t]{0.45\linewidth}{\raggedright
     \visible<13>{
     Mutation: trans.\ probs. \\ \vp
-    Training: plast. event rates \\ \vp
+    Training: freq.\ of pot/dep events \\ \vp
     Learning: synaptic weight}}
   \end{center}
 
@@ -861,7 +864,7 @@ Stanford University, Applied Physics
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
    \only<1>{\aligntop{\includegraphics[height=0.15\linewidth]{multistate.svg}}}%
-   \only<2-6>{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
+   \only<2-5>{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
    &
    \visible<1-3,5>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{blank_learnS.svg}}}%
@@ -869,15 +872,15 @@ Stanford University, Applied Physics
    \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_top.svg}}}%
    \only<4>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_ko_wo_s.svg}}}%
    \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_left.svg}}}%
-   \only<6>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
+%   \only<6>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
    &
    \only<1-2>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_nl.svg}}}%
    \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_top_nl.svg}}}%
    \only<4>{\parbox[t]{0.35\linewidth}{\centering \vp depletion effect\\ $<$ \\ enhanced plasticity \\
    \vp $\implies$  enhanced learning}}%
    \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_left_nl.svg}}}%
-   \only<6>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $\implies$ \\ replenishment \\
-    $\implies$ \\ enhanced learning}}%
+%   \only<6>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $\implies$ \\ replenishment \\
+%    $\implies$ \\ enhanced learning}}%
  \end{tabular}
  \end{center}
  \note[item]{Binary fails -- mathematical proof for any params}
@@ -1092,8 +1095,13 @@ Stanford University, Applied Physics
    \item Diverse behavioural patterns:\\
    \alert{Enhanced plasticity \lto\ enhance/impair} learning (prior experience).\\
    \alert{Reverse-training \lto\ enhance/impair} learning (plasticity rates).
+   
+   \item \alert{enhanced LTD} vs.\ \alert{depletion} \lto\ learning outcome.
+    \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
+    
 
-   \vp\item Predictions for synaptic physiology:\\
+
+   \item Predictions for synaptic physiology:\\
    \alert{Synaptic complexity:} necessary to amplify depletion.\\
    \alert{Synaptic stubbornness:} repeated potentiation makes subsequent depression harder.
 
