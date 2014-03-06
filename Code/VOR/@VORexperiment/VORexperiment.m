@@ -16,7 +16,7 @@ classdef VORexperiment
     
     properties %labels
         WTlabel='WT';
-        KOlabel='D^bK^{b-/-}';
+        KOlabel='K^bD^{b-/-}';
         noprelabel='No Pre-training';
         withprelabel='w/ Pre-training';
         WTcolor='k';

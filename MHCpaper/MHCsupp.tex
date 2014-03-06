@@ -41,9 +41,9 @@
 \newcommand{\dec}{_{\text{dec}}}
 \newcommand{\incdec}{_{\text{inc/dec}}}
 \newcommand{\wt}{_{\text{WT}}}
-%\newcommand{\ko}{_{\text{D$^\mathrm{b}$K$^\mathrm{b}$-/-}}}
-\newcommand{\KO}{D$^\mathrm{b}$K$^{\mathrm{b}-/-}$}
-\newcommand{\ko}{_{\text{MHC}}}
+\newcommand{\ko}{_{\text{K$^\mathrm{b}$D$^\mathrm{b}$-/-}}}
+\newcommand{\KO}{K$^\mathrm{b}$D$^{\mathrm{b}-/-}$}
+%\newcommand{\ko}{_{\text{MHC}}}
 %\newcommand{\KO}{MHC}
 \newcommand{\tpre}{t_{\text{pre}}}
 \newcommand{\ttrain}{t_{\text{train}}}
@@ -370,7 +370,7 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
       \item\label{fig:multistate_sim}
       \aligntop{\includegraphics[width=0.25\linewidth]{multistate.svg}}
       \\[1.5cm]
-      \aligntop{\includegraphics[width=0.3\linewidth]{multistate_med_learnS.eps}}
+      \aligntop{\includegraphics[width=0.3\linewidth]{serial_med_learnS.eps}}
       &
       \aligntop{\includegraphics[width=0.3\linewidth]{binary_learnS.eps}}
       &
@@ -1013,7 +1013,7 @@ However, to avoid confusion, we found parameter values performed reasonably in t
     & states & pot & WT dep & {\footnotesize\KO} dep & base & inc & dec & train & pre \\
 
     \cline{1-10}
-    Serial   & 10 & $0.12$  & $0.14$  & $0.2$  & 0.5 & 0.11 & 0.89 & 5  & 100  &\label{tr:serial_fit} \\
+    Serial   & 10 & $0.12$  & $0.14$  & $0.2$  & 0.5 & 0.89 & 0.11 & 5  & 100  &\label{tr:serial_fit} \\
     Cascade  & 14 & $0.386$  & $0.398$  & $0.466$  & 0.522 & 0.63 & 0.002 & 1.5  & 200  &\label{tr:cascade_fit} \\
     Non-uni. & 12 & $0.4$    & $0.4$    & $0.53$   & 0.5 & 0.7 & 0.1 & 5  & 500  &\label{tr:nonuni_fit} \\
     \cline{1-10}
