@@ -5,7 +5,7 @@ function [ newmodel,loglike ] = FitGUI( truemodel )
 
 S=struct('MaxIter',100,'TolFun',NaN,'TolX',1e-4,'TolFunChange',1,...
     'fp',0.5,'num_ch',30,'num_t',50);
-T=struct('Algorithm','BW','Weighter','RJ');
+T=struct('Algorithm','BW','Weighter','RJ','Penaliser','No');
 AxFontSize=12;
 BtFontSize=12;
 cmapname='Hot';
@@ -341,8 +341,8 @@ MakeButton(4,'Stop',@Stop);
 
     function Update(~,~)
        if ~isempty(simobj(1).potdep)
-           options=struct('PlotFcn',@PlotFcn,'GroundTruth',truemodel);
-           [newmodel,loglike,exitflag,output]=FitSynapse(simobj,newmodel,catstruct(options,S,T));
+           options=SynapseOptimset(catstruct(S,T),'PlotFcn',@PlotFcn,'GroundTruth',truemodel);
+           [newmodel,loglike,exitflag,output]=FitSynapse(simobj,newmodel,options);
            warndlg(['Exit flag: ' int2str(exitflag) '. ' output.message]);
            stopbtn=false;
        end

@@ -15,7 +15,7 @@ end
 
 if nargin>1
     varargin=extractPVpairs(varargin);
-    [options,unused]=UpdateOptions(options,varargin{:});
+    [options,unused]=UpdateOptions(options,varargin);
     options.ExtraParams=[options.ExtraParams unused];
 end
 

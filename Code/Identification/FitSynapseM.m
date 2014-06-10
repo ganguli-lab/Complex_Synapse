@@ -14,119 +14,50 @@ else
     options=SynapseOptimset;
 end
 
-%information about the current state of the optimiser
-optimValues=struct('iteration',0,'procedure',[options.Algorithm ',' options.Weighter ',' options.Penaliser],'funcCount',0,...
-    'NumStates',guessmodel.NumStates,...
-    'fval',[],'prev',[],'truth',[],'stateProb',{{}});
-state='init';
-
-fitmodel=guessmodel.Sort(options.fp);
-optimValues.fval=HMMloglike(fitmodel,simobj);
-
-updater=str2func([options.Penaliser 'penalty']);
-extraArgs=[{'Algorithm',options.Algorithm,'Weighter',options.Weighter},options.ExtraParams];
+[optimValues,fitmodel,updaterfn,extraArgs]=FitSynapseUtility_setup(options,guessmodel,simobj);
 
 exitflag=0;
 msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
 
-%information about the previous state and current state of the optimiser relative to the previous state
-optimValues.prev=struct('model',[],'fval',[],'dfval',[],'KLInitial',[],'KLM',[]);
-%information about the current state of the optimiser relative to ground truth
-if ~isempty(options.GroundTruth)
-    optimValues.truth=struct('model',options.GroundTruth,'fval',[],'dfval',[],'KLInitial',[],'KLM',[]);
-    optimValues.truth.fval=HMMloglike(options.GroundTruth,simobj);
-    optimValues.truth.dfval=optimValues.truth.fval-optimValues.fval;
-end
-
+state='init';
 CallOutFcns;
 
-for i=1:options.MaxIter
+while exitflag==0 &&  optimValues.iteration <= options.MaxIter
     %
     state='interrupt';
-    stop=CallOutFcns;
-    if stop
-        exitflag=-5;
-        msg='Stopped by OuputFcn or PlotFcn';
+    CallOutFcns;
+    if exitflag~=0
         break;
     end
     %
-%store previous model
+    [optimValues,fitmodel,exitflag,msg]=FitSynapseUtility_update(optimValues,options,fitmodel,simobj,updaterfn,extraArgs);
     %
-    optimValues.iteration=i;
-    optimValues.prev.model=fitmodel;
-    optimValues.prev.fval=optimValues.fval;
-    %
-%perform the update
-    %
-    try
-    [fitmodel,optimValues.fval,optimValues.stateProb]=updater(optimValues.prev.model,simobj,...
-        extraArgs{:});
-    fitmodel=fitmodel.Sort(options.fp);
-    catch ME
-        exitflag=-1;
-        msg=['Error: ' ME.message];
+    CallOutFcns;
+    if exitflag~=0
         break;
     end
     %
-%calculate size of changes in model
+    optimValues=FitSynapseUtility_calcchanges(optimValues,fitmodel);
     %
-    [optimValues.prev.KLInitial,optimValues.prev.KLM]=optimValues.prev.model.KLdivs(fitmodel);
-    optimValues.prev.dfval=optimValues.fval-optimValues.prev.fval;
-    optimValues.funcCount=i;
-    %
-%calculate difference of current model from groud truth
-    %
-    if ~isempty(optimValues.truth)
-        %
-        optimValues.truth.dfval=optimValues.truth.fval-optimValues.fval;
-        [optimValues.truth.KLInitial,optimValues.truth.KLM]=optimValues.truth.model.KLdivs(fitmodel);
-        %
-%decide whether or not to continue
-        %
-        if optimValues.truth.dfval < options.TolFun
-            if mean(optimValues.truth.KLM/optimValues.NumStates) < options.TolX
-                    exitflag=1;
-                    msg=['Success. trueloglike - loglike < ' num2str(options.TolFun)...
-                        ' and KLdiv from true model to fit model < ' num2str(options.TolX)];
-                    break;
-            else
-                exitflag=-3;
-                msg=['Not enough data? trueloglike - loglike < ' num2str(options.TolFun)...
-                    ' despite KLdiv from true M to fit M > ' num2str(options.TolX)];
-                break;
-            end
-        end
+    CallOutFcns;
+    if exitflag~=0
+        break;
     end
     %
-%decide whether or not to continue
+    [optimValues,exitflag,msg]=FitSynapseUtility_checktermination(optimValues,options,'M');
     %
-    if optimValues.fval > options.TolFun
-        exitflag=1;
-        msg=['Success. loglike > ' num2str(options.TolFun)];
-        break;
-    elseif mean(optimValues.prev.KLM)/(optimValues.NumStates) < options.TolX && abs(optimValues.prev.dfval) < options.TolFunChange
-        if isnan(options.TolFun)
-            exitflag=1;
-        else
-            exitflag=-2;
-        end
-        msg=['Reached local maximum. Change in loglike < ' num2str(options.TolFunChange)...
-            '. KL-div due to change in model < ' num2str(options.TolX)];
+    CallOutFcns;
+    if exitflag~=0
         break;
     end
     %
     state='iter';
-    stop=CallOutFcns;
-    if stop
-        exitflag=-5;
-        msg='Stopped by OuputFcn or PlotFcn';
-        break;
-    end
-end
+    CallOutFcns;
+    %
+end%while
 
-fval=optimValues.fval;
-output=struct('message',msg,'algortihm',options.Algorithm,'weighter',options.Weighter,'penaliser',options.Penaliser,...
-    'iterations',i,'prev',optimValues.prev,'truth',optimValues.truth);
+[fval,output]=FitSynapseUtility_finish(optimValues,options,msg);
+
 state='done';
 CallOutFcns;
 
@@ -140,6 +71,10 @@ CallOutFcns;
         %
         if ~isempty(options.PlotFcn)
             stopv = options.PlotFcn(fitmodel, optimValues, state);
+        end
+        if stopv
+            exitflag=-5;
+            msg='Stopped by OuputFcn or PlotFcn';
         end
     end
 
