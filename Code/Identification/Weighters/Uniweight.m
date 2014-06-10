@@ -8,6 +8,7 @@ function [ newmodelobj,loglike,pstate ] = Uniweight( modelobj,simobj,varargin )
 %   simobj   = vector of SynapsePlastSeq
 
 Algorithm='BW';%algorithm to apply to each chunk of data
+Normalise=true;
 varargin=assignApplicable(varargin);
 
 updater=str2func([Algorithm 'update']);
@@ -25,9 +26,10 @@ for i=1:length(simobj)
     loglike=loglike+chunkll;
 end
     
-newmodelobj=newmodelobj.Normalise;
-
-assert(newmodelobj.isvalid,'newmodelobj is invalid');
+if Normalise
+    newmodelobj=newmodelobj.Normalise;
+    assert(newmodelobj.isvalid,'newmodelobj is invalid');
+end
 
 end
 

@@ -8,7 +8,7 @@ function [ newmodelobj,loglike,pstate ] = RJweight( modelobj,simobj,varargin )
 
 % lloffset=0;%avoid overflow by making this more positive
 Algorithm='BW';%algorithm to apply to each chunk of data
-Normalise=false;
+Normalise=true;
 varargin=assignApplicable(varargin);
 
 updater=str2func([Algorithm 'update']);
@@ -22,7 +22,7 @@ newmodelobj=modelobj.Zero;
 loglike=0;
 
 for i=1:length(simobj)
-    [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',Normalise,varargin{:});
+    [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',false,varargin{:});
     if ~strcmpi(Algorithm,'BW')
         chunkModel=exp(-lloffset-chunkll)*chunkModel;
     end
@@ -31,9 +31,10 @@ for i=1:length(simobj)
     loglike=loglike+chunkll;
 end
     
-newmodelobj=newmodelobj.Normalise;
-
-assert(newmodelobj.isvalid,'newmodelobj is invalid');
+if Normalise
+    newmodelobj=newmodelobj.Normalise;
+    assert(newmodelobj.isvalid,'newmodelobj is invalid');
+end
 
 end
 

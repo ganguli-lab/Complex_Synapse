@@ -35,16 +35,17 @@ newmodelobj=modelobj.Zero;
 loglike=0;
 
 for i=1:length(simobj)
-    [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',Normalise,varargin{:});
+    [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',true,varargin{:});
     chunkModel=exp(lloffset+HMMloglike(chunkModel,weightsim))*chunkModel;
     newmodelobj=newmodelobj+chunkModel;
     pstate{i}=chunkPs*diag(1./sum(chunkPs,1));
     loglike=loglike+chunkll;
 end
     
-newmodelobj=newmodelobj.Normalise;
-
-assert(newmodelobj.isvalid,'newmodelobj is invalid');
+if Normalise
+    newmodelobj=newmodelobj.Normalise;
+    assert(newmodelobj.isvalid,'newmodelobj is invalid');
+end
 
 end
 
