@@ -1,33 +1,19 @@
-classdef SynapsePlastSeq
-    %SYNAPSEPLASTSEQ Sequence of plasticity events.
-    %   This class stores the results of a sequence of plasticity events:
-    %   the type of each event (SYNAPSEPLASTSEQ.potdep) and the synaptic
-    %   weight index before/after each event (SYNAPSEPLASTSEQ.readouts).
+classdef SynapsePlastSeqSim < SynapsePlastSeq
+    %SYNAPSEPLASTSEQSIM Simulated sequence of plasticity events.
+    %   This class stores the results of a simulated sequence of plasticity
+    %   events: the type of each event (SYNAPSEPLASTSEQ.potdep), the
+    %   synapticstate before/after each event (SYNAPSEPLASTSEQ.stateseq)
+    %   and the corresponding synaptic weight index (SYNAPSEPLASTSEQ.readouts)
     
     properties (SetAccess=protected)%data
-        %seq of plast types (indices of SynapseIdModel.M). default: []
-        potdep=[],
-        %sequence of synaptic states. default: []
+        %sequence of synaptic states. default: [1]
         stateseq=[];
-        %sequence of synaptic weights (indices of SynapseIdModel.outProj). default: []
-        readouts=[];
     end
     
-    methods (Access=?SynapseIdModel) %setting data
-        %
-        function newobj=setPotDep(obj,newPotdep)
-            newobj=obj;
-            newobj.potdep=newPotdep;
-        end
-        %
+    methods (Access={?SynapseIdModel}) %setting data
         function newobj=setStateSeq(obj,newStateSeq)
             newobj=obj;
             newobj.stateseq=newStateSeq;
-        end            
-        %
-        function newobj=setReadouts(obj,newReadouts)
-            newobj=obj;
-            newobj.readouts=newReadouts;
         end            
     end
     
@@ -38,20 +24,8 @@ classdef SynapsePlastSeq
     
     methods %size info
         %
-        function val=NumT(obj)
-            val=length([obj.readouts]);
-        end
-        %
         function val=NumStates(obj)
             val=max([obj.stateseq]);
-        end
-        %
-        function val=NumPlast(obj)
-            val=max([obj.potdep]);
-        end
-        %
-        function val=NumWvals(obj)
-            val=max([obj.readouts]);
         end
         %
         tf=SameSizes(obj,otherobj)
@@ -69,11 +43,12 @@ classdef SynapsePlastSeq
     end%methods
     
     methods%constructor
-        function obj=SynapsePlastSeq(varargin)
+        function obj=SynapsePlastSeqSim(varargin)
+            obj@SynapsePlastSeq(varargin{:});
             if nargin ~=0%false -> default constructor does nothing
                 if nargin==2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
                     %true -> preallocate with default constructor doing nothing
-                    obj(max(varargin{1},1),max(varargin{2},1))=SynapsePlastSeq;
+                    obj(max(varargin{1},1),max(varargin{2},1))=SynapsePlastSeqSim;
                     if varargin{1}<1
                         obj(1,:)=[];
                     end
@@ -82,12 +57,12 @@ classdef SynapsePlastSeq
                     end
                 elseif nargin==1 && isnumeric(varargin{1}) && isrow(varargin{1})
                     siz=num2cell(varargin{1});
-                    obj(siz{:})=SynapsePlastSeq;
+                    obj(siz{:})=SynapsePlastSeqSim;
                 else
                     %
                     %default parameters:
                     %if we're copying another obj
-                    [tempobj,varargin]=extractArgOfType(varargin,'SynapsePlastSeq');
+                    [tempobj,varargin]=extractArgOfType(varargin,'SynapsePlastSeqSim');
                     %otherwise
                     if isempty(tempobj)
                         tempobj=obj;
@@ -96,10 +71,10 @@ classdef SynapsePlastSeq
                     %Set size of object:
                     %
                     if nargin>=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
-                        obj(varargin{1},varargin{2})=SynapsePlastSeq;
+                        obj(varargin{1},varargin{2})=SynapsePlastSeqSim;
                     elseif nargin>=1 && isnumeric(varargin{1}) && isrow(varargin{1})
                         siz=num2cell(varargin{1});
-                        obj(siz{:})=SynapsePlastSeq;
+                        obj(siz{:})=SynapsePlastSeqSim;
                     end%if nargin>=2
                     %
                     %set parameter values:
@@ -110,7 +85,7 @@ classdef SynapsePlastSeq
                     %
                 end% if nargin=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
             end%if nargin ~=0
-        end%function SynapsePlastSeq
+        end%function SynapsePlastSeqSim
     end%methods constructor
     
 end

@@ -1,6 +1,11 @@
 classdef SynapseIdModel
-    %SYNAPSEIDMODEL Model of complex synapse. Used for Identification
-    %   Detailed explanation goes here
+    %SYNAPSEIDMODEL Model of complex synapse. Used for Identification.
+    %   This class stores the plasticity transition matrices
+    %   (SYNAPSEIDMODEL.M) for each type of plasticity (e.g.
+    %   SYNAPSEIDMODEL.M = {Mpot,Mdep}), the initial probability
+    %   distribution for initial states (SYNAPSEIDMODEL.Initial) and the
+    %   synaptic weight for each state (SYNAPSEIDMODEL.w). This class is
+    %   used by the FitSynapse functions.
     
     properties (SetAccess=protected)%data
         %prob dist of iniitial state, row vec. default: [0.5 0.5]

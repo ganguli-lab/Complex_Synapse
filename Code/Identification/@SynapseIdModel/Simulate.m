@@ -14,7 +14,7 @@ if ismatrix(randno)
 
     fp(fp==0)=1e-10;
 
-    simobj=SynapsePlastSeq;
+    simobj=SynapsePlastSeqSim;
     simobj=simobj.setPotDep(WhichBin([0,cumsum(fp),1],randno(1,:)));
     randno=randno(2,:);
 
@@ -44,10 +44,10 @@ if ismatrix(randno)
 
 else
     if ndims(randno)==3
-        simobj=SynapsePlastSeq(1,size(randno,3));
+        simobj=SynapsePlastSeqSim(1,size(randno,3));
     else
         siz=size(randno);
-        simobj=SynapsePlastSeq(siz(3:end));
+        simobj=SynapsePlastSeqSim(siz(3:end));
         randno=reshape(randno,siz(1),siz(2),[]);
     end
     
