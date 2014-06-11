@@ -3,7 +3,6 @@ function [ tf ] = iscompatible( simobj,modelobj )
 %   are indices in correct range?
 
 tf = simobj.NumPlast<=modelobj.NumPlast &&...
-    simobj.NumStates<=modelobj.NumStates &&...
     simobj.NumWvals<=modelobj.NumWvals ;
     
 

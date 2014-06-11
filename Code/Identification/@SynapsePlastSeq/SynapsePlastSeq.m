@@ -7,8 +7,6 @@ classdef SynapsePlastSeq
     properties (SetAccess=protected)%data
         %seq of plast types (indices of SynapseIdModel.M). default: []
         potdep=[],
-        %sequence of synaptic states. default: []
-        stateseq=[];
         %sequence of synaptic weights (indices of SynapseIdModel.outProj). default: []
         readouts=[];
     end
@@ -19,11 +17,6 @@ classdef SynapsePlastSeq
             newobj=obj;
             newobj.potdep=newPotdep;
         end
-        %
-        function newobj=setStateSeq(obj,newStateSeq)
-            newobj=obj;
-            newobj.stateseq=newStateSeq;
-        end            
         %
         function newobj=setReadouts(obj,newReadouts)
             newobj=obj;
@@ -40,10 +33,6 @@ classdef SynapsePlastSeq
         %
         function val=NumT(obj)
             val=length([obj.readouts]);
-        end
-        %
-        function val=NumStates(obj)
-            val=max([obj.stateseq]);
         end
         %
         function val=NumPlast(obj)
