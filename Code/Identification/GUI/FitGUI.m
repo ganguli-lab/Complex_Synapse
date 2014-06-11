@@ -78,7 +78,7 @@ colormap(statepr,cmapname);
 
 %-------------------------------------------------------------------------
 truemodel=truemodel.Sort(S.fp);
-simobj=SynapsePlastSeq(1,S.num_ch);
+simobj=SynapsePlastSeqSim(1,S.num_ch);
 newmodel=SynapseIdModel;
 stopbtn=false;
 InitRand;
@@ -224,7 +224,7 @@ MakeButton(4,'Stop',@Stop);
     end
 
     function Simulate(~,~)
-        simobj=SynapsePlastSeq(1,S.num_ch);
+        simobj=SynapsePlastSeqSim(1,S.num_ch);
         for jj=1:S.num_ch
             simobj(jj)=truemodel.Simulate(S.fp,rand(2,S.num_t));
         end

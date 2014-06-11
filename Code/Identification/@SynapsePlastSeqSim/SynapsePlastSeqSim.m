@@ -27,8 +27,6 @@ classdef SynapsePlastSeqSim < SynapsePlastSeq
         function val=NumStates(obj)
             val=max([obj.stateseq]);
         end
-        %
-        tf=SameSizes(obj,otherobj)
     end
     
     methods
@@ -44,7 +42,6 @@ classdef SynapsePlastSeqSim < SynapsePlastSeq
     
     methods%constructor
         function obj=SynapsePlastSeqSim(varargin)
-            obj@SynapsePlastSeq(varargin{:});
             if nargin ~=0%false -> default constructor does nothing
                 if nargin==2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
                     %true -> preallocate with default constructor doing nothing
