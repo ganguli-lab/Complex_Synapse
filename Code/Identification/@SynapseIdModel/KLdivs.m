@@ -6,6 +6,7 @@ function [ initdiv,Mdivs ] = KLdivs( obj1,obj2 )
 
 initdiv=KLdiv(obj1.Initial,obj2.Initial);
 Mdivs=cellfun(@KLdiv,obj1.M,obj2.M);
+Mdivs=Mdivs/obj1.NumStates;
 
 end
 

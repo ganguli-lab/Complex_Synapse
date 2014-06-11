@@ -5,6 +5,7 @@ function [ newW ] = StochastifyD( W )
 assert(ismat(W));
 assert(issquare(W));
 
+W(W<0 & W>-1e-7)=0;
 newW=diag(1./sum(W,2))*W;
 
 

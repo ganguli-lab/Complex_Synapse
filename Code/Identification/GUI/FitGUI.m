@@ -4,8 +4,8 @@ function [ newmodel,loglike ] = FitGUI( truemodel )
 
 
 S=struct('MaxIter',100,'TolFun',NaN,'TolX',1e-4,'TolFunChange',1,...
-    'fp',0.5,'num_ch',30,'num_t',50);
-T=struct('Algorithm','BW','Weighter','RJ','Penaliser','No');
+    'Penalty',1,'NormPower',2,'fp',0.5,'num_ch',30,'num_t',50);
+T=struct('Algorithm','BW','Weighter','RJ','Penaliser','No','ModelDiff','KL');
 AxFontSize=12;
 BtFontSize=12;
 cmapname='Hot';
@@ -183,7 +183,8 @@ MakeButton(4,'Stop',@Stop);
     end%function MakeEditBox
 
     function PlotSim
-        wt=[3-2*[simobj.potdep]; 2*[simobj.readouts]-3];
+%         wt=[3-2*[simobj.potdep]; 2*[simobj.readouts]-3];
+        wt=[3-2*simobj(1).potdep; 2*simobj(1).readouts-3];
         cla(potdepwt);
         imagesc(wt,'Parent',potdepwt);
         set(potdepwt,'YTick',[1 2],'YTickLabel',{'pot/dep','weight'});
@@ -200,7 +201,8 @@ MakeButton(4,'Stop',@Stop);
     function PlotStatePr(stpr)
         cla(statepr);
         if iscell(stpr)
-            imagesc([stpr{:}],'Parent',statepr);
+%             imagesc([stpr{:}],'Parent',statepr);
+            imagesc(stpr{1},'Parent',statepr);
         else
             imagesc(stpr,'Parent',statepr);
         end
@@ -271,7 +273,7 @@ MakeButton(4,'Stop',@Stop);
         legend(hl,{'loglikelihood(true)','loglikelihood(est)'},'location','west');
         %
         hkl=plot(mets_true(2),(1:upno)',squeeze(metvals(1:upno,1,2:4)));
-        ylabel(mets_true(2),'KL divergence','FontSize',AxFontSize);
+        ylabel(mets_true(2),[T.ModelDiff ' divergence'],'FontSize',AxFontSize);
         legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
         %
         xlabel(mets_true(1),'Update #','FontSize',AxFontSize);
@@ -288,7 +290,7 @@ MakeButton(4,'Stop',@Stop);
         end
         %
         hkl=plot(mets_est(2),(1:upno)',squeeze(metvals(1:upno,2,2:4)));
-        ylabel(mets_est(2),'KL divergence','FontSize',AxFontSize);
+        ylabel(mets_est(2),[T.ModelDiff ' divergence'],'FontSize',AxFontSize);
         legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
         %
         xlabel(mets_est(1),'Update #','FontSize',AxFontSize);

@@ -69,7 +69,7 @@ msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
             exitflag=-2;
         end
         msg=['Reached local maximum. Change in loglike < ' num2str(options.TolFunChange)...
-            '. distance due to change in model < ' num2str(options.TolX)];
+            '. Size of change in model < ' num2str(options.TolX)];
         return;
     end
 
