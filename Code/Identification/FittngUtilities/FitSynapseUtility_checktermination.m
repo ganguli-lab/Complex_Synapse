@@ -16,7 +16,7 @@ switch fitMorInit
      fitInit=false;
  case 'Init'
      fitM=false;
-end
+end%switch fitMorInit
 
 exitflag=0;
 msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
@@ -27,28 +27,28 @@ msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
 %using difference of current model from groud truth
         %
         if optimValues.truth.dfval < options.TolFun
-            if fitM && mean(optimValues.truth.dM/optimValues.NumStates) < options.TolX
+            if fitM && max(optimValues.truth.dM) < options.TolX
                 if fitInit && optimValues.truth.dInitial < options.TolX
                     exitflag=1;
                     msg=['Success. trueloglike - loglike < ' num2str(options.TolFun)...
-                        ' and KLdiv from true model to fit model < ' num2str(options.TolX)];
+                        ' and distance from true model to fit model < ' num2str(options.TolX)];
                     return;
                 else
                     exitflag=-4;
                     msg=['Not enough data? trueloglike - loglike < ' num2str(options.TolFun)...
-                        ' and KLdiv from true M to fit M > ' num2str(options.TolX)...
+                        ' and distance from true M to fit M > ' num2str(options.TolX)...
                         ' but not Initial'];
                     return;
                 end
             elseif fitInit && optimValues.truth.dInitial < options.TolX
                 exitflag=1;
                 msg=['Success. trueloglike - loglike < ' num2str(options.TolFun)...
-                    ' and KLdiv from true model to fit model < ' num2str(options.TolX)];
+                    ' and distance from true model to fit model < ' num2str(options.TolX)];
                 return;
             else
                 exitflag=-3;
                 msg=['Not enough data? trueloglike - loglike < ' num2str(options.TolFun)...
-                    ' despite KLdiv from true M to fit M > ' num2str(options.TolX)];
+                    ' despite distance from true M to fit M > ' num2str(options.TolX)];
                 return;
             end
         end
@@ -61,15 +61,15 @@ msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
         exitflag=1;
         msg=['Success. loglike > ' num2str(options.TolFun)];
         return;
-    elseif sum([fitInit*optimValues.prev.dInitial fitM*optimValues.prev.dM])/(fitInit+fitM*optimValues.NumPlast*optimValues.NumStates) < options.TolX ...
+    elseif max([fitInit*optimValues.prev.dInitial fitM*optimValues.prev.dM]) < options.TolX ...
             && abs(optimValues.prev.dfval) < options.TolFunChange
-        if isnan(options.TolFun)
+        if isnan(options.TolFun) && isempty(optimValues.truth)
             exitflag=1;
         else
             exitflag=-2;
         end
         msg=['Reached local maximum. Change in loglike < ' num2str(options.TolFunChange)...
-            '. KL-div due to change in model < ' num2str(options.TolX)];
+            '. distance due to change in model < ' num2str(options.TolX)];
         return;
     end
 
