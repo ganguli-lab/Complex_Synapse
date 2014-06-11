@@ -1,4 +1,4 @@
-function [ optimValues ] = FitSynapseUtility_calcchanges( optimValues,fitmodel )
+function [ optimValues ] = FitSynapseUtility_calcchanges( optimValues,fitmodel,options )
 %[optimValues]=FITSYNAPSEUTILITY_CALCCHANGES(optimValues,fitmodel) calculate changes
 %in model fit due to last update
 %   optimValues = struct with information about the current state of the optimiser
@@ -7,7 +7,12 @@ function [ optimValues ] = FitSynapseUtility_calcchanges( optimValues,fitmodel )
 
 %calculate size of changes in model
     %
-    [optimValues.prev.KLInitial,optimValues.prev.KLM]=optimValues.prev.model.KLdivs(fitmodel);
+    switch options.ModelDiff
+        case 'KL'
+            [optimValues.prev.dInitial,optimValues.prev.dM]=optimValues.prev.model.KLdivs(fitmodel);
+        case 'Ln'
+            [optimValues.prev.dInitial,optimValues.prev.dM]=optimValues.prev.model.LnNorm(options.NormPower,fitmodel);
+    end
     optimValues.prev.dfval=optimValues.fval-optimValues.prev.fval;
     optimValues.funcCount=optimValues.funcCount+1;
     %
@@ -16,7 +21,12 @@ function [ optimValues ] = FitSynapseUtility_calcchanges( optimValues,fitmodel )
     if ~isempty(optimValues.truth)
         %
         optimValues.truth.dfval=optimValues.truth.fval-optimValues.fval;
-        [optimValues.truth.KLInitial,optimValues.truth.KLM]=optimValues.truth.model.KLdivs(fitmodel);
+        switch options.ModelDiff
+            case 'KL'
+                [optimValues.truth.dInitial,optimValues.truth.dM]=optimValues.truth.model.KLdivs(fitmodel);
+            case 'Ln'
+                [optimValues.truth.dInitial,optimValues.truth.dM]=optimValues.truth.model.LnNorm(options.NormPower,fitmodel);
+        end
         %
     end
 

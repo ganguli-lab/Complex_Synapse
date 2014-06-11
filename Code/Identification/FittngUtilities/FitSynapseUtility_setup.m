@@ -20,10 +20,11 @@ optimValues=struct('iteration',0,'funcCount',0,...
     'fval',[],'prev',[],'truth',[],'stateProb',{{}});
 
 %information about the previous state and current state of the optimiser relative to the previous state
-optimValues.prev=struct('model',[],'fval',[],'dfval',[],'KLInitial',[],'KLM',[]);
+optimValues.prev=struct('model',[],'fval',[],'dfval',[],'dInitial',[],'dM',[]);
 %information about the current state of the optimiser relative to ground truth
 if ~isempty(options.GroundTruth)
-    optimValues.truth=struct('model',options.GroundTruth,'fval',[],'dfval',[],'KLInitial',[],'KLM',[]);
+    optimValues.truth=optimValues.prev;
+    optimValues.truth.model=options.GroundTruth;
     optimValues.truth.fval=HMMloglike(options.GroundTruth,simobj);
     optimValues.truth.dfval=optimValues.truth.fval-optimValues.fval;
 end
@@ -33,7 +34,7 @@ fitmodel=guessmodel.Sort(options.fp);
 optimValues.fval=HMMloglike(fitmodel,simobj);
 
 updaterfn=str2func([options.Penaliser 'penalty']);
-extraArgs=[{'Algorithm',[init options.Algorithm],'Weighter',options.Weighter},options.ExtraParams];
+extraArgs=[{'Algorithm',[init options.Algorithm],'Weighter',options.Weighter,'Penalty',options.Penalty},options.ExtraParams];
 
 
 

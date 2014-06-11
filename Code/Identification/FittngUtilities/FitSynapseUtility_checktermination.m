@@ -27,8 +27,8 @@ msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
 %using difference of current model from groud truth
         %
         if optimValues.truth.dfval < options.TolFun
-            if fitM && mean(optimValues.truth.KLM/optimValues.NumStates) < options.TolX
-                if fitInit && optimValues.truth.KLInitial < options.TolX
+            if fitM && mean(optimValues.truth.dM/optimValues.NumStates) < options.TolX
+                if fitInit && optimValues.truth.dInitial < options.TolX
                     exitflag=1;
                     msg=['Success. trueloglike - loglike < ' num2str(options.TolFun)...
                         ' and KLdiv from true model to fit model < ' num2str(options.TolX)];
@@ -40,7 +40,7 @@ msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
                         ' but not Initial'];
                     return;
                 end
-            elseif fitInit && optimValues.truth.KLInitial < options.TolX
+            elseif fitInit && optimValues.truth.dInitial < options.TolX
                 exitflag=1;
                 msg=['Success. trueloglike - loglike < ' num2str(options.TolFun)...
                     ' and KLdiv from true model to fit model < ' num2str(options.TolX)];
@@ -61,7 +61,7 @@ msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
         exitflag=1;
         msg=['Success. loglike > ' num2str(options.TolFun)];
         return;
-    elseif sum([fitInit*optimValues.prev.KLInitial fitM*optimValues.prev.KLM])/(fitInit+fitM*optimValues.NumPlast*optimValues.NumStates) < options.TolX ...
+    elseif sum([fitInit*optimValues.prev.dInitial fitM*optimValues.prev.dM])/(fitInit+fitM*optimValues.NumPlast*optimValues.NumStates) < options.TolX ...
             && abs(optimValues.prev.dfval) < options.TolFunChange
         if isnan(options.TolFun)
             exitflag=1;

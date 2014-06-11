@@ -254,10 +254,10 @@ MakeButton(4,'Stop',@Stop);
     function mets=CalcMets(optimvals)
         mets(1,1)=optimvals.truth.fval;
         mets(2,1)=optimvals.fval;
-        mets(1,4)=optimvals.truth.KLInitial;
-        mets(1,2:3)=optimvals.truth.KLM;
-        mets(2,4)=optimvals.prev.KLInitial;
-        mets(2,2:3)=optimvals.prev.KLM;
+        mets(1,4)=optimvals.truth.dInitial;
+        mets(1,2:3)=optimvals.truth.dM;
+        mets(2,4)=optimvals.prev.dInitial;
+        mets(2,2:3)=optimvals.prev.dM;
     end
 
     function PlotMets(upno)
