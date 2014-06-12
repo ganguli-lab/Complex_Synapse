@@ -1,8 +1,9 @@
 function [ optimValues ] = FitSynapseUtility_calcchanges( optimValues,fitmodel,options )
-%[optimValues]=FITSYNAPSEUTILITY_CALCCHANGES(optimValues,fitmodel) calculate changes
-%in model fit due to last update
+%[optimValues]=FITSYNAPSEUTILITY_CALCCHANGES(optimValues,fitmodel,options)
+%calculate changes in model fit due to last update 
 %   optimValues = struct with information about the current state of the optimiser
 %   fitmodel    = SynapseIdModel where we'll store the model fit
+%   options     = struct of options (see SynapseOptimset)
 
 
 %calculate size of changes in model

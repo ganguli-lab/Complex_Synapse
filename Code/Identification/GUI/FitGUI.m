@@ -273,7 +273,7 @@ MakeButton(4,'Stop',@Stop);
         legend(hl,{'loglikelihood(true)','loglikelihood(est)'},'location','west');
         %
         hkl=plot(mets_true(2),(1:upno)',squeeze(metvals(1:upno,1,2:4)));
-        ylabel(mets_true(2),[T.ModelDiff ' divergence'],'FontSize',AxFontSize);
+        ylabel(mets_true(2),[T.ModelDiff ' distance'],'FontSize',AxFontSize);
         legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
         %
         xlabel(mets_true(1),'Update #','FontSize',AxFontSize);
@@ -290,7 +290,7 @@ MakeButton(4,'Stop',@Stop);
         end
         %
         hkl=plot(mets_est(2),(1:upno)',squeeze(metvals(1:upno,2,2:4)));
-        ylabel(mets_est(2),[T.ModelDiff ' divergence'],'FontSize',AxFontSize);
+        ylabel(mets_est(2),[T.ModelDiff ' distance'],'FontSize',AxFontSize);
         legend(hkl,{'M^{pot}','M^{dep}','initial'},'location','east');
         %
         xlabel(mets_est(1),'Update #','FontSize',AxFontSize);
