@@ -1,20 +1,25 @@
-function [ fitmodel,like_n ] = FitSynapseSize( fitsim,testsim,varargin )
+function [ fitmodel,like_n ] = FitSynapseSize( simobjs,options )
 %[fitmodel,like_n]=FitSynapseSize(fitsim,testsim,varargin)
 %Determinig number of states needed for SynapseIdModel (fitmodel) to fit
-%SypssePlastSeq (fitsim,testsim)
+%SypssePlastSeq (simobjs)
 %   like_n = struct(numstates,loglike)
 %   fitsim  = used to fit fitmodel.M
 %   testsim = used to evaluate models, after refitting fitmodel.Initial
 
-MaxStates=6;%maximum number of states with each value of w
-MinLogLikeInc=0;%carry on adding states if increase of log likelihood is greater than this
+% MaxStates=6;%maximum number of states with each value of w
+% MinLogLikeInc=0;%carry on adding states if increase of log likelihood is greater than this
 % MinLogLikeInc=chi2inv(0.95,1)/2;%carry on adding states if increase of log likelihood is greater than this
-NumReps=10;%number of attempts for each w
-Display=true;
-varargin=assignApplicable(varargin);
+% NumReps=10;%number of attempts for each w
+% Display=true;
+% varargin=assignApplicable(varargin);
+if exist('options','var')
+    options=SynapseOptimset(options);
+else
+    options=SynapseOptimset;
+end
 
-NumPlastTypes=max(fitsim.NumPlast,testsim.NumPlast);
-numWvals=max(fitsim.NumWvals,testsim.NumWvals);
+NumPlastTypes=simobjs.NumPlast;
+numWvals=simobjs.NumWvals;
 
 like_n=struct('numstates',1:(numWvals*MaxStates),'loglike',NaN(1,numWvals*MaxStates));
 
@@ -23,7 +28,7 @@ w=(1:numWvals)';
 [fitmodel,loglike]=TryNewW(w);
 like_n.loglike(length(w))=loglike;
 %
-if Display
+if strcmpi(options.Display,'on')
     disp(length(w));
 end
 contadding=true;
@@ -31,18 +36,16 @@ contadding=true;
 while contadding
     contadding=false;
     for j=1:numWvals
-        if sum(w==j) < MaxStates
+        if sum(w==j) < options.MaxStates
             neww=AddState(w,j);
-%             newmodel=TryNewW(neww);
             [newmodel,newloglike]=TryNewW(neww);
-%             newloglike=HMMloglike(newmodel,testsim);
-            if newloglike-loglike > MinLogLikeInc
+            if newloglike-loglike > options.MinLogLikeInc
                 w=neww;
                 fitmodel=newmodel;
                 loglike=newloglike;
                 like_n.loglike(length(w))=loglike;
                 %
-                if Display
+                if strcmpi(options.Display,'on')
                     disp(length(w));
                 end
                 contadding=true;
@@ -60,16 +63,22 @@ like_n.loglike(isnan(like_n.loglike))=[];
     end%function addstate
 
     function [newmodel,newloglike]=TryNewW(neww)
-        newmodel=FitModel(neww);
-        [newmodel,newloglike]=ReFitInitial(newmodel);
+        newloglike=zeros(size(simobjs,1));
+        for k=1:size(simobjs,1);
+            inds=1:length(newloglike);
+            inds(k)=[];
+            newmodel=FitModel(neww,reshape(simobjs(inds,:),1,[]));
+            [newmodel,newloglike(k)]=ReFitInitial(newmodel,simobjs(k,:));
+        end%for k
+        newloglike=mean(newloglike);
     end%function TryNewW
 
-    function newmodel=FitModel(neww)
+    function newmodel=FitModel(neww,fitsim)
         newmodel=SynapseIdModel.Rand(neww);
-        testloglike=HMMloglike(newmodel,fitsim);
-        for i=1:NumReps
+        testloglike=HMMloglike(newmodel,fitsim)+SynapsePrior(newmodel,options);
+        for i=1:options.NumReps
             guessmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes);
-            [guessmodel,guessloglike]=FitSynapseM(fitsim,guessmodel,struct(varargin{:}));
+            [guessmodel,guessloglike]=FitSynapseM(fitsim,guessmodel,options);
             if guessloglike > testloglike
                 newmodel=guessmodel;
                 testloglike=guessloglike;
@@ -77,13 +86,13 @@ like_n.loglike(isnan(like_n.loglike))=[];
         end%for i
     end%function TryNewW
 
-    function [newmodel,newloglike]=ReFitInitial(trialmodel)
+    function [newmodel,newloglike]=ReFitInitial(trialmodel,testsim)
         newloglike=-Inf;
         newmodel=trialmodel;
-        for i=1:NumReps
+        for i=1:options.NumReps
             p=rand(1,trialmodel.NumStates);
             guessmodel=trialmodel.setInitial(p/sum(p));
-            [guessmodel,guessloglike]=FitSynapseInit(testsim,guessmodel,struct(varargin{:}));
+            [guessmodel,guessloglike]=FitSynapseInit(testsim,guessmodel,options);
             if guessloglike > newloglike
                 newmodel=guessmodel;
                 newloglike=guessloglike;
