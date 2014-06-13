@@ -21,7 +21,7 @@ end
 NumPlastTypes=simobjs.NumPlast;
 numWvals=simobjs.NumWvals;
 
-like_n=struct('numstates',1:(numWvals*MaxStates),'loglike',NaN(1,numWvals*MaxStates));
+like_n=struct('numstates',1:(numWvals*options.MaxStates),'loglike',NaN(1,numWvals*options.MaxStates));
 
 w=(1:numWvals)';
 
@@ -63,7 +63,7 @@ like_n.loglike(isnan(like_n.loglike))=[];
     end%function addstate
 
     function [newmodel,newloglike]=TryNewW(neww)
-        newloglike=zeros(size(simobjs,1));
+        newloglike=zeros(size(simobjs,1),1);
         for k=1:size(simobjs,1);
             inds=1:length(newloglike);
             inds(k)=[];

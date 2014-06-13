@@ -3,11 +3,19 @@ function [ options ] = SynapseOptimset( varargin )
 %synapse fitting
 %   oldoptions can be omitted, defaults will be used instead
 %   Parametr name = definition (default,{valid types},{valid attributes})
+%                           or (default,{valid vaalues}) for strings
 %     MaxIter = maximum # iterations in fitting (1000,{'numeric'},{'scalar','nonnegative'})
 %     TolFun = Stop when log-likelihood reaches this (NaN,{'numeric'},{'scalar'})
 %     TolX = Stop when change in model this (1e-4,{'numeric'},{'scalar','nonnegative'})
 %     TolFunChange = Stop when change in log-likelihood less than this (1,{'numeric'},{'scalar','nonnegative'})
 %     fp = fraction of potentiating events (0.5,{'numeric'},{'row','>=',0,'<=',1})
+%     Display = display message at each step? ('off',{'on','off'})
+%     OutputFcn = output function handle ([],{'function_handle},{})
+%       syntax: stop=OutputFcn(fitmodelobj,optimValues,state)
+%       search for "Output Functions" in the help browser for more information
+%     PlotFcn = plot function handle ([],{'function_handle},{})
+%       syntax: stop=PlotFcn(fitmodelobj,optimValues,state)
+%       search for "Output Functions" in the help browser for more information
 %     Algorithm = algorithm used on each sequence ('BW',{'BW','Viterbi'})
 %       BW=Baum-Welch, Viterbi=Viterbi path
 %     Weighter = algorithm used to combine sequences ('RJ',{'RJ','Uni','Mackay'})
