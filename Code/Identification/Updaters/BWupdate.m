@@ -11,15 +11,17 @@ Normalise=true;
 varargin=assignApplicable(varargin);
 
 
-[alpha,eta]=BWalphaN(length(simobj.readouts),modelobj,simobj);
-beta=BWbetaN(eta,1,modelobj,simobj);
+% [alpha,eta,updater]=BWalphaN(modelobj,simobj);
+% beta=BWbetaN(eta,modelobj,simobj,updater);
+[alpha,eta]=BWalphaN(modelobj,simobj);
+beta=BWbetaN(eta,modelobj,simobj);
 M_new={zeros(length(modelobj.M{1}))};
 for i=2:numel(modelobj.M)
     M_new{i}=M_new{1};
 end
 
 
-for t=1:length(simobj.readouts)-1
+for t=1:simobj.NumT-1
     M_new{simobj.potdep(t)}=M_new{simobj.potdep(t)} + (beta(:,t+1)*alpha(t,:))' .*...
         (modelobj.M{simobj.potdep(t)}*modelobj.outProj{simobj.readouts(t+1)}) * eta(t+1);
 end

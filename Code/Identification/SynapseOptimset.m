@@ -43,12 +43,12 @@ options=struct('MaxIter',1000,'TolFun',NaN,'TolX',1e-4,'TolFunChange',1,...
     'MaxStates',6,'MinLogLikeInc',0,'NumReps',10,...
     'fp',0.5,'GroundTruth',[]);
 
-if isstruct(varargin{1})
+if nargin>=1 && isstruct(varargin{1})
     options=UpdateOldOptions(options,varargin{1});
     varargin(1)=[];
 end
 
-if nargin>1
+if length(varargin)>1
     varargin=extractPVpairs(varargin);
     [options,unused]=UpdateOptions(options,varargin);
     options.ExtraParams=[options.ExtraParams unused];

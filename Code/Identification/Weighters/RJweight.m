@@ -15,7 +15,9 @@ updater=str2func([Algorithm 'update']);
 
 error(CheckSize(simobj,@isvector));
 
-lloffset=-HMMloglike(modelobj,simobj)/length(simobj);
+if ~strcmpi(Algorithm,'BW')
+    lloffset=-HMMloglike(modelobj,simobj)/length(simobj);
+end
 
 pstate=cell(1,length(simobj));
 newmodelobj=modelobj.Zero;

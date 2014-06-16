@@ -1,21 +1,30 @@
-function [ beta ] = BWbetaN( eta,t,modelobj,simobj )
-%beta=BWBETA(eta,t,modelobj,simobj) normalised backward variables for Baum-Welch algorithm
+function [ beta ] = BWbetaN( eta,modelobj,simobj,updater )
+%beta=BWBETA(eta,modelobj,simobj) normalised backward variables for Baum-Welch algorithm
 %   beta     = normalised backward variables
 %   eta      = normalisation factor
-%   t        = time-step after which we want forward variables
 %   modelobj = SynapseIdModel
 %   simobj   = SynapsePlastSeq
 
+%   t        = time-step after which we want forward variables
 
 error(CheckSize(modelobj,@isscalar));
 error(CheckSize(simobj,@isscalar));
-error(CheckSize(t,@isscalar));
-error(CheckValue(t,@isint));
+% error(CheckSize(t,@isscalar));
+% error(CheckValue(t,@isint));
 
-beta=ones(length(modelobj.Initial),length(simobj.readouts)-t+1);
+% M=cat(3,modelobj.M{simobj.potdep});
+% outProj=cat(3,modelobj.outProj{simobj.readouts});
 
-for i=length(simobj.readouts):-1:t+1
-    beta(:,i-t) = modelobj.M{simobj.potdep(i-1)} * modelobj.outProj{simobj.readouts(i)} * beta(:,i-t+1) * eta(i);
+beta=ones(modelobj.NumStates,simobj.NumT);
+
+if nargin>=5
+    for i=simobj.NumT:-1:2
+        beta(:,i-1) = squeeze(updater(:,:,i-1)) * beta(:,i) * eta(i);
+    end
+else
+    for i=simobj.NumT:-1:2
+        beta(:,i-1) = modelobj.M{simobj.potdep(i-1)} * modelobj.outProj{simobj.readouts(i)} * beta(:,i) * eta(i);
+    end
 end
 
 end

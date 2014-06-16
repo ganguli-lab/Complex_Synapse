@@ -10,13 +10,14 @@ function [ optimValues,exitflag,msg ] = FitSynapseUtility_checktermination( opti
 
 fitM=true;
 fitInit=true;
-existsAndDefault('fitMorInit','');
-switch fitMorInit
- case 'M'
-     fitInit=false;
- case 'Init'
-     fitM=false;
-end%switch fitMorInit
+if exist('fitMorInit','var')
+    switch fitMorInit
+     case 'M'
+         fitInit=false;
+     case 'Init'
+         fitM=false;
+    end%switch fitMorInit
+end%if exist fitMorInit
 
 exitflag=0;
 msg=['Exceeded max iterations: ' int2str(options.MaxIter)];

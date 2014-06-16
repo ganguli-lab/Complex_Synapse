@@ -8,7 +8,7 @@ function [ loglike ] = HMMloglike( modelobj,simobj )
 error(CheckSize(modelobj,@isscalar));
 
 if isscalar(simobj)
-    [~,eta]=BWalphaN(length(simobj.readouts),modelobj,simobj);
+    [~,eta]=BWalphaN(modelobj,simobj);
     loglike = -sum(log(eta));
 else
     loglike=0;

@@ -1,4 +1,4 @@
-function [ optimValues,fitmodel,exitflag,msg ] = FitSynapseUtility_update( optimValues,options,fitmodel,simobj,updaterfn,extraArgs )
+function [ optimValues,fitmodel,exitflag,msg,ME ] = FitSynapseUtility_update( optimValues,options,fitmodel,simobj,updaterfn,extraArgs )
 %[optimValues,fitmodel,exitflag,msg]=FITSYNAPSEUTILITY_UPDATE(optimValues,fitmodel,simobj,updaterfn,extraArgs)
 %perform update of currrent model fit
 %   optimValues = struct with information about the current state of the optimiser
@@ -9,9 +9,11 @@ function [ optimValues,fitmodel,exitflag,msg ] = FitSynapseUtility_update( optim
 %   extraArgs   = cell array of extra arguments to pass to updaterfn
 %   exitflag    = integer describing reason for exiting
 %   msg         = string describing reason for exiting
+%   ME          = MException
 
 exitflag=0;
 msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
+ME=[];
 
 %store previous model
     %

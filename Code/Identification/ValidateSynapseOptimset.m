@@ -45,8 +45,12 @@ validateattributes(options.MinLogLikeInc,{'numeric'},{'scalar','nonnegative'},'S
 validateattributes(options.NumReps,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','NumReps');
 validateattributes(options.fp,{'numeric'},{'row','>=',0,'<=',1},'SynapseOptimset','fp');
 validateattributes(options.ExtraParams,{'cell'},{},'SynapseOptimset','ExtraParams');
-validateattributes(options.OutputFcn,{'function_handle'},{},'SynapseOptimset','OutputFcn');
-validateattributes(options.PlotFcn,{'function_handle'},{},'SynapseOptimset','PlotFcn');
+if ~isempty(options.OutputFcn)
+    validateattributes(options.OutputFcn,{'function_handle'},{},'SynapseOptimset','OutputFcn');
+end
+if ~isempty(options.PlotFcn)
+    validateattributes(options.PlotFcn,{'function_handle'},{},'SynapseOptimset','PlotFcn');
+end
 if ~isempty(options.GroundTruth)
     validateattributes(options.GroundTruth,{'SynapseIdModel'},{},'SynapseOptimset','GroundTruth');
 end

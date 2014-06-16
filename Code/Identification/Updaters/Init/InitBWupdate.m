@@ -12,8 +12,8 @@ varargin=assignApplicable(varargin);
 
 
 % pstate=zeros(length(modelobj.Initial),length(simobj.readouts));
-[alpha,eta]=BWalphaN(length(simobj.readouts),modelobj,simobj);
-beta=BWbetaN(eta,1,modelobj,simobj);
+[alpha,eta]=BWalphaN(modelobj,simobj);
+beta=BWbetaN(eta,modelobj,simobj);
 
 
 % for t=1:length(simobj.readouts)
