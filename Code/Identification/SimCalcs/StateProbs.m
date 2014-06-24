@@ -10,8 +10,8 @@ if isscalar(simobj)
 %     p=zeros(length(modelobj.Initial),length(simobj.readouts));
     % alpha=BWalpha(length(readouts),readouts,Initial,outProj,M,potdep);
     % beta=BWbeta(1,readouts,outProj,M,potdep);
-    [alpha,eta]=BWalphaN(modelobj,simobj);
-    beta=BWbetaN(eta,modelobj,simobj);
+    [alpha,~,updater]=BWalphaN(modelobj,simobj);
+    beta=BWbetaN(updater,modelobj,simobj);
 
 %     for t=1:length(simobj.readouts)
 %         p(:,t)=alpha(t,:)'.*beta(:,t);
