@@ -11,7 +11,7 @@ function [ optimValues ] = FitSynapseUtility_calcchanges( optimValues,options )
         case 'KL'
             [optimValues.prev.dInitial,optimValues.prev.dM]=optimValues.prev.model.KLdivs(optimValues.model);
         case 'Ln'
-            [optimValues.prev.dInitial,optimValues.prev.dM]=optimValues.prev.model.LnNorm(options.NormPower,optimValues.model);
+            [optimValues.prev.dInitial,optimValues.prev.dM]=optimValues.prev.model.LnNorm(optimValues.model);
     end
     optimValues.prev.dfval=optimValues.fval-optimValues.prev.fval;
     optimValues.funcCount=optimValues.funcCount+1;
@@ -25,7 +25,7 @@ function [ optimValues ] = FitSynapseUtility_calcchanges( optimValues,options )
             case 'KL'
                 [optimValues.truth.dInitial,optimValues.truth.dM]=optimValues.truth.model.KLdivs(optimValues.model);
             case 'Ln'
-                [optimValues.truth.dInitial,optimValues.truth.dM]=optimValues.truth.model.LnNorm(options.NormPower,optimValues.model);
+                [optimValues.truth.dInitial,optimValues.truth.dM]=optimValues.truth.model.LnNorm(optimValues.model);
         end
         %
     end

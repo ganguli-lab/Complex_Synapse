@@ -27,7 +27,6 @@ function ValidateSynapseOptimset( options )
 %     ExtraParams = extra param-value pairs passed to algorithms ({},{'cell'},{})
 %     ModelDiff = measure of model distance ('KL',{'KL','Ln`'})
 %       KL=Kullback-Leibler divergence, Ln=mean L^n norm of rows
-%     NormPower = exponent of L^n norm (2,{'numeric'},{'scalar','nonnegative'})
 %     GroundTruth = true model used to generate data ([],{'SynapseIdModel'},{})
 %   For fittng number of states:
 %     MaxStates = maximum # states per value of w (6,{'numeric'},{'scalar','nonnegative'})
@@ -39,7 +38,6 @@ validateattributes(options.TolFun,{'numeric'},{'scalar'},'SynapseOptimset','TolF
 validateattributes(options.TolX,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','TolX');
 validateattributes(options.TolFunChange,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','TolFunChange');
 validateattributes(options.Penalty,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','Penalty');
-validateattributes(options.NormPower,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','NormPower');
 validateattributes(options.MaxStates,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','MaxStates');
 validateattributes(options.MinLogLikeInc,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','MinLogLikeInc');
 validateattributes(options.NumReps,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','NumReps');

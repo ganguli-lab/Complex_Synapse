@@ -19,6 +19,13 @@ classdef SynapseIdModel
         outProj={[1 0; 0 0],[0 0; 0 1]};
     end
     
+    properties
+        %exponent of L^n norm 
+        NormPower=2;
+        %method of combining L^n norms of rows of M (e.g. @max, @mean, @norm)
+        NormRows=@max;
+    end
+    
     methods %setting data
         %
         function newobj=setInitial(obj,newInitial)
@@ -69,7 +76,7 @@ classdef SynapseIdModel
     
     methods%calculations etc.
         [initdiv,Mdivs]=KLdivs(obj1,obj2)
-        [initnrm,Mnrm]=LnNorm(obj1,n,obj2)
+        [initnrm,Mnrm]=LnNorm(obj1,obj2)
         obj3=plus(obj1,obj2)
         obj3=minus(obj1,obj2)
         obj3=mtimes(obj1,obj2)
