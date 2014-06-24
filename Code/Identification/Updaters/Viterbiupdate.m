@@ -41,7 +41,8 @@ end
 
 pstate(sub2ind(size(pstate),LikelyPath,1:simobj.NumT))=1;
 
-newmodelobj=SynapseIdModel(modelobj,'M',M_new,'Initial',pstate(:,1)');
+newmodelobj=modelobj.setM(M_new);
+newmodelobj=newmodelobj.setInitial(pstate(:,1)');
 
 if Normalise
     newmodelobj=newmodelobj.Normalise;

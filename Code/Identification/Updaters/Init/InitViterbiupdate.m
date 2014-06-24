@@ -29,7 +29,7 @@ LikelyPath=LikelyPath(ix,:);
 
 pstate(sub2ind(size(pstate),LikelyPath,1:simobj.NumT))=1;
 
-newmodelobj=SynapseIdModel(modelobj,'Initial',pstate(:,1)');
+newmodelobj=modelobj.setInitial(pstate(:,1)');
 
 if Normalise
     newmodelobj=newmodelobj.Normalise;

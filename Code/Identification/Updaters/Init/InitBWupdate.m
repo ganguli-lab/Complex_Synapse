@@ -12,8 +12,8 @@ varargin=assignApplicable(varargin);
 
 
 % pstate=zeros(length(modelobj.Initial),length(simobj.readouts));
-[alpha,eta]=BWalphaN(modelobj,simobj);
-beta=BWbetaN(eta,modelobj,simobj);
+[alpha,eta,updater]=BWalphaN(modelobj,simobj);
+beta=BWbetaN(updater,modelobj,simobj);
 
 
 % for t=1:length(simobj.readouts)
@@ -21,7 +21,7 @@ beta=BWbetaN(eta,modelobj,simobj);
 % end
 pstate=alpha'.*beta;
 
-newmodelobj=SynapseIdModel(modelobj,'Initial',pstate(:,1)');
+newmodelobj=modelobj.setInitial(pstate(:,1)');
 
 if Normalise
     pstate=pstate*diag(1./sum(pstate,1));
