@@ -14,7 +14,7 @@ else
     options=SynapseOptimset;
 end
 
-[optimValues,fitmodel,updaterfn,extraArgs]=FitSynapseUtility_setup(options,guessmodel,simobj);
+[optimValues,updaterfn,extraArgs]=FitSynapseUtility_setup(options,guessmodel,simobj);
 
 exitflag=0;
 msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
@@ -30,14 +30,14 @@ while exitflag==0 &&  optimValues.iteration <= options.MaxIter
         break;
     end
     %
-    [optimValues,fitmodel,exitflag,msg,ME]=FitSynapseUtility_update(optimValues,options,fitmodel,simobj,updaterfn,extraArgs);
+    [optimValues,exitflag,msg,ME]=FitSynapseUtility_update(optimValues,options,simobj,updaterfn,extraArgs);
     %
     CallOutFcns;
     if exitflag~=0
         break;
     end
     %
-    optimValues=FitSynapseUtility_calcchanges(optimValues,fitmodel,options);
+    optimValues=FitSynapseUtility_calcchanges(optimValues,options);
     %
     CallOutFcns;
     if exitflag~=0
@@ -56,7 +56,7 @@ while exitflag==0 &&  optimValues.iteration <= options.MaxIter
     %
 end%while
 
-[fval,output]=FitSynapseUtility_finish(optimValues,options,msg,ME);
+[fitmodel,fval,output]=FitSynapseUtility_finish(optimValues,options,msg,ME);
 
 state='done';
 CallOutFcns;
@@ -66,11 +66,11 @@ CallOutFcns;
         %
         stopv=false;
         if ~isempty(options.OutputFcn)
-            stopv = options.OutputFcn(fitmodel, optimValues, state);
+            stopv = options.OutputFcn(optimValues.model, optimValues, state);
         end
         %
         if ~isempty(options.PlotFcn)
-            stopv = options.PlotFcn(fitmodel, optimValues, state);
+            stopv = options.PlotFcn(optimValues.model, optimValues, state);
         end
         if stopv
             exitflag=-5;

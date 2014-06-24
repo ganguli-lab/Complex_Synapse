@@ -45,7 +45,7 @@ while contadding
                 loglike=newloglike;
                 like_n.loglike(length(w))=loglike;
                 %
-                if strcmpi(options.Display,'on')
+                if ~strcmpi(options.Display,'off')
                     disp(length(w));
                 end
                 contadding=true;

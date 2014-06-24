@@ -1,8 +1,7 @@
-function [ optimValues,fitmodel,updaterfn,extraArgs ] = FitSynapseUtility_setup( options,guessmodel,simobj,init )
-%[optimValues,fitmodel,updaterfn,extraArgs]=FITSYNAPSEUTILITY_SETUP(options,guessmodel,simobj,init)
+function [ optimValues,updaterfn,extraArgs ] = FitSynapseUtility_setup( options,guessmodel,simobj,init )
+%[optimValues,updaterfn,extraArgs]=FITSYNAPSEUTILITY_SETUP(options,guessmodel,simobj,init)
 %initial setup of variables for optimiser
 %   optimValues = struct with information about the current state of the optimiser
-%   fitmodel    = SynapseIdModel where we'll store the model fit
 %   simobj      = vector of SynapsePlastSeq with data to be fit
 %   updaterfn   = handle of function that'll perform the updates
 %   extraArgs   = cell array of extra arguments to pass to updaterfn
@@ -17,11 +16,11 @@ existsAndDefault('init','');
 optimValues=struct('iteration',0,'funcCount',0,...
     'procedure',[options.Algorithm ',' options.Weighter ',' options.Penaliser],...
     'NumStates',guessmodel.NumStates,'NumPlast',guessmodel.NumPlast,...
-    'fval',[],'prev',[],'truth',[],'stateProb',{{}});
+    'model',[],'fval',[],'prev',[],'truth',[],'stateProb',{{}});
 
 %the SynapseIdModel where we'll store the fit
-fitmodel=guessmodel.Sort(options.fp);
-optimValues.fval=HMMloglike(fitmodel,simobj)+SynapsePrior(fitmodel,options);
+optimValues.model=guessmodel.Sort(options.fp);
+optimValues.fval=HMMloglike(optimValues.model,simobj)+SynapsePrior(optimValues.model,options);
 
 %information about the previous state and current state of the optimiser relative to the previous state
 optimValues.prev=struct('model',[],'fval',[],'dfval',[],'dInitial',[],'dM',[]);

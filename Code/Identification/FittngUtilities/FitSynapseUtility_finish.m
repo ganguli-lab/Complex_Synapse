@@ -1,6 +1,7 @@
-function [ fval,output ] = FitSynapseUtility_finish( optimValues,options,msg,ME )
+function [ fitmodel,fval,output ] = FitSynapseUtility_finish( optimValues,options,msg,ME )
 %[fval,output]=FitSynapseUtility_finish(optimValues,options,msg)
 %create ouputs after optimiser terminates
+%   fitmodel    = SynapseIdModel where we'll store the model fit
 %   fval   = log likelihood of fitmodel
 %   output = struct that contains information about the optimization 
 %   optimValues = struct with information about the current state of the optimiser
@@ -8,6 +9,7 @@ function [ fval,output ] = FitSynapseUtility_finish( optimValues,options,msg,ME 
 %   msg         = string describing reason for exiting
 %   ME          = MException
 
+fitmodel = optimValues.model;
 fval=optimValues.fval;
 output=struct('message',msg,'ME',ME,...
     'algortihm',options.Algorithm,'weighter',options.Weighter,'penaliser',options.Penaliser,...
