@@ -11,23 +11,39 @@ Normalise=true;
 varargin=assignApplicable(varargin);
 
 
-% [alpha,eta,updater]=BWalphaN(modelobj,simobj);
-% beta=BWbetaN(eta,modelobj,simobj,updater);
-[alpha,eta]=BWalphaN(modelobj,simobj);
-beta=BWbetaN(eta,modelobj,simobj);
-M_new={zeros(length(modelobj.M{1}))};
-for i=2:numel(modelobj.M)
-    M_new{i}=M_new{1};
-end
+siz=modelobj.NumStates*[1 1];
+[alpha,eta,updater]=BWalphaN(modelobj,simobj);
+beta=BWbetaN(updater,modelobj,simobj);
+% [alpha,eta]=BWalphaN(modelobj,simobj);
+% beta=BWbetaN(eta,modelobj,simobj);
+% M_new={zeros(length(modelobj.M{1}))};
+% for i=2:numel(modelobj.M)
+%     M_new{i}=M_new{1};
+% end
 
 
-for t=1:simobj.NumT-1
-    M_new{simobj.potdep(t)}=M_new{simobj.potdep(t)} + (beta(:,t+1)*alpha(t,:))' .*...
-        (modelobj.M{simobj.potdep(t)}*modelobj.outProj{simobj.readouts(t+1)}) * eta(t+1);
-end
+% for t=1:simobj.NumT-1
+%     M_new{simobj.potdep(t)}=M_new{simobj.potdep(t)} + (beta(:,t+1)*alpha(t,:))' .*...
+%         reshape(updater(:,:,t),siz);
+% %     M_new{simobj.potdep(t)}=M_new{simobj.potdep(t)} + (beta(:,t+1)*alpha(t,:))' .*...
+% %         (modelobj.M{simobj.potdep(t)}*modelobj.outProj{simobj.readouts(t+1)}) * eta(t+1);
+% end
 pstate=alpha'.*beta;
 
-newmodelobj=SynapseIdModel(modelobj,'M',M_new,'Initial',pstate(:,1)');
+alpha=reshape(alpha(1:end-1,:)', [modelobj.NumStates 1 simobj.NumT-1]);
+beta=reshape(beta(:,2:end), [1 modelobj.NumStates simobj.NumT-1]);
+
+Mupdate = mmx('mult',alpha,beta) .* updater;
+M_new=cell(1,modelobj.NumPlast);
+for i=1:modelobj.NumPlast
+    M_new{i} = reshape( sum( Mupdate(:,:,simobj.potdep(1:end-1)==i) , 3 )  , siz );
+end
+    
+
+
+% newmodelobj=SynapseIdModel(modelobj,'M',M_new,'Initial',pstate(:,1)');
+newmodelobj=modelobj.setM(M_new);
+newmodelobj=newmodelobj.setInitial(pstate(:,1)');
 
 if Normalise
     pstate=pstate*diag(1./sum(pstate,1));

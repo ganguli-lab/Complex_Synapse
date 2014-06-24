@@ -7,7 +7,7 @@ function [ obj ] = CalcOutProj( obj )
 wvals=obj.GetWVals;
 
 for i=1:length(wvals)
-    obj.outProj{i}=diag(obj.w==wvals(i));
+    obj.outProj{i}=double(diag(obj.w==wvals(i)));
 end
 
 obj.outProj(i+1:end)=[];

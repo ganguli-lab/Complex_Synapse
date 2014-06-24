@@ -1,7 +1,7 @@
-function [ beta ] = BWbetaN( eta,modelobj,simobj,updater )
+function [ beta ] = BWbetaN( eta_up,modelobj,simobj )
 %beta=BWBETA(eta,modelobj,simobj) normalised backward variables for Baum-Welch algorithm
 %   beta     = normalised backward variables
-%   eta      = normalisation factor
+%   eta_up   = normalisation factor or updater matrices
 %   modelobj = SynapseIdModel
 %   simobj   = SynapsePlastSeq
 
@@ -17,13 +17,14 @@ error(CheckSize(simobj,@isscalar));
 
 beta=ones(modelobj.NumStates,simobj.NumT);
 
-if nargin>=5
+if ismatrix(eta_up)
     for i=simobj.NumT:-1:2
-        beta(:,i-1) = squeeze(updater(:,:,i-1)) * beta(:,i) * eta(i);
+        beta(:,i-1) = modelobj.M{simobj.potdep(i-1)} * modelobj.outProj{simobj.readouts(i)} * beta(:,i) * eta_up(i);
     end
 else
+    siz=modelobj.NumStates*[1 1];
     for i=simobj.NumT:-1:2
-        beta(:,i-1) = modelobj.M{simobj.potdep(i-1)} * modelobj.outProj{simobj.readouts(i)} * beta(:,i) * eta(i);
+        beta(:,i-1) = reshape(eta_up(:,:,i-1),siz) * beta(:,i);
     end
 end
 
