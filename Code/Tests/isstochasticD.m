@@ -3,7 +3,7 @@ function [ tf ] = isstochasticD( W )
 %sum to one, and are all elements positive?
 %   tf=logical[0,1]
 
-tf = ismat(W) && issquare(W) && all(abs(sum(W,2)-1)<1e-7) && all(all(W>=-1e-7));
+tf = ismatrix(W) && issquare(W) && all(abs(sum(W,2)-1)<1e-7) && all(all(W>=-1e-7));
 
 
 end

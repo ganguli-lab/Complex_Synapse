@@ -3,10 +3,12 @@ function [ deta ] = DeltaEta( W,w )
 %   W = transition rates
 %   w = Weights of states (+/-1)
 
-assert(ismat(W));%matrix
-assert(issquare(W));%square
-assert(iscol(w));%row
-assert(length(w)==length(W));%same size
+validateattributes(W,{'numeric'},{'square','nrows',length(w)});
+validateattributes(w,{'numeric'},{'column'});
+% assert(ismat(W));%matrix
+% assert(issquare(W));%square
+% assert(iscol(w));%row
+% assert(length(w)==length(W));%same size
 %assert(all(abs(w)==1));%+/-1
 
 % n=size(W,1);
