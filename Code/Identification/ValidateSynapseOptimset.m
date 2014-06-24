@@ -7,7 +7,7 @@ function ValidateSynapseOptimset( options )
 %     TolX = Stop when change in model this (1e-4,{'numeric'},{'scalar','nonnegative'})
 %     TolFunChange = Stop when change in log-likelihood less than this (1,{'numeric'},{'scalar','nonnegative'})
 %     fp = fraction of potentiating events (0.5,{'numeric'},{'row','>=',0,'<=',1})
-%     Display = display message at each step? ('off',{'on','off'})
+%     Display = display message at each step? ('off',{'off','iter','final','notify','addstate'})
 %     OutputFcn = output function handle ([],{'function_handle},{})
 %       syntax: stop=OutputFcn(fitmodelobj,optimValues,state)
 %       search for "Output Functions" in the help browser for more information
@@ -54,7 +54,7 @@ end
 if ~isempty(options.GroundTruth)
     validateattributes(options.GroundTruth,{'SynapseIdModel'},{},'SynapseOptimset','GroundTruth');
 end
-validatestring(options.Display,{'on','off'},'SynapseOptimset','Display');
+validatestring(options.Display,{'off','iter','final','notify','addstate'},'SynapseOptimset','Display');
 validatestring(options.Algorithm,{'BW','Viterbi'},'SynapseOptimset','Algorithm');
 validatestring(options.Weighter,{'RJ','Uni','Mackay'},'SynapseOptimset','Weighter');
 validatestring(options.Penaliser,{'No','OffDiagL1','Lhalf'},'SynapseOptimset','Penaliser');

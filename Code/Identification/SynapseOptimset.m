@@ -9,7 +9,7 @@ function [ options ] = SynapseOptimset( varargin )
 %     TolX = Stop when change in model this (1e-4,{'numeric'},{'scalar','nonnegative'})
 %     TolFunChange = Stop when change in log-likelihood less than this (1,{'numeric'},{'scalar','nonnegative'})
 %     fp = fraction of potentiating events (0.5,{'numeric'},{'row','>=',0,'<=',1})
-%     Display = display message at each step? ('off',{'on','off'})
+%     Display = display message at each step? ('off',{'off','iter','final','notify','addstate'})
 %     OutputFcn = output function handle ([],{'function_handle},{})
 %       syntax: stop=OutputFcn(fitmodelobj,optimValues,state)
 %       search for "Output Functions" in the help browser for more information
