@@ -28,9 +28,7 @@ w=(1:numWvals)';
 [fitmodel,loglike]=TryNewW(w);
 like_n.loglike(length(w))=loglike;
 %
-if strcmpi(options.Display,'on')
-    disp(length(w));
-end
+DispStates;
 contadding=true;
 
 while contadding
@@ -45,9 +43,7 @@ while contadding
                 loglike=newloglike;
                 like_n.loglike(length(w))=loglike;
                 %
-                if ~strcmpi(options.Display,'off')
-                    disp(length(w));
-                end
+                DispStates;
                 contadding=true;
             end%if MinLogLikeInc
         end%if MaxStates
@@ -100,6 +96,11 @@ like_n.loglike(isnan(like_n.loglike))=[];
         end%for i
     end%function TryNewW
 
+    function DispStates
+        if ~strcmpi(options.Display,'off')
+            disp(['# states: ' int2str(length(w))]);
+        end
+    end
 
 
 end

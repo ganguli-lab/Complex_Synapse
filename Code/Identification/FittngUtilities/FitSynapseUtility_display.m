@@ -12,6 +12,8 @@ function FitSynapseUtility_display( optimValues,options,state,exitflag,msg )
 switch options.Display
     case 'off'
         return;
+    case 'addstate'
+        return;
     case 'iter'
         if strcmpi(state,'iter')
             DisplayMessage;
