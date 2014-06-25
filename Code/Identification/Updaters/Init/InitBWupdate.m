@@ -7,8 +7,19 @@ function [ newmodelobj,loglike,pstate ] = InitBWupdate( modelobj,simobj,varargin
 %   simobj   = SynapsePlastSeq
 
 
-Normalise=true;
-varargin=assignApplicable(varargin);
+% Normalise=true;
+% varargin=assignApplicable(varargin);
+
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='InitBWupdate';
+    p.StructExpand=true;
+    p.KeepUnmatched=true;
+    p.addParameter('Normalise',true);
+%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
+end
+p.parse(varargin{:});
 
 
 % pstate=zeros(length(modelobj.Initial),length(simobj.readouts));
@@ -23,7 +34,7 @@ pstate=alpha'.*beta;
 
 newmodelobj=modelobj.setInitial(pstate(:,1)');
 
-if Normalise
+if p.Results.Normalise
     pstate=pstate*diag(1./sum(pstate,1));
     newmodelobj=newmodelobj.Normalise;
     assert(newmodelobj.isvalid,'newmodelobj is invalid');

@@ -7,8 +7,19 @@ function [ newmodelobj,loglike,pstate ] = InitViterbiupdate( modelobj,simobj,var
 %   simobj   = SynapsePlastSeq
 
 
-Normalise=true;
-varargin=assignApplicable(varargin);
+% Normalise=true;
+% varargin=assignApplicable(varargin);
+
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='InitViterbiupdate';
+    p.StructExpand=true;
+    p.KeepUnmatched=true;
+    p.addParameter('Normalise',true);
+%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
+end
+p.parse(varargin{:});
 
 
 loglike=log(modelobj.Initial*modelobj.outProj{simobj.readouts(1)});
@@ -31,7 +42,7 @@ pstate(sub2ind(size(pstate),LikelyPath,1:simobj.NumT))=1;
 
 newmodelobj=modelobj.setInitial(pstate(:,1)');
 
-if Normalise
+if p.Results.Normalise
     newmodelobj=newmodelobj.Normalise;
     assert(newmodelobj.isvalid,'newmodelobj is invalid');
 end

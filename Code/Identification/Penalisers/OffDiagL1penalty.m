@@ -7,14 +7,27 @@ function [ newmodelobj,loglike,pstate ] = OffDiagL1penalty( modelobj,simobj,vara
 %   modelobj = SynapseIdModel
 %   simobj   = vector of SynapsePlastSeq
 
-Weighter='RJ';%weighting algorithm to apply before penalty
-Normalise=true;
-Penalty=1;
-varargin=assignApplicable(varargin);
+% Weighter='RJ';%weighting algorithm to apply before penalty
+% Normalise=true;
+% Penalty=1;
+% varargin=assignApplicable(varargin);
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='OffDiagL1penalty';
+    p.StructExpand=true;
+    p.KeepUnmatched=true;
+    p.addParameter('Weighter','RJ');
+    p.addParameter('Normalise',true);
+    p.addParameter('Penalty',1);
+%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
+end
+p.parse(varargin{:});
+Penalty=p.Results.Penalty;
 
-weighterfn=str2func([Weighter 'weight']);
+weighterfn=str2func([p.Results.Weighter 'weight']);
 
-[newmodelobj,loglike,pstate] = weighterfn(modelobj,simobj,'Normalise',false,varargin{:});
+[newmodelobj,loglike,pstate] = weighterfn(modelobj,simobj,'Normalise',false,p.Unmatched);
 
 M=newmodelobj.M;
 L1=0;
@@ -27,14 +40,14 @@ newmodelobj=newmodelobj.setM(M);
 
 loglike = loglike - Penalty * L1;
 
-if Normalise
+if p.Results.Normalise
     newmodelobj=newmodelobj.Normalise;
     assert(newmodelobj.isvalid,'newmodelobj is invalid');
 end
 
     function lambda=CalcLagrange(M)
         rowsum = sum(M,2) - Penalty;
-        lambda = ( rowsum + sqrt( rowsum.^2 + 4*Penalty*diag(M) ) )/2;
+        lambda = ( rowsum + sqrt( rowsum.^2 + 4**diag(M) ) )/2;
     end
 
     function Mnew=PenNorm(M,lambda)

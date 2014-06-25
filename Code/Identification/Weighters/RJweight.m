@@ -7,15 +7,26 @@ function [ newmodelobj,loglike,pstate ] = RJweight( modelobj,simobj,varargin )
 %   simobj   = vector of SynapsePlastSeq
 
 % lloffset=0;%avoid overflow by making this more positive
-Algorithm='BW';%algorithm to apply to each chunk of data
-Normalise=true;
-varargin=assignApplicable(varargin);
+% Algorithm='BW';%algorithm to apply to each chunk of data
+% Normalise=true;
+% varargin=assignApplicable(varargin);
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='RJweight';
+    p.StructExpand=true;
+    p.KeepUnmatched=true;
+    p.addParameter('Algorithm','BW');
+    p.addParameter('Normalise',true);
+%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
+end
+p.parse(varargin{:});
 
-updater=str2func([Algorithm 'update']);
+updater=str2func([p.Results.Algorithm 'update']);
 
-error(CheckSize(simobj,@isvector));
+% error(CheckSize(simobj,@isvector));
 
-if ~strcmpi(Algorithm,'BW')
+if ~strcmpi(p.Results.Algorithm(end-1:end),'BW')
     lloffset=-HMMloglike(modelobj,simobj)/length(simobj);
 end
 
@@ -24,8 +35,8 @@ newmodelobj=modelobj.Zero;
 loglike=0;
 
 for i=1:length(simobj)
-    [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',false,varargin{:});
-    if ~strcmpi(Algorithm,'BW')
+    [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',false,p.Unmatched);
+    if ~strcmpi(p.Results.Algorithm(end-1:end),'BW')
         chunkModel=exp(-lloffset-chunkll)*chunkModel;
     end
     newmodelobj=newmodelobj+chunkModel;
@@ -33,7 +44,7 @@ for i=1:length(simobj)
     loglike=loglike+chunkll;
 end
     
-if Normalise
+if p.Results.Normalise
     newmodelobj=newmodelobj.Normalise;
     assert(newmodelobj.isvalid,'newmodelobj is invalid');
 end
