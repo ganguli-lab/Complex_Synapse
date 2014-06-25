@@ -76,6 +76,7 @@ CallOutFcns;
             exitflag=-5;
             msg='Stopped by OuputFcn or PlotFcn';
         end
+        FitSynapseUtility_display(optimValues,options,state,exitflag,msg);
     end
 
 
