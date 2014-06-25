@@ -7,8 +7,9 @@ function [ beta ] = BWbetaN( updater,modelobj,simobj )
 
 %   t        = time-step after which we want forward variables
 
-error(CheckSize(modelobj,@isscalar));
+% error(CheckSize(modelobj,@isscalar));
 % error(CheckSize(simobj,@isscalar));
+
 % error(CheckSize(t,@isscalar));
 % error(CheckValue(t,@isint));
 
@@ -17,10 +18,11 @@ error(CheckSize(modelobj,@isscalar));
 
 beta=ones(modelobj.NumStates,simobj.NumT);
 
-    siz=modelobj.NumStates*[1 1];
-    for i=simobj.NumT:-1:2
-        beta(:,i-1) = reshape(updater(:,:,i-1),siz) * beta(:,i);
-    end
+%     siz=modelobj.NumStates*[1 1];
+%     for i=simobj.NumT:-1:2
+%         beta(:,i-1) = reshape(updater(:,:,i-1),siz) * beta(:,i);
+%     end
+[ beta ] = BWbetaNloop_mex( beta,updater );
 
 end
 

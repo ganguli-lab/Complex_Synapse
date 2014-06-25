@@ -1,0 +1,11 @@
+libemlrt.lib
+libcovrt.lib
+libut.lib
+libmwblas.lib
+libmwmathutil.lib
+/export:mexFunction
+/export:emlrtMexFcnProperties
+/export:BWalphaNloop
+/export:BWalphaNloop_initialize
+/export:BWalphaNloop_terminate
+/export:BWalphaNloop_atexit
