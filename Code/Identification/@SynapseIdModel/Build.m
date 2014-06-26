@@ -18,7 +18,8 @@ newobj=SynapseIdModel;
 
 newobj=newobj.setM({ScaleW*Wp+eye(length(Wp)),ScaleW*Wm+eye(length(Wp))});
 newobj=newobj.setW(w);
-newobj=newobj.CalcEqProb(fp);
+newobj=newobj.setFp(fp);
+newobj=newobj.CalcEqProb;
 
 
 end

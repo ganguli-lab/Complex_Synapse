@@ -1,4 +1,4 @@
-function simobj=Simulate(obj,fp,randno)
+function simobj=Simulate(obj,randno)
 %simobj=SIMULATE(obj,fp,randno) simulate SynapsePlastSeqSim from
 %SynapseIdModel
 %   randno  = matrix(2,n,siz) of random numbers in [0,1]
@@ -6,15 +6,17 @@ function simobj=Simulate(obj,fp,randno)
 %               second row controls which transition is used
 %           n   = number of time-steps in each sequence
 %           siz = size of resulting SynapsePlastSeqSim, simobj
+
 %   fp      =  fraction of transitions that are potentiating
 
 if ismatrix(randno)
 
     error(CheckValue(randno,@(x) all(all(inrange(x,0,1))),'inrange(0,1)'));
     error(CheckSize(randno,@(x) size(x,1)>=2,'size(randno,1)==2'));
-    error(CheckValue(fp,@(x) all(all(inrange(x,0,1))),'inrange(0,1)'));
-    error(CheckSize(fp,@(x) length(x)==obj.NumPlast-1,'length(fp)==length(obj.M)-1'));
+%     error(CheckValue(fp,@(x) all(all(inrange(x,0,1))),'inrange(0,1)'));
+%     error(CheckSize(fp,@(x) length(x)==obj.NumPlast-1,'length(fp)==length(obj.M)-1'));
 
+    fp=obj.fp;
     fp(fp==0)=1e-10;
 
     simobj=SynapsePlastSeqSim;
@@ -55,7 +57,7 @@ else
     end
     
     for i=1:numel(simobj)
-        simobj(i)=obj.Simulate(fp,squeeze(randno(:,:,i)));
+        simobj(i)=obj.Simulate(squeeze(randno(:,:,i)));
     end    
 
 end%if ismatrix

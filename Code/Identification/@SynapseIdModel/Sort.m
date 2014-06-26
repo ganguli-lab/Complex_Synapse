@@ -1,11 +1,12 @@
-function [ newobj,ix ] = Sort( obj,fp )
+function [ newobj,ix ] = Sort( obj )
 %newobj=SORT(obj) Put states in order of decreasing eta^+
 
-error(CheckSize(fp,@(x) length(x)==length(obj.M)-1,'length(M)-1'));
+% error(CheckSize(fp,@(x) length(x)==length(obj.M)-1,'length(M)-1'));
 
 newobj=obj;
 
 W=zeros(length(newobj.w));
+fp=obj.fp;
 fp(end+1)=1-sum(fp);
 
 [newobj.w,ix]=sort(obj.w,'ascend');

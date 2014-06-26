@@ -1,8 +1,9 @@
-function newobj=CalcEqProb(obj,fp)
+function newobj=CalcEqProb(obj)
 %newobj=CALCEQPROB(obj,fp) set Initial to eq dist
 
 newobj=obj;
 W=zeros(length(newobj.w));
+fp=obj.fp;
 fp(end+1)=1-sum(fp);
 
 for i=1:length(obj.M)

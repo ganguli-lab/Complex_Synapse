@@ -17,6 +17,10 @@ classdef SynapseIdModel
         %cell of diagonal matrices for each possible value of
         %output(low to high), with elements equal to prob of output
         outProj={[1 0; 0 0],[0 0; 0 1]};
+        %probability of each type of plasticity event
+        %last element determined by sum=1
+        %used in simulation and sorting
+        fp=0.5;
     end
     
     properties
@@ -48,12 +52,17 @@ classdef SynapseIdModel
             newobj=obj;
             newobj.outProj=newOutProj;
         end
+        %
+        function newobj=setFp(obj,newFp)
+            newobj=obj;
+            newobj.fp=newFp;
+        end
     end
     
     methods%validity etc.
         newobj=Normalise(obj)
         newobj=Zero(obj)
-        [newobj,ix]=Sort(obj,fp)
+        [newobj,ix]=Sort(obj)
         tf=isvalid(obj)
     end
     
@@ -86,7 +95,7 @@ classdef SynapseIdModel
     methods%for simulations
         wvals=GetWVals(obj)
         wvalinds=GetWValInds(obj)
-        simobj=Simulate(obj,fp,randno)
+        simobj=Simulate(obj,randno)
         imh=image(obj,axInitial,axM,varargin)
     end
     
@@ -94,7 +103,7 @@ classdef SynapseIdModel
         %called when changing w
         obj=CalcOutProj(obj)
         %set Initial to eq dist
-        newobj=CalcEqProb(obj,fp)
+        newobj=CalcEqProb(obj)
     end%methods
     
     methods (Static=true) %for construction

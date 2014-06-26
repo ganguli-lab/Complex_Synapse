@@ -19,7 +19,7 @@ optimValues=struct('iteration',0,'funcCount',0,...
     'model',[],'fval',[],'prev',[],'truth',[],'stateProb',{{}});
 
 %the SynapseIdModel where we'll store the fit
-optimValues.model=guessmodel.Sort(options.fp);
+optimValues.model=guessmodel.Sort;
 optimValues.fval=HMMloglike(optimValues.model,simobj)+SynapsePrior(optimValues.model,options);
 
 %information about the previous state and current state of the optimiser relative to the previous state

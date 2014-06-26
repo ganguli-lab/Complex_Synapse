@@ -25,7 +25,7 @@ ME=[];
     try
     [optimValues.model,optimValues.fval,optimValues.stateProb]=updaterfn(optimValues.prev.model,simobj,...
         extraArgs{:});
-    optimValues.model=optimValues.model.Sort(options.fp);
+    optimValues.model=optimValues.model.Sort;
     catch ME
         exitflag=-1;
         msg=['Error: ' ME.message];

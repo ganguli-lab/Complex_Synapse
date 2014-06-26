@@ -4,7 +4,7 @@ function [ newmodel,loglike ] = FitGUI( truemodel )
 
 
 S=struct('MaxIter',100,'TolFun',NaN,'TolX',1e-4,'TolFunChange',1,...
-    'Penalty',1,'NormPower',2,'fp',0.5,'num_ch',30,'num_t',50);
+    'Penalty',1,'num_ch',30,'num_t',50);
 T=struct('Algorithm','BW','Weighter','RJ','Penaliser','No','ModelDiff','KL');
 AxFontSize=12;
 BtFontSize=12;
@@ -77,7 +77,7 @@ freezeColors(potdepwt);
 colormap(statepr,cmapname);
 
 %-------------------------------------------------------------------------
-truemodel=truemodel.Sort(S.fp);
+truemodel=truemodel.Sort;
 simobj=SynapsePlastSeqSim(1,S.num_ch);
 newmodel=SynapseIdModel;
 stopbtn=false;
@@ -228,7 +228,7 @@ MakeButton(4,'Stop',@Stop);
     function Simulate(~,~)
         simobj=SynapsePlastSeqSim(1,S.num_ch);
         for jj=1:S.num_ch
-            simobj(jj)=truemodel.Simulate(S.fp,rand(2,S.num_t));
+            simobj(jj)=truemodel.Simulate(rand(2,S.num_t));
         end
         PlotSim;
         PlotModel(truemodel,ax_true);
@@ -241,7 +241,7 @@ MakeButton(4,'Stop',@Stop);
 
     function InitRand(~,~)
         newmodel=SynapseIdModel.Rand(truemodel.w);
-        newmodel=newmodel.Sort(S.fp);
+        newmodel=newmodel.Sort;
         PlotModel(newmodel,ax_est);
         if ~isempty(simobj(1).potdep)
             stpr=StateProbs(newmodel,simobj);
