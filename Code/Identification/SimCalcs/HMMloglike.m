@@ -5,7 +5,7 @@ function [ loglike ] = HMMloglike( modelobj,simobj )
 %   simobj   = SynapsePlastSeq
 
 
-error(CheckSize(modelobj,@isscalar));
+% error(CheckSize(modelobj,@isscalar));
 
 if isscalar(simobj)
     [~,eta]=BWalphaN(modelobj,simobj);
