@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWalphaNloop_api'
  *
- * C source code generated on: Thu Jun 26 11:57:27 2014
+ * C source code generated on: Fri Jun 27 13:42:24 2014
  *
  */
 
@@ -112,18 +112,18 @@ static void f_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
 static void g_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   emlrtMsgIdentifier *msgId, emxArray_real_T *ret)
 {
-  int32_T iv2[2];
+  int32_T iv0[2];
   boolean_T bv0[2];
   int32_T i;
-  int32_T iv3[2];
+  int32_T iv1[2];
   for (i = 0; i < 2; i++) {
-    iv2[i] = -1;
+    iv0[i] = -1;
     bv0[i] = TRUE;
   }
 
-  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 2U, iv2, bv0, iv3);
-  ret->size[0] = iv3[0];
-  ret->size[1] = iv3[1];
+  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 2U, iv0, bv0, iv1);
+  ret->size[0] = iv1[0];
+  ret->size[1] = iv1[1];
   ret->allocatedSize = ret->size[0] * ret->size[1];
   ret->data = (real_T *)mxGetData(src);
   ret->canFreeData = FALSE;
@@ -133,13 +133,13 @@ static void g_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
 static void h_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   emlrtMsgIdentifier *msgId, emxArray_real_T *ret)
 {
-  int32_T iv4[1];
+  int32_T iv2[1];
   boolean_T bv1[1];
-  int32_T iv5[1];
-  iv4[0] = -1;
+  int32_T iv3[1];
+  iv2[0] = -1;
   bv1[0] = TRUE;
-  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 1U, iv4, bv1, iv5);
-  ret->size[0] = iv5[0];
+  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 1U, iv2, bv1, iv3);
+  ret->size[0] = iv3[0];
   ret->allocatedSize = ret->size[0];
   ret->data = (real_T *)mxGetData(src);
   ret->canFreeData = FALSE;
@@ -149,19 +149,19 @@ static void h_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
 static void i_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   emlrtMsgIdentifier *msgId, emxArray_real_T *ret)
 {
-  int32_T iv6[3];
+  int32_T iv4[3];
   boolean_T bv2[3];
   int32_T i;
-  int32_T iv7[3];
+  int32_T iv5[3];
   for (i = 0; i < 3; i++) {
-    iv6[i] = -1;
+    iv4[i] = -1;
     bv2[i] = TRUE;
   }
 
-  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 3U, iv6, bv2, iv7);
-  ret->size[0] = iv7[0];
-  ret->size[1] = iv7[1];
-  ret->size[2] = iv7[2];
+  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 3U, iv4, bv2, iv5);
+  ret->size[0] = iv5[0];
+  ret->size[1] = iv5[1];
+  ret->size[2] = iv5[2];
   ret->allocatedSize = ret->size[0] * ret->size[1] * ret->size[2];
   ret->data = (real_T *)mxGetData(src);
   ret->canFreeData = FALSE;

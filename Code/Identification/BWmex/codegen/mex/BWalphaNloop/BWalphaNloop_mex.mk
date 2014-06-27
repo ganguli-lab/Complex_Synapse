@@ -7,13 +7,10 @@ include BWalphaNloop_mex.mki
 
 
 SRC_FILES =  \
-	BWalphaNloop_mexutil.c \
 	BWalphaNloop_data.c \
 	BWalphaNloop_initialize.c \
 	BWalphaNloop_terminate.c \
 	BWalphaNloop.c \
-	eml_int_forloop_overflow_check.c \
-	eml_error.c \
 	BWalphaNloop_api.c \
 	BWalphaNloop_emxutil.c \
 	BWalphaNloop_mex.c \

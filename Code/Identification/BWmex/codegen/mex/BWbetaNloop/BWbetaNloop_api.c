@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWbetaNloop_api'
  *
- * C source code generated on: Thu Jun 26 11:57:47 2014
+ * C source code generated on: Fri Jun 27 13:42:43 2014
  *
  */
 
@@ -59,18 +59,18 @@ static void d_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
 static void e_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   emlrtMsgIdentifier *msgId, emxArray_real_T *ret)
 {
-  int32_T iv2[2];
+  int32_T iv0[2];
   boolean_T bv0[2];
   int32_T i;
-  int32_T iv3[2];
+  int32_T iv1[2];
   for (i = 0; i < 2; i++) {
-    iv2[i] = -1;
+    iv0[i] = -1;
     bv0[i] = TRUE;
   }
 
-  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 2U, iv2, bv0, iv3);
-  ret->size[0] = iv3[0];
-  ret->size[1] = iv3[1];
+  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 2U, iv0, bv0, iv1);
+  ret->size[0] = iv1[0];
+  ret->size[1] = iv1[1];
   ret->allocatedSize = ret->size[0] * ret->size[1];
   ret->data = (real_T *)mxGetData(src);
   ret->canFreeData = FALSE;
@@ -96,19 +96,19 @@ static void emlrt_marshallOut(emxArray_real_T *u, const mxArray *y)
 static void f_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   emlrtMsgIdentifier *msgId, emxArray_real_T *ret)
 {
-  int32_T iv4[3];
+  int32_T iv2[3];
   boolean_T bv1[3];
   int32_T i;
-  int32_T iv5[3];
+  int32_T iv3[3];
   for (i = 0; i < 3; i++) {
-    iv4[i] = -1;
+    iv2[i] = -1;
     bv1[i] = TRUE;
   }
 
-  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 3U, iv4, bv1, iv5);
-  ret->size[0] = iv5[0];
-  ret->size[1] = iv5[1];
-  ret->size[2] = iv5[2];
+  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 3U, iv2, bv1, iv3);
+  ret->size[0] = iv3[0];
+  ret->size[1] = iv3[1];
+  ret->size[2] = iv3[2];
   ret->allocatedSize = ret->size[0] * ret->size[1] * ret->size[2];
   ret->data = (real_T *)mxGetData(src);
   ret->canFreeData = FALSE;

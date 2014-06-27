@@ -7,13 +7,10 @@ include BWbetaNloop_mex.mki
 
 
 SRC_FILES =  \
-	BWbetaNloop_mexutil.c \
 	BWbetaNloop_data.c \
 	BWbetaNloop_initialize.c \
 	BWbetaNloop_terminate.c \
 	BWbetaNloop.c \
-	eml_int_forloop_overflow_check.c \
-	eml_error.c \
 	BWbetaNloop_api.c \
 	BWbetaNloop_emxutil.c \
 	BWbetaNloop_mex.c \

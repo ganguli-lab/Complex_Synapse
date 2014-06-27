@@ -15,7 +15,7 @@
 <a name="3"><font color="#888888 "><i>    3   </i></font></a><font color="#117755"><I> *</i></font>
 <a name="4"><font color="#888888 "><i>    4   </i></font></a><font color="#117755"><I> * Code generation for function 'BWbetaNloop_api'</i></font>
 <a name="5"><font color="#888888 "><i>    5   </i></font></a><font color="#117755"><I> *</i></font>
-<a name="6"><font color="#888888 "><i>    6   </i></font></a><font color="#117755"><I> * C source code generated on: Thu Jun 26 11:57:47 2014</i></font>
+<a name="6"><font color="#888888 "><i>    6   </i></font></a><font color="#117755"><I> * C source code generated on: Fri Jun 27 13:42:43 2014</i></font>
 <a name="7"><font color="#888888 "><i>    7   </i></font></a><font color="#117755"><I> *</i></font>
 <a name="8"><font color="#888888 "><i>    8   </i></font></a><font color="#117755"><I> */</i></font>
 <a name="9"><font color="#888888 "><i>    9   </i></font></a>
@@ -71,18 +71,18 @@
 <a name="59"><font color="#888888 "><i>   59   </i></font></a><font color="#112266"><b>static</b></font> <font color="#112266"><b>void</b></font> <a name="fcn_e_emlrt_marshallIn">e_emlrt_marshallIn</a>(<font color="#112266"><b>const</b></font> emlrtStack *sp, <font color="#112266"><b>const</b></font> mxArray *src, <font color="#112266"><b>const</b></font>
 <a name="60"><font color="#888888 "><i>   60   </i></font></a>  emlrtMsgIdentifier *msgId, <a href="BWbetaNloop_types_h.html#type_emxArray_real_T" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'type_emxArray_real_T');" target="rtwreport_document_frame"><font color="#1122aa">emxArray_real_T</font></a> *ret)
 <a name="61"><font color="#888888 "><i>   61   </i></font></a><b>{</b>
-<a name="62"><font color="#888888 "><i>   62   </i></font></a>  int32_T iv2[2];
+<a name="62"><font color="#888888 "><i>   62   </i></font></a>  int32_T iv0[2];
 <a name="63"><font color="#888888 "><i>   63   </i></font></a>  boolean_T bv0[2];
 <a name="64"><font color="#888888 "><i>   64   </i></font></a>  int32_T i;
-<a name="65"><font color="#888888 "><i>   65   </i></font></a>  int32_T iv3[2];
+<a name="65"><font color="#888888 "><i>   65   </i></font></a>  int32_T iv1[2];
 <a name="66"><font color="#888888 "><i>   66   </i></font></a>  <font color="#112266"><b>for</b></font> (i = 0; i &lt; 2; i++) <b>{</b>
-<a name="67"><font color="#888888 "><i>   67   </i></font></a>    iv2[i] = -1;
+<a name="67"><font color="#888888 "><i>   67   </i></font></a>    iv0[i] = -1;
 <a name="68"><font color="#888888 "><i>   68   </i></font></a>    bv0[i] = TRUE;
 <a name="69"><font color="#888888 "><i>   69   </i></font></a>  <b>}</b>
 <a name="70"><font color="#888888 "><i>   70   </i></font></a>
-<a name="71"><font color="#888888 "><i>   71   </i></font></a>  emlrtCheckVsBuiltInR2012b(sp, msgId, src, <font color="#1122ff">&quot;double&quot;</font>, FALSE, 2U, iv2, bv0, iv3);
-<a name="72"><font color="#888888 "><i>   72   </i></font></a>  ret-&gt;size[0] = iv3[0];
-<a name="73"><font color="#888888 "><i>   73   </i></font></a>  ret-&gt;size[1] = iv3[1];
+<a name="71"><font color="#888888 "><i>   71   </i></font></a>  emlrtCheckVsBuiltInR2012b(sp, msgId, src, <font color="#1122ff">&quot;double&quot;</font>, FALSE, 2U, iv0, bv0, iv1);
+<a name="72"><font color="#888888 "><i>   72   </i></font></a>  ret-&gt;size[0] = iv1[0];
+<a name="73"><font color="#888888 "><i>   73   </i></font></a>  ret-&gt;size[1] = iv1[1];
 <a name="74"><font color="#888888 "><i>   74   </i></font></a>  ret-&gt;allocatedSize = ret-&gt;size[0] * ret-&gt;size[1];
 <a name="75"><font color="#888888 "><i>   75   </i></font></a>  ret-&gt;data = (real_T *)mxGetData(src);
 <a name="76"><font color="#888888 "><i>   76   </i></font></a>  ret-&gt;canFreeData = FALSE;
@@ -108,19 +108,19 @@
 <a name="96"><font color="#888888 "><i>   96   </i></font></a><font color="#112266"><b>static</b></font> <font color="#112266"><b>void</b></font> <a name="fcn_f_emlrt_marshallIn">f_emlrt_marshallIn</a>(<font color="#112266"><b>const</b></font> emlrtStack *sp, <font color="#112266"><b>const</b></font> mxArray *src, <font color="#112266"><b>const</b></font>
 <a name="97"><font color="#888888 "><i>   97   </i></font></a>  emlrtMsgIdentifier *msgId, <a href="BWbetaNloop_types_h.html#type_emxArray_real_T" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'type_emxArray_real_T');" target="rtwreport_document_frame"><font color="#1122aa">emxArray_real_T</font></a> *ret)
 <a name="98"><font color="#888888 "><i>   98   </i></font></a><b>{</b>
-<a name="99"><font color="#888888 "><i>   99   </i></font></a>  int32_T iv4[3];
+<a name="99"><font color="#888888 "><i>   99   </i></font></a>  int32_T iv2[3];
 <a name="100"><font color="#888888 "><i>  100   </i></font></a>  boolean_T bv1[3];
 <a name="101"><font color="#888888 "><i>  101   </i></font></a>  int32_T i;
-<a name="102"><font color="#888888 "><i>  102   </i></font></a>  int32_T iv5[3];
+<a name="102"><font color="#888888 "><i>  102   </i></font></a>  int32_T iv3[3];
 <a name="103"><font color="#888888 "><i>  103   </i></font></a>  <font color="#112266"><b>for</b></font> (i = 0; i &lt; 3; i++) <b>{</b>
-<a name="104"><font color="#888888 "><i>  104   </i></font></a>    iv4[i] = -1;
+<a name="104"><font color="#888888 "><i>  104   </i></font></a>    iv2[i] = -1;
 <a name="105"><font color="#888888 "><i>  105   </i></font></a>    bv1[i] = TRUE;
 <a name="106"><font color="#888888 "><i>  106   </i></font></a>  <b>}</b>
 <a name="107"><font color="#888888 "><i>  107   </i></font></a>
-<a name="108"><font color="#888888 "><i>  108   </i></font></a>  emlrtCheckVsBuiltInR2012b(sp, msgId, src, <font color="#1122ff">&quot;double&quot;</font>, FALSE, 3U, iv4, bv1, iv5);
-<a name="109"><font color="#888888 "><i>  109   </i></font></a>  ret-&gt;size[0] = iv5[0];
-<a name="110"><font color="#888888 "><i>  110   </i></font></a>  ret-&gt;size[1] = iv5[1];
-<a name="111"><font color="#888888 "><i>  111   </i></font></a>  ret-&gt;size[2] = iv5[2];
+<a name="108"><font color="#888888 "><i>  108   </i></font></a>  emlrtCheckVsBuiltInR2012b(sp, msgId, src, <font color="#1122ff">&quot;double&quot;</font>, FALSE, 3U, iv2, bv1, iv3);
+<a name="109"><font color="#888888 "><i>  109   </i></font></a>  ret-&gt;size[0] = iv3[0];
+<a name="110"><font color="#888888 "><i>  110   </i></font></a>  ret-&gt;size[1] = iv3[1];
+<a name="111"><font color="#888888 "><i>  111   </i></font></a>  ret-&gt;size[2] = iv3[2];
 <a name="112"><font color="#888888 "><i>  112   </i></font></a>  ret-&gt;allocatedSize = ret-&gt;size[0] * ret-&gt;size[1] * ret-&gt;size[2];
 <a name="113"><font color="#888888 "><i>  113   </i></font></a>  ret-&gt;data = (real_T *)mxGetData(src);
 <a name="114"><font color="#888888 "><i>  114   </i></font></a>  ret-&gt;canFreeData = FALSE;
