@@ -132,6 +132,8 @@ MakeButton(4,'Stop',@Stop);
 
 %  Utility functions
 
+%-------------------------------------------------------------------------
+%Functions that build interface elements
  
 %     function pos=CalcPosVert(which,maxwhich,left,bottom,width,height)
 %     %Calculate position for panel in vertical grid of size [left bottom width height]
@@ -182,6 +184,57 @@ MakeButton(4,'Stop',@Stop);
                         'Callback',func);
     end%function MakeEditBox
 
+%-------------------------------------------------------------------------
+%Callback functions for buttons
+
+    function Simulate(~,~)
+        simobj=SynapsePlastSeqSim(1,S.num_ch);
+        for jj=1:S.num_ch
+            simobj(jj)=truemodel.Simulate(rand(2,S.num_t));
+        end
+        PlotSim;
+        PlotModel(truemodel,ax_true);
+        %InitRand;
+        %UpdateMets;
+        stpr=StateProbs(newmodel,simobj);
+        if iscell(stpr)
+            PlotStatePr(stpr);
+        else
+            PlotStatePr({stpr});
+        end
+        %InitRand;
+    end
+
+    function InitRand(~,~)
+        newmodel=SynapseIdModel.Rand(truemodel.w);
+        newmodel=newmodel.Sort;
+        PlotModel(newmodel,ax_est);
+        if ~isempty(simobj(1).potdep)
+            stpr=StateProbs(newmodel,simobj);
+            if iscell(stpr)
+                PlotStatePr(stpr);
+            else
+                PlotStatePr({stpr});
+            end
+        end
+    end
+
+    function Stop(~,~)
+        stopbtn=true;
+    end
+
+    function Update(~,~)
+       if ~isempty(simobj(1).potdep)
+           options=SynapseOptimset(catstruct(S,T),'PlotFcn',@PlotFcn,'GroundTruth',truemodel);
+           [newmodel,loglike,exitflag,output]=FitSynapse(simobj,newmodel,options);
+           warndlg(['Exit flag: ' int2str(exitflag) '. ' output.message]);
+           stopbtn=false;
+       end
+    end
+
+%-------------------------------------------------------------------------
+%Functions that update plots
+
     function PlotSim
 %         wt=[3-2*[simobj.potdep]; 2*[simobj.readouts]-3];
         wt=[3-2*simobj(1).potdep; 2*simobj(1).readouts-3];
@@ -200,12 +253,8 @@ MakeButton(4,'Stop',@Stop);
 
     function PlotStatePr(stpr)
         cla(statepr);
-        if iscell(stpr)
-%             imagesc([stpr{:}],'Parent',statepr);
-            imagesc(stpr{1},'Parent',statepr);
-        else
-            imagesc(stpr,'Parent',statepr);
-        end
+%         imagesc([stpr{:}],'Parent',statepr);
+        imagesc(stpr{1},'Parent',statepr);
         set(statepr,'CLim',[0 1]);
         cb=colorbar('peer',statepr);
         cblabel(cb,'Probability','FontSize',AxFontSize,'Rotation',270,'VerticalAlignment','bottom');
@@ -223,34 +272,6 @@ MakeButton(4,'Stop',@Stop);
         modelobj.image(ax(3),ax(1:2),'FontSize',AxFontSize);
         cb=colorbar('peer',ax(3),'location','SouthOutside');
         cblabel(cb,'Probability','FontSize',AxFontSize);
-    end
-
-    function Simulate(~,~)
-        simobj=SynapsePlastSeqSim(1,S.num_ch);
-        for jj=1:S.num_ch
-            simobj(jj)=truemodel.Simulate(rand(2,S.num_t));
-        end
-        PlotSim;
-        PlotModel(truemodel,ax_true);
-        %InitRand;
-        %UpdateMets;
-        stpr=StateProbs(newmodel,simobj);
-        PlotStatePr(stpr);
-        %InitRand;
-    end
-
-    function InitRand(~,~)
-        newmodel=SynapseIdModel.Rand(truemodel.w);
-        newmodel=newmodel.Sort;
-        PlotModel(newmodel,ax_est);
-        if ~isempty(simobj(1).potdep)
-            stpr=StateProbs(newmodel,simobj);
-            PlotStatePr(stpr);
-        end
-    end
-
-    function Stop(~,~)
-        stopbtn=true;
     end
 
     function mets=CalcMets(optimvals)
@@ -339,15 +360,6 @@ MakeButton(4,'Stop',@Stop);
                 set(figure1,'Name','Done');
             otherwise
         end
-    end
-
-    function Update(~,~)
-       if ~isempty(simobj(1).potdep)
-           options=SynapseOptimset(catstruct(S,T),'PlotFcn',@PlotFcn,'GroundTruth',truemodel);
-           [newmodel,loglike,exitflag,output]=FitSynapse(simobj,newmodel,options);
-           warndlg(['Exit flag: ' int2str(exitflag) '. ' output.message]);
-           stopbtn=false;
-       end
     end
 
 end
