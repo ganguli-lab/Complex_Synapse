@@ -46,7 +46,7 @@ beta=reshape(beta(:,2:end), [1 modelobj.NumStates simobj.NumT-1]);
 
 Mupdate = mmx('mult',alpha,beta) .* updater;
 M_new=cell(1,modelobj.NumPlast);
-for i=1:modelobj.NumPlast
+for i=1:length(M_new)
     M_new{i} = reshape( sum( Mupdate(:,:,simobj.potdep(1:end-1)==i) , 3 )  , siz );
 end
     

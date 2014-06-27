@@ -26,7 +26,9 @@ updater=str2func([p.Results.Algorithm 'update']);
 
 % error(CheckSize(simobj,@isvector));
 
-if ~strcmpi(p.Results.Algorithm(end-1:end),'BW')
+notBW=~strcmpi(p.Results.Algorithm(end-1:end),'BW');
+
+if notBW
     lloffset=-HMMloglike(modelobj,simobj)/length(simobj);
 end
 
@@ -35,9 +37,11 @@ newmodelobj=modelobj.Zero;
 loglike=0;
 
 for i=1:length(simobj)
-    [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',false,p.Unmatched);
-    if ~strcmpi(p.Results.Algorithm(end-1:end),'BW')
+    if notBW
+        [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',true,p.Unmatched);
         chunkModel=exp(-lloffset-chunkll)*chunkModel;
+    else
+        [chunkModel,chunkll,chunkPs]=updater(modelobj,simobj(i),'Normalise',false,p.Unmatched);
     end
     newmodelobj=newmodelobj+chunkModel;
     pstate{i}=chunkPs*diag(1./sum(chunkPs,1));
