@@ -13,16 +13,10 @@ function [ beta ] = BWbetaN( updater,modelobj,simobj )
 % error(CheckSize(t,@isscalar));
 % error(CheckValue(t,@isint));
 
-% M=cat(3,modelobj.M{simobj.potdep});
-% outProj=cat(3,modelobj.outProj{simobj.readouts});
 
 beta=ones(modelobj.NumStates,simobj.NumT);
 
-%     siz=modelobj.NumStates*[1 1];
-%     for i=simobj.NumT:-1:2
-%         beta(:,i-1) = reshape(updater(:,:,i-1),siz) * beta(:,i);
-%     end
-[ beta ] = BWbetaNloop_mex( beta,updater );
+beta=BWbetaNloop_mex(beta,updater);
 
 end
 
