@@ -1,8 +1,11 @@
 function [ newobj ] = Rand( w,varargin )
-%newobj=Rand(obj,func,fp,varargin) build SynapseIdModel from function
-%   [Wp,Wm,newobj.w]=func(varargin{:})
-%   newobj.Initial=EqProb(fp*Wp+(1-fp)*Wm)
-%   newobj.M={Wp+eye,Wm+eye}
+%newobj=Rand(w,...) build random SynapseIdModel
+%   w = synaptic weights
+%   parameter value pairs (default):
+%   'NumPlastTypes' number of typse of plasticity (2),
+%   'ScaleW' multiplies elelments (1),
+%   'sparsity' probability that each elemnt is non-zero (1).
+%other params passed to SynapseIdModel constructor
 
 
 % ScaleW=1;
@@ -12,7 +15,7 @@ function [ newobj ] = Rand( w,varargin )
 persistent p
 if isempty(p)
     p=inputParser;
-    p.FunctionName='BWupdate';
+    p.FunctionName='SynapseIdModel.Rand';
     p.StructExpand=true;
     p.KeepUnmatched=true;
     p.addParameter('ScaleW',1);
@@ -29,7 +32,7 @@ end
 init=rand(1,length(w));
 
 
-newobj=SynapseIdModel;
+newobj=SynapseIdModel(p.Unmatched);
 
 newobj=newobj.setM(M);
 newobj=newobj.setW(w);

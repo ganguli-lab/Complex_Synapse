@@ -10,7 +10,7 @@ function [ newmodelobj,loglike,pstate ] = Mackayweight( modelobj,simobj,varargin
 % Algorithm='BW';%algorithm to apply to each chunk of data
 % HoldBack=-0.25;
 % Normalise=true;
-varargin=assignApplicable(varargin);
+% varargin=assignApplicable(varargin);
 persistent p
 if isempty(p)
     p=inputParser;

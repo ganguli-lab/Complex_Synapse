@@ -81,6 +81,7 @@ classdef SynapseIdModel
         end
         %
         tf=SameSizes(obj,otherobj)
+        tf=MatchW(obj,otherobj)
     end
     
     methods%calculations etc.
@@ -95,6 +96,7 @@ classdef SynapseIdModel
     methods%for simulations
         wvals=GetWVals(obj)
         wvalinds=GetWValInds(obj)
+        newobj=SetWValInds(obj)
         simobj=Simulate(obj,randno)
         imh=image(obj,axInitial,axM,varargin)
     end
@@ -104,6 +106,8 @@ classdef SynapseIdModel
         obj=CalcOutProj(obj)
         %set Initial to eq dist
         newobj=CalcEqProb(obj)
+        %set Initial and M to random
+        newobj=Randomise(obj,varargin)
     end%methods
     
     methods (Static=true) %for construction
@@ -114,6 +118,7 @@ classdef SynapseIdModel
     methods (Access=private)%for constructiuon
         %called by constructor
         copy=CopyProps(original,copy)
+        copy=CopyFields(original,copy)
         [s,x] = assignToObject(s, x)
     end%methods
     
@@ -148,6 +153,8 @@ classdef SynapseIdModel
                     %set parameter values:
                     [tempobj,varargin]=assignToObject(tempobj,varargin);
                     obj=CopyProps(tempobj,obj);
+                    [Unmatched,varargin]=extractArgOfType(varargin,'struct');
+                    obj=CopyFields(Unmatched,obj);
                     %
                     %Extract data:
                     %

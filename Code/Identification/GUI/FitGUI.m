@@ -206,7 +206,7 @@ MakeButton(4,'Stop',@Stop);
     end
 
     function InitRand(~,~)
-        newmodel=SynapseIdModel.Rand(truemodel.w);
+        newmodel=truemodel.Randomise;
         newmodel=newmodel.Sort;
         PlotModel(newmodel,ax_est);
         if ~isempty(simobj(1).potdep)

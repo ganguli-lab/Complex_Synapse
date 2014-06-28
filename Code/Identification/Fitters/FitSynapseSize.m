@@ -1,10 +1,11 @@
-function [ fitmodel,like_n ] = FitSynapseSize( simobjs,options )
-%[fitmodel,like_n]=FitSynapseSize(fitsim,testsim,varargin)
+function [ fitmodel,like_n ] = FitSynapseSize( simobjs,options,varargin )
+%[fitmodel,like_n]=FitSynapseSize(simobjs,options)
 %Determinig number of states needed for SynapseIdModel (fitmodel) to fit
 %SypssePlastSeq (simobjs)
 %   like_n = struct(numstates,loglike)
 %   fitsim  = used to fit fitmodel.M
 %   testsim = used to evaluate models, after refitting fitmodel.Initial
+%other arguments passed to SynapseIdModel.Rand
 
 % MaxStates=6;%maximum number of states with each value of w
 % MinLogLikeInc=0;%carry on adding states if increase of log likelihood is greater than this
@@ -73,7 +74,7 @@ like_n.loglike(isnan(like_n.loglike))=[];
         newmodel=SynapseIdModel.Rand(neww);
         testloglike=HMMloglike(newmodel,fitsim)+SynapsePrior(newmodel,options);
         for i=1:options.NumReps
-            guessmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes);
+            guessmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes,varargin{:});
             [guessmodel,guessloglike]=FitSynapseM(fitsim,guessmodel,options);
             if guessloglike > testloglike
                 newmodel=guessmodel;
