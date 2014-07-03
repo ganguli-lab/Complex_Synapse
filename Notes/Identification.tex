@@ -94,7 +94,7 @@ When we don't have any prior information about the model $\M$, we fit the model 
   \pr\cond{\w^A[0,T]}{\M} = \prod_a \pr\cond{\w^a[0,T]}{\M}.
 \end{equation}
 %
-To do this, we define an axillary function
+To do this, we define an axillary function \cite{Baum1970baumwelch,Dempster2007EM}:
 %
 \begin{equation}\label{eq:emq}
   Q(\M,\M') = \sum_{i^A[0,T]} \pr\cond{i^A[0,T],\w^A[0,T]}{\M} \log\!\! \brk{
@@ -171,7 +171,7 @@ Therefore:
 %
 
 These quantities usually suffer from underflow.
-This can be avoided by using normalised forwar/backward variables:
+This can be avoided by using normalised forwar/backward variables \cite{Zhai2003HMMnorm}:
 %
 \begin{equation}\label{eq:normalphabeta}
 \begin{aligned}
@@ -213,7 +213,7 @@ Then we can write
 %
 The factors of $\pr\cond{\w[0,T]}{\M}$ can be absorbed by a redefinition of the Lagrange multipliers.
 
-Demanding a maximum and setting the derivatives to zero leaves us with the update rule:
+Demanding a maximum and setting the derivatives to zero leaves us with the update rule \cite{Baum1970baumwelch}:
 %
 \begin{equation}\label{eq:BWupdate}
 \begin{aligned}
@@ -244,7 +244,7 @@ This results in
 %
 Once again, we can absorb the factors of $\pr\cond{\w[0,T]}{\M}$ by a redefinition of the Lagrange multipliers.
 
-Defining $\widetilde{N}^{A\mu}_{ij} = \sum_a \widetilde{N}^{a\mu}_{ij}$ and setting the derivatives to zero leaves us with the update rule:
+Defining $\widetilde{N}^{A\mu}_{ij} = \sum_a \widetilde{N}^{a\mu}_{ij}$ and setting the derivatives to zero leaves us with the update rule \cite{rabiner1993speechrec}:
 %
 \begin{equation}\label{eq:RJupdate}
 \begin{aligned}
@@ -288,13 +288,89 @@ We will not put any prior on $\pib$, so its update rule will be unaffected.
 The normalisation constant $Z(\beta)$ will not play any role either.
 Now the derivatives read:
 %
-\begin{equation}\label{eq:multidiffs}
+\begin{equation}\label{eq:priordiffs}
   \pdiff{\CL}{\M'^\mu_{ij}} 
-    = \pr\!\prn{\w[0,T],\M} \prn{ \frac{ \widetilde{N}^{A\mu}_{ij} }{ \M'^\mu_{ij} }  - \pdiff{E^\mu_{ij}}{\M'^\mu_{ij}} }- \lambda^\mu_{i}.
+    = \pr\!\prn{\w[0,T],\M} \prn{ \frac{ \widetilde{N}^{A\mu}_{ij} }{ \M'^\mu_{ij} }  - \beta \pdiff{E^\mu_{ij}}{\M'^\mu_{ij}} }- \lambda^\mu_{i}.
 \end{equation}
 %
 Once again, we can absorb the factors of $\pr\!\prn{\w[0,T],\M}$ by a redefinition of the Lagrange multipliers.
 
+
+\subsection{Off-diagonal $\CL^1$ penalty \label{sec:offdiagL1}}
+
+Here we use the off-diagonal $\CL^1$ norm as a penalty:
+%
+\begin{equation}\label{eq:L1penalty}
+  E^\mu_{ij} = (1-\delta_{ij}) \M^\mu_{ij}.
+\end{equation}
+%
+Then the condition for a maximum \eqref{eq:priordiffs} reads
+%
+\begin{equation}\label{eq:L1priormax}
+\begin{aligned}
+  \frac{ \widetilde{N}^{A\mu}_{ij} }{ \M'^\mu_{ij} }  - (1-\delta_{ij})\beta - \lambda^\mu_{i} &= 0, \\
+   \M'^\mu_{ij} &= \frac{\widetilde{N}^{A\mu}_{ij}}{\lambda^\mu_{i}+(1-\delta_{ij})\beta}.
+\end{aligned}
+\end{equation}
+%
+Demanding normalisation gives
+%
+\begin{multline}\label{eq:L1norm}
+  \sum_{j \neq i}\frac{\widetilde{N}^{A\mu}_{ij}}{\lambda^\mu_{i}+\beta} +\frac{\widetilde{N}^{A\mu}_{ii}}{\lambda^\mu_{i}} =0, \\
+  \implies \quad
+  \lambda^\mu_{i} = \half \brk{ \prn{\sum_j \widetilde{N}^{A\mu}_{ij} -\beta} + 
+     \sqrt{\prn{\sum_j \widetilde{N}^{A\mu}_{ij} -\beta}^2 +4\beta\widetilde{N}^{A\mu}_{ii}}}
+\end{multline}
+%
+Which produces the update rule
+%
+\begin{equation}\label{eq:L1update}
+\begin{aligned}
+  \M'^\mu_{ij} &= \frac{ 2\widetilde{N}^{A\mu}_{ij} }{ \prn{\sum_k \widetilde{N}^{A\mu}_{ik} +\beta} +
+     \sqrt{\prn{\sum_k \widetilde{N}^{A\mu}_{ik} -\beta}^2 +4\beta\widetilde{N}^{A\mu}_{ii}} } 
+     \qquad \text{for } i\neq j, \\
+  \M'^\mu_{ii} &= \frac{ 2\widetilde{N}^{A\mu}_{ii} }{ \prn{\sum_k \widetilde{N}^{A\mu}_{ik} -\beta} +
+     \sqrt{\prn{\sum_k \widetilde{N}^{A\mu}_{ik} -\beta}^2 +4\beta\widetilde{N}^{A\mu}_{ii}} }.
+\end{aligned}
+\end{equation}
+%
+
+
+\subsection{$\CL^\half$ penalty \label{sec:Lhalf}}
+
+Here we use the  $\CL^\half$ norm as a penalty:
+%
+\begin{equation}\label{eq:Lhalfpenalty}
+  E^\mu_{ij} = 2\sqrt{\M^\mu_{ij}}.
+\end{equation}
+%
+Then the condition for a maximum \eqref{eq:priordiffs} reads
+%
+\begin{equation}\label{eq:Lhalfpriormax}
+  \frac{ \widetilde{N}^{A\mu}_{ij} }{ \M'^\mu_{ij} }  - \frac{\beta}{\sqrt{\M'^\mu_{ij}}} - \lambda^\mu_{i} = 0.
+\end{equation}
+%
+It is helpful to define
+%
+\begin{equation}\label{eq:Lhalfvars}
+\begin{aligned}
+  \widetilde{N}^{A\mu}_{ij} &= \beta^2 L^\mu_{ij}, \\
+  \lambda^\mu_i &= \prn{\gamma^\mu_i}^{-2}.
+\end{aligned}
+\end{equation}
+%
+Then we have the update rule
+%
+\begin{equation}\label{eq:Lhalfupdate}
+  \M'^\mu_{ij} = \frac{ \prn{\gamma^\mu_i}^2 \beta^2 }{ 4 } \prn{\sqrt{ \prn{\gamma^\mu_i}^2 + 4\prn{L^\mu_{ij}}^2 } - \gamma^\mu_i }^2, 
+\end{equation}
+%
+with $\gamma^\mu_i$ determined by:
+%
+\begin{equation}\label{eq:Lhalfnorm}
+    \frac{ \prn{\gamma^\mu_i}^2 \beta^2 }{ 4 } \sum_j \prn{\sqrt{\prn{\gamma^\mu_i}^2 + 4\prn{L^\mu_{ij}}^2} - \gamma^\mu_i}^2 = 1.
+\end{equation}
+%
 
 
 
