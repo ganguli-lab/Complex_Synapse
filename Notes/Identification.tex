@@ -1,0 +1,321 @@
+% -*- TeX -*- -*- UK -*-
+% ----------------------------------------------------------------
+% arXiv Paper ************************************************
+%
+% Subhaneil Lahiri's template
+%
+% Before submitting:
+%    Comment out hyperref
+%    Comment out showkeys
+%    Replace \input{mydefs.tex} with its contents
+%       or include mydefs.tex in zip/tar file
+%    Replace \input{newsymb.tex} with its contents
+%       or include newsymb.tex in zip/tar file
+%    Put this file, the .bbl file, any picture or
+%       other additional files and natbib.sty
+%       file in a zip/tar file
+%
+% **** -----------------------------------------------------------
+\documentclass[12pt]{article}
+%Preamble:
+\usepackage{a4wide}
+\input{sl_preamble.tex}
+%
+% >> Only for drafts! <<
+\usepackage[notref,notcite]{showkeys}
+% ----------------------------------------------------------------
+%\numberwithin{equation}{section}
+%\renewcommand{\baselinestretch}{1.5}
+% ----------------------------------------------------------------
+% New commands etc.
+\input{sl_definitions.tex}
+\input{sl_symbols.tex}
+\newcommand{\pib}{\boldsymbol{\pi}}
+\newcommand{\Pib}{\boldsymbol{\Pi}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\pr}{\mathbb{P}}
+% ----------------------------------------------------------------
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title info:
+
+\title{Complex Synapse Identification}%
+\author{Subhaneil Lahiri}%
+
+% ----------------------------------------------------------------
+\begin{document}
+% ----------------------------------------------------------------
+\maketitle
+% ----------------------------------------------------------------
+\begin{abstract}
+  Notes on using HMM techniques to fit models of complex synapses
+\end{abstract}
+% ----------------------------------------------------------------
+
+\section{Introduction \label{sec:intro}}
+
+
+
+
+
+
+\section{Notation \label{sec:notation}}
+
+Let $t$ be the time of a plasticity event, assumed to be an integer. 
+We denote a sequence of event times by $[0,T]$.
+
+We denote states of a synapse by subscripts $i,j$. 
+The state at a particular time during a sequence is $i(t)$.
+An entire trajectory (sequence of states) is denoted by $i[0,T]$.
+
+The synaptic weight is denoted by $\w$.
+Its value when the synapse is in state $i$ is $\w_i$.
+Its observed value at time $t$ during a sequence is $\w(t)$.
+An entire sequence of observations is denoted by $\w[0,T]$.
+
+The different types of plasticity (\eg potentiation and depression) are indicated by superscripts $\mu,\nu$.
+The type of plasticity used at time $t$ is $\mu(t)$.
+An entire sequence of plasticity types is denoted by $\mu[0,T]$.
+
+When we are combining data from several sequences of plasticity events, the individual sequences will be denoted by superscripts $a,b$.
+The set of all sequences will be denoted by the superscript $A$.
+
+The Markov matrices describing plasticity are $\M^\mu_{ij}$.
+The probabilities of the initial states are $\pib_i$.
+The set of parameters defining a model (\ie $\brc{\M^\mu_{ij}}$ and $\pib_i$) are denoted by $\M$ for convenience.
+
+
+\section{Expectation-Maximisation (EM) \label{sec:em}}
+
+When we don't have any prior information about the model $\M$, we fit the model by maximising the likelihood function:
+%
+\begin{equation}\label{eq:like}
+  \pr\cond{\w^A[0,T]}{\M} = \prod_a \pr\cond{\w^a[0,T]}{\M}.
+\end{equation}
+%
+To do this, we define an axillary function
+%
+\begin{equation}\label{eq:emq}
+  Q(\M,\M') = \sum_{i^A[0,T]} \pr\cond{i^A[0,T],\w^A[0,T]}{\M} \log\!\! \brk{
+      \frac{ \pr\cond{i^A[0,T],\w^A[0,T]}{\M'} }{ \pr\cond{i^A[0,T],\w^A[0,T]}{\M} } }.
+\end{equation}
+%
+It can be shown that, if $\M'$ is chosen to maximise this quantity (which is easier than maximising the likelihood), the it will have a higher likelihood than $\M'$.
+In effect, $\M$ is used to estimate the hidden state trajectories, which are then used to re-estimate the model.
+This can be done iteratively to find a local maximum of the likelihood.
+If this is repeated several times with random initialisation, we can hope to find the global maximum.
+
+When we have several sequences, we can write
+%
+\begin{multline}\label{eq:emqseveral}
+%\begin{aligned}
+  Q(\M,\M') = \sum_{i^A[0,T]} \brk{ \prod_a \pr\cond{i^a[0,T],\w^a[0,T]}{\M} } \brk{\sum_a  \log\!\!  \brk{
+      \frac{ \pr\cond{i^A[0,T],\w^a[0,T]}{\M'} }{ \pr\cond{i^A[0,T],\w^a[0,T]}{\M} } } }\\
+   = \sum_a \prod_{b \neq a} \pr\cond{\w^b[0,T]}{\M} \sum_{i^a[0,T]} \pr\cond{i^a[0,T],\w^a[0,T]}{\M} \log\!\!  \brk{
+      \frac{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M'} }{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M} } } \\
+   = \pr\cond{\w^A[0,T]}{\M} \sum_a \frac{Q^a(\M,\M')}{\pr\cond{\w^a[0,T]}{\M}}.
+%\end{aligned}
+\end{multline}
+%
+
+\subsection{Single sequence (Baum-Welch) \label{sec:bw}}
+
+Suppose we have a single sequence of plasticity events.
+Then the joint likelihood of a trajectory and sequence observed synaptic weights is given by
+%
+\begin{equation}\label{eq:trajlike}
+\begin{aligned}
+  \pr\cond{t[0,T], \w[0,T]}{\M} &= \pib_{i(0)} \, \Pib(0) 
+        \prod_{t=0}^{T-1} \M^{\mu(t)}_{i(t)i(t+1)} \, \Pib(t+1),\\
+  \text{where}\quad
+  \Pib(t) &= \delta_{\w_{i(t)}\w(t)}
+\end{aligned}
+\end{equation}
+%
+We wish to maximise \eqref{eq:emq} subject to normalisation constraints.
+Therefore we maximise the Lagrangian:
+%
+\begin{equation}\label{eq:lagrangesingle}
+  \CL = Q(\M,\M') + \lambda\prn{1-\sum_i\pib'_i} + \sum_{\mu i} \lambda^\mu_i\prn{1-\sum_j\M'^\mu_{ij}}. 
+\end{equation}
+%
+We find
+%
+\begin{equation}\label{eq:singlediffs}
+\begin{aligned}
+  \pdiff{\CL}{\M'^\mu_{ij}} &= \frac{N^\mu_{ij}}{\M'^\mu_{ij}} - \lambda^\mu_{i}, \\
+  \pdiff{\CL}{\pib'_{i}} &= \frac{\alpha_i(0) \, \beta_i(0)}{\pib'_{i}} - \lambda,
+\end{aligned}
+\end{equation}
+%
+where the numerator $N^\mu_{ij}$ and the forward/backward variables $\alpha$ and $\beta$ are defined as:
+%
+\begin{equation}\label{eq:alphabeta}
+\begin{aligned}
+  N^\nu_{i(t)i(t+1)} &= \sum_{t=0}^{T-1} \pr\cond{i[t,t+1]),\w[0,T]}{\M} \\
+     &= \sum_{t=0}^{T-1} \delta_{\mu(t)\nu} \, \alpha_i(t) \, \beta_j(t+1) \, \M^{\nu}_{i(t)i(t+1)} \, \Pib(t+1) ,\\
+  \alpha_{i(t)}(t) &= \pr\cond{i(t),\w[0,t]}{\M} \\
+     &= \sum_{i[0,t-1]} \pib_{i(0)} \, \delta_{\w_{i(0)}\w(0)} \prod_{s=0}^{t-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib(s+1), \\
+  \beta_{i(t)}(t) &= \pr\cond{i(t),\w[t+1,T]}{\M} \\
+     &= \sum_{i[t+1,T]} \prod_{s=t}^{T-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib(s+1).
+\end{aligned}
+\end{equation}
+%
+Note that, whilst disjoint sequences $\w[s,s']$ and $\w[t,t']$ are not independent, they are conditionally independent given the state at any time between the two intervals.
+Therefore:
+%
+\begin{equation}\label{eq:stateprob}
+  \pr\cond{i(t),\w[0,T]}{\M} = \alpha_{i(t)}(t) \, \beta_{i(t)}(t).
+\end{equation}
+%
+
+These quantities usually suffer from underflow.
+This can be avoided by using normalised forwar/backward variables:
+%
+\begin{equation}\label{eq:normalphabeta}
+\begin{aligned}
+  \tilde{\alpha}_i(t) &= \alpha_i(t) \prod_{s=0}^{t} \eta(s), \\
+  \tilde{\beta}_i(t) &= \beta_i(t) \prod_{s=t+1}^{T} \eta(s),
+\end{aligned}
+\end{equation}
+%
+where $\eta[0,T]$ is chosen so that all of the $\tilde{\alpha}[0,T]$ are normalised: $\sum_i \tilde{\alpha}_i(t) = 1$.
+These quantities have the interpretations:
+%
+\begin{equation}\label{eq:normintepr}
+\begin{aligned}
+  \tilde{\alpha}_{i(t)}(t) &= \pr\cond{i(t)}{\w[0,t],\M}, \\
+  \eta(t) &= \pr\cond{\w(t)}{\w[0,t-1],\M}, \\
+  \prod_{s=0}^t \eta(t) &= \pr\cond{\w[0,t]}{\M}.
+\end{aligned}
+\end{equation}
+%
+Note that the new backward variables $\tilde{\beta}$ are not normalised and have no particularly interesting interpretation.
+However:
+%
+\begin{equation}\label{eq:normstateprob}
+\begin{aligned}
+  \widetilde{N}^\nu_{i(t)i(t+1)} &= \sum_{t=0}^{T-1} \pr\cond{i[t,t+1])}{\w[0,T],\M} \\
+     &= \sum_{t=0}^{T-1} \delta_{\mu(t)\nu} \, \tilde{\alpha}_i(t) \, \tilde{\beta}_j(t+1) \, \eta(t+1) \, \M^{\nu}_{i(t)i(t+1)} \, \Pib(t+1) ,\\
+  \pr\cond{i(t)}{\w[0,T],\M} &= \alpha_{i(t)}(t) \, \beta_{i(t)}(t).
+\end{aligned}
+\end{equation}
+%
+Then we can write
+%
+\begin{equation}\label{eq:singlediffsnorm}
+\begin{aligned}
+  \pdiff{\CL}{\M'^\mu_{ij}} &= \pr\cond{\w[0,T]}{\M} \, \frac{ \widetilde{N}^\mu_{ij} }{ \M'^\mu_{ij} } - \lambda^\mu_{i}, \\
+  \pdiff{\CL}{\pib'_{i}} &= \pr\cond{\w[0,T]}{\M} \, \frac{ \tilde{\alpha}_i(0) \, \tilde{\beta}_i(0) }{ \pib'_{i} } - \lambda,
+\end{aligned}
+\end{equation}
+%
+The factors of $\pr\cond{\w[0,T]}{\M}$ can be absorbed by a redefinition of the Lagrange multipliers.
+
+Demanding a maximum and setting the derivatives to zero leaves us with the update rule:
+%
+\begin{equation}\label{eq:BWupdate}
+\begin{aligned}
+  \M'^\mu_{ij} &= \frac{ \widetilde{N}^\mu_{ij} }{ \sum_k \widetilde{N}^\mu_{ik} },\\
+  \pib'_{i} &= \frac{ \tilde{\alpha}_i(0) \, \tilde{\beta}_i(0) }{ \sum_j \tilde{\alpha}_j(0) \, \tilde{\beta}_j(0) }.
+\end{aligned}
+\end{equation}
+%
+This can be iterated until a maximum is found.
+
+
+\subsection{Multiple sequences (Rabiner-Juang) \label{sec:rj}}
+
+When we have multiple sequences of plasticity events, we will still want to maximise the Lagrangian \eqref{eq:lagrangesingle}, but now we will use the auxiliary function \eqref{eq:emqseveral}.
+This results in
+%
+\begin{equation}\label{eq:multidiffs}
+\begin{aligned}
+  \pdiff{\CL}{\M'^\mu_{ij}} &= \pr\cond{\w^A[0,T]}{\M} \,\sum_a \frac{1}{\pr\cond{\w^a[0,T]}{\M}} \,
+    \frac{ N^{a\mu}_{ij} }{ \M'^\mu_{ij} } - \lambda^\mu_{i}, \\
+    &= \pr\cond{\w^A[0,T]}{\M} \, \frac{ \sum_a \widetilde{N}^{a\mu}_{ij} }{ \M'^\mu_{ij} } - \lambda^\mu_{i}, \\
+  \pdiff{\CL}{\pib'_{i}} &= \pr\cond{\w^A[0,T]}{\M} \,\sum_a \frac{1}{\pr\cond{\w^a[0,T]}{\M}} \,
+    \frac{ \alpha^a_i(0) \, \beta^a_i(0) }{ \pib'_{i} } - \lambda,\\
+    &= \pr\cond{\w^A[0,T]}{\M} \,
+    \frac{ \sum_a \tilde{\alpha}^a_i(0) \, \tilde{\beta}^a_i(0) }{ \pib'_{i} } - \lambda.
+\end{aligned}
+\end{equation}
+%
+Once again, we can absorb the factors of $\pr\cond{\w[0,T]}{\M}$ by a redefinition of the Lagrange multipliers.
+
+Defining $\widetilde{N}^{A\mu}_{ij} = \sum_a \widetilde{N}^{a\mu}_{ij}$ and setting the derivatives to zero leaves us with the update rule:
+%
+\begin{equation}\label{eq:RJupdate}
+\begin{aligned}
+  \M'^\mu_{ij} &= \frac{ \widetilde{N}^{A\mu}_{ij} }{ \sum_k \widetilde{N}^{A\mu}_{ik} },\\
+  \pib'_{i} &= \frac{ \sum_a \tilde{\alpha}^a_i(0) \, \tilde{\beta}^a_i(0) }{ \sum_{bj} \tilde{\alpha}^b_j(0) \, \tilde{\beta}^b_j(0) }.
+\end{aligned}
+\end{equation}
+%
+This can be iterated until a maximum is found.
+
+
+\section{Sparseness promoting priors \label{sec:priors}}
+
+When we have a prior distribution for the model, $\pr(\M)$, instead of maximising the likelihood \eqref{eq:like}, we can maximise the posterior:
+%
+\begin{equation}\label{eq:posterior}
+  \pr\cond{\M}{\w[0,T]} = \frac{ \pr(\w[0,T],\M) }{ \pr(\w[0,T) } = \frac{ \pr\cond{\w[0,T]}{\M} \pr(\M) }{ \pr(\w[0,T) }.
+\end{equation}
+%
+As the denominator is independent of the model, this is equivalent to maximising the numerator, \ie the joint distribution.
+
+Using the same trick as before \eqref{eq:emq}, we can define an auxilliary function
+%
+\begin{equation}\label{eq:emqprior}
+\begin{aligned}
+  \widetilde{Q}(\M,\M') &= \sum_{i^A[0,T]} \pr\!\prn{i^A[0,T],\w^A[0,T],\M} \log\!\! \brk{
+      \frac{ \pr\!\prn{i^A[0,T],\w^A[0,T],\M'} }{ \pr\!\prn{i^A[0,T],\w^A[0,T],\M} } }\\
+      &= \pr\!\prn{\M} Q(\M,\M') + \pr\!\prn{\w^A[0,T],\M} \log\!\! \brk{
+      \frac{ \pr\!\prn{\M'} }{ \pr\!\prn{\M} } }.
+\end{aligned}
+\end{equation}
+%
+
+We will consider priors of the form
+%
+\begin{equation}\label{eq:priorsum}
+  \pr\!\prn{\M} = \frac{\exp\prn{-\beta\sum_{\mu ij}E^\mu_{ij}(\M^\mu_{ij})}}{Z(\beta)}.
+\end{equation}
+%
+We will not put any prior on $\pib$, so its update rule will be unaffected.
+The normalisation constant $Z(\beta)$ will not play any role either.
+Now the derivatives read:
+%
+\begin{equation}\label{eq:multidiffs}
+  \pdiff{\CL}{\M'^\mu_{ij}} 
+    = \pr\!\prn{\w[0,T],\M} \prn{ \frac{ \widetilde{N}^{A\mu}_{ij} }{ \M'^\mu_{ij} }  - \pdiff{E^\mu_{ij}}{\M'^\mu_{ij}} }- \lambda^\mu_{i}.
+\end{equation}
+%
+Once again, we can absorb the factors of $\pr\!\prn{\w[0,T],\M}$ by a redefinition of the Lagrange multipliers.
+
+
+
+
+
+%\subsection*{Acknowledgements}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection*{Appendices}
+%\appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{utcaps_sl}
+\bibliography{maths,neuro,markov}
+
+\end{document}
+% ----------------------------------------------------------------
