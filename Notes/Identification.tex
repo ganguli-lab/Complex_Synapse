@@ -64,8 +64,10 @@
 
 Let $t$ be the time of a plasticity event, assumed to be an integer. 
 We denote a sequence of event times by $[0,T]$.
+Any sequence whose upper bound is smaller that its lower bound can be considered empty, and that variable is omitted.
+The same applies to sums and products.
 
-We denote states of a synapse by subscripts $i,j$. 
+We denote states of a synapse by subscripts $i,j,k$. 
 The state at a particular time during a sequence is $i(t)$.
 An entire trajectory (sequence of states) is denoted by $i[0,T]$.
 
@@ -75,8 +77,8 @@ Its observed value at time $t$ during a sequence is $\w(t)$.
 An entire sequence of observations is denoted by $\w[0,T]$.
 
 The different types of plasticity (\eg potentiation and depression) are indicated by superscripts $\mu,\nu$.
-The type of plasticity used at time $t$ is $\mu(t)$.
-An entire sequence of plasticity types is denoted by $\mu[0,T]$.
+The type of plasticity used between times $(t-1,t)$ is $\mu(t)$.
+An entire sequence of plasticity types is denoted by $\mu[1,T]$.
 
 When we are combining data from several sequences of plasticity events, the individual sequences will be denoted by superscripts $a,b$.
 The set of all sequences will be denoted by the superscript $A$.
@@ -108,15 +110,15 @@ If this is repeated several times with random initialisation, we can hope to fin
 
 When we have several sequences, we can write
 %
-\begin{multline}\label{eq:emqseveral}
-%\begin{aligned}
-  Q(\M,\M') = \sum_{i^A[0,T]} \brk{ \prod_a \pr\cond{i^a[0,T],\w^a[0,T]}{\M} } \brk{\sum_a  \log\!\!  \brk{
-      \frac{ \pr\cond{i^A[0,T],\w^a[0,T]}{\M'} }{ \pr\cond{i^A[0,T],\w^a[0,T]}{\M} } } }\\
-   = \sum_a \prod_{b \neq a} \pr\cond{\w^b[0,T]}{\M} \sum_{i^a[0,T]} \pr\cond{i^a[0,T],\w^a[0,T]}{\M} \log\!\!  \brk{
+\begin{equation}\label{eq:emqseveral}
+\begin{gathered}
+  Q(\M,\M') = \sum_{i^A[0,T]}  \prod_b \pr\cond{i^b[0,T],\w^b[0,T]}{\M} \sum_a  \log\!\!  \brk{
+      \frac{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M'} }{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M} } } \\
+   = \sum_a \prod_{b \neq a} \pr\cond{\w^b[0,T]}{\M}\! \sum_{i^a[0,T]}\!\! \pr\cond{i^a[0,T],\w^a[0,T]}{\M} \log\!\!  \brk{
       \frac{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M'} }{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M} } } \\
    = \pr\cond{\w^A[0,T]}{\M} \sum_a \frac{Q^a(\M,\M')}{\pr\cond{\w^a[0,T]}{\M}}.
-%\end{aligned}
-\end{multline}
+\end{gathered}
+\end{equation}
 %
 
 \subsection{Single sequence (Baum-Welch) \label{sec:bw}}
@@ -126,10 +128,10 @@ Then the joint likelihood of a trajectory and sequence observed synaptic weights
 %
 \begin{equation}\label{eq:trajlike}
 \begin{aligned}
-  \pr\cond{t[0,T], \w[0,T]}{\M} &= \pib_{i(0)} \, \Pib(0) 
-        \prod_{t=0}^{T-1} \M^{\mu(t)}_{i(t)i(t+1)} \, \Pib(t+1),\\
+  \pr\cond{t[0,T], \w[0,T]}{\M} &= \pib_{i(0)} \, \Pib_{i(0)}(0) 
+        \prod_{t=1}^{T} \M^{\mu(t)}_{i(t-1)i(t)} \, \Pib_{i(t)}(t),\\
   \text{where}\quad
-  \Pib(t) &= \delta_{\w_{i(t)}\w(t)}
+  \Pib_i(t) &= \delta_{\w_{i}\w(t)}
 \end{aligned}
 \end{equation}
 %
@@ -153,12 +155,12 @@ where the numerator $N^\mu_{ij}$ and the forward/backward variables $\alpha$ and
 %
 \begin{equation}\label{eq:alphabeta}
 \begin{aligned}
-  N^\nu_{i(t)i(t+1)} &= \sum_{t=0}^{T-1} \pr\cond{i[t,t+1]),\w[0,T]}{\M} \\
-     &= \sum_{t=0}^{T-1} \delta_{\mu(t)\nu} \, \alpha_i(t) \, \beta_j(t+1) \, \M^{\nu}_{i(t)i(t+1)} \, \Pib(t+1) ,\\
-  \alpha_{i(t)}(t) &= \pr\cond{i(t),\w[0,t]}{\M} \\
-     &= \sum_{i[0,t-1]} \pib_{i(0)} \, \delta_{\w_{i(0)}\w(0)} \prod_{s=0}^{t-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib(s+1), \\
-  \beta_{i(t)}(t) &= \pr\cond{i(t),\w[t+1,T]}{\M} \\
-     &= \sum_{i[t+1,T]} \prod_{s=t}^{T-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib(s+1).
+  N^\nu_{jk} &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, \pr\cond{i[t-1,t]=(jk),\w[0,T]}{\M} \\
+     &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, \alpha_j(t-1) \, \beta_k(t) \, \M^{\nu}_{jk} \, \Pib_k(t) ,\\
+  \alpha_j(t) &= \pr\cond{i(t)=j,\w[0,t]}{\M} \\
+     &= \sum_{i[0,t]} \pib_{i(0)}(0) \, \Pib_{i(0)}(0) \prod_{s=1}^{t} \M^{\mu(s)}_{i(s-1)i(s)} \, \Pib_{i(s)}(s) \,\delta_{i(t)j}, \\
+  \beta_j(t) &= \pr\cond{i(t)=j,\w[t+1,T]}{\M} \\
+     &= \sum_{i[t,T]} \delta_{i(t)j} \prod_{s=t+1}^{T} \M^{\mu(s)}_{i(s-1)i(s)} \, \Pib_{i(s)}(s).
 \end{aligned}
 \end{equation}
 %
@@ -166,12 +168,12 @@ Note that, whilst disjoint sequences $\w[s,s']$ and $\w[t,t']$ are not independe
 Therefore:
 %
 \begin{equation}\label{eq:stateprob}
-  \pr\cond{i(t),\w[0,T]}{\M} = \alpha_{i(t)}(t) \, \beta_{i(t)}(t).
+  \alpha_j(t) \, \beta_j(t) = \pr\cond{i(t)=j,\w[0,T]}{\M}.
 \end{equation}
 %
 
 These quantities usually suffer from underflow.
-This can be avoided by using normalised forwar/backward variables \cite{Zhai2003HMMnorm}:
+This can be avoided by using normalised forward/backward variables \cite{Zhai2003HMMnorm}:
 %
 \begin{equation}\label{eq:normalphabeta}
 \begin{aligned}
@@ -185,7 +187,7 @@ These quantities have the interpretations:
 %
 \begin{equation}\label{eq:normintepr}
 \begin{aligned}
-  \tilde{\alpha}_{i(t)}(t) &= \pr\cond{i(t)}{\w[0,t],\M}, \\
+  \tilde{\alpha}_j(t) &= \pr\cond{i(t)=j}{\w[0,t],\M}, \\
   \eta(t) &= \pr\cond{\w(t)}{\w[0,t-1],\M}, \\
   \prod_{s=0}^t \eta(t) &= \pr\cond{\w[0,t]}{\M}.
 \end{aligned}
@@ -196,9 +198,9 @@ However:
 %
 \begin{equation}\label{eq:normstateprob}
 \begin{aligned}
-  \widetilde{N}^\nu_{i(t)i(t+1)} &= \sum_{t=0}^{T-1} \pr\cond{i[t,t+1])}{\w[0,T],\M} \\
-     &= \sum_{t=0}^{T-1} \delta_{\mu(t)\nu} \, \tilde{\alpha}_i(t) \, \tilde{\beta}_j(t+1) \, \eta(t+1) \, \M^{\nu}_{i(t)i(t+1)} \, \Pib(t+1) ,\\
-  \pr\cond{i(t)}{\w[0,T],\M} &= \alpha_{i(t)}(t) \, \beta_{i(t)}(t).
+  \widetilde{N}^\nu_{jk} &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, \pr\cond{i[t-1,t]=(jk)}{\w[0,T],\M} \\
+     &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, \tilde{\alpha}_i(t-1) \, \tilde{\beta}_j(t) \, \eta(t) \, \M^{\nu}_{i(t-1)i(t)} \, \Pib_k(t) ,\\
+  \tilde{\alpha}_j(t) \, \tilde{\beta}_j(t) &= \pr\cond{i(t)=j}{\w[0,T],\M}.
 \end{aligned}
 \end{equation}
 %
@@ -296,7 +298,7 @@ Now the derivatives read:
 Once again, we can absorb the factors of $\pr\!\prn{\w[0,T],\M}$ by a redefinition of the Lagrange multipliers.
 
 
-\subsection{Off-diagonal $\CL^1$ penalty \label{sec:offdiagL1}}
+\subsection{Off-diagonal \texorpdfstring{$\CL^1$}{L\textasciicircum1} penalty \label{sec:offdiagL1}}
 
 Here we use the off-diagonal $\CL^1$ norm as a penalty:
 %
@@ -336,7 +338,7 @@ Which produces the update rule
 %
 
 
-\subsection{$\CL^\half$ penalty \label{sec:Lhalf}}
+\subsection{\texorpdfstring{$\CL^\half$}{L\textasciicircum1/2} penalty \label{sec:Lhalf}}
 
 Here we use the  $\CL^\half$ norm as a penalty:
 %
@@ -362,13 +364,13 @@ It is helpful to define
 Then we have the update rule
 %
 \begin{equation}\label{eq:Lhalfupdate}
-  \M'^\mu_{ij} = \frac{ \prn{\gamma^\mu_i}^2 \beta^2 }{ 4 } \prn{\sqrt{ \prn{\gamma^\mu_i}^2 + 4\prn{L^\mu_{ij}}^2 } - \gamma^\mu_i }^2, 
+  \M'^\mu_{ij} = \frac{ \prn{\gamma^\mu_i}^2 \beta^2 }{ 4 } \prn{\sqrt{ \prn{\gamma^\mu_i}^2 + 4L^\mu_{ij} } - \gamma^\mu_i }^2,
 \end{equation}
 %
 with $\gamma^\mu_i$ determined by:
 %
 \begin{equation}\label{eq:Lhalfnorm}
-    \frac{ \prn{\gamma^\mu_i}^2 \beta^2 }{ 4 } \sum_j \prn{\sqrt{\prn{\gamma^\mu_i}^2 + 4\prn{L^\mu_{ij}}^2} - \gamma^\mu_i}^2 = 1.
+    \frac{ \prn{\gamma^\mu_i}^2 \beta^2 }{ 4 } \sum_j \prn{\sqrt{\prn{\gamma^\mu_i}^2 + 4L^\mu_{ij}} - \gamma^\mu_i}^2 = 1.
 \end{equation}
 %
 
