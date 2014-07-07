@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWalphaNloop_terminate'
  *
- * C source code generated on: Fri Jun 27 13:42:24 2014
+ * C source code generated on: Mon Jul 07 15:22:55 2014
  *
  */
 
@@ -13,18 +13,17 @@
 #include "BWalphaNloop_terminate.h"
 
 /* Function Definitions */
-void BWalphaNloop_atexit(emlrtStack *sp)
+void BWalphaNloop_atexit(void)
 {
   emlrtCreateRootTLS(&emlrtRootTLSGlobal, &emlrtContextGlobal, NULL, 1);
-  sp->tls = emlrtRootTLSGlobal;
-  emlrtEnterRtStackR2012b(sp);
-  emlrtLeaveRtStackR2012b(sp);
+  emlrtEnterRtStackR2012b(emlrtRootTLSGlobal);
+  emlrtLeaveRtStackR2012b(emlrtRootTLSGlobal);
   emlrtDestroyRootTLS(&emlrtRootTLSGlobal);
 }
 
-void BWalphaNloop_terminate(emlrtStack *sp)
+void BWalphaNloop_terminate(void)
 {
-  emlrtLeaveRtStackR2012b(sp);
+  emlrtLeaveRtStackR2012b(emlrtRootTLSGlobal);
   emlrtDestroyRootTLS(&emlrtRootTLSGlobal);
 }
 

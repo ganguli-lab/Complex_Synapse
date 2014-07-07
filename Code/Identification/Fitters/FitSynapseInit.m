@@ -1,4 +1,4 @@
-function [ fitmodel,fval,exitflag,output ] = FitSynapseInit( simobj,guessmodel,options )
+function [ fitmodel,fval,exitflag,output ] = FitSynapseInit( simobj,guessmodel,varargin )
 %[fitmodel,fval,exitflag,output]=FITSYNAPSEINIT(simobj,guessmodel,options) 
 %Fitting Initial of SynapseIdModel (fitmodel) to SynapsePlastSeq simobj,
 %without updating M.
@@ -8,11 +8,7 @@ function [ fitmodel,fval,exitflag,output ] = FitSynapseInit( simobj,guessmodel,o
 %   guessmodel = initial guess SynapseIdModel
 %   options    = struct of options
 
-if exist('options','var')
-    options=SynapseOptimset(options);
-else
-    options=SynapseOptimset;
-end
+options=SynapseOptimset(varargin{:});
 
 [optimValues,updaterfn,extraArgs]=FitSynapseUtility_setup(options,guessmodel,simobj,'Init');
 

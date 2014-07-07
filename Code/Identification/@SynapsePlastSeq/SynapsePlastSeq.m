@@ -54,6 +54,7 @@ classdef SynapsePlastSeq
     methods (Access=private)%for constructiuon
         %called by constructor
         copy=CopyProps(original,copy)
+        toobj=CopyFields(fromstruct,toobj)
         [s,x] = assignToObject(s, x)
     end%methods
     
@@ -92,6 +93,9 @@ classdef SynapsePlastSeq
                     end%if nargin>=2
                     %
                     %set parameter values:
+                    if ~isempty(Unmatched)
+                        tempobj=CopyFields(Unmatched,tempobj);
+                    end
                     [tempobj,varargin]=assignToObject(tempobj,varargin);
                     obj=CopyProps(tempobj,obj);
                     %

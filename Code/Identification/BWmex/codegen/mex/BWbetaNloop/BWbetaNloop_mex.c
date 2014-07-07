@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWbetaNloop'
  *
- * C source code generated on: Fri Jun 27 13:42:43 2014
+ * C source code generated on: Mon Jul 07 15:23:20 2014
  *
  */
 
@@ -28,9 +28,8 @@ static void BWbetaNloop_mexFunction(int nlhs, mxArray *plhs[], int nrhs, const m
   int n = 0;
   int nOutputs = (nlhs < 1 ? 1 : nlhs);
   int nInputs = nrhs;
-  emlrtStack stack={0,0,0}; /* Root of the run-time stack. */
   /* Module initialization. */
-  BWbetaNloop_initialize(&stack, &emlrtContextGlobal);
+  BWbetaNloop_initialize(&emlrtContextGlobal);
   /* Check for proper number of arguments. */
   if (nrhs != 2) {
     emlrtErrMsgIdAndTxt(emlrtRootTLSGlobal, "EMLRT:runTime:WrongNumberOfInputs", 5, mxINT32_CLASS, 2, mxCHAR_CLASS, 11, "BWbetaNloop");
@@ -42,19 +41,18 @@ static void BWbetaNloop_mexFunction(int nlhs, mxArray *plhs[], int nrhs, const m
     inputs[n] = (mxArray *)prhs[n];
   }
   /* Call the function. */
-  BWbetaNloop_api(&stack, (const mxArray**)inputs, (const mxArray**)outputs);
+  BWbetaNloop_api((const mxArray**)inputs, (const mxArray**)outputs);
   /* Copy over outputs to the caller. */
   for (n = 0; n < nOutputs; ++n) {
     plhs[n] = emlrtReturnArrayR2009a(outputs[n]);
   }
   /* Module finalization. */
-  BWbetaNloop_terminate(&stack);
+  BWbetaNloop_terminate();
 }
 
 void BWbetaNloop_atexit_wrapper(void)
 {
-  emlrtStack stack={0,0,0}; /* Root of the run-time stack. */
-   BWbetaNloop_atexit(&stack);
+   BWbetaNloop_atexit();
 }
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])

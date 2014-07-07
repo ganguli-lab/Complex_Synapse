@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWbetaNloop_api'
  *
- * C source code generated on: Fri Jun 27 13:42:43 2014
+ * C source code generated on: Mon Jul 07 15:23:20 2014
  *
  */
 
@@ -22,6 +22,6 @@
 #include "BWbetaNloop_types.h"
 
 /* Function Declarations */
-extern void BWbetaNloop_api(emlrtStack *sp, const mxArray *prhs[2], const mxArray *plhs[1]);
+extern void BWbetaNloop_api(const mxArray *prhs[2], const mxArray *plhs[1]);
 #endif
 /* End of code generation (BWbetaNloop_api.h) */

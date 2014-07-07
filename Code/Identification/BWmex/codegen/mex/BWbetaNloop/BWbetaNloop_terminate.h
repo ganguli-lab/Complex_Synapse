@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWbetaNloop_terminate'
  *
- * C source code generated on: Fri Jun 27 13:42:43 2014
+ * C source code generated on: Mon Jul 07 15:23:20 2014
  *
  */
 
@@ -22,7 +22,7 @@
 #include "BWbetaNloop_types.h"
 
 /* Function Declarations */
-extern void BWbetaNloop_atexit(emlrtStack *sp);
-extern void BWbetaNloop_terminate(emlrtStack *sp);
+extern void BWbetaNloop_atexit(void);
+extern void BWbetaNloop_terminate(void);
 #endif
 /* End of code generation (BWbetaNloop_terminate.h) */

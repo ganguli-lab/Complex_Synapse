@@ -118,7 +118,7 @@ classdef SynapseIdModel
     methods (Access=private)%for constructiuon
         %called by constructor
         copy=CopyProps(original,copy)
-        copy=CopyFields(original,copy)
+        toobj=CopyFields(fromstruct,toobj)
         [s,x] = assignToObject(s, x)
     end%methods
     
@@ -151,10 +151,12 @@ classdef SynapseIdModel
                     end%if nargin>=2
                     %
                     %set parameter values:
+                    [Unmatched,varargin]=extractArgOfType(varargin,'struct');
+                    if ~isempty(Unmatched)
+                        tempobj=CopyFields(Unmatched,tempobj);
+                    end
                     [tempobj,varargin]=assignToObject(tempobj,varargin);
                     obj=CopyProps(tempobj,obj);
-                    [Unmatched,varargin]=extractArgOfType(varargin,'struct');
-                    obj=CopyFields(Unmatched,obj);
                     %
                     %Extract data:
                     %

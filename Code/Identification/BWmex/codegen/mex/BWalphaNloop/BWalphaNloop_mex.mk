@@ -7,7 +7,6 @@ include BWalphaNloop_mex.mki
 
 
 SRC_FILES =  \
-	BWalphaNloop_data.c \
 	BWalphaNloop_initialize.c \
 	BWalphaNloop_terminate.c \
 	BWalphaNloop.c \

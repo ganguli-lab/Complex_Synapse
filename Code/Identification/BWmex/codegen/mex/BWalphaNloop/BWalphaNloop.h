@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWalphaNloop'
  *
- * C source code generated on: Fri Jun 27 13:42:24 2014
+ * C source code generated on: Mon Jul 07 15:22:55 2014
  *
  */
 
@@ -22,6 +22,6 @@
 #include "BWalphaNloop_types.h"
 
 /* Function Declarations */
-extern void BWalphaNloop(const emlrtStack *sp, emxArray_real_T *alpha, emxArray_real_T *eta, emxArray_real_T *updater);
+extern void BWalphaNloop(emxArray_real_T *alpha, emxArray_real_T *eta, emxArray_real_T *updater);
 #endif
 /* End of code generation (BWalphaNloop.h) */

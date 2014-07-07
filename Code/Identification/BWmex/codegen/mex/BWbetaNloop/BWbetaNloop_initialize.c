@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWbetaNloop_initialize'
  *
- * C source code generated on: Fri Jun 27 13:42:43 2014
+ * C source code generated on: Mon Jul 07 15:23:20 2014
  *
  */
 
@@ -11,16 +11,17 @@
 #include "rt_nonfinite.h"
 #include "BWbetaNloop.h"
 #include "BWbetaNloop_initialize.h"
-#include "BWbetaNloop_data.h"
+
+/* Variable Definitions */
+static const volatile char_T *emlrtBreakCheckR2012bFlagVar;
 
 /* Function Definitions */
-void BWbetaNloop_initialize(emlrtStack *sp, emlrtContext *aContext)
+void BWbetaNloop_initialize(emlrtContext *aContext)
 {
   emlrtBreakCheckR2012bFlagVar = emlrtGetBreakCheckFlagAddressR2012b();
   emlrtCreateRootTLS(&emlrtRootTLSGlobal, aContext, NULL, 1);
-  sp->tls = emlrtRootTLSGlobal;
-  emlrtClearAllocCountR2012b(sp, FALSE, 0U, 0);
-  emlrtEnterRtStackR2012b(sp);
+  emlrtClearAllocCountR2012b(emlrtRootTLSGlobal, FALSE, 0U, 0);
+  emlrtEnterRtStackR2012b(emlrtRootTLSGlobal);
   emlrtFirstTimeR2012b(emlrtRootTLSGlobal);
 }
 

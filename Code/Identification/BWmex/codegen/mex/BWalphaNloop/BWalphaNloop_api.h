@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWalphaNloop_api'
  *
- * C source code generated on: Fri Jun 27 13:42:24 2014
+ * C source code generated on: Mon Jul 07 15:22:55 2014
  *
  */
 
@@ -22,6 +22,6 @@
 #include "BWalphaNloop_types.h"
 
 /* Function Declarations */
-extern void BWalphaNloop_api(emlrtStack *sp, const mxArray *prhs[3], const mxArray *plhs[3]);
+extern void BWalphaNloop_api(const mxArray *prhs[3], const mxArray *plhs[3]);
 #endif
 /* End of code generation (BWalphaNloop_api.h) */

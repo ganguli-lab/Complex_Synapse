@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWbetaNloop_api'
  *
- * C source code generated on: Fri Jun 27 13:42:43 2014
+ * C source code generated on: Mon Jul 07 15:23:20 2014
  *
  */
 
@@ -13,51 +13,48 @@
 #include "BWbetaNloop_api.h"
 #include "BWbetaNloop_emxutil.h"
 
-/* Variable Definitions */
-static emlrtRTEInfo b_emlrtRTEI = { 1, 1, "BWbetaNloop_api", "" };
-
 /* Function Declarations */
-static void b_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
-  emlrtMsgIdentifier *parentId, emxArray_real_T *y);
-static void c_emlrt_marshallIn(const emlrtStack *sp, const mxArray *updater,
-  const char_T *identifier, emxArray_real_T *y);
-static void d_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
-  emlrtMsgIdentifier *parentId, emxArray_real_T *y);
-static void e_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
-  emlrtMsgIdentifier *msgId, emxArray_real_T *ret);
-static void emlrt_marshallIn(const emlrtStack *sp, const mxArray *beta, const
-  char_T *identifier, emxArray_real_T *y);
+static void b_emlrt_marshallIn(const mxArray *u, const emlrtMsgIdentifier
+  *parentId, emxArray_real_T *y);
+static void c_emlrt_marshallIn(const mxArray *updater, const char_T *identifier,
+  emxArray_real_T *y);
+static void d_emlrt_marshallIn(const mxArray *u, const emlrtMsgIdentifier
+  *parentId, emxArray_real_T *y);
+static void e_emlrt_marshallIn(const mxArray *src, const emlrtMsgIdentifier
+  *msgId, emxArray_real_T *ret);
+static void emlrt_marshallIn(const mxArray *beta, const char_T *identifier,
+  emxArray_real_T *y);
 static void emlrt_marshallOut(emxArray_real_T *u, const mxArray *y);
-static void f_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
-  emlrtMsgIdentifier *msgId, emxArray_real_T *ret);
+static void f_emlrt_marshallIn(const mxArray *src, const emlrtMsgIdentifier
+  *msgId, emxArray_real_T *ret);
 
 /* Function Definitions */
-static void b_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
-  emlrtMsgIdentifier *parentId, emxArray_real_T *y)
+static void b_emlrt_marshallIn(const mxArray *u, const emlrtMsgIdentifier
+  *parentId, emxArray_real_T *y)
 {
-  e_emlrt_marshallIn(sp, emlrtAlias(u), parentId, y);
+  e_emlrt_marshallIn(emlrtAlias(u), parentId, y);
   emlrtDestroyArray(&u);
 }
 
-static void c_emlrt_marshallIn(const emlrtStack *sp, const mxArray *updater,
-  const char_T *identifier, emxArray_real_T *y)
+static void c_emlrt_marshallIn(const mxArray *updater, const char_T *identifier,
+  emxArray_real_T *y)
 {
   emlrtMsgIdentifier thisId;
   thisId.fIdentifier = identifier;
   thisId.fParent = NULL;
-  d_emlrt_marshallIn(sp, emlrtAlias(updater), &thisId, y);
+  d_emlrt_marshallIn(emlrtAlias(updater), &thisId, y);
   emlrtDestroyArray(&updater);
 }
 
-static void d_emlrt_marshallIn(const emlrtStack *sp, const mxArray *u, const
-  emlrtMsgIdentifier *parentId, emxArray_real_T *y)
+static void d_emlrt_marshallIn(const mxArray *u, const emlrtMsgIdentifier
+  *parentId, emxArray_real_T *y)
 {
-  f_emlrt_marshallIn(sp, emlrtAlias(u), parentId, y);
+  f_emlrt_marshallIn(emlrtAlias(u), parentId, y);
   emlrtDestroyArray(&u);
 }
 
-static void e_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
-  emlrtMsgIdentifier *msgId, emxArray_real_T *ret)
+static void e_emlrt_marshallIn(const mxArray *src, const emlrtMsgIdentifier
+  *msgId, emxArray_real_T *ret)
 {
   int32_T iv0[2];
   boolean_T bv0[2];
@@ -68,7 +65,8 @@ static void e_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
     bv0[i] = TRUE;
   }
 
-  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 2U, iv0, bv0, iv1);
+  emlrtCheckVsBuiltInR2012b(emlrtRootTLSGlobal, msgId, src, "double", FALSE, 2U,
+    iv0, bv0, iv1);
   ret->size[0] = iv1[0];
   ret->size[1] = iv1[1];
   ret->allocatedSize = ret->size[0] * ret->size[1];
@@ -77,13 +75,13 @@ static void e_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   emlrtDestroyArray(&src);
 }
 
-static void emlrt_marshallIn(const emlrtStack *sp, const mxArray *beta, const
-  char_T *identifier, emxArray_real_T *y)
+static void emlrt_marshallIn(const mxArray *beta, const char_T *identifier,
+  emxArray_real_T *y)
 {
   emlrtMsgIdentifier thisId;
   thisId.fIdentifier = identifier;
   thisId.fParent = NULL;
-  b_emlrt_marshallIn(sp, emlrtAlias(beta), &thisId, y);
+  b_emlrt_marshallIn(emlrtAlias(beta), &thisId, y);
   emlrtDestroyArray(&beta);
 }
 
@@ -93,8 +91,8 @@ static void emlrt_marshallOut(emxArray_real_T *u, const mxArray *y)
   mxSetDimensions((mxArray *)y, u->size, 2);
 }
 
-static void f_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
-  emlrtMsgIdentifier *msgId, emxArray_real_T *ret)
+static void f_emlrt_marshallIn(const mxArray *src, const emlrtMsgIdentifier
+  *msgId, emxArray_real_T *ret)
 {
   int32_T iv2[3];
   boolean_T bv1[3];
@@ -105,7 +103,8 @@ static void f_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
     bv1[i] = TRUE;
   }
 
-  emlrtCheckVsBuiltInR2012b(sp, msgId, src, "double", FALSE, 3U, iv2, bv1, iv3);
+  emlrtCheckVsBuiltInR2012b(emlrtRootTLSGlobal, msgId, src, "double", FALSE, 3U,
+    iv2, bv1, iv3);
   ret->size[0] = iv3[0];
   ret->size[1] = iv3[1];
   ret->size[2] = iv3[2];
@@ -115,22 +114,21 @@ static void f_emlrt_marshallIn(const emlrtStack *sp, const mxArray *src, const
   emlrtDestroyArray(&src);
 }
 
-void BWbetaNloop_api(emlrtStack *sp, const mxArray *prhs[2], const mxArray *
-                     plhs[1])
+void BWbetaNloop_api(const mxArray *prhs[2], const mxArray *plhs[1])
 {
   emxArray_real_T *beta;
   emxArray_real_T *updater;
-  emlrtHeapReferenceStackEnterFcnR2012b(sp);
-  emxInit_real_T(sp, &beta, 2, &b_emlrtRTEI, TRUE);
-  b_emxInit_real_T(sp, &updater, 3, &b_emlrtRTEI, TRUE);
+  emlrtHeapReferenceStackEnterFcnR2012b(emlrtRootTLSGlobal);
+  emxInit_real_T(&beta, 2, TRUE);
+  b_emxInit_real_T(&updater, 3, TRUE);
   prhs[0] = emlrtProtectR2012b(prhs[0], 0, TRUE, -1);
 
   /* Marshall function inputs */
-  emlrt_marshallIn(sp, emlrtAlias(prhs[0]), "beta", beta);
-  c_emlrt_marshallIn(sp, emlrtAlias(prhs[1]), "updater", updater);
+  emlrt_marshallIn(emlrtAlias(prhs[0]), "beta", beta);
+  c_emlrt_marshallIn(emlrtAlias(prhs[1]), "updater", updater);
 
   /* Invoke the target function */
-  BWbetaNloop(sp, beta, updater);
+  BWbetaNloop(beta, updater);
 
   /* Marshall function outputs */
   emlrt_marshallOut(beta, prhs[0]);
@@ -139,7 +137,7 @@ void BWbetaNloop_api(emlrtStack *sp, const mxArray *prhs[2], const mxArray *
   emxFree_real_T(&updater);
   beta->canFreeData = FALSE;
   emxFree_real_T(&beta);
-  emlrtHeapReferenceStackLeaveFcnR2012b(sp);
+  emlrtHeapReferenceStackLeaveFcnR2012b(emlrtRootTLSGlobal);
 }
 
 /* End of code generation (BWbetaNloop_api.c) */

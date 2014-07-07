@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWalphaNloop'
  *
- * C source code generated on: Fri Jun 27 13:42:24 2014
+ * C source code generated on: Mon Jul 07 15:22:55 2014
  *
  */
 
@@ -28,9 +28,8 @@ static void BWalphaNloop_mexFunction(int nlhs, mxArray *plhs[], int nrhs, const 
   int n = 0;
   int nOutputs = (nlhs < 1 ? 1 : nlhs);
   int nInputs = nrhs;
-  emlrtStack stack={0,0,0}; /* Root of the run-time stack. */
   /* Module initialization. */
-  BWalphaNloop_initialize(&stack, &emlrtContextGlobal);
+  BWalphaNloop_initialize(&emlrtContextGlobal);
   /* Check for proper number of arguments. */
   if (nrhs != 3) {
     emlrtErrMsgIdAndTxt(emlrtRootTLSGlobal, "EMLRT:runTime:WrongNumberOfInputs", 5, mxINT32_CLASS, 3, mxCHAR_CLASS, 12, "BWalphaNloop");
@@ -42,19 +41,18 @@ static void BWalphaNloop_mexFunction(int nlhs, mxArray *plhs[], int nrhs, const 
     inputs[n] = (mxArray *)prhs[n];
   }
   /* Call the function. */
-  BWalphaNloop_api(&stack, (const mxArray**)inputs, (const mxArray**)outputs);
+  BWalphaNloop_api((const mxArray**)inputs, (const mxArray**)outputs);
   /* Copy over outputs to the caller. */
   for (n = 0; n < nOutputs; ++n) {
     plhs[n] = emlrtReturnArrayR2009a(outputs[n]);
   }
   /* Module finalization. */
-  BWalphaNloop_terminate(&stack);
+  BWalphaNloop_terminate();
 }
 
 void BWalphaNloop_atexit_wrapper(void)
 {
-  emlrtStack stack={0,0,0}; /* Root of the run-time stack. */
-   BWalphaNloop_atexit(&stack);
+   BWalphaNloop_atexit();
 }
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])

@@ -3,7 +3,7 @@
  *
  * Code generation for function 'BWalphaNloop_terminate'
  *
- * C source code generated on: Fri Jun 27 13:42:24 2014
+ * C source code generated on: Mon Jul 07 15:22:55 2014
  *
  */
 
@@ -22,7 +22,7 @@
 #include "BWalphaNloop_types.h"
 
 /* Function Declarations */
-extern void BWalphaNloop_atexit(emlrtStack *sp);
-extern void BWalphaNloop_terminate(emlrtStack *sp);
+extern void BWalphaNloop_atexit(void);
+extern void BWalphaNloop_terminate(void);
 #endif
 /* End of code generation (BWalphaNloop_terminate.h) */

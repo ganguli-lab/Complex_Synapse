@@ -7,7 +7,6 @@ include BWbetaNloop_mex.mki
 
 
 SRC_FILES =  \
-	BWbetaNloop_data.c \
 	BWbetaNloop_initialize.c \
 	BWbetaNloop_terminate.c \
 	BWbetaNloop.c \

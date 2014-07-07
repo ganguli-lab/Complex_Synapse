@@ -15,7 +15,7 @@
 <a name="3"><font color="#888888 "><i>    3   </i></font></a><font color="#117755"><I> *</i></font>
 <a name="4"><font color="#888888 "><i>    4   </i></font></a><font color="#117755"><I> * Code generation for function 'BWalphaNloop_initialize'</i></font>
 <a name="5"><font color="#888888 "><i>    5   </i></font></a><font color="#117755"><I> *</i></font>
-<a name="6"><font color="#888888 "><i>    6   </i></font></a><font color="#117755"><I> * C source code generated on: Fri Jun 27 13:42:24 2014</i></font>
+<a name="6"><font color="#888888 "><i>    6   </i></font></a><font color="#117755"><I> * C source code generated on: Mon Jul 07 15:22:55 2014</i></font>
 <a name="7"><font color="#888888 "><i>    7   </i></font></a><font color="#117755"><I> *</i></font>
 <a name="8"><font color="#888888 "><i>    8   </i></font></a><font color="#117755"><I> */</i></font>
 <a name="9"><font color="#888888 "><i>    9   </i></font></a>
@@ -23,21 +23,22 @@
 <a name="11"><font color="#888888 "><i>   11   </i></font></a><font color="#992211">#</font><font color="#992211"><b>include</b></font> <font color="#992211">&quot;rt_nonfinite.h&quot;</font>
 <a name="12"><font color="#888888 "><i>   12   </i></font></a><font color="#992211">#</font><font color="#992211"><b>include</b></font> <font color="#992211">&quot;BWalphaNloop.h&quot;</font>
 <a name="13"><font color="#888888 "><i>   13   </i></font></a><font color="#992211">#</font><font color="#992211"><b>include</b></font> <font color="#992211">&quot;BWalphaNloop_initialize.h&quot;</font>
-<a name="14"><font color="#888888 "><i>   14   </i></font></a><font color="#992211">#</font><font color="#992211"><b>include</b></font> <font color="#992211">&quot;BWalphaNloop_data.h&quot;</font>
-<a name="15"><font color="#888888 "><i>   15   </i></font></a>
-<a name="16"><font color="#888888 "><i>   16   </i></font></a><font color="#117755"><i>/* Function Definitions */</i></font>
-<a name="17"><font color="#888888 "><i>   17   </i></font></a><font color="#112266"><b>void</b></font> <a name="fcn_BWalphaNloop_initialize">BWalphaNloop_initialize</a>(emlrtStack *sp, emlrtContext *aContext)
-<a name="18"><font color="#888888 "><i>   18   </i></font></a><b>{</b>
-<a name="19"><font color="#888888 "><i>   19   </i></font></a>  <a href="BWalphaNloop_data_c.html#var_emlrtBreakCheckR2012bFlagVar" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'var_emlrtBreakCheckR2012bFlagVar');" target="rtwreport_document_frame"><font color="#1122aa">emlrtBreakCheckR2012bFlagVar</font></a> = emlrtGetBreakCheckFlagAddressR2012b();
-<a name="20"><font color="#888888 "><i>   20   </i></font></a>  emlrtCreateRootTLS(&amp;<a href="BWalphaNloop_mex_c.html#var_emlrtRootTLSGlobal" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'var_emlrtRootTLSGlobal');" target="rtwreport_document_frame"><font color="#1122aa">emlrtRootTLSGlobal</font></a>, aContext, NULL, 1);
-<a name="21"><font color="#888888 "><i>   21   </i></font></a>  sp-&gt;tls = <a href="BWalphaNloop_mex_c.html#var_emlrtRootTLSGlobal" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'var_emlrtRootTLSGlobal');" target="rtwreport_document_frame"><font color="#1122aa">emlrtRootTLSGlobal</font></a>;
-<a name="22"><font color="#888888 "><i>   22   </i></font></a>  emlrtClearAllocCountR2012b(sp, FALSE, 0U, 0);
-<a name="23"><font color="#888888 "><i>   23   </i></font></a>  emlrtEnterRtStackR2012b(sp);
-<a name="24"><font color="#888888 "><i>   24   </i></font></a>  emlrtFirstTimeR2012b(<a href="BWalphaNloop_mex_c.html#var_emlrtRootTLSGlobal" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'var_emlrtRootTLSGlobal');" target="rtwreport_document_frame"><font color="#1122aa">emlrtRootTLSGlobal</font></a>);
-<a name="25"><font color="#888888 "><i>   25   </i></font></a><b>}</b>
-<a name="26"><font color="#888888 "><i>   26   </i></font></a>
-<a name="27"><font color="#888888 "><i>   27   </i></font></a><font color="#117755"><i>/* End of code generation (BWalphaNloop_initialize.c) */</i></font>
-<a name="28"><font color="#888888 "><i>   28   </i></font></a></pre>
+<a name="14"><font color="#888888 "><i>   14   </i></font></a>
+<a name="15"><font color="#888888 "><i>   15   </i></font></a><font color="#117755"><i>/* Variable Definitions */</i></font>
+<a name="16"><font color="#888888 "><i>   16   </i></font></a><font color="#112266"><b>static</b></font> <font color="#112266"><b>const</b></font> <font color="#112266"><b>volatile</b></font> char_T *<a name="var_emlrtBreakCheckR2012bFlagVar">emlrtBreakCheckR2012bFlagVar</a>;
+<a name="17"><font color="#888888 "><i>   17   </i></font></a>
+<a name="18"><font color="#888888 "><i>   18   </i></font></a><font color="#117755"><i>/* Function Definitions */</i></font>
+<a name="19"><font color="#888888 "><i>   19   </i></font></a><font color="#112266"><b>void</b></font> <a name="fcn_BWalphaNloop_initialize">BWalphaNloop_initialize</a>(emlrtContext *aContext)
+<a name="20"><font color="#888888 "><i>   20   </i></font></a><b>{</b>
+<a name="21"><font color="#888888 "><i>   21   </i></font></a>  <a href="#var_emlrtBreakCheckR2012bFlagVar" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'var_emlrtBreakCheckR2012bFlagVar');" target="rtwreport_document_frame"><font color="#1122aa">emlrtBreakCheckR2012bFlagVar</font></a> = emlrtGetBreakCheckFlagAddressR2012b();
+<a name="22"><font color="#888888 "><i>   22   </i></font></a>  emlrtCreateRootTLS(&amp;<a href="BWalphaNloop_mex_c.html#var_emlrtRootTLSGlobal" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'var_emlrtRootTLSGlobal');" target="rtwreport_document_frame"><font color="#1122aa">emlrtRootTLSGlobal</font></a>, aContext, NULL, 1);
+<a name="23"><font color="#888888 "><i>   23   </i></font></a>  emlrtClearAllocCountR2012b(<a href="BWalphaNloop_mex_c.html#var_emlrtRootTLSGlobal" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'var_emlrtRootTLSGlobal');" target="rtwreport_document_frame"><font color="#1122aa">emlrtRootTLSGlobal</font></a>, FALSE, 0U, 0);
+<a name="24"><font color="#888888 "><i>   24   </i></font></a>  emlrtEnterRtStackR2012b(<a href="BWalphaNloop_mex_c.html#var_emlrtRootTLSGlobal" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'var_emlrtRootTLSGlobal');" target="rtwreport_document_frame"><font color="#1122aa">emlrtRootTLSGlobal</font></a>);
+<a name="25"><font color="#888888 "><i>   25   </i></font></a>  emlrtFirstTimeR2012b(<a href="BWalphaNloop_mex_c.html#var_emlrtRootTLSGlobal" onclick="if (top) if (top.docHiliteMe) top.docHiliteMe(window, 'var_emlrtRootTLSGlobal');" target="rtwreport_document_frame"><font color="#1122aa">emlrtRootTLSGlobal</font></a>);
+<a name="26"><font color="#888888 "><i>   26   </i></font></a><b>}</b>
+<a name="27"><font color="#888888 "><i>   27   </i></font></a>
+<a name="28"><font color="#888888 "><i>   28   </i></font></a><font color="#117755"><i>/* End of code generation (BWalphaNloop_initialize.c) */</i></font>
+<a name="29"><font color="#888888 "><i>   29   </i></font></a></pre>
 </td></tr></table>
 </p>
 </body>
