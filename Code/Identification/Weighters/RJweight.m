@@ -7,9 +7,6 @@ function [ newmodelobj,loglike,pstate ] = RJweight( modelobj,simobj,varargin )
 %   simobj   = vector of SynapsePlastSeq
 
 % lloffset=0;%avoid overflow by making this more positive
-% Algorithm='BW';%algorithm to apply to each chunk of data
-% Normalise=true;
-% varargin=assignApplicable(varargin);
 persistent p
 if isempty(p)
     p=inputParser;

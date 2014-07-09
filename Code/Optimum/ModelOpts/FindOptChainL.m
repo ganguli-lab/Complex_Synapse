@@ -1,4 +1,4 @@
-function [ qv,A ] = FindOptChainL( s,n,reps,varargin )
+function [ qv,A ] = FindOptChainL( s,n,varargin )
 %[Wp,Wm]=FINDOPT(t,n,reps) Find synapse model that maximises SNR(t)
 %   t    = time value
 %   n    = #states
@@ -6,14 +6,22 @@ function [ qv,A ] = FindOptChainL( s,n,reps,varargin )
 %   Wp = potentiation transition rates
 %   Wm = depression transition rates
 
-existsAndDefault('reps',1);
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='FindOptChainL';
+    p.StructExpand=true;
+    p.KeepUnmatched=true;
+    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptChainL','reps',3));
+    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainL','InitRand'));
+    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainL','InitRand'));
+end
+p.parse(varargin{:});
+r=p.Results;
 
-if reps==1
+if r.reps==1
 
-    InitRand=true;
-    varargin=assignApplicable(varargin);
-
-    if InitRand
+    if r.InitRand
         qv=rand(1,n-1);
     else
     %    [Wp,Wm]=MakeSMS(ones(1,n-1));
@@ -22,7 +30,7 @@ if reps==1
 
     try
     %     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
-        [ qv,A ]=ModelOptChainL( qv,s,varargin{:});
+        [ qv,A ]=ModelOptChainL( qv,s,p.Unmatched);
     catch ME
         A=-OptFunChainL(qv,s);
         disp(ME.message);
@@ -32,18 +40,16 @@ if reps==1
 
 else
 
-    DispReps=false;
-    varargin=assignApplicable(varargin);
     qv=[];
     A=0;
-    for i=1:reps
-        [ qvt,At ] = FindOptChainL( s,n,1,varargin{:} );
+    for i=1:r.reps
+        [ qvt,At ] = FindOptChainL( s,n,1, p.Unmatched,'InitRand',r.InitRand );
         if At>A
             qv=qvt;
             A=At;
         end
-        if DispReps
-            disp([int2str(i) '/' int2str(reps)]);
+        if r.DispReps
+            disp([int2str(i) '/' int2str(r.reps)]);
         end
     end
     

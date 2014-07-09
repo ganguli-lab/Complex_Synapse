@@ -1,8 +1,19 @@
-function [ Wp,Wm,w ] = DiffJumpMSInterp( n,eps )
+function [ Wp,Wm,w ] = DiffJumpMSInterp( n,varargin )
 %[Wp,Wm,w]=DIFFJUMP(n) Possibly better than uniform SMS
 %   Detailed explanation goes here
 
-existsAndDefault('eps',1);
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='DiffJumpMSInterp';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addRequired('n',@(x)validateattributes(x,{'numeric'},{'scalar','even'},'DiffJumpMSInterp','n',1))
+    p.addOptional('eps',1,@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DiffJumpMSInterp','eps',2));
+end
+p.parse(n,varargin{:});
+n=p.Results.n;
+eps=p.Results.eps;
 
 q=[ones(1,n/2-1) 1-eps ones(1,n/2-1)];
 

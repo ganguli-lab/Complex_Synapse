@@ -19,8 +19,13 @@ if isempty(p)
 %     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
 p.parse(varargin{:});
+if any(strcmp('w',p.UsingDefaults))
+    w=obj.w;
+else
+    w=p.Results.w;
+end
 
-newobj=obj.setW(p.Results.w);
+newobj=obj.setW(w);
 
 init=rand(1,length(newobj.w));
 newobj=newobj.setInitial(init/sum(init));

@@ -2,13 +2,21 @@ function [ Wp,Wm,w ] = MakeMultistate( qp,qm )
 %[WP,WM,w]=MAKEMULTISTATE(QP,QM) Transition rates for Multistate toplogy
 %   QP/QM=adjacent transiton rates for potentiation/depression, vector
 
-error(CheckSize(qp,@isvector));
-existsAndDefault('qm',wrev(qp));
-error(CheckSize(qm,@(x) samesize(x,qp),'samesize(qp)'));
-error(CheckSize(qp,@(x) mod(length(x),2)==1,'odd dim'));
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='MakeMultistate';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addRequired('qp',@(x)validateattributes(x,{'numeric'},{'vector','nonnegative'},'MakeMultistate','qp',1))
+    p.addRequired('qm',@(x)validateattributes(x,{'numeric'},{'nonnegative','size',size(qp)},'MakeMultistate','qm',2))
+end
+p.parse(qp,qm);
+r=p.Results;
+error(CheckSize(r.qp,@(x) mod(length(x),2)==1,'odd dim'));
 
-Wp=StochastifyC(diag(qp,1));
-Wm=StochastifyC(diag(qm,-1));
+Wp=StochastifyC(diag(r.qp,1));
+Wm=StochastifyC(diag(r.qm,-1));
 
 if nargout>2
 w=[-ones((length(qp)+1)/2,1);ones((length(qp)+1)/2,1)];

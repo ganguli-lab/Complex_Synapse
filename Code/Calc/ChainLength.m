@@ -1,4 +1,4 @@
-function [ lengthmet,lengths,ix ] = ChainLength( qv,dim )
+function [ lengthmet,lengths,ix ] = ChainLength( qv,varargin )
 %[lengthmet,lengths,ix]=CHAINLENGTH(qv,dim) estimate effective length of chain
 %   qv  = nearest neighbour transitions
 %   dim = dimension of qv corresponding to different states
@@ -6,7 +6,21 @@ function [ lengthmet,lengths,ix ] = ChainLength( qv,dim )
 %   lengths   = length of chain corresponding to each row of lengthmet
 %   ix        = where is lengthmet maximised (linear ind for row of lengthmet
 
-existsAndDefault('dim',1+isrow(qv));
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='ChainLength';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addRequired('qv',@(x)validateattributes(x,{'numeric'},{'2d'},'ChainLength','qv',1))
+    p.addOptional('dim',1+isrow(qv),@(x)validateattributes(x,{'numeric'},{'scalar','positive','integer'},'ChainLength','dim',2));
+end
+p.parse(W,varargin{:});
+qv=p.Results.qv;
+dim=p.Results.dim;
+if any(strcmp('dim',p.UsingDefaults))
+    dim=1+isrow(qv);
+end
 
 n=size(qv,dim)+1;
 qv=permute(qv,[dim 1:(dim-1) (dim+1):ndims(qv)]);

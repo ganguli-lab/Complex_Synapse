@@ -1,5 +1,5 @@
-function [ Wp,Wm,A ] = FindOptL( sm,n,reps,varargin )
-%[Wp,Wm]=FINDOPT(sm,n,reps) Find synapse model that maximises SNR(t)
+function [ Wp,Wm,A ] = FindOptL( sm,n,varargin )
+%[Wp,Wm]=FINDOPTL(sm,n,reps) Find synapse model that maximises A(sm)
 %   t    = time value
 %   n    = #states
 %   reps = number of attempts we max over
@@ -7,16 +7,25 @@ function [ Wp,Wm,A ] = FindOptL( sm,n,reps,varargin )
 %   Wm = depression transition rates
 %   A  = Laplace Transf value
 
-existsAndDefault('reps',1);
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='FindOptL';
+    p.StructExpand=true;
+    p.KeepUnmatched=true;
+    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptL','reps',3));
+    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptL','InitRand'));
+%     p.addParameter('Triangular',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOpt','InitRand'));
+    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptL','InitRand'));
+end
+p.parse(varargin{:});
+r=p.Results;
 
-if reps==1
+if r.reps==1
 
-    InitRand=true;
-    % Triangular=false;
-    varargin=assignApplicable(varargin);
 
-    if InitRand
-    %     if Triangular
+    if r.InitRand
+    %     if r.Triangular
     %         W=RandTrans(n);
     %         w=BinaryWeights(n);
     %         [Wp,Wm]=TriangleDcmp(W,0.5,w,sm);
@@ -33,7 +42,7 @@ if reps==1
 
     try
     %     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
-        [Wp,Wm,A] = ModelOptL( Wp,Wm,sm,varargin{:});
+        [Wp,Wm,A] = ModelOptL( Wp,Wm,sm,p.Unmatched);
     catch ME
         A=SNRlaplace(s,Wp,Wm,fp,w);
         disp(ME.message);
@@ -43,20 +52,19 @@ if reps==1
     
 else
     
-    DispReps=false;
-    varargin=assignApplicable(varargin);
     Wp=[];
     Wm=[];
     A=0;
-    for i=1:reps
-        [ Wpt,Wmt,At ] = FindOptL( sm,n,1,varargin{:} );
+    for i=1:r.reps
+%         [ Wpt,Wmt,At ] = FindOptL( sm,n,1, p.Unmatched,'InitRand',r.InitRand,'Triangular',r.Triangular );
+        [ Wpt,Wmt,At ] = FindOptL( sm,n,1, p.Unmatched,'InitRand',r.InitRand );
         if At>A
             Wp=Wpt;
             Wm=Wmt;
             A=At;
         end
-        if DispReps
-            disp([int2str(i) '/' int2str(reps)]);
+        if r.DispReps
+            disp([int2str(i) '/' int2str(r.reps)]);
         end
     end
     

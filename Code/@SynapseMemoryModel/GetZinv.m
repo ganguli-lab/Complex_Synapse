@@ -1,4 +1,4 @@
-function [ Zinv,piv ] = GetZinv( obj,piv )
+function [ Zinv,piv ] = GetZinv( obj,varargin )
 %[Zinv,piv]=SynapseMemoryModel.GETZINV inverse of fundamental matrix
 %   Zinv = ev*piv - Wf
 %   ev = column vector of ones
@@ -6,7 +6,16 @@ function [ Zinv,piv ] = GetZinv( obj,piv )
 
 ev=ones(size(obj.w));
 
-existsAndDefault('piv',ev');
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='SynapseMemoryModel.GetZinv';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addOptional('piv',ev',@(x)validateattributes(x,{'numeric'},{'row'},'SynapseMemoryModel.GetZinv','piv',2));
+end
+p.parse(varargin{:});
+piv=p.Results.piv;
 
 Zinv = ev*piv - obj.GetWf;
 

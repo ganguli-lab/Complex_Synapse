@@ -10,7 +10,9 @@ function [ optimValues,updaterfn,extraArgs ] = FitSynapseUtility_setup( options,
 %   init        = 'Init' if we're only updating fitmodel.Initial (optional)
 
 
-existsAndDefault('init','');
+if ~exist('init','var')
+    init='';
+end
 
 %information about the current state of the optimiser
 optimValues=struct('iteration',0,'funcCount',0,...

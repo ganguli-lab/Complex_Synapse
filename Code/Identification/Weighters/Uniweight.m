@@ -7,9 +7,6 @@ function [ newmodelobj,loglike,pstate ] = Uniweight( modelobj,simobj,varargin )
 %   modelobj = SynapseIdModel
 %   simobj   = vector of SynapsePlastSeq
 
-% Algorithm='BW';%algorithm to apply to each chunk of data
-% Normalise=true;
-% varargin=assignApplicable(varargin);
 persistent p
 if isempty(p)
     p=inputParser;

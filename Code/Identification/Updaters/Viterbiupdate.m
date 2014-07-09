@@ -7,8 +7,6 @@ function [ newmodelobj,loglike,pstate ] = Viterbiupdate( modelobj,simobj,varargi
 %   simobj   = SynapsePlastSeq
 
 
-% Normalise=true;
-% varargin=assignApplicable(varargin);
 
 persistent p
 if isempty(p)

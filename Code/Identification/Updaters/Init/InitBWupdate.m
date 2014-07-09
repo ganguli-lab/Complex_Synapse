@@ -7,8 +7,6 @@ function [ newmodelobj,loglike,pstate ] = InitBWupdate( modelobj,simobj,varargin
 %   simobj   = SynapsePlastSeq
 
 
-% Normalise=true;
-% varargin=assignApplicable(varargin);
 
 persistent p
 if isempty(p)

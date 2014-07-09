@@ -7,29 +7,41 @@ function [ newWp,newWm,snr,ef ] = GradientModelOpt( Wp,Wm,tm,varargin)
 %   snr= snr at T
 %   ef = exit flag
 
-eta=1e-3;
-TolFun=1e-6;
-TolX=1e-10;
-TolCon=1e-6;
-MaxIter=1000;
-DispExit=false;
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='GradientModelOpt';
+    p.StructExpand=true;
+    p.KeepUnmatched=true;
+    p.addParameter('DispExit',false,@(x) validateattributes(x,{'logical'},{'scalar'},'GradientModelOpt','DispExit'));
+    p.addParameter('TolFun',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'GradientModelOpt','TolFun'));
+    p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'GradientModelOpt','TolFun'));
+    p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'GradientModelOpt','TolFun'));
+    p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'GradientModelOpt','TolFun'));
+    p.addParameter('fp',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'GradientModelOpt','fp'));
+    p.addParameter('eta',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'GradientModelOpt','eta'));
+    p.addParameter('w',1,@(x) validateattributes(x,{'numeric'},{'column'},'GradientModelOpt','w'));
+end
+p.parse(varargin{:});
+r=p.Results;
+
 n=length(Wp);
-w=BinaryWeights(n);
-fp=0.5;
-varargin=assignApplicable(varargin);
+
+if any(strcmp('w',p.UsingDefaults))
+    r.w=BinaryWeights(n);
+end
 
 
 [A,b]=ParamsConstraints(n);
 
 x0 = Mats2Params(Wp,Wm);            % Starting guess 
 options = {...
-    'TolFun', TolFun,...  % termination based on function value (of the derivative)
-    'TolX', TolX,...
-    'TolCon',TolCon,...
-    'MaxIter',MaxIter, ...
-    varargin{:}};
+    'TolFun', r.TolFun,...  % termination based on function value (of the derivative)
+    'TolX', r.TolX,...
+    'TolCon',r.TolCon,...
+    'MaxIter',r.MaxIter};
 
-    [x,snr,ef] = GradientDescend(x0,eta,A,b,@OptFunGrad,tm,fp,w,options{:});
+    [x,snr,ef] = GradientDescend(x0,r.eta,A,b,@OptFunGrad,{tm,r.fp,r.w},p.Unmatched,options{:});
 [newWp,newWm]=Params2Mats(x);
 snr=-snr;
 % [~,~,ix]=SortByEta(0.5*Wp+0.5*Wm,w);
@@ -38,7 +50,7 @@ snr=-snr;
 % newWm=Wm(ix,ix);
 
 
-if DispExit
+if r.DispExit
     disp(ExitFlagMsg(ef));
 end
 

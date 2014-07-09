@@ -63,7 +63,7 @@ classdef SynapseMemoryModel
     methods%associated matrices
         Wf=GetWf(obj)
         q=GetEnc(obj)
-        [Zinv,piv]=GetZinv(obj,piv)
+        [Zinv,piv]=GetZinv(obj,varargin)
         p=EqProb(obj,varargin)
     end
     

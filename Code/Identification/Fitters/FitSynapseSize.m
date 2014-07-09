@@ -7,12 +7,6 @@ function [ fitmodel,like_n ] = FitSynapseSize( simobjs,options,varargin )
 %   testsim = used to evaluate models, after refitting fitmodel.Initial
 %other arguments passed to SynapseIdModel.Rand
 
-% MaxStates=6;%maximum number of states with each value of w
-% MinLogLikeInc=0;%carry on adding states if increase of log likelihood is greater than this
-% MinLogLikeInc=chi2inv(0.95,1)/2;%carry on adding states if increase of log likelihood is greater than this
-% NumReps=10;%number of attempts for each w
-% Display=true;
-% varargin=assignApplicable(varargin);
 if exist('options','var')
     options=SynapseOptimset(options);
 else

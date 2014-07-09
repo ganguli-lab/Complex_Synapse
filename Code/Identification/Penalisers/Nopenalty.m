@@ -7,9 +7,6 @@ function [ newmodelobj,loglike,pstate ] = Nopenalty( modelobj,simobj,varargin )
 %   modelobj = SynapseIdModel
 %   simobj   = vector of SynapsePlastSeq
 
-% Weighter='RJ';%weighting algorithm to apply before penalty
-% Normalise=true;
-% varargin=assignApplicable(varargin);
 persistent p
 if isempty(p)
     p=inputParser;

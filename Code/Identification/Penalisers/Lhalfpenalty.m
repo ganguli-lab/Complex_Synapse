@@ -7,10 +7,6 @@ function [ newmodelobj,loglike,pstate ] = Lhalfpenalty( modelobj,simobj,varargin
 %   modelobj = SynapseIdModel
 %   simobj   = vector of SynapsePlastSeq
 
-% Weighter='RJ';%weighting algorithm to apply before penalty
-% Normalise=true;
-% Penalty=1;
-% varargin=assignApplicable(varargin);
 persistent p
 if isempty(p)
     p=inputParser;
