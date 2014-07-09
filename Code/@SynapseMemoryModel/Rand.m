@@ -7,7 +7,6 @@ function [ newobj ] = Rand( w,fp,varargin )
 
 ScaleW=1;
 sparsity=1;
-NumPlastTypes=2;
 varargin=assignApplicable(varargin);
 
 

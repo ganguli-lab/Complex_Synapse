@@ -16,8 +16,8 @@ end
 
 newobj=SynapseMemoryModel;
 
-newobj=newobj.setWp(Wp);
-newobj=newobj.setWm(Wm);
+newobj=newobj.setWp(ScaleW*Wp);
+newobj=newobj.setWm(ScaleW*Wm);
 newobj=newobj.setFp(fp);
 newobj=newobj.setW(w);
 

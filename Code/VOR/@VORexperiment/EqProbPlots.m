@@ -3,12 +3,10 @@ function EqProbPlots( obj,fh,varargin )
 %gain-increase, gain-decrease for WT/KO
 %   fh = figure handle(s) for plots
 
-Pooled=false;
 
 n=(0.5:obj.WT.NumStates+0.5)';
-varargin=assignApplicable(varargin);
 
-if Pooled
+if obj.pooled
     n=n-1;
     xlab='Number potentiated';
 else

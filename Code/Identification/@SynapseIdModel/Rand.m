@@ -8,10 +8,6 @@ function [ newobj ] = Rand( w,varargin )
 %other params passed to SynapseIdModel constructor
 
 
-% ScaleW=1;
-% sparsity=1;
-% NumPlastTypes=2;
-% varargin=assignApplicable(varargin);
 persistent p
 if isempty(p)
     p=inputParser;

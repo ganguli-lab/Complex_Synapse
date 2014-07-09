@@ -269,7 +269,7 @@ MakeButton(4,'Stop',@Stop);
         cla(ax(1));
         cla(ax(2));
         cla(ax(3));
-        modelobj.image(ax(3),ax(1:2),'FontSize',AxFontSize);
+        modelobj.image(ax(3),ax(1:2),{'FontSize',AxFontSize});
         cb=colorbar('peer',ax(3),'location','SouthOutside');
         cblabel(cb,'Probability','FontSize',AxFontSize);
     end

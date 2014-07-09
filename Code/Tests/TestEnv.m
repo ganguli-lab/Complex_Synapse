@@ -8,7 +8,7 @@ if isempty(p)
     p.KeepUnmatched=false;
     p.addOptional('trialtype','numulti',@(x)validatestring(x,{'nmulti','pmulti','randtrans'},'TestEnv','thresh',1));
     p.addParameter('fp',0.5,@(x)validateattributes(x,{'numeric'},{'scalar'},'TestEnv','fp'));
-    p.addParameter('len',true,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'TestEnv','len'));
+    p.addParameter('len',20,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'TestEnv','len'));
     p.addParameter('numtrials',100,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'TestEnv','numtrials'));
     p.addParameter('sp',0.31,@(x)validateattributes(x,{'numeric'},{'scalar'},'TestEnv','sp'));
     p.addParameter('di',0.7,@(x)validateattributes(x,{'numeric'},{'scalar'},'TestEnv','di'));

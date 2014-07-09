@@ -20,7 +20,7 @@ SynapseIdModel.fp is a row vector of probabilities of each type of plasticty
 being used, excluding the last one.
 
 To create a ground truth model to use for simulation:
-    modelobj=SynapseIdModel.Build(@SerialBuilder,fp,n,q);
+    modelobj=SynapseIdModel.Build(@SerialBuilder,{n,q},fp);
 which creates a Serial synapse, with n states and transition probabilites q.
 
 To create a random model as a starting guess for model fitting:

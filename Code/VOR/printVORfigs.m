@@ -21,7 +21,7 @@ elseif strncmpi(prefix,'binary',3)
     n=2;
 elseif strncmpi(prefix,'pooled',3)
     builder_h=@PooledBuilder;
-%     pooled=true;
+    pooled=true;
     paramPot=paramWT(3)*[1 1];
     paramWT(3)=[];
     n=7;
@@ -29,7 +29,7 @@ end
 
 
 
-vexpt=VORbuilder(builder_h,n,paramPot,paramWT,paramKO,0.5,0.5+df,0.5-df,T_train,T_pre);
+vexpt=VORbuilder(builder_h,n,paramPot,paramWT,paramKO,0.5,0.5+df,0.5-df,T_train,T_pre,pooled);
 vexpt.PrintFigs(prefix);
 
 

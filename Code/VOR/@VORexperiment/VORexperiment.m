@@ -31,6 +31,7 @@ classdef VORexperiment
         ProbFontSize=10;
         %
         numpts=100;
+        pooled=false;
     end
     
     methods

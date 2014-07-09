@@ -1,5 +1,5 @@
-function [ exptobj ] = VORbuilder( builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,fpDec,t_inc,t_dec )
-%VORexptobj=VORBUILDER(builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,fpDec,t_inc,t_dec)
+function [ exptobj ] = VORbuilder( builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,fpDec,t_inc,t_dec,pooled )
+%VORexptobj=VORBUILDER(builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,fpDec,t_inc,t_dec,pooled)
 %building a VORexperiment object
 %   builder_h  = function handle [Wp,Wm,w]=builder_h(numStates,param)
 %   num_states = number of synaptic states
@@ -11,6 +11,7 @@ function [ exptobj ] = VORbuilder( builder_h,numStates,paramPot,paramWT,paramKO,
 %   fpDec      = fraction of potentiating events during gain-decrease pre-training
 %   t_inc      = duration of gain-increase training
 %   t_dec      = duration of gain-decrease pre-training
+%   pooled     = is it a pooled resource model?
 
 
 
@@ -24,7 +25,7 @@ KOobj=SynapseMemoryModel('Wp',Wp,'Wm',WmKO,'w',w,'fp',fpNorm);
 nopreobj=VORtrainSeq('tTrain',t_dec+t_inc,'fps',[fpNorm fpInc]);
 withpreobj=VORtrainSeq('tTrain',[t_dec t_dec+t_inc],'fps',[fpNorm fpDec fpInc]);
 
-exptobj=VORexperiment('WT',WTobj,'KO',KOobj,'nopre',nopreobj,'withpre',withpreobj);
+exptobj=VORexperiment('WT',WTobj,'KO',KOobj,'nopre',nopreobj,'withpre',withpreobj,'pooled',pooled);
 
 end
 

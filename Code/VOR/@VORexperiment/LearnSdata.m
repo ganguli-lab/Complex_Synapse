@@ -2,10 +2,6 @@ function St=LearnSdata( obj,varargin )
 %VORexperiment.PLOTLEARNS plot learning curves during taining
 %and pre-training for WT/KO
 
-% Parent=gca;
-% 
-% varargin=assignApplicable(varargin);
-% cla(Parent);
 
 tchange=obj.withpre.tTrain(1);
 

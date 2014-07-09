@@ -111,7 +111,7 @@ classdef SynapseIdModel
     end%methods
     
     methods (Static=true) %for construction
-        newobj=Build(func,fp,varargin)
+        newobj=Build(func,varargin)
         newobj=Rand(w,varargin)
     end
     

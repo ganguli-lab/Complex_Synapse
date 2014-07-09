@@ -3,11 +3,9 @@ function ProbEvols( obj,fh,varargin )
 %and pre-training for WT/KO
 %   fh = figure handle(s) for plots
 
-Pooled=false;
-varargin=assignApplicable(varargin);
 
 n=1:obj.WT.NumStates;
-if Pooled
+if obj.pooled
     n=n-1;
     xlab='Number potentiated';
 else
