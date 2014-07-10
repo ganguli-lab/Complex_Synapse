@@ -49,6 +49,7 @@ classdef SynapsePlastSeq
     methods
         newobj=GetRange(obj,range)
         obj3=plus(obj1,obj2)
+        dwelltimes=DwellTimes(obj,varargin)
     end
     
     methods (Access=private)%for constructiuon

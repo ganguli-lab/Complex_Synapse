@@ -23,7 +23,7 @@ if isempty(p)
     p.FunctionName='TryParams';
     p.StructExpand=true;
     p.KeepUnmatched=false;
-    p.addOptional('options',SynapseOptimset,@(x)validateattributes(x,{'struct'},{}));
+    p.addOptional('options',SynapseOptimset,@(x)validateattributes(x,{'SynapseOptimset'},{}));
     p.addParameter('num_t',400);
     p.addParameter('min_ch',10);
     p.addParameter('max_ch',100);

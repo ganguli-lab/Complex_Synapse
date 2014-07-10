@@ -20,10 +20,11 @@ if isempty(p)
 %     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
 p.parse(varargin{:});
+r=p.Results;
 
-M=cell(1,p.Results.NumPlastTypes);
-for i=1:p.Results.NumPlastTypes
-    M{i}=p.Results.ScaleW*RandTrans(length(w),p.Results.sparsity)+eye(length(w));
+M=cell(1,r.NumPlastTypes);
+for i=1:r.NumPlastTypes
+    M{i}=r.ScaleW*RandTrans(length(w),r.sparsity)+eye(length(w));
 end
 init=rand(1,length(w));
 

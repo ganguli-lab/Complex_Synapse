@@ -160,6 +160,7 @@ classdef SynapseIdModel
                     %
                     %Extract data:
                     %
+                    obj=obj.SetWValInds;
                 end% if nargin=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
             end%if nargin ~=0
         end%function SynapseIdModel

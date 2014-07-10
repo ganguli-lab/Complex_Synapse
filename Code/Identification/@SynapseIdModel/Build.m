@@ -30,7 +30,7 @@ newobj=newobj.setM({r.ScaleW*Wp+eye(length(Wp)),r.ScaleW*Wm+eye(length(Wp))});
 newobj=newobj.setW(w);
 newobj=newobj.setFp(r.fp);
 newobj=newobj.CalcEqProb;
-
+newobj=newobj.SetWValInds;
 
 end
 
