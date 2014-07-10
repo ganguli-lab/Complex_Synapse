@@ -20,10 +20,10 @@ obj.ProbFontSize=4*obj.ProbFontSize;
     
     Parent=axes('Parent',fig);
 %     axes(Parent);
-    obj.PlotLearn('LineWidth',2,'Parent',Parent);
+    obj.PlotLearn({'LineWidth',2},'Parent',Parent);
     Parent=axes('Parent',figs);
 %     axes(Parent);
-    obj.PlotLearnS('LineWidth',2,'Parent',Parent);
+    obj.PlotLearnS({'LineWidth',2},'Parent',Parent);
 
     obj.EqProbPlots(figEq,'LineWidth',2);
     obj.ProbEvols(figEv);

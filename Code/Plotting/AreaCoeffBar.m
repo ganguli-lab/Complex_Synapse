@@ -15,6 +15,17 @@ assert(0<=fp && fp<=1);%fp in [0,1]
 assert(iscol(w));%row
 assert(length(w)==length(Wp));%same size
 assert(all(abs(w)==1));%+/-1
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='AreaCoeffBar';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+%     p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'VORexperiment.image','PlotLearnS',2));
+    p.addParameter('Parent',gca,@(x)validateattributes(x,{'numeric'},{'scalar'},'AreaCoeffBar','Mlabels'));
+%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
+end
+p.parse(varargin{:});
 
 
 c=AreaCoeff(Wp,Wm,fp);
@@ -27,11 +38,9 @@ cc(2,:)=cc(2,:).*(1-w)'/2;
 
 h=bar(cc',varargin{:});
 
-Parent=gca;
-varargin=assignApplicable(varargin);
 
 
-legend(Parent,'w>0','w<0','Location','Best');
+legend(p.Results.Parent,'w>0','w<0','Location','Best');
 
 end
 

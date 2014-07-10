@@ -30,11 +30,6 @@ St.KOwithpre=S(1)-S;
 
 
 
-% embiggen(Parent,obj.FontSize);
-% xlabel(Parent,'Training time','FontSize',obj.LabFontSize)
-% ylabel(Parent,'Learning (-\Delta mean w)','FontSize',obj.LabFontSize)
-% legend(Parent,ph,{[obj.WTlabel ' ' obj.noprelabel];[obj.KOlabel ' ' obj.noprelabel];...
-%     [obj.WTlabel ' ' obj.withprelabel];[obj.KOlabel ' ' obj.withprelabel]},'Location','Best')
 
 
 

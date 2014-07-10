@@ -12,7 +12,7 @@ if isempty(p)
     p.FunctionName='SynapseIdModel.image';
     p.StructExpand=true;
     p.KeepUnmatched=false;
-    p.addOptional('extraArgs',SynapseOptimset,@(x)validateattributes(x,{'cell'},{},'SynapseIdModel.image','extraArgs',4));
+    p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'SynapseIdModel.image','extraArgs',4));
     p.addParameter('Mlabels',{'pot','dep'},@(x)validateattributes(x,{'cell'},{},'SynapseIdModel.image','Mlabels'));
 %     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
