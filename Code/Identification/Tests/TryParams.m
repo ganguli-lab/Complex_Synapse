@@ -23,7 +23,8 @@ if isempty(p)
     p.FunctionName='TryParams';
     p.StructExpand=true;
     p.KeepUnmatched=false;
-    p.addOptional('options',SynapseOptimset,@(x)validateattributes(x,{'SynapseOptimset'},{}));
+    p.addOptional('synapseOptions',SynapseOptimset,@(x)validateattributes(x,{'SynapseOptimset'},{},'TryParams','synapseOptions',2));
+    p.addOptional('optimOptions',optimoptions('fmincon','Algorithm','interior-point'),@(x)validateattributes(x,{'optim.options.Fmincon'},{},'TryParams','optimOptions',3));
     p.addParameter('num_t',400);
     p.addParameter('min_ch',10);
     p.addParameter('max_ch',100);
@@ -35,6 +36,7 @@ if isempty(p)
 %     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
 p.parse(varargin{:});
+r=p.Results;
 
 fitsizeparams={'fp',truemodel.fp,'NormPower',truemodel.NormPower,'NormRows',truemodel.NormRows};
 
@@ -45,32 +47,33 @@ prob_st=zeros(2,n_loop);
 KL=zeros(2,n_loop);
 Ln=zeros(2,n_loop);
 
-num_ch=p.Results.min_ch;
+num_ch=round(r.min_ch/r.crossval);
 loop=0;
 
-while num_ch <= p.Results.max_ch
+while num_ch*r.crossval <= r.max_ch
     fprintf('#seq: %d          ',num_ch);
     loop=loop+1;
     
-    simobj=truemodel.Simulate(rand(2,p.Results.num_t,p.Results.crossval,num_ch));
+    simobj=truemodel.Simulate(rand(2,r.num_t,r.crossval,num_ch));
     
-    KLtrials=zeros(1,p.Results.num_trials);
+    KLtrials=zeros(1,r.num_trials);
     Lntrials=KLtrials;
     
-    for trial=1:p.Results.num_trials
+    for trial=1:r.num_trials
         fprintf([repmat('\b',[1 8+numel(int2str(trial-1))]) 'trial#: %d'] ,trial);
         
-        if p.Results.doSize
+        if r.doSize
         
-            fitmodel=FitSynapseSize(simobj,p.Results.options,fitsizeparams{:});
+%             fitmodel=FitSynapseSize(simobj,r.synapseOptions,fitsizeparams);
+            fitmodel=FitSynapseSizeDwell(simobj,r.synapseOptions,r.optimOptions,fitsizeparams);
             prob_st(1,loop) = prob_st(loop) + truemodel.MatchW(fitmodel);
         
         end
         
-        if p.Results.doDist
+        if r.doDist
             
             guessmodel=truemodel.Randomise;
-            fitmodel=FitSynapse(simobj(:)',guessmodel,p.Results.options);
+            fitmodel=FitSynapse(simobj(:)',guessmodel,r.synapseOptions);
 
             [~,KLfit]=truemodel.KLdivs(fitmodel);
             KLtrials(trial)=sum(KLfit);
@@ -82,7 +85,7 @@ while num_ch <= p.Results.max_ch
         
     end%for trial
     
-    num_events(loop)=p.Results.crossval*num_ch*p.Results.num_t;
+    num_events(loop)=r.crossval*num_ch*r.num_t;
    
     KL(1,loop)=mean(KLtrials);
     KL(2,loop)=std(KLtrials);
@@ -94,26 +97,26 @@ while num_ch <= p.Results.max_ch
     num_ch=2*num_ch;
 end%while num_ch
 
-prob_st=prob_st/p.Results.num_trials;
-prob_st(2,:) = sqrt( prob_st(1,:) .* (1-prob_st(1,:)) / p.Results.num_trials );
+prob_st=prob_st/r.num_trials;
+prob_st(2,:) = sqrt( prob_st(1,:) .* (1-prob_st(1,:)) / r.num_trials );
 
 toc;
 
-if p.Results.plot
+if r.plot
     figure;
-    if p.Results.doSize
-        subplot(1,1+2*p.Results.doDist,1);
+    if r.doSize
+        subplot(1,1+2*r.doDist,1);
         errorbar(num_events,prob_st(1,:),prob_st(2,:));
         ylim([0 1]);
         xlabel('# events');
         ylabel('prob # states correct');
     end
-    if p.Results.doDist
-        subplot(1,p.Results.doSize+2,p.Results.doSize+1);
+    if r.doDist
+        subplot(1,r.doSize+2,r.doSize+1);
         errorbar(num_events,KL(1,:),KL(2,:));
         xlabel('# events');
         ylabel('KL distance');
-        subplot(1,p.Results.doSize+2,p.Results.doSize+2);
+        subplot(1,r.doSize+2,r.doSize+2);
         errorbar(num_events,Ln(1,:),Ln(2,:));
         xlabel('# events');
         ylabel('L^n distance');

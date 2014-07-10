@@ -1,33 +1,42 @@
 function [ num_exp,fvals ] = FitNumExp( data,synapseOptions,optimOptions )
-%FITNUMEXP Summary of this function goes here
-%   Detailed explanation goes here
+%[num_exp,fvals]=FITNUMEXP(data,synapseOptions,optimOptions) number of
+%exponentials nedded to fit distribution of data
+%   data           = cell of row vectors of dwell times. One row held back for
+%       testing fits. Which row held back is rotated, then averaged over.
+%   synapseOptions = SynapseOptimset
+%   optimOptions   = optimoptions for fmincon
+%   num_exp = number of exponentials needed
+%   fvals   = row of neg-log-likelihoods for each value of num_exp tested
 
 
-num_exp=0;
+% num_exp=0;
 negloglike=Inf;
+fvals=NaN(1,synapseOptions.MaxStates);
 warning('off','MATLAB:nearlySingularMatrix');
 warning('off','MATLAB:singularMatrix');
 
-while num_exp < synapseOptions.MaxStates
+for num_exp = 1:synapseOptions.MaxStates
     
     fitnegloglike=zeros(1,length(data));
     holdinds=1:length(data);
     for holdback=holdinds
         fitinds=holdinds;
         fitinds(holdback)=[];
-        fitnegloglike(holdback)=OneCrossVal(num_exp+1,[data{fitinds}],data{holdback});
+        fitnegloglike(holdback)=OneCrossVal(num_exp,[data{fitinds}],data{holdback});
     end%for holdback
     fitnegloglike=mean(fitnegloglike);
     
+    fvals(num_exp+1)=fitnegloglike;
     if negloglike-fitnegloglike > synapseOptions.MinLogLikeInc
-        num_exp=num_exp+1;
         negloglike=fitnegloglike;
-        fvals(num_exp)=negloglike;
+        DispStates;
     else
         break;
     end%if fit improves enough
     
 end%while num_exp
+
+num_exp=max(1,num_exp-1);
 
 warning('on','MATLAB:nearlySingularMatrix');
 warning('on','MATLAB:singularMatrix');
@@ -48,6 +57,14 @@ warning('on','MATLAB:singularMatrix');
         end%for i
         crossnegloglike=MultiExpFun(bestfit,testdata);
     end
+
+    function DispStates
+        if ~strcmpi(synapseOptions.Display,'off')
+            disp(['# states: ' int2str(num_exp)]);
+        end
+    end
+
+
 
 end
 

@@ -1,4 +1,4 @@
-function [ fitmodel,like_n ] = FitSynapseSize( simobjs,options,varargin )
+function [ fitmodel,like_n ] = FitSynapseSize( simobjs,varargin )
 %[fitmodel,like_n]=FitSynapseSize(simobjs,options)
 %Determinig number of states needed for SynapseIdModel (fitmodel) to fit
 %SypssePlastSeq (simobjs)
@@ -7,11 +7,18 @@ function [ fitmodel,like_n ] = FitSynapseSize( simobjs,options,varargin )
 %   testsim = used to evaluate models, after refitting fitmodel.Initial
 %other arguments passed to SynapseIdModel.Rand
 
-if exist('options','var')
-    options=SynapseOptimset(options);
-else
-    options=SynapseOptimset;
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='FitSynapseSize';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addOptional('options',SynapseOptimset,@(x)validateattributes(x,{'SynapseOptimset'},{},'FitSynapseSize','options',2));
+    p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'FitSynapseSize','extraArgs',3));
+%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
+p.parse(varargin{:});
+options=p.Results.options;
 
 NumPlastTypes=simobjs.NumPlast;
 numWvals=simobjs.NumWvals;
@@ -68,7 +75,7 @@ like_n.loglike(isnan(like_n.loglike))=[];
         newmodel=SynapseIdModel.Rand(neww);
         testloglike=HMMloglike(newmodel,fitsim)+SynapsePrior(newmodel,options);
         for i=1:options.NumReps
-            guessmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes,varargin{:});
+            guessmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes,p.Results.extraArgs{:});
             [guessmodel,guessloglike]=FitSynapseM(fitsim,guessmodel,options);
             if guessloglike > testloglike
                 newmodel=guessmodel;
