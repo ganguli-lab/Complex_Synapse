@@ -13,8 +13,10 @@ if isempty(p)
     p.FunctionName='FitSynapseSizeDwell';
     p.StructExpand=true;
     p.KeepUnmatched=false;
-    p.addOptional('synapseOptions',SynapseOptimset,@(x)validateattributes(x,{'SynapseOptimset'},{},'FitSynapseSizeDwell','synapseOptions',2));
-    p.addOptional('optimOptions',optimoptions('fmincon','Algorithm','interior-point'),@(x)validateattributes(x,{'optim.options.Fmincon'},{},'FitSynapseSizeDwell','optimOptions',3));
+    p.addOptional('synapseOptions',SynapseOptimset,...
+        @(x)validateattributes(x,{'SynapseOptimset'},{},'FitSynapseSizeDwell','synapseOptions',2));
+    p.addOptional('optimOptions',optimoptions('fmincon','Algorithm','interior-point','Display','off'),...
+        @(x)validateattributes(x,{'optim.options.Fmincon'},{},'FitSynapseSizeDwell','optimOptions',3));
     p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'FitSynapseSizeDwell','extraArgs',4));
 %     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end

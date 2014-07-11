@@ -26,8 +26,8 @@ if isempty(p)
     p.addOptional('synapseOptions',SynapseOptimset,@(x)validateattributes(x,{'SynapseOptimset'},{},'TryParams','synapseOptions',2));
     p.addOptional('optimOptions',optimoptions('fmincon','Algorithm','interior-point'),@(x)validateattributes(x,{'optim.options.Fmincon'},{},'TryParams','optimOptions',3));
     p.addParameter('num_t',400);
-    p.addParameter('min_ch',10);
-    p.addParameter('max_ch',100);
+    p.addParameter('min_ch',12);
+    p.addParameter('max_ch',120);
     p.addParameter('crossval',2);
     p.addParameter('num_trials',20);
     p.addParameter('plot',false);

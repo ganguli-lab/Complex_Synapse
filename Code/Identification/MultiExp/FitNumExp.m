@@ -26,7 +26,7 @@ for num_exp = 1:synapseOptions.MaxStates
     end%for holdback
     fitnegloglike=mean(fitnegloglike);
     
-    fvals(num_exp+1)=fitnegloglike;
+    fvals(num_exp)=fitnegloglike;
     if negloglike-fitnegloglike > synapseOptions.MinLogLikeInc
         negloglike=fitnegloglike;
         DispStates;

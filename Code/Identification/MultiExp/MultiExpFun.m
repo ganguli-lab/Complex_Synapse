@@ -13,7 +13,7 @@ c=params(n+1:end);
 c=[c;1-sum(c)];
 
 like = (c.*q)'*exp(-q*data);
-negloglike=-sum(log(like));
+negloglike=-sum(log(like))/length(data);
 
 
 end

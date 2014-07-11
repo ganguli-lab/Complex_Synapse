@@ -20,14 +20,14 @@ expqt=exp(-qt);
 onemat=ones(size(qt));
 
 like = (c.*q)'*expqt;
-negloglike=-sum(log(like));
+negloglike=-sum(log(like))/T;
 
 gradc=diag(q)*expqt;
 gradc=gradc-ones(n,1)*gradc(end,:);
 gradc(end,:)=[];
 gradq=diag(c)*(onemat-qt).*expqt;
 grad=-[gradq;gradc]*diag(1./like);
-grad=sum(grad,2);
+grad=sum(grad,2)/T;
 
 hesscc=mmx('mult', reshape(gradc,n-1,1,T), reshape(gradc,1,n-1,T) );
 
@@ -37,6 +37,6 @@ hesscq = mmx('mult', reshape(gradc,n-1,1,T), reshape(gradq,1,n,T) );
 hessqq = mmx('mult', reshape(gradq,n,1,T), reshape(gradq,1,n,T) );
 %needs fixing
 
-hess = cat(1, cat(2, hesscc, hesscq ), cat(2, permute(hesscq,[2 1 3]), hessqq ) );
+hess = sum(cat(1, cat(2, hesscc, hesscq ), cat(2, permute(hesscq,[2 1 3]), hessqq ) ),3)/T;
 end
 

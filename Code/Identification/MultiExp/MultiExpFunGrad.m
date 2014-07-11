@@ -18,14 +18,14 @@ expqt=exp(-qt);
 onemat=ones(size(qt));
 
 like = (c.*q)'*expqt;
-negloglike=-sum(log(like));
+negloglike=-sum(log(like))/length(data);
 
 gradc=diag(q)*expqt;
 gradc=gradc-ones(n,1)*gradc(end,:);
 gradc(end,:)=[];
 gradq=diag(c)*(onemat-qt).*expqt;
 grad=-[gradq;gradc]*diag(1./like);
-grad=sum(grad,2);
+grad=sum(grad,2)/length(data);
 
 end
 
