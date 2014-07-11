@@ -9,13 +9,12 @@ qm=ones(1,19);
 m1=SNRcurve(t,Wp,Wm,0.5,w);
 %%
 plot(t,casc,'b',t,m1,'g','LineWidth',2)
-set(gca,'XScale','log','YScale','log')
+set(gca,'XScale','log','YScale','log','FontSize',20)
 xlim([t(1) t(end)])
 ylim([casc(end) casc(1)])
-xlabel('Time')
-ylabel('SNR')
+xlabel('Time','FontSize',20)
+ylabel('SNR','FontSize',20)
 legend({'Cascade','Serial'},'Location','Best')
-embiggen(gca,20)
 set(gcf, 'PaperPositionMode', 'auto');
 %%
 clear x q Wp Wm w t m1 casc

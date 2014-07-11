@@ -2,10 +2,9 @@
 nrange=2:2:12;
 cla;
 eh=loglog(1./srange,10*A.*srange,'g','LineWidth',3);
-xlabel('Time');ylabel('Running average SNR');
-embiggen;
+xlabel('Time','FontSize',16);ylabel('Running average SNR','FontSize',16);
 xlim([1/max(srange) 1/min(srange)]);
-set(gca,'XTick',[1e-3,1e-2,1e-1,1,1e1,1e2,1e3]);
+set(gca,'XTick',[1e-3,1e-2,1e-1,1,1e1,1e2,1e3],'FontSize',16);
 hold on;
 %
 [Wp,Wm,w]=SerialBuilder(nrange(end),1);

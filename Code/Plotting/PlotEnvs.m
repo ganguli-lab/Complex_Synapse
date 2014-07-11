@@ -31,12 +31,11 @@ else
 end
 lh2=line([1;1]*bnds2',yl'*ones(1,length(bnds2)),'Color','k','LineWidth',1.5,'LineStyle','--','Parent',Parent,varargin{:});
 if Format
-    set(Parent,'XScale','log','YScale','log')
+    set(Parent,'XScale','log','YScale','log','FontSize',16)
     xlim(Parent,[t(1) t(end)])
     ylim(Parent,yl)
-    embiggen
-    xlabel(Parent,'Time')
-    ylabel(Parent,'SNR');
+    xlabel(Parent,'Time','FontSize',16)
+    ylabel(Parent,'SNR','FontSize',16);
 end
 h=[h;lh1;lh2];
 end
