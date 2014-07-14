@@ -54,19 +54,19 @@ while num_ch*r.crossval <= r.max_ch
     fprintf('#seq: %d          ',num_ch);
     loop=loop+1;
     
-    simobj=truemodel.Simulate(rand(2,r.num_t,r.crossval,num_ch));
-    
     KLtrials=zeros(1,r.num_trials);
     Lntrials=KLtrials;
     
     for trial=1:r.num_trials
         fprintf([repmat('\b',[1 8+numel(int2str(trial-1))]) 'trial#: %d'] ,trial);
         
+        simobj=truemodel.Simulate(rand(2,r.num_t,r.crossval,num_ch));
+    
         if r.doSize
         
 %             fitmodel=FitSynapseSize(simobj,r.synapseOptions,fitsizeparams);
             fitmodel=FitSynapseSizeDwell(simobj,r.synapseOptions,r.optimOptions,fitsizeparams);
-            prob_st(1,loop) = prob_st(loop) + truemodel.MatchW(fitmodel);
+            prob_st(1,loop) = prob_st(1,loop) + truemodel.MatchW(fitmodel);
         
         end
         

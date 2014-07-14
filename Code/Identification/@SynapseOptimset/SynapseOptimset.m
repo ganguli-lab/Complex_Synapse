@@ -76,12 +76,20 @@ classdef SynapseOptimset
         %     GroundTruth = true model used to generate data ([],{'SynapseIdModel'},{})
         GroundTruth = [];
         %   For fittng number of states:
-        %     MaxStates = maximum # states per value of w (6,{'numeric'},{'scalar','nonnegative'})
+        %     MaxStates = maximum # states per value of w (6,{'numeric'},{'scalar','nonnegative','integer'})
         MaxStates = 6;
         %     MinLogLikeInc = minimum log likelihood increase to carry on adding states (0,{'numeric'},{'scalar','nonnegative'})
         MinLogLikeInc = 0;
-        %     NumReps = number of attempts for each w (10,{'numeric'},{'scalar','nonnegative'})
+        %     NumReps = number of attempts for each w (10,{'numeric'},{'scalar','nonnegative','integer'})
         NumReps = 10;
+        %     NumSample = number of samples from posterior (10,{'numeric'},{'scalar','nonnegative','integer'})
+        NumSample=1000;
+        %     PriorCcoeff = coefficient of L^1/2 penalty on exponential
+        %     coeffs (6,{'numeric'},{'scalar','nonnegative'})
+        PriorCcoeff=50;
+        %     PriorQcoeff = coefficient of L^1/2 penalty on exponential
+        %     decays (6,{'numeric'},{'scalar','nonnegative'})
+        PriorQcoeff=1;
     end
     
     methods

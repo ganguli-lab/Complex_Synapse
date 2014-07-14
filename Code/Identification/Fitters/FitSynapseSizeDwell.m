@@ -15,9 +15,9 @@ if isempty(p)
     p.KeepUnmatched=false;
     p.addOptional('synapseOptions',SynapseOptimset,...
         @(x)validateattributes(x,{'SynapseOptimset'},{},'FitSynapseSizeDwell','synapseOptions',2));
-    p.addOptional('optimOptions',optimoptions('fmincon','Algorithm','interior-point','Display','off'),...
-        @(x)validateattributes(x,{'optim.options.Fmincon'},{},'FitSynapseSizeDwell','optimOptions',3));
-    p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'FitSynapseSizeDwell','extraArgs',4));
+%     p.addOptional('optimOptions',optimoptions('fminunc','Algorithm','quasi-newton','Display','off'),...
+%         @(x)validateattributes(x,{'optim.options.Fminunc'},{},'FitSynapseSizeDwell','optimOptions',3));
+    p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'FitSynapseSizeDwell','extraArgs',3));
 %     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
 p.parse(varargin{:});
@@ -26,15 +26,17 @@ synapseOptions=p.Results.synapseOptions;
 % NumPlastTypes=simobjs.NumPlast;
 numWvals=simobjs.NumWvals;
 
-dwell=cell(size(simobjs,1),numWvals);
-for i=1:size(simobjs,1)
-    dwell(i,:)=simobjs(i,:).DwellTimes(numWvals);
-end
+% dwell=cell(size(simobjs,1),numWvals);
+% for i=1:size(simobjs,1)
+%     dwell(i,:)=simobjs(i,:).DwellTimes(numWvals);
+% end
+dwell=simobjs.DwellTimes(numWvals);
 
 numStates=zeros(numWvals,1);
 for j=1:numWvals
     DispStates(j);
-    numStates(j)=FitNumExp( dwell(:,j),synapseOptions,p.Results.optimOptions );
+%     numStates(j)=FitNumExp( dwell(:,j),synapseOptions,p.Results.optimOptions );
+    numStates(j)=FitNumExpSample( dwell{j},synapseOptions);
 end
 
 numStates=cumsum(numStates)+1;

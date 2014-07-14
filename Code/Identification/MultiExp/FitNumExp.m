@@ -4,30 +4,31 @@ function [ num_exp,fvals ] = FitNumExp( data,synapseOptions,optimOptions )
 %   data           = cell of row vectors of dwell times. One row held back for
 %       testing fits. Which row held back is rotated, then averaged over.
 %   synapseOptions = SynapseOptimset
-%   optimOptions   = optimoptions for fmincon
+%   optimOptions   = optimoptions for fminunc
 %   num_exp = number of exponentials needed
 %   fvals   = row of neg-log-likelihoods for each value of num_exp tested
 
 
-% num_exp=0;
+num_exp=0;
 negloglike=Inf;
 fvals=NaN(1,synapseOptions.MaxStates);
 warning('off','MATLAB:nearlySingularMatrix');
 warning('off','MATLAB:singularMatrix');
 
-for num_exp = 1:synapseOptions.MaxStates
+while num_exp <= 1:synapseOptions.MaxStates
     
     fitnegloglike=zeros(1,length(data));
     holdinds=1:length(data);
     for holdback=holdinds
         fitinds=holdinds;
         fitinds(holdback)=[];
-        fitnegloglike(holdback)=OneCrossVal(num_exp,[data{fitinds}],data{holdback});
+        fitnegloglike(holdback)=OneCrossVal(num_exp+1,[data{fitinds}],data{holdback});
     end%for holdback
     fitnegloglike=mean(fitnegloglike);
     
-    fvals(num_exp)=fitnegloglike;
+    fvals(num_exp+1)=fitnegloglike;
     if negloglike-fitnegloglike > synapseOptions.MinLogLikeInc
+        num_exp=num_exp+1;
         negloglike=fitnegloglike;
         DispStates;
     else
@@ -36,7 +37,7 @@ for num_exp = 1:synapseOptions.MaxStates
     
 end%while num_exp
 
-num_exp=max(1,num_exp-1);
+num_exp=max(1,num_exp);
 
 warning('on','MATLAB:nearlySingularMatrix');
 warning('on','MATLAB:singularMatrix');

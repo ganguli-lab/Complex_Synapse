@@ -31,18 +31,16 @@ function Validate( obj )
 %   For fittng number of states:
 %     MaxStates = maximum # states per value of w (6,{'numeric'},{'scalar','nonnegative'})
 %     MinLogLikeInc = minimum log likelihood increase to carry on adding states (0,{'numeric'},{'scalar','nonnegative'})
-%     NumReps = number of attempts for each w (10,{'numeric'},{'scalar','nonnegative'})
+%     NumReps = number of attempts for each w (10,{'numeric'},{'scalar','nonnegative','integer'})
 
 validateattributes(obj.MaxIter,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','MaxIter');
 validateattributes(obj.TolFun,{'numeric'},{'scalar'},'SynapseOptimset','TolFun');
 validateattributes(obj.TolX,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','TolX');
 validateattributes(obj.TolFunChange,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','TolFunChange');
 validateattributes(obj.Penalty,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','Penalty');
-validateattributes(obj.MaxStates,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','MaxStates');
-validateattributes(obj.MinLogLikeInc,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','MinLogLikeInc');
-validateattributes(obj.NumReps,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','NumReps');
 validateattributes(obj.fp,{'numeric'},{'row','>=',0,'<=',1},'SynapseOptimset','fp');
 validateattributes(obj.ExtraParams,{'cell'},{},'SynapseOptimset','ExtraParams');
+
 if ~isempty(obj.OutputFcn)
     validateattributes(obj.OutputFcn,{'function_handle'},{},'SynapseOptimset','OutputFcn');
 end
@@ -57,6 +55,13 @@ validatestring(obj.Algorithm,{'BW','Viterbi'},'SynapseOptimset','Algorithm');
 validatestring(obj.Weighter,{'RJ','Uni','Mackay'},'SynapseOptimset','Weighter');
 validatestring(obj.Penaliser,{'No','OffDiagL1','Lhalf'},'SynapseOptimset','Penaliser');
 validatestring(obj.ModelDiff,{'KL','Ln`'},'SynapseOptimset','ModelDiff');
+
+validateattributes(obj.MaxStates,{'numeric'},{'scalar','nonnegative','integer'},'SynapseOptimset','MaxStates');
+validateattributes(obj.MinLogLikeInc,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','MinLogLikeInc');
+validateattributes(obj.NumReps,{'numeric'},{'scalar','nonnegative','integer'},'SynapseOptimset','NumReps');
+validateattributes(obj.NumSample,{'numeric'},{'scalar','nonnegative','integer'},'SynapseOptimset','NumSample');
+validateattributes(obj.PriorCcoeff,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','PriorCcoeff');
+validateattributes(obj.PriorQcoeff,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','PriorQcoeff');
 
 
 end

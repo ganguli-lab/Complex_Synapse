@@ -4,15 +4,15 @@
 crossvals=2:5;
 llincvals=[0 0.1 0.25 0.5 1 2 5 10];
 
-scan_results(length(tolfunvals),length(tolxvals))=...
+scan_results(length(crossvals),length(llincvals))=...
     struct('num_events',[],'prob_st',[],'KL',[],'Ln',[]);
 
 % options=SynapseOptimset('MaxStates',modelobj.NumStates/2+1,'ModelDiff','Ln');
 optimOptions=optimoptions('fmincon','Algorithm','interior-point','Display','off');
 synapseOptions=SynapseOptimset('MaxStates',3);
 
-for i=1:length(tolfunvals)
-    for j=1:length(tolxvals)
+for i=1:length(crossvals)
+    for j=1:length(llincvals)
 %         synapseOptions.TolFunChange=tolfunvals(i);
 %         synapseOptions.TolX=tolxvals(j);
         synapseOptions.MinLogLikeInc=llincvals(j);
