@@ -22,11 +22,11 @@ function [ neglogprior ] = MultiExpPrior( params,penc,penq )
 % r=p.Results;
 
 n=ceil(length(params)/2);
-q=exp(params(1:n));
+q2=exp(2*params(1:n));
 c=params(n+1:end);
 c=[c;1-sum(c)];
 
-neglogprior = penc*sum(sqrt(c)) + sum(penq*q.^2-params(1:n));
+neglogprior = penc*sum(sqrt(c)) + sum(penq*q2-params(1:n));
 
 end
 

@@ -15,7 +15,7 @@ fvals=NaN(1,synapseOptions.MaxStates);
 warning('off','MATLAB:nearlySingularMatrix');
 warning('off','MATLAB:singularMatrix');
 
-while num_exp <= 1:synapseOptions.MaxStates
+while num_exp <= synapseOptions.MaxStates
     
     fitnegloglike=zeros(1,length(data));
     holdinds=1:length(data);

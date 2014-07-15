@@ -12,8 +12,8 @@ P=zeros(synapseOptions.NumReps,synapseOptions.NumSample);
 for i=1:synapseOptions.NumReps
 
     maxnum=synapseOptions.MaxStates;
-    rnd = slicesample(rand(1,2*maxnum-1),synapseOptions.NumSample,'logpdf',...
-        @JointDist);
+    rnd = slicesample(rand(1,2*maxnum-1),synapseOptions.NumSample,...
+        'logpdf',@JointDist);
 
     c=rnd(:,maxnum+1:end)';
     c=[c;1-sum(c,1)];
@@ -27,7 +27,7 @@ num_exp=round(mean(P(:)));
 
 
     function logjoint=JointDist(params)
-        logjoint=-MultiExpFun(params',data)-MultiExpPrior(params',synapseOptions.PriorCcoeff,synapseOptions.PriorQcoeff);
+        logjoint=-MultiExpLike(params',data)-MultiExpPrior(params',synapseOptions.PriorCcoeff,synapseOptions.PriorQcoeff);
     end
 
 end

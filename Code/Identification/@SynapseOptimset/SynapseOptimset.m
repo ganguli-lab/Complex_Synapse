@@ -1,4 +1,4 @@
-classdef SynapseOptimset
+classdef SynapseOptimset < hgsetget
     %options=SYNAPSEOPTIMSET(oldoptions,param,val,...) optimisation parameters for
     %synapse fitting
     %   oldoptions can be omitted, defaults will be used instead

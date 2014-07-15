@@ -65,7 +65,8 @@ while num_ch*r.crossval <= r.max_ch
         if r.doSize
         
 %             fitmodel=FitSynapseSize(simobj,r.synapseOptions,fitsizeparams);
-            fitmodel=FitSynapseSizeDwell(simobj,r.synapseOptions,r.optimOptions,fitsizeparams);
+            fitmodel=FitSynapseSizeDwell(simobj,r.synapseOptions,fitsizeparams);
+%             fitmodel=FitSynapseSizeDwell(simobj,r.synapseOptions,r.optimOptions,fitsizeparams);
             prob_st(1,loop) = prob_st(1,loop) + truemodel.MatchW(fitmodel);
         
         end

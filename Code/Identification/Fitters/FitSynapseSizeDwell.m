@@ -18,7 +18,6 @@ if isempty(p)
 %     p.addOptional('optimOptions',optimoptions('fminunc','Algorithm','quasi-newton','Display','off'),...
 %         @(x)validateattributes(x,{'optim.options.Fminunc'},{},'FitSynapseSizeDwell','optimOptions',3));
     p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'FitSynapseSizeDwell','extraArgs',3));
-%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
 p.parse(varargin{:});
 synapseOptions=p.Results.synapseOptions;

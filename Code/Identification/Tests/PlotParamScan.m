@@ -2,8 +2,8 @@ function [ h ] = PlotParamScan( scan_results, paramvec, paramname )
 %PLOTPARAMSCAN Summary of this function goes here
 %   Detailed explanation goes here
 
-doSize=scan_results(1).prob_st(1);
-doDist=scan_results(1).KL(1);
+doSize=any(any([scan_results.prob_st]));
+doDist=any(any([scan_results.KL]));
 
 h.fig=figure;
 if doSize
