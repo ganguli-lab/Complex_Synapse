@@ -1,14 +1,19 @@
 function CorderGUI(varargin)
 
-% %initial params
-nstates=2;
-% 
-% varargin=assignApplicable(varargin);
-% 
-% 
-% %check validity of params
-% assert(isscalar(nstates));
-% assert(isint(nstates));
+%initial params
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='CorderGUI';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addParameter('nstates',20,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'CorderGUI','nsteps'));
+end
+p.parse(varargin{:});
+
+%initial params
+nstates=p.Results.nstates;
+
 
 
 

@@ -15,20 +15,29 @@ function [ S1 ] = DoubleEnv_Case5Exp1( t1,t2,S2,n,varargin )
 %       t = time to evaluate SNR envelope (default=t1)
 %       Constraint3 = Use constraint 3? (default=false)
 
-error(CheckSize(t1,@isscalar))
-error(CheckValue(t1,@(x)x>0))
-error(CheckSize(t2,@isscalar))
-error(CheckValue(t2,@(x)x>0))
-error(CheckSize(S2,@isscalar))
-error(CheckValue(S2,@(x)x>0))
-error(CheckSize(n,@isscalar))
-error(CheckValue(n,@(x)x>0))
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='DoubleEnv_Case5Exp1';
+    p.StructExpand=true;
+    p.KeepUnmatched=true;
+    p.addRequired('t1',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DoubleEnv_Case5Exp1','t1',1));
+    p.addRequired('t2',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DoubleEnv_Case5Exp1','t2',2));
+    p.addRequired('S2',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DoubleEnv_Case5Exp1','S2',3));
+    p.addRequired('n',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DoubleEnv_Case5Exp1','n',4));
+    p.addParameter('t',[],@(x) validateattributes(x,{'numeric'},{},'DoubleEnv_Case5Exp1','t'));
+    p.addParameter('Constraint3',true,@(x) validateattributes(x,{'logical'},{'scalar'},'DoubleEnv_Case5Exp1','Constraint3'));
+end
+p.parse(t1,t2,S2,n,varargin{:});
+r=p.Results;
+if any(strcmp('t',p.UsingDefaults))
+    r.t=r.t1;
+end
 
-t=t1;
-Constraint3=false;
-varargin=assignApplicable(varargin);
 
-S1=zeros(size(t));
+
+
+S1=zeros(size(r.t));
 
 end%function
 

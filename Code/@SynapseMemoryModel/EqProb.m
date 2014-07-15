@@ -1,13 +1,21 @@
 function [ pinf ] = EqProb( obj,varargin )
 %pinf=SynapseMemoryModel.EQPROB equlibrium distribution of Markov chain (cts time)
 
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='SynapseMemoryModel.EqProb';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addParameter('RCondThresh',1e-5,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'SynapseMemoryModel.EqProb','RCondThresh'));
+end
+p.parse(func,varargin{:});
+r=p.Results;
 
-RCondThresh=1e-3;
-varargin=assignApplicable(varargin);
 
 [Zinv,piv]=obj.GetZinv;
 
-if rcond(Zinv)>RCondThresh
+if rcond(Zinv)>r.RCondThresh
     pinf = piv/Zinv;
 else
     [v,qb]=eig(-obj.GetWf');

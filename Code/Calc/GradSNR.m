@@ -6,36 +6,43 @@ function [ S, dSdWp,dSdWm ] = GradSNR( t, Wp, Wm, fp, w, varargin  )
 %   FP = Fraction of potentiation transitions
 %   w = Weights of states (+/-1)
 
-error(CheckSize(t,@isscalar));
-error(CheckSize(Wp,@ismat));%matrix
-error(CheckSize(Wp,@issquare));%square
-error(CheckSize(Wm,@(x)samesize(Wp,x),'samesize(Wp)'));%also square matrix of same size
-error(CheckSize(fp,@isscalar));
-error(CheckValue(fp,@(x) inrange(x,0,1),'inrange(0,1)'));%fp in [0,1]
-error(CheckSize(w,@iscol));
-error(CheckValue(w,@(x) all(x.^2==1),'all w = +/-1'));
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='GradSNR';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addRequired('t',@(x)validateattributes(x,{'numeric'},{'scalar'},'GradSNR','t',1));
+    p.addRequired('Wp',@(x)validateattributes(x,{'numeric'},{'2d','square'},'GradSNR','Wp',2));
+    p.addRequired('Wm',@(x)validateattributes(x,{'numeric'},{'2d','square'},'GradSNR','Wm',3));
+    p.addRequired('fp',@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'GradSNR','fp',4));
+    p.addRequired('w',@(x)validateattributes(x,{'numeric'},{'column'},'GradSNR','w',5));
+    p.addParameter('NoDiag',true,@(x)validateattributes(x,{'logical'},{'scalar'},'GradSNR','NoDiag'));
+    p.addParameter('thresh',1e-7,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'GradSNR','thresh'));
+    p.addParameter('DegThresh',1e-3,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'GradSNR','DegThresh'));
+    p.addParameter('RCondThresh',1e-5,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'GradSNR','RCondThresh'));
+    p.addParameter('UseZ',true,@(x)validateattributes(x,{'logical'},{'scalar'},'GradSNR','UseZ'));
+    p.addParameter('UseV',false,@(x)validateattributes(x,{'logical'},{'scalar'},'GradSNR','UseV'));
+end
+p.parse(t,Wp,Wm,fp,w,varargin{:});
+r=p.Results;
 
-NoDiag=true;
-thresh=1e-7;
-DegThresh=1e-3;
-RCondThresh=1e-5;
-UseZ=true;
-UseV=false;
-varargin=assignApplicable(varargin);
+error(CheckSize(r.Wm,@(x)samesize(r.Wp,x),'samesize(Wp)'));%also square matrix of same size
+error(CheckSize(r.w,@(x)length(x)==length(r.Wp),'samesize(Wp)'));
 
 
-q=Wp-Wm;
-W=fp*q + Wm;
+q=r.Wp-r.Wm;
+W=r.fp*q + r.Wm;
 
 [u,qa]=eig(-W);
 qa=diag(qa);
 [qa,ix]=sort(qa);
 u=u(:,ix);
 
-Zinv=ones(length(w)) - W;
+Zinv=ones(length(r.w)) - W;
 
 %this method doesn't work when eigenvalues are nearly degenerate
-if min(diff(qa)) > DegThresh
+if min(diff(qa)) > r.DegThresh
     [v,qb]=eig(-W');
     qb=diag(qb);
     [~,ix]=sort(qb);
@@ -43,67 +50,67 @@ if min(diff(qa)) > DegThresh
     v=diag(1./diag(v.'*u)) * v.';
 
     Z=u * diag(1./[1;qa(2:end)]) * v;
-    p=v(1,:);
-    p=p/sum(p);
-    UseV=true;
+    pr=v(1,:);
+    pr=pr/sum(pr);
+    r.UseV=true;
 %this method doesn't work when eigenvectors are nearly parallel or W is
 %nearly non-ergodic
-elseif rcond(Zinv) > RCondThresh
-    p = ones(1,length(w))/Zinv;
-    UseZ=false;
+elseif rcond(Zinv) > r.RCondThresh
+    pr = ones(1,length(r.w))/Zinv;
+    r.UseZ=false;
 %this method doesn't work when eigenvectors are nearly parallel
 else
     Z=u * diag(1./[1;qa(2:end)]) / u;
-    p=[1 zeros(1,length(qa)-1)] / u;
-    p=p/sum(p);
+    pr=[1 zeros(1,length(qa)-1)] / u;
+    pr=pr/sum(pr);
 end
 
 expLt=exp(-qa*t);
-if UseV
+if r.UseV
     expWt=u*diag(expLt)*v;
 else
     expWt=u*diag(expLt)/u;
 end
 
-S=p*q*expWt*w;
+S=pr*q*expWt*r.w;
 
 %deriv wrt q_ij
-dSdq=((expWt*w)*p).';
+dSdq=((expWt*r.w)*pr).';
 
 %deriv wrt W_ij, due to p
-if UseZ
-    dSdp=((Z*q*expWt*w)*p).';
+if r.UseZ
+    dSdp=((Z*q*expWt*r.w)*pr).';
 else
-    dSdp=((Zinv\q*expWt*w)*p).';
+    dSdp=((Zinv\q*expWt*r.w)*pr).';
 end
 
 %deriv wrt W_ij, due to expWt
 %ref: http://dx.doi.org/10.1002/nme.263
-FF=expLt*ones(1,length(w));
+FF=expLt*ones(1,length(r.w));
 F=FF-FF.';
-qa=qa*ones(1,length(w));
+qa=qa*ones(1,length(r.w));
 qa=qa.'-qa;
 %check for degenerate evals
-degenerate= qa<thresh;
+degenerate= qa<r.thresh;
 qa(degenerate)=1;
 F(degenerate)=t*FF(degenerate);
 %
 F=F./qa;
-if UseV
-    dSdexpWt=(u*diag(v*w)*F*diag(p*q*u)*v).';
+if r.UseV
+    dSdexpWt=(u*diag(v*r.w)*F*diag(pr*q*u)*v).';
 else
-    dSdexpWt=(u*diag(u\w)*F*diag(p*q*u)/u).';
+    dSdexpWt=(u*diag(u\r.w)*F*diag(pr*q*u)/u).';
 end
 
 %deriv wrt W_ij
 dSdW=dSdp+dSdexpWt;
 
-if NoDiag
-    dSdq=dSdq-diag(dSdq)*ones(1,length(w));
-    dSdW=dSdW-diag(dSdW)*ones(1,length(w));
+if r.NoDiag
+    dSdq=dSdq-diag(dSdq)*ones(1,length(r.w));
+    dSdW=dSdW-diag(dSdW)*ones(1,length(r.w));
 end
 
-dSdWp=fp*dSdW+dSdq;
+dSdWp=r.fp*dSdW+dSdq;
 dSdWm=dSdW-dSdWp;
 
 dSdWp=real(dSdWp);

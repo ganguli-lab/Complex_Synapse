@@ -15,28 +15,40 @@ function [ S1,qc,cc ] = DoubleEnv_Case2Exp2( t1,t2,S2,n,varargin )
 %       t = time to evaluate SNR envelope (default=t1)
 %       Constraint3 = Use constraint 3? (default=false)
 
-error(CheckSize(t1,@isscalar))
-error(CheckValue(t1,@(x)x>0))
-error(CheckSize(t2,@isscalar))
-error(CheckValue(t2,@(x)x>0))
-error(CheckSize(S2,@isscalar))
-error(CheckValue(S2,@(x)x>0))
-error(CheckSize(n,@isscalar))
-error(CheckValue(n,@(x)x>0))
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='DoubleEnv_Case2Exp2';
+    p.StructExpand=true;
+    p.KeepUnmatched=true;
+    p.addRequired('t1',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DoubleEnv_Case2Exp2','t1',1));
+    p.addRequired('t2',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DoubleEnv_Case2Exp2','t2',2));
+    p.addRequired('S2',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DoubleEnv_Case2Exp2','S2',3));
+    p.addRequired('n',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DoubleEnv_Case2Exp2','n',4));
+    p.addParameter('t',[],@(x) validateattributes(x,{'numeric'},{},'DoubleEnv_Case2Exp2','t'));
+    p.addParameter('Constraint3',false,@(x) validateattributes(x,{'logical'},{'scalar'},'DoubleEnv_Case2Exp2','Constraint3'));
+    p.addParameter('Display','off',@(x) validatestring(x,{'on','off'},'DoubleEnv_Case2Exp2','Display'));
+    p.addParameter('Jacobian','on',@(x) validatestring(x,{'on','off'},'DoubleEnv_Case2Exp2','Jacobian'));
+end
+p.parse(t1,t2,S2,n,varargin{:});
+r=p.Results;
+if any(strcmp('t',p.UsingDefaults))
+    r.t=r.t1;
+end
+
+t1=r.t1;
+t2=r.t2;
+S2=r.S2;
+
 
 gammasq=128/pi^4;
 
-t=t1;
-Constraint3=false;
-Display='off';
-Jacobian='on';
-varargin=assignApplicable(varargin);
 
 
 q1guess=0.9/t1;
 q2guess=1.1/t2;
 
-[qc,~,ef]=fsolve(@eqs,[q1guess,q2guess],optimset('Display',Display,'Jacobian',Jacobian));
+[qc,~,ef]=fsolve(@eqs,[q1guess,q2guess],optimset('Display',r.Display,'Jacobian',r.Jacobian));
 
 q1=qc(1);
 q2=qc(2);
@@ -46,11 +58,11 @@ c2=n-1-c1;
 qc=qc';
 cc=[c1; c2];
 
-S1=c1*q1*exp(-q1*t)+c2*q2*exp(-q2*t);
+S1=c1*q1*exp(-q1*r.t)+c2*q2*exp(-q2*r.t);
 
 valid = c1*q1+c2*q2<=1;
 valid = valid && mu2(q1)>=0;
-if Constraint3
+if r.Constraint3
     valid = valid && c1^2*q1 <= gammasq;
     valid = valid && c2^2*q2 <= gammasq;
 end%if

@@ -1,13 +1,5 @@
 function ShortcutEqProbGUI(varargin)
 
-% %initial params
-% 
-% varargin=assignApplicable(varargin);
-% 
-% 
-% %check validity of params
-% assert(isscalar(nstates));
-% assert(isint(nstates));
 
 
 

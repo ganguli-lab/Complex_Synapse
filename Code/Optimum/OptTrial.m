@@ -27,7 +27,7 @@ cla(r.Parent);
 
 t=10.^(-1:0.1:ceil(log10(nmax^2)));
 
-[ h,yl ] = PlotEnvs( t,nmax,plotArgs{:} );
+[ h,yl ] = PlotEnvs( t,nmax,plotArgs(3:4),plotArgs{1:2} );
 delete(h(3:end-1));
 
 q=ones(1,n-1);

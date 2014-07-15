@@ -1,18 +1,19 @@
 function AreaCoeffDeltaEtaPertGUI(varargin)
 
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='AreaCoeffDeltaEtaPertGUI';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addParameter('nsteps',20,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'AreaCoeffDeltaEtaPertGUI','nsteps'));
+    p.addParameter('nstates',20,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'AreaCoeffDeltaEtaPertGUI','nstates'));
+end
+p.parse(varargin{:});
+
 %initial params
-nsteps=20;
-nstates=2;
-
-varargin=assignApplicable(varargin);
-
-
-%check validity of params
-assert(isscalar(nsteps));
-assert(isint(nsteps));
-
-assert(isscalar(nstates));
-assert(isint(nstates));
+nsteps=p.Results.nstates;
+nstates=p.Results.nstates;
 
 
 

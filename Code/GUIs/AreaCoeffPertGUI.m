@@ -1,18 +1,22 @@
 function AreaCoeffPertGUI(varargin)
 
 %initial params
-nsteps=20;
-nstates=2;
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='AreaCoeffPertGUI';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addParameter('nsteps',20,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'AreaCoeffPertGUI','nsteps'));
+    p.addParameter('nstates',20,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'AreaCoeffPertGUI','nstates'));
+end
+p.parse(varargin{:});
 
-varargin=assignApplicable(varargin);
 
 
-%check validity of params
-assert(isscalar(nsteps));
-assert(isint(nsteps));
-
-assert(isscalar(nstates));
-assert(isint(nstates));
+%initial params
+nsteps=p.Results.nstates;
+nstates=p.Results.nstates;
 
 
 

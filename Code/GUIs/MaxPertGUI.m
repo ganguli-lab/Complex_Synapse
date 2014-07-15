@@ -1,18 +1,20 @@
 function MaxPertGUI(varargin)
 
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='MaxPertGUI';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addParameter('nsteps',20,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'MaxPertGUI','nsteps'));
+    p.addParameter('nstates',20,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'MaxPertGUI','nstates'));
+end
+p.parse(varargin{:});
+
 %initial params
-nsteps=50;
-nstates=2;
+nsteps=p.Results.nstates;
+nstates=p.Results.nstates;
 
-varargin=assignApplicable(varargin);
-
-
-%check validity of params
-assert(isscalar(nsteps));
-assert(isint(nsteps));
-
-assert(isscalar(nstates));
-assert(isint(nstates));
 
 
 

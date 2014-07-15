@@ -1,12 +1,18 @@
 function CascadeGUI(varargin)
 
 %initial params
-nstates=4;
-varargin=assignApplicable(varargin);
-% 
-%check validity of params
-assert(isscalar(nstates));
-assert(isint(nstates));
+persistent p
+if isempty(p)
+    p=inputParser;
+    p.FunctionName='CascadeGUI';
+    p.StructExpand=true;
+    p.KeepUnmatched=false;
+    p.addParameter('nstates',20,@(x)validateattributes(x,{'numeric'},{'scalar','integer'},'CascadeGUI','nsteps'));
+end
+p.parse(varargin{:});
+
+%initial params
+nstates=p.Results.nstates;
 
 
 
