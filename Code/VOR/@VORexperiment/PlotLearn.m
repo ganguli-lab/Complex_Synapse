@@ -7,10 +7,8 @@ if isempty(p)
     p=inputParser;
     p.FunctionName='VORexperiment.PlotLearn';
     p.StructExpand=true;
-    p.KeepUnmatched=false;
-    p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'VORexperiment.PlotLearn','extraArgs',2));
+    p.KeepUnmatched=true;
     p.addParameter('Parent',gca,@(x)validateattributes(x,{'numeric'},{'scalar'},'VORexperiment.PlotLearn','Mlabels'));
-%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
 p.parse(varargin{:});
 r=p.Results;
@@ -20,14 +18,14 @@ cla(r.Parent);
 dt=obj.nopre.tTrain(end)/obj.numpts;
 
 [S,~,t]=obj.nopre.LearningCurve(obj.WT,dt);
-ph(1)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,r.extraArgs{:});
+ph(1)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,p.Unmatched);
 hold(r.Parent,'on');
 [S]=obj.nopre.LearningCurve(obj.KO,dt);
-ph(2)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',r.Parent,r.extraArgs{:});
+ph(2)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',r.Parent,p.Unmatched);
 [S]=obj.withpre.LearningCurve(obj.WT,dt);
-ph(3)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,r.extraArgs{:});
+ph(3)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,p.Unmatched);
 [S]=obj.withpre.LearningCurve(obj.KO,dt);
-ph(4)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',r.Parent,r.extraArgs{:});
+ph(4)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',r.Parent,p.Unmatched);
 
 axes(r.Parent);
 set(r.Parent,'FontSize',obj.FontSize);

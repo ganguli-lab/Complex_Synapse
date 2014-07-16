@@ -13,7 +13,6 @@ if isempty(p)
     p.FunctionName='SynapseMemoryModel.Spectrum';
     p.StructExpand=true;
     p.KeepUnmatched=false;
-    p.addRequired('func',@(x)validateattributes(x,{'function_handle','char'},{},'SynapseMemoryModel.Spectrum','func',1));
     p.addParameter('DegThresh',1e-3,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'SynapseMemoryModel.Spectrum','DegThresh'));
     p.addParameter('RCondThresh',1e-5,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'SynapseMemoryModel.Spectrum','RCondThresh'));
 end

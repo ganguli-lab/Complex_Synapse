@@ -12,10 +12,8 @@ if isempty(p)
     p=inputParser;
     p.FunctionName='FitSynapseSize';
     p.StructExpand=true;
-    p.KeepUnmatched=false;
+    p.KeepUnmatched=true;
     p.addOptional('options',SynapseOptimset,@(x)validateattributes(x,{'SynapseOptimset'},{},'FitSynapseSize','options',2));
-    p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'FitSynapseSize','extraArgs',3));
-%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
 p.parse(varargin{:});
 options=p.Results.options;
@@ -75,7 +73,7 @@ like_n.loglike(isnan(like_n.loglike))=[];
         newmodel=SynapseIdModel.Rand(neww);
         testloglike=HMMloglike(newmodel,fitsim)+SynapsePrior(newmodel,options);
         for i=1:options.NumReps
-            guessmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes,p.Results.extraArgs{:});
+            guessmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes,p.Unmatched);
             [guessmodel,guessloglike]=FitSynapseM(fitsim,guessmodel,options);
             if guessloglike > testloglike
                 newmodel=guessmodel;

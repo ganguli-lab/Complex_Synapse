@@ -12,12 +12,11 @@ if isempty(p)
     p=inputParser;
     p.FunctionName='FitSynapseSizeDwell';
     p.StructExpand=true;
-    p.KeepUnmatched=false;
+    p.KeepUnmatched=true;
     p.addOptional('synapseOptions',SynapseOptimset,...
         @(x)validateattributes(x,{'SynapseOptimset'},{},'FitSynapseSizeDwell','synapseOptions',2));
 %     p.addOptional('optimOptions',optimoptions('fminunc','Algorithm','quasi-newton','Display','off'),...
 %         @(x)validateattributes(x,{'optim.options.Fminunc'},{},'FitSynapseSizeDwell','optimOptions',3));
-    p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'FitSynapseSizeDwell','extraArgs',3));
 end
 p.parse(varargin{:});
 synapseOptions=p.Results.synapseOptions;
@@ -43,7 +42,7 @@ w=zeros(numStates(end),1);
 w(numStates)=1;
 w=cumsum(w)+1;
 w(end)=[];
-fitmodel=SynapseIdModel.Rand(w,p.Results.extraArgs{:});
+fitmodel=SynapseIdModel.Rand(w,p.Unmatched);
 
 
 % like_n=struct('numstates',1:(numWvals*options.MaxStates),'loglike',NaN(1,numWvals*options.MaxStates));

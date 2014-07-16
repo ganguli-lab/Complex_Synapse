@@ -9,10 +9,9 @@ if isempty(p)
     p=inputParser;
     p.FunctionName='SynapseMemoryModel.Rand';
     p.StructExpand=true;
-    p.KeepUnmatched=false;
+    p.KeepUnmatched=true;
     p.addRequired('w',@(x)validateattributes(x,{'numeric'},{'column'},'SynapseMemoryModel.Rand','w',1));
     p.addOptional('fp',0.5,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'SynapseMemoryModel.Rand','fp',2));
-    p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'SynapseMemoryModel.Rand','extraArgs',3));
     p.addParameter('ScaleW',{'pot','dep'},@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'SynapseMemoryModel.Rand','ScaleW'));
     p.addParameter('sparsity',1,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'SynapseMemoryModel.Rand','sparsity'));
 end
@@ -21,7 +20,7 @@ r=p.Results;
 
 
 
-newobj=SynapseIdModel;
+newobj=SynapseMemoryModel(p.Unmatched);
 
 newobj=newobj.setWp(r.ScaleW*RandTrans(length(w),r.sparsity));
 newobj=newobj.setWm(r.ScaleW*RandTrans(length(w),r.sparsity));

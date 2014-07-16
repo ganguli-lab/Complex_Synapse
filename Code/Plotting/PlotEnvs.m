@@ -15,7 +15,6 @@ if isempty(p)
     p.KeepUnmatched=true;
     p.addRequired('t',@(x)validateattributes(x,{'numeric'},{'row','nonnegative'},'PlotEnvs','t1',1));
     p.addRequired('n',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'PlotEnvs','n',2));
-    p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'PlotEnvs','extraArgs',3));
     p.addParameter('Format',true,@(x) validateattributes(x,{'logical'},{'scalar'},'PlotEnvs','Format'));
     p.addParameter('Parent',gca,@(x) validateattributes(x,{'numeric'},{'scalar'},'PlotEnvs','Parent'));
     p.addParameter('Constr3',true,@(x) validateattributes(x,{'logical'},{'scalar'},'PlotEnvs','Constr3'));
@@ -28,18 +27,18 @@ r=p.Results;
 [env,bnds]=SNRenvelope(r.t,r.n);
 [env2,bnds2]=SNRenvelope2(r.t,r.n);
 if r.Constr3
-    h=plot(r.t,env2,'g',r.t,env,'g--','LineWidth',3,'Parent',r.Parent,r.extraArgs{:});
+    h=plot(r.t,env2,'g',r.t,env,'g--','LineWidth',3,'Parent',r.Parent,p.Unmatched);
 else
-    h=plot(r.t,env2,'g','LineWidth',3,'Parent',r.Parent,r.extraArgs{:});
+    h=plot(r.t,env2,'g','LineWidth',3,'Parent',r.Parent,p.Unmatched);
 end
 hold(r.Parent,'on');
 yl=[env(end) env2(1)];
 if r.Constr3
-    lh1=line([1;1]*bnds',yl'*ones(1,length(bnds)),'Color','k','LineWidth',1.5,'LineStyle',':','Parent',r.Parent,r.extraArgs{:});
+    lh1=line([1;1]*bnds',yl'*ones(1,length(bnds)),'Color','k','LineWidth',1.5,'LineStyle',':','Parent',r.Parent,p.Unmatched);
 else
     lh1=[];
 end
-lh2=line([1;1]*bnds2',yl'*ones(1,length(bnds2)),'Color','k','LineWidth',1.5,'LineStyle','--','Parent',r.Parent,r.extraArgs{:});
+lh2=line([1;1]*bnds2',yl'*ones(1,length(bnds2)),'Color','k','LineWidth',1.5,'LineStyle','--','Parent',r.Parent,p.Unmatched);
 if r.Format
     set(r.Parent,'XScale','log','YScale','log','FontSize',16)
     xlim(r.Parent,[r.t(1) r.t(end)])

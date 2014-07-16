@@ -21,9 +21,7 @@ if isempty(p)
     p.FunctionName='AreaCoeffBar';
     p.StructExpand=true;
     p.KeepUnmatched=false;
-%     p.addOptional('extraArgs',{},@(x)validateattributes(x,{'cell'},{},'VORexperiment.image','PlotLearnS',2));
     p.addParameter('Parent',gca,@(x)validateattributes(x,{'numeric'},{'scalar'},'AreaCoeffBar','Mlabels'));
-%     p.addParameter('Normalise',true,@(x) validateattributes(x,{'logical'},{'scalar'}));
 end
 p.parse(varargin{:});
 

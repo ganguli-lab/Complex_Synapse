@@ -81,6 +81,7 @@ classdef SynapseMemoryModel
     methods (Static=true) %for construction
         newobj=Build(func,fp,varargin)
         newobj=Rand(w,fp,varargin)
+        memmodelobj=FromIdModel(idmodelobj)
     end
     
     methods (Access=private)%for constructiuon

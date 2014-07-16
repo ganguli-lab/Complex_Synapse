@@ -10,9 +10,9 @@ function ViewFigs( obj )
     figEv=figure('WindowStyle','docked','PaperPositionMode','auto');
 
     Parent=axes('Parent',fig);
-    obj.PlotLearn({'LineWidth',2},'Parent',Parent);
+    obj.PlotLearn('LineWidth',2,'Parent',Parent);
     Parent=axes('Parent',figs);
-    obj.PlotLearnS({'LineWidth',2},'Parent',Parent);
+    obj.PlotLearnS('LineWidth',2,'Parent',Parent);
 
     obj.EqProbPlots(figEq,'LineWidth',2);
     obj.ProbEvols(figEv);
