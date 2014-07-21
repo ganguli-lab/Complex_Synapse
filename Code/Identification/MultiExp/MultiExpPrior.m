@@ -26,7 +26,7 @@ q2=exp(2*params(1:n));
 c=params(n+1:end);
 c=[c;1-sum(c)];
 
-neglogprior = penc*sum(sqrt(c)) + sum(penq*q2-params(1:n));
+neglogprior = penc*sum(sqrt(c)) + sum(penq*q2/2-params(1:n));
 
 end
 

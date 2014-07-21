@@ -15,7 +15,7 @@ or being used for a simulation.
 *SynapseIdModel.M is a cell row of Markov matrices (discrete time) 
 corresponding to each type of plasticty (e.g. potentiation and depression).
 *SynapseIdModel.Initial is a row vector of probabilites for the initial state.
-*SynapseIdModel.w is a column vector of synaptic weights for each state
+*SynapseIdModel.w is a column vector of synaptic weight labels for each state
 SynapseIdModel.fp is a row vector of probabilities of each type of plasticty
 being used, excluding the last one.
 

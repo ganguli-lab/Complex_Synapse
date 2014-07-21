@@ -7,10 +7,11 @@ function ParamScanGUI( scan_results,  paramName1,paramVals1,  paramName2,paramVa
 %   paramVals1/2 = vector of values for parameter scanned for rows/cols of scan_results
 
 S=struct('Metric',1,paramName1,1,paramName2,2);
-mets={'prob_st','KL','Ln'};
-metLabels={'prob # states correct','KL distance','L^n distance'};
+mets={'prob_st','Ln','KL'};
+metLabels={'prob # states correct','L^n distance','KL distance'};
 LineStyles={'-','--','-.',':'};
 Markers={'p','s','o','^','none'};
+
 
 %-------------------------------------------------------------------------
 %Create figure
@@ -89,7 +90,8 @@ MakePlots;
     end
 
     function MakeOnePlot(axh,data,varname,varvals,othervarname,othervarval)
-        cla(axh);
+        cla(axh,'reset');
+        set(axh,'FontSize',16)
         hold(axh,'all');
         legtext=cell(1,length(varvals));
         for i=1:length(varvals)
@@ -100,8 +102,13 @@ MakePlots;
                 'Marker',Markers{mod(i-1,length(Markers))+1});
         end
     
-        if S.Metric==1
-            ylim(axh,[-0.05 1.05]);
+        switch S.Metric
+            case 1
+                ylim(axh,[-0.05 1.05]);
+            case 2
+                ylim(axh,[0 0.9]);
+            case 3
+                ylim(axh,[0 0.2]);
         end
         title(axh,[othervarname '=' num2str(othervarval)]);
         xlabel(axh,'# events');

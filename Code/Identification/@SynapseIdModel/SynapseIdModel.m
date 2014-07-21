@@ -113,6 +113,7 @@ classdef SynapseIdModel
     methods (Static=true) %for construction
         newobj=Build(func,varargin)
         newobj=Rand(w,varargin)
+        idmodelobj=FromMemModel(memmodelobj,varargin)
     end
     
     methods (Access=private)%for constructiuon
