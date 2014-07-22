@@ -13,8 +13,12 @@ c=params(n+1:end);
 c=[c;1-sum(c)];
 
 like = (c.*q)'*exp(-q*data);
-negloglike=-sum(log(like));
 
+negloglike=-log(like);
+
+negloglike(like<=0) = inf;
+
+negloglike = sum(negloglike);
 
 end
 

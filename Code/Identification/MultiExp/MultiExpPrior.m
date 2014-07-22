@@ -23,10 +23,22 @@ function [ neglogprior ] = MultiExpPrior( params,penc,penq )
 
 n=ceil(length(params)/2);
 q2=exp(2*params(1:n));
+% tau=exp(-params(1:n));
 c=params(n+1:end);
 c=[c;1-sum(c)];
 
-neglogprior = penc*sum(sqrt(c)) + sum(penq*q2/2-params(1:n));
+neglogprior = penc*sum(sqrt(abs(c))) + sum(penq*q2/2 - params(1:n));
+
+if min(c) < 0
+    neglogprior = inf;
+end
+% for i = 1:n
+%     t_test=linspace(tau(i)/10,tau(i)*10,100);
+%     prob=MultiExpLike(params,t_test);
+%     if isinf(prob)
+%         neglogprior=inf;
+%     end
+% end
 
 end
 
