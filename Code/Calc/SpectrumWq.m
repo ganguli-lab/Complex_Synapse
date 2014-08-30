@@ -10,6 +10,7 @@ persistent p
 if isempty(p)
     p=inputParser;
     p.FunctionName='SpectrumWq';
+    p.CaseSensitive=true;
     p.StructExpand=true;
     p.KeepUnmatched=false;
     p.addRequired('W',@(x)validateattributes(x,{'numeric'},{'2d','square'},'SpectrumWq','W',1));
@@ -47,26 +48,26 @@ if min(diff(qa)) > r.DegThresh
     v=diag(1./diag(v.'*u)) * v.';
 
     Z=u * diag(1./[1;qa(2:end)]) * v;
-    p=v(1,:);
-    p=p/sum(p);
-    ca = 2*r.fp*(1-r.fp) * (v*r.w) .* (p*r.q*Z*u)';
+    pr=v(1,:);
+    pr=pr/sum(pr);
+    ca = 2*r.fp*(1-r.fp) * (v*r.w) .* (pr*r.q*Z*u)';
     return;
 end
 
 
-%this method doesn't work when eigenvectors are nearly parallel
+%this method doesn't work when eigenvectors are nearly prarallel
 % if rcond(u) > RCondThresh
     Zinv=ones(n) - r.W;
-    %this method doesn't work when eigenvectors are nearly parallel or W
+    %this method doesn't work when eigenvectors are nearly prarallel or W
     %non-ergodic
     if rcond(Zinv) > r.RCondThresh
         ca = 2*fp*(1-fp) * (u\r.w) * sum((Zinv\r.q) * (Zinv\u), 1);
         ca=diag(ca);
     else
         Z=u * diag(1./[1;qa(2:end)]) / u;
-        p=[1 zeros(1,length(qa)-1)] / u;
-        p=p/sum(p);
-        ca = 2*r.fp*(1-r.fp) * (u\r.w) .* (p*r.q*Z*u)';
+        pr=[1 zeros(1,length(qa)-1)] / u;
+        pr=pr/sum(pr);
+        ca = 2*r.fp*(1-r.fp) * (u\r.w) .* (pr*r.q*Z*u)';
     end
 % else
 %     qa=NaN(n,1);

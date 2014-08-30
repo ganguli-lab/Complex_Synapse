@@ -14,7 +14,9 @@ chains(1,length(srange))=struct('s',[],'qv',[],'A',[],'snr',[]);
 for i=1:length(srange)
     chains(i).s=srange(i);
     [chains(i).qv,chains(i).A]=FindOptChainL(srange(i),nstates,50,varargin{:});
-    [Wp,Wm,w]=MakeSMS(chains(i).qv);
+    qp=chains(i).qv(1:nstates-1);
+    qm=chains(i).qv(nstates:end);
+    [Wp,Wm,w]=MakeMultistate(qp,qm);
     chains(i).snr=SNRcurve(trange,Wp,Wm,0.5,w);
     disp([int2str(i) '/' int2str(length(srange))]);
 end

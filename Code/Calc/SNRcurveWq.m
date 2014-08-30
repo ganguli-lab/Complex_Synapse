@@ -9,6 +9,7 @@ persistent p
 if isempty(p)
     p=inputParser;
     p.FunctionName='SNRcurveWq';
+    p.CaseSensitive=true;
     p.StructExpand=true;
     p.KeepUnmatched=true;
     p.addRequired('t',@(x)validateattributes(x,{'numeric'},{},'SNRcurveWq','t',1));

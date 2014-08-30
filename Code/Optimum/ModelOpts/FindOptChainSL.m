@@ -1,4 +1,4 @@
-function [ qv,A ] = FindOptChainL( s,n,varargin )
+function [ qv,A ] = FindOptChainSL( s,n,varargin )
 %[Wp,Wm]=FINDOPT(t,n,reps) Find synapse model that maximises SNR(t)
 %   t    = time value
 %   n    = #states
@@ -22,17 +22,17 @@ r=p.Results;
 if r.reps==1
 
     if r.InitRand
-        qv=rand(1,2*n-2);
+        qv=rand(1,n-1);
     else
     %    [Wp,Wm]=MakeSMS(ones(1,n-1));
-         qv=ones(1,2*n-2);
+         qv=ones(1,n-1);
     end
 
     try
     %     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
-        [ qv,A ]=ModelOptChainL( qv,s,p.Unmatched);
+        [ qv,A ]=ModelOptChainSL( qv,s,p.Unmatched);
     catch ME
-        A=-OptFunChainL(qv,s);
+        A=-OptFunChainSL(qv,s);
         disp(ME.message);
         disp(['In function: ' ME.stack(1).name ' at line ' int2str(ME.stack(1).line) ' of ' ME.stack(1).file]);
         return;
@@ -43,7 +43,7 @@ else
     qv=[];
     A=0;
     for i=1:r.reps
-        [ qvt,At ] = FindOptChainL( s,n,1, p.Unmatched,'InitRand',r.InitRand );
+        [ qvt,At ] = FindOptChainSL( s,n,1, p.Unmatched,'InitRand',r.InitRand );
         if At>A
             qv=qvt;
             A=At;

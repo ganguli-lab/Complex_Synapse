@@ -1,13 +1,11 @@
-function [ A ] = OptFunChainL( qv,s )
+function [ A ] = OptFunChainSL( qv,s )
 %OPTFUNCHAINL Laplace transform of SNR curve for symmetric serial model for
 %fmincon
 %   Detailed explanation goes here
 
-qp=qv(1:length(qv)/2);
-qm=qv(length(qv)/2+1:end);
-[Wp,Wm,w]=MakeMultistate(qp,qm);
+[Wp,Wm,w]=MakeSMS(qv);
 
-p=qp./qm;
+p=qv./wrev(qv);
 p=[1 cumprod(p)];
 p=p/sum(p);
 

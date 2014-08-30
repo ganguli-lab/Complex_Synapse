@@ -2,8 +2,8 @@ function [env,whichn,whicht,new_res,snr] = ExtractEnv( res_struct )
 %EXTRACTENV(res_struct) extract envelope from grid search results struct
 %   Detailed explanation goes here
 
-snr=[res_struct.SNR];
-snr=reshape(snr,[length(res_struct(1).SNR) size(res_struct) ]);
+snr=[res_struct.snr];
+snr=reshape(snr,[length(res_struct(1).snr) size(res_struct) ]);
 snr=real(snr);
 
 env=snr;
