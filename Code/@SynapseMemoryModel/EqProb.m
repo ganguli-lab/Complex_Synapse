@@ -9,7 +9,7 @@ if isempty(p)
     p.KeepUnmatched=false;
     p.addParameter('RCondThresh',1e-5,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'SynapseMemoryModel.EqProb','RCondThresh'));
 end
-p.parse(func,varargin{:});
+p.parse(varargin{:});
 r=p.Results;
 
 

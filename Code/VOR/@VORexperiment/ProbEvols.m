@@ -12,12 +12,14 @@ else
     xlab='State';
 end
 
-dt=obj.nopre.tTrain(end)/obj.numpts;
+[P_WT_nopre,P_KO_nopre,P_WT_pre,P_KO_pre,t]=obj.ProbEvolsData;
 
-[~,P_WT_nopre,t]=obj.nopre.LearningCurve(obj.WT,dt);
-[~,P_KO_nopre]=obj.nopre.LearningCurve(obj.KO,dt);
-[~,P_WT_pre]=obj.withpre.LearningCurve(obj.WT,dt);
-[~,P_KO_pre]=obj.withpre.LearningCurve(obj.WT,dt);
+% dt=obj.nopre.tTrain(end)/obj.numpts;
+
+% [~,P_WT_nopre,t]=obj.nopre.LearningCurve(obj.WT,dt);
+% [~,P_KO_nopre]=obj.nopre.LearningCurve(obj.KO,dt);
+% [~,P_WT_pre]=obj.withpre.LearningCurve(obj.WT,dt);
+% [~,P_KO_pre]=obj.withpre.LearningCurve(obj.WT,dt);
 
 
 if isscalar(fh)

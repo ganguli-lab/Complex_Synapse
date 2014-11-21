@@ -51,7 +51,8 @@ ylabel(r.Parent,'Learning (-\Delta mean w)','FontSize',obj.LabFontSize)
     pos=dsxy2figxy(r.Parent,[0.6*tchange+0.4*xl(2) (0.95*yl(1)+0.05*yl(2)) 0.2*(xl(2)-tchange) 0.05*(yl(2)-yl(1))]);
     annotation('textbox',pos,'String','training','VerticalAlignment','bottom','LineStyle','none',...
         'HorizontalAlignment','center','FontSize',obj.txFontSize);
-    legend(r.Parent,[ph(1);ph(2)],{obj.WTlabel; obj.KOlabel},'Location','Best')
+     drawnow;
+   legend(r.Parent,[ph(1);ph(2)],{obj.WTlabel; obj.KOlabel},'Location','Best')
     drawnow;
 
 end

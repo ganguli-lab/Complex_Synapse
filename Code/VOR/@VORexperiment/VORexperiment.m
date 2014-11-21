@@ -42,6 +42,7 @@ classdef VORexperiment
         ViewFigs( obj )
         PrintFigs( obj,prefix )
         St=LearnSdata(obj,varargin);
+        [P_WT_nopre,P_KO_nopre,P_WT_pre,P_KO_pre,t]=ProbEvolsData(obj)
     end
     
     methods (Access=private)%for constructiuon

@@ -8,7 +8,7 @@ if isempty(p)
     p=inputParser;
     p.FunctionName='VORexperiment.PlotLearnS';
     p.StructExpand=true;
-    p.KeepUnmatched=false;
+    p.KeepUnmatched=true;
     p.addParameter('Parent',gca,@(x)validateattributes(x,{'numeric'},{'scalar'},'VORexperiment.PlotLearnS','Mlabels'));
 end
 p.parse(varargin{:});
