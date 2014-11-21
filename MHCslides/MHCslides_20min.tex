@@ -55,7 +55,7 @@
 %\subtitle{\small{based on work with: Barbara Nguyen-Vu, Grace Zhao, Aparna Suvrathan, Han-Mi Lee, Surya Ganguli, Carla Shatz and Jennifer Raymond
 %}}
 %
-\author[S.~Lahiri et al.]{Subhaneil Lahiri \\ with: Barbara Nguyen-Vu, Grace Zhao, Aparna Suvrathan, Han-Mi Lee, Surya Ganguli, Carla Shatz and Jennifer Raymond%\inst{1}
+\author[S.~Lahiri et al.]{Subhaneil Lahiri \texorpdfstring{\\}{} with: Barbara Nguyen-Vu, Grace Zhao, Aparna Suvrathan, Han-Mi Lee, Surya Ganguli, Carla Shatz and Jennifer Raymond%\inst{1}
 }
 %
 \institute[Stanford]{%
@@ -131,6 +131,62 @@ Stanford University
 %
 \end{frame}
 
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Enhanced plasticity \texorpdfstring{\emph{can}}{can} enhance learning}
+%
+% \parbox[t]{0.3\linewidth}{
+%   Overexpress NR2B  \\[0.5cm]
+%   \includegraphics[width=0.97\linewidth]{enh-Tang.jpg} \\
+%   Fear conditioning  \\
+%   \citerr{Tang1999enhancedLearning}
+% }
+% \hspace{0.03\linewidth}
+% \parbox[t]{0.3\linewidth}{
+%   Inhibit CN \\[0.5cm]
+%   \includegraphics[width=0.97\linewidth]{enh-Malleret.jpg} \\
+%   Novel object recognition \\
+%   \citerr{Malleret2001enhancedLearning} \\
+% }
+% \hspace{0.03\linewidth}
+% \parbox[t]{0.3\linewidth}{
+%   Knockout Hdac2 \\[0.5cm]
+%   \includegraphics[width=0.97\linewidth]{enh-Guan.jpg} \\
+%   Fear conditioning \\
+%   \citerr{Guan2009enhancedLearning} \\
+% }
+ \begin{tabular}{p{0.3\linewidth}@{\hspace{0.03\linewidth}}p{0.3\linewidth}@{\hspace{0.03\linewidth}}p{0.3\linewidth}}
+   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+   Overexpress NR2B & Inhibit CN & Knockout Hdac2 \\[0.5cm]
+   \aligntop{\includegraphics[width=0.7\linewidth]{enh-Tang.jpg}} &
+   \aligntop{\includegraphics[width=0.97\linewidth]{enh-Malleret.jpg}} &
+   \aligntop{\includegraphics[width=0.97\linewidth]{enh-Guan.jpg}} \\
+   Fear conditioning & Novel object recog. & Fear conditioning \\
+   \citerr{Tang1999enhancedLearning} & \citerr{Malleret2001enhancedLearning} & \citerr{Guan2009enhancedLearning} \\
+ \end{tabular}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Enhanced plasticity can \texorpdfstring{\emph{impair}}{impair} learning}
+%
+ \begin{tabular}{p{0.22\linewidth}@{\hspace{0.03\linewidth}}p{0.22\linewidth}@{\hspace{0.03\linewidth}}p{0.22\linewidth}@{\hspace{0.03\linewidth}}p{0.22\linewidth}}
+   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+   Mutate PSD-95 & Knockout PTP$\delta$ & Delete Tmod2 & Knockout FMR1 \\[0.5cm]
+   \aligntop{\includegraphics[width=0.7\linewidth]{imp-Migaud.jpg}} &
+   \aligntop{\includegraphics[width=0.97\linewidth]{imp-Uetani.jpg}} &
+   \aligntop{\includegraphics[width=0.97\linewidth]{imp-Cox.jpg}} &
+   \aligntop{\includegraphics[width=0.97\linewidth]{imp-Koekkoek.jpg}} \\
+   Water maze & Water maze & Fear cond. & Eyeblink \\
+   \citerrr{Migaud1998impairedLearning} & \citerrr{Uetani2000impairedLearning} & \citerrr{Cox2003impairedLearning} & \citerrr{Koekkoek2005impairedConditioning} 
+ \end{tabular}
+ 
+ \vp\hfill also: \citerrr{Hayashi2004impairedConsolidation,Rutten2008impairedLearning}
+%
+\end{frame}
+
 %%-------------Slide--------------------------------------------------------
 %
 %\begin{frame}{Outline}
@@ -185,17 +241,29 @@ Stanford University
    }
  \hspace{0.15\linewidth}
  \parbox[t]{0.59\linewidth}{%
- \raggedleft
-   \aligntop{\includegraphics[width=0.5\linewidth]{pk.png}}\\
-   \rref{Cajal}
+   \aligntop{\includegraphics[width=0.99\linewidth]{VORcircuit.svg}}
 
+%   \vp PF-Pk: \parbox[t]{0.5\linewidth}{PF+CF \lto LTD, \\
+%              PF+\cancel{CF} \lto LTP.}
+              
    \vp \begin{tabular}{ll}
    VOR increase: & LTD in PF-Pk synapses.\\
+   VOR decrease: & different mechanism,\\
+    & also reverses LTD in PF-Pk.
    \end{tabular}
-
-%   \vp  \aligntop{\includegraphics[width=0.8\linewidth]{ltd.svg}}
-
  }
+% \parbox[t]{0.59\linewidth}{%
+% \raggedleft
+%   \aligntop{\includegraphics[width=0.5\linewidth]{pk.png}}\\
+%   \rref{Cajal}
+%
+%   \vp \begin{tabular}{ll}
+%   VOR increase: & LTD in PF-Pk synapses.\\
+%   \end{tabular}
+%
+%   \vp  \aligntop{\includegraphics[width=0.8\linewidth]{ltd.svg}}
+%
+% }
    \note[item]{Gain change involves cerebellum}
    \note[item]{If we enhanced plasticity here: expect enhanced learning}
 %   \note[item]{Marr-Albus-Ito: Pf-Pk synapses}
@@ -601,29 +669,29 @@ Stanford University
     \only<2>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
     \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
     \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
-%    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
-%    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
-%    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
-%    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
-%    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
-%    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
-%    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
-%    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
-%    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
-%    \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
-%    \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
-    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
-    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
-    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
-    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
-    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
-    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
-    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
-    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
-    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
+    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
+    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
+    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
+    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
+    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
+    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
+    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
+    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
+    \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
+    \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+%    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
+%    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
+%    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
+%    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
+%    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
+%    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
+%    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
+%    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
+%    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
     %
     \hspace{0.05\linewidth}\parbox[t]{0.45\linewidth}{\raggedright
-    \visible<13>{
+    \visible<15>{
     Mutation: transition probabilities \\ \vp
     Training: rates of pot/dep events \\ \vp
     Learning: synaptic weight}}
@@ -683,11 +751,11 @@ Stanford University
 \begin{frame}{Questions}
 %
  Depletion effect competes with enhanced intrinsic plasticity.
- 
+
  \vp\alert{Question 1:}  When is the depletion effect stronger?
-  
- \vp\vp\vp Reverse training impairs learning in wild-type.  
- 
+
+ \vp\vp\vp Reverse training impairs learning in wild-type.
+
  \vp\alert{Question 2:} How can replenishment \emph{ever} impair learning?
 %
 \end{frame}
@@ -1002,14 +1070,14 @@ Stanford University
    reverse-training \\
    repopulates boundary
    &
-   depopulates boundary 
+   depopulates boundary
 %   &
 %   repopulates boundary
    \\
    $\downarrow$ & $\downarrow$ \\
    enhanced learning
    &
-   impaired learning 
+   impaired learning
 %   &
 %   enhanced learning
  \end{tabular}
@@ -1018,7 +1086,8 @@ Stanford University
  \note[item]{Too much pushes to other side, depopulates boundary}
  \note[item]{this effect is absent in any simple synapse}
 
- \vp\alert{Key feature 2:} ``Stubborn'' metaplasticity.
+ \vp\alert{Key feature 2:} Synaptic stubbornness -- 
+ metaplasticity where repeated \\ \hfill potentiation impairs subsequent depression.
  \note[item]{repeated potentiation makes subsequent depression harder}
  \note[item]{borne out by other models}
  %
@@ -1036,9 +1105,9 @@ Stanford University
  %
  \vp The success of the serial model relies on two features:
  \begin{itemize}
-   \item Complexity - needed to amplify the effect of depletion,
+   \item Complexity - needed to for depletion to dominate enhanced plasticity,
    \note[item]{due to exponential decay}
-   \item Metaplasticity -- repeated potentiation impairs subsequent depression.
+   \item Stubbornness - repeated potentiation impairs subsequent depression.
    \note[item]{push away from boundary where signal generated}
  \end{itemize}
  \note[item]{borne out by other models that fail/succeed}
@@ -1127,10 +1196,10 @@ Stanford University
 
 
    \item Predictions for synaptic physiology:\\
-   \alert{Synaptic complexity:} necessary to amplify depletion.\\
-   \alert{Synaptic stubbornness:} repeated potentiation impairs future depression.
+   \alert{Complexity:} necessary to amplify depletion.\\
+   \alert{Stubbornness:} repeated potentiation impairs subsequent depression.
 
-   \vp\item  We used behaviour to constrain the dynamics of synaptic plasticity
+   \vp\item  We used behaviour to constrain the dynamics of synaptic plasticity.
 \end{itemize}
 %
 \end{frame}
