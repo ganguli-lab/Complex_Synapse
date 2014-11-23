@@ -99,35 +99,13 @@ Stanford University
 
 \begin{frame}{Introduction}
 %
-\parbox[t]{0.69\linewidth}{%
  Learning requires synaptic plasticity.\\
  Expect: enhanced plasticity \lto\ enhanced learning.
-}
-\parbox[t]{0.29\linewidth}{%
- \hfill{\alignmid{\includegraphics[width=0.4\linewidth]{the_brain_by_lonewolf16.jpg}}}
-}
- \\
- \citerr{Tang1999enhancedLearning,Malleret2001enhancedLearning,Guan2009enhancedLearning}\\
- \note[item]{It does help in some cases}
-\onslide<2->
-\parbox[t]{0.69\linewidth}{%
- But often: enhanced plasticity \lto\ impaired learning.
-}
-\parbox[t]{0.29\linewidth}{%
- \hfill{\alignmid{\includegraphics[width=0.4\linewidth]{pinky_by_lonewolf16.jpg}}}
-}
- \\
- \citerr{Migaud1998impairedLearning,Uetani2000impairedLearning,Hayashi2004impairedConsolidation}\\
- \citerr{Cox2003impairedLearning,Rutten2008impairedLearning,Koekkoek2005impairedConditioning}\\
- \note[item]{Want to understand when and why}
-
- \onslide<3->\vp Mice with enhanced cerebellar plasticity can show \alert{both} impaired and enhanced learning.
- \note[item]{Depends on circumstance. Rich pattern of behaviour}
-
- \vp Simple synapses \alert{cannot} explain behaviour.
- \alert{Complex synapses} are required.\\
- \lto\ predictions for synaptic physiology.
- \note[item]{Develop understanding of when and why learning is enhanced/impaired}
+ 
+ \vp
+ \alignmid{\includegraphics[width=0.3\linewidth]{limitless_xlg.jpg}}
+ \hp
+ \alignmid{\includegraphics[width=0.6\linewidth]{Limitless1noblkborders.png}}
 %
 \end{frame}
 
@@ -180,10 +158,31 @@ Stanford University
    \aligntop{\includegraphics[width=0.97\linewidth]{imp-Cox.jpg}} &
    \aligntop{\includegraphics[width=0.97\linewidth]{imp-Koekkoek.jpg}} \\
    Water maze & Water maze & Fear cond. & Eyeblink \\
-   \citerrr{Migaud1998impairedLearning} & \citerrr{Uetani2000impairedLearning} & \citerrr{Cox2003impairedLearning} & \citerrr{Koekkoek2005impairedConditioning} 
+   \citerrr{Migaud1998impairedLearning} & \citerrr{Uetani2000impairedLearning} & \citerrr{Cox2003impairedLearning} & \citerrr{Koekkoek2005impairedConditioning}
  \end{tabular}
- 
+
  \vp\hfill also: \citerrr{Hayashi2004impairedConsolidation,Rutten2008impairedLearning}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Overview}
+%
+ \parbox[c]{0.8\linewidth}{%
+ Sometimes enhanced plasticity \lto\ enhanced learning.\\
+ Sometimes enhanced plasticity \lto\ impaired learning.
+ 
+ \vp Why? How? When?} 
+     \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
+
+ \onslide<2->\vp Mice with enhanced cerebellar plasticity can show \alert{both} impaired and enhanced learning.
+ \note[item]{Depends on circumstance. Rich pattern of behaviour}
+
+ \vp Simple synapses \alert{cannot} explain behaviour.
+ \alert{Complex synapses} are required.\\
+ \lto\ predictions for synaptic physiology.
+ \note[item]{Develop understanding of when and why learning is enhanced/impaired}
 %
 \end{frame}
 
@@ -245,7 +244,7 @@ Stanford University
 
 %   \vp PF-Pk: \parbox[t]{0.5\linewidth}{PF+CF \lto LTD, \\
 %              PF+\cancel{CF} \lto LTP.}
-              
+
    \vp \begin{tabular}{ll}
    VOR increase: & LTD in PF-Pk synapses.\\
    VOR decrease: & different mechanism,\\
@@ -690,11 +689,11 @@ Stanford University
 %    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
 %    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
     %
-    \hspace{0.05\linewidth}\parbox[t]{0.45\linewidth}{\raggedright
-    \visible<15>{
-    Mutation: transition probabilities \\ \vp
-    Training: rates of pot/dep events \\ \vp
-    Learning: synaptic weight}}
+%    \hspace{0.05\linewidth}\parbox[t]{0.45\linewidth}{\raggedright
+%    \visible<15>{
+%    Mutation: transition probabilities \\ \vp
+%    Training: rates of pot/dep events \\ \vp
+%    Learning: synaptic weight}}
   \end{center}
 
 %  \onslide<2>{\hfill
@@ -743,6 +742,43 @@ Stanford University
 % %
 % %
 % \note[item]{In equilibrium prior to memory creation}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Modelling VOR experiments}
+%
+ %
+ \begin{center}
+    \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_wt.svg}}}%
+    \only<2>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_1.svg}}}%
+    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_21.svg}}}%
+    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_41.svg}}}%
+    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_61.svg}}}%
+    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_81.svg}}}%
+    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_101.svg}}}%
+    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_wt.svg}}}%
+    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_ko.svg}}}%
+
+ \end{center}
+ %
+ \visible<1->{
+ Training: \parbox[t]{0.7\linewidth}{%
+ different CF activity $\implies$\\
+ change frequency of pot/dep events.
+ } }
+ 
+ \visible<7->{
+ \vp Learning: \parbox[t]{0.7\linewidth}{%
+ decrease in average synaptic weight.
+ } }
+ 
+ \visible<8->{
+ \vp Mutation: \parbox[t]{0.7\linewidth}{%
+ lower threshold for LTD $\implies$\\
+ increase transition probability for depression events.
+ } }
 %
 \end{frame}
 
@@ -948,7 +984,7 @@ Stanford University
    \only<1>{\aligntop{\includegraphics[height=0.15\linewidth]{multistate.svg}}}%
    \only<2-6>{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
    &
-   \visible<1-3,5,6>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
+   \visible<1-3,5>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{blank_learnS.svg}}}%
    \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS.svg}}}%
    \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_top.svg}}}%
@@ -1086,7 +1122,7 @@ Stanford University
  \note[item]{Too much pushes to other side, depopulates boundary}
  \note[item]{this effect is absent in any simple synapse}
 
- \vp\alert{Key feature 2:} Synaptic stubbornness -- 
+ \vp\alert{Key feature 2:} Synaptic stubbornness --
  metaplasticity where repeated \\ \hfill potentiation impairs subsequent depression.
  \note[item]{repeated potentiation makes subsequent depression harder}
  \note[item]{borne out by other models}
