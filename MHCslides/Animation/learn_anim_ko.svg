@@ -13,7 +13,7 @@
    height="159.80394"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.5 r10040"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="learn_anim_ko.svg">
   <sodipodi:namedview
      id="base"
@@ -23,17 +23,17 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="4.7361552"
-     inkscape:cx="190.66098"
+     inkscape:cx="165.27996"
      inkscape:cy="58.397318"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g3157"
      showgrid="true"
      inkscape:snap-global="false"
      showguides="true"
      inkscape:guide-bbox="true"
      inkscape:window-width="2560"
      inkscape:window-height="1538"
-     inkscape:window-x="-8"
+     inkscape:window-x="2552"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
      fit-margin-top="0"
@@ -807,7 +807,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -825,7 +825,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
        transform="matrix(-1,0,0,1,522.73386,108.49931)"
        sodipodi:type="arc"
@@ -835,7 +835,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
        transform="matrix(-1,0,0,1,471.82476,108.49931)"
        sodipodi:type="arc"
@@ -845,7 +845,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
        transform="matrix(-1,0,0,1,497.27931,108.49931)"
        sodipodi:type="arc"
@@ -855,7 +855,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
        transform="matrix(-1,0,0,1,446.37023,108.49931)"
        sodipodi:type="arc"
@@ -865,7 +865,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
        transform="matrix(-1,0,0,1,344.55204,108.49931)"
        sodipodi:type="arc"
@@ -875,7 +875,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
        transform="matrix(-1,0,0,1,370.00659,108.49931)"
        sodipodi:type="arc"
@@ -885,7 +885,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
        transform="matrix(-1,0,0,1,395.46113,108.49931)"
        sodipodi:type="arc"
@@ -895,7 +895,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
        transform="matrix(-1,0,0,1,420.91568,108.49931)"
        sodipodi:type="arc"
@@ -905,7 +905,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <path
        style="fill:none;stroke:#aa0000;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#Arrow2Sends)"
        d="m 338.65721,450.78823 c 7.6964,-18.27925 17.6254,-18.42304 23.96805,-2.65131"
@@ -963,7 +963,7 @@
        sodipodi:cy="347.36218"
        sodipodi:rx="5"
        sodipodi:ry="5"
-       d="m 190,347.36218 a 5,5 0 1 1 -10,0 5,5 0 1 1 10,0 z" />
+       d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z" />
     <g
        transform="translate(-7.5958235,16.17788)"
        id="g3144">
@@ -1052,14 +1052,14 @@
          sodipodi:linespacing="125%"
          id="text3120"
          y="111.47552"
-         x="-443.59995"
+         x="-405.08771"
          style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
          xml:space="preserve"><tspan
            style="font-size:16px"
            y="111.47552"
-           x="-443.59995"
+           x="-405.08771"
            id="tspan3122"
-           sodipodi:role="line">State probability</tspan></text>
+           sodipodi:role="line"># synapses</tspan></text>
     </g>
     <path
        inkscape:connector-curvature="0"

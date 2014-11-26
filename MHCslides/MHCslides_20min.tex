@@ -345,20 +345,20 @@ Stanford University
  \vp
  \begin{center}
 
-   \parbox[t]{0.25\linewidth}{%\raggedright
-     \visible<1,2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_wt_wo_n.svg}}}
-   }
+%   \parbox[t]{0.25\linewidth}{%\raggedright
+%     \visible<1,2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_wt_wo_n.svg}}}
+%   }
    %
-%   \only<1>{\aligntop{\includegraphics[width=0.3\linewidth]{sat_model_1.svg}}}%
-%   \only<2>{\aligntop{\includegraphics[width=0.3\linewidth]{sat_model_2.svg}}}%
+   \only<1>{\aligntop{\includegraphics[width=0.3\linewidth]{sat_model_1.svg}}}%
+   \only<2->{\aligntop{\includegraphics[width=0.3\linewidth]{sat_model_2.svg}}}%
    %
-   \hspace{0.3\linewidth}
-   %
-   \parbox[t]{0.25\linewidth}{%\raggedleft
-     \visible<2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_ko_wo_n.svg}}}
-   }
+%   \hspace{0.3\linewidth}
+%   %
+%   \parbox[t]{0.25\linewidth}{%\raggedleft
+%     \visible<2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_ko_wo_n.svg}}}
+%   }
 
-   \vp\visible<2>{\alert{Question 1:} {\color{darkblue}depletion effect} competes with {\color{darkgreen}enhanced intrinsic plasticity}.
+   \vp\visible<3>{\alert{Question 1:} {\color{darkblue}depletion effect} competes with {\color{darkgreen}enhanced intrinsic plasticity}.
    When is depletion effect stronger?}
 
 % \end{tabular}
@@ -657,6 +657,7 @@ Stanford University
 \begin{frame}{Models of complex synaptic dynamics}
 %
 %  There are $N$ identical synapses with $M$ internal functional states.
+\visible<2->{
 \parbox[c]{0.82\linewidth}{%
   \begin{itemize}
     \item Internal functional state of synapse \lto\ synaptic weight.
@@ -664,29 +665,35 @@ Stanford University
   \end{itemize}
 }\hfill
 \alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
+}
+
   %
   \vp
-  \begin{center}
 %  \begin{overlayarea}{0.7\linewidth}{0.3\linewidth}
 %    \only<1>{\includegraphics[width=0.99\linewidth]{synapse_model_1.svg}}%
 %    \only<2>{\includegraphics[width=0.99\linewidth]{synapse_model_2.svg}}
 %  \end{overlayarea}
-%    \aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
-    \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
-    \only<2>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
-    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
-    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
-    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
-    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
-    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
-    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
-    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
-    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
-    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
-    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
-    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
-    \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
-    \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+%    
+\begin{overlayarea}{0.95\linewidth}{0.4\textheight}
+  \begin{center}
+%\aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
+    \only<1>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal_1.svg}}}%
+    \only<2>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal.svg}}}%
+    \only<3->{\vp}
+    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
+    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
+    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
+    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
+    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
+    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
+    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
+    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
+    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
+    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
+    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
+    \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
+    \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
+    \only<16>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
 %    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
 %    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
 %    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
@@ -703,15 +710,24 @@ Stanford University
 %    Training: rates of pot/dep events \\ \vp
 %    Learning: synaptic weight}}
   \end{center}
+\end{overlayarea}
 
 %  \onslide<2>{\hfill
 %  \parbox[t]{0.3\linewidth}{PF+\cancel{CF} \lto\ LTP, \\
 %              PF+CF \lto\ LTD.}
 %  \parbox[t]{0.27\linewidth}{Lower threshold\\ for LTD}
 %  \parbox[t]{0.27\linewidth}{VOR gain increase}}
+\vp
+\begin{overlayarea}{0.95\linewidth}{0.3\textheight}
+  \only<2>{States: \parbox[t]{0.85\linewidth}{NMDAR subunit composition, CaMK II autophosphorylation,\\
+   activating PKC, p38 MAPK,...}
+  
+  \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}\\\citerr{Smith2006savings,Lahiri2013synapse}}%
 
-  \vp
-  \footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}\\\citerr{Smith2006savings,Lahiri2013synapse}
+  \only<9->{Metaplasticity: \parbox[t]{0.7\linewidth}{%
+     change propensity for plasticity \\
+     (independent of change in synaptic weight).}}    
+\end{overlayarea}
 
   %
   \note[item]{complex synapse: not just synaptic weight. dynamical system}
@@ -757,32 +773,34 @@ Stanford University
 
 \begin{frame}{Modelling VOR experiments}
 %
+ \visible<3->{PF-Pk LTD \lto\ VOR increase}
  %
  \begin{center}
-    \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_wt.svg}}}%
-    \only<2>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_1.svg}}}%
-    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_21.svg}}}%
-    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_41.svg}}}%
-    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_61.svg}}}%
-    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_81.svg}}}%
-    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_101.svg}}}%
-    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_wt.svg}}}%
-    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_ko.svg}}}%
+    \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{multi-serial.svg}}}%
+    \only<2>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_wt.svg}}}%
+    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_1.svg}}}%
+    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_21.svg}}}%
+    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_41.svg}}}%
+    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_61.svg}}}%
+    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_81.svg}}}%
+    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_101.svg}}}%
+    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_wt.svg}}}%
+    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_ko.svg}}}%
 
  \end{center}
  %
- \visible<2->{
+ \visible<3->{
  Training: \parbox[t]{0.7\linewidth}{%
  different CF activity $\implies$\\
  change frequency of pot/dep events.
  } }
 
- \visible<7->{
+ \visible<8->{
  \vp Learning: \parbox[t]{0.7\linewidth}{%
  decrease in average synaptic weight.
  } }
 
- \visible<8->{
+ \visible<9->{
  \vp Mutation: \parbox[t]{0.7\linewidth}{%
  lower threshold for LTD $\implies$\\
  increase transition probability for depression events.
@@ -1050,7 +1068,7 @@ Stanford University
  \end{tabular}
  \end{center}
 %  \visible<3>{\alert{Key:} ``Stubborn'' metaplasticity}\\
- \citerr{Leibold2008serial,Ben-DayanRubin2007sparse}
+% \visible<1>{\citerr{Leibold2008serial,Ben-DayanRubin2007sparse}}
 
  \note[item]{Serial: still only two weights. Works.}
  \note[item]{Understand by looking at distributions before training}
@@ -1089,7 +1107,7 @@ Stanford University
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
    {\includegraphics[height=0.2\linewidth]{binary_bar_ko_wo_s.svg}}&
    {\includegraphics[height=0.2\linewidth]{serial_bar_ko_wo_s.svg}}\\[1cm]
-   Intrinsic plasticity  & Depletion dominates \\
+   intrinsic plasticity  & depletion dominates \\
    dominates depletion & intrinsic plasticity\\
    $\downarrow$ & $\downarrow$ \\
    enhanced plasticity & enhanced plasticity \\
@@ -1176,7 +1194,7 @@ Stanford University
     \aligntop{\includegraphics[width=0.3\linewidth]{multistate_nonuni_s.svg}}
  \end{tabular}
  \end{center}
- \citerr{amit1994learning,Fusi2005cascade}
+ %\citerr{amit1994learning,Fusi2005cascade}
  %}
 %
 \end{frame}
