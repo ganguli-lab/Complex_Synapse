@@ -349,8 +349,8 @@ Stanford University
 %     \visible<1,2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_wt_wo_n.svg}}}
 %   }
    %
-   \only<1>{\aligntop{\includegraphics[width=0.3\linewidth]{sat_model_1.svg}}}%
-   \only<2->{\aligntop{\includegraphics[width=0.3\linewidth]{sat_model_2.svg}}}%
+   \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_1.svg}}}%
+   \only<2->{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_2.svg}}}%
    %
 %   \hspace{0.3\linewidth}
 %   %
@@ -673,7 +673,7 @@ Stanford University
 %    \only<1>{\includegraphics[width=0.99\linewidth]{synapse_model_1.svg}}%
 %    \only<2>{\includegraphics[width=0.99\linewidth]{synapse_model_2.svg}}
 %  \end{overlayarea}
-%    
+%
 \begin{overlayarea}{0.95\linewidth}{0.4\textheight}
   \begin{center}
 %\aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
@@ -721,12 +721,12 @@ Stanford University
 \begin{overlayarea}{0.95\linewidth}{0.3\textheight}
   \only<2>{States: \parbox[t]{0.85\linewidth}{NMDAR subunit composition, CaMK II autophosphorylation,\\
                                               activating PKC, p38 MAPK,...}
-  
+
   \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}\\\citerr{Smith2006savings,Lahiri2013synapse}}%
 
   \only<9->{Metaplasticity: \parbox[t]{0.7\linewidth}{%
      change propensity for plasticity \\
-     (independent of change in synaptic weight).}}    
+     (independent of change in synaptic weight).}}
 \end{overlayarea}
 
   %
@@ -1098,73 +1098,73 @@ Stanford University
 %%
 %\end{frame}
 %
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Enhanced plasticity can enhance or impair learning}
+%%-------------Slide--------------------------------------------------------
 %
- %
- \begin{center}
- \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
-   {\includegraphics[height=0.2\linewidth]{binary_bar_ko_wo_s.svg}}&
-   {\includegraphics[height=0.2\linewidth]{serial_bar_ko_wo_s.svg}}\\[1cm]
-   intrinsic plasticity  & depletion dominates \\
-   dominates depletion & intrinsic plasticity\\
-   $\downarrow$ & $\downarrow$ \\
-   enhanced plasticity & enhanced plasticity \\
-   enhances learning & impairs learning
- \end{tabular}
- \end{center}
- \note[item]{Binary: enhanced plasticity \lto\ bias}
- \note[item]{Not enough to overcome faster depression}
- \note[item]{Serial: Only get signal from boundary}
- \note[item]{Exponential decay depopulates boundary, enhances effect of bias}
- %
-
- \vp\alert{Key feature 1:} Synaptic complexity that amplifies depletion effect.
- \note[item]{borne out by other models}
+%\begin{frame}{Enhanced plasticity can enhance or impair learning}
+%%
+% %
+% \begin{center}
+% \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+%   {\includegraphics[height=0.2\linewidth]{binary_bar_ko_wo_s.svg}}&
+%   {\includegraphics[height=0.2\linewidth]{serial_bar_ko_wo_s.svg}}\\[1cm]
+%   intrinsic plasticity  & depletion dominates \\
+%   dominates depletion & intrinsic plasticity\\
+%   $\downarrow$ & $\downarrow$ \\
+%   enhanced plasticity & enhanced plasticity \\
+%   enhances learning & impairs learning
+% \end{tabular}
+% \end{center}
+% \note[item]{Binary: enhanced plasticity \lto\ bias}
+% \note[item]{Not enough to overcome faster depression}
+% \note[item]{Serial: Only get signal from boundary}
+% \note[item]{Exponential decay depopulates boundary, enhances effect of bias}
+% %
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Reverse-training can impair or enhance learning}
+% \vp\alert{Key feature 1:} Synaptic complexity that amplifies depletion effect.
+% \note[item]{borne out by other models}
+%%
+%\end{frame}
 %
- %
- \begin{center}
- \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
-   {\includegraphics[height=0.2\linewidth]{binary_bar_wt_w_s.svg}}&
-   {\includegraphics[height=0.2\linewidth]{serial_bar_wt_w_s.svg}}
-%   &
-%   {\includegraphics[height=0.2\linewidth]{serial_bar_ko_w_s.svg}}
-   \\[1cm]
-   reverse-training &
-   reverse-training \\
-   repopulates boundary
-   &
-   depopulates boundary
-%   &
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Reverse-training can impair or enhance learning}
+%%
+% %
+% \begin{center}
+% \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
+%   {\includegraphics[height=0.2\linewidth]{binary_bar_wt_w_s.svg}}&
+%   {\includegraphics[height=0.2\linewidth]{serial_bar_wt_w_s.svg}}
+%%   &
+%%   {\includegraphics[height=0.2\linewidth]{serial_bar_ko_w_s.svg}}
+%   \\[1cm]
+%   reverse-training &
+%   reverse-training \\
 %   repopulates boundary
-   \\
-   $\downarrow$ & $\downarrow$ \\
-   enhanced learning
-   &
-   impaired learning
 %   &
+%   depopulates boundary
+%%   &
+%%   repopulates boundary
+%   \\
+%   $\downarrow$ & $\downarrow$ \\
 %   enhanced learning
- \end{tabular}
- \end{center}
- \note[item]{rev-training: little repopulates boundary}
- \note[item]{Too much pushes to other side, depopulates boundary}
- \note[item]{this effect is absent in any simple synapse}
-
- \vp\alert{Key feature 2:} Synaptic stubbornness --
- metaplasticity where repeated \\ \hfill potentiation impairs subsequent depression.
- \note[item]{repeated potentiation makes subsequent depression harder}
- \note[item]{borne out by other models}
- %
+%   &
+%   impaired learning
+%%   &
+%%   enhanced learning
+% \end{tabular}
+% \end{center}
+% \note[item]{rev-training: little repopulates boundary}
+% \note[item]{Too much pushes to other side, depopulates boundary}
+% \note[item]{this effect is absent in any simple synapse}
 %
-\end{frame}
-
+% \vp\alert{Key feature 2:} Synaptic stubbornness --
+% metaplasticity where repeated \\ \hfill potentiation impairs subsequent depression.
+% \note[item]{repeated potentiation makes subsequent depression harder}
+% \note[item]{borne out by other models}
+% %
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Essential features}
