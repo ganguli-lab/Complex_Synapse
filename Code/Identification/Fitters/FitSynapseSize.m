@@ -70,7 +70,7 @@ like_n.loglike(isnan(like_n.loglike))=[];
     end%function TryNewW
 
     function newmodel=FitModel(neww,fitsim)
-        newmodel=SynapseIdModel.Rand(neww);
+        newmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes,p.Unmatched);
         testloglike=HMMloglike(newmodel,fitsim)+SynapsePrior(newmodel,options);
         for i=1:options.NumReps
             guessmodel=SynapseIdModel.Rand(neww,'NumPlastTypes',NumPlastTypes,p.Unmatched);

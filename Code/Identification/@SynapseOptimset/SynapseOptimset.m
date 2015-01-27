@@ -72,7 +72,7 @@ classdef SynapseOptimset < hgsetget
         ExtraParams = {};
         %     ModelDiff = measure of model distance ('KL',{'KL','Ln`'})
         %       KL=Kullback-Leibler divergence, Ln=mean L^n norm of rows
-        ModelDiff = 'KL';
+        ModelDiff = 'Ln';
         %     GroundTruth = true model used to generate data ([],{'SynapseIdModel'},{})
         GroundTruth = [];
         %   For fittng number of states:

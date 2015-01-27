@@ -28,6 +28,10 @@ classdef SynapseIdModel
         NormPower=2;
         %method of combining L^n norms of rows of M (e.g. @max, @mean, @norm)
         NormRows=@max;
+        %threshold for lumpability test
+        LumpThresh=1e-3;
+        %threshold for degeneracy test
+        DegThresh=1e-3;
     end
     
     methods %setting data
@@ -87,10 +91,14 @@ classdef SynapseIdModel
     methods%calculations etc.
         [initdiv,Mdivs]=KLdivs(obj1,obj2)
         [initnrm,Mnrm]=LnNorm(obj1,obj2)
+        deta=PartialKemeny(obj)
         obj3=plus(obj1,obj2)
         obj3=minus(obj1,obj2)
         obj3=mtimes(obj1,obj2)
         obj3=mrdivide(obj1,obj2)
+        tf=TestLump(obj,partitions)
+        partitions=FindLumps(obj)
+        newobj=Lumpify(obj,partitions)
     end
     
     methods%for simulations

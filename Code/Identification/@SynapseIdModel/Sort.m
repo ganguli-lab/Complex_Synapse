@@ -5,18 +5,13 @@ function [ newobj,ix ] = Sort( obj )
 
 newobj=obj;
 
-W=zeros(length(newobj.w));
-fp=obj.fp;
-fp(end+1)=1-sum(fp);
-
 [newobj.w,ix]=sort(obj.w,'ascend');
 newobj.Initial=newobj.Initial(ix);
 for i=1:length(obj.M)
     newobj.M{i}=obj.M{i}(ix,ix);
-    W=W+fp(i)*newobj.M{i};
 end
 
-deta=DeltaEta(W-eye(length(newobj.w)),newobj.w);
+deta=newobj.PartialKemeny;
 
 wchange=[0 find(diff(newobj.w)) length(newobj.w)];
 
