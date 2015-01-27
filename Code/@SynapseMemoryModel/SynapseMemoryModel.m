@@ -77,6 +77,9 @@ classdef SynapseMemoryModel
         deta=DeltaEta(obj)
         tau=MixTime(obj)
         [As,dAp,dAm]=SNRlaplaceGrad(obj,s)
+        tf=TestLump(obj,partitions,varargin)
+        partitions=FindLumps(obj,varargin)
+        newobj=Lumpify(obj,partitions)
     end
     
     methods (Static=true) %for construction
