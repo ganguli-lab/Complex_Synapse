@@ -17,7 +17,7 @@ r=p.Results;
 if r.UseExpM
     S=zeros(size(t));
     p=obj.EqProb(p.Unmatched);
-    q=obj.GetWf;
+    q=obj.GetEnc;
     W=obj.GetWf;
     for i=1:numel(t)
         S(i) = p*q*expm(W*t(i))*obj.w;

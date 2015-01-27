@@ -1,5 +1,5 @@
 function [ S, dSdWp,dSdWm ] = GradSNR( t, Wp, Wm, fp, w, varargin  )
-%[S,GS]=GRADSNR(T,WP,WM,FP,w) Summary of this function goes here
+%[S,GS]=GRADSNR(T,WP,WM,FP,w) gradient of SNR curve wrt matrix elements
 %   T = time value
 %   WP = potentiation transition rates
 %   WM = depression transition rates

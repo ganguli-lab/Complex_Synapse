@@ -41,7 +41,7 @@ plot(t,real(s),plotArgs{:});
 
 line([1;1]*tm,yl','Color','b','LineStyle','--',plotArgs{:});
 
-[KTp,KTm]=KTmults(tm,Wp,Wm,0.5,w);
+[KTp,KTm]=KTmultsSNR(tm,Wp,Wm,0.5,w);
 
 lmax=all(all( KTp>=0 & KTm>=0 ));
 

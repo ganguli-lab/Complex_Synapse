@@ -76,6 +76,7 @@ classdef SynapseMemoryModel
         T=FPT(obj)
         deta=DeltaEta(obj)
         tau=MixTime(obj)
+        [As,dAp,dAm]=SNRlaplaceGrad(obj,s)
     end
     
     methods (Static=true) %for construction

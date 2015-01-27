@@ -12,10 +12,13 @@ if isempty(p)
     p.FunctionName='SynapseMemoryModel.GetZinv';
     p.StructExpand=true;
     p.KeepUnmatched=false;
-    p.addOptional('piv',ev',@(x)validateattributes(x,{'numeric'},{'row'},'SynapseMemoryModel.GetZinv','piv',2));
+    p.addOptional('piv',[],@(x)validateattributes(x,{'numeric'},{'row'},'SynapseMemoryModel.GetZinv','piv',2));
 end
 p.parse(varargin{:});
 piv=p.Results.piv;
+if isempty(piv)
+    piv=ev';
+end
 
 Zinv = ev*piv - obj.GetWf;
 
