@@ -38,7 +38,6 @@ validateattributes(obj.TolFun,{'numeric'},{'scalar'},'SynapseOptimset','TolFun')
 validateattributes(obj.TolX,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','TolX');
 validateattributes(obj.TolFunChange,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','TolFunChange');
 validateattributes(obj.Penalty,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','Penalty');
-validateattributes(obj.fp,{'numeric'},{'row','>=',0,'<=',1},'SynapseOptimset','fp');
 validateattributes(obj.ExtraParams,{'cell'},{},'SynapseOptimset','ExtraParams');
 
 if ~isempty(obj.OutputFcn)
@@ -58,6 +57,7 @@ validatestring(obj.ModelDiff,{'KL','Ln`'},'SynapseOptimset','ModelDiff');
 
 validateattributes(obj.MaxStates,{'numeric'},{'scalar','nonnegative','integer'},'SynapseOptimset','MaxStates');
 validateattributes(obj.MinLogLikeInc,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','MinLogLikeInc');
+validateattributes(obj.HoldbackForget,{'numeric'},{'scalar','nonnegative','<',1},'SynapseOptimset','HoldbackForget');
 validateattributes(obj.NumReps,{'numeric'},{'scalar','nonnegative','integer'},'SynapseOptimset','NumReps');
 validateattributes(obj.NumSample,{'numeric'},{'scalar','nonnegative','integer'},'SynapseOptimset','NumSample');
 validateattributes(obj.PriorCcoeff,{'numeric'},{'scalar','nonnegative'},'SynapseOptimset','PriorCcoeff');

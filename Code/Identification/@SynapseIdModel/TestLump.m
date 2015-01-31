@@ -1,4 +1,4 @@
-function [ tf ] = TestLump( obj,partitions )
+function [ tf,wtest,Mtest ] = TestLump( obj,partitions )
 %tf=obj.TESTLUMP(partitions) test if SynapseIdModel obj is lumpabel wrt
 %partions
 %   pertitions = cell array of vectors containing indices of states in each
@@ -8,12 +8,12 @@ function [ tf ] = TestLump( obj,partitions )
 
 
 wtest=LumpTest(obj.w,partitions);
-wtest=max(abs(wtest));
+wtestm=max(abs(wtest));
 Mtest=cellfun(@(x)LumpTest(x,partitions),obj.M,'UniformOutput',false);
-Mtest=cellfun(@(x)max(max(abs(x))),Mtest);
+Mtestm=cellfun(@(x)max(max(abs(x))),Mtest);
 
 
-tf=max([wtest Mtest])<obj.LumpThresh;
+tf=max([wtestm Mtestm])<obj.LumpThresh;
 
 
 end

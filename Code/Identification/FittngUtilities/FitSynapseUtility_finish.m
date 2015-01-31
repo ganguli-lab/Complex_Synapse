@@ -14,6 +14,9 @@ fval=optimValues.fval;
 output=struct('message',msg,'ME',ME,...
     'algortihm',options.Algorithm,'weighter',options.Weighter,'penaliser',options.Penaliser,...
     'iterations',optimValues.iteration,'prev',optimValues.prev,'truth',optimValues.truth);
+if ~isempty(optimValues.holdback)
+    fval=optimValues.holdback.fval;
+end
 
 end
 

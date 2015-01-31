@@ -25,7 +25,7 @@ while exitflag==0 &&  optimValues.iteration <= options.MaxIter
         break;
     end
     %
-    [optimValues,exitflag,msg,ME]=FitSynapseUtility_update(optimValues,options,simobj,updaterfn,extraArgs);
+    [optimValues,exitflag,msg,ME]=FitSynapseUtility_update(optimValues,options,updaterfn,extraArgs);
     %
     CallOutFcns;
     if exitflag~=0

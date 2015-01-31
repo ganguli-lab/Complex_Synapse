@@ -79,7 +79,10 @@ classdef SynapseOptimset < hgsetget
         %     MaxStates = maximum # states per value of w (6,{'numeric'},{'scalar','nonnegative','integer'})
         MaxStates = 6;
         %     MinLogLikeInc = minimum log likelihood increase to carry on adding states (0,{'numeric'},{'scalar','nonnegative'})
+        %                   or: minimum log likelihood increase on held back data to avoid overfitting
         MinLogLikeInc = 0;
+        %     HoldbackForget = forgetting factor for previous likelihood increase on held back data (0,{'numeric'},{'scalar','nonnegative','<',1})
+        HoldbackForget = 0;
         %     NumReps = number of attempts for each w (10,{'numeric'},{'scalar','nonnegative','integer'})
         NumReps = 10;
         %     NumSample = number of samples from posterior (10,{'numeric'},{'scalar','nonnegative','integer'})

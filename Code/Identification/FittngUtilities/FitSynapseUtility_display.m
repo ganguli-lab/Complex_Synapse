@@ -19,18 +19,22 @@ switch options.Display
             DisplayMessage;
             DisplayMessageDiff;
             DisplayMessageDiffTruth;
+            DisplayMessageGen;
         end
         if strcmpi(state,'init')
             DisplayMessageTruth;
+            DisplayMessageGen;
         end
         if strcmpi(state,'done')
-            DisplayMessage;
             disp(msg);
+            DisplayMessage;
+            DisplayMessageGen;
         end
     case 'final'
         if strcmpi(state,'done')
             disp(msg);
             DisplayMessage;
+            DisplayMessageGen;
         end
     case 'notify'
         if strcmpi(state,'done') && exitflag < 1
@@ -38,6 +42,7 @@ switch options.Display
             DisplayMessage;
             DisplayMessageTruth;
             DisplayMessageDiffTruth;
+            DisplayMessageGen;
         end
 end
         
@@ -58,6 +63,12 @@ end
     function DisplayMessageTruth
         if ~isempty(optimValues.truth)
             disp(['True LogLike: ' num2str(optimValues.truth.fval,'%6.2f')]);
+        end
+    end
+
+    function DisplayMessageGen
+        if ~isempty(optimValues.holdback)
+            disp(['Generalisation LogLike: ' num2str(optimValues.holdback.fval,'%6.2f')]);
         end
     end
 

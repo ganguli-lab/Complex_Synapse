@@ -43,7 +43,7 @@ end
 
     function lambda=CalcLagrange(M)
         rowsum = sum(M,2) - Penalty;
-        lambda = ( rowsum + sqrt( rowsum.^2 + 4**diag(M) ) )/2;
+        lambda = ( rowsum + sqrt( rowsum.^2 + 4*Penalty*diag(M) ) )/2;
     end
 
     function Mnew=PenNorm(M,lambda)

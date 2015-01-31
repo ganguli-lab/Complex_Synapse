@@ -48,11 +48,11 @@ end
 
     function DispReps(i)
         if ~strcmpi(options.Display,'off')
-            if i>1
-                fprintf(repmat('\b',[1 numel(sprintf('Rep:%d/%d',i-1,options.NumReps))]));
+            if i>1 && strcmpi(options.Display,'addstate')
+                fprintf(repmat('\b',[1 numel(sprintf('Rep:%d/%d ',i-1,options.NumReps))]));
             end
             if i<=options.NumReps
-                fprintf('Rep:%d/%d',i,options.NumReps)
+                fprintf('Rep:%d/%d\n',i,options.NumReps)
             end
         end
     end

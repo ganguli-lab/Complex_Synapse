@@ -18,7 +18,7 @@ end
 optimValues=struct('iteration',0,'funcCount',0,...
     'procedure',[options.Algorithm ',' options.Weighter ',' options.Penaliser],...
     'NumStates',guessmodel.NumStates,'NumPlast',guessmodel.NumPlast,...
-    'model',[],'fval',[],'prev',[],'truth',[],'stateProb',{{}});
+    'fitsim',[],'model',[],'fval',[],'prev',[],'truth',[],'holdback',[],'stateProb',{{}});
 
 %the SynapseIdModel where we'll store the fit
 optimValues.model=guessmodel.Sort;
@@ -37,6 +37,12 @@ end
 updaterfn=str2func([options.Penaliser 'penalty']);
 extraArgs=[{'Algorithm',[init options.Algorithm],'Weighter',options.Weighter,'Penalty',options.Penalty},options.ExtraParams];
 
+if isvector(simobj)
+    optimValues.fitsim=simobj;
+else
+    optimValues.fitsim=reshape(simobj(1:end-1,:),1,[]);
+    optimValues.holdback=struct('testsim',simobj(end,:),'dfval',[],'fval',[]);
+end
 
 
 end

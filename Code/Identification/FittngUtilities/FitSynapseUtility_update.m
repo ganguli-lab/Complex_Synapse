@@ -1,4 +1,4 @@
-function [ optimValues,exitflag,msg,ME ] = FitSynapseUtility_update( optimValues,options,simobj,updaterfn,extraArgs )
+function [ optimValues,exitflag,msg,ME ] = FitSynapseUtility_update( optimValues,options,updaterfn,extraArgs )
 %[optimValues,exitflag,msg]=FITSYNAPSEUTILITY_UPDATE(optimValues,simobj,updaterfn,extraArgs)
 %perform update of currrent model fit
 %   optimValues = struct with information about the current state of the optimiser
@@ -23,9 +23,18 @@ ME=[];
 %perform the update
     %
     try
-    [optimValues.model,optimValues.fval,optimValues.stateProb]=updaterfn(optimValues.prev.model,simobj,...
+    [optimValues.model,optimValues.fval,optimValues.stateProb]=updaterfn(optimValues.prev.model,optimValues.fitsim,...
         extraArgs{:});
     optimValues.model=optimValues.model.Sort;
+    if ~isempty(optimValues.holdback)
+        prevfval=optimValues.holdback.fval;
+        optimValues.holdback.fval=HMMloglike(optimValues.model,optimValues.holdback.testsim)+SynapsePrior(optimValues.model,options);
+        if isempty(optimValues.holdback.dfval)
+            optimValues.holdback.dfval=optimValues.holdback.fval-prevfval;
+        else
+            optimValues.holdback.dfval=optimValues.holdback.fval-prevfval + options.HoldbackForget*optimValues.holdback.dfval;
+        end
+    end
     catch ME
         exitflag=-1;
         msg=['Error: ' ME.message];
