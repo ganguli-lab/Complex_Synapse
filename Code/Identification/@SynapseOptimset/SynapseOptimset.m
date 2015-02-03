@@ -123,6 +123,7 @@ classdef SynapseOptimset < hgsetget
                     %
                     %Extract data:
                     %
+                    obj.ExtraParams=varargin;
             end%if nargin ~=0
         end%function SynapseIdModel
     end%methods constructor

@@ -25,18 +25,20 @@ w=zeros(numWvals*options.MaxStates,1);
 w(1:options.MaxStates:end)=1;
 w=cumsum(w);
 
-fitmodel=SynapseIdModel.Rand(w,'NumPlastTypes',NumPlastTypes,p.Unmatched);
-testloglike=HMMloglike(fitmodel,simobjs)+SynapsePrior(fitmodel,options);
-for i=1:options.NumReps
-    DispReps(i);
-    guessmodel=SynapseIdModel.Rand(w,'NumPlastTypes',NumPlastTypes,p.Unmatched);
-    [guessmodel,guessloglike]=FitSynapse(simobjs,guessmodel,options);
-    if guessloglike > testloglike
-        fitmodel=guessmodel;
-        testloglike=guessloglike;
-    end%if guessloglike
-end%for i
-DispReps(i+1);
+% fitmodel=SynapseIdModel.Rand(w,'NumPlastTypes',NumPlastTypes,p.Unmatched);
+% testloglike=HMMloglike(fitmodel,simobjs)+SynapsePrior(fitmodel,options);
+% for i=1:options.NumReps
+%     DispReps(i);
+%     guessmodel=SynapseIdModel.Rand(w,'NumPlastTypes',NumPlastTypes,p.Unmatched);
+%     [guessmodel,guessloglike]=FitSynapse(simobjs,guessmodel,options);
+    guessmodel=SpectralInit(simobjs,w,'NumPlastTypes',NumPlastTypes,p.Unmatched);
+    [fitmodel]=FitSynapse(simobjs,guessmodel,options);
+%     if guessloglike > testloglike
+%         fitmodel=guessmodel;
+%         testloglike=guessloglike;
+%     end%if guessloglike
+% end%for i
+% DispReps(i+1);
 
 partitions=fitmodel.FindLumps;
 if fitmodel.TestLump(partitions);

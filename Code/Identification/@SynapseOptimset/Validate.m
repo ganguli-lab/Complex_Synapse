@@ -51,7 +51,7 @@ if ~isempty(obj.GroundTruth)
 end
 validatestring(obj.Display,{'off','iter','final','notify','addstate'},'SynapseOptimset','Display');
 validatestring(obj.Algorithm,{'BW','Viterbi'},'SynapseOptimset','Algorithm');
-validatestring(obj.Weighter,{'RJ','Uni','Mackay'},'SynapseOptimset','Weighter');
+validatestring(obj.Weighter,{'RJ','Uni','Mackay','Sequential'},'SynapseOptimset','Weighter');
 validatestring(obj.Penaliser,{'No','OffDiagL1','Lhalf'},'SynapseOptimset','Penaliser');
 validatestring(obj.ModelDiff,{'KL','Ln`'},'SynapseOptimset','ModelDiff');
 

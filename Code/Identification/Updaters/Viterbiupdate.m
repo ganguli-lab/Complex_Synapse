@@ -32,17 +32,31 @@ ev=ones(1,modelobj.NumStates);
 n=(1:modelobj.NumStates)';
 pstate=LikelyPath;
 
+M=cat(3,modelobj.M{simobj.potdep(1:end-1)});
+outProj=cat(3,modelobj.outProj{simobj.readouts(2:end)});
+
+updater=log(mmx('mult',M,outProj));
+
+
 for i=1:simobj.NumT-1
     ExpandPath(i);
 end
-LikelyPath(:,end)=n;
 
+LikelyPath(:,end)=n;
 [loglike,ix]=max(loglike);
 LikelyPath=LikelyPath(ix,:);
 
-for t=1:simobj.NumT-1
-    M_new{simobj.potdep(t)}(LikelyPath(t),LikelyPath(t+1))=M_new{simobj.potdep(t)}(LikelyPath(t),LikelyPath(t+1)) + 1;
+stepstart=LikelyPath(1:end-1);
+stepend=LikelyPath(2:end);
+steps=sub2ind(modelobj.NumStates*[1 1],stepstart,stepend);
+
+for i=1:modelobj.NumPlast
+    M_new{i}(1:modelobj.NumStates^2)=hist(steps(simobj.potdep(1:end-1)==i),1:modelobj.NumStates^2);
 end
+    
+% for t=1:simobj.NumT-1
+%     M_new{simobj.potdep(t)}(LikelyPath(t),LikelyPath(t+1))=M_new{simobj.potdep(t)}(LikelyPath(t),LikelyPath(t+1)) + 1;
+% end
 
 for i=1:length(M_new)
     M_new{i}=M_new{i}+diag(sum(M_new{i},2)==0);
@@ -51,7 +65,8 @@ end
 pstate(sub2ind(size(pstate),LikelyPath,1:simobj.NumT))=1;
 
 newmodelobj=modelobj.setM(M_new);
-newmodelobj=newmodelobj.setInitial(pstate(:,1)');
+% newmodelobj=newmodelobj.setInitial(pstate(:,1)');
+newmodelobj=newmodelobj.setInitial(sum(pstate,2)');
 
 if p.Results.Normalise
     newmodelobj=newmodelobj.Normalise;
@@ -63,10 +78,12 @@ end
 
     function ExpandPath(step)
         LikelyPath(:,step)=n;
-        StepLike = loglike'*ev + log(modelobj.M{simobj.potdep(step)}*modelobj.outProj{simobj.readouts(step+1)});
+        StepLike = loglike'*ev + updater(:,:,step);
         [loglike,ix]=max(StepLike,[],1);
         LikelyPath=LikelyPath(ix,:);
     end
+
+        
 
 end
 
