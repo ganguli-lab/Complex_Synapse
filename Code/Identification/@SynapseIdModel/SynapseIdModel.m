@@ -96,7 +96,7 @@ classdef SynapseIdModel
         obj3=minus(obj1,obj2)
         obj3=mtimes(obj1,obj2)
         obj3=mrdivide(obj1,obj2)
-        tf=TestLump(obj,partitions)
+        [tf,wtest,Mtest]=TestLump(obj,partitions)
         partitions=FindLumps(obj)
         newobj=Lumpify(obj,partitions)
     end

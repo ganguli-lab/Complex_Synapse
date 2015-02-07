@@ -18,7 +18,7 @@ M=cell(1,simobj.NumPlast);
 for a=1:length(P2)
     M{a}=zeros(length(P2{a}));
     for b=1:length(P3)
-        M{a}=M{a}+P2{a}\squeeze(sum(P3{a,b},2));
+        M{a}=M{a}+P2{b}\squeeze(sum(P3{b,a},2));
     end
     M{a}=Obs*M{a}*Obsinv;
 end
