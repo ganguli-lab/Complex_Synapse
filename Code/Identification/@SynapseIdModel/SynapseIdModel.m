@@ -12,8 +12,8 @@ classdef SynapseIdModel
         Initial=[0.5 0.5];
         %cell of Markov matrices. default: {Mpot,Mdep} 
         M={[1 0; 0 1], [1 0; 0 1]};
-        %synaptic weights. default: [-1; 1]
-        w=[-1; 1];
+        %synaptic weights. default: [1; 2]
+        w=[1; 2];
         %cell of diagonal matrices for each possible value of
         %output(low to high), with elements equal to prob of output
         outProj={[1 0; 0 0],[0 0; 0 1]};

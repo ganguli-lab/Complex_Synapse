@@ -10,10 +10,10 @@ function [ fitmodel ] = FitSynapseSizeLump( simobjs,varargin )
 persistent p
 if isempty(p)
     p=inputParser;
-    p.FunctionName='FitSynapseSize';
+    p.FunctionName='FitSynapseSizeLump';
     p.StructExpand=true;
     p.KeepUnmatched=true;
-    p.addOptional('options',SynapseOptimset,@(x)validateattributes(x,{'SynapseOptimset'},{},'FitSynapseSize','options',2));
+    p.addOptional('options',SynapseOptimset,@(x)validateattributes(x,{'SynapseOptimset'},{},'FitSynapseSizeLump','options',2));
 end
 p.parse(varargin{:});
 options=p.Results.options;
