@@ -1,5 +1,5 @@
 function [ A ] = OptFunChainL( qv,s )
-%OPTFUNCHAINL Laplace transform of SNR curve for symmetric serial model for
+%OPTFUNCHAINL Laplace transform of SNR curve for asymmetric serial model for
 %fmincon
 %   Detailed explanation goes here
 

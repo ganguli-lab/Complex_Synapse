@@ -1,5 +1,5 @@
 function [ A,gr ] = OptFunGradChainL( qv,s )
-%OPTFUNGRADCHAINL Laplace transform of SNR curve for symmetric serial model
+%OPTFUNGRADCHAINL Laplace transform of SNR curve for asymmetric serial model
 %and gradient for fmincon
 %   Detailed explanation goes here
 
