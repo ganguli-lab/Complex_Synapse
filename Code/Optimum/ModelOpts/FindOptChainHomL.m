@@ -9,12 +9,13 @@ function [ qv,A ] = FindOptChainHomL( s,n,varargin )
 persistent p
 if isempty(p)
     p=inputParser;
-    p.FunctionName='FindOptChainL';
+    p.FunctionName='FindOptChainHomL';
     p.StructExpand=true;
     p.KeepUnmatched=true;
-    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptChainL','reps',3));
-    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainL','InitRand'));
-    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainL','InitRand'));
+    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptChainHomL','reps',3));
+    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomL','InitRand'));
+    p.addParameter('InitHomZero',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomL','InitHomZero'));
+    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomL','InitRand'));
 end
 p.parse(varargin{:});
 r=p.Results;
@@ -26,6 +27,10 @@ if r.reps==1
     else
     %    [Wp,Wm]=MakeSMS(ones(1,n-1));
          qv=ones(1,4*n-4);
+    end
+    
+    if r.InitHomZero
+        qv(2*n-1:end)=0;
     end
 
     try
@@ -45,6 +50,16 @@ else
     A=0;
     for i=1:r.reps
         [ qvt,At ] = FindOptChainHomL( s,n,1, p.Unmatched,'InitRand',r.InitRand );
+        if At>A
+            qv=qvt;
+            A=At;
+        end
+        if r.DispReps
+            disp([int2str(i) '/' int2str(r.reps)]);
+        end
+    end
+    for i=1:r.reps
+        [ qvt,At ] = FindOptChainHomL( s,n,1, p.Unmatched,'InitRand',r.InitRand,'InitHomZero',true );
         if At>A
             qv=qvt;
             A=At;

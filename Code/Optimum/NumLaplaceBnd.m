@@ -33,9 +33,9 @@ for i=1:length(srange)
     [~,dWp,dWm]=modelobj.SNRlaplaceGrad(srange(i));
     [chains(i).KTp,chains(i).KTm]=KTmults(Wp,Wm,dWp,dWm);
     
-    disp([int2str(i) '/' int2str(length(srange))]);
+    DispCounter(i,length(srange),'');
 end
-
+DispCounter(length(srange)+1,length(srange),'');
 
 end
 

@@ -38,9 +38,9 @@ if min(diff(qa)) > r.DegThresh
     v=diag(1./diag(v.'*u)) * v.';
 
     Z=u * diag(1./[1;qa(2:end)]) * v;
-    p=v(1,:);
-    p=p/sum(p);
-    ca = 2*obj.fp*(1-obj.fp) * (v*obj.w) .* (p*q*Z*u)';
+    pr=v(1,:);
+    pr=pr/sum(pr);
+    ca = 2*obj.fp*(1-obj.fp) * (v*obj.w) .* (pr*q*Z*u)';
     return;
 end
 
@@ -55,9 +55,9 @@ end
         ca=diag(ca);
     else
         Z=u * diag(1./[1;qa(2:end)]) / u;
-        p=[1 zeros(1,length(qa)-1)] / u;
-        p=p/sum(p);
-        ca = 2*obj.fp*(1-obj.fp) * (u\obj.w) .* (p*q*Z*u)';
+        pr=[1 zeros(1,length(qa)-1)] / u;
+        pr=pr/sum(pr);
+        ca = 2*obj.fp*(1-obj.fp) * (u\obj.w) .* (pr*q*Z*u)';
     end
 % else
 %     qa=NaN(n,1);
