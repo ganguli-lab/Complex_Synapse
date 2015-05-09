@@ -49,7 +49,7 @@ grp= grhp + p(1:end-1).*Zw;
 grm= grhm + p(2:end).*Zw;
 
 A=-A;
-gr=-[grp grm grhp grhm];
+gr=-0.5*[grp grm grhp grhm];
 
 end
 

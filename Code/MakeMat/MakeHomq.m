@@ -1,6 +1,6 @@
 function [ qp,qm ] = MakeHomq( qv,fp )
 %[qp_eff,qm_eff]=MAKEHOMQ(qv,fp) effective nearest neighbour transition rates with
-%activity independent plasticity
+%activity independent plasticity, for forgetting, not encoding.
 %   qv=[qp qm qhp qhm]
 %   qp_eff = qp + qhp/28fp
 %   qm_eff = qm + qhm/28fp
