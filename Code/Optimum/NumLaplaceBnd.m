@@ -24,8 +24,13 @@ for i=1:length(srange)
         qp=chains(i).qv;
         qm=wrev(qp);
     elseif hom
-        [chains(i).qv,chains(i).A]=FindOptChainHomL(srange(i),nstates,50,varargin{:});
-        [qp,qm]=MakeHomq(chains(i).qv,0.5);
+%         [chains(i).qv,chains(i).A]=FindOptChainHomL(srange(i),nstates,50,varargin{:});
+%         [chains(i).qv,chains(i).A]=FindOptChainHomLC(srange(i),nstates,50,varargin{:});
+        [chains(i).qv,chains(i).A]=FindOptChainHomLA(srange(i),nstates,50,varargin{:});
+%         [qp,qm]=MakeHomq(chains(i).qv,0.5);
+%         [qp,qm]=MakeHomqC(chains(i).qv,0.5);
+        qp=chains(i).qv(1:nstates-1);
+        qm=chains(i).qv(nstates:end);
     else
         [chains(i).qv,chains(i).A]=FindOptChainL(srange(i),nstates,50,varargin{:});
         qp=chains(i).qv(1:nstates-1);
