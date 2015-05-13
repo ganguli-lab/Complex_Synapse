@@ -1,5 +1,5 @@
-function [ chains ] = FixNumLaplaceBnd( oldchains,srange,nstates,trange,inds,mode,varargin )
-%chains=FIXNUMLAPLACEBND(srange,nstates,trange,sym) numeric laplace bound
+function [ chains ] = FixNumLaplaceBndChain( oldchains,srange,nstates,trange,inds,mode,varargin )
+%chains=FIXNUMLAPLACEBNDCHAIN(srange,nstates,trange,sym) numeric laplace bound
 %   chains  = struct array (size=[1 length(srange)])
 %   srange  = values of Laplace parameter at which we maximise
 %   nstates = number of states in chain

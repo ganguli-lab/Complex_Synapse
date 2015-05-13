@@ -96,7 +96,7 @@ else
         end
     end
             DispCounter(r.reps+1,r.reps,'rep: ');
-    DispCounter(2,2,'init: ');
+    DispCounter(3,2,'init: ');
     warning('on','MATLAB:nearlySingularMatrix');
     
 end
