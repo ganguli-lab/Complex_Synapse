@@ -16,6 +16,7 @@ if isempty(p)
     p.KeepUnmatched=true;
     p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptL','reps',3));
     p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptL','InitRand'));
+    p.addParameter('InitHomZero',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomLA','InitHomZero'));
 %     p.addParameter('Triangular',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOpt','InitRand'));
     p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptL','InitRand'));
 end
@@ -43,6 +44,11 @@ if r.reps==1
          Q=zeros(n);
     end
 
+    if r.InitHomZero
+        Q=zeros(n);
+    end
+    
+    
     try
     %     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
         [Wp,Wm,Q,A] = ModelOptHomL( Wp,Wm,Q,sm,p.Unmatched);
@@ -60,6 +66,7 @@ else
     Wm=[];
     Q=[];
     A=0;
+    DispCounter(1,2,'init: ');
     for i=1:r.reps
         if r.DispReps
             DispCounter(i,r.reps,'rep: ');
@@ -74,6 +81,22 @@ else
         end
     end
             DispCounter(r.reps+1,r.reps,'rep: ');
+    DispCounter(2,2,'init: ');
+    for i=1:r.reps
+        if r.DispReps
+            DispCounter(i,r.reps,'rep: ');
+        end
+%         [ Wpt,Wmt,At ] = FindOptL( sm,n,1, p.Unmatched,'InitRand',r.InitRand,'Triangular',r.Triangular );
+        [ Wpt,Wmt,Qt,At ] = FindOptHomL( sm,n,1, p.Unmatched,'InitRand',r.InitRand,'InitHomZero',true );
+        if At>A
+            Wp=Wpt;
+            Wm=Wmt;
+            Q=Qt;
+            A=At;
+        end
+    end
+            DispCounter(r.reps+1,r.reps,'rep: ');
+    DispCounter(2,2,'init: ');
     warning('on','MATLAB:nearlySingularMatrix');
     
 end

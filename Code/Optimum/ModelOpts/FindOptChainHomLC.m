@@ -9,13 +9,13 @@ function [ qv,A ] = FindOptChainHomLC( s,n,varargin )
 persistent p
 if isempty(p)
     p=inputParser;
-    p.FunctionName='FindOptChainHomL';
+    p.FunctionName='FindOptChainHomLC';
     p.StructExpand=true;
     p.KeepUnmatched=true;
-    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptChainHomL','reps',3));
-    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomL','InitRand'));
-    p.addParameter('InitHomZero',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomL','InitHomZero'));
-    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomL','InitRand'));
+    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptChainHomLC','reps',3));
+    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomLC','InitRand'));
+    p.addParameter('InitHomZero',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomLC','InitHomZero'));
+    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomLC','InitRand'));
 end
 p.parse(varargin{:});
 r=p.Results;
@@ -48,7 +48,7 @@ else
     warning('off','MATLAB:nearlySingularMatrix');
     qv=[];
     A=0;
-    DispCounter(1,2,'mode: ');
+    DispCounter(1,2,'init: ');
     for i=1:r.reps
         [ qvt,At ] = FindOptChainHomLC( s,n,1, p.Unmatched,'InitRand',r.InitRand );
         if At>A
@@ -61,7 +61,7 @@ else
         end
     end
             DispCounter(r.reps+1,r.reps,'rep: ');
-    DispCounter(2,2,'mode: ');
+    DispCounter(2,2,'init: ');
     for i=1:r.reps
         [ qvt,At ] = FindOptChainHomLC( s,n,1, p.Unmatched,'InitRand',r.InitRand,'InitHomZero',true );
         if At>A
@@ -74,7 +74,7 @@ else
         end
     end
             DispCounter(r.reps+1,r.reps,'rep: ');
-    DispCounter(3,2,'mode: ');
+    DispCounter(3,2,'init: ');
     warning('on','MATLAB:nearlySingularMatrix');
 end
 

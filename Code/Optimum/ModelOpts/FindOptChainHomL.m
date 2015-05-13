@@ -48,7 +48,7 @@ else
     warning('off','MATLAB:nearlySingularMatrix');
     qv=[];
     A=0;
-    DispCounter(1,2,'mode: ');
+    DispCounter(1,2,'init: ');
     for i=1:r.reps
         [ qvt,At ] = FindOptChainHomL( s,n,1, p.Unmatched,'InitRand',r.InitRand );
         if At>A
@@ -61,7 +61,7 @@ else
         end
     end
             DispCounter(r.reps+1,r.reps,'rep: ');
-    DispCounter(2,2,'mode: ');
+    DispCounter(2,2,'init: ');
     for i=1:r.reps
         [ qvt,At ] = FindOptChainHomL( s,n,1, p.Unmatched,'InitRand',r.InitRand,'InitHomZero',true );
         if At>A
@@ -74,7 +74,7 @@ else
         end
     end
             DispCounter(r.reps+1,r.reps,'rep: ');
-    DispCounter(3,2,'mode: ');
+    DispCounter(3,2,'init: ');
     warning('on','MATLAB:nearlySingularMatrix');
 end
 
