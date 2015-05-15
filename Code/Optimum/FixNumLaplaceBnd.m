@@ -12,7 +12,7 @@ function [ mats ] = FixNumLaplaceBnd( oldmats,srange,nstates,trange,inds,varargi
 %   chains.snr = snr curve of optimal model
 
 mats=oldmats;
-reps=50;
+reps=200;
 
 for j=1:length(inds)
     i=inds(j);
