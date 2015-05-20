@@ -11,14 +11,14 @@ function [ Wp,Wm,Q,A ] = FindOptHomL( sm,n,varargin )
 persistent p
 if isempty(p)
     p=inputParser;
-    p.FunctionName='FindOptL';
+    p.FunctionName='FindOptHomL';
     p.StructExpand=true;
     p.KeepUnmatched=true;
-    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptL','reps',3));
-    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptL','InitRand'));
-    p.addParameter('InitHomZero',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptChainHomLA','InitHomZero'));
-%     p.addParameter('Triangular',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOpt','InitRand'));
-    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptL','InitRand'));
+    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptHomL','reps',3));
+    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptHomL','InitRand'));
+    p.addParameter('InitHomZero',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptHomL','InitHomZero'));
+%     p.addParameter('Triangular',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptHomL','InitRand'));
+    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptHomL','InitRand'));
 end
 p.parse(varargin{:});
 r=p.Results;
