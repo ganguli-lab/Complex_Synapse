@@ -36,7 +36,7 @@ grp= 0.5*p(1:end-1).*Za + (p(1:end-1)+0.5*c(1:end-1)).*Zw;
 grm= -0.5*p(2:end).*Za + (p(2:end)-0.5*c(2:end)).*Zw;
 
 A=-A;
-gr=-[grp grm];
+gr=-0.5*[grp grm];
 
 end
 

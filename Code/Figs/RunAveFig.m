@@ -1,4 +1,5 @@
-load('laplacebndHom.mat','AenvNoHom','AenvHom','srange');
+load('laplacebndNoHom.mat','AenvNoHom','srange');
+load('laplacebndHom.mat','AenvHom');
 load('laplacebndHomA.mat','AenvHomA');
 load('laplacebndHomB.mat','AenvHomB');
 AenvProven=11./(1+11*srange);

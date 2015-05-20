@@ -43,15 +43,17 @@ else
     qv=[];
     A=0;
     for i=1:r.reps
-        [ qvt,At ] = FindOptChainL( s,n,1, p.Unmatched,'InitRand',r.InitRand );
+         if r.DispReps
+            DispCounter(i,r.reps,'rep: ');
+%             disp([int2str(i) '/' int2str(r.reps)]);
+        end
+       [ qvt,At ] = FindOptChainL( s,n,1, p.Unmatched,'InitRand',r.InitRand );
         if At>A
             qv=qvt;
             A=At;
         end
-        if r.DispReps
-            disp([int2str(i) '/' int2str(r.reps)]);
-        end
     end
+            DispCounter(r.reps+1,r.reps,'rep: ');
     
 end
 
