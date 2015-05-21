@@ -32,7 +32,7 @@ for j=1:length(inds)
             [chains(i).qv,chains(i).A]=FindOptChainHomLC(srange(i),nstates,reps,varargin{:});
             [qp,qm]=MakeHomqC(chains(i).qv,0.5);
         case 'a'
-        [chains(i).qv,chains(i).A]=FindOptChainHomLA(srange(i),nstates,reps,varargin{:});
+            [chains(i).qv,chains(i).A]=FindOptChainHomLA(srange(i),nstates,reps,varargin{:});
             qp=chains(i).qv(1:nstates-1);
             qm=chains(i).qv(nstates:end);
     end
