@@ -15,7 +15,7 @@ qhm=qv(3*n+1:end);
 [Hp,Hm]=MakeMultistate(qhp,qhm);
 H=Hp+Hm;
 
-p=(qp+qhp)./(qm+qhm);
+p=(0.5*qp+qhp)./(0.5*qm+qhm);
 p=[1 cumprod(p)];
 p=p/sum(p);
 
