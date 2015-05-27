@@ -12,7 +12,7 @@ function [ chains ] = FixNumLaplaceBndChain( oldchains,srange,nstates,trange,ind
 %   chains.snr = snr curve of optimal model
 
 chains=oldchains;
-reps=800;
+reps=1000;
 
 for j=1:length(inds)
     i=inds(j);

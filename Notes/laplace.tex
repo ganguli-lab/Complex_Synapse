@@ -1,0 +1,173 @@
+% -*- TeX -*- -*- UK -*-
+% ----------------------------------------------------------------
+% arXiv Paper ************************************************
+%
+% Subhaneil Lahiri's template
+%
+% Before submitting:
+%    Comment out hyperref
+%    Comment out showkeys
+%    Replace \input{?.tex} with its contents
+%       or include ?.tex in zip/tar file
+%    Put this file, the .bbl file, any picture or
+%       other additional files and natbib.sty
+%       file in a zip/tar file
+%
+% **** -----------------------------------------------------------
+\documentclass[12pt]{article}
+%Preamble:
+\usepackage{a4wide}
+\input{sl_preamble.tex}
+%
+% >> Only for drafts! <<
+\usepackage[notref,notcite]{showkeys}
+% ----------------------------------------------------------------
+%\numberwithin{equation}{section}
+%\renewcommand{\baselinestretch}{1.5}
+% ----------------------------------------------------------------
+% New commands etc.
+\input{sl_definitions.tex}
+\input{sl_symbols.tex}
+%matrices
+\newcommand{\inv}{^{-1}}
+\newcommand{\dg}{^\mathrm{dg}}
+\newcommand{\trans}{^\mathrm{T}}
+\newcommand{\I}{\mathbf{I}}
+%vec of ones
+\newcommand{\onev}{\mathbf{e}}
+%mat of ones
+\newcommand{\onem}{\mathbf{E}}
+%Markov matrix
+\newcommand{\MM}{\mathbf{Q}}
+%equilibrium distribution
+\newcommand{\eq}{\mathbf{p}^\infty}
+%first passage times
+\newcommand{\fpt}{\mathbf{T}}
+%off-diag first passage times
+\newcommand{\fptb}{\overline{\fpt}}
+%fundamental matrix
+\newcommand{\fund}{\mathbf{Z}}
+%other symbols
+\newcommand{\Pb}{\mathbf{P}}
+\newcommand{\D}{\mathbf{D}}
+\newcommand{\pib}{\boldsymbol{\pi}}
+\newcommand{\Lb}{\boldsymbol{\Lambda}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\uv}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\W}{\mathbf{W}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\enc}{\mathbf{q}}
+\newcommand{\frg}{\W^{\mathrm{F}}}
+\newcommand{\F}{\boldsymbol{\Phi}}
+\newcommand{\syn}{\vec{w}}
+\newcommand{\synid}{\syn_\text{ideal}}
+\DeclareMathOperator{\SNR}{SNR}
+\DeclareMathOperator{\snr}{SNR}
+\DeclareMathOperator{\env}{Env}
+\newcommand{\rh}{\hat{r}}
+\newcommand{\CI}{\mathcal{I}}
+\newcommand{\CS}{\mathcal{S}}
+\newcommand{\CA}{\mathcal{A}}
+\newcommand{\CB}{\mathcal{B}}
+\newcommand{\comp}{^\mathrm{c}}
+% ----------------------------------------------------------------
+\input{sl_theorems_preamble.tex}
+% ----------------------------------------------------------------
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title info:
+\title{Laplacian envelope}
+%
+% Author List:
+%
+\author{Subhaneil Lahiri
+%
+}
+
+\begin{document}
+
+\maketitle
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{abstract}
+  We try to find the continuous time Markov process that has the maximal Laplace tranformed signal-to-noise curve.
+\end{abstract}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Beginning of Article:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Recognition memory}\label{sec:recog}
+
+
+We will be trying to store patterns in a set od $N$ synaptic weights, $\syn$.
+Every time we try to store a pattern, these synapses are subjected to a plasticity event where each synapse is either potentiated or depressed, depending on the pattern.
+we will assume that these patterns are spatially and temporally independent.
+
+At some time, suppose we wish to determine if a given pattern is one of those that we previously attempted to store.
+We wish to answer this question by looking at the synaptic weights directly (ideal observer).
+For that given pattern there will be an ideal set of synaptic weights, $\synid$, where those synapses that were supposed to be potentiated are maximised and those that were supposed to be depressed are minimised.
+Suppose that the given pattern was actually seen at time 0 and we are observing the synapses at time $t$.
+The actual set of synaptic weights we see, $\syn(t)$, will be a vector of random variables that differs from $\synid$ due to the stochasticity of the pattern encoding and all of the other (uncorrelated) pattern that are stored after it.
+As $t\to\infty$, the synaptic weights will become independent of the patter stored at $t=0$.
+Thus, the vector of random variables $\syn(\infty)$ also describes the synaptic weights under the null hypothesis -- if that given pattern had never been stored.
+
+We can test if the pattern had been previously stored by computing $\synid\cdt\syn$ and comparing it to some threshold.
+For large $N$, this quantity will have a Gausssian distribution.
+There will be a ROC curve as a function of this threshold:
+%
+\begin{equation}\label{eq:ROC}
+  \begin{aligned}
+  \operatorname{TPR} &= \Phi_c \prn{ \frac{ \Phi_c\inv(\operatorname{FPR}) - \snr }{ \operatorname{NNR} } },
+  \quad\text{where } &
+    \Phi_c(x) &= \int_x^\infty \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dz, \\&&
+    \snr &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\&&
+    \operatorname{NNR} &= \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }},
+  \end{aligned}
+\end{equation}
+%
+and TPR/FPR are the true/false positive rates.
+When the signal-to-noise ratio, $\snr$ is larger than $\Phi_c\inv(\operatorname{FPR})$, it is beneficial to decrease the noise-to-noise ratio, NNR.
+In the other case, it is beneficial to increase it.
+The expectations and variances are over the probability distribution of the synaptic states given the sequence of plasticity events and the probability distribution of the sequence of plasticity events.
+
+The formulae above assumed that we know the time between storage and recognition.
+We should also compute the expectations and variances over probability distribution of the recall time, $t$, as well.
+If we only know average time, $\tau$, a natural choice for this distribution is
+%
+\begin{equation}\label{eq:recogtime}
+  P(t\vert\tau) = \frac{\e^{-t/\tau}}{\tau}.
+\end{equation}
+%
+Different parts of the brain, that store memories for different timescales, could be characterised by different values of $\tau$.
+
+
+
+
+
+%\subsection*{Acknowledgements}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\subsection*{Appendices}
+%\appendix
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibliographystyle{utcaps_sl}
+\bibliography{maths,neuro,markov}
+
+\end{document}
