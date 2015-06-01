@@ -54,18 +54,26 @@
 \newcommand{\D}{\mathbf{D}}
 \newcommand{\pib}{\boldsymbol{\pi}}
 \newcommand{\Lb}{\boldsymbol{\Lambda}}
+%synapse models
 \newcommand{\w}{\mathbf{w}}
-\newcommand{\uv}{\mathbf{u}}
-\newcommand{\vv}{\mathbf{v}}
 \newcommand{\W}{\mathbf{W}}
 \newcommand{\M}{\mathbf{M}}
 \newcommand{\enc}{\mathbf{K}}
 \newcommand{\frg}{\W^{\mathrm{F}}}
+\newcommand{\F}{\boldsymbol{\Phi}}
+%superscripts
+\newcommand{\pot}{^{\text{pot}}}
+\newcommand{\dep}{^{\text{dep}}}
+\newcommand{\potdep}{^{\text{pot/dep}}}
+%with activity indep processes
 \renewcommand{\hom}{\mathbf{H}}
 \newcommand{\Mh}{\widetilde{\M}}
 \newcommand{\frgh}{\widetilde{\W}^{\mathrm{F}}}
 \newcommand{\ench}{\widetilde{\enc}}
-\newcommand{\F}{\boldsymbol{\Phi}}
+%eigenvectors
+\newcommand{\evr}{\mathbf{u}}
+\newcommand{\evl}{\boldsymbol{\eta}}
+%snr curves etc
 \newcommand{\syn}{\vec{w}}
 \newcommand{\synid}{\syn_\text{ideal}}
 \DeclareMathOperator{\SNR}{SNR}
@@ -78,10 +86,6 @@
 \newcommand{\CA}{\mathcal{A}}
 \newcommand{\CB}{\mathcal{B}}
 \newcommand{\comp}{^\mathrm{c}}
-%superscripts
-\newcommand{\pot}{^{\text{pot}}}
-\newcommand{\dep}{^{\text{dep}}}
-\newcommand{\potdep}{^{\text{pot/dep}}}
 % ----------------------------------------------------------------
 \input{sl_theorems_preamble.tex}
 % ----------------------------------------------------------------
@@ -179,8 +183,8 @@ Where the averages and variances are over the probability distribution of the sy
 If we also average over the time between storage and recognition, we have
 %
 \begin{equation}\label{eq:snrb}
-  \snrb(\tau) = \intd[_0^\infty]{t} P(t\vert\tau) \snr(t) 
-   = \frac{1}{\tau} \intd[_0^\infty]{t} \e^{-t/\tau} \snr(t),  
+  \snrb(\tau) = \intd[_0^\infty]{t} P(t\vert\tau) \snr(t)
+   = \frac{1}{\tau} \intd[_0^\infty]{t} \e^{-t/\tau} \snr(t),
 \end{equation}
 %
 This is similar to the average SNR up to time $\tau$, but with the hard cut-off replaced with a smooth exponential.
@@ -225,7 +229,7 @@ For the numerator, we can write
 If the elements of $\synid$ take values $\pm1$ with probability $f\potdep$,
 %
 \begin{equation}\label{eq:overlapone}
-  \av{\syn^1_\text{ideal}\syn^1(t)} = f\pot \av{\syn^1(t)}_{\text{pot},t=0} - f\dep \av{\syn^1(t)}_{\text{dep},t=0} 
+  \av{\syn^1_\text{ideal}\syn^1(t)} = f\pot \av{\syn^1(t)}_{\text{pot},t=0} - f\dep \av{\syn^1(t)}_{\text{dep},t=0}
 \end{equation}
 %
 To compute this quantity, we will need to discuss how we model individual synapses.
@@ -251,13 +255,22 @@ Their elements must satisfy the following constraints
   \M\potdep_{ij} &\geq 0, &\qquad
   \sum_j \M\potdep_{ij} &= 1, \\
   \hom_{i \neq j} &\geq 0, &\qquad
-  \sum_j \hom_{ij} &= 0. 
+  \sum_j \hom_{ij} &= 0.
 \end{aligned}
 \end{equation}
 %
 The upper bounds $\M\potdep_{ij} \leq 1$ and $\hom_{ii} \leq 0$ follow automatically from these.
 There is no upper bound on $\hom_{i \neq j}$ (or lower bound on $\hom_{ii}$) as these are rates rather than probabilities.
 
+If we treat the off diagonal elements as the independent degrees of freedom, with the off diagonal elements determined by the row sum constraints (second column of \eqref{eq:constr}), the constraints are
+%
+\begin{equation}\label{eq:constri}
+  \M\potdep_{i \neq j} \geq 0, \qquad
+  \sum_{j\neq i} \M\potdep_{ij} \leq 1, \qquad
+  \hom_{i \neq j} \geq 0.
+\end{equation}
+%
+The second of these will be referred to as the ``diagonal'' constraint.
 
 Given a sequence of plasticity events at times $t_1,t_2,t_3,\ldots$, the probability distribution across the internal states is
 %
@@ -349,7 +362,7 @@ Clearly
   \sum_j \Mh\potdep_{ij} = 1.
 \end{equation}
 %
-The ``off-diagonal'' constraints are more complicated.
+The ``diagonal'' constraints are more complicated.
 There can be many $\M\potdep,\hom$ that result in the same $\Mh\potdep$.
 However, the fact that $\M\potdep_{ij} \in [0,1]$ and $\hom_{i\neq j} \geq 0$ imply that $\forall (i \neq j)$:
 %
@@ -368,11 +381,11 @@ To ensure that $\M\potdep_{ii} \geq 0$, we also need to ensure that $\sum_{j\neq
 %
 \begin{equation}\label{eq:homdiag}
 \begin{aligned}
-  \sum_{j\neq i} \M\pot_{ij} 
+  \sum_{j\neq i} \M\pot_{ij}
     &= \sum_{j\neq i} \prn{ \Mh\pot_{ij} - \frac{\hom_{ij}}{2rf\pot} }\\
     &\geq \sum_{j\neq i} \prn{ \Mh\pot_{ij} - \frac{1}{f\pot}  \min\brc{ f\pot\Mh\pot_{ij},f\dep\Mh\dep_{ij} } }\\
     &= \frac{1}{f\pot} \sum_{j\neq i} \brk{ f\pot\Mh\pot_{ij}-f\dep\Mh\dep_{ij} }_+ , \\
-  \sum _{j\neq i} \M\dep_{ij} 
+  \sum _{j\neq i} \M\dep_{ij}
     &= \frac{1}{f\dep} \sum_{j\neq i} \brk{ f\dep\Mh\dep_{ij}-f\pot\Mh\pot_{ij} }_+ ,
 \end{aligned}
 \end{equation}
@@ -391,11 +404,308 @@ Therefore we find the set of constraints
 \end{aligned}
 \end{equation}
 %
+The second column of this will be referred to as the ``diagonal'' constraints.
+
 We showed that these are necessary conditions for the existence of $\M\potdep,\hom$ satisfying \eqref{eq:constr}.
 We can see that they are sufficient by choosing $\hom_{ij} = 2r\min\brc{f\pot\Mh\pot_{ij},f\dep\Mh\dep_{ij}}$ for $i \neq j$ and $\hom_{ii}=-\sum_{j \neq i} \hom_{ij}$.
 
 We can then treat the off-diagonal elements of $\Mh\potdep$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
+The diagonal elements are determined by setting the row sums to 1.
+We then have
+%
+\begin{equation}\label{eq:derivpd}
+  \pdiff{\Mh\pot_{ij}}{\Mh\pot_{mn}{}} = \pdiff{\Mh\dep_{ij}}{\Mh\dep_{mn}{}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
+  \qquad
+  \pdiff{\Mh\pot_{ij}}{\Mh\dep_{mn}{}} = \pdiff{\Mh\dep_{ij}}{\Mh\pot_{mn}{}} = 0.
+\end{equation}
+%
+It will also be convenient to define the differential operators
+%
+\begin{equation}\label{eq:pertfe}
+  \pdiff{}{\frgh_{ij}{}} = \frac{1}{2f\pot} \pdiff{}{\Mh\pot_{ij}{}} + \frac{1}{2f\dep} \pdiff{}{\Mh\dep_{ij}{}},
+  \qquad
+  \pdiff{}{\ench_{ij}{}} = \frac{1}{2f\pot} \pdiff{}{\Mh\pot_{ij}{}} - \frac{1}{2f\dep} \pdiff{}{\Mh\dep_{ij}{}},
+\end{equation}
+%
+these satisfy
+%
+\begin{equation}\label{eq:derivfe}
+  \pdiff{\frgh_{ij}}{\frgh_{mn}{}} = \pdiff{\ench_{ij}}{\ench_{mn}{}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
+  \qquad
+  \pdiff{\frgh_{ij}}{\ench_{mn}{}} = \pdiff{\ench_{ij}}{\frgh_{mn}{}} = 0.
+\end{equation}
+%
 
+
+
+\section{Laplace transform}\label{sec:laplace}
+
+\subsection{Fundamental matrix \etc}\label{sec:lfund}
+
+In analogy to the generalised fundamental matrix of a Markov chain \cite{Kemeny1981fund}, define
+%
+\begin{equation}\label{eq:lfund}
+  \fund(s) = (s\I +\onev\pib -\MM)\inv,
+\end{equation}
+%
+where $\pib$ is an arbitrary row vector satisfying $\pib\onev = \frac{1}{\tau_0} \neq 0$.
+This reduces to the fundamental matrix at $s=0$.
+We can see that $\onev$ is an eigenvector:
+%
+\begin{equation}\label{eq:lfundrowsum}
+  \fund(s)\onev = \frac{\tau_0}{1+s\tau_0}\onev.
+\end{equation}
+%
+Suppose we have some row vector $\mathbf{a}$ such that $\mathbf{a}\onev=0$.
+Then $\mathbf{a}\fund(s)$ is independent of $\pib$:
+%
+\begin{equation}\label{eq:alfund}
+  \pdiff{(\mathbf{a}\fund(s))_i}{\pib_k} = (\mathbf{a}\fund(s)\onev) \fund_{ki}(s) 
+      = \frac{\tau_0}{1+s\tau_0} (\mathbf{a}\onev) \fund_{ki}(s) = 0.
+\end{equation}
+%
+
+
+Then we also define
+%
+\begin{equation}\label{eq:lfptb}
+  \fptb(s) = (\onem\fund\dg(s)-\fund(s))\D,
+  \qquad
+  \fptb_{ij}(s) = \frac{\fund_{jj}(s)-\fund_{ij}(s)}{\eq_j}.
+\end{equation}
+%
+This reduces to the first passage time matrix at $s=0$, but at other $s$ there is (probably) no relation.
+
+Using the exact same proof as in the case $s=0$, we see that the quantity
+%
+\begin{equation}\label{eq:lkemeny}
+  \eta(s) = \sum_j \fptb_{ij}(s)\eq_j
+\end{equation}
+%
+is independent of the starting state $i$, but now $\eta(s) = \tr\fund(s) - \frac{\tau}{1+s\tau}$.
+We can the define
+%
+\begin{equation}\label{eq:lpmixtime}
+  \eta^{\pm}_i(s) = \sum_j \fptb_{ij}(s)\eq_j \prn{\frac{1\pm\w_j}{2}} =  \sum_{j\in\pm} \fptb_{ij}(s)\eq_j.
+\end{equation}
+%
+We can arrange the states in order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
+It will be more convenient to use the quantities
+%
+\begin{equation}\label{eq:lwpmixtime}
+  \eta^w_i(s) = \sum_j \fptb_{ij}(s)\eq_j \w 
+    = \eta^+_i(s) - \eta^-_i(s) =2\eta^+_i(s) - \eta(s) =\eta(s) - 2\eta^-_i(s) .
+\end{equation}
+%
+Arranging the states in order of decreasing $\eta^w_i(s)$ is the same as the order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
+These quantities can still be used when $\w$ takes more than two values.
+
+
+
+\subsection{Laplace transform of SNR curve}\label{sec:laplaceSNR}
+
+Consider the Laplace transform of the evolution operator:
+%
+\begin{equation}\label{eq:levol}
+  \mathbf{G}(s) = \intd[_0^{\infty}]{t} \e^{(\MM-s) t}.
+\end{equation}
+%
+For $\Re s>0$, we have
+%
+\begin{equation}\label{eq:levolcalc}
+  (s-\MM)\mathbf{G}(s) = \intd[_0^{\infty}]{t} (s-\MM)\e^{(\MM-s) t} = \brk{-\e^{(\MM-s) t}}_0^{\infty} = \I.
+\end{equation}
+%
+As $(s-\MM)$ is invertible for $\Re s>0$, because the real part of all eigenvalues of $\MM$ are nonpositive, we have
+%
+\begin{equation}\label{eq:levolres}
+  \mathbf{G}(s) = (s-\MM)\inv.
+\end{equation}
+%
+For $s=0$, we can avoid problems by replacing $\mathbf{G}(s) \to \fund(s)$.
+
+Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurvehom} (ignoring the denominator)
+%
+\begin{equation}\label{eq:lsnr}
+\begin{aligned}
+  A(s) &= \intd[_0^{\infty}]{t} \e^{-st}\SNR(t) \\
+   &= \intd[_0^{\infty}]{t} \sqrt{N} \eq \ench \e^{(r\frgh-s)t} \w \\
+   &= \sqrt{N} \eq \ench \prn{s - r\frgh}\inv \w.
+\end{aligned}
+\end{equation}
+%
+This expression is ill-behaved at $s=0$.
+Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s) \to \fund(s)$, as $\ench\onev=0$.
+%
+\begin{equation}\label{eq:larea}
+\begin{aligned}
+  \hat{A}(s) = \frac{A(s)}{\sqrt{N}} &=  \eq \ench \fund(s) \w \\
+    &= \sum_{ijk} \eq_i \ench_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \eq_k \w_k \\
+    &= \sum_{ij}  \eq_i \ench_{ij} (\eta^w_{i}(s) - \eta^w_{j}(s)).
+\end{aligned}
+\end{equation}
+%
+Note that $A(0)=A$, the area, and $\lim_{s\to\infty} \brc{sA(s)} = \SNR(0)$, the initial SNR.
+
+In analogy with the case $s=0$, we define
+%
+\begin{equation}\label{eq:lareacoeffs}
+  \begin{aligned}
+    c_k(s) &= \sum_{ij} \eq_i \ench_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \\
+    a_i(s) &= \sum_j \eq_i \ench_{ij} (\eta^w_{i}(s) - \eta^w_{j}(s)),\\
+    \implies
+    \hat{A}(s) &= \sum_k c_k(s) \eq_k \w_k
+      = \sum_i a_i(s).
+  \end{aligned}
+\end{equation}
+%
+
+\subsection{Derivatives}\label{sec:lderiv}
+
+Using the same approach as the area bound in \cite{Lahiri2013synapse}, we find that the derivatives are
+%
+\begin{equation}\label{eq:lAdiff}
+\begin{aligned}
+  \pdiff{\hat{A}(s)}{\Mh\potdep_{mn}{}}
+     =&\, rf\potdep \eq_m \brk{ \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) a_i(s)
+     +c_m(s) (\eta^w_m(s) - \eta^w_n(s)) } \\
+     &\pm f\potdep \eq_m (\eta^w_m(s) - \eta^w_n(s)).
+\end{aligned}
+\end{equation}
+%
+
+
+
+
+
+\section{Upper bounds}\label{sec:upperbnds}
+
+
+
+\subsection{Area bound}\label{sec:area}
+
+
+%
+\begin{equation}\label{eq:areadef}
+  \int[_0^\infty]{dt} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) = A(0).
+\end{equation}
+%
+
+The only effect of $\hom$ is in the diagonal constraints (second column of \eqref{eq:constrh} vs.\ second inequality in \eqref{eq:constri}).
+However, the area is invariant under the scaling mode:
+%
+\begin{equation}\label{eq:scale}
+  \Mh\potdep - \I \to \lambda (\Mh\potdep - \I).
+\end{equation}
+%
+This means we can always take a set of matrices that violate either version of the diagonal constraints and use \eqref{eq:scale} to create a set of matrices that satisfy them without changing the area.
+Therefore, including $\hom$ has no effect on the area bound and the result from \cite{Lahiri2013synapse} applies here as well.
+
+This means that 
+%
+\begin{equation}\label{eq:areabnd}
+  A(0) \leq \frac{\sqrt{N}(M-1)}{r}.
+\end{equation}
+%
+The model that saturates this bound is one of serial topology with $\eq$ concentrated symmtrically at the two end states.
+
+
+
+\subsection{Initial SNR}\label{sec:initial}
+
+%
+\begin{equation}\label{eq:initdef}
+  \snr(0) = \snrb(0) = \lim_{s\to\infty} sA(s).
+\end{equation}
+%
+
+
+%
+\begin{equation}\label{eq:initbnd}
+  \snr(0) \leq \sqrt{N},
+\end{equation}
+%
+at least when $f\pot=f\dep=\frac{1}{2}$.
+
+
+\subsection{Envelope}\label{sec:envelope}
+
+Now we introduce an eigenvector decomposition for $-\frgh$:
+%
+\begin{equation}\label{eq:eigendecomp}
+  \frgh = - \sum_a q_a \evr^a \evl^a,
+  \quad
+  \evl^a \evr^b = \delta_{ab},
+  \quad
+  \frgh \evr^a = -q_a \evr^a,
+  \quad
+  \evl^a \frgh = -q_a \evl^a.
+\end{equation}
+%
+Then we can write
+%
+\begin{equation}\label{eqsnreig}
+  \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-rt/\tau_a},
+  \qquad
+  \snrb(\tau) = \sqrt{N}\sum_a \frac{\CI_a}{1+r\tau/\tau_a},
+\end{equation}
+%
+where
+%
+\begin{equation}\label{eq:snrcoeffs}
+  \CI_a = (\eq \ench \evr^a) (\evl^a \w),
+  \qquad
+  \tau_a = \frac{1}{q_a}.
+\end{equation}
+%
+From \eqref{eq:areabnd} and \eqref{eq:initbnd}, we see that they are subject to the constraints
+%
+\begin{equation}\label{eq:coeffconstr}
+  \sum_a \CI_a \tau_a \leq M-1,
+  \qquad
+  \sum_a \CI_a \leq 1.
+\end{equation}
+%
+No doubt there are many other constraints that these quantities must satisfy, but we can see what these ones imply for the $\snrb(\tau)$ by maximising it subject to these constraints.
+
+Consider the Lagrangian
+%
+\begin{equation}\label{eq:envlagrangian}
+  \CL = \sum_a \frac{\CI_a}{1+r\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
+\end{equation}
+%
+The Karush-Kuhn-Tucker necessary conditions for a maximum are
+%
+\begin{equation}\label{eq:envKTcond}
+  \pdiff{\CL}{\CI_a} = 0, \qquad
+  \pdiff{\CL}{\tau_a} = 0, \qquad
+  \mu_\alpha \geq 0, \qquad
+  \pdiff{\CL}{\mu_\alpha} \geq 0, \qquad
+  \mu_\alpha\pdiff{\CL}{\mu_\alpha} = 0. 
+\end{equation}
+%
+These are solved by
+%
+\begin{equation}\label{eq:envsol}
+\begin{gathered}
+  \CI_1 = 1, \qquad
+  \CI_{a>1} = 0, \qquad
+  \tau_1 = M-1, \\
+  \mu_\CI = \frac{(M-1)^2}{(r\tau + (M-1))^2}, \qquad
+  \mu_\CA = \frac{r\tau}{(r\tau+(M-1))^2}. \qquad
+\end{gathered}
+\end{equation}
+%
+This leads to the envelope
+%
+\begin{equation}\label{eq:env}
+  \snrb(\tau) \leq \frac{\sqrt{N}(M-1)}{r\tau + (M-1)}.
+\end{equation}
+%
+This is the envelope (``memory frontier'') that we can prove.
+Finding more constraints would lower it.
+Clearly there have to be more constraints, as \eqref{eq:envsol} indicates that this would be achieved by the same model at all times.
+This model would have to saturate both the initial SNR bound \eqref{eq:initbnd} and the area bound \eqref{eq:areabnd}, whereas we saw that they were achieved by different models, which perform well at short/long timescales respectively.
 
 %\subsection*{Acknowledgements}
 
