@@ -86,6 +86,9 @@
 \newcommand{\CA}{\mathcal{A}}
 \newcommand{\CB}{\mathcal{B}}
 \newcommand{\comp}{^\mathrm{c}}
+%avoid double superscripts
+\renewcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}}
+
 % ----------------------------------------------------------------
 \input{sl_theorems_preamble.tex}
 % ----------------------------------------------------------------
@@ -323,7 +326,7 @@ Combining with \eqref{eq:noise} gives
 %
 \begin{equation}\label{eq:SNRcurveExact}
   \SNR(t) = \frac{\sqrt{N} \eq \enc\,\e^{(r\frg+\hom)t}\w}
-                 {\sqrt{1-(f\pot-f\dep)^2(\eq_+-\eq_-)^2}}.
+                 {\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
 \end{equation}
 %
 We can absorb $\hom$ into $\MM\potdep$ by defining
@@ -342,7 +345,7 @@ Then the SNR curve is
 %
 \begin{equation}\label{eq:SNRcurvehom}
   \SNR(t) = \frac{\sqrt{N}  \eq \ench \,\e^{rt\frgh}\w}
-                 {\sqrt{1-(f\pot-f\dep)^2(\eq_+-\eq_-)^2}}.
+                 {\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
 \end{equation}
 %
 The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with $f\pot=f\dep$ or $\eq_+=\eq_-$.
@@ -414,27 +417,41 @@ The diagonal elements are determined by setting the row sums to 1.
 We then have
 %
 \begin{equation}\label{eq:derivpd}
-  \pdiff{\Mh\pot_{ij}}{\Mh\pot_{mn}{}} = \pdiff{\Mh\dep_{ij}}{\Mh\dep_{mn}{}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
+  \pdiff{\Mh\pot_{ij}}{\Mh\pot_{mn}} = \pdiff{\Mh\dep_{ij}}{\Mh\dep_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
   \qquad
-  \pdiff{\Mh\pot_{ij}}{\Mh\dep_{mn}{}} = \pdiff{\Mh\dep_{ij}}{\Mh\pot_{mn}{}} = 0.
+  \pdiff{\Mh\pot_{ij}}{\Mh\dep_{mn}} = \pdiff{\Mh\dep_{ij}}{\Mh\pot_{mn}} = 0.
 \end{equation}
 %
 It will also be convenient to define the differential operators
 %
 \begin{equation}\label{eq:pertfe}
-  \pdiff{}{\frgh_{ij}{}} = \frac{1}{2f\pot} \pdiff{}{\Mh\pot_{ij}{}} + \frac{1}{2f\dep} \pdiff{}{\Mh\dep_{ij}{}},
+  \pdiff{}{\frgh_{ij}} = \frac{1}{2f\pot} \pdiff{}{\Mh\pot_{ij}} + \frac{1}{2f\dep} \pdiff{}{\Mh\dep_{ij}},
   \qquad
-  \pdiff{}{\ench_{ij}{}} = \frac{1}{2f\pot} \pdiff{}{\Mh\pot_{ij}{}} - \frac{1}{2f\dep} \pdiff{}{\Mh\dep_{ij}{}},
+  \pdiff{}{\ench_{ij}} = \frac{1}{2f\pot} \pdiff{}{\Mh\pot_{ij}} - \frac{1}{2f\dep} \pdiff{}{\Mh\dep_{ij}},
 \end{equation}
 %
 these satisfy
 %
 \begin{equation}\label{eq:derivfe}
-  \pdiff{\frgh_{ij}}{\frgh_{mn}{}} = \pdiff{\ench_{ij}}{\ench_{mn}{}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
+  \pdiff{\frgh_{ij}}{\frgh_{mn}} = \pdiff{\ench_{ij}}{\ench_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
   \qquad
-  \pdiff{\frgh_{ij}}{\ench_{mn}{}} = \pdiff{\ench_{ij}}{\frgh_{mn}{}} = 0.
+  \pdiff{\frgh_{ij}}{\ench_{mn}} = \pdiff{\ench_{ij}}{\frgh_{mn}} = 0.
 \end{equation}
 %
+
+If we wish to use the off-diagonal elements of $\frgh$ and $\ench$ as the degrees of freedom, the constraints are
+%
+\begin{equation}\label{eq:constrfe}
+\begin{aligned}
+  \frgh_{i \neq j}   &\geq \abs{ \ench_{i \neq j} }, &\qquad
+  \sum_{j\neq i} \brk{ \ench_{ij} }_+ &\leq f\pot, \\
+  \sum_j \frgh_{ij} &=0, &
+  \sum_{j\neq i} \brk{ \ench_{ij} }_- &\geq -f\dep, \\
+  \sum_j \ench_{ij} &=0.
+\end{aligned}
+\end{equation}
+%
+
 
 
 
@@ -460,8 +477,8 @@ Suppose we have some row vector $\mathbf{a}$ such that $\mathbf{a}\onev=0$.
 Then $\mathbf{a}\fund(s)$ is independent of $\pib$:
 %
 \begin{equation}\label{eq:alfund}
-  \pdiff{(\mathbf{a}\fund(s))_i}{\pib_k} = (\mathbf{a}\fund(s)\onev) \fund_{ki}(s)
-      = \frac{\tau_0}{1+s\tau_0} (\mathbf{a}\onev) \fund_{ki}(s) = 0.
+  \pdiff{(\mathbf{a}\fund(s))_i}{\pib_k} = -(\mathbf{a}\fund(s)\onev) \fund_{ki}(s)
+      = -\frac{\tau_0}{1+s\tau_0} (\mathbf{a}\onev) \fund_{ki}(s) = 0.
 \end{equation}
 %
 
@@ -529,8 +546,8 @@ Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurvehom} (igno
 \begin{equation}\label{eq:lsnr}
 \begin{aligned}
   A(s) &= \intd[_0^{\infty}]{t} \e^{-st}\SNR(t) \\
-   &= \intd[_0^{\infty}]{t} \sqrt{N} \eq \ench \e^{(r\frgh-s)t} \w \\
-   &= \sqrt{N} \eq \ench \prn{s - r\frgh}\inv \w.
+   &= \intd[_0^{\infty}]{t} \frac{ \sqrt{N} \eq \ench \e^{(r\frgh-s)t} \w }{ \sqrt{1-(f\pot-f\dep)^2(\eq\w)^2} } \\
+   &= \frac{\sqrt{N} \eq \ench \prn{s - r\frgh}\inv \w }{\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
 \end{aligned}
 \end{equation}
 %
@@ -539,7 +556,7 @@ Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s)
 %
 \begin{equation}\label{eq:larea}
 \begin{aligned}
-  \hat{A}(s) = \frac{A(s)}{\sqrt{N}} &=  \eq \ench \fund(s) \w \\
+  \hat{A}(s) = A(s) \sqrt{\frac{{{1-(f\pot-f\dep)^2(\eq\w)^2}}}{N}}  &=  \eq \ench \fund(s) \w \\
     &= \sum_{ijk} \eq_i \ench_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \eq_k \w_k \\
     &= \sum_{ij}  \eq_i \ench_{ij} (\eta^w_{i}(s) - \eta^w_{j}(s)).
 \end{aligned}
@@ -565,12 +582,9 @@ In analogy with the case $s=0$, we define
 Using the same approach as the area bound in \cite{Lahiri2013synapse}, we find that the derivatives are
 %
 \begin{equation}\label{eq:lAdiff}
-\begin{aligned}
-  \pdiff{\hat{A}(s)}{\Mh\potdep_{mn}{}}
-     =&\, rf\potdep \eq_m \brk{ \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) a_i(s)
-     +c_m(s) (\eta^w_m(s) - \eta^w_n(s)) } \\
-     &\pm f\potdep \eq_m (\eta^w_m(s) - \eta^w_n(s)).
-\end{aligned}
+  \pdiff{\hat{A}(s)}{\Mh\potdep_{mn}}
+     = f\potdep \eq_m \brk{ \sum_i r[\fptb_{mi}(0)-\fptb_{ni}(0)]\, a_i(s)
+     +[rc_m(s) \pm 1] [\eta^w_m(s) - \eta^w_n(s)] } 
 \end{equation}
 %
 
@@ -710,14 +724,151 @@ This model would have to saturate both the initial SNR bound \eqref{eq:initbnd} 
 
 
 
+\section{Finite time}\label{sec:finite}
+
+Now we'll maximise $\snrb(\tau)$ for some fixed $\tau$, subject to the constraints \eqref{eq:constrh}.
+First, we will maximise the numerator of \eqref{eq:lsnr} holding $\eq\w$ fixed. 
+We can maximise the ration \wrt $\eq\w$ later.
+Consider the Lagrangian
+%
+\begin{equation}\label{eq:finitelagrangian}
+\begin{aligned}
+  \CL =&\, \sum_{ij} \eq_i \ench_{ij} (\eta^w_i(s) - \eta^w_j(s))
+        +\sum_{i\neq j} \prn{ f\pot\mu\pot_{ij} \Mh\pot_{ij} + f\dep\mu\dep_{ij} \Mh\dep_{ij} }\\
+        &+\sum_i \prn{ \mu\pot_{ii} \brk{ f\pot - \sum_{j\neq i} \theta_{ij} \ench_{ij} } }
+        +\sum_i \prn{ \mu\dep_{ii} \brk{ f\dep + \sum_{j\neq i} \bar{\theta}_{ij} \ench_{ij} } } \\
+        &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i\w_i },
+\end{aligned}
+\end{equation}
+%
+where $\theta_{ij} = 1-\bar{\theta}_{ij} = \Theta(\ench_{ij})$ and $\Delta\pr$ is the constant value we are holding $\eq\w$ at.
+After maximising
+The Karush-Kuhn-Tucker necessary conditions for a maximum are
+%
+\begin{equation}\label{eq:KTfinite}
+  \pdiff{\CL}{\Mh\potdep_{ij}} = 0, \quad
+  \mu\potdep_{ij} \geq 0, \quad
+  \pdiff{\CL}{\mu\potdep_{ij}} \geq 0, \quad
+  \mu\potdep_{ij}\pdiff{\CL}{\mu\potdep_{ij}} = 0, \quad
+  \pdiff{\CL}{\lambda} = 0.
+\end{equation}
+%
+The derivatives, for $m \neq n$ are
+%
+\begin{equation}\label{eq:finitederivs}
+\begin{aligned}
+  \frac{1}{f\potdep} \pdiff{\CL}{\Mh\potdep_{mn}} =& \,  
+     \eq_m \brk{ \sum_i r[\fptb_{mi}(0)-\fptb_{ni}(0)]\, a_i(s)
+     +[rc_m(s) \pm 1] [\eta^w_m(s) - \eta^w_n(s)] } \\
+     &+ \mu\potdep_{mn} \mp  \theta_{mn} \mu\pot_{mm} \pm  \bar{\theta}_{mn} \mu\dep_{mm} \\
+     &+ \lambda \eq_m \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) \eq_i\w_i.
+\end{aligned}
+\end{equation}
+%
+Below, we will consider various combinations of these derivatives that preserve $\eq$.
+
+\subsection{Increasing \texorpdfstring{$c_k$}{c(k)}}\label{sec:areacoeffincr}
+
+Consider the following combinations of derivatives:
+%
+\begin{equation}\label{eq:areacoeffincrderiv}
+    \Delta_{mn} \equiv
+      \frac{1}{\eq_{m}} \pdiffc{}{\frgh_{mn}}
+      + \frac{1}{\eq_n} \pdiffc{}{\frgh_{nm}}, 
+\end{equation}
+%
+
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+%
+\begin{equation}\label{eq:sareacoeffincrprob}
+  \Delta_{mn} \eq_i = 0,
+\end{equation}
+%
+which makes it possible to integrate the perturbation:
+%
+\begin{equation}\label{eq:areacoeffincrfinite}
+  \Mh\potdep \to \Mh\potdep + \frac{\D\boldsymbol{\epsilon}}{2f\potdep},
+  \qquad
+  \begin{aligned}
+  \boldsymbol{\epsilon} &= \boldsymbol{\epsilon}\trans,
+  \\
+  \boldsymbol{\epsilon} \onev &= 0.
+  \end{aligned}
+\end{equation}
+%
+But more interestingly:
+%
+\begin{align}
+%  \begin{aligned}
+\label{eq:areacoeffincr}
+    \Delta_{mn}\CL &=
+      \frac{\mu\pot_{mn} + \mu\dep_{mn}}{2\eq_m} + \frac{\mu\pot_{nm} + \mu\dep_{nm}}{2\eq_n}
+      + r\prn{c_m(s)-c_n(s)}\prn{\eta^w_{m}(s) - \eta^w_{n}(s)},\\
+%  \end{aligned}
+\end{align}
+%
+where $c_k$ were defined in \eqref{eq:lareacoeffs}.
+As this derivative is zero at a maximum, and the $\mu\potdep_{ij}$ are non negative, the last term must be nonpositive.
+Therefore, if we arrange the states in order of decreasing $\eta^w_i(s)$, the $c_k(s)$ must be nondecreasing.
 
 
+\subsubsection{Shortcuts}\label{sec:shortcuts}
 
+Now consider the following combinations of derivatives for $n>1$:
+%
+\begin{align}
+%  \begin{aligned}
+\label{eq:shortcutderiv}
+    \widetilde{\Delta}_{m,n} &\equiv
+      \brk{ \sum_{k=0}^{n-1} \frac{1}{\eq_{m+k}} \pdiffc{}{\frgh_{m+k,m+k+1}} }
+      - \frac{1}{\eq_m} \pdiffc{}{\frgh_{m,m+ n}}.
+%  \end{aligned}
+\end{align}
+%
 
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+%
+\begin{equation}\label{eq:shortcutprob}
+  \widetilde{\Delta}_{m,n} \eq_i = 0,
+\end{equation}
+%
+which makes it possible to integrate the perturbation:
+%
+\begin{equation}\label{eq:shortcutfinite}
+  \Mh\potdep \to \Mh\potdep + \frac{\D\boldsymbol{\epsilon}^{(m,n)}}{2f\potdep},
+  \qquad
+  \begin{aligned}
+    &\prn{\boldsymbol{\epsilon}^{(m,n)}}_{m,m+n}
+      &\!\!\!\!\!\!&= -\epsilon,\\
+    &\prn{\boldsymbol{\epsilon}^{(m,n)}}_{m+k,m+k+1}
+      &\!\!\!\!\!\!&= \epsilon
+        &\;
+        &\forall\, k \in [0,n-1],\\
+    &\prn{\boldsymbol{\epsilon}^{(m,n)}}_{m+k,m+k}
+      &\!\!\!\!\!\!&= -\epsilon
+        &
+        &\forall\, k \in [1,n-1].
+  \end{aligned}
+\end{equation}
+%
+But more interestingly for our purposes:
+%
+\begin{equation}\label{eq:shortcutarea}
+\begin{aligned}
+    \widetilde{\Delta}_{m,n}\CL =& \,
+      \brk{ \sum_{k=0}^{n-1} \frac{\mu\pot_{m+k,m+k+1}+\mu\dep_{m+k,m+k+1}}{\eq_{m+k}}
+      - \frac{\mu\pot_{m,m+n}+\mu\dep_{m,m+n}}{\eq_m}} \\
+      &+ r \sum_{k=0}^{n-1} \prn{\eta^w_{m+k}(s) - \eta^w_{m+k+1}(s)} \prn{c_{m+k}(s) - c_{m}(s)},
+\end{aligned}
+\end{equation}
+%
 
+If we put the states in order of decreasing $\eta^w_k(s)$, the results of the \sref{sec:areacoeffincr} tell us that the $c_k(s)$ are non-decreasing.
+This implies that the last term of the final expression in \eqref{eq:shortcutarea} is non-negative.
+If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu\potdep_{m,m+n}>0$, which in turn implies that $\Mh\potdep_{m,m+n}=0$ for all $n>1$. NO! ONLY ONE OF THEM.
 
-
-
+A similar technique also works for $n<1$.
+This implies that the only nonzero off-diagonal transitions are nearest neighbour.
 
 
 
