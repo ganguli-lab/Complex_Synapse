@@ -1,23 +1,23 @@
-function [ A,gr ] = OptFunGradChainSL( qv,s )
+function [ A,gr ] = OptFunGradChainSL( qv,s,fp )
 %OPTFUNGRADCHAINL Laplace transform of SNR curve for symmetric serial model
 %and gradient for fmincon
 %   Detailed explanation goes here
 
 [Wp,Wm,w]=MakeSMS(qv);
 
-p=qv./wrev(qv);
+p=fp*qv./wrev((1-fp)*qv);
 p=[1 cumprod(p)];
 p=p/sum(p);
 
 q=Wp-Wm;
 
-Zinv=ones(length(Wp))-Wm-0.5*q;
+Zinv=ones(length(Wp))-fp*Wp-(1-fp)*Wm;
 Zinvs=s*eye(length(Wp))+Zinv;
 
 a=q*(Zinvs\w);
 c=(p*q)/Zinvs;
 
-A=0.5*p*a;
+A=2*fp*(1-fp)*p*a;
 
 % %dA(s)/dq_(i,i+1)
 % dAdq = p(1:end-1).*(diff(Zinvs\w))';
@@ -30,7 +30,7 @@ A=0.5*p*a;
 gr= p(1:end-1).*diff(Zinv\a)' + (2*p(1:end-1)+c(1:end-1)).*diff(Zinvs\w)';
 
 A=-A;
-gr=-gr;
+gr=-2*fp*(1-fp)*gr;
 
 end
 

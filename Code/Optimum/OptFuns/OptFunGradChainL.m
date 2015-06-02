@@ -1,19 +1,20 @@
-function [ A,gr ] = OptFunGradChainL( qv,s )
+function [ A,gr ] = OptFunGradChainL( qv,s,fp )
 %OPTFUNGRADCHAINL Laplace transform of SNR curve for asymmetric serial model
 %and gradient for fmincon
 %   Detailed explanation goes here
+
 
 qp=qv(1:length(qv)/2);
 qm=qv(length(qv)/2+1:end);
 [Wp,Wm,w]=MakeMultistate(qp,qm);
 
-p=qp./qm;
+p=fp/(1-fp)*qp./qm;
 p=[1 cumprod(p)];
 p=p/sum(p);
 
 q=Wp-Wm;
 
-Zinv=ones(length(Wp))-Wm-0.5*q;
+Zinv=ones(length(Wp))-fp*Wp-(1-fp)*Wm;
 Zinvs=s*eye(length(Wp))+Zinv;
 
 a=q*(Zinvs\w);
@@ -22,7 +23,7 @@ c=(p*q)/Zinvs;
 Za=diff(Zinv\a)';
 Zw=diff(Zinvs\w)';
 
-A=0.5*p*a;
+A=2*fp*(1-fp)*p*a;
 
 % %dA(s)/dq_(i,i+1)
 % dAdq = p(1:end-1).*(diff(Zinvs\w))';
@@ -32,11 +33,11 @@ A=0.5*p*a;
 % gr = 2*dAdq+dAdW;
 
 %dA/dWp_(i,i+1)+dA/dWm_(n-i+1,n-i)
-grp= 0.5*p(1:end-1).*Za + (p(1:end-1)+0.5*c(1:end-1)).*Zw;
-grm= -0.5*p(2:end).*Za + (p(2:end)-0.5*c(2:end)).*Zw;
+grp= fp*p(1:end-1).*Za + (p(1:end-1)+fp*c(1:end-1)).*Zw;
+grm= -(1-fp)*p(2:end).*Za + (p(2:end)-(1-fp)*c(2:end)).*Zw;
 
 A=-A;
-gr=-0.5*[grp grm];
+gr=-2*fp*(1-fp)*[grp grm];
 
 end
 

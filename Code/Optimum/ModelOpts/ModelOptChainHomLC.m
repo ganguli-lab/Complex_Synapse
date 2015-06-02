@@ -20,11 +20,12 @@ if isempty(p)
     p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOptChainHomLC','TolFun'));
     p.addParameter('Algorithm','interior-point',@(x) validatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptChainHomLC','TolFun'));
     p.addParameter('Display','off',@(x) validatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOptChainHomLC','TolFun'));
+    p.addParameter('fp',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'ModelOptChainHomLC','fp'));
 end
 p.parse(varargin{:});
 r=p.Results;
 
-[ Ac,b ] = HomChainConstr( length(qv)/4+1, 0.5 );
+[ Ac,b ] = HomChainConstr( length(qv)/4+1, r.fp );
 
 
 options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
@@ -36,11 +37,11 @@ options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
 
 if r.UseDerivs
     options = optimset(options,'GradObj','on');
-    [newqv,A,ef] = fmincon(@(y)OptFunGradChainHomLC(y,sm),qv,...
+    [newqv,A,ef] = fmincon(@(y)OptFunGradChainHomLC(y,sm,r.fp),qv,...
         Ac,b,[],[],[],[],[],... 
         options);
 else
-    [newqv,A,ef] = fmincon(@(y)OptFunChainHomLC(y,sm),qv,...
+    [newqv,A,ef] = fmincon(@(y)OptFunChainHomLC(y,sm,r.fp),qv,...
         Ac,b,[],[],[],[],[],... 
         options);
 end

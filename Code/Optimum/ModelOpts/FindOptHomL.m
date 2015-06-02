@@ -1,6 +1,6 @@
 function [ Wp,Wm,Q,A ] = FindOptHomL( sm,n,varargin )
-%[Wp,Wm]=FINDOPTHOML(sm,n,reps) Find synapse model that maximises A(sm)
-%   t    = time value
+%[Wp,Wm,Q,A]=FINDOPTHOML(sm,n,reps) Find synapse model that maximises A(sm)
+%   sm   = inverse time value
 %   n    = #states
 %   reps = number of attempts we max over
 %   Wp = potentiation transition rates

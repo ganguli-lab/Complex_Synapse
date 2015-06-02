@@ -460,7 +460,7 @@ Suppose we have some row vector $\mathbf{a}$ such that $\mathbf{a}\onev=0$.
 Then $\mathbf{a}\fund(s)$ is independent of $\pib$:
 %
 \begin{equation}\label{eq:alfund}
-  \pdiff{(\mathbf{a}\fund(s))_i}{\pib_k} = (\mathbf{a}\fund(s)\onev) \fund_{ki}(s) 
+  \pdiff{(\mathbf{a}\fund(s))_i}{\pib_k} = (\mathbf{a}\fund(s)\onev) \fund_{ki}(s)
       = \frac{\tau_0}{1+s\tau_0} (\mathbf{a}\onev) \fund_{ki}(s) = 0.
 \end{equation}
 %
@@ -493,7 +493,7 @@ We can arrange the states in order of decreasing $\eta^{+}_i(s)$ or increasing $
 It will be more convenient to use the quantities
 %
 \begin{equation}\label{eq:lwpmixtime}
-  \eta^w_i(s) = \sum_j \fptb_{ij}(s)\eq_j \w 
+  \eta^w_i(s) = \sum_j \fptb_{ij}(s)\eq_j \w
     = \eta^+_i(s) - \eta^-_i(s) =2\eta^+_i(s) - \eta(s) =\eta(s) - 2\eta^-_i(s) .
 \end{equation}
 %
@@ -584,10 +584,10 @@ Using the same approach as the area bound in \cite{Lahiri2013synapse}, we find t
 
 \subsection{Area bound}\label{sec:area}
 
-
+The area under the SNR curve is:
 %
 \begin{equation}\label{eq:areadef}
-  \int[_0^\infty]{dt} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) = A(0).
+  \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) = A(0).
 \end{equation}
 %
 
@@ -595,31 +595,32 @@ The only effect of $\hom$ is in the diagonal constraints (second column of \eqre
 However, the area is invariant under the scaling mode:
 %
 \begin{equation}\label{eq:scale}
-  \Mh\potdep - \I \to \lambda (\Mh\potdep - \I).
+  \Mh\potdep  \to (1-\lambda)\I + \lambda \Mh\potdep .
 \end{equation}
 %
 This means we can always take a set of matrices that violate either version of the diagonal constraints and use \eqref{eq:scale} to create a set of matrices that satisfy them without changing the area.
 Therefore, including $\hom$ has no effect on the area bound and the result from \cite{Lahiri2013synapse} applies here as well.
 
-This means that 
+This means that
 %
 \begin{equation}\label{eq:areabnd}
   A(0) \leq \frac{\sqrt{N}(M-1)}{r}.
 \end{equation}
 %
-The model that saturates this bound is one of serial topology with $\eq$ concentrated symmtrically at the two end states.
+The model that saturates this bound is one of serial topology with $\eq$ concentrated symmetrically at the two end states.
 
 
 
 \subsection{Initial SNR}\label{sec:initial}
 
+The initial SNR is:
 %
 \begin{equation}\label{eq:initdef}
   \snr(0) = \snrb(0) = \lim_{s\to\infty} sA(s).
 \end{equation}
 %
 
-
+This satisfies the inequality
 %
 \begin{equation}\label{eq:initbnd}
   \snr(0) \leq \sqrt{N},
@@ -681,7 +682,7 @@ The Karush-Kuhn-Tucker necessary conditions for a maximum are
   \pdiff{\CL}{\tau_a} = 0, \qquad
   \mu_\alpha \geq 0, \qquad
   \pdiff{\CL}{\mu_\alpha} \geq 0, \qquad
-  \mu_\alpha\pdiff{\CL}{\mu_\alpha} = 0. 
+  \mu_\alpha\pdiff{\CL}{\mu_\alpha} = 0.
 \end{equation}
 %
 These are solved by
@@ -706,6 +707,25 @@ This is the envelope (``memory frontier'') that we can prove.
 Finding more constraints would lower it.
 Clearly there have to be more constraints, as \eqref{eq:envsol} indicates that this would be achieved by the same model at all times.
 This model would have to saturate both the initial SNR bound \eqref{eq:initbnd} and the area bound \eqref{eq:areabnd}, whereas we saw that they were achieved by different models, which perform well at short/long timescales respectively.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 %\subsection*{Acknowledgements}
 

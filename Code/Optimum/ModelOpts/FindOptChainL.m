@@ -1,10 +1,10 @@
 function [ qv,A ] = FindOptChainL( s,n,varargin )
-%[Wp,Wm]=FINDOPT(t,n,reps) Find synapse model that maximises SNR(t)
-%   t    = time value
+%[qv,A]=FINDOPT(s,n,reps) Find synapse model that maximises SNR(t)
+%   s    = inverse time value
 %   n    = #states
 %   reps = number of attempts we max over
-%   Wp = potentiation transition rates
-%   Wm = depression transition rates
+%   qv = nearest neighbour transition rates
+%   A  = Laplace Transf value
 
 persistent p
 if isempty(p)
@@ -32,7 +32,7 @@ if r.reps==1
     %     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
         [ qv,A ]=ModelOptChainL( qv,s,p.Unmatched);
     catch ME
-        A=-OptFunChainL(qv,s);
+        A=-OptFunChainL(qv,s,0.5);
         disp(ME.message);
         disp(['In function: ' ME.stack(1).name ' at line ' int2str(ME.stack(1).line) ' of ' ME.stack(1).file]);
         return;

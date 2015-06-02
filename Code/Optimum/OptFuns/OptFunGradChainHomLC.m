@@ -1,4 +1,4 @@
-function [ A,gr ] = OptFunGradChainHomLC( qv,s )
+function [ A,gr ] = OptFunGradChainHomLC( qv,s,fp )
 %OPTFUNGRADCHAINHOML Laplace transform of SNR curve and gradient for
 %asymmetric serial model with homeostatic plasticity for fmincon
 %   Detailed explanation goes here
@@ -15,13 +15,13 @@ Wm=StochastifyC(diag(q_dep_inc,1)+diag(q_dep_dec,-1));
 
 w=BinaryWeights(n+1);
 
-p=(q_pot_inc+q_dep_inc)./(q_pot_dec+q_dep_dec);
+p=(fp*q_pot_inc+(1-fp)*q_dep_inc)./(fp*q_pot_dec+(1-fp)*q_dep_dec);
 p=[1 cumprod(p)];
 p=p/sum(p);
 
 q=Wp-Wm;
 
-Zinv=ones(length(Wp))-Wm-0.5*q;
+Zinv=ones(length(Wp))-fp*Wp-(1-fp)*Wm;
 Zinvs=s*eye(length(Wp))+Zinv;
 
 a=q*(Zinvs\w);
@@ -30,7 +30,7 @@ c=(p*q)/Zinvs;
 Za=diff(Zinv\a)';
 Zw=diff(Zinvs\w)';
 
-A=0.5*p*a;
+A=2*fp*(1-fp)*p*a;
 
 % %dA(s)/dq_(i,i+1)
 % dAdq = p(1:end-1).*(diff(Zinvs\w))';
@@ -48,13 +48,13 @@ dAdq_inc= p(1:end-1).*Zw;
 %dA/dq_(i+1,i)
 dAdq_dec= - p(2:end).*Zw;
 
-gr_pot_inc=0.5*dAdW_inc+dAdq_inc;
-gr_pot_dec=0.5*dAdW_dec+dAdq_dec;
-gr_dep_inc=0.5*dAdW_inc-dAdq_inc;
-gr_dep_dec=0.5*dAdW_dec-dAdq_dec;
+gr_pot_inc=fp*dAdW_inc+dAdq_inc;
+gr_pot_dec=fp*dAdW_dec+dAdq_dec;
+gr_dep_inc=(1-fp)*dAdW_inc-dAdq_inc;
+gr_dep_dec=(1-fp)*dAdW_dec-dAdq_dec;
 
 A=-A;
-gr=-0.5*[gr_pot_inc gr_pot_dec gr_dep_inc gr_dep_dec];
+gr=-2*fp*(1-fp)*[gr_pot_inc gr_pot_dec gr_dep_inc gr_dep_dec];
 
 end
 

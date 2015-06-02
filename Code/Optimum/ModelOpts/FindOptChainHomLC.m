@@ -1,6 +1,6 @@
 function [ qv,A ] = FindOptChainHomLC( s,n,varargin )
-%[Wp,Wm]=FINDOPTCHAINHOMLC(t,n,reps) Find synapse model that maximises SNR(t)
-%   t    = time value
+%[qv,A]=FINDOPTCHAINHOMLC(s,n,reps) Find synapse model that maximises SNR(t)
+%   s    = inverse time value
 %   n    = #states
 %   reps = number of attempts we max over
 %   Wp = potentiation transition rates
@@ -37,7 +37,7 @@ if r.reps==1
     %     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
         [ qv,A ]=ModelOptChainHomLC( qv,s,p.Unmatched);
     catch ME
-        A=-OptFunChainHomLC(qv,s);
+        A=-OptFunChainHomLC(qv,s,0.5);
         disp(ME.message);
         disp(['In function: ' ME.stack(1).name ' at line ' int2str(ME.stack(1).line) ' of ' ME.stack(1).file]);
         return;
