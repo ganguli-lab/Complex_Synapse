@@ -1,5 +1,5 @@
 function [ A ] = SNRlaplace( obj,s )
-%A=SynapseMemoryModel.SNRLAPLACE Laplace transform of SNR curve for complex synapse (cts time)
+%A=SynapseMemoryModel.SNRLAPLACE(s) Laplace transform of SNR curve for complex synapse (cts time)
 %   A(s) = int exp(-s*t)*SNR(t) dt
 %   s  = parameter of Laplace transform
 %   WP = potentiation transition rates
@@ -13,7 +13,7 @@ if isscalar(s)
 else
     A=zeros(size(s));
     for i=1:numel(s)
-        A(i)=SNRlaplace(s(i),Wp,Wm,fp,w);
+        A(i)=obj.SNRlaplace(s(i));
     end
 end
 

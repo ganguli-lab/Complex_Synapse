@@ -368,14 +368,7 @@ Update;
     end
 
     function PrintFrame(imnumber)
-    f=getframe(figure1);
-    [im,map] = frame2im(f);    %Return associated image data 
-    if isempty(map)            %Truecolor system
-      rgb = im;
-    else                       %Indexed system
-      rgb = ind2rgb(im,map);   %Convert image data
-    end
-        imwriter.writeFrame(rgb,imnumber);
+        imwriter.writeFig(figure1,imnumber);
     end
 
 end
