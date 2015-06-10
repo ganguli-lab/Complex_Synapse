@@ -1,9 +1,10 @@
-function [ Aenv ] = SerialLaplaceEnv( s,numstates )
+function [ Aenv,sbnd] = SerialLaplaceEnv( s,numstates )
 %As=SerialLaplaceEnv(s,numstates) maximum Laplace transform of SNR
 %curve for serial topology models
-%   Aenv = max Laplace transform of SNR curve
 %   s         = inverse timescale, Laplace transform parameter
 %   numstates = # states
+%   Aenv = max Laplace transform of SNR curve
+%   sbnd = boundaries of regimes [sticky-uniform-shorter-binary]
 
 Aenv=UniSerialLaplaceEnv(s);
 
@@ -18,6 +19,9 @@ stickymax=StickySerialLaplaceEnvMax(numstates);
 Aenv(s>smax)=AenvBinary(s>smax);
 Aenv(s<smin)=AenvUni(s<smin);
 Aenv(s<stickymax)=AenvSticky(s<stickymax);
+
+
+sbnd=[stickymax smin smax];
 
 end
 
