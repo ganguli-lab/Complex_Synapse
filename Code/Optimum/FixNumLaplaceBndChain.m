@@ -21,18 +21,22 @@ for j=1:length(inds)
     chains(i).s=srange(i);
     
     switch mode
-        case 'n'
-            [chains(i).qv,chains(i).A]=FindOptChainL(srange(i),nstates,reps,varargin{:});
-            qp=chains(i).qv(1:nstates-1);
-            qm=chains(i).qv(nstates:end);
-        case 's'
+        case 'sym'
+            [chains(i).qv,chains(i).A]=FindOptChainSL(srange(i),nstates,50,varargin{:});
+            qp=chains(i).qv;
+            qm=wrev(qp);
+        case 'homs'
             [chains(i).qv,chains(i).A]=FindOptChainHomL(srange(i),nstates,reps,varargin{:});
             [qp,qm]=MakeHomq(chains(i).qv,0.5);
-        case 'c'
+        case 'homc'
             [chains(i).qv,chains(i).A]=FindOptChainHomLC(srange(i),nstates,reps,varargin{:});
             [qp,qm]=MakeHomqC(chains(i).qv,0.5);
-        case 'a'
+        case 'homa'
             [chains(i).qv,chains(i).A]=FindOptChainHomLA(srange(i),nstates,reps,varargin{:});
+            qp=chains(i).qv(1:nstates-1);
+            qm=chains(i).qv(nstates:end);
+        otherwise
+            [chains(i).qv,chains(i).A]=FindOptChainL(srange(i),nstates,reps,varargin{:});
             qp=chains(i).qv(1:nstates-1);
             qm=chains(i).qv(nstates:end);
     end

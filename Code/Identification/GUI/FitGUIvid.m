@@ -16,11 +16,13 @@ figure1 = figure('Units','pixels','OuterPosition',[0 64 2560 1536]);
 
 %Create panels
 model_true=uipanel(figure1,'Units','normalized',...
-        'Position',[0 0 0.2 1]);%left bottom width height
+    'BackgroundColor','w',...
+    'Position',[0 0 0.2 1]);%left bottom width height
 set(model_true,'Title','True model','FontSize',AxFontSize);
 %
 model_est=uipanel(figure1,'Units','normalized',...
-        'Position',[0.8 0 0.2 1]);%left bottom width height
+    'BackgroundColor','w',...
+    'Position',[0.8 0 0.2 1]);%left bottom width height
 set(model_est,'Title','Estimated model','FontSize',AxFontSize);
 %
 % controls=uipanel(figure1,'Units','normalized',...
@@ -28,11 +30,13 @@ set(model_est,'Title','Estimated model','FontSize',AxFontSize);
 % set(controls,'Title','Controls','FontSize',AxFontSize);
 %
 simulation=uipanel(figure1,'Units','normalized',...
-        'Position',[0.2 0.45 0.6 0.55]);%left bottom width height
+    'BackgroundColor','w',...
+    'Position',[0.2 0.45 0.6 0.55]);%left bottom width height
 set(simulation,'Title','Simulation','FontSize',AxFontSize);
 %
 metrics=uipanel(figure1,'Units','normalized',...
-        'Position',[0.2 0 0.6 0.45]);%left bottom width height
+    'BackgroundColor','w',...
+    'Position',[0.2 0 0.6 0.45]);%left bottom width height
 set(metrics,'Title','Metrics','FontSize',AxFontSize);
 
 %Create axes

@@ -1,5 +1,5 @@
-function LaplaceEnvGUI( srange, Qmat, AenvNum, NumSynapse, inds )
-%LAPLACEENVGUI(srange,Qmat,AenvNum,NumSynapse,inds) GUI for displaying Laplacian
+function LaplaceEnvGUIVid( imwriter,srange, Qmat, AenvNum, NumSynapse, inds )
+%LAPLACEENVGUIVID(imwriter,srange,Qmat,AenvNum,NumSynapse,inds) GUI for displaying Laplacian
 %envelope 
 %   Detailed explanation goes here
 
@@ -7,7 +7,7 @@ function LaplaceEnvGUI( srange, Qmat, AenvNum, NumSynapse, inds )
 %Formatting options
 
 AxFontSize=20;
-BtFontSize=16;
+% BtFontSize=16;
 EnvLinewidth=3;
 ModelLineWidth=2;
 TimeLineWidth=2;
@@ -31,32 +31,33 @@ AenvProven=sqrt(NumSynapse)*(M-1)./(tau+(M-1));
 snr_xlim=[tau(1) tau(end)];
 snr_ylim=[AenvNum(end) 5*sqrt(NumSynapse)];
 
-Play=false;
-frNumber=1;
+% Play=false;
+% frNumber=1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure
 
-figure1 = figure('Units','pixels','OuterPosition',[0 64 2560 1536]);
+figure1 = figure('Units','pixels','Position',[0 64 2560 1536],'PaperPositionMode','auto');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Panels
 
 %snr curves
 snr_ph=uipanel(figure1,'Units','normalized',...
-    'Position',[0 0.15 0.5 0.85]);%left bottom width height
-set(snr_ph,'Title','SNR curves','FontSize',AxFontSize);
-%    'BackgroundColor','w',...
+    'BackgroundColor','w',...
+    'Position',[0 00 0.5 1]);%left bottom width height
+% set(snr_ph,'Title','SNR curves','FontSize',AxFontSize);
 
 %current model
 model_ph=uipanel(figure1,'Units','normalized',...
-    'Position',[0.5 0.15 0.5 0.85]);%left bottom width height
-set(model_ph,'Title','Current model','FontSize',AxFontSize);
+    'BackgroundColor','w',...
+    'Position',[0.5 0 0.5 1]);%left bottom width height
+% set(model_ph,'Title','Current model','FontSize',AxFontSize);
 
-%slider for frameNumber
-slider_ph=uipanel(figure1,'Units','normalized',...
-    'Position',[0 0 1 0.15],'FontSize',AxFontSize);
-set(slider_ph,'Title','Frame');
+% %slider for frameNumber
+% slider_ph=uipanel(figure1,'Units','normalized',...
+%     'Position',[0 0 1 0.15],'FontSize',AxFontSize);
+% set(slider_ph,'Title','Frame');
 
 
 
@@ -84,49 +85,57 @@ model_ax(3) = axes('Parent',model_ph,...
 cbpos=[0.85 0.05 0.05 0.9];
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%Create slider: frameNumber
-%slider
-slh4=uicontrol(slider_ph,'Style','slider',...
-                'Max',length(tau),'Min',1,...
-                'Value',frNumber,...
-                'SliderStep',[1 10]/length(tau),...
-                'Units','normalized',...
-                'Position',[0.1 0.25 0.8 0.7],...
-                'Callback',{@sl_callback4});
-%slider labels
-uicontrol(slider_ph,'Style','text',...
-                'String',tau(1),...
-                'Units','normalized',...
-                'FontSize',BtFontSize,...
-                'Position',[0.1 0.05 0.08 0.2]);
-uicontrol(slider_ph,'Style','text',...
-                'String',tau(end),...
-                'Units','normalized',...
-                'FontSize',BtFontSize,...
-                'Position',[0.85 0.05 0.05 0.2]);
-%Play button
-pbh4=...
-uicontrol(slider_ph,'Style','pushbutton',...
-                'String','Play',...
-                'Units','normalized',...
-                'Position',[0.0 0.25 0.1 0.7],...
-                'FontSize',BtFontSize,...
-                'Callback',{@pb_callback4});
-%display value of slider
-ed4=uicontrol(slider_ph,'Style','edit',...
-                'String',num2str(tau(frNumber)),...
-                'Units','normalized',...
-                'Position',[0.9 0.25 0.1 0.7],...
-                'FontSize',BtFontSize,...
-                'Callback',{@ed_callback4});
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %Create slider: frameNumber
+% %slider
+% slh4=uicontrol(slider_ph,'Style','slider',...
+%                 'Max',length(tau),'Min',1,...
+%                 'Value',frNumber,...
+%                 'SliderStep',[1 10]/length(tau),...
+%                 'Units','normalized',...
+%                 'Position',[0.1 0.25 0.8 0.7],...
+%                 'Callback',{@sl_callback4});
+% %slider labels
+% uicontrol(slider_ph,'Style','text',...
+%                 'String',tau(1),...
+%                 'Units','normalized',...
+%                 'FontSize',BtFontSize,...
+%                 'Position',[0.1 0.05 0.08 0.2]);
+% uicontrol(slider_ph,'Style','text',...
+%                 'String',tau(end),...
+%                 'Units','normalized',...
+%                 'FontSize',BtFontSize,...
+%                 'Position',[0.85 0.05 0.05 0.2]);
+% %Play button
+% pbh4=...
+% uicontrol(slider_ph,'Style','pushbutton',...
+%                 'String','Play',...
+%                 'Units','normalized',...
+%                 'Position',[0.0 0.25 0.1 0.7],...
+%                 'FontSize',BtFontSize,...
+%                 'Callback',{@pb_callback4});
+% %display value of slider
+% ed4=uicontrol(slider_ph,'Style','edit',...
+%                 'String',num2str(tau(frNumber)),...
+%                 'Units','normalized',...
+%                 'Position',[0.9 0.25 0.1 0.7],...
+%                 'FontSize',BtFontSize,...
+%                 'Callback',{@ed_callback4});
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 warning('off','MATLAB:handle_graphics:exceptions:SceneNode');
 
-changeFrameNumber(frNumber);
+% changeFrameNumber(frNumber);
+% 
+%    while frNumber < length(tau)
+%        changeFrameNumber(frNumber+1);
+%    end %while Play
+   
+for i=1:length(tau)
+    changeFrameNumber(i);
+end
 
-
+close(figure1);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Plotting functions
@@ -195,22 +204,23 @@ changeFrameNumber(frNumber);
    end
 
     function changeFrameNumber(frameNumber)
-        frNumber=frameNumber;
-        set(ed4,'String',num2str(tau(frameNumber)));
-        set(slh4,'Value',frameNumber);
+%         frNumber=frameNumber;
+%         set(ed4,'String',num2str(tau(frameNumber)));
+%         set(slh4,'Value',frameNumber);
         PlotSNR(frameNumber);
         PlotModel(frameNumber);
         drawnow;
+        PrintFrame(frameNumber);
     end
 
-    function DoPlay
-       while Play && frNumber < length(tau)
-           changeFrameNumber(frNumber+1);
-       end %while Play
-       Play=true;
-       pb_callback4(pbh4);
-    end %function DoPlay
-
+%     function DoPlay
+%        while Play && frNumber < length(tau)
+%            changeFrameNumber(frNumber+1);
+%        end %while Play
+%        Play=true;
+%        pb_callback4(pbh4);
+%     end %function DoPlay
+% 
     function [newqp,newqm]=ZeroIrrel(qp,qm)
         newqp=qp;
         newqm=qm;
@@ -226,32 +236,35 @@ changeFrameNumber(frNumber);
         end
     end
 
+    function PrintFrame(frameNumber)
+        imwriter.writeFig(figure1,frameNumber);
+    end
         
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Callbacks
 
 
 
-    function sl_callback4(source,~)
-        changeFrameNumber(round(get(source,'Value')));
-    end %sl1_callback
-
-    function ed_callback4(source,~)
-        time=str2double(get(source,'String'));
-        frameNumber=find(tau>=time,1,'first');
-        changeFrameNumber(frameNumber);
-    end %sl1_callback
-
-    function pb_callback4(source,~)
-        Play=~Play;
-        if Play
-            set(source,'String','Pause');
-            DoPlay;
-        else
-            set(source,'String','Play');
-        end %if
-    end %sl1_callback
-
+%     function sl_callback4(source,~)
+%         changeFrameNumber(round(get(source,'Value')));
+%     end %sl1_callback
+% 
+%     function ed_callback4(source,~)
+%         time=str2double(get(source,'String'));
+%         frameNumber=find(tau>=time,1,'first');
+%         changeFrameNumber(frameNumber);
+%     end %sl1_callback
+% 
+%     function pb_callback4(source,~)
+%         Play=~Play;
+%         if Play
+%             set(source,'String','Pause');
+%             DoPlay;
+%         else
+%             set(source,'String','Play');
+%         end %if
+%     end %sl1_callback
+% 
 
 
 
