@@ -6,7 +6,7 @@ function LaplaceEnvGUI( srange, Qmat, AenvNum, NumSynapse, inds )
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Formatting options
 
-AxFontSize=20;
+AxFontSize=30;
 BtFontSize=16;
 EnvLinewidth=3;
 ModelLineWidth=2;
@@ -15,6 +15,10 @@ EqLineWidth=2;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Data
+
+if ~exist('inds','var') || isempty(inds)
+    inds=1:length(srange);
+end
 
 M=size(Qmat,1)/2+1;
 
@@ -175,7 +179,11 @@ changeFrameNumber(frNumber);
        line([1;1]*(1.5:1:M-0.5),[0.5;1.5]*ones(1,M-1),'Parent',model_ax(2),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
        bar(model_ax(3),qm,'b');
        
+       xlim(model_ax(1),[0 M]);
+       xlim(model_ax(2),[0.5 M+0.5]);
+       xlim(model_ax(3),[0 M]);
        ylim(model_ax(1),[0 1]);
+       ylim(model_ax(2),[0.5 1.5]);
        ylim(model_ax(3),[0 1]);
        
        title(model_ax(1),'Potentiation transition probability','FontSize',AxFontSize);
