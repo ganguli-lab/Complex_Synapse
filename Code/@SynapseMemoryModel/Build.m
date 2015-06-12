@@ -1,8 +1,6 @@
 function [ newobj ] = Build( func,varargin )
-%newobj=BUILD(func,fp,varargin) build SynapseIdModel from function
-%   [Wp,Wm,newobj.w]=func(varargin{:})
-%   newobj.Initial=EqProb(fp*Wp+(1-fp)*Wm)
-%   newobj.M={Wp+eye,Wm+eye}
+%newobj=BUILD(func,fp,extraArgs) build SynapseMemoryModel from function
+%   [newobj.Wp,newobj.Wm,newobj.w]=func(extraArgs{:})
 
 
 persistent p

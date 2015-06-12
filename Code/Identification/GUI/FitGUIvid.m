@@ -17,23 +17,23 @@ figure1 = figure('Units','pixels','OuterPosition',[0 64 2560 1536]);
 %Create panels
 model_true=uipanel(figure1,'Units','normalized',...
         'Position',[0 0 0.2 1]);%left bottom width height
-set(model_true,'Title','True model');
+set(model_true,'Title','True model','FontSize',AxFontSize);
 %
 model_est=uipanel(figure1,'Units','normalized',...
         'Position',[0.8 0 0.2 1]);%left bottom width height
-set(model_est,'Title','Estimated model');
+set(model_est,'Title','Estimated model','FontSize',AxFontSize);
 %
 % controls=uipanel(figure1,'Units','normalized',...
 %         'Position',[0.2 0.9 0.6 0.1]);%left bottom width height
-% set(controls,'Title','Controls');
+% set(controls,'Title','Controls','FontSize',AxFontSize);
 %
 simulation=uipanel(figure1,'Units','normalized',...
         'Position',[0.2 0.45 0.6 0.55]);%left bottom width height
-set(simulation,'Title','Simulation');
+set(simulation,'Title','Simulation','FontSize',AxFontSize);
 %
 metrics=uipanel(figure1,'Units','normalized',...
         'Position',[0.2 0 0.6 0.45]);%left bottom width height
-set(metrics,'Title','Metrics');
+set(metrics,'Title','Metrics','FontSize',AxFontSize);
 
 %Create axes
 ax_true(1) = axes('Parent',model_true,'OuterPosition',[0 0.6 1 0.4]);%left bottom width height
