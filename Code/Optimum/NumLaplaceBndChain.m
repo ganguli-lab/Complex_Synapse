@@ -1,11 +1,10 @@
 function [ chains ] = NumLaplaceBndChain( srange,nstates,trange,mode,varargin )
-%chains=NUMLAPLACEBNDCHAIN(srange,nstates,trange,sym) numeric laplace bound
+%chains=NUMLAPLACEBNDCHAIN(srange,nstates,trange,mode) numeric laplace bound
 %   chains  = struct array (size=[1 length(srange)])
 %   srange  = values of Laplace parameter at which we maximise
 %   nstates = number of states in chain
 %   trange  = values of time for snr curve
-%   sym     = search for symmetric chains?
-%   hom     = include homeostatic plasticity?
+%   mode    = search for symmetric chains? include homeostatic plasticity?
 %   chains.s   = value of Laplace parameter at which we optimised
 %   chains.qv  = nearest neighbour transitions of optimal model
 %   chains.A   = value of Laplace transform at s for optimal model

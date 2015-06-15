@@ -53,7 +53,9 @@ else
             A=At;
         end
     end
+        if r.DispReps
             DispCounter(r.reps+1,r.reps,'rep: ');
+        end
     
 end
 

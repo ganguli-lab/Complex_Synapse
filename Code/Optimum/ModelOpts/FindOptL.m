@@ -56,6 +56,9 @@ else
     Wm=[];
     A=0;
     for i=1:r.reps
+        if r.DispReps
+            DispCounter(i,r.reps,'rep: ');
+        end
 %         [ Wpt,Wmt,At ] = FindOptL( sm,n,1, p.Unmatched,'InitRand',r.InitRand,'Triangular',r.Triangular );
         [ Wpt,Wmt,At ] = FindOptL( sm,n,1, p.Unmatched,'InitRand',r.InitRand );
         if At>A
@@ -63,11 +66,11 @@ else
             Wm=Wmt;
             A=At;
         end
-        if r.DispReps
-            disp([int2str(i) '/' int2str(r.reps)]);
-        end
     end
-    
+        if r.DispReps
+            DispCounter(r.reps+1,r.reps,'rep: ');
+        end
+   
 end
 
 end

@@ -55,16 +55,19 @@ else
     Wm=[];
     snr=0;
     for i=1:r.reps
+        if r.DispReps
+            DispCounter(i,r.reps,'rep: ');
+        end
         [ Wpt,Wmt,St ] = FindOpt( t,n,1, p.Unmatched,'InitRand',r.InitRand,'Triangular',r.Triangular );
         if St>snr
             Wp=Wpt;
             Wm=Wmt;
             snr=St;
         end
-        if r.DispReps
-            disp([int2str(i) '/' int2str(r.reps)]);
-        end
     end
+        if r.DispReps
+            DispCounter(r.reps+1,r.reps,'rep: ');
+        end
         
 end
 
