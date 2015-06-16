@@ -22,12 +22,16 @@ for j=1:length(inds)
     switch mode
         case 'hom'
             [mats(i).Wp,mats(i).Wm,mats(i).Q,mats(i).A]=FindOptHomL(srange(i),nstates,reps,varargin{:});
+            Wp=mats(i).Wp+mats(i).Q;
+            Wm=mats(i).Wm+mats(i).Q;
         otherwise
             [mats(i).Wp,mats(i).Wm,mats(i).A]=FindOptL(srange(i),nstates,reps,varargin{:});
+            Wp=mats(i).Wp;
+            Wm=mats(i).Wm;
     end
     
     w=BinaryWeights(nstates);
-    modelobj=SynapseMemoryModel('Wp',mats(i).Wp+mats(i).Q,'Wm',mats(i).Wm+mats(i).Q,'w',w,'fp',0.5);
+    modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
     
     mats(i).snr=modelobj.SNRcurve(trange);
     

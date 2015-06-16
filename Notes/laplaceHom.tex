@@ -95,7 +95,7 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title info:
-\title{Laplacian envelope}
+\title{Laplacian envelope with activity-independent plasticity}
 %
 % Author List:
 %
@@ -248,69 +248,50 @@ We denote the probability distribution across these states by the row vector $\p
 We denote a column vector of ones by $\onev$, so the normalisation condition is $\pr(t)\onev=1$.
 
 When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices $\M\potdep$ whose $i,j$ elements are the transition probabilities from state $i$ to state $j$.
-The matrices $\M\potdep$ are transition matrices of discrete time Markov processes.
+In between these plasticity events the synapse will undergo stochastic transitions described by a matrix $\hom$ whose $i,j$ element is the transition rate from state $i$ to state $j$ for $i \neq j$ and $\hom_{ii}=-\sum_{j \neq i} \hom_{ij}$.
+This allows us to describe homeostatic plasticity as well as plasticity processes that occur over a period of time -- $\M\potdep$ puts the synapse into some state where the process $\hom$ takes over and does the rest.
+The matrices $\M\potdep$ are transition matrices of discrete time Markov processes, whereas $\hom$ is the transition matrix of a continuous time Markov process.
 Their elements must satisfy the following constraints
 %
 \begin{equation}\label{eq:constr}
 \begin{aligned}
   \M\potdep_{ij} &\geq 0, &\qquad
-  \sum_j \M\potdep_{ij} &= 1.
+  \sum_j \M\potdep_{ij} &= 1, \\
+  \hom_{i \neq j} &\geq 0, &\qquad
+  \sum_j \hom_{ij} &= 0.
 \end{aligned}
 \end{equation}
 %
-The upper bounds $\M\potdep_{ij} \leq 1$ follow automatically from these.
+The upper bounds $\M\potdep_{ij} \leq 1$ and $\hom_{ii} \leq 0$ follow automatically from these.
+There is no upper bound on $\hom_{i \neq j}$ (or lower bound on $\hom_{ii}$) as these are rates rather than probabilities.
 
 If we treat the off diagonal elements as the independent degrees of freedom, with the off diagonal elements determined by the row sum constraints (second column of \eqref{eq:constr}), the constraints are
 %
 \begin{equation}\label{eq:constri}
   \M\potdep_{i \neq j} \geq 0, \qquad
-  \sum_{j\neq i} \M\potdep_{ij} \leq 1.
+  \sum_{j\neq i} \M\potdep_{ij} \leq 1, \qquad
+  \hom_{i \neq j} \geq 0.
 \end{equation}
 %
 The second of these will be referred to as the ``diagonal'' constraint.
 
-Given a sequence of plasticity events at times $t_1,t_2,t_3,\ldots$, the probability distribution across the internal states at time $t_n$ is
+Given a sequence of plasticity events at times $t_1,t_2,t_3,\ldots$, the probability distribution across the internal states is
 %
 \begin{equation}\label{eq:plastseq}
-  \pr(t_n) = \pr(t_0)  \M\pot \M\dep \M\dep \M\pot \M\dep \M\pot \M\pot \M\dep \ldots \M\pot .
+  \pr(t_n) = \pr(t_0) \e^{\hom(t_1-t_0)} \M\pot \e^{\hom(t_2-t_1)} \M\dep \e^{\hom(t_3-t_4)} \M\dep \ldots \M\pot \e^{\hom(t_n-t_{n-1})}.
 \end{equation}
 %
-If the probability of a given plasticity event being poetitiating/depressing os $f\potdep$, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
-
 In computing the expectation in \eqref{eq:overlapone} the plasticity event that occurs at $t=0$ is fixed, but all of the previous and subsequent events are marginalised over.
-If we marginalise over the types (potentiating/depressing) of these other events (conditioned on the number of events) we find
-%
-\begin{multline}\label{eq:plastseqtypes}
-  \pr(t_n) = \pr(t_0) (f\pot\M\pot+f\dep\M\dep)  \ldots (f\pot\M\pot+f\dep\M\dep) \\
-    \M\potdep (f\pot\M\pot+f\dep\M\dep) \ldots (f\pot\M\pot+f\dep\M\dep),
-\end{multline}
-%
-where the factor of $\M\potdep$ is the event at $t=0$.
-If we expand out all of the parenthetical factors, we will get a sum of terms of the form \eqref{eq:plastseq} weighted by their probabilities.
-
-If $t_0 \ll 0$, the effect of the large number of earlier events will be to put the synapse in the steady state distribution, $\eq$, of the stochastic process $(f\pot\M\pot+f\dep\M\dep)$:
-%
-\begin{equation}\label{eq:plastseqeq}
-  \pr(t_n) = \eq \M\potdep (f\pot\M\pot+f\dep\M\dep)^n,
-\end{equation}
-%
-where $n$ is the number of plasticity events that took place.
-
-If the plasticity events occur at Poisson rate $r$, the probability of $n$ events occurring in time $t$ is given by a Poisson distribution with mean $rt$.
-If we marginalise over $n$as well
+If the plasticity events occur at Poisson rate $r$, with potentiation and depression occurring independently with probability $f\potdep$, averaging over all previous and subsequent events gives
 %
 \begin{equation}\label{eq:plastseqav}
-\begin{aligned}
-  P(\text{state}=i,t \mid \text{pot/dep},0) 
-    &= \sum_n \frac{(rt)^n}{n!} \e^{-rt} \eq \M\potdep (f\pot\M\pot+f\dep\M\dep)^n \\
-    &= \brk{ \eq \M\potdep\, \e^{rt(f\pot\M\pot+f\dep\M\dep-\I) } }_i,
-\end{aligned}
+  P(\text{state}=i,t \mid \text{pot/dep},0) = \brk{ \eq \M\potdep\, \e^{r(f\pot\M\pot+f\dep\M\dep-\I)t +\hom t} }_i,
 \end{equation}
 %
 where $\eq$ is the steady state distribution of the continuous time transition matrix that appears in the exponential:
 %
 \begin{equation}\label{eq:eq}
-  \eq\frg = 0,
+  \eq(r\frg +\hom) = 0,
   \qquad\text{where}\quad
   \frg = f\pot\M\pot + f\dep\M\dep - \I.
 \end{equation}
@@ -322,11 +303,11 @@ This results in
 %
 \begin{equation}\label{eq:overlapwt}
 \begin{aligned}
-  \av{\syn^1_\text{ideal}\syn^1(t)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \e^{rt\frg} \w, \\
+  \av{\syn^1_\text{ideal}\syn^1(t)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \e^{(r\frg+\hom)t} \w, \\
   \av{\syn^1_\text{ideal}\syn^1(\infty)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \onev\eq \w \\
          &= \eq (f\pot\onev-f\dep\onev)\, \eq \w \\
          &=  (f\pot-f\dep)\, \eq \w \\
-         &=  (f\pot-f\dep)\, \eq \e^{rt\frg} \w .
+         &=  (f\pot-f\dep)\, \eq \e^{(r\frg+\hom)t} \w .
 \end{aligned}
 \end{equation}
 %
@@ -373,43 +354,100 @@ First maximise the numerator at fixed $\eq\w$.
 Then maximise the ratio \wrt $\eq\w$.
 This will allow us to ignore the denominator until the very end.
 
+This formula takes the same form as the one in our NIPS paper \cite{Lahiri2013synapse}, where the process $\hom$ was not included.
+However, the process $\hom$ still has an impact due to the constraints.
 
+The constraints on $\Mh\potdep$ are less stringent than the constraints on $\M\potdep$, \eqref{eq:constr}.
+Clearly
+%
+\begin{equation}\label{eq:constrhoffdiag}
+  \Mh\potdep_{i \neq j} \geq 0, \qquad
+  \sum_j \Mh\potdep_{ij} = 1.
+\end{equation}
+%
+The ``diagonal'' constraints are more complicated.
+There can be many $\M\potdep,\hom$ that result in the same $\Mh\potdep$.
+However, the fact that $\M\potdep_{ij} \in [0,1]$ and $\hom_{i\neq j} \geq 0$ imply that $\forall (i \neq j)$:
+%
+\begin{equation}\label{eq:homrange}
+  2r\max\brc{f\pot(\Mh\pot_{ij}-1),f\dep(\Mh\dep_{ij}-1)} \leq \hom_{ij} \leq 2r\min\brc{f\pot\Mh\pot_{ij},f\dep\Mh\dep_{ij}}
+\end{equation}
+%
+These two bounds are consistent when
+%
+\begin{equation}\label{eq:homconsistent}
+  -f\dep \leq f\pot\Mh\pot_{ij} - f\dep\Mh\dep_{ij} \leq f\pot
+  \qquad \forall i\neq j.
+\end{equation}
+%
+To ensure that $\M\potdep_{ii} \geq 0$, we also need to ensure that $\sum_{j\neq i}\M\potdep_{ij} \leq 1$.
+%
+\begin{equation}\label{eq:homdiag}
+\begin{aligned}
+  \sum_{j\neq i} \M\pot_{ij}
+    &= \sum_{j\neq i} \prn{ \Mh\pot_{ij} - \frac{\hom_{ij}}{2rf\pot} }\\
+    &\geq \sum_{j\neq i} \prn{ \Mh\pot_{ij} - \frac{1}{f\pot}  \min\brc{ f\pot\Mh\pot_{ij},f\dep\Mh\dep_{ij} } }\\
+    &= \frac{1}{f\pot} \sum_{j\neq i} \brk{ f\pot\Mh\pot_{ij}-f\dep\Mh\dep_{ij} }_+ , \\
+  \sum _{j\neq i} \M\dep_{ij}
+    &= \frac{1}{f\dep} \sum_{j\neq i} \brk{ f\dep\Mh\dep_{ij}-f\pot\Mh\pot_{ij} }_+ ,
+\end{aligned}
+\end{equation}
+%
+where rectification function is $[x]_\pm = x \Theta(\pm x)$, in terms of the Heaviside step function.
+Demanding that these quantities are at most 1 is sufficient to ensure that \eqref{eq:homconsistent} is satisfied.
+
+Therefore we find the set of constraints
+%
+\begin{equation}\label{eq:constrh}
+\begin{aligned}
+  \Mh\potdep_{i \neq j} &\geq 0, &\qquad
+  \sum_{j\neq i} \brk{ f\pot\Mh\pot_{ij}-f\dep\Mh\dep_{ij} }_+ &\leq f\pot, \\
+  \sum_j \Mh\potdep_{ij} &=1, &
+  \sum_{j\neq i} \brk{ f\dep\Mh\dep_{ij}-f\pot\Mh\pot_{ij} }_+  &\leq f\dep.
+\end{aligned}
+\end{equation}
+%
+The second column of this will be referred to as the ``diagonal'' constraints.
+
+We showed that these are necessary conditions for the existence of $\M\potdep,\hom$ satisfying \eqref{eq:constr}.
+We can see that they are sufficient by choosing $\hom_{ij} = 2r\min\brc{f\pot\Mh\pot_{ij},f\dep\Mh\dep_{ij}}$ for $i \neq j$ and $\hom_{ii}=-\sum_{j \neq i} \hom_{ij}$.
 
 We can then treat the off-diagonal elements of $\Mh\potdep$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
 The diagonal elements are determined by setting the row sums to 1.
 We then have
 %
 \begin{equation}\label{eq:derivpd}
-  \pdiff{\M\pot_{ij}}{\M\pot_{mn}} = \pdiff{\M\dep_{ij}}{\M\dep_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
+  \pdiff{\Mh\pot_{ij}}{\Mh\pot_{mn}} = \pdiff{\Mh\dep_{ij}}{\Mh\dep_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
   \qquad
-  \pdiff{\M\pot_{ij}}{\M\dep_{mn}} = \pdiff{\M\dep_{ij}}{\M\pot_{mn}} = 0.
+  \pdiff{\Mh\pot_{ij}}{\Mh\dep_{mn}} = \pdiff{\Mh\dep_{ij}}{\Mh\pot_{mn}} = 0.
 \end{equation}
 %
 It will also be convenient to define the differential operators
 %
 \begin{equation}\label{eq:pertfe}
-  \pdiff{}{\frg_{ij}} = \frac{1}{2f\pot} \pdiff{}{\M\pot_{ij}} + \frac{1}{2f\dep} \pdiff{}{\M\dep_{ij}},
+  \pdiff{}{\frgh_{ij}} = \frac{1}{2f\pot} \pdiff{}{\Mh\pot_{ij}} + \frac{1}{2f\dep} \pdiff{}{\Mh\dep_{ij}},
   \qquad
-  \pdiff{}{\enc_{ij}} = \frac{1}{2f\pot} \pdiff{}{\M\pot_{ij}} - \frac{1}{2f\dep} \pdiff{}{\M\dep_{ij}},
+  \pdiff{}{\ench_{ij}} = \frac{1}{2f\pot} \pdiff{}{\Mh\pot_{ij}} - \frac{1}{2f\dep} \pdiff{}{\Mh\dep_{ij}},
 \end{equation}
 %
 these satisfy
 %
 \begin{equation}\label{eq:derivfe}
-  \pdiff{\frg_{ij}}{\frg_{mn}} = \pdiff{\enc_{ij}}{\enc_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
+  \pdiff{\frgh_{ij}}{\frgh_{mn}} = \pdiff{\ench_{ij}}{\ench_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
   \qquad
-  \pdiff{\frg_{ij}}{\enc_{mn}} = \pdiff{\enc_{ij}}{\frg_{mn}} = 0.
+  \pdiff{\frgh_{ij}}{\ench_{mn}} = \pdiff{\ench_{ij}}{\frgh_{mn}} = 0.
 \end{equation}
 %
 
-If we wish to use the off-diagonal elements of $\frg$ and $\enc$ as the degrees of freedom, the constraints are
+If we wish to use the off-diagonal elements of $\frgh$ and $\ench$ as the degrees of freedom, the constraints are
 %
 \begin{equation}\label{eq:constrfe}
 \begin{aligned}
-  \frg_{i \neq j}   &\geq \abs{ \enc_{i \neq j} }, &\qquad
-  \sum_{j\neq i}\frg_{ij} \pm \abs{ \enc_{ij} } &\leq f\potdep, \\
-  \sum_j \frg_{ij} &=0, &
-  \sum_j \enc_{ij} &=0.
+  \frgh_{i \neq j}   &\geq \abs{ \ench_{i \neq j} }, &\qquad
+  \sum_{j\neq i} \brk{ \ench_{ij} }_+ &\leq f\pot, \\
+  \sum_j \frgh_{ij} &=0, &
+  \sum_{j\neq i} \brk{ \ench_{ij} }_- &\geq -f\dep, \\
+  \sum_j \ench_{ij} &=0.
 \end{aligned}
 \end{equation}
 %
@@ -508,19 +546,19 @@ Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurvehom} (igno
 \begin{equation}\label{eq:lsnr}
 \begin{aligned}
   A(s) &= \intd[_0^{\infty}]{t} \e^{-st}\SNR(t) \\
-   &= \intd[_0^{\infty}]{t} \frac{ \sqrt{N} \eq \enc \e^{(r\frg-s)t} \w }{ \sqrt{1-(f\pot-f\dep)^2(\eq\w)^2} } \\
-   &= \frac{\sqrt{N} \eq \enc \prn{s - r\frg}\inv \w }{\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
+   &= \intd[_0^{\infty}]{t} \frac{ \sqrt{N} \eq \ench \e^{(r\frgh-s)t} \w }{ \sqrt{1-(f\pot-f\dep)^2(\eq\w)^2} } \\
+   &= \frac{\sqrt{N} \eq \ench \prn{s - r\frgh}\inv \w }{\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
 \end{aligned}
 \end{equation}
 %
 This expression is ill-behaved at $s=0$.
-Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s) \to \fund(s)$, as $\enc\onev=0$.
+Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s) \to \fund(s)$, as $\ench\onev=0$.
 %
 \begin{equation}\label{eq:larea}
 \begin{aligned}
-  \hat{A}(s) = A(s) \sqrt{\frac{{{1-(f\pot-f\dep)^2(\eq\w)^2}}}{N}}  &=  \eq \enc \fund(s) \w \\
-    &= \sum_{ijk} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \eq_k \w_k \\
-    &= \sum_{ij}  \eq_i \enc_{ij} (\eta^w_{i}(s) - \eta^w_{j}(s)).
+  \hat{A}(s) = A(s) \sqrt{\frac{{{1-(f\pot-f\dep)^2(\eq\w)^2}}}{N}}  &=  \eq \ench \fund(s) \w \\
+    &= \sum_{ijk} \eq_i \ench_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \eq_k \w_k \\
+    &= \sum_{ij}  \eq_i \ench_{ij} (\eta^w_{i}(s) - \eta^w_{j}(s)).
 \end{aligned}
 \end{equation}
 %
@@ -530,8 +568,8 @@ In analogy with the case $s=0$, we define
 %
 \begin{equation}\label{eq:lareacoeffs}
   \begin{aligned}
-    c_k(s) &= \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \\
-    a_i(s) &= \sum_j \eq_i \enc_{ij} (\eta^w_{i}(s) - \eta^w_{j}(s)),\\
+    c_k(s) &= \sum_{ij} \eq_i \ench_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \\
+    a_i(s) &= \sum_j \eq_i \ench_{ij} (\eta^w_{i}(s) - \eta^w_{j}(s)),\\
     \implies
     \hat{A}(s) &= \sum_k c_k(s) \eq_k \w_k
       = \sum_i a_i(s).
@@ -541,20 +579,49 @@ In analogy with the case $s=0$, we define
 
 \subsection{Derivatives}\label{sec:lderiv}
 
-Using the same approach as the area bound in \cite{Lahiri2013synapse}, and defining $\Theta_i(s) = \sum_j \fptb_{ij}(0) a_j(s)$,  we find that the derivatives are
+Using the same approach as the area bound in \cite{Lahiri2013synapse}, we find that the derivatives are
 %
 \begin{equation}\label{eq:lAdiff}
   \pdiff{\hat{A}(s)}{\Mh\potdep_{mn}}
-     = f\potdep \eq_m \prn{ r \brk{\Theta_m(s) - \Theta_n(s)}
-     +\prn{rc_m(s) \pm 1} \brk{\eta^w_m(s) - \eta^w_n(s)} },
+     = f\potdep \eq_m \brk{ \sum_i r[\fptb_{mi}(0)-\fptb_{ni}(0)]\, a_i(s)
+     +[rc_m(s) \pm 1] [\eta^w_m(s) - \eta^w_n(s)] }
 \end{equation}
 %
-with the upper/lower sign in $\pm$ corresponding to derivatives \wrt $\M\potdep$.
-The term with $\Theta(s)$ comes from differentiating $\eq$, the term with $c(s)$ comes from differentiating $\eta^w(s)$ and the term with $\pm1$ comes from differentiating $\enc$ in \eqref{eq:larea}.
+
+
 
 
 
 \section{Upper bounds}\label{sec:upperbnds}
+
+
+
+\subsection{Area bound}\label{sec:area}
+
+The area under the SNR curve is:
+%
+\begin{equation}\label{eq:areadef}
+  \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) = A(0).
+\end{equation}
+%
+
+The only effect of $\hom$ is in the diagonal constraints (second column of \eqref{eq:constrh} vs.\ second inequality in \eqref{eq:constri}).
+However, the area is invariant under the scaling mode:
+%
+\begin{equation}\label{eq:scale}
+  \Mh\potdep  \to (1-\lambda)\I + \lambda \Mh\potdep .
+\end{equation}
+%
+This means we can always take a set of matrices that violate either version of the diagonal constraints and use \eqref{eq:scale} to create a set of matrices that satisfy them without changing the area.
+Therefore, including $\hom$ has no effect on the area bound and the result from \cite{Lahiri2013synapse} applies here as well.
+
+This means that
+%
+\begin{equation}\label{eq:areabnd}
+  A(0) \leq \frac{\sqrt{N}(M-1)}{r}.
+\end{equation}
+%
+The model that saturates this bound is one of serial topology with $\eq$ concentrated symmetrically at the two end states.
 
 
 
@@ -567,45 +634,27 @@ The initial SNR is:
 \end{equation}
 %
 
-As shown in \cite{Lahiri2013synapse}, this satisfies the inequality
+This satisfies the inequality
 %
 \begin{equation}\label{eq:initbnd}
   \snr(0) \leq \sqrt{N},
 \end{equation}
 %
-The model that saturates this bound is (equivalent to) a two-state model with deterministic transitions and $f\potdep=\frac{1}{2}$.
-
-\subsection{Area bound}\label{sec:area}
-
-The area under the SNR curve is:
-%
-\begin{equation}\label{eq:areadef}
-  \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) = A(0).
-\end{equation}
-%
-
-As shown in \cite{Lahiri2013synapse}, this satisfies the inequality
-%
-\begin{equation}\label{eq:areabnd}
-  A(0) \leq \frac{\sqrt{N}(M-1)}{r}.
-\end{equation}
-%
-The model that saturates this bound is one of serial topology with $\eq$ concentrated symmetrically at the two end states.
-
+at least when $f\pot=f\dep=\frac{1}{2}$.
 
 
 \subsection{Envelope}\label{sec:envelope}
 
-Now we introduce an eigenvector decomposition for $-\frg$:
+Now we introduce an eigenvector decomposition for $-\frgh$:
 %
 \begin{equation}\label{eq:eigendecomp}
-  \frg = - \sum_a q_a \evr^a \evl^a,
+  \frgh = - \sum_a q_a \evr^a \evl^a,
   \quad
   \evl^a \evr^b = \delta_{ab},
   \quad
-  \frg \evr^a = -q_a \evr^a,
+  \frgh \evr^a = -q_a \evr^a,
   \quad
-  \evl^a \frg = -q_a \evl^a.
+  \evl^a \frgh = -q_a \evl^a.
 \end{equation}
 %
 Then we can write
@@ -677,25 +726,27 @@ This model would have to saturate both the initial SNR bound \eqref{eq:initbnd} 
 
 \section{Finite time}\label{sec:finite}
 
-Now we'll maximise $\snrb(\tau)$ for some fixed $\tau$, subject to the constraints \eqref{eq:constr}.
+Now we'll maximise $\snrb(\tau)$ for some fixed $\tau$, subject to the constraints \eqref{eq:constrh}.
 First, we will maximise the numerator of \eqref{eq:lsnr} holding $\eq\w$ fixed.
 We can maximise the ration \wrt $\eq\w$ later.
 Consider the Lagrangian
 %
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
-  \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\eta^w_i(s) - \eta^w_j(s))
-        +\sum_{i j} \prn{ f\pot\mu\pot_{ij} \M\pot_{ij} + f\dep\mu\dep_{ij} \M\dep_{ij} }\\
+  \CL =&\, \sum_{ij} \eq_i \ench_{ij} (\eta^w_i(s) - \eta^w_j(s))
+        +\sum_{i\neq j} \prn{ f\pot\mu\pot_{ij} \Mh\pot_{ij} + f\dep\mu\dep_{ij} \Mh\dep_{ij} }\\
+        &+\sum_i \prn{ \mu\pot_{ii} \brk{ f\pot - \sum_{j\neq i} \theta_{ij} \ench_{ij} } }
+        +\sum_i \prn{ \mu\dep_{ii} \brk{ f\dep + \sum_{j\neq i} \bar{\theta}_{ij} \ench_{ij} } } \\
         &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i\w_i },
 \end{aligned}
 \end{equation}
 %
-where $\Delta\pr$ is the constant value we are holding $\eq\w$ at.
+where $\theta_{ij} = 1-\bar{\theta}_{ij} = \Theta(\ench_{ij})$ and $\Delta\pr$ is the constant value we are holding $\eq\w$ at.
 After maximising
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTfinite}
-  \pdiff{\CL}{\M\potdep_{ij}} = 0, \quad
+  \pdiff{\CL}{\Mh\potdep_{ij}} = 0, \quad
   \mu\potdep_{ij} \geq 0, \quad
   \pdiff{\CL}{\mu\potdep_{ij}} \geq 0, \quad
   \mu\potdep_{ij}\pdiff{\CL}{\mu\potdep_{ij}} = 0, \quad
@@ -707,10 +758,10 @@ The derivatives, for $m \neq n$ are
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
   \frac{1}{f\potdep} \pdiff{\CL}{\Mh\potdep_{mn}} =& \,
-      \eq_m \prn{ r \brk{\Theta_m(s) - \Theta_n(s)}
-     +\prn{rc_m(s) \pm 1} \brk{\eta^w_m(s) - \eta^w_n(s)} } \\
-     &+ \mu\potdep_{mn} -  \mu\potdep_{mm}  
-     + \lambda \eq_m \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) \eq_i\w_i.
+     \eq_m \brk{ \sum_i r[\fptb_{mi}(0)-\fptb_{ni}(0)]\, a_i(s)
+     +[rc_m(s) \pm 1] [\eta^w_m(s) - \eta^w_n(s)] } \\
+     &+ \mu\potdep_{mn} \mp  \theta_{mn} \mu\pot_{mm} \pm  \bar{\theta}_{mn} \mu\dep_{mm} \\
+     &+ \lambda \eq_m \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) \eq_i\w_i.
 \end{aligned}
 \end{equation}
 %
