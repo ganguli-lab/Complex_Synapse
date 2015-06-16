@@ -21,6 +21,10 @@
 %
 % >> Only for drafts! <<
 \usepackage[notref,notcite]{showkeys}
+%
+\input{sl_graphics_preamble.tex}
+\graphicspath{{Figures/}}
+%
 % ----------------------------------------------------------------
 %\numberwithin{equation}{section}
 %\renewcommand{\baselinestretch}{1.5}
@@ -673,6 +677,19 @@ Finding more constraints would lower it.
 Clearly there have to be more constraints, as \eqref{eq:envsol} indicates that this would be achieved by the same model at all times.
 This model would have to saturate both the initial SNR bound \eqref{eq:initbnd} and the area bound \eqref{eq:areabnd}, whereas we saw that they were achieved by different models, which perform well at short/long timescales respectively.
 
+This envelope is shown in \autoref{fig:envproven}.
+
+
+\begin{figure}[tb]
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.8\linewidth]{LenvProven.eps}
+  \caption{The memory curve envelope that we can prove, \eqref{eq:env}.
+  The number of synapses $N=10^4$ and the number of states $M=12$.
+  The dashed lines indicate the initial SNR bound, \eqref{eq:initbnd}, and the area bound, \eqref{eq:areabnd}, from \cite{Lahiri2013synapse}.}\label{fig:envproven}
+\end{figure}
+
+
 
 
 \section{Finite time}\label{sec:finite}
@@ -714,117 +731,70 @@ The derivatives, for $m \neq n$ are
 \end{aligned}
 \end{equation}
 %
-Below, we will consider various combinations of these derivatives that preserve $\eq$.
+These have the same form as for $s=0$, which allowed us to argue that the model with maximal area must have the serial topology, \cite{Leibold2008serial,Ben-DayanRubin2007sparse}.
 
-\subsection{Increasing \texorpdfstring{$c_k$}{c(k)}}\label{sec:areacoeffincr}
-
-Consider the following combinations of derivatives:
+The one missing ingredient is the scale invariance.
+Define the scale transformation:
 %
-\begin{equation}\label{eq:areacoeffincrderiv}
-    \Delta_{mn} \equiv
-      \frac{1}{\eq_{m}} \pdiffc{}{\frgh_{mn}}
-      + \frac{1}{\eq_n} \pdiffc{}{\frgh_{nm}},
+\begin{equation}\label{eq:scale}
+  \lambda * \M = (1-\lambda)\I + \lambda \M. 
 \end{equation}
 %
-
-One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+The Laplace transform has the following scaling property
 %
-\begin{equation}\label{eq:sareacoeffincrprob}
-  \Delta_{mn} \eq_i = 0,
+\begin{equation}\label{eqlaplacescale}
+  A(\lambda s;\lambda * \M\potdep) = A(s;\M\potdep).
 \end{equation}
 %
-which makes it possible to integrate the perturbation:
-%
-\begin{equation}\label{eq:areacoeffincrfinite}
-  \Mh\potdep \to \Mh\potdep + \frac{\D\boldsymbol{\epsilon}}{2f\potdep},
-  \qquad
-  \begin{aligned}
-  \boldsymbol{\epsilon} &= \boldsymbol{\epsilon}\trans,
-  \\
-  \boldsymbol{\epsilon} \onev &= 0.
-  \end{aligned}
-\end{equation}
-%
-But more interestingly:
-%
-\begin{align}
-%  \begin{aligned}
-\label{eq:areacoeffincr}
-    \Delta_{mn}\CL &=
-      \frac{\mu\pot_{mn} + \mu\dep_{mn}}{2\eq_m} + \frac{\mu\pot_{nm} + \mu\dep_{nm}}{2\eq_n}
-      + r\prn{c_m(s)-c_n(s)}\prn{\eta^w_{m}(s) - \eta^w_{n}(s)},\\
-%  \end{aligned}
-\end{align}
-%
-where $c_k$ were defined in \eqref{eq:lareacoeffs}.
-As this derivative is zero at a maximum, and the $\mu\potdep_{ij}$ are non negative, the last term must be nonpositive.
-Therefore, if we arrange the states in order of decreasing $\eta^w_i(s)$, the $c_k(s)$ must be nondecreasing.
+At $s=0$, it is scale invariant.
+This means that we can take a pair of matrices that violates the ``diagonal'' constraints (second inequality of \eqref{eq:constri}) and use the scale transform \eqref{eq:scale} to construct a pair of matrices that satisfy the ``diagonal'' constraints and have the same area.
+This allowed us to ignore the diagonal constraints.
+We can't do that for $s>0$.
+
+However, we do have numerical evidence that the model that maximises the Laplace transform does have the serial topology.
+In \autoref{fig:envnum} we see the result of numerical maximisation of \eqref{eq:finitelagrangian}.
+We see that restricting to the serial topology does not make the performance any worse.
+In fact, it slightly improves the performance, but this can be ascribed to the numerical optimisation problem being easier.
+Assuming that the optimiser did find the global maximum, this provides evidence for our conjecture  that the model that maximises the Laplace transform must have the serial topology.
 
 
-\subsubsection{Shortcuts}\label{sec:shortcuts}
-
-Now consider the following combinations of derivatives for $n>1$:
-%
-\begin{align}
-%  \begin{aligned}
-\label{eq:shortcutderiv}
-    \widetilde{\Delta}_{m,n} &\equiv
-      \brk{ \sum_{k=0}^{n-1} \frac{1}{\eq_{m+k}} \pdiffc{}{\frgh_{m+k,m+k+1}} }
-      - \frac{1}{\eq_m} \pdiffc{}{\frgh_{m,m+ n}}.
-%  \end{aligned}
-\end{align}
-%
-
-One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
-%
-\begin{equation}\label{eq:shortcutprob}
-  \widetilde{\Delta}_{m,n} \eq_i = 0,
-\end{equation}
-%
-which makes it possible to integrate the perturbation:
-%
-\begin{equation}\label{eq:shortcutfinite}
-  \Mh\potdep \to \Mh\potdep + \frac{\D\boldsymbol{\epsilon}^{(m,n)}}{2f\potdep},
-  \qquad
-  \begin{aligned}
-    &\prn{\boldsymbol{\epsilon}^{(m,n)}}_{m,m+n}
-      &\!\!\!\!\!\!&= -\epsilon,\\
-    &\prn{\boldsymbol{\epsilon}^{(m,n)}}_{m+k,m+k+1}
-      &\!\!\!\!\!\!&= \epsilon
-        &\;
-        &\forall\, k \in [0,n-1],\\
-    &\prn{\boldsymbol{\epsilon}^{(m,n)}}_{m+k,m+k}
-      &\!\!\!\!\!\!&= -\epsilon
-        &
-        &\forall\, k \in [1,n-1].
-  \end{aligned}
-\end{equation}
-%
-But more interestingly for our purposes:
-%
-\begin{equation}\label{eq:shortcutarea}
-\begin{aligned}
-    \widetilde{\Delta}_{m,n}\CL =& \,
-      \brk{ \sum_{k=0}^{n-1} \frac{\mu\pot_{m+k,m+k+1}+\mu\dep_{m+k,m+k+1}}{\eq_{m+k}}
-      - \frac{\mu\pot_{m,m+n}+\mu\dep_{m,m+n}}{\eq_m}} \\
-      &+ r \sum_{k=0}^{n-1} \prn{\eta^w_{m+k}(s) - \eta^w_{m+k+1}(s)} \prn{c_{m+k}(s) - c_{m}(s)},
-\end{aligned}
-\end{equation}
-%
-
-If we put the states in order of decreasing $\eta^w_k(s)$, the results of the \sref{sec:areacoeffincr} tell us that the $c_k(s)$ are non-decreasing.
-This implies that the last term of the final expression in \eqref{eq:shortcutarea} is non-negative.
-If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu\potdep_{m,m+n}>0$, which in turn implies that $\Mh\potdep_{m,m+n}=0$ for all $n>1$. NO! ONLY ONE OF THEM.
-
-A similar technique also works for $n<1$.
-This implies that the only nonzero off-diagonal transitions are nearest neighbour.
+\begin{figure}[tb]
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.8\linewidth]{LenvNum.eps}\\
+  \caption{Numerical envelope for the memory curve, \eqref{eq:snrb}, when $f\potdep=\frac{1}{2}$, the number of synapses $N=10^4$ and the number of states $M=12$.
+  The dashed red line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
+  The solid red line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.}\label{fig:envnum}
+\end{figure}
 
 
+\section{Nearly uniform serial models}\label{sec:serial}
+
+\begin{figure}[tb]
+  \centering
+  % Requires \usepackage{graphicx}
+  \begin{myenuma}
+    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_n.svg}}\hspace{0.02\linewidth}\label{fig:serial_uniform}
+    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_sticky.svg}}\hspace{0.02\linewidth}\label{fig:serial_sticky}
+    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_shorten.svg}}\label{fig:serial_shorten}
+  \end{myenuma}
+  \caption{Heuristic models that maximise memory curve.
+  At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with $M$ states.
+  At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model. 
+  At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states. 
+  Once this reaches zero, we discard the old end state and work on the new end state.} \label{fig:heuristicmodels}
+\end{figure}
 
 
+Looking at them models that were found by numerical maximisation in \autoref{fig:envnum} (see the video for the models), suggests we look at the particular set of models, shown in \autoref{fig:heuristicmodels}.
 
+At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with $M$ states.
+At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as $\tau\to\infty$.
+At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
+Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state.
+Once the length has been reduced to $M=2$, the model is not shortened any further and the two-state model with deterministic transitions maximises the memory curve for all earlier times.
 
-
+These models can be solved analytically, as we will see below, leading to a heuristic envelope.
 
 
 %\subsection*{Acknowledgements}

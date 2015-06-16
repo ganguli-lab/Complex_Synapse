@@ -51,6 +51,7 @@ if r.reps==1
 
 else
     
+    warning('off','MATLAB:nearlySingularMatrix');
     Wp=[];
     Wm=[];
     snr=0;
@@ -69,6 +70,7 @@ else
             DispCounter(r.reps+1,r.reps,'rep: ');
         end
         
+    warning('on','MATLAB:nearlySingularMatrix');
 end
 
 end

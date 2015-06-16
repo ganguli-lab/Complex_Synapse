@@ -12,6 +12,7 @@ EnvLinewidth=3;
 ModelLineWidth=2;
 TimeLineWidth=2;
 EqLineWidth=2;
+Interpreter='latex';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Data
@@ -155,16 +156,21 @@ changeFrameNumber(frNumber);
         xlim(snr_ax,snr_xlim);
         ylim(snr_ax,snr_ylim);
         
-        set(snr_ax,'FontSize',AxFontSize)
+        set(snr_ax,'TickLabelInterpreter',Interpreter,'FontSize',AxFontSize)
         
-%         xlabel(snr_ax,'\textsf{Mean recall time}, $\mathsf{\tau}$','Interpreter','latex','FontSize',AxFontSize);
-        xlabel(snr_ax,'Mean recall time, \tau','FontSize',AxFontSize);
-        ylabel(snr_ax,'\textsf{Recognition performance}, $\overline{\mathsf{SNR}}\mathsf{(\tau)}$','Interpreter','latex','FontSize',AxFontSize);
-        title(snr_ax,'Proven and numerical envelopes','FontSize',AxFontSize);
+        switch Interpreter
+            case 'tex'
+                xlabel(snr_ax,'Mean recall time, \tau','FontSize',AxFontSize);
+                ylabel(snr_ax,'\textsf{Recognition performance}, $\overline{\mathsf{SNR}}\mathsf{(\tau)}$','Interpreter','latex','FontSize',AxFontSize);
+            case 'latex'
+                xlabel(snr_ax,'Mean recall time, $\mathsf{\tau}$','Interpreter','latex','FontSize',AxFontSize);
+                ylabel(snr_ax,'Recognition performance, $\overline{\mathrm{SNR}}(\tau)$','Interpreter','latex','FontSize',AxFontSize);
+        end
+        title(snr_ax,'Proven and numerical envelopes','Interpreter',Interpreter,'FontSize',AxFontSize);
         legend(snr_ax,{'Proven envelope',...
             'Numeric envelope',...
             'Current model'},...
-            'Location','northeast','FontSize',AxFontSize);
+            'Location','northeast','Interpreter',Interpreter,'FontSize',AxFontSize);
     end
 
    function PlotModel(frameNumber)
@@ -186,17 +192,17 @@ changeFrameNumber(frNumber);
        ylim(model_ax(2),[0.5 1.5]);
        ylim(model_ax(3),[0 1]);
        
-       title(model_ax(1),'Potentiation transition probability','FontSize',AxFontSize);
-       th=title(model_ax(3),'Depression transition probability','FontSize',AxFontSize);
+       title(model_ax(1),'Potentiation transition probability','Interpreter',Interpreter,'FontSize',AxFontSize);
+       th=title(model_ax(3),'Depression transition probability','Interpreter',Interpreter,'FontSize',AxFontSize);
        tpos=get(th,'Position');
        
        colormap(model_ax(2),'hot');
-       ch=colorbar(model_ax(2),'Location','manual','Position',cbpos);
-       colorbarlabel(ch,'Equilibrium distribution','FontSize',AxFontSize);
+       ch=colorbar(model_ax(2),'Location','manual','Position',cbpos,'TickLabelInterpreter',Interpreter,'FontSize',AxFontSize);
+       colorbarlabel(ch,'Equilibrium distribution','Interpreter',Interpreter,'FontSize',AxFontSize);
        
-       set(model_ax(1),'XTickMode','manual','XTick',[],'FontSize',AxFontSize);
-       set(model_ax(2),'XTickMode','manual','XTick',[],'YTickMode','manual','YTick',[],'FontSize',AxFontSize);
-       set(model_ax(3),'XTickMode','manual','XTick',[],'YDir','reverse','FontSize',AxFontSize);
+       set(model_ax(1),'XTickMode','manual','XTick',[],'TickLabelInterpreter',Interpreter,'FontSize',AxFontSize);
+       set(model_ax(2),'XTickMode','manual','XTick',[],'YTickMode','manual','YTick',[],'TickLabelInterpreter',Interpreter,'FontSize',AxFontSize);
+       set(model_ax(3),'XTickMode','manual','XTick',[],'YDir','reverse','TickLabelInterpreter',Interpreter,'FontSize',AxFontSize);
        set(th,'Position',tpos,'VerticalAlignment','top');
 %        title(model_ax(3),'Depression transition probability','FontSize',AxFontSize);
        
