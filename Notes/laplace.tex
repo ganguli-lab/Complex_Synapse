@@ -545,11 +545,11 @@ In analogy with the case $s=0$, we define
 
 \subsection{Derivatives}\label{sec:lderiv}
 
-Using the same approach as the area bound in \cite{Lahiri2013synapse}, and defining $\Theta_i(s) = \sum_j \fptb_{ij}(0) a_j(s)$,  we find that the derivatives are
+Using the same approach as the area bound in \cite{Lahiri2013synapse}, and defining $\theta_i(s) = \sum_j \fptb_{ij}(0) a_j(s)$,  we find that the derivatives are
 %
 \begin{equation}\label{eq:lAdiff}
   \pdiff{\hat{A}(s)}{\Mh\potdep_{mn}}
-     = f\potdep \eq_m \prn{ r \brk{\Theta_m(s) - \Theta_n(s)}
+     = f\potdep \eq_m \prn{ r \brk{\theta_m(s) - \theta_n(s)}
      +\prn{rc_m(s) \pm 1} \brk{\eta^w_m(s) - \eta^w_n(s)} },
 \end{equation}
 %
@@ -724,7 +724,7 @@ The derivatives, for $m \neq n$ are
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
   \frac{1}{f\potdep} \pdiff{\CL}{\Mh\potdep_{mn}} =& \,
-      \eq_m \prn{ r \brk{\Theta_m(s) - \Theta_n(s)}
+      \eq_m \prn{ r \brk{\theta_m(s) - \theta_n(s)}
      +\prn{rc_m(s) \pm 1} \brk{\eta^w_m(s) - \eta^w_n(s)} } \\
      &+ \mu\potdep_{mn} -  \mu\potdep_{mm}  
      + \lambda \eq_m \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) \eq_i\w_i.
@@ -778,7 +778,8 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
     \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_sticky.svg}}\hspace{0.02\linewidth}\label{fig:serial_sticky}
     \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_shorten.svg}}\label{fig:serial_shorten}
   \end{myenuma}
-  \caption{Heuristic models that maximise memory curve.
+  \caption{Heuristics for models that maximise memory curve.
+  All unlabelled arrowshave transition probabilities equal to 1.
   At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with $M$ states.
   At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model. 
   At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states. 
@@ -791,10 +792,286 @@ Looking at them models that were found by numerical maximisation in \autoref{fig
 At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with $M$ states.
 At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as $\tau\to\infty$.
 At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
-Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state.
+Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state (as one can see from the video, this is not quite true, but it is close enough to true to get a reasonable approximation to the envelope).
 Once the length has been reduced to $M=2$, the model is not shortened any further and the two-state model with deterministic transitions maximises the memory curve for all earlier times.
 
-These models can be solved analytically, as we will see below, leading to a heuristic envelope.
+These models' Laplace transforms can be computed analytically, as we will see below, leading to a heuristic envelope.
+All of these calculations will be performed at $f\potdep=\frac{1}{2}$, so the denominator will play no role.
+We will work in units such that $r=1$ temporarily, only restoring $r$ at the end.
+
+
+\subsection{Uniform serial model}\label{sec:serial_uniform}
+
+
+Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_uniform}.
+Looking at \eqref{eq:larea}, the only thing we need is differences in $\eta^w_i(s)$.
+In fact, given that the only nonzero elements of $\enc$ are
+%
+\begin{equation}\label{eq:unienc}
+  \enc_{ii+1}=\frac{1}{2} \quad\text{for}\quad i<M, 
+  \qquad
+  \enc_{ii-1}=-\frac{1}{2} \quad\text{for}\quad i>1,
+\end{equation}
+%
+and $\eq_i = \frac{1}{M}$, we have
+%
+\begin{equation}\label{eq:uniareaeta}
+  \hat{A}(s) = \frac{\eta^w_1(s) - \eta^w_M(s)}{M}.
+\end{equation}
+%
+
+Note that
+%
+\begin{equation}\label{eq:etafund}
+  \eta^w(s) = \text{const.} - \fund(s)\w.
+\end{equation}
+%
+As we are only interested in differences of the $\eta^w_i(s)$, we can drop the constant.
+Then
+%
+\begin{equation}\label{eq:etarecur}
+  -(s\I + \onev\pib - \frg)\eta^w(s) = \w.
+\end{equation}
+%
+We can then write
+%
+\begin{equation}\label{eq:detarecur}
+  \eta^w(s) = -\frac{(\pib\eta^w(s))\onev+\w}{s} + \delta\eta(s),
+  \qquad
+  (\frg-s\I)\delta\eta(s) = \frac{\frg\w}{s}.
+\end{equation}
+%
+As we are only interested in differences, we can drop any terms proportional to $\onev$ in $\eta^w(s)$.
+
+The $i$'th row of this equation reads
+%
+\begin{equation}\label{eq:detarow}
+  \frac{\delta\eta_{i+1}+\delta\eta_{i-1}}{2} - (s+1)\delta\eta_i = 0,
+\end{equation}
+%
+with the following exceptions
+%
+\begin{equation}\label{eq:detabnduni}
+\begin{aligned}
+  \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
+  \frac{\delta\eta_{M/2+1}+\delta\eta_{M/2-1}}{2} - (s+1)\delta\eta_{M/2} &= \frac{1}{s},\\
+  \frac{\delta\eta_{M/2+2}+\delta\eta_{M/2}}{2} - (s+1)\delta\eta_{M/2+1} &= -\frac{1}{s},\\
+  \frac{\delta\eta_{M-1}}{2} - \prn{s+\frac{1}{2}}\delta\eta_M &= 0.
+\end{aligned}
+\end{equation}
+%
+These equations are invariant under $\delta\eta_{M+1-i} \to -\delta\eta_i$, so these two must be equal.
+Then we have
+%
+\begin{equation}\label{eq:detahalf}
+\begin{aligned}
+  \frac{\delta\eta_{i+1}+\delta\eta_{i-1}}{2} - (s+1)\delta\eta_i &= 0,
+  \quad\text{for}\quad 1<i<\frac{M}{2}\\
+  \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
+  \frac{\delta\eta_{M/2-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{M/2} &= \frac{1}{s}.
+\end{aligned}
+\end{equation}
+%
+
+The first of these equations is solved by
+%
+\begin{equation}\label{eq:detagensol}
+  \delta\eta_i = B\alpha^{i-1} + C\alpha^{1-i},
+  \qquad\text{where}\qquad
+  \alpha^2 - 2(s+1)\alpha + 1 = 0,
+\end{equation}
+%
+with $B$ and $C$ determined by the boundary conditions provided by the last two equations of \eqref{eq:detahalf}:
+%
+\begin{equation}\label{eq:unicoeffs}
+  B = -\frac{2\alpha}{(1+\alpha)(\alpha^{M/2}+\alpha^{-M/2})s},
+  \qquad
+  C = -\frac{2}{(1+\alpha)(\alpha^{M/2}+\alpha^{-M/2})s}.
+\end{equation}
+%
+This can be used to compute the Laplace transform
+%
+\begin{equation}\label{eq:unilaplace}
+  A(s) = \frac{2\eta^w_1(s)}{M} 
+   = \frac{2}{M}\prn{\frac{1}{s}+B+C} 
+   = \frac{2(\alpha^{M/2}-1)^2}{Ms(\alpha^M+1)}.
+\end{equation}
+%
+
+In reality, $M$ can only take even integer values.
+However, one can find a heuristic approximation to the envelope by maximising \wrt $M$.
+We find that
+%
+\begin{multline}\label{eq:unienv}
+  s = 2\sinh^2\frac{y_*}{M_*},
+  \qquad
+  \hat{A}_*(s) = \prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \frac{\log\alpha(s)}{s},
+  \\ \text{where}\quad 
+  y_* = \tanh \frac{y_*}{2} \cosh y_* \approx 1.50553.
+  \qquad
+\end{multline}
+%
+This is only valid for
+%
+\begin{equation}\label{eq:univalid}
+  2 \leq M_* \leq M,
+  \qquad\implies\qquad
+  2\sinh^2 \frac{y_*}{M} \leq s \leq 2\sinh^2 \frac{y_*}{2}.
+\end{equation}
+%
+
+When $M \gg 2$, the validity region is approximately
+%
+\begin{equation}\label{eq:univalidapprox}
+  \frac{4.53327}{M^2} \lesssim s \lesssim 1.36423.
+\end{equation}
+%
+When $s \sim \CO(M^{-2}) \ll 1$, we have $\alpha \approx 1+\sqrt{2s}$ and the heuristic envelope is approximately
+%
+\begin{equation}\label{eq:unienvapprox}
+  \hat{A}_*(s) \approx \frac{ 1.08406 }{ \sqrt{s} }.
+\end{equation}
+%
+
+For $s\gtrsim 1.36423$, we set $M=2$ to find
+%
+\begin{equation}\label{eq:binaryenv}
+  \hat{A}(s) = \frac{1}{1+s}.
+\end{equation}
+%
+This does not match up with \eqref{eq:unienvapprox} at the boundary of the two regions, as this is outside the regime of validity of that approximation.
+However, it does match up with the full formula, \eqref{eq:unienv}.
+
+
+
+\subsection{Sticky serial model}\label{sec:serial_sticky}
+
+Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_sticky}.
+We proceed in the same manner as in \autoref{sec:serial_uniform}, with the following differences.
+
+The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
+%
+\begin{equation}\label{eq:stickyenc}
+  \begin{aligned}
+  \enc_{12} = -\enc_{MM-1} &= \frac{\varepsilon}{2},
+  &\qquad
+  \eq_1 = \eq_M &= \frac{1}{2+(M-2)\varepsilon},
+  \\ &&
+  \eq_i &=  \frac{\varepsilon}{2+(M-2)\varepsilon}
+  \quad\text{for}\quad 1<i<M.
+  \end{aligned}
+\end{equation}
+%
+This means that the Laplace transform is given by
+%
+\begin{equation}\label{eq:stickyareaeta}
+  \hat{A}(s) = \frac{\varepsilon(\eta^w_1(s)-\eta^w_M(s))}{2+(M-2)\varepsilon} 
+       = \frac{2\varepsilon\, \eta^w_1(s)}{2+(M-2)\varepsilon}.
+\end{equation}
+%
+
+The $\eta^w_i(s)$ take the same general form \eqref{eq:detagensol}, but with different coefficients due to the different boundary conditions
+%
+\begin{equation}\label{eq:detabndsticky}
+\begin{aligned}
+  \frac{\varepsilon\delta\eta_2}{2} - \prn{s+\frac{\varepsilon}{2}}\delta\eta_1 &= 0, \\
+  \frac{\delta\eta_{M/2-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{M/2} &= \frac{1}{s}.
+\end{aligned}
+\end{equation}
+%
+These are solved by
+%
+\begin{equation}\label{eq:stickycoeffs}
+\begin{aligned}
+  B &= -\frac{ 2 \alpha^{M/2} (\alpha-(1-\varepsilon)) }{ (1+\alpha) [(1+\alpha^{M}) - (1-\varepsilon) \alpha (1+\alpha^{M-2}) ]s}, \\
+  C &= -\frac{ 2 \alpha^{M/2} (1-(1-\varepsilon)\alpha) }{ (1+\alpha) [(1+\alpha^{M}) - (1-\varepsilon) \alpha (1+\alpha^{M-2}) ]s},
+\end{aligned}
+\end{equation}
+%
+which leads to the Laplace transform
+%
+\begin{equation}\label{eq:stickylaplace}
+  \hat{A}(s) = \frac{2\varepsilon}{2+(M-2)\varepsilon} \, 
+      \frac{ (\alpha^{M/2}-1)^2 - (1-\varepsilon)\alpha(\alpha^{M/2-1}-1)^2 }{ (\alpha^M + 1) - (1-\varepsilon)\alpha(\alpha^{M-2}+1) }.
+\end{equation}
+%
+
+We can maximise this \wrt $\varepsilon$.
+This results in a complicated quadratic equation for $\varepsilon$ with an even worse solution that we will not reproduce here.
+For small $s \ll M^{-2}$, it is given by
+%
+\begin{equation}\label{eq:stickyeps}
+  \varepsilon = \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},  
+\end{equation}
+%
+and the Laplace transform is 
+%
+\begin{equation}\label{stickyenv}
+  \hat{A}(s) = (M-1) \prn{ 1 - \sqrt{M(M-2)s} + \CO(M^2s)}.
+\end{equation}
+%
+
+
+
+\section{Shortened serial model}\label{sec:serial_shorten}
+
+
+Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_shorten}.
+We proceed in the same manner as in \autoref{sec:serial_uniform}, with the following differences.
+
+The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
+The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
+%
+\begin{equation}\label{eq:shortenenc}
+  \begin{aligned}
+  \enc_{M-1M} = -\enc_{21} &= \frac{\varepsilon}{2},
+  &\qquad
+  \eq_1 = \eq_M &= \frac{\varepsilon}{M-2(1-\varepsilon)},
+  \\ &&
+  \eq_i &=  \frac{1}{M-2(1-\varepsilon)}
+  \quad\text{for}\quad 1<i<M.
+  \end{aligned}
+\end{equation}
+%
+This means that the Laplace transform is given by
+%
+\begin{equation}\label{eq:shortenareaeta}
+  \hat{A}(s) = \frac{\varepsilon(\eta^w_1(s)-\eta^w_M(s)) + (1-\varepsilon)(\eta^w_2(s)-\eta^w_{M-2}(s))}{M-2(1-\varepsilon)}
+       = \frac{2\varepsilon\, \eta^w_1(s) + 2(1-\varepsilon)\eta^w_2(s)}{M-2(1-\varepsilon)}.
+\end{equation}
+%
+
+The $\eta^w_i(s)$ take the same general form \eqref{eq:detagensol} except for $i=1$, and with different coefficients due to the different boundary conditions
+%
+\begin{equation}\label{eq:detabndshorten}
+\begin{aligned}
+  \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
+  \frac{\delta\eta_3 + \varepsilon\,\delta\eta_1}{2} - \prn{s+\frac{1+\varepsilon}{2}}\delta\eta_2 &= 0, \\
+  \frac{\delta\eta_{M/2-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{M/2} &= \frac{1}{s}.
+\end{aligned}
+\end{equation}
+%
+These are solved by
+%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 %\subsection*{Acknowledgements}
