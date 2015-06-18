@@ -12,7 +12,7 @@ EnvLinewidth=3;
 ModelLineWidth=2;
 TimeLineWidth=2;
 EqLineWidth=2;
-Interpreter='tex';
+Interpreter='latex';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Data

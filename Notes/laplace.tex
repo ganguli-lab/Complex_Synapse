@@ -764,8 +764,29 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
   \includegraphics[width=0.8\linewidth]{LenvNum.eps}\\
   \caption{Numerical envelope for the memory curve, \eqref{eq:snrb}, when $f\potdep=\frac{1}{2}$, the number of synapses $N=10^4$ and the number of states $M=12$.
   The dashed red line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
-  The solid red line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.}\label{fig:envnum}
+  The solid red line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
+  The solid grren line indicates the proven envelope, \eqref{eq:env}.}\label{fig:envnum}
 \end{figure}
+
+\begin{figure}[tbp]
+  \centering
+  % Requires \usepackage{graphicx}
+  \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv07.eps}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv13.eps}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv21.eps}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv27.eps}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv36.eps}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv51.eps}}
+  \end{myenuma}
+  \caption{The models that constitute the numeric envelope in \autoref{fig:envnum}.
+  The plot to the left of each frame indicates the memory curve of the model shown to the right in blue, with the numeric envelope for models with the serial topology in red and the proven envelope, \eqref{eq:env}, in green.
+  The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
+  The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
+  The heat map in the centre right of each frame indicates the equilibrium probability distribution for each state.
+  See the video for more details.}\label{fig:envvid}
+\end{figure}
+
 
 
 \section{Nearly uniform serial models}\label{sec:serial}
