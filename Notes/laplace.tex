@@ -854,8 +854,8 @@ with the following exceptions
 \begin{equation}\label{eq:detabnduni}
 \begin{aligned}
   \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{M/2+1}+\delta\eta_{M/2-1}}{2} - (s+1)\delta\eta_{M/2} &= \frac{1}{s},\\
-  \frac{\delta\eta_{M/2+2}+\delta\eta_{M/2}}{2} - (s+1)\delta\eta_{M/2+1} &= -\frac{1}{s},\\
+  \frac{\delta\eta_{\frac{M}{2}+1}+\delta\eta_{\frac{M}{2}-1}}{2} - (s+1)\delta\eta_{\frac{M}{2}} &= \frac{1}{s},\\
+  \frac{\delta\eta_{\frac{M}{2}+2}+\delta\eta_{\frac{M}{2}}}{2} - (s+1)\delta\eta_{\frac{M}{2}+1} &= -\frac{1}{s},\\
   \frac{\delta\eta_{M-1}}{2} - \prn{s+\frac{1}{2}}\delta\eta_M &= 0.
 \end{aligned}
 \end{equation}
@@ -868,7 +868,7 @@ Then we have
   \frac{\delta\eta_{i+1}+\delta\eta_{i-1}}{2} - (s+1)\delta\eta_i &= 0,
   \quad\text{for}\quad 1<i<\frac{M}{2}\\
   \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{M/2-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{M/2} &= \frac{1}{s}.
+  \frac{\delta\eta_{\frac{M}{2}-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{\frac{M}{2}} &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
 %
@@ -884,9 +884,9 @@ The first of these equations is solved by
 with $B$ and $C$ determined by the boundary conditions provided by the last two equations of \eqref{eq:detahalf}:
 %
 \begin{equation}\label{eq:unicoeffs}
-  B = -\frac{2\alpha}{(1+\alpha)(\alpha^{M/2}+\alpha^{-M/2})s},
+  B = -\frac{2\alpha}{(1+\alpha)(\alpha^{\frac{M}{2}}+\alpha^{-\frac{M}{2}})s},
   \qquad
-  C = -\frac{2}{(1+\alpha)(\alpha^{M/2}+\alpha^{-M/2})s}.
+  C = -\frac{2}{(1+\alpha)(\alpha^{\frac{M}{2}}+\alpha^{-\frac{M}{2}})s}.
 \end{equation}
 %
 This can be used to compute the Laplace transform
@@ -894,7 +894,7 @@ This can be used to compute the Laplace transform
 \begin{equation}\label{eq:unilaplace}
   A(s) = \frac{2\eta^w_1(s)}{M} 
    = \frac{2}{M}\prn{\frac{1}{s}+B+C} 
-   = \frac{2(\alpha^{M/2}-1)^2}{Ms(\alpha^M+1)}.
+   = \frac{2(\alpha^{\frac{M}{2}}-1)^2}{Ms(\alpha^M+1)}.
 \end{equation}
 %
 
@@ -975,7 +975,7 @@ The $\eta^w_i(s)$ take the same general form \eqref{eq:detagensol}, but with dif
 \begin{equation}\label{eq:detabndsticky}
 \begin{aligned}
   \frac{\varepsilon\delta\eta_2}{2} - \prn{s+\frac{\varepsilon}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{M/2-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{M/2} &= \frac{1}{s}.
+  \frac{\delta\eta_{\frac{M}{2}-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{\frac{M}{2}} &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
 %
@@ -983,21 +983,36 @@ These are solved by
 %
 \begin{equation}\label{eq:stickycoeffs}
 \begin{aligned}
-  B &= -\frac{ 2 \alpha^{M/2} (\alpha-(1-\varepsilon)) }{ (1+\alpha) [(1+\alpha^{M}) - (1-\varepsilon) \alpha (1+\alpha^{M-2}) ]s}, \\
-  C &= -\frac{ 2 \alpha^{M/2} (1-(1-\varepsilon)\alpha) }{ (1+\alpha) [(1+\alpha^{M}) - (1-\varepsilon) \alpha (1+\alpha^{M-2}) ]s},
+  B &= -\frac{ 2 \alpha^{\frac{M}{2}} (\alpha-(1-\varepsilon)) }{ (1+\alpha) [(1+\alpha^{M}) - (1-\varepsilon) \alpha (1+\alpha^{M-2}) ]s}, \\
+  C &= -\frac{ 2 \alpha^{\frac{M}{2}} (1-(1-\varepsilon)\alpha) }{ (1+\alpha) [(1+\alpha^{M}) - (1-\varepsilon) \alpha (1+\alpha^{M-2}) ]s},
 \end{aligned}
 \end{equation}
 %
 which leads to the Laplace transform
 %
 \begin{equation}\label{eq:stickylaplace}
-  \hat{A}(s) = \frac{2\varepsilon}{2+(M-2)\varepsilon} \, 
-      \frac{ (\alpha^{M/2}-1)^2 - (1-\varepsilon)\alpha(\alpha^{M/2-1}-1)^2 }{ (\alpha^M + 1) - (1-\varepsilon)\alpha(\alpha^{M-2}+1) }.
+  \hat{A}(s) = \frac{2\varepsilon}{[2+(M-2)\varepsilon]s} \, 
+      \frac{ (\alpha^{\frac{M}{2}}-1)^2 - (1-\varepsilon)\alpha(\alpha^{\frac{M-2}{2}}-1)^2 }{ (\alpha^M + 1) - (1-\varepsilon)\alpha(\alpha^{M-2}+1) }.
 \end{equation}
 %
 
 We can maximise this \wrt $\varepsilon$.
 This results in a complicated quadratic equation for $\varepsilon$ with an even worse solution that we will not reproduce here.
+We can find the boundary of the region of applicability by seeing at what value of $s$ is the optimal value of $\varepsilon=1$:
+%
+\begin{equation}\label{eq:stickyvalid}
+\begin{aligned}
+  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=1} \propto &\,
+    M\alpha[(\alpha^{\frac{M-2}{2}}-1)^2(\alpha^M+1) - (\alpha^{\frac{M}{2}}-1)^2(\alpha^{M-2}+1)]
+     \\ &+ 2(\alpha^{\frac{M}{2}}-1)^2(\alpha^M+1) = 0,\\
+    s = &\, \frac{(\alpha-1)^2}{2\alpha}.
+\end{aligned}
+\end{equation}
+%
+The ``sticky'' models are optimal at values of $s$ smaller than this.
+This is not quite the same as the lower boundary of the region \eqref{eq:univalid}, so there is a gap between them where the uniform model with $M$ states is optimal.
+The width of this gap is insignificant for larger $M$.
+
 For small $s \ll M^{-2}$, it is given by
 %
 \begin{equation}\label{eq:stickyeps}
@@ -1006,14 +1021,14 @@ For small $s \ll M^{-2}$, it is given by
 %
 and the Laplace transform is 
 %
-\begin{equation}\label{stickyenv}
+\begin{equation}\label{eq:stickyenv}
   \hat{A}(s) = (M-1) \prn{ 1 - \sqrt{M(M-2)s} + \CO(M^2s)}.
 \end{equation}
 %
 
 
 
-\section{Shortened serial model}\label{sec:serial_shorten}
+\subsection{Shortened serial model}\label{sec:serial_shorten}
 
 
 Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_shorten}.
@@ -1047,29 +1062,116 @@ The $\eta^w_i(s)$ take the same general form \eqref{eq:detagensol} except for $i
 \begin{aligned}
   \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
   \frac{\delta\eta_3 + \varepsilon\,\delta\eta_1}{2} - \prn{s+\frac{1+\varepsilon}{2}}\delta\eta_2 &= 0, \\
-  \frac{\delta\eta_{M/2-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{M/2} &= \frac{1}{s}.
+  \frac{\delta\eta_{\frac{M}{2}-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{\frac{M}{2}} &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
 %
 These are solved by
 %
+%
+\begin{equation}\label{eq:shortensol}
+\begin{aligned}
+  \delta\eta_i &= B\alpha^{i-2} + C\alpha^{2-i} \qquad
+        \text{for} \quad 2 \leq i \leq \frac{M}{2}, \\
+  \delta\eta_1 &= \frac{2\alpha^{\frac{M}{2}}}
+         {[\varepsilon(\alpha^{M}+1) + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
+  B &= - \frac{2\alpha^{\frac{M}{2}}(\alpha^2-\alpha+1 + \varepsilon(\alpha-1))}
+         {(1+\alpha)[\varepsilon(\alpha^{M}+1) + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
+  C &= - \frac{2\alpha^{\frac{M-2}{2}}(\alpha^2-\alpha+1 - \varepsilon\alpha(\alpha-1))}
+         {(1+\alpha)[\varepsilon(\alpha^{M}+1) + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
+\end{aligned}
+\end{equation}
+%
+Which gives the following Laplace transform
+%
+\begin{equation}\label{eq:shortenlaplace}
+  \hat{A}(s) = \frac{2 [\varepsilon(\alpha^{\frac{M}{2}}-1)^2
+          + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{\frac{M-2}{2}}-1)^2] }
+          { [M-2(1-\varepsilon)]
+            [\varepsilon(\alpha^{M}+1) + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s }.
+\end{equation}
+%
+This interpolates between \eqref{eq:unilaplace} at $\varepsilon=1$ and the same expression at $M-2$ at $\varepsilon=0$.
+
+We can maximise this \wrt $\varepsilon$.
+This results in a complicated quadratic equation for $\varepsilon$ with an even worse solution that we will not reproduce here.
+We can find the boundary of the region of applicability by seeing at what value of $s$ is the optimal value of $\varepsilon=0\text{ or }1$:
+%
+\begin{equation}\label{eq:shortenvalid}
+\begin{aligned}
+  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=1} \propto &\,
+    M(\alpha^2-\alpha+1)(\alpha-1)\alpha^{\frac{M-2}{2}}(\alpha^M-1) - (\alpha^{\frac{M}{2}}-1)^2(\alpha^{M}+1)
+      = 0,\\
+  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=0} \propto &\,
+    (M-2)(\alpha-1)\alpha^{\frac{M-2}{2}}(\alpha^M-1) - (\alpha^2-\alpha+1)(\alpha^{\frac{M-2}{2}}-1)^2(\alpha^{M-2}+1)
+      = 0,\\
+    s = &\, \frac{(\alpha-1)^2}{2\alpha},
+\end{aligned}
+\end{equation}
+%
+with the $\varepsilon=1$ case providing the lower boundary and $\varepsilon=0$ providing the upper boundary.
+If these were really the models that maximised $A(s)$, the region of validity for $M$ would not overlap with that for $M-2$.
+In this case, however, there is an overlap.
+This is related to the fact that the video shows that the optimal models do not6 shorten by one state at a time, but several outgoing transition probabilities are reduced at once.
 
 
 
+\subsection{Heuristic envelope}\label{sec:heuristicenv}
+
+
+We can obtain a good approximation to the envelope by combining the results \autoref{sec:serial_uniform} and \autoref{sec:serial_sticky}, ignoring the complications of \autoref{sec:serial_shorten}.
+We will also ignore the small gap between the regions of validity, \eqref{eq:univalid} and \eqref{eq:stickyvalid}.
+
+We will phrase it in terms of $\snrb(\tau)$, reintroducing $r$:
+%
+\begin{equation}\label{eq:envunits}
+  \snrb(\tau) = \frac{ \sqrt{N} \hat{A}\prn{\frac{1}{r\tau}} }{ r\tau },
+  \qquad
+  \alpha(\tau) = \frac{ 1 + r\tau +\sqrt{1+2r\tau} }{ r\tau }.
+\end{equation}
+%
+Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylaplace}, we find
+%
+\begin{equation}\label{eq:henv}
+  \snrb(\tau) = \left\{
+\begin{aligned}
+  & \frac{\sqrt{N}}{1+r\tau}, & 
+  & r\tau \leq \frac{1}{2\sinh^2\frac{y_*}{2}} , \\
+  & \sqrt{N}\prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \log\alpha, & 
+  \frac{1}{2\sinh^2 \frac{y_*}{2}} \leq & r\tau \leq \frac{1}{2\sinh^2 \frac{y_*}{M}} , \\
+  & \max_\varepsilon \brc{\frac{2\sqrt{N}\varepsilon}{2+(M-2)\varepsilon} \,
+      \frac{ (\alpha^{\frac{M}{2}}-1)^2 - (1-\varepsilon)\alpha(\alpha^{\frac{M-2}{2}}-1)^2 }{ (\alpha^M + 1) - (1-\varepsilon)\alpha(\alpha^{M-2}+1) }}, &
+  \frac{1}{2\sinh^2 \frac{y_*}{M}} \leq & r\tau .
+\end{aligned}
+\right.
+\end{equation}
+%
+For $M \gg 1$, and $r\tau$ much greater than the lower bound of each region, we can approximate this as 
+%
+\begin{equation}\label{eq:henvapproc}
+  \snrb(\tau) \approx \left\{
+\begin{aligned}
+  & \frac{\sqrt{N}}{1+r\tau}, &
+  & r\tau \leq 0.73 , \\
+  & \frac{ 1.1\sqrt{N}}{ \sqrt{r\tau} } , &
+  0.73 \leq & r\tau \leq 0.22 M^2 , \\
+  & \frac{ \sqrt{N} (M-1) }{ r\tau }, &\quad
+  0.22 M^2 \leq &r\tau .
+\end{aligned}
+\right.
+\end{equation}
+%
+This is plotted in \autoref{fig:heuristicenv}.
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+\begin{figure}[tb]
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.8\linewidth]{LenvHeuristic.svg}\\
+  \caption{Heuristic envelope.
+  Analytic expressions are only valid to the right of each region.}\label{fig:heuristicenv}
+\end{figure}
 
 
 
