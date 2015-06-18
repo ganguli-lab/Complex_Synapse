@@ -116,10 +116,12 @@
 
 
 \begin{abstract}
-  We try to find the continuous time Markov process that has the maximal Laplace tranformed signal-to-noise curve.
+  We try to find the continuous time Markov process that has the maximal Laplace transformed signal-to-noise curve.
 \end{abstract}
 
 \tableofcontents
+
+\listoffigures
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Beginning of Article:
@@ -684,7 +686,7 @@ This envelope is shown in \autoref{fig:envproven}.
   \centering
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.8\linewidth]{LenvProven.eps}
-  \caption{The memory curve envelope that we can prove, \eqref{eq:env}.
+  \caption[Proven envelope]{The memory curve envelope that we can prove, \eqref{eq:env}.
   The number of synapses $N=10^4$ and the number of states $M=12$.
   The dashed lines indicate the initial SNR bound, \eqref{eq:initbnd}, and the area bound, \eqref{eq:areabnd}, from \cite{Lahiri2013synapse}.}\label{fig:envproven}
 \end{figure}
@@ -762,7 +764,7 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
   \centering
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.8\linewidth]{LenvNum.eps}\\
-  \caption{Numerical envelope for the memory curve, \eqref{eq:snrb}, when $f\potdep=\frac{1}{2}$, the number of synapses $N=10^4$ and the number of states $M=12$.
+  \caption[Numerical envelope]{Numerical envelope for the memory curve, \eqref{eq:snrb}, when $f\potdep=\frac{1}{2}$, the number of synapses $N=10^4$ and the number of states $M=12$.
   The dashed red line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
   The solid red line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
   The solid grren line indicates the proven envelope, \eqref{eq:env}.}\label{fig:envnum}
@@ -779,7 +781,7 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
   \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv36.eps}}
   \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv51.eps}}
   \end{myenuma}
-  \caption{The models that constitute the numeric envelope in \autoref{fig:envnum}.
+  \caption[Optimal models]{The models that constitute the numeric envelope in \autoref{fig:envnum}.
   The plot to the left of each frame indicates the memory curve of the model shown to the right in blue, with the numeric envelope for models with the serial topology in red and the proven envelope, \eqref{eq:env}, in green.
   The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
   The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
@@ -799,7 +801,7 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
     \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_sticky.svg}}\hspace{0.02\linewidth}\label{fig:serial_sticky}
     \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_shorten.svg}}\label{fig:serial_shorten}
   \end{myenuma}
-  \caption{Heuristics for models that maximise memory curve.
+  \caption[Heuristic optimal models]{Heuristics for models that maximise memory curve.
   All unlabelled arrowshave transition probabilities equal to 1.
   At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with $M$ states.
   At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model. 
@@ -1190,10 +1192,27 @@ This is plotted in \autoref{fig:heuristicenv}.
   \centering
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.8\linewidth]{LenvHeuristic.svg}\\
-  \caption{Heuristic envelope.
+  \caption[Heuristic envelope]{Heuristic envelope.
   Analytic expressions are only valid to the right of each region.}\label{fig:heuristicenv}
 \end{figure}
 
+
+
+\section{Conclusions}\label{sec:conclusions}
+
+
+We do not expect to find precisely these models inside real synapses.
+First, evolution was faced with stronger constraints than us when designing these synapses as it had to build them out of real molecules.
+Second, the set of priorities faced by evolution would have been longer than just performance in recogniton memory at a single timescale.
+
+Nevertheless, the qualitative message of our findings should be more robust to reality:
+%
+\begin{itemize}
+  \item \emph{Short} timescale $\to$ \emph{intermediate} timescales: transition topology goes \\ short and wide $\to$ long and thin.
+  \item \emph{Intermediate} timescale $\to$ \emph{long} timescales: transition probabilities go \\ strong and deterministic $\to$ weak and stochastic.
+\end{itemize}
+%
+This is what we expect to find in the different brain regions that store memories for different timescales.
 
 
 
