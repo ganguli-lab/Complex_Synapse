@@ -1,5 +1,6 @@
-function [ Wp,Wm,A ] = FindOptL( sm,n,varargin )
-%[Wp,Wm,A]=FINDOPTL(sm,n,reps) Find synapse model that maximises A(sm)
+function [ Wp,Wm,A ] = FindOptDoubleL( sm,sc,Ac,n,varargin )
+%[Wp,Wm,A]=FINDOPTDOUBLEL(sm,n,reps) Find synapse model that maximises
+%A(sm) subject to A(sc)=Ac
 %   sm   = inverse time value
 %   n    = #states
 %   reps = number of attempts we max over
@@ -42,7 +43,7 @@ if r.reps==1
 
     try
     %     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
-        [Wp,Wm,A] = ModelOptL( Wp,Wm,sm,p.Unmatched);
+        [Wp,Wm,A] = ModelOptDoubleL( Wp,Wm,sm,sc,Ac,p.Unmatched);
     catch ME
         A=SNRlaplace(sm,Wp,Wm,0.5,BinaryWeights(n));
         disp(ME.message);

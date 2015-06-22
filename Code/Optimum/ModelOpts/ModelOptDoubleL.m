@@ -1,6 +1,6 @@
-function [ newWp,newWm,A,ef ] = ModelOptL( Wp,Wm,sm,varargin)
-%[newWp,newWm,A,ef]=MODELOPTL(Wp,Wm,sm) run gradient descent on model to
-%maximise A(sm)
+function [ newWp,newWm,A,ef ] = ModelOptDoubleL( Wp,Wm,sm,sc,Ac,varargin)
+%[newWp,newWm,A,ef]=MODELOPTDOUBLEL(Wp,Wm,sm) run gradient descent on model to
+%maximise A(sm) subject to A(sc)=Ac
 %   sm = inverse time value
 %   WP = potentiation transition rates
 %   WM = depression transition rates
@@ -42,13 +42,15 @@ options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
     'largescale', 'on');
 
 if r.UseDerivs
-    options = optimset(options,'GradObj','on');
+    options = optimset(options,'GradObj','on','GradConstr','on');
     [x,A,ef] = fmincon(@(y)OptFunGradL(y,sm,fp,w),x0,A,b,...
-         [],[],[],[],[],... 
+         [],[],[],[],...
+         @nlconstrgr,... 
        options);
 else
     [x,A,ef] = fmincon(@(y)OptFunL(y,sm,fp,w),x0,A,b,...
-         [],[],[],[],[],... 
+         [],[],[],[],...
+         @nlconstr,... 
        options);
 end
 [Wp,Wm]=Params2Mats(x);
@@ -60,6 +62,21 @@ A=-A;
 if r.DispExit
     disp(ExitFlagMsg(ef));
 end
+
+
+
+    function [c,ceq]=nlconstr(xc)
+        c=-1;
+        ceq=OptFunL(xc,sc,fp,w)+Ac;
+    end
+
+    function [c,ceq,gradc,gradceq]=nlconstrgr(xc)
+        c=-1;
+        [ceq,gradceq]=OptFunGradL(xc,sc,fp,w);
+        ceq=ceq+Ac;
+        gradc=zeros(size(gradceq));
+    end
+
 
 end
 
