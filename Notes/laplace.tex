@@ -307,7 +307,7 @@ If we marginalise over $n$as well
 %
 \begin{equation}\label{eq:plastseqav}
 \begin{aligned}
-  P(\text{state}=i,t \mid \text{pot/dep},0) 
+  P(\text{state}=i,t \mid \text{pot/dep},0)
     &= \sum_n \frac{(rt)^n}{n!} \e^{-rt} \eq \M\potdep (f\pot\M\pot+f\dep\M\dep)^n \\
     &= \brk{ \eq \M\potdep\, \e^{rt(f\pot\M\pot+f\dep\M\dep-\I) } }_i,
 \end{aligned}
@@ -728,7 +728,7 @@ The derivatives, for $m \neq n$ are
   \frac{1}{f\potdep} \pdiff{\CL}{\Mh\potdep_{mn}} =& \,
       \eq_m \prn{ r \brk{\theta_m(s) - \theta_n(s)}
      +\prn{rc_m(s) \pm 1} \brk{\eta^w_m(s) - \eta^w_n(s)} } \\
-     &+ \mu\potdep_{mn} -  \mu\potdep_{mm}  
+     &+ \mu\potdep_{mn} -  \mu\potdep_{mm}
      + \lambda \eq_m \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) \eq_i\w_i.
 \end{aligned}
 \end{equation}
@@ -739,7 +739,7 @@ The one missing ingredient is the scale invariance.
 Define the scale transformation:
 %
 \begin{equation}\label{eq:scale}
-  \lambda * \M = (1-\lambda)\I + \lambda \M. 
+  \lambda * \M = (1-\lambda)\I + \lambda \M.
 \end{equation}
 %
 The Laplace transform has the following scaling property
@@ -786,7 +786,7 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
   The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
   The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
   The heat map in the centre right of each frame indicates the equilibrium probability distribution for each state.
-  See the video for more details.}\label{fig:envvid}
+  See the video for the full set of models.}\label{fig:envvid}
 \end{figure}
 
 
@@ -804,18 +804,18 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
   \caption[Heuristic optimal models]{Heuristics for models that maximise memory curve.
   All unlabelled arrowshave transition probabilities equal to 1.
   At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with $M$ states.
-  At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model. 
-  At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states. 
+  At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model.
+  At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
   Once this reaches zero, we discard the old end state and work on the new end state.} \label{fig:heuristicmodels}
 \end{figure}
 
 
-Looking at them models that were found by numerical maximisation in \autoref{fig:envnum} (see the video for the models), suggests we look at the particular set of models, shown in \autoref{fig:heuristicmodels}.
+Looking at them models that were found by numerical maximisation in \autoref{fig:envvid} (see the video for the full set of models), suggests we look at the particular set of models, shown in \autoref{fig:heuristicmodels}.
 
 At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with $M$ states.
 At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as $\tau\to\infty$.
 At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
-Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state (as one can see from the video, this is not quite true, but it is close enough to true to get a reasonable approximation to the envelope).
+Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state (as one can see from \autoref{fig:envvid} and the video, this is not quite true, but it is close enough to true to get a reasonable approximation to the envelope).
 Once the length has been reduced to $M=2$, the model is not shortened any further and the two-state model with deterministic transitions maximises the memory curve for all earlier times.
 
 These models' Laplace transforms can be computed analytically, as we will see below, leading to a heuristic envelope.
@@ -831,7 +831,7 @@ Looking at \eqref{eq:larea}, the only thing we need is differences in $\eta^w_i(
 In fact, given that the only nonzero elements of $\enc$ are
 %
 \begin{equation}\label{eq:unienc}
-  \enc_{ii+1}=\frac{1}{2} \quad\text{for}\quad i<M, 
+  \enc_{ii+1}=\frac{1}{2} \quad\text{for}\quad i<M,
   \qquad
   \enc_{ii-1}=-\frac{1}{2} \quad\text{for}\quad i>1,
 \end{equation}
@@ -915,8 +915,8 @@ with $B$ and $C$ determined by the boundary conditions provided by the last two 
 This can be used to compute the Laplace transform
 %
 \begin{equation}\label{eq:unilaplace}
-  A(s) = \frac{2\eta^w_1(s)}{M} 
-   = \frac{2}{M}\prn{\frac{1}{s}+B+C} 
+  A(s) = \frac{2\eta^w_1(s)}{M}
+   = \frac{2}{M}\prn{\frac{1}{s}+B+C}
    = \frac{2(\alpha^{\frac{M}{2}}-1)^2}{Ms(\alpha^M+1)}.
 \end{equation}
 %
@@ -929,7 +929,7 @@ We find that
   s = 2\sinh^2\frac{y_*}{M_*},
   \qquad
   \hat{A}_*(s) = \prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \frac{\log\alpha(s)}{s},
-  \\ \text{where}\quad 
+  \\ \text{where}\quad
   y_* = \tanh \frac{y_*}{2} \cosh y_* \approx 1.50553.
   \qquad
 \end{multline}
@@ -988,7 +988,7 @@ The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
 This means that the Laplace transform is given by
 %
 \begin{equation}\label{eq:stickyareaeta}
-  \hat{A}(s) = \frac{\varepsilon(\eta^w_1(s)-\eta^w_M(s))}{2+(M-2)\varepsilon} 
+  \hat{A}(s) = \frac{\varepsilon(\eta^w_1(s)-\eta^w_M(s))}{2+(M-2)\varepsilon}
        = \frac{2\varepsilon\, \eta^w_1(s)}{2+(M-2)\varepsilon}.
 \end{equation}
 %
@@ -1014,7 +1014,7 @@ These are solved by
 which leads to the Laplace transform
 %
 \begin{equation}\label{eq:stickylaplace}
-  \hat{A}(s) = \frac{2\varepsilon}{[2+(M-2)\varepsilon]s} \, 
+  \hat{A}(s) = \frac{2\varepsilon}{[2+(M-2)\varepsilon]s} \,
       \frac{ (\alpha^{\frac{M}{2}}-1)^2 - (1-\varepsilon)\alpha(\alpha^{\frac{M-2}{2}}-1)^2 }{ (\alpha^M + 1) - (1-\varepsilon)\alpha(\alpha^{M-2}+1) }.
 \end{equation}
 %
@@ -1039,10 +1039,10 @@ The width of this gap is insignificant for larger $M$.
 For small $s \ll M^{-2}$, it is given by
 %
 \begin{equation}\label{eq:stickyeps}
-  \varepsilon = \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},  
+  \varepsilon = \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},
 \end{equation}
 %
-and the Laplace transform is 
+and the Laplace transform is
 %
 \begin{equation}\label{eq:stickyenv}
   \hat{A}(s) = (M-1) \prn{ 1 - \sqrt{M(M-2)s} + \CO(M^2s)}.
@@ -1135,7 +1135,7 @@ We can find the boundary of the region of applicability by seeing at what value 
 with the $\varepsilon=1$ case providing the lower boundary and $\varepsilon=0$ providing the upper boundary.
 If these were really the models that maximised $A(s)$, the region of validity for $M$ would not overlap with that for $M-2$.
 In this case, however, there is an overlap.
-This is related to the fact that the video shows that the optimal models do not6 shorten by one state at a time, but several outgoing transition probabilities are reduced at once.
+This is related to the fact that \autoref{fig:envvid} and the video shows that the optimal models do not6 shorten by one state at a time, but several outgoing transition probabilities are reduced at once.
 
 
 
@@ -1158,9 +1158,9 @@ Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylapl
 \begin{equation}\label{eq:henv}
   \snrb(\tau) = \left\{
 \begin{aligned}
-  & \frac{\sqrt{N}}{1+r\tau}, & 
+  & \frac{\sqrt{N}}{1+r\tau}, &
   & r\tau \leq \frac{1}{2\sinh^2\frac{y_*}{2}} , \\
-  & \sqrt{N}\prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \log\alpha, & 
+  & \sqrt{N}\prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \log\alpha, &
   \frac{1}{2\sinh^2 \frac{y_*}{2}} \leq & r\tau \leq \frac{1}{2\sinh^2 \frac{y_*}{M}} , \\
   & \max_\varepsilon \brc{\frac{2\sqrt{N}\varepsilon}{2+(M-2)\varepsilon} \,
       \frac{ (\alpha^{\frac{M}{2}}-1)^2 - (1-\varepsilon)\alpha(\alpha^{\frac{M-2}{2}}-1)^2 }{ (\alpha^M + 1) - (1-\varepsilon)\alpha(\alpha^{M-2}+1) }}, &
@@ -1169,7 +1169,7 @@ Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylapl
 \right.
 \end{equation}
 %
-For $M \gg 1$, and $r\tau$ much greater than the lower bound of each region, we can approximate this as 
+For $M \gg 1$, and $r\tau$ much greater than the lower bound of each region, we can approximate this as
 %
 \begin{equation}\label{eq:henvapproc}
   \snrb(\tau) \approx \left\{

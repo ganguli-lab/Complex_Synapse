@@ -12,6 +12,7 @@ function [ mats ] = FixNumLaplaceBnd( oldmats,srange,nstates,trange,mode,inds,va
 
 mats=oldmats;
 reps=200;
+w=BinaryWeights(nstates);
 
 for j=1:length(inds)
     i=inds(j);
@@ -21,22 +22,17 @@ for j=1:length(inds)
     
     switch mode
         case 'hom'
-            [mats(i).Wp,mats(i).Wm,mats(i).Q,mats(i).A]=FindOptHomL(srange(i),nstates,reps,varargin{:});
-            Wp=mats(i).Wp+mats(i).Q;
-            Wm=mats(i).Wm+mats(i).Q;
+            [Wp,Wm,Q,mats(i).A]=FindOptHomL(srange(i),nstates,reps,varargin{:});
+            mats(i).modelobj=SynapseMemoryModel('Wp',Wp+Q,'Wm',Wm+Q,'w',w,'fp',0.5);
         otherwise
-            [mats(i).Wp,mats(i).Wm,mats(i).A]=FindOptL(srange(i),nstates,reps,varargin{:});
-            Wp=mats(i).Wp;
-            Wm=mats(i).Wm;
+            [Wp,Wm,mats(i).A]=FindOptL(srange(i),nstates,reps,varargin{:});
+            mats(i).modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
     end
     
-    w=BinaryWeights(nstates);
-    modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
+    mats(i).snr=mats(i).modelobj.SNRcurve(trange);
     
-    mats(i).snr=modelobj.SNRcurve(trange);
-    
-    [~,dWp,dWm]=modelobj.SNRlaplaceGrad(srange(i));
-    [mats(i).KTp,mats(i).KTm]=KTmults(modelobj.Wp,modelobj.Wm,dWp,dWm);
+    [~,dWp,dWm]=mats(i).modelobj.SNRlaplaceGrad(srange(i));
+    [mats(i).KTp,mats(i).KTm]=KTmults(mats(i).modelobj.Wp,mats(i).modelobj.Wm,dWp,dWm);
     
     if mats(i).A < oldmats(i).A
         mats(i)=oldmats(i);
