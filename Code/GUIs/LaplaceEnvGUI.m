@@ -122,9 +122,16 @@ uicontrol(slider_ph,'Style','pushbutton',...
 ed4=uicontrol(slider_ph,'Style','edit',...
                 'String',num2str(tau(frNumber)),...
                 'Units','normalized',...
-                'Position',[0.9 0.25 0.1 0.7],...
+                'Position',[0.9 0.6 0.1 0.35],...
                 'FontSize',BtFontSize,...
                 'Callback',{@ed_callback4});
+%display value of slider
+ed2=uicontrol(slider_ph,'Style','edit',...
+                'String',num2str(length(srange)+1-frNumber),...
+                'Units','normalized',...
+                'Position',[0.9 0.25 0.1 0.35],...
+                'FontSize',BtFontSize,...
+                'Callback',{@ed_callback2});
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 warning('off','MATLAB:handle_graphics:exceptions:SceneNode');
@@ -211,6 +218,7 @@ changeFrameNumber(frNumber);
     function changeFrameNumber(frameNumber)
         frNumber=frameNumber;
         set(ed4,'String',num2str(tau(frameNumber)));
+        set(ed2,'String',num2str(length(srange)+1-frNumber));
         set(slh4,'Value',frameNumber);
         PlotSNR(frameNumber);
         PlotModel(frameNumber);
@@ -253,6 +261,13 @@ changeFrameNumber(frNumber);
     function ed_callback4(source,~)
         time=str2double(get(source,'String'));
         frameNumber=find(tau>=time,1,'first');
+        changeFrameNumber(frameNumber);
+    end %sl1_callback
+
+    function ed_callback2(source,~)
+        frameNumber=length(srange)+1-str2double(get(source,'String'));
+        frameNumber=max(1,frameNumber);
+        frameNumber=min(length(srange),frameNumber);
         changeFrameNumber(frameNumber);
     end %sl1_callback
 
