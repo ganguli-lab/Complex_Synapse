@@ -11,13 +11,13 @@ function [ Wp,Wm,A ] = FindOptDoubleL( sm,sc,Ac,n,varargin )
 persistent p
 if isempty(p)
     p=inputParser;
-    p.FunctionName='FindOptL';
+    p.FunctionName='FindOptDoubleL';
     p.StructExpand=true;
     p.KeepUnmatched=true;
-    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptL','reps',3));
-    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptL','InitRand'));
-%     p.addParameter('Triangular',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOpt','InitRand'));
-    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptL','InitRand'));
+    p.addOptional('reps',1,@(x)validateattributes(x,{'numeric'},{'scalar'},'FindOptDoubleL','reps',5));
+    p.addParameter('InitRand',true,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptDoubleL','InitRand'));
+%     p.addParameter('Triangular',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptDoubleL','InitRand'));
+    p.addParameter('DispReps',false,@(x) validateattributes(x,{'logical'},{'scalar'},'FindOptDoubleL','InitRand'));
 end
 p.parse(varargin{:});
 r=p.Results;
@@ -62,7 +62,7 @@ else
             DispCounter(i,r.reps,'rep: ');
         end
 %         [ Wpt,Wmt,At ] = FindOptL( sm,n,1, p.Unmatched,'InitRand',r.InitRand,'Triangular',r.Triangular );
-        [ Wpt,Wmt,At ] = FindOptL( sm,n,1, p.Unmatched,'InitRand',r.InitRand );
+        [ Wpt,Wmt,At ] = FindOptDoubleL( sm,sc,Ac,n,1, p.Unmatched,'InitRand',r.InitRand );
         if At>A
             Wp=Wpt;
             Wm=Wmt;

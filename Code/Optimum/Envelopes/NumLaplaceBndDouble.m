@@ -1,4 +1,4 @@
-function [ env ] = NumLaplaceBndDouble( srange,nstates,trange,sc,Ac,varargin )
+function [ env ] = NumLaplaceBndDouble( srange,nstates,sc,Ac,varargin )
 %chains=NUMLAPLACEBNDDOUBLE(srange,nstates,trange,mode) numeric laplace
 %bound with constraint
 %   env = struct
@@ -11,11 +11,18 @@ function [ env ] = NumLaplaceBndDouble( srange,nstates,trange,sc,Ac,varargin )
 %   nstates = number of states in chain
 %   trange  = values of time for snr curve
 %   sc,Ac   = constaint, A(sc)=Ac
+
+
+% function [ env ] = NumLaplaceBndDouble( srange,nstates,trange,sc,Ac,varargin )
+
+
+
 reps=50;
 
 w=BinaryWeights(nstates);
 
-mats(1,length(srange))=struct('s',[],'modelobj',[],'A',[],'snr',[],'KTp',[],'KTm',[]);
+% mats(1,length(srange))=struct('s',[],'modelobj',[],'A',[],'snr',[],'KTp',[],'KTm',[]);
+mats(1,length(srange))=struct('s',[],'modelobj',[],'A',[]);
 
 for i=1:length(srange)
     
@@ -26,10 +33,10 @@ for i=1:length(srange)
     [Wp,Wm,mats(i).A]=FindOptDoubleL(srange(i),sc,Ac,nstates,reps,varargin{:});
     mats(i).modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
     
-    mats(i).snr=mats(i).modelobj.SNRcurve(trange);
-    
-    [~,dWp,dWm]=mats(i).modelobj.SNRlaplaceGrad(srange(i));
-    [mats(i).KTp,mats(i).KTm]=KTmults(mats(i).modelobj.Wp,mats(i).modelobj.Wm,dWp,dWm);
+%     mats(i).snr=mats(i).modelobj.SNRcurve(trange);
+%     
+%     [~,dWp,dWm]=mats(i).modelobj.SNRlaplaceGrad(srange(i));
+%     [mats(i).KTp,mats(i).KTm]=KTmults(mats(i).modelobj.Wp,mats(i).modelobj.Wm,dWp,dWm);
 end
 DispCounter(length(srange)+1,length(srange),'s val: ');
 

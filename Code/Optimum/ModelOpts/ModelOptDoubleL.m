@@ -43,7 +43,7 @@ options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
 
 if r.UseDerivs
     options = optimset(options,'GradObj','on','GradConstr','on');
-    [x,A,ef] = fmincon(@(y)OptFunGradL(y,sm,fp,w),x0,A,b,...
+    [x,A,ef] = fmincon(@(y)OptFunGradDoubleL(y,sm,fp,w),x0,A,b,...
          [],[],[],[],...
          @nlconstrgr,... 
        options);
@@ -58,6 +58,12 @@ end
 % [~,~,ix]=SortByEta(0.5*Wp+0.5*Wm,w);
 [newWp,newWm]=SortByWtEtaS(Wp,Wm,w,fp,sm);
 A=-A;
+
+[~,~,~,~,fail]=DoubleLaplace(sm,newWp,newWm,fp,w);
+
+if fail
+    A=0;
+end
 
 if r.DispExit
     disp(ExitFlagMsg(ef));
