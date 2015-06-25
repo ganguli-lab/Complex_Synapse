@@ -31,7 +31,7 @@ fp=r.fp;
 n=length(Wp);
 w=BinaryWeights(n);
 
-[A,b]=ParamsConstraints(n);
+[Alc,b]=ParamsConstraints(n);
 
 x0 = Mats2Params(Wp,Wm);            % Starting guess 
 options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
@@ -43,16 +43,22 @@ options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
 
 if r.UseDerivs
     options = optimset(options,'GradObj','on','GradConstr','on');
-    [x,A,ef] = fmincon(@(y)OptFunGradDoubleL(y,sm,fp,w),x0,A,b,...
+    [x,A,ef] = fmincon(@(y)OptFunGradDoubleL(y,sm,fp,w),x0,Alc,b,...
          [],[],[],[],...
          @nlconstrgr,... 
        options);
 else
-    [x,A,ef] = fmincon(@(y)OptFunL(y,sm,fp,w),x0,A,b,...
+    [x,A,ef] = fmincon(@(y)OptFunL(y,sm,fp,w),x0,Alc,b,...
          [],[],[],[],...
          @nlconstr,... 
        options);
 end
+
+if any(Alc*x>b)
+    A=0;
+end
+    
+
 [Wp,Wm]=Params2Mats(x);
 
 % [~,~,ix]=SortByEta(0.5*Wp+0.5*Wm,w);

@@ -9,7 +9,9 @@ ev=ones(1,length(Wp));
 q=Wp-Wm;
 W=Wm+fp*q;
 
-[U,S,~]=svd(W);
+Zinv=ones(length(Wp))-W;
+
+[U,S,~]=svd(Zinv);
 
 [smin,ix]=min(diag(S));
 U=U(:,ix);
@@ -55,7 +57,6 @@ else
 
     p=EqProb(W);
 
-    Zinv=ones(length(Wp))-W;
     Zinvs=s*eye(length(Wp))+Zinv;
 
     a=q*(Zinvs\w);

@@ -14,6 +14,17 @@ classdef SynapseMemoryModel
         fp=0.5;
     end
     
+    properties%thresholds
+        %smallest singular value for Split models
+        SingValThresh=1e-10;
+        %smallest reciprocal condition number for inverting Zinv
+        RCondThresh=1e-5;
+        %degeneracy threshold, for evals or eta^+
+        DegThresh=1e-3;
+        %threshold for lumpability test
+        LumpThresh=1e-3;        
+    end
+    
     methods %setting data
         %
         function newobj=setWp(obj,newWp)

@@ -7,17 +7,17 @@ function [ qa,ca ] = Spectrum( obj,varargin )
 %   QA = eigenvalues (decay rate)
 %   CA = weights (contribution to area)
 
-persistent p
-if isempty(p)
-    p=inputParser;
-    p.FunctionName='SynapseMemoryModel.Spectrum';
-    p.StructExpand=true;
-    p.KeepUnmatched=false;
-    p.addParameter('DegThresh',1e-3,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'SynapseMemoryModel.Spectrum','DegThresh'));
-    p.addParameter('RCondThresh',1e-5,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'SynapseMemoryModel.Spectrum','RCondThresh'));
-end
-p.parse(varargin{:});
-r=p.Results;
+% persistent p
+% if isempty(p)
+%     p=inputParser;
+%     p.FunctionName='SynapseMemoryModel.Spectrum';
+%     p.StructExpand=true;
+%     p.KeepUnmatched=false;
+%     p.addParameter('DegThresh',1e-3,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'SynapseMemoryModel.Spectrum','DegThresh'));
+%     p.addParameter('RCondThresh',1e-5,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'SynapseMemoryModel.Spectrum','RCondThresh'));
+% end
+% p.parse(varargin{:});
+% r=p.Results;
 
 
 
@@ -30,7 +30,7 @@ qa=diag(qa);
 u=u(:,ix);
 
 %this method doesn't work when eigenvalues are nearly degenerate
-if min(diff(qa)) > r.DegThresh
+if min(diff(qa)) > obj.DegThresh
     [v,qb]=eig(-W');
     qb=diag(qb);
     [~,ix]=sort(qb);
@@ -50,7 +50,7 @@ end
     Zinv=obj.GetZinv;
     %this method doesn't work when eigenvectors are nearly parallel or W
     %non-ergodic
-    if rcond(Zinv) > r.RCondThresh
+    if rcond(Zinv) > obj.RCondThresh
         ca = 2*obj.fp*(1-obj.fp) * (u\obj.w) * sum((Zinv\q) * (Zinv\u), 1);
         ca=diag(ca);
     else
