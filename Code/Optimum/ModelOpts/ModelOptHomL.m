@@ -32,9 +32,11 @@ fp=r.fp;
 n=length(Wp);
 w=BinaryWeights(n);
 
-[Ac,b]=ParamsConstraintsHom(n);
+x0 = Mats2Params(Wp,Wm);            % Starting guess 
+lb=zeros(size(x0));
+ub=[];
+[linconstr_A,linconstr_b]=ParamsConstraintsHom(n);
 
-x0 = Mats2ParamsHom(Wp,Wm,Q);            % Starting guess 
 options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
     'TolFun', r.TolFun,...  % termination based on function value (of the derivative)
     'TolX', r.TolX,...
@@ -44,13 +46,15 @@ options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
 
 if r.UseDerivs
     options = optimset(options,'GradObj','on');
-    [x,A,ef] = fmincon(@(y)OptFunGradHomL(y,sm,fp,w),x0,Ac,b,...
-         [],[],[],[],[],... 
-       options);
+    [x,A,ef] = fmincon(@(y)OptFunGradHomL(y,sm,fp,w),x0,...
+        linconstr_A,linconstr_b,...
+        [],[],lb,ub,[],...
+        options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
 else
-    [x,A,ef] = fmincon(@(y)OptFunHomL(y,sm,fp,w),x0,Ac,b,...
-         [],[],[],[],[],... 
-       options);
+    [x,A,ef] = fmincon(@(y)OptFunHomL(y,sm,fp,w),x0,...
+        linconstr_A,linconstr_b,...
+        [],[],lb,ub,[],...
+        options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
 end
 [Wp,Wm,Q]=Params2MatsHom(x);
 
@@ -58,7 +62,7 @@ end
 [newWp,newWm,newQ]=SortByWtEtaSHom(Wp,Wm,Q,w,fp,sm);
 A=-A;
 
-if any(Ac*x>b)
+if any(linconstr_A*x>linconstr_b)
     A=NaN;
 end
 
