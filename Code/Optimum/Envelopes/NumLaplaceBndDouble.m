@@ -1,5 +1,5 @@
 function [ env ] = NumLaplaceBndDouble( srange,nstates,sc,Ac,varargin )
-%chains=NUMLAPLACEBNDDOUBLE(srange,nstates,trange,mode) numeric laplace
+%chains=NUMLAPLACEBNDDOUBLE(srange,nstates,sc,Ac) numeric laplace
 %bound with constraint
 %   env = struct
 %   env.mats  = struct array (size=[1 length(srange)])

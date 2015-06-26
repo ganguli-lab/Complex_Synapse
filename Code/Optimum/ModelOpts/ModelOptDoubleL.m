@@ -44,23 +44,38 @@ options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
     'largescale', 'on');
 
 if r.UseDerivs
+    options = optimset(options,'GradObj','on');
+    [x1] = fmincon(@initoptfngr,x0,...
+        linconstr_A,linconstr_b,...
+        [],[],lb,ub,...
+        [],... 
+        options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
+else
+    [x1] = fmincon(@initoptfn,x0,...
+        linconstr_A,linconstr_b,...
+        [],[],lb,ub,...
+        [],... 
+        options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
+end
+
+if r.UseDerivs
     options = optimset(options,'GradObj','on','GradConstr','on');
-    [x,A,ef] = fmincon(@(y)OptFunGradDoubleL(y,sm,fp,w),x0,...
+    [x,A,ef] = fmincon(@(y)OptFunGradDoubleL(y,sm,fp,w),x1,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
         @nlconstrgr,... 
         options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
 else
-    [x,A,ef] = fmincon(@(y)OptFunL(y,sm,fp,w),x0,...
+    [x,A,ef] = fmincon(@(y)OptFunL(y,sm,fp,w),x1,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
         @nlconstr,... 
         options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
 end
 
-if any(linconstr_A*x>linconstr_b)
-    A=0;
-end
+% if any(linconstr_A*x>linconstr_b)
+%     A=0;
+% end
     
 
 [Wp,Wm]=Params2Mats(x);
@@ -71,7 +86,7 @@ A=-A;
 
 [~,~,~,~,fail]=DoubleLaplace(sm,newWp,newWm,fp,w);
 
-if fail
+if fail || ef==-2
     A=0;
 end
 
@@ -93,6 +108,16 @@ end
         gradc=zeros(size(gradceq));
     end
 
+    function f=initoptfn(xi)
+        [~,f]=nlconstr(xi);
+        f=0.5*f^2;
+    end
+
+    function [f,gr]=initoptfngr(xi)
+        [~,f,~,gr]=nlconstrgr(xi);
+        f=0.5*f^2;
+        gr=f*gr;
+    end
 
 end
 

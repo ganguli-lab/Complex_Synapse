@@ -24,8 +24,10 @@ function [ msg ] = ExitFlagMsg( ef )
 %                 end
             case -1
                 msg=('Finished.  Algorithm was terminated by the output function.');
+            case -2
+                msg=('Finished.  No feasible point was found.');
             otherwise
-                assert ( false, 'New exit condition out of the fminunc optimizer front-end.');
+                assert ( false, ['New exit condition out of the fmincon optimizer front-end:' int2str(ef)]);
         end
 
 end
