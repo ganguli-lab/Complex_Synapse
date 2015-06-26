@@ -60,7 +60,7 @@ end
 
 if r.UseDerivs
     options = optimset(options,'GradObj','on','GradConstr','on');
-    [x,A,ef] = fmincon(@(y)OptFunGradDoubleL(y,sm,fp,w),x1,...
+    [x,A,ef] = fmincon(@(y)OptFunGradL(y,sm,fp,w),x1,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
         @nlconstrgr,... 
@@ -115,8 +115,8 @@ end
 
     function [f,gr]=initoptfngr(xi)
         [~,f,~,gr]=nlconstrgr(xi);
-        f=0.5*f^2;
         gr=f*gr;
+        f=0.5*f^2;
     end
 
 end
