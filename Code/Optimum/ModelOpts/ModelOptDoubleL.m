@@ -10,18 +10,18 @@ function [ newWp,newWm,A,ef ] = ModelOptDoubleL( Wp,Wm,sm,sc,Ac,varargin)
 persistent p
 if isempty(p)
     p=inputParser;
-    p.FunctionName='ModelOptL';
+    p.FunctionName='ModelOptDoubleL';
     p.StructExpand=true;
     p.KeepUnmatched=true;
-    p.addParameter('UseDerivs',true,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOptL','UseDerivs'));
-    p.addParameter('DispExit',false,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOptL','DispExit'));
-    p.addParameter('TolFun',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptL','TolFun'));
-    p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptL','TolFun'));
-    p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptL','TolFun'));
-    p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOptL','TolFun'));
-    p.addParameter('Algorithm','interior-point',@(x) validatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptL','TolFun'));
-    p.addParameter('Display','off',@(x) validatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOptL','TolFun'));
-    p.addParameter('fp',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'ModelOptL','fp'));
+    p.addParameter('UseDerivs',true,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOptDoubleL','UseDerivs'));
+    p.addParameter('DispExit',false,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOptDoubleL','DispExit'));
+    p.addParameter('TolFun',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleL','TolFun'));
+    p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleL','TolFun'));
+    p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleL','TolFun'));
+    p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOptDoubleL','TolFun'));
+    p.addParameter('Algorithm','interior-point',@(x) validatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptDoubleL','TolFun'));
+    p.addParameter('Display','off',@(x) validatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOptDoubleL','TolFun'));
+    p.addParameter('fp',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'ModelOptDoubleL','fp'));
 end
 p.parse(varargin{:});
 r=p.Results;
@@ -60,7 +60,7 @@ end
 
 if r.UseDerivs
     options = optimset(options,'GradObj','on','GradConstr','on');
-    [x,A,ef] = fmincon(@(y)OptFunGradL(y,sm,fp,w),x1,...
+    [x,A,ef] = fmincon(@(y)OptFunGradDoubleL(y,sm,fp,w),x1,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
         @nlconstrgr,... 
@@ -103,18 +103,19 @@ end
 
     function [c,ceq,gradc,gradceq]=nlconstrgr(xc)
         c=-1;
-        [ceq,gradceq]=OptFunGradL(xc,sc,fp,w);
+        [ceq,gradceq]=OptFunGradDoubleL(xc,sc,fp,w);
         ceq=ceq+Ac;
         gradc=zeros(size(gradceq));
     end
 
     function f=initoptfn(xi)
-        [~,f]=nlconstr(xi);
+        f=OptFunL(xi,sc,fp,w)+Ac;
         f=0.5*f^2;
     end
 
     function [f,gr]=initoptfngr(xi)
-        [~,f,~,gr]=nlconstrgr(xi);
+        [f,gr]=OptFunGradL(xi,sc,fp,w);
+        f=f+Ac;
         gr=f*gr;
         f=0.5*f^2;
     end
