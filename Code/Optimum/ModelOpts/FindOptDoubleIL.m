@@ -43,7 +43,7 @@ if r.reps==1
 
     try
     %     [Wp,Wm] = ModelOpt( Wp,Wm,t,varargin{:});
-        [Wp,Wm,A] = ModelOptDoubleL( Wp,Wm,sm,sc,Ac,p.Unmatched);
+        [Wp,Wm,A] = ModelOptDoubleIL( Wp,Wm,sm,sc,Ac,p.Unmatched);
     catch ME
         A=SNRlaplace(sm,Wp,Wm,0.5,BinaryWeights(n));
         disp(ME.message);

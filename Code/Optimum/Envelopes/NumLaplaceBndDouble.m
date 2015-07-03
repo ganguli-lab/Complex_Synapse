@@ -40,7 +40,9 @@ for i=1:length(srange)
             mats(i).modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
     end
     
-    mats(i).snrb=mats(i).modelobj.SNRrunAve(1./srange);
+    if mats(i).modelobj.isvalid
+        mats(i).snrb=mats(i).modelobj.SNRrunAve(1./srange);
+    end
 %     
 %     [~,dWp,dWm]=mats(i).modelobj.SNRlaplaceGrad(srange(i));
 %     [mats(i).KTp,mats(i).KTm]=KTmults(mats(i).modelobj.Wp,mats(i).modelobj.Wm,dWp,dWm);

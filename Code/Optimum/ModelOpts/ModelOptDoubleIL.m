@@ -43,30 +43,31 @@ options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
     'MaxIter',r.MaxIter, ...
     'largescale', 'on');
 
-% if r.UseDerivs
-%     options = optimset(options,'GradObj','on');
-%     [x1] = fmincon(@initoptfngr,x0,...
-%         linconstr_A,linconstr_b,...
-%         [],[],lb,ub,...
-%         [],... 
-%         options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
-% else
-%     [x1] = fmincon(@initoptfn,x0,...
-%         linconstr_A,linconstr_b,...
-%         [],[],lb,ub,...
-%         [],... 
-%         options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
-% end
+if r.UseDerivs
+    options = optimset(options,'GradObj','on');
+    [x1] = fmincon(@initoptfngr,x0,...
+        linconstr_A,linconstr_b,...
+        [],[],lb,ub,...
+        [],... 
+        options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
+else
+    [x1] = fmincon(@initoptfn,x0,...
+        linconstr_A,linconstr_b,...
+        [],[],lb,ub,...
+        [],... 
+        options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
+end
+% x1=x0;
 
 if r.UseDerivs
     options = optimset(options,'GradObj','on','GradConstr','on');
-    [x,A,ef] = fmincon(@(y)OptFunGradL(y,sm,fp,w),x0,...
+    [x,A,ef] = fmincon(@(y)OptFunGradL(y,sm,fp,w),x1,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
         @nlconstrgr,... 
         options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
 else
-    [x,A,ef] = fmincon(@(y)OptFunL(y,sm,fp,w),x0,...
+    [x,A,ef] = fmincon(@(y)OptFunL(y,sm,fp,w),x1,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
         @nlconstr,... 
@@ -84,9 +85,9 @@ end
 [newWp,newWm]=SortByWtEtaS(Wp,Wm,w,fp,sm);
 A=-A;
 
-[~,~,~,~,fail]=DoubleLaplace(sm,newWp,newWm,fp,w);
+% [~,~,~,~,fail]=DoubleLaplace(sm,newWp,newWm,fp,w);
 
-if fail || ef==-2
+if ef==-2
     A=0;
 end
 
@@ -97,28 +98,29 @@ end
 
 
     function [c,ceq]=nlconstr(xc)
-        ceq=-1;
+        ceq=0;
         c=OptFunL(xc,sc,fp,w)+Ac;
     end
 
     function [c,ceq,gradc,gradceq]=nlconstrgr(xc)
-        ceq=-1;
+        ceq=0;
         [c,gradc]=OptFunGradL(xc,sc,fp,w);
         c=c+Ac;
         gradceq=zeros(size(gradc));
     end
 
-%     function f=initoptfn(xi)
+    function f=initoptfn(xi)
+        f=OptFunL(xi,sc,fp,w);
 %         f=OptFunL(xi,sc,fp,w)+Ac;
 %         f=0.5*f^2;
-%     end
-% 
-%     function [f,gr]=initoptfngr(xi)
-%         [f,gr]=OptFunGradL(xi,sc,fp,w);
+    end
+
+    function [f,gr]=initoptfngr(xi)
+        [f,gr]=OptFunGradL(xi,sc,fp,w);
 %         f=f+Ac;
 %         gr=f*gr;
 %         f=0.5*f^2;
-%     end
+    end
 
 end
 
