@@ -59,7 +59,8 @@ else
 end
 
 if r.UseDerivs
-    options = optimset(options,'GradObj','on','GradConstr','on');
+    options = optimset(options,'GradObj','on','GradConstr','on',...
+        'Hessian','user-supplied','HessFcn',@lagrangianhess);
     [x,A,ef] = fmincon(@(y)OptFunGradDoubleL(y,sm,fp,w),x1,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
@@ -97,15 +98,15 @@ end
 
 
     function [c,ceq]=nlconstr(xc)
-        c=-1;
+        c=[];
         ceq=OptFunL(xc,sc,fp,w)+Ac;
     end
 
     function [c,ceq,gradc,gradceq]=nlconstrgr(xc)
-        c=-1;
+        c=[];
         [ceq,gradceq]=OptFunGradDoubleL(xc,sc,fp,w);
         ceq=ceq+Ac;
-        gradc=zeros(size(gradceq));
+        gradc=[];
     end
 
     function f=initoptfn(xi)
@@ -120,5 +121,8 @@ end
         f=0.5*f^2;
     end
 
+    function h=lagrangianhess(x,lambda)
+        h = OptHessL(x,sm,fp,w) + lambda.eqnonlin * OptHessL(x,sc,fp,w);
+    end
 end
 

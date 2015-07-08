@@ -35,10 +35,10 @@ hess4 = outer3(p,ZqZ,Zw);
 hess10 = outer3(c,Zs,Zw);
 [hess10,hess9]=subtracttranspose(hess10);
 
-hess3 = outer(p,Z,Zw);
+hess3 = outer3(p,Z,Zw);
 [hess3,hess5]=subtracttranspose(hess3);
 
-hess6 = outer(p,Zs,Zw);
+hess6 = outer3(p,Zs,Zw);
 [hess6,hess8]=subtracttranspose(hess6);
 
 hessWW = hess1 + hess2 + hess4 + hess7 + hess9 + hess10;
@@ -51,18 +51,23 @@ hessmp = fp*fm * hessWW + fm * hessWq - fp * hessqW;
 hessmm = fm^2 * hessWW - fm * ( hessWq + hessqW );
 
     function tens=outer3(vec1,mat,vec2)
-        tens=outer(vec1, outer(mat,vec2,true), true); 
+    %outer produxt ov vector, matrix and vector
+        tens=outer(vec1, outer(mat,vec2,false), true); 
     end
 
     function tens=subtractdiag(tens)
-        tens = tens - outer( ev, sum(tens.*eyemask,1), true);
+    %subtract diagonal element from each row for first two indices
+        tens = tens - permute( outer( ev, sum(tens.*eyemask,1), true), [2 1 3 4]);
     end
 
     function tenstr=transposetens(tens)
+    %swap first two and last two indices
         tenstr=permute(tens,[3 4 1 2]);
     end
 
     function [tens1,tens2]=subtracttranspose(tens)
+    %subtract diagonal element from each row for first two indices, and
+    %lsst two indices, and compute transposed tensor
         tens1 = subtractdiag(tens);
         tens2 = transposetens(tens1);
         tens2=subtractdiag(tens2);
