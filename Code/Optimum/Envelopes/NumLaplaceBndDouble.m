@@ -53,7 +53,7 @@ DispCounter(length(srange)+1,length(srange),'s val: ');
 Aenv=[mats.A];
 Aenv=Aenv.*srange;
 
-env=struct('sc',sc,'Ac',Ac,'mats',mats,'tau',1./srange,'Aenv',Aenv);
+env=struct('sc',sc,'Ac',Ac,'mats',mats,'tau',1./srange,'SNRbenv',Aenv);
 
 end
 

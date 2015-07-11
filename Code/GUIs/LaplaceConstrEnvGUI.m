@@ -22,7 +22,7 @@ Id=eye(env.mats(1).modelobj.NumStates);
 AenvSingle=sqrt(NumSynapse)*AenvSingle./env.tau;
 
 snr_xlim=[env.tau(1) env.tau(end)];
-snr_ylim=[AenvSingle(end) 5*AenvSingle(1)];
+snr_ylim=[min(sqrt(NumSynapse)*env.SNRbenv(end),sqrt(NumSynapse)*env.sc*env.Ac) 5*AenvSingle(1)];
 
 Play=false;
 frNumber=1;
@@ -130,11 +130,13 @@ changeFrameNumber(frNumber);
     function PlotSNR(frameNumber)
         cla(snr_ax);
         
-        loglog(env.tau,AenvSingle,'g',env.tau,sqrt(NumSynapse)*env.Aenv,'r','Parent',snr_ax,'LineWidth',EnvLinewidth);
+        loglog(env.tau,AenvSingle,'g',env.tau,sqrt(NumSynapse)*env.SNRbenv,'r','Parent',snr_ax,'LineWidth',EnvLinewidth);
         hold(snr_ax,'on');
         loglog(1/env.sc,sqrt(NumSynapse)*env.sc*env.Ac,'ro','Parent',snr_ax,'MarkerFaceColor','r','MarkerSize',10);
         
-        loglog(env.tau,sqrt(NumSynapse)*env.mats(frameNumber).snrb,'b','Parent',snr_ax,'LineWidth',ModelLineWidth);
+        if ~isempty(env.mats(frameNumber).snrb)
+            loglog(env.tau,sqrt(NumSynapse)*env.mats(frameNumber).snrb,'b','Parent',snr_ax,'LineWidth',ModelLineWidth);
+        end
         
         line(env.tau(frameNumber)*[1;1],snr_ylim','Color','k','Parent',snr_ax,'LineWidth',TimeLineWidth)
         
@@ -154,16 +156,18 @@ changeFrameNumber(frNumber);
         title(snr_ax,'Proven and numerical envelopes','Interpreter',Interpreter,'FontSize',AxFontSize);
         legend(snr_ax,{'Unconstrained envelope',...
             'Constrained envelope',...
-            'Constaint',...
+            'Constraint',...
             'Current model'},...
             'Location','northeast','Interpreter',Interpreter,'FontSize',AxFontSize);
     end
 
    function PlotModel(frameNumber)
-       imagesc(env.mats(frameNumber).modelobj.w','Parent',model_ax(1),[-1 1]);
-       imagesc(env.mats(frameNumber).modelobj.Wp+Id,'Parent',model_ax(2),[0 1]);
-       imagesc(env.mats(frameNumber).modelobj.Wm+Id,'Parent',model_ax(3),[0 1]);
-       imagesc(env.mats(frameNumber).modelobj.EqProb,'Parent',model_ax(4),[0 1]);
+       if env.mats(frameNumber).modelobj.isvalid
+           imagesc(env.mats(frameNumber).modelobj.w','Parent',model_ax(1),[-1 1]);
+           imagesc(env.mats(frameNumber).modelobj.Wp+Id,'Parent',model_ax(2),[0 1]);
+           imagesc(env.mats(frameNumber).modelobj.Wm+Id,'Parent',model_ax(3),[0 1]);
+           imagesc(env.mats(frameNumber).modelobj.EqProb,'Parent',model_ax(4),[0 1]);
+       end
        
 %        line([1;1]*(1.5:1:M-0.5),[0.5;1.5]*ones(1,M-1),'Parent',model_ax(2),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
        
