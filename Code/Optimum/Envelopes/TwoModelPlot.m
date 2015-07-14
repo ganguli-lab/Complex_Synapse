@@ -1,15 +1,16 @@
-function TwoModelPlot( chains,twochains,ind,varargin )
+function TwoModelPlot( chains,env,ind,varargin )
 %TWOMODELPLOT Summary of this function goes here
 %   Detailed explanation goes here
 
 
-srange=[twochains.s];
-loglog(1./srange,srange.*[chains.A],'g',1./srange,[twochains.A].*srange,'r',1/twochains(1).sc,twochains(1).sc*twochains(1).Ac,'rd',varargin{:});
+loglog(env.tau,[chains.s].*[chains.A],'g',env.tau,env.SNRbenv,'r',1/env.sc,env.sc*env.Ac,'rd',varargin{:});
 hold on
 yl=ylim;
 if exist('ind','var') && ~isempty(ind)
-    loglog(1./srange,twochains(ind).snrb,'b',varargin{:});
-    line([1 1]/srange(ind),yl,'Color','k',varargin{:});
+    loglog(env.tau,env.chains(ind).snrb,'b',varargin{:});
+    line([1 1]*env.tau(ind),yl,'Color','k',varargin{:});
+    line([1 1]*env.tau(env.chains(ind).sinds(1)),yl,'Color','k','LineStyle',':',varargin{:});
+    line([1 1]*env.tau(env.chains(ind).sinds(2)),yl,'Color','k','LineStyle',':',varargin{:});
 end
 hold off;
 

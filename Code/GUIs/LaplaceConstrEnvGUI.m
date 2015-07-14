@@ -189,6 +189,11 @@ changeFrameNumber(frNumber);
            line([1;1]*(1.5:1:M-0.5),[0.5;M+1.5]*ones(1,M-1),'Parent',model_ax(3),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
            line([0.5;M+1.5]*ones(1,M-1),[1;1]*(1.5:1:M-0.5),'Parent',model_ax(3),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
            line([1;1]*(1.5:1:M-0.5),[0.5;1.5]*ones(1,M-1),'Parent',model_ax(4),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
+       else
+           imagesc(0,'Parent',model_ax(1),[-1 1]);
+           imagesc(0,'Parent',model_ax(2),[0 1]);
+           imagesc(0,'Parent',model_ax(3),[0 1]);
+           imagesc(0,'Parent',model_ax(4),[0 1]);
        end
        
        title(model_ax(1),'Synaptic weight','Interpreter',Interpreter,'FontSize',AxFontSize);

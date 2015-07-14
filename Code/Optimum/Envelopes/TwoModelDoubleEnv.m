@@ -1,5 +1,5 @@
-function [ twochains ] = TwoModelDoubleEnv( chains,sc_ind,Ac )
-%twochains=TWOMODELDOUBLEENV(chains,sc_ind,Ac) constrained envelope from
+function [ env ] = TwoModelDoubleEnv( chains,sc_ind,Ac )
+%env=TWOMODELDOUBLEENV(chains,sc_ind,Ac) constrained envelope from
 %population of two types of synapse
 %   chains = struct from NumLaplaceBndChains
 
@@ -7,32 +7,53 @@ if Ac > chains(sc_ind).A
     error(['Ac = ' num2str(Ac) ' > env = ' num2str(chains(sc_ind).A)]);
 end
 
-n=length(chains(1).qv)/2;
 
-srange=[chains.s];
+tau=1./[chains.s];
+SNRbc=Ac*chains(sc_ind).s;
 
-twochains(1,length(chains)) = struct('s',[],'qv',[],'frac',[],'A',[],'snrb',[],'sc',srange(sc_ind),'Ac',Ac);
+twochains(1,length(chains)) = struct('s',[],'qv',[],'frac',[],'A',[],'snrb',[],'sinds',[]);
 
 for i=1:length(chains)
-    twochains(i).sc = srange(sc_ind);
-    twochains(i).Ac = Ac;
-    twochains(i).s = srange(i);
-    twochains(i).qv = [chains(i).qv ; chains(sc_ind).qv];
-    model=SynapseMemoryModel.Build(@MakeMultistate,0.5,{chains(i).qv(1:n),chains(i).qv(n+1:end)});
-    Aother=model.SNRlaplace(srange(sc_ind));
-    if Aother > Ac
-        twochains(i).frac=[Ac/Aother ; 0];
-        twochains(i).snrb=twochains(i).frac(1)*model.SNRrunAve(1./srange);
-    else
-        twochains(i).frac=[chains(sc_ind).A-Ac ; Ac-Aother]/(chains(sc_ind).A-Aother);
-        twochains(i).snrb=twochains(i).frac(1)*model.SNRrunAve(1./srange);
-        model=SynapseMemoryModel.Build(@MakeMultistate,0.5,{chains(sc_ind).qv(1:n),chains(sc_ind).qv(n+1:end)});
-        twochains(i).snrb=twochains(i).snrb+twochains(i).frac(2)*model.SNRrunAve(1./srange);
-    end
-    twochains(i).A = twochains(i).snrb(i)/srange(i);
+    twochains(i).s = chains(i).s;
+    twochains(i).A = 0;
+    for j=1:length(chains)
+        for k=1:length(chains)
+            tempchains=twochains(i);
+            tempchains.qv = [chains(j).qv ; chains(k).qv];
+            tempchains.sinds=[j k];
+
+            Sij=chains(j).snrb(i);
+            Sik=chains(k).snrb(i);
+            Scj=chains(j).snrb(sc_ind);
+            Sck=chains(k).snrb(sc_ind);
+            
+            if Scj > SNRbc && Sck > SNRbc
+                x=Sij>Sik;
+            elseif Scj < SNRbc && Sck < SNRbc
+                x=NaN;
+            elseif Scj > Sck && Sij > Sik
+                x=1;
+            elseif Scj < Sck && Sij < Sik
+                x=0;
+            else
+                x=(SNRbc-Sck)/(Scj-Sck);
+            end
+            tempchains.frac = [x 1-x];
+            tempchains.snrb = tempchains.frac * [chains(j).snrb; chains(k).snrb];
+            tempchains.A = tempchains.snrb(i)/tempchains.s;
+            
+            if tempchains.A > twochains(i).A
+                twochains(i)=tempchains;
+            end
+        end%for k
+    end%for j
 end
 
+Aenv=[twochains.A];
+Aenv=Aenv./tau;
 
+
+env=struct('chains',twochains,'sc',chains(sc_ind).s,'Ac',Ac,'tau',tau,'SNRbenv',Aenv);
 
 end
 
