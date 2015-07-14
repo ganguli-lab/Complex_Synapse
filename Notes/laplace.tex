@@ -58,6 +58,8 @@
 \newcommand{\D}{\mathbf{D}}
 \newcommand{\pib}{\boldsymbol{\pi}}
 \newcommand{\Lb}{\boldsymbol{\Lambda}}
+\newcommand{\etw}{\boldsymbol{\eta}^w}
+\newcommand{\thb}{\boldsymbol{\theta}}
 %synapse models
 \newcommand{\w}{\mathbf{w}}
 \newcommand{\W}{\mathbf{W}}
@@ -478,11 +480,11 @@ We can arrange the states in order of decreasing $\eta^{+}_i(s)$ or increasing $
 It will be more convenient to use the quantities
 %
 \begin{equation}\label{eq:lwpmixtime}
-  \eta^w_i(s) = \sum_j \fptb_{ij}(s)\eq_j \w
+  \etw_i(s) = \sum_j \fptb_{ij}(s)\eq_j \w_j
     = \eta^+_i(s) - \eta^-_i(s) =2\eta^+_i(s) - \eta(s) =\eta(s) - 2\eta^-_i(s) .
 \end{equation}
 %
-Arranging the states in order of decreasing $\eta^w_i(s)$ is the same as the order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
+Arranging the states in order of decreasing $\etw_i(s)$ is the same as the order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
 These quantities can still be used when $\w$ takes more than two values.
 
 
@@ -526,7 +528,7 @@ Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s)
 \begin{aligned}
   \hat{A}(s) = A(s) \sqrt{\frac{{{1-(f\pot-f\dep)^2(\eq\w)^2}}}{N}}  &=  \eq \enc \fund(s) \w \\
     &= \sum_{ijk} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \eq_k \w_k \\
-    &= \sum_{ij}  \eq_i \enc_{ij} (\eta^w_{i}(s) - \eta^w_{j}(s)).
+    &= \sum_{ij}  \eq_i \enc_{ij} (\etw_{i}(s) - \etw_{j}(s)).
 \end{aligned}
 \end{equation}
 %
@@ -537,7 +539,7 @@ In analogy with the case $s=0$, we define
 \begin{equation}\label{eq:lareacoeffs}
   \begin{aligned}
     c_k(s) &= \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \\
-    a_i(s) &= \sum_j \eq_i \enc_{ij} (\eta^w_{i}(s) - \eta^w_{j}(s)),\\
+    a_i(s) &= \sum_j \eq_i \enc_{ij} (\etw_{i}(s) - \etw_{j}(s)),\\
     \implies
     \hat{A}(s) &= \sum_k c_k(s) \eq_k \w_k
       = \sum_i a_i(s).
@@ -547,18 +549,53 @@ In analogy with the case $s=0$, we define
 
 \subsection{Derivatives}\label{sec:lderiv}
 
-Using the same approach as the area bound in \cite{Lahiri2013synapse}, and defining $\theta_i(s) = \sum_j \fptb_{ij}(0) a_j(s)$,  we find that the derivatives are
+Using the same approach as the area bound in \cite{Lahiri2013synapse}, and defining $\thb_i(s) = \sum_j \fptb_{ij}(0) a_j(s)$,  we find that the derivatives are
 %
 \begin{equation}\label{eq:lAdiff}
-  \pdiff{\hat{A}(s)}{\Mh\potdep_{mn}}
-     = f\potdep \eq_m \prn{ r \brk{\theta_m(s) - \theta_n(s)}
-     +\prn{rc_m(s) \pm 1} \brk{\eta^w_m(s) - \eta^w_n(s)} },
+  \pdiff{\hat{A}(s)}{\M\potdep_{mn}}
+     = f\potdep \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
+     +\prn{rc_m(s) \pm 1} \brk{\etw_m(s) - \etw_n(s)} },
 \end{equation}
 %
 with the upper/lower sign in $\pm$ corresponding to derivatives \wrt $\M\potdep$.
-The term with $\Theta(s)$ comes from differentiating $\eq$, the term with $c(s)$ comes from differentiating $\eta^w(s)$ and the term with $\pm1$ comes from differentiating $\enc$ in \eqref{eq:larea}.
+The term with $\Theta(s)$ comes from differentiating $\eq$, the term with $c(s)$ comes from differentiating $\etw(s)$ and the term with $\pm1$ comes from differentiating $\enc$ in \eqref{eq:larea}.
 
-
+To write down the Hessian, we will first define some notation.
+Given a four-index array $H_{ijkl}$, we define $H\trans_{ijkl} = H_{klij}$
+Then we denote
+%
+\begin{equation}\label{eq:hessparts}
+\begin{aligned}
+  R_{ijkl} &= 
+    &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\thb_k(s) - \thb_l(s)} \\
+    &&&+ \eq_i \brc{[\fund(0)\enc\fund(s)]_{ik} - [\fund(0)\enc\fund(s)]_{jk}} \brc{\etw_k(s) - \etw_l(s)} \\
+    &&&+ \eq_i c_i(s) \brc{\fund_{ik}(s) - \fund_{jk}(s)} \brc{\etw_k(s) - \etw_l(s)},  \\
+  S_{ijkl} &= 
+    &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\etw_k(s) - \etw_l(s)} \\
+    &&&+ \eq_k \brc{\fund_{ki}(s) - \fund_{li}(s)} \brc{\etw_i(s) - \etw_j(s)}.
+\end{aligned}
+\end{equation}
+%
+Then we can write the hessian as
+%
+\begin{equation}\label{eq:hessian}
+\begin{aligned}
+  \pdiff{^2\hat{A}(s)}{\M\pot_{ij} \partial\M\pot_{kl}} &=
+     (f\pot)^2 (R_{ijkl} + R\trans_{ijkl})
+     + f\pot(S_{ijkl} + S\trans_{ijkl}), \\
+  \pdiff{^2\hat{A}(s)}{\M\pot_{ij} \partial\M\dep_{kl}} &=
+     f\pot f\dep (R_{ijkl} + R\trans_{ijkl})
+     - f\pot S_{ijkl} + f\dep S\trans_{ijkl}, \\
+  \pdiff{^2\hat{A}(s)}{\M\dep_{ij} \partial\M\pot_{kl}} &=
+     f\pot f\dep (R_{ijkl} + R\trans_{ijkl})
+     - f\pot S\trans_{ijkl} + f\dep S_{ijkl}, \\
+  \pdiff{^2\hat{A}(s)}{\M\pot_{ij} \partial\M\pot_{kl}} &=
+     (f\dep)^2 (R_{ijkl} + R\trans_{ijkl})
+     - f\dep(S_{ijkl} + S\trans_{ijkl}), \\
+\end{aligned}
+\end{equation}
+%
+This is useful in numerical maximisation.
 
 \section{Upper bounds}\label{sec:upperbnds}
 
@@ -703,7 +740,7 @@ Consider the Lagrangian
 %
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
-  \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\eta^w_i(s) - \eta^w_j(s))
+  \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\etw_i(s) - \etw_j(s))
         +\sum_{i j} \prn{ f\pot\mu\pot_{ij} \M\pot_{ij} + f\dep\mu\dep_{ij} \M\dep_{ij} }\\
         &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i\w_i },
 \end{aligned}
@@ -726,8 +763,8 @@ The derivatives, for $m \neq n$ are
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
   \frac{1}{f\potdep} \pdiff{\CL}{\Mh\potdep_{mn}} =& \,
-      \eq_m \prn{ r \brk{\theta_m(s) - \theta_n(s)}
-     +\prn{rc_m(s) \pm 1} \brk{\eta^w_m(s) - \eta^w_n(s)} } \\
+      \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
+     +\prn{rc_m(s) \pm 1} \brk{\etw_m(s) - \etw_n(s)} } \\
      &+ \mu\potdep_{mn} -  \mu\potdep_{mm}
      + \lambda \eq_m \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) \eq_i\w_i.
 \end{aligned}
@@ -827,7 +864,7 @@ We will work in units such that $r=1$ temporarily, only restoring $r$ at the end
 
 
 Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_uniform}.
-Looking at \eqref{eq:larea}, the only thing we need is differences in $\eta^w_i(s)$.
+Looking at \eqref{eq:larea}, the only thing we need is differences in $\etw_i(s)$.
 In fact, given that the only nonzero elements of $\enc$ are
 %
 \begin{equation}\label{eq:unienc}
@@ -839,32 +876,32 @@ In fact, given that the only nonzero elements of $\enc$ are
 and $\eq_i = \frac{1}{M}$, we have
 %
 \begin{equation}\label{eq:uniareaeta}
-  \hat{A}(s) = \frac{\eta^w_1(s) - \eta^w_M(s)}{M}.
+  \hat{A}(s) = \frac{\etw_1(s) - \etw_M(s)}{M}.
 \end{equation}
 %
 
 Note that
 %
 \begin{equation}\label{eq:etafund}
-  \eta^w(s) = \text{const.} - \fund(s)\w.
+  \etw(s) = \text{const.} - \fund(s)\w.
 \end{equation}
 %
-As we are only interested in differences of the $\eta^w_i(s)$, we can drop the constant.
+As we are only interested in differences of the $\etw_i(s)$, we can drop the constant.
 Then
 %
 \begin{equation}\label{eq:etarecur}
-  -(s\I + \onev\pib - \frg)\eta^w(s) = \w.
+  -(s\I + \onev\pib - \frg)\etw(s) = \w.
 \end{equation}
 %
 We can then write
 %
 \begin{equation}\label{eq:detarecur}
-  \eta^w(s) = -\frac{(\pib\eta^w(s))\onev+\w}{s} + \delta\eta(s),
+  \etw(s) = -\frac{(\pib\etw(s))\onev+\w}{s} + \delta\eta(s),
   \qquad
   (\frg-s\I)\delta\eta(s) = \frac{\frg\w}{s}.
 \end{equation}
 %
-As we are only interested in differences, we can drop any terms proportional to $\onev$ in $\eta^w(s)$.
+As we are only interested in differences, we can drop any terms proportional to $\onev$ in $\etw(s)$.
 
 The $i$'th row of this equation reads
 %
@@ -915,7 +952,7 @@ with $B$ and $C$ determined by the boundary conditions provided by the last two 
 This can be used to compute the Laplace transform
 %
 \begin{equation}\label{eq:unilaplace}
-  A(s) = \frac{2\eta^w_1(s)}{M}
+  A(s) = \frac{2\etw_1(s)}{M}
    = \frac{2}{M}\prn{\frac{1}{s}+B+C}
    = \frac{2(\alpha^{\frac{M}{2}}-1)^2}{Ms(\alpha^M+1)}.
 \end{equation}
@@ -988,12 +1025,12 @@ The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
 This means that the Laplace transform is given by
 %
 \begin{equation}\label{eq:stickyareaeta}
-  \hat{A}(s) = \frac{\varepsilon(\eta^w_1(s)-\eta^w_M(s))}{2+(M-2)\varepsilon}
-       = \frac{2\varepsilon\, \eta^w_1(s)}{2+(M-2)\varepsilon}.
+  \hat{A}(s) = \frac{\varepsilon(\etw_1(s)-\etw_M(s))}{2+(M-2)\varepsilon}
+       = \frac{2\varepsilon\, \etw_1(s)}{2+(M-2)\varepsilon}.
 \end{equation}
 %
 
-The $\eta^w_i(s)$ take the same general form \eqref{eq:detagensol}, but with different coefficients due to the different boundary conditions
+The $\etw_i(s)$ take the same general form \eqref{eq:detagensol}, but with different coefficients due to the different boundary conditions
 %
 \begin{equation}\label{eq:detabndsticky}
 \begin{aligned}
@@ -1074,12 +1111,12 @@ The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
 This means that the Laplace transform is given by
 %
 \begin{equation}\label{eq:shortenareaeta}
-  \hat{A}(s) = \frac{\varepsilon(\eta^w_1(s)-\eta^w_M(s)) + (1-\varepsilon)(\eta^w_2(s)-\eta^w_{M-2}(s))}{M-2(1-\varepsilon)}
-       = \frac{2\varepsilon\, \eta^w_1(s) + 2(1-\varepsilon)\eta^w_2(s)}{M-2(1-\varepsilon)}.
+  \hat{A}(s) = \frac{\varepsilon(\etw_1(s)-\etw_M(s)) + (1-\varepsilon)(\etw_2(s)-\etw_{M-2}(s))}{M-2(1-\varepsilon)}
+       = \frac{2\varepsilon\, \etw_1(s) + 2(1-\varepsilon)\etw_2(s)}{M-2(1-\varepsilon)}.
 \end{equation}
 %
 
-The $\eta^w_i(s)$ take the same general form \eqref{eq:detagensol} except for $i=1$, and with different coefficients due to the different boundary conditions
+The $\etw_i(s)$ take the same general form \eqref{eq:detagensol} except for $i=1$, and with different coefficients due to the different boundary conditions
 %
 \begin{equation}\label{eq:detabndshorten}
 \begin{aligned}
