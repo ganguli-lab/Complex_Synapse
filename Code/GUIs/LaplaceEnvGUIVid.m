@@ -1,5 +1,5 @@
-function LaplaceEnvGUIVid( imwriter,srange, Qmat, AenvNum, NumSynapse, inds )
-%LAPLACEENVGUIVID(imwriter,srange,Qmat,AenvNum,NumSynapse,inds) GUI for displaying Laplacian
+function LaplaceEnvGUIVid( imwriter, chains, NumSynapse, inds )
+%LAPLACEENVGUIVID(imwriter,chains,NumSynapse,inds) GUI for displaying Laplacian
 %envelope 
 %   Detailed explanation goes here
 
@@ -18,19 +18,18 @@ Interpreter='latex';
 %Data
 
 if ~exist('inds','var') || isempty(inds)
-    inds=1:length(srange);
+    inds=1:length(chains);
 end
 
-M=size(Qmat,1)/2+1;
+chains=chains(inds);
+srange=[chains.s];
+Qmat=reshape([chains.qv],[],length(chains))';
+AenvNum=[chains.A];
 
-srange=srange(inds);
-Qmat=Qmat(:,inds);
-AenvNum=AenvNum(inds);
+tau=1./srange;
+M=size(Qmat,2)/2+1;
 
-tau=wrev(1./srange);
-Qmat=fliplr(Qmat)';
-
-AenvNum=sqrt(NumSynapse)*wrev(AenvNum)./tau;
+AenvNum=sqrt(NumSynapse)*AenvNum./tau;
 AenvProven=sqrt(NumSynapse)*(M-1)./(tau+(M-1));
 
 snr_xlim=[tau(1) tau(end)];
@@ -145,10 +144,6 @@ close(figure1);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Plotting functions
 
-    function modelobj=MakeModel(frameNumber)
-        qv=Qmat(frameNumber,:);
-        modelobj=SynapseMemoryModel.Build(@MakeMultistate,0.5,{qv(1:M-1),qv(M:end)});
-    end
 
     function PlotSNR(frameNumber)
         cla(snr_ax);
@@ -156,9 +151,7 @@ close(figure1);
         loglog(tau,AenvProven,'g',tau,AenvNum,'r','Parent',snr_ax,'LineWidth',EnvLinewidth);
         hold(snr_ax,'on');
         
-        modelobj=MakeModel(frameNumber);
-        model_snr=sqrt(NumSynapse)*modelobj.SNRrunAve(tau);
-        loglog(tau,model_snr,'b','Parent',snr_ax,'LineWidth',ModelLineWidth);
+        loglog(tau,sqrt(NumSynapse)*chains(frameNumber).snrb,'b','Parent',snr_ax,'LineWidth',ModelLineWidth);
         
         line(tau(frameNumber)*[1;1],snr_ylim','Color','k','Parent',snr_ax,'LineWidth',TimeLineWidth)
         
@@ -182,8 +175,7 @@ close(figure1);
     end
 
    function PlotModel(frameNumber)
-       modelobj=MakeModel(frameNumber);
-       pr=modelobj.EqProb;
+       pr=chains(frameNumber).modelobj.EqProb;
        qp=Qmat(frameNumber,1:M-1);
        qm=Qmat(frameNumber,M:end);
        [qp,qm]=ZeroIrrel(qp,qm);

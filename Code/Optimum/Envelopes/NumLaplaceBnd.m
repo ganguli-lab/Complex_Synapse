@@ -1,5 +1,5 @@
-function [ mats ] = NumLaplaceBnd( srange,nstates,trange,mode,varargin )
-%chains=NUMLAPLACEBND(srange,nstates,trange,mode) numeric laplace bound
+function [ mats ] = NumLaplaceBnd( srange,nstates,mode,varargin )
+%chains=NUMLAPLACEBND(srange,nstates,mode) numeric laplace bound
 %   mats  = struct array (size=[1 length(srange)])
 %   srange  = values of Laplace parameter at which we maximise
 %   nstates = number of states in chain
@@ -14,7 +14,7 @@ reps=50;
 
 w=BinaryWeights(nstates);
 
-mats(1,length(srange))=struct('s',[],'modelobj',[],'A',[],'snr',[],'KTp',[],'KTm',[]);
+mats(1,length(srange))=struct('s',[],'modelobj',[],'A',[],'snrb',[]);
 
 for i=1:length(srange)
     
@@ -31,10 +31,7 @@ for i=1:length(srange)
             mats(i).modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
     end
     
-    mats(i).snr=mats(i).modelobj.SNRcurve(trange);
-    
-    [~,dWp,dWm]=mats(i).modelobj.SNRlaplaceGrad(srange(i));
-    [mats(i).KTp,mats(i).KTm]=KTmults(mats(i).modelobj.Wp,mats(i).modelobj.Wm,dWp,dWm);
+    mats(i).snrb=mats(i).modelobj.SNRrunAve(1./srange);
 end
 DispCounter(length(srange)+1,length(srange),'s val: ');
 

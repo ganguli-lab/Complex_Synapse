@@ -122,7 +122,7 @@ ed2=uicontrol(slider_ph,'Style','edit',...
                 'Callback',{@ed_callback2});
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% warning('off','MATLAB:handle_graphics:exceptions:SceneNode');
+warning('off','MATLAB:handle_graphics:exceptions:SceneNode');
 
 changeFrameNumber(frNumber);
 

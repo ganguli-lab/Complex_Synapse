@@ -1,16 +1,15 @@
-function [ chains ] = NumLaplaceBndChain( srange,nstates,trange,mode,varargin )
-%chains=NUMLAPLACEBNDCHAIN(srange,nstates,trange,mode) numeric laplace bound
+function [ chains ] = NumLaplaceBndChain( srange,nstates,mode,varargin )
+%chains=NUMLAPLACEBNDCHAIN(srange,nstates,mode) numeric laplace bound
 %   chains  = struct array (size=[1 length(srange)])
 %   srange  = values of Laplace parameter at which we maximise
 %   nstates = number of states in chain
-%   trange  = values of time for snr curve
 %   mode    = search for symmetric chains? include homeostatic plasticity?
 %   chains.s   = value of Laplace parameter at which we optimised
 %   chains.qv  = nearest neighbour transitions of optimal model
 %   chains.A   = value of Laplace transform at s for optimal model
 %   chains.snr = snr curve of optimal model
 
-chains(1,length(srange))=struct('s',[],'qv',[],'A',[],'snr',[],'KTp',[],'KTm',[]);
+chains(1,length(srange))=struct('s',[],'qv',[],'A',[],'modelobj',[],'snrb',[]);
 reps=50;
 
 for i=1:length(srange)
@@ -41,12 +40,10 @@ for i=1:length(srange)
     end%switch mode
     
     [Wp,Wm,w]=MakeMultistate(qp,qm);
-    modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
+    chains(i).modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
     
-    chains(i).snr=modelobj.SNRcurve(trange);
+    chains(i).snrb=chains(i).modelobj.SNRrunAve(1./srange);
     
-    [~,dWp,dWm]=modelobj.SNRlaplaceGrad(srange(i));
-    [chains(i).KTp,chains(i).KTm]=KTmults(Wp,Wm,dWp,dWm);
 end%for i
 DispCounter(length(srange)+1,length(srange),'s val: ');
 

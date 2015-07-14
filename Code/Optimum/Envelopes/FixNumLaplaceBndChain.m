@@ -1,4 +1,4 @@
-function [ chains ] = FixNumLaplaceBndChain( oldchains,srange,nstates,trange,inds,mode,varargin )
+function [ chains ] = FixNumLaplaceBndChain( oldchains,srange,nstates,inds,mode,varargin )
 %chains=FIXNUMLAPLACEBNDCHAIN(srange,nstates,trange,inds,mode) numeric laplace bound
 %   chains  = struct array (size=[1 length(srange)])
 %   srange  = values of Laplace parameter at which we maximise
@@ -41,12 +41,9 @@ for j=1:length(inds)
     end
     
     [Wp,Wm,w]=MakeMultistate(qp,qm);
-    modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
+    chains(i).modelobj=SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',0.5);
     
-    chains(i).snr=modelobj.SNRcurve(trange);
-    
-    [~,dWp,dWm]=modelobj.SNRlaplaceGrad(srange(i));
-    [chains(i).KTp,chains(i).KTm]=KTmults(Wp,Wm,dWp,dWm);
+    chains(i).snrb=chains(i).modelobj.SNRrunAve(1./srange);
     
     if chains(i).A < oldchains(i).A
         chains(i)=oldchains(i);
