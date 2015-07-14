@@ -13,11 +13,12 @@ ModelLineWidth=2;
 TimeLineWidth=2;
 EqLineWidth=2;
 Interpreter='tex';
+LumpThresh=2e-2;
+DegThresh=1e-2;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Data
 
-Id=eye(env.mats(1).modelobj.NumStates);
 
 AenvSingle=sqrt(NumSynapse)*AenvSingle./env.tau;
 
@@ -52,7 +53,6 @@ slider_ph=uipanel(figure1,'Units','normalized',...
 set(slider_ph,'Title','Frame');
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Axes
 
@@ -61,16 +61,21 @@ snr_ax = axes('Parent',snr_ph,'OuterPosition',[0 0 1 1]);%left bottom width heig
 
 %synaptic weight heatmap
 model_ax(1) = axes('Parent',model_ph,...
-    'OuterPosition',[0 0.85 1 0.15]);%left bottom width height
+    'OuterPosition',[0 0.85 0.85 0.15]);%left bottom width height
 %potentiation heatmap
 model_ax(2) = axes('Parent',model_ph,...
-    'OuterPosition',[0 0.55 1 0.3]);%left bottom width height
+    'OuterPosition',[0 0.5 0.85 0.35]);%left bottom width height
 %depression heatmap
 model_ax(3) = axes('Parent',model_ph,...
-    'OuterPosition',[0 0.25 1 0.3]);%left bottom width height
+    'OuterPosition',[0 0.15 0.85 0.35]);%left bottom width height
 %equilibrium distribution heatmap
 model_ax(4) = axes('Parent',model_ph,...
-    'OuterPosition',[0 0 1 0.25]);%left bottom width height
+    'OuterPosition',[0 0 0.85 0.15]);%left bottom width height
+
+%colorbar for heatmaps
+wt_cbpos=[0.85 0.9 0.05 0.08];
+pr_cbpos=[0.85 0.05 0.05 0.8];
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -95,8 +100,7 @@ uicontrol(slider_ph,'Style','text',...
                 'FontSize',BtFontSize,...
                 'Position',[0.85 0.05 0.05 0.2]);
 %Play button
-pbh4=...
-uicontrol(slider_ph,'Style','pushbutton',...
+pbh4=uicontrol(slider_ph,'Style','pushbutton',...
                 'String','Play',...
                 'Units','normalized',...
                 'Position',[0.0 0.25 0.1 0.7],...
@@ -118,7 +122,7 @@ ed2=uicontrol(slider_ph,'Style','edit',...
                 'Callback',{@ed_callback2});
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-warning('off','MATLAB:handle_graphics:exceptions:SceneNode');
+% warning('off','MATLAB:handle_graphics:exceptions:SceneNode');
 
 changeFrameNumber(frNumber);
 
@@ -153,7 +157,7 @@ changeFrameNumber(frNumber);
                 xlabel(snr_ax,'Mean recall time, $\mathsf{\tau}$','Interpreter','latex','FontSize',AxFontSize);
                 ylabel(snr_ax,'Recognition performance, $\overline{\mathrm{SNR}}(\tau)$','Interpreter','latex','FontSize',AxFontSize);
         end
-        title(snr_ax,'Proven and numerical envelopes','Interpreter',Interpreter,'FontSize',AxFontSize);
+        title(snr_ax,'Numerical envelopes','Interpreter',Interpreter,'FontSize',AxFontSize);
         legend(snr_ax,{'Unconstrained envelope',...
             'Constrained envelope',...
             'Constraint',...
@@ -162,14 +166,30 @@ changeFrameNumber(frNumber);
     end
 
    function PlotModel(frameNumber)
-       if env.mats(frameNumber).modelobj.isvalid
-           imagesc(env.mats(frameNumber).modelobj.w','Parent',model_ax(1),[-1 1]);
-           imagesc(env.mats(frameNumber).modelobj.Wp+Id,'Parent',model_ax(2),[0 1]);
-           imagesc(env.mats(frameNumber).modelobj.Wm+Id,'Parent',model_ax(3),[0 1]);
-           imagesc(env.mats(frameNumber).modelobj.EqProb,'Parent',model_ax(4),[0 1]);
-       end
        
-%        line([1;1]*(1.5:1:M-0.5),[0.5;1.5]*ones(1,M-1),'Parent',model_ax(2),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
+       if env.mats(frameNumber).modelobj.isvalid
+           modelobj=env.mats(frameNumber).modelobj;
+           modelobj.LumpThresh=LumpThresh;
+           modelobj.DegThresh=DegThresh;
+           pt=modelobj.FindLumps;
+    %        if modelobj.TestLump(pt)
+               modelobj=modelobj.Lumpify(pt);
+    %        end
+           M=modelobj.NumStates;
+           Id=eye(M);
+
+           imagesc(modelobj.w','Parent',model_ax(1),[-1 1]);
+           imagesc(modelobj.Wp+Id,'Parent',model_ax(2),[0 1]);
+           imagesc(modelobj.Wm+Id,'Parent',model_ax(3),[0 1]);
+           imagesc(modelobj.EqProb,'Parent',model_ax(4),[0 1]);
+              
+           line([1;1]*(1.5:1:M-0.5),[0.5;1.5]*ones(1,M-1),'Parent',model_ax(1),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
+           line([1;1]*(1.5:1:M-0.5),[0.5;M+1.5]*ones(1,M-1),'Parent',model_ax(2),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
+           line([0.5;M+1.5]*ones(1,M-1),[1;1]*(1.5:1:M-0.5),'Parent',model_ax(2),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
+           line([1;1]*(1.5:1:M-0.5),[0.5;M+1.5]*ones(1,M-1),'Parent',model_ax(3),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
+           line([0.5;M+1.5]*ones(1,M-1),[1;1]*(1.5:1:M-0.5),'Parent',model_ax(3),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
+           line([1;1]*(1.5:1:M-0.5),[0.5;1.5]*ones(1,M-1),'Parent',model_ax(4),'Color',[0.5 0.5 0.5],'LineWidth',EqLineWidth);
+       end
        
        title(model_ax(1),'Synaptic weight','Interpreter',Interpreter,'FontSize',AxFontSize);
        title(model_ax(2),'Potentiation transition probability','Interpreter',Interpreter,'FontSize',AxFontSize);
@@ -184,12 +204,16 @@ changeFrameNumber(frNumber);
        ylabel(model_ax(2),'From state','Interpreter',Interpreter,'FontSize',AxFontSize);
        ylabel(model_ax(3),'From state','Interpreter',Interpreter,'FontSize',AxFontSize);
 
+       colormap(model_ax(1),'redblue');
        colormap(model_ax(2),'hot');
        colormap(model_ax(3),'hot');
        colormap(model_ax(4),'hot');
  
-       ch=colorbar('peer',model_ax(4),'location','SouthOutside','TickLabelInterpreter',Interpreter,'FontSize',AxFontSize);
-       xlabel(ch,'Probability','Interpreter',Interpreter,'FontSize',AxFontSize);       
+       ch=colorbar('peer',model_ax(1),'Location','manual','Position',wt_cbpos,'TickLabelInterpreter',Interpreter,'FontSize',AxFontSize);
+       colorbarlabel(ch,'Weight','Interpreter',Interpreter,'FontSize',AxFontSize);       
+
+       ch=colorbar('peer',model_ax(4),'Location','manual','Position',pr_cbpos,'TickLabelInterpreter',Interpreter,'FontSize',AxFontSize);
+       colorbarlabel(ch,'Probability','Interpreter',Interpreter,'FontSize',AxFontSize);       
 
        set(model_ax(1),'YTickMode','manual','YTick',[],'TickLabelInterpreter',Interpreter,'FontSize',AxFontSize);
        set(model_ax(2),'TickLabelInterpreter',Interpreter,'FontSize',AxFontSize);
@@ -212,7 +236,7 @@ changeFrameNumber(frNumber);
            changeFrameNumber(frNumber+1);
        end %while Play
        Play=true;
-       pb_callback4(pbh4);
+       pb_callback4(pbh4,0);
     end %function DoPlay
 
         

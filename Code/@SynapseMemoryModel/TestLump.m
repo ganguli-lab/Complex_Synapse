@@ -1,4 +1,4 @@
-function [ tf ] = TestLump( obj,partitions,varargin )
+function [ tf,Mtest,wtest ] = TestLump( obj,partitions,varargin )
 %tf=obj.TESTLUMP(partitions) test if SynapseIdModel obj is lumpabel wrt
 %partions
 %   pertitions = cell array of vectors containing indices of states in each

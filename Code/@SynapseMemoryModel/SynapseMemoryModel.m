@@ -22,7 +22,9 @@ classdef SynapseMemoryModel
         %degeneracy threshold, for evals or eta^+
         DegThresh=1e-3;
         %threshold for lumpability test
-        LumpThresh=1e-3;        
+        LumpThresh=1e-3;
+        %threshold for orphaned states
+        OrphanThresh=1e-3;
     end
     
     methods %setting data
@@ -52,6 +54,7 @@ classdef SynapseMemoryModel
         newobj=Normalise(obj)
         newobj=Zero(obj)
         [newobj,ix]=Sort(obj)
+        newobj=Reorder(obj,ix)
         tf=isvalid(obj)
     end
     
@@ -88,6 +91,9 @@ classdef SynapseMemoryModel
         deta=DeltaEta(obj)
         tau=MixTime(obj)
         [As,dAp,dAm]=SNRlaplaceGrad(obj,s)
+    end
+    
+    methods%simplifying
         [tf,wtest,Mtest]=TestLump(obj,partitions,varargin)
         partitions=FindLumps(obj,varargin)
         newobj=Lumpify(obj,partitions)

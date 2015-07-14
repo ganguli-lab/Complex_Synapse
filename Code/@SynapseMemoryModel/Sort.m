@@ -1,12 +1,11 @@
 function [ newobj,ix ] = Sort( obj )
-%newobj=SORT(obj) Put states in order of decreasing eta^+
+%[newobj,ix]=SORT(obj) Put states in order of decreasing eta^+
+%   obj,newobj = SynapseMemoryModel
+%   ix = order of states, newobj.w=obj.w(ix)
 
 
-newobj=obj;
-
-[newobj.w,ix]=sort(obj.w,'ascend');
-newobj.Wp=obj.Wp(ix,ix);
-newobj.Wm=obj.Wm(ix,ix);
+[~,ix]=sort(obj.w,'ascend');
+newobj=obj.Reorder(ix);
 
 deta=obj.DeltaEta;
 
@@ -18,8 +17,7 @@ for i=1:length(wchange)-1
     ix=[ix dix'+wchange(i)];
 end
 
-newobj.Wp=obj.Wp(ix,ix);
-newobj.Wm=obj.Wm(ix,ix);
+newobj=obj.Reorder(ix);
 
 
 end

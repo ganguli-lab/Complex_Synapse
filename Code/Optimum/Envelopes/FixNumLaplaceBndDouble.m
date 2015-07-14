@@ -1,8 +1,9 @@
-function [ env ] = FixNumLaplaceBndDouble( oldenv,srange,nstates,mode,inds,varargin )
-%chains=FIXNUMLAPLACEBND(srange,nstates,trange,mode,inds) numeric laplace bound
-%   mats    = struct array (size=[1 length(srange)])
+function [ env ] = FixNumLaplaceBndDouble( oldenv,srange,nstates,sc,Ac,mode,inds,varargin )
+%env=FIXNUMLAPLACEBNDDOUBLE(oldenv,srange,nstates,sc,Ac,,mode,inds) numeric laplace bound
+%   env.mats    = struct array (size=[1 length(srange)])
 %   srange  = values of Laplace parameter at which we maximise
 %   nstates = number of states in chain
+%   sc,Ac   = constaint, A(sc)=Ac
 %   mode    = search for symmetric chains? include homeostatic plasticity?
 %   mats.s  = value of Laplace parameter at which we optimised
 %   mats.modelobj = SynapseMemoryModel of optimal model
@@ -32,8 +33,8 @@ for j=1:length(inds)
         mats(i).snrb=mats(i).modelobj.SNRrunAve(1./srange);
     end
     
-    if mats(i).A < oldmats(i).A
-        mats(i)=oldmats(i);
+    if mats(i).A < oldenv.mats(i).A
+        mats(i)=oldenv.mats(i);
     end
 end
 DispCounter(length(inds)+1,length(inds),'s val: ');
