@@ -18,7 +18,12 @@ function [ env ] = NumLaplaceBndDouble( srange,nstates,sc,Ac,mode,varargin )
 
 
 
-reps=50;
+if isnumeric(varargin{1})
+    reps=varargin{1};
+    varargin(1)=[];
+else
+    reps=50;
+end
 
 w=BinaryWeights(nstates);
 

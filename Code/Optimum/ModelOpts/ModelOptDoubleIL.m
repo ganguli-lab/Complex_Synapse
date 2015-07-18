@@ -88,7 +88,7 @@ A=-A;
 
 % [~,~,~,~,fail]=DoubleLaplace(sm,newWp,newWm,fp,w);
 
-if ef==-2
+if ef==-2 || nlconstr(x)>0
     A=0;
 end
 

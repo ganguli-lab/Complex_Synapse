@@ -11,7 +11,13 @@ function [ env ] = FixNumLaplaceBndDouble( oldenv,srange,nstates,sc,Ac,mode,inds
 %   mats.snrb = snr curve of optimal model
 
 mats=oldenv.mats;
-reps=200;
+if isnumeric(varargin{1})
+    reps=varargin{1};
+    varargin(1)=[];
+else
+    reps=200;
+end
+% reps=50;
 w=BinaryWeights(nstates);
 
 for j=1:length(inds)
