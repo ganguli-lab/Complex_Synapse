@@ -44,7 +44,8 @@ options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
     'largescale', 'on');
 
 if r.UseDerivs
-    options = optimset(options,'GradObj','on');
+    options = optimset(options,'GradObj','on',...
+        'Hessian','user-supplied','HessFcn',@lagrangianhessmax);
     [x1] = fmincon(@initoptfngr,x0,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
@@ -99,15 +100,15 @@ end
 
 
     function [c,ceq]=nlconstr(xc)
-        ceq=0;
+        ceq=[];
         c=OptFunL(xc,sc,fp,w)+Ac;
     end
 
     function [c,ceq,gradc,gradceq]=nlconstrgr(xc)
-        ceq=0;
+        ceq=[];
         [c,gradc]=OptFunGradL(xc,sc,fp,w);
         c=c+Ac;
-        gradceq=zeros(size(gradc));
+        gradceq=[];
     end
 
     function f=initoptfn(xi)
@@ -124,7 +125,11 @@ end
     end
 
     function h=lagrangianhess(x,lambda)
-        h = OptHessL(x,sm,fp,w) + lambda.eqnonlin * OptHessL(x,sc,fp,w);
+        h = OptHessL(x,sm,fp,w) + lambda.ineqnonlin * OptHessL(x,sc,fp,w);
+    end
+
+    function h=lagrangianhessmax(x,~)
+        h = OptHessL(x,sm,fp,w);
     end
 
 end
