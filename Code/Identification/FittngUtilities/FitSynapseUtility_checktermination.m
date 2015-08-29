@@ -74,16 +74,16 @@ msg=['Exceeded max iterations: ' int2str(options.MaxIter)];
         return;
     end
     %
-%decide whether or not to continue
-%using change in log likelihood on heldvack data
-%i.e. test generalisation to prevent overfitting
-    %
-    if ~isempty(optimValues.holdback)
-        if optimValues.holdback.dfval < options.MinLogLikeInc
-            exitflag=-2;
-            msg=['Overfitting. Change in loglike(held back data) < ' num2str(options.MinLogLikeInc)];
-        end
-    end
+% %decide whether or not to continue
+% %using change in log likelihood on heldback data
+% %i.e. test generalisation to prevent overfitting
+%     %
+%     if ~isempty(optimValues.holdback)
+%         if optimValues.holdback.dfval < options.MinLogLikeInc
+%             exitflag=-2;
+%             msg=['Overfitting. Change in loglike(held back data) < ' num2str(options.MinLogLikeInc)];
+%         end
+%     end
 
 end
 

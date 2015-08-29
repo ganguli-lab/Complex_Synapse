@@ -41,7 +41,7 @@ if isvector(simobj)
     optimValues.fitsim=simobj;
 else
     optimValues.fitsim=reshape(simobj(1:end-1,:),1,[]);
-    optimValues.holdback=struct('testsim',simobj(end,:),'dfval',[],'fval',[]);
+    optimValues.holdback=struct('testsim',simobj(end,:),'model',[],'fval',[]);
 end
 
 

@@ -5,7 +5,7 @@ function DoubleLenvPlot( env,AenvSingle,ind,varargin )
 %   
 
 
-loglog(env.tau,AenvSingle./env.tau,'g',env.tau,env.Aenv,'r',1/env.sc,env.sc*env.Ac,'rd',varargin{:});
+loglog(env.tau,AenvSingle./env.tau,'g',env.tau,env.SNRbenv,'r',1/env.sc,env.sc*env.Ac,'rd',varargin{:});
 
 hold on;
 

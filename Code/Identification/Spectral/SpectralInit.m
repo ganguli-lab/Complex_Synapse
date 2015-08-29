@@ -14,14 +14,18 @@ if isempty(p)
     p.FunctionName='SpectralInit';
     p.StructExpand=true;
     p.KeepUnmatched=true;
-    p.addParameter('RandFrac',0.05,@(x)validateattributes(x,{'numeric'},{'nonnegative'},'SpectralInit','options',3));
+    p.addParameter('RandFrac',0.05,@(x)validateattributes(x,{'numeric'},{'nonnegative','<=',1},'SpectralInit','options',3));
 end
 p.parse(varargin{:});
 
 
-[P1,P2,P3]=CalcObsProbs(seqobj);
+
 
 modelobj=SynapseIdModel.Rand(w,p.Unmatched);
+
+if p.Results.RandFrac < 1
+
+[P1,P2,P3]=CalcObsProbs(seqobj);
 
 Obs=MakeObs(modelobj);
 Obsinv=(Obs'*Obs)\Obs';
@@ -43,7 +47,9 @@ end
 % modelobj=modelobj.setM(M);
 
 % modelobj=modelobj + 0.05*SynapseIdModel.Rand(w);
-modelobj=p.Results.RandFrac*modelobj + SynapseIdModel('M',M,'Initial',Initial,'w',w);
+modelobj=p.Results.RandFrac*modelobj + (1-p.Results.RandFrac)*SynapseIdModel('M',M,'Initial',Initial,'w',w);
+
+end
 
 modelobj=modelobj.Normalise;
 

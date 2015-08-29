@@ -27,14 +27,10 @@ for i=1:length(chains)
             Scj=chains(j).snrb(sc_ind);
             Sck=chains(k).snrb(sc_ind);
             
-            if Scj > SNRbc && Sck > SNRbc
-                x=Sij>Sik;
-            elseif Scj < SNRbc && Sck < SNRbc
+            if Scj < SNRbc && Sck < SNRbc
                 x=NaN;
-            elseif Scj > Sck && Sij > Sik
-                x=1;
-            elseif Scj < Sck && Sij < Sik
-                x=0;
+            elseif (Scj >= SNRbc && Sck >= SNRbc) || (Scj-Sck)*(Sij-Sik) > 0
+                x=Sij>=Sik;
             else
                 x=(SNRbc-Sck)/(Scj-Sck);
             end

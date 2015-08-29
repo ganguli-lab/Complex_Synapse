@@ -16,6 +16,7 @@ output=struct('message',msg,'ME',ME,...
     'iterations',optimValues.iteration,'prev',optimValues.prev,'truth',optimValues.truth);
 if ~isempty(optimValues.holdback)
     fval=optimValues.holdback.fval;
+    fitmodel=optimValues.holdback.model;
 end
 
 end
