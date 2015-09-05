@@ -566,11 +566,11 @@ Then we denote
 %
 \begin{equation}\label{eq:hessparts}
 \begin{aligned}
-  R_{ijkl} &= 
+  R_{ijkl} &=
     &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\thb_k(s) - \thb_l(s)} \\
     &&&+ \eq_i \brc{[\fund(0)\enc\fund(s)]_{ik} - [\fund(0)\enc\fund(s)]_{jk}} \brc{\etw_k(s) - \etw_l(s)} \\
     &&&+ \eq_i c_i(s) \brc{\fund_{ik}(s) - \fund_{jk}(s)} \brc{\etw_k(s) - \etw_l(s)},  \\
-  S_{ijkl} &= 
+  S_{ijkl} &=
     &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\etw_k(s) - \etw_l(s)} \\
     &&&+ \eq_k \brc{\fund_{ki}(s) - \fund_{li}(s)} \brc{\etw_i(s) - \etw_j(s)}.
 \end{aligned}
@@ -1000,7 +1000,7 @@ For $s\gtrsim 1.36423$, we set $M=2$ to find
 \end{equation}
 %
 This does not match up with \eqref{eq:unienvapprox} at the boundary of the two regions, as this is outside the regime of validity of that approximation.
-However, it does match up with the full formula, \eqref{eq:unienv}.
+However, it does match up with the full formula, \eqref{eq:unienv} at the boundary.
 
 
 
@@ -1151,11 +1151,11 @@ Which gives the following Laplace transform
             [\varepsilon(\alpha^{M}+1) + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s }.
 \end{equation}
 %
-This interpolates between \eqref{eq:unilaplace} at $\varepsilon=1$ and the same expression at $M-2$ at $\varepsilon=0$.
+This interpolates between \eqref{eq:unilaplace} at $\varepsilon=1$ and the same expression for $M-2$ at $\varepsilon=0$.
 
 We can maximise this \wrt $\varepsilon$.
 This results in a complicated quadratic equation for $\varepsilon$ with an even worse solution that we will not reproduce here.
-We can find the boundary of the region of applicability by seeing at what value of $s$ is the optimal value of $\varepsilon=0\text{ or }1$:
+We can find the boundary of the region of applicability by asking at what value of $s$ is the optimal value of $\varepsilon=0$ or $1$?
 %
 \begin{equation}\label{eq:shortenvalid}
 \begin{aligned}
@@ -1172,7 +1172,7 @@ We can find the boundary of the region of applicability by seeing at what value 
 with the $\varepsilon=1$ case providing the lower boundary and $\varepsilon=0$ providing the upper boundary.
 If these were really the models that maximised $A(s)$, the region of validity for $M$ would not overlap with that for $M-2$.
 In this case, however, there is an overlap.
-This is related to the fact that \autoref{fig:envvid} and the video shows that the optimal models do not6 shorten by one state at a time, but several outgoing transition probabilities are reduced at once.
+This is related to the fact that \autoref{fig:envvid} and the video shows that the optimal models do not shorten by one state at a time, but several outgoing transition probabilities are reduced at once.
 
 
 
@@ -1245,8 +1245,8 @@ Second, the set of priorities faced by evolution would have been longer than jus
 Nevertheless, the qualitative message of our findings should be more robust to reality:
 %
 \begin{itemize}
-  \item \emph{Short} timescale $\to$ \emph{intermediate} timescales: transition topology goes \\ short and wide $\to$ long and thin.
-  \item \emph{Intermediate} timescale $\to$ \emph{long} timescales: transition probabilities go \\ strong and deterministic $\to$ weak and stochastic.
+  \item \emph{Short} timescale $\to$ \emph{intermediate} timescales: transition topology goes from \\ short and wide $\to$ long and thin.
+  \item \emph{Intermediate} timescale $\to$ \emph{long} timescales: transition probabilities go from \\ strong and deterministic $\to$ weak and stochastic.
 \end{itemize}
 %
 This is what we expect to find in the different brain regions that store memories for different timescales.

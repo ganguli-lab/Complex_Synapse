@@ -2,10 +2,10 @@ function [ A,b ] = ParamsConstraints( n )
 %[A,b]=PARAMSCONSTRAINTS(n) Constrtaints on parameters from stochasticity
 %   n = length(Wp)
 %   Constaints: A.x <= b
-%   From:           Wpm_ij >= 0, for all i ~= j
-%        sum_{j~=i} Wpm_ij <= 1, for all i;
+%   From: sum_{j~=i} Wpm_ij <= 1, for all i;
 
-
+%           Wpm_ij >= 0, for all i ~= j
+%        
 
 
 A=zeros(2*n,2*n*(n-1));
