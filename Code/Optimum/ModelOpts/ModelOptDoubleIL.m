@@ -19,12 +19,15 @@ if isempty(p)
     p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleIL','TolFun'));
     p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleIL','TolFun'));
     p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOptDoubleIL','TolFun'));
-    p.addParameter('Algorithm','interior-point',@(x) validatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptDoubleIL','TolFun'));
+    p.addParameter('Algorithm','interior-point',@(x) validatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptDoubleIL','Algorithm'));
+    p.addParameter('Hessian','fcn',@(x) validatestring(x,{'fcn','mult','none'},'ModelOptDoubleIL','Hessian'));
     p.addParameter('Display','off',@(x) validatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOptDoubleIL','TolFun'));
     p.addParameter('fp',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'ModelOptDoubleIL','fp'));
 end
 p.parse(varargin{:});
 r=p.Results;
+extra=[fields(p.Unmatched)'; struct2cell(p.Unmatched)'];
+
 
 fp=r.fp;
 
@@ -36,16 +39,23 @@ lb=zeros(size(x0));
 ub=ones(size(x0));
 [linconstr_A,linconstr_b]=ParamsConstraints(n);
 
-options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
+options = optimoptions('fmincon','Algorithm',r.Algorithm,'Display',r.Display,...
     'TolFun', r.TolFun,...  % termination based on function value (of the derivative)
     'TolX', r.TolX,...
     'TolCon',r.TolCon,...
-    'MaxIter',r.MaxIter, ...
-    'largescale', 'on');
+    'MaxIter',r.MaxIter,...
+    extra{:});%, ...
+    %'largescale', 'on');
 
 if r.UseDerivs
-    options = optimset(options,'GradObj','on');%,...
-        %'Hessian','user-supplied','HessFcn',@lagrangianhessmax);
+    options = optimoptions('fmincon',options,'GradObj','on');
+    if strcmpi(r.Hessian,'fcn')
+        options=optimoptions('fmincon',options,'Hessian','user-supplied',...
+            'HessFcn',@initopthess);
+    elseif strcmpi(r.Hessian,'mult')
+        options=optimoptions('fmincon',options,'Hessian','user-supplied',...
+            'SubproblemAlgorithm','cg','HessMult',@initopthessmult);
+    end
     [x1] = fmincon(@initoptfngr,x0,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
@@ -60,9 +70,16 @@ else
 end
 % x1=x0;
 
+% nlconstr(x1)
+% linconstr_A*x1>linconstr_b
+
 if r.UseDerivs
-    options = optimset(options,'GradObj','on','GradConstr','on',...
-        'Hessian','user-supplied','HessFcn',@lagrangianhess);
+    options = optimoptions('fmincon',options,'GradConstr','on');
+    if strcmpi(r.Hessian,'fcn')
+        options=optimoptions('fmincon',options,'HessFcn',@lagrangianhess);
+    elseif strcmpi(r.Hessian,'mult')
+        options=optimoptions('fmincon',options,'HessMult',@lagrangianhessmult);
+    end
     [x,A,ef] = fmincon(@(y)OptFunGradL(y,sm,fp,w),x1,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,...
@@ -80,6 +97,8 @@ end
 %     A=0;
 % end
     
+% nlconstr(x)
+% linconstr_A*x>linconstr_b
 
 [Wp,Wm]=Params2Mats(x);
 
@@ -128,9 +147,18 @@ end
         h = OptHessL(x,sm,fp,w) + lambda.ineqnonlin * OptHessL(x,sc,fp,w);
     end
 
-    function h=lagrangianhessmax(x,~)
+    function Hv=lagrangianhessmult(x,lambda,v)
+        Hv = OptHessMultL(x,sm,fp,w,v) + lambda.ineqnonlin * OptHessMultL(x,sc,fp,w,v);
+    end
+
+    function h=initopthess(x,~)
         h = OptHessL(x,sm,fp,w);
     end
+
+    function Hv=initopthessmult(x,~,v)
+        Hv = OptHessMultL(x,sm,fp,w,v);
+    end
+
 
 end
 
