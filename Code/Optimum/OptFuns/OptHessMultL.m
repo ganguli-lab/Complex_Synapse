@@ -1,7 +1,8 @@
 function [ hessV ] = OptHessMultL( x0,s,fp,w,xp )
-%[hess]=OPTHESSL(x0,s,fp,w,xp) multiplies diff of transtion matrices by hessian
-%of Laplace transform of SNR curve
-%   x0 = parameters (off diagonal matrix elements)
+%[hess]=OPTHESSL(x0,s,fp,w,xp) multiplies diff of transtion matrices by
+%hessian of Laplace transform of SNR curve
+%   x0 = parameters (off diagonal matrix elements) where hessian evaluated
+%   xp = parameters (off diagonal matrix elements) to multiply by hessian
 %   f = function to be minimised (-SNR(t))
 %   hess = d^2f/dx^2
 
@@ -44,13 +45,16 @@ hess10m = Zinvs \ Vm * Zwc;
 hess3m  = Zinv  \ Vm * Zwp;
 hess6m  = Zinvs \ Vm * Zwp;
 
-hessVpp = fp^2  * (hess2p + hess4p * hess10p) + fp * (hess3p + hess6p);
-hessVmp = fp*fm * (hess2p + hess4p * hess10p) + fm * hess3p - fp * hess6p;
-hessVpm = fp*fm * (hess2m + hess4m * hess10m) - fp * hess3m + fm * hess6m;
-hessVmm = fm^2  * (hess2m + hess4m * hess10m) - fp * (hess3m + hess6m);
+hessVpp = fp^2  * (hess2p + hess4p + hess10p) + fp * (hess3p +      hess6p);
+hessVmp = fp*fm * (hess2p + hess4p + hess10p) + fm *  hess3p - fp * hess6p;
+hessVpm = fp*fm * (hess2m + hess4m + hess10m) - fp *  hess3m + fm * hess6m;
+hessVmm = fm^2  * (hess2m + hess4m + hess10m) - fp * (hess3m +      hess6m);
 
-hessVp = hessVpp + hessVpm;
-hessVm = hessVmp + hessVmm;
+hessVp = (hessVpp + hessVpm)';
+hessVm = (hessVmp + hessVmm)';
+
+hessVp = hessVp - diag(hessVp) * ev;
+hessVm = hessVm - diag(hessVm) * ev;
 
 hessV = - Mats2Params(hessVp,hessVm);
 
