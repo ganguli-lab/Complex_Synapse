@@ -17,11 +17,11 @@ if isempty(p)
     p.addParameter('UseDerivs',true,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOptHomL','UseDerivs'));
     p.addParameter('DispExit',false,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOptHomL','DispExit'));
     p.addParameter('TolFun',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptHomL','TolFun'));
-    p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptHomL','TolFun'));
-    p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptHomL','TolFun'));
-    p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOptHomL','TolFun'));
-    p.addParameter('Algorithm','interior-point',@(x) validatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptHomL','TolFun'));
-    p.addParameter('Display','off',@(x) validatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOptHomL','TolFun'));
+    p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptHomL','TolX'));
+    p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptHomL','TolCon'));
+    p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOptHomL','MaxIter'));
+    p.addParameter('Algorithm','interior-point',@(x) parsevalidatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptHomL','Algorithm'));
+    p.addParameter('Display','off',@(x) parsevalidatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOptHomL','Display'));
     p.addParameter('fp',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'ModelOptHomL','fp'));
 end
 p.parse(varargin{:});
@@ -32,7 +32,7 @@ fp=r.fp;
 n=length(Wp);
 w=BinaryWeights(n);
 
-x0 = Mats2Params(Wp,Wm);            % Starting guess 
+x0 = Mats2ParamsHom(Wp,Wm,Q);            % Starting guess 
 lb=zeros(size(x0));
 ub=[];
 [linconstr_A,linconstr_b]=ParamsConstraintsHom(n);

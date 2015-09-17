@@ -16,21 +16,17 @@ if isempty(p)
     p.addParameter('UseDerivs',true,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOptDoubleIL','UseDerivs'));
     p.addParameter('DispExit',false,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOptDoubleIL','DispExit'));
     p.addParameter('TolFun',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleIL','TolFun'));
-    p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleIL','TolFun'));
-    p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleIL','TolFun'));
-    p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOptDoubleIL','TolFun'));
-    p.addParameter('Algorithm','interior-point');
-    p.addParameter('Hessian','fcn');
-    p.addParameter('Display','off')
+    p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleIL','TolX'));
+    p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOptDoubleIL','TolCon'));
+    p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOptDoubleIL','MaxIter'));
+    p.addParameter('Algorithm','interior-point',@(x) parsevalidatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptDoubleIL','Algorithm'));
+    p.addParameter('Hessian','fcn',@(x) parsevalidatestring(x,{'fcn','mult','none'},'ModelOptDoubleIL','Hessian'));
+    p.addParameter('Display','off',@(x) parsevalidatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOptDoubleIL','Display'))
     p.addParameter('fp',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'ModelOptDoubleIL','fp'));
 end
 p.parse(varargin{:});
 r=p.Results;
 extra=[fields(p.Unmatched)'; struct2cell(p.Unmatched)'];
-
-Algorithm=validatestring(r.Algorithm,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptDoubleIL','Algorithm');
-Display=validatestring(r.Display,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOptDoubleIL','TolFun');
-Hessian=validatestring(r.Hessian,{'fcn','mult','none'},'ModelOptDoubleIL','Hessian');
 
 fp=r.fp;
 
@@ -42,7 +38,7 @@ lb=zeros(size(x0));
 ub=ones(size(x0));
 [linconstr_A,linconstr_b]=ParamsConstraints(n);
 
-options = optimoptions('fmincon','Algorithm',Algorithm,'Display',Display,...
+options = optimoptions('fmincon','Algorithm',r.Algorithm,'Display',r.Display,...
     'TolFun', r.TolFun,...  % termination based on function value (of the derivative)
     'TolX', r.TolX,...
     'TolCon',r.TolCon,...
@@ -52,7 +48,7 @@ options = optimoptions('fmincon','Algorithm',Algorithm,'Display',Display,...
 
 if r.UseDerivs
     options = optimoptions('fmincon',options,'GradObj','on');
-    if strcmpi(Hessian,'fcn')
+    if strcmpi(r.Hessian,'fcn')
         options=optimoptions('fmincon',options,'Hessian','user-supplied',...
             'HessFcn',@initopthess);
     elseif strcmpi(r.Hessian,'mult')
@@ -78,7 +74,7 @@ end
 
 if r.UseDerivs
     options = optimoptions('fmincon',options,'GradConstr','on');
-    if strcmpi(Hessian,'fcn')
+    if strcmpi(r.Hessian,'fcn')
         options=optimoptions('fmincon',options,'HessFcn',@lagrangianhess);
     elseif strcmpi(r.Hessian,'mult')
         options=optimoptions('fmincon',options,'HessMult',@lagrangianhessmult);

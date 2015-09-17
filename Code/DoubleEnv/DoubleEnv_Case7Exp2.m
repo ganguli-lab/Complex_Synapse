@@ -27,8 +27,8 @@ if isempty(p)
     p.addRequired('n',@(x)validateattributes(x,{'numeric'},{'scalar','positive'},'DoubleEnv_Case7Exp2','n',4));
     p.addParameter('t',[],@(x) validateattributes(x,{'numeric'},{},'DoubleEnv_Case7Exp2','t'));
     p.addParameter('Constraint3',true,@(x) validateattributes(x,{'logical'},{'scalar'},'DoubleEnv_Case7Exp2','Constraint3'));
-    p.addParameter('Display','off',@(x) validatestring(x,{'on','off'},'DoubleEnv_Case7Exp2','Display'));
-    p.addParameter('Jacobian','on',@(x) validatestring(x,{'on','off'},'DoubleEnv_Case7Exp2','Jacobian'));
+    p.addParameter('Display','off',@(x) parsevalidatestring(x,{'on','off'},'DoubleEnv_Case7Exp2','Display'));
+    p.addParameter('Jacobian','on',@(x) parsevalidatestring(x,{'on','off'},'DoubleEnv_Case7Exp2','Jacobian'));
 end
 p.parse(t1,t2,S2,n,varargin{:});
 r=p.Results;

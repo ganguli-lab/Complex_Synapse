@@ -16,11 +16,12 @@ if isempty(p)
     p.addParameter('UseDerivs',false,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOpt','UseDerivs'));
     p.addParameter('DispExit',false,@(x) validateattributes(x,{'logical'},{'scalar'},'ModelOpt','DispExit'));
     p.addParameter('TolFun',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOpt','TolFun'));
-    p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOpt','TolFun'));
-    p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOpt','TolFun'));
-    p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOpt','TolFun'));
-    p.addParameter('Algorithm','interior-point',@(x) validatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOpt','TolFun'));
-    p.addParameter('Display','off',@(x) validatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOpt','TolFun'));
+    p.addParameter('TolX',1e-10,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOpt','TolX'));
+    p.addParameter('TolCon',1e-6,@(x) validateattributes(x,{'numeric'},{'scalar'},'ModelOpt','TolCon'));
+    p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOpt','MaxIter'));
+    p.addParameter('Algorithm','interior-point',@(x) parsevalidatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOpt','Algorithm'));
+    p.addParameter('Display','off',@(x) parsevalidatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOpt','Display'));
+    p.addParameter('fp',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'ModelOpt','fp'));
 end
 p.parse(varargin{:});
 r=p.Results;
@@ -42,12 +43,12 @@ options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
 
 if r.UseDerivs
     options = optimset(options,'GradObj','on');
-    [x,snr,ef] = fmincon(@(y)OptFunGrad(y,tm,0.5,w),x0,...
+    [x,snr,ef] = fmincon(@(y)OptFunGrad(y,tm,r.fp,w),x0,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,[],...
         options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
 else
-    [x,snr,ef] = fmincon(@(y)OptFun(y,tm,0.5,w),x0,...
+    [x,snr,ef] = fmincon(@(y)OptFun(y,tm,r.fp,w),x0,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,[],...
         options);%fun,xo,A,b,Aeq,beq,lb,ub,nonlcon,options
@@ -56,7 +57,7 @@ end
 snr=-snr;
 
 % [~,~,ix]=SortByEta(0.5*Wp+0.5*Wm,w);
-[~,~,ix]=SortByWt(0.5*Wp+0.5*Wm,w,tm);
+[~,~,ix]=SortByWt(r.fp*Wp+(1-r.fp)*Wm,w,tm);
 newWp=Wp(ix,ix);
 newWm=Wm(ix,ix);
 
