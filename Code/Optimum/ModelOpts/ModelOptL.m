@@ -21,10 +21,12 @@ if isempty(p)
     p.addParameter('MaxIter',1000,@(x) validateattributes(x,{'numeric'},{'scalar','integer'},'ModelOptL','MaxIter'));
     p.addParameter('Algorithm','interior-point',@(x) parsevalidatestring(x,{'trust-region-reflective','active-set','interior-point','sqp'},'ModelOptL','Algorithm'));
     p.addParameter('Display','off',@(x) parsevalidatestring(x,{'off','iter','iter-detailed','notify','notify-detailed','final','final-detailed'},'ModelOptL','Display'));
+    p.addParameter('Hessian','fcn',@(x) parsevalidatestring(x,{'fcn','mult','none'},'ModelOptL','Hessian'));
     p.addParameter('fp',0.5,@(x) validateattributes(x,{'numeric'},{'scalar','nonnegative','<=',1},'ModelOptL','fp'));
 end
 p.parse(varargin{:});
 r=p.Results;
+extra=[fields(p.Unmatched)'; struct2cell(p.Unmatched)'];
 
 fp=r.fp;
 
@@ -36,15 +38,21 @@ lb=zeros(size(x0));
 ub=ones(size(x0));
 [linconstr_A,linconstr_b]=ParamsConstraints(n);
 
-options = optimset(p.Unmatched,'Algorithm',r.Algorithm,'Display',r.Display,...
+options = optimoptions('fmincon',extra{:},'Algorithm',r.Algorithm,'Display',r.Display,...
     'TolFun', r.TolFun,...  % termination based on function value (of the derivative)
     'TolX', r.TolX,...
     'TolCon',r.TolCon,...
-    'MaxIter',r.MaxIter, ...
-    'largescale', 'on');
+    'MaxIter',r.MaxIter);
 
 if r.UseDerivs
-    options = optimset(options,'GradObj','on');
+    options = optimoptions(options,'GradObj','on');
+    if strcmpi(r.Hessian,'fcn')
+        options=optimoptions('fmincon',options,'Hessian','user-supplied',...
+            'HessFcn',@opthess);
+    elseif strcmpi(r.Hessian,'mult')
+        options=optimoptions('fmincon',options,'Hessian','user-supplied',...
+            'SubproblemAlgorithm','cg','HessMult',@opthessmult);
+    end
     [x,A,ef] = fmincon(@(y)OptFunGradL(y,sm,fp,w),x0,...
         linconstr_A,linconstr_b,...
         [],[],lb,ub,[],...
@@ -64,6 +72,16 @@ A=-A;
 if r.DispExit
     disp(ExitFlagMsg(ef));
 end
+
+
+    function h=opthess(x,~)
+        h = OptHessL(x,sm,fp,w);
+    end
+
+    function Hv=opthessmult(x,~,v)
+        Hv = OptHessMultL(x,sm,fp,w,v);
+    end
+
 
 end
 
