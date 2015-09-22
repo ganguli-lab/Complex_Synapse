@@ -1,4 +1,7 @@
 
+% Interpreter='latex';
+Interpreter='tex';
+
 load('laplacebnd12.mat','AenvAll','srange');
 load('laplacebndChainA12.mat','AenvChains');
 
@@ -11,11 +14,17 @@ loglog( 1./srange,100*AenvProven.*srange,'g',...
     'LineWidth',2);
 %     1./srange,100*AenvHomC.*srange,'r--',...
 ylim([1e-1 500]);
-xlabel('Mean recall time, $\tau$','Interpreter','latex','FontSize',16);
-ylabel('Recognition performance, $\overline{\mathrm{SNR}}(\tau)$','Interpreter','latex','FontSize',16);
-title('Numerical envelopes','Interpreter','latex','FontSize',20);
+switch Interpreter
+    case 'latex'
+        xlabel('Mean recall time, $\tau$','Interpreter',Interpreter,'FontSize',16);
+        ylabel('Recognition performance, $\overline{\mathrm{SNR}}(\tau)$','Interpreter',Interpreter,'FontSize',16);
+    case 'tex'
+        xlabel('Mean recall time, \tau','Interpreter',Interpreter,'FontSize',16);
+        ylabel('\textsf{Recognition performance,} $\overline{\mathsf{SNR}}\mathsf{(\tau)}$','Interpreter','latex','FontSize',16);
+end
+title('Numerical envelopes','Interpreter',Interpreter,'FontSize',20);
 legend({'Proven envelope',...
     'Numeric: all topologies',...
     'Numeric: serial topology',...
     },...
-    'Location','southwest','Interpreter','latex','FontSize',16);
+    'Location','southwest','Interpreter',Interpreter,'FontSize',16);

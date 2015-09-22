@@ -12,7 +12,7 @@ EnvLinewidth=3;
 ModelLineWidth=2;
 TimeLineWidth=2;
 EqLineWidth=2;
-Interpreter='latex';
+Interpreter='tex';
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Data
@@ -41,7 +41,7 @@ snr_ylim=[AenvNum(end) 5*sqrt(NumSynapse)];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure
 
-figure1 = figure('Units','pixels','Position',[0 64 2560 1536],'PaperPositionMode','auto');
+figure1 = figure('Units','pixels','Position',[0 64 2560 1008],'PaperPositionMode','auto');
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Panels

@@ -41,7 +41,7 @@ frNumber=1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %figure
 
-figure1 = figure('Units','pixels','OuterPosition',[0 64 2560 1536]);
+figure1 = figure('Units','pixels','OuterPosition',[0 64 2560 1232]);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %Panels
