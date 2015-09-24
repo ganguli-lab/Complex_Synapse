@@ -6,13 +6,14 @@ function [ newmodel,loglike ] = FitGUIvid( imwriter,truemodel,options,num_ch,num
 % S=struct('MaxIter',100,'TolFun',NaN,'TolX',1e-4,'TolFunChange',1,...
 %     'Penalty',1,'num_ch',30,'num_t',50);
 % T=struct('Algorithm','BW','Weighter','RJ','Penaliser','No','ModelDiff','KL');
-AxFontSize=12;
+AxFontSize=18;
+AxFontSizeS=16;
 % BtFontSize=12;
 cmapname='Hot';
 options=SynapseOptimset(options,'PlotFcn',@PlotFcn,'GroundTruth',truemodel);
 %-------------------------------------------------------------------------
 %Create figure
-figure1 = figure('Units','pixels','OuterPosition',[0 64 2560 1536]);
+figure1 = figure('Units','pixels','OuterPosition',[0 64 2560 1264],'PaperPositionMode','auto');
 
 %Create panels
 model_true=uipanel(figure1,'Units','normalized',...
@@ -49,8 +50,8 @@ ax_est(1) = axes('Parent',model_est,'OuterPosition',[0 0.6 1 0.4]);%left bottom 
 ax_est(2) = axes('Parent',model_est,'OuterPosition',[0 0.2 1 0.4]);%left bottom width height
 ax_est(3) = axes('Parent',model_est,'OuterPosition',[0 0 1 0.2]);%left bottom width height
 %
-potdepwt = axes('Parent',simulation,'OuterPosition',[0 0.8 0.9 0.2]);%left bottom width height
-statepr  = axes('Parent',simulation,'OuterPosition',[0 0 0.95 0.8]);%left bottom width height
+potdepwt = axes('Parent',simulation,'OuterPosition',[0 0.79 0.9 0.2]);%left bottom width height
+statepr  = axes('Parent',simulation,'OuterPosition',[0 0 0.95 0.79]);%left bottom width height
 %
 mets_true(2)=axes('Parent',metrics,'OuterPosition',[0 0.5 1 0.5],'YAxisLocation','right');%left bottom width height
 mets_true(1)=axes('Parent',metrics,'OuterPosition',[0 0.5 1 0.5],'Color','none');%left bottom width height
@@ -63,21 +64,21 @@ mets_est(1)=axes('Parent',metrics,'OuterPosition',[0 0 1 0.5],'Color','none');%l
 % edtpos={0.0,0.0,0.5,0.5};%left bottom width height
 % btpos={0.5,0.0,0.5,1};%left bottom width height
 
-pdleg=axes('Parent',simulation,'Position',[0.9 0.93 0.1 0.04]);
+pdleg=axes('Parent',simulation,'Position',[0.9 0.93 0.1 0.035]);
 imagesc([1 -1],'Parent',pdleg);
-set(pdleg,'XAxisLocation','top','XTick',[1 2],'YTick',[],'XTickLabel',{'pot','dep'});
-wtleg=axes('Parent',simulation,'Position',[0.9 0.89 0.1 0.04]);
+set(pdleg,'XAxisLocation','top','XTick',[1 2],'YTick',[],'XTickLabel',{'pot','dep'},'FontSize',AxFontSizeS);
+wtleg=axes('Parent',simulation,'Position',[0.9 0.895 0.1 0.035]);
 imagesc([1 -1],'Parent',wtleg);
-set(wtleg,'XAxisLocation','bottom','XTick',[1 2],'YTick',[],'XTickLabel',{'strong','weak'});
+set(wtleg,'XAxisLocation','bottom','XTick',[1 2],'YTick',[],'XTickLabel',{'strong','weak'},'FontSize',AxFontSizeS);
 
-colormap(pdleg,'jet')
-freezeColors(pdleg);
-colormap(wtleg,'jet')
-freezeColors(wtleg);
+colormap(pdleg,'redblue')
+% freezeColors(pdleg);
+colormap(wtleg,'redblue')
+% freezeColors(wtleg);
 
 
 colormap(potdepwt,'jet');
-freezeColors(potdepwt);
+% freezeColors(potdepwt);
 colormap(statepr,cmapname);
 
 %-------------------------------------------------------------------------
@@ -89,6 +90,7 @@ InitRand;
 PlotModel(truemodel,ax_true);
 metvals=zeros(options.MaxIter,2,4);
 Simulate;
+InitSpec;
 drawnow;
 PrintFrame(0);
 Update;
@@ -196,10 +198,11 @@ Update;
 %Callback functions for buttons
 
     function Simulate(~,~)
-        simobj=SynapsePlastSeqSim(1,num_ch);
-        for jj=1:num_ch
-            simobj(jj)=truemodel.Simulate(rand(2,num_t));
-        end
+%         simobj=SynapsePlastSeqSim(1,num_ch);
+%         for jj=1:num_ch
+%             simobj(jj)=truemodel.Simulate(rand(2,num_t));
+%         end
+        simobj=truemodel.Simulate(rand(2,num_t,1,num_ch));
         PlotSim;
         PlotModel(truemodel,ax_true);
         %InitRand;
@@ -215,7 +218,21 @@ Update;
 
     function InitRand(~,~)
         newmodel=truemodel.Randomise;
-        newmodel=newmodel.Sort;
+%         newmodel=SpectralInit(simobj,truemodel.w,'NumPlastTypes',truemodel.NumPlast);
+        PlotModel(newmodel,ax_est);
+        if ~isempty(simobj(1).potdep)
+            stpr=StateProbs(newmodel,simobj);
+            if iscell(stpr)
+                PlotStatePr(stpr);
+            else
+                PlotStatePr({stpr});
+            end
+        end
+    end
+
+    function InitSpec(~,~)
+%         newmodel=truemodel.Randomise;
+        newmodel=SpectralInit(simobj,truemodel.w,'NumPlastTypes',truemodel.NumPlast);
         PlotModel(newmodel,ax_est);
         if ~isempty(simobj(1).potdep)
             stpr=StateProbs(newmodel,simobj);
@@ -248,10 +265,10 @@ Update;
         wt=[3-2*simobj(1).potdep; 2*simobj(1).readouts-3];
         cla(potdepwt);
         imagesc(wt,'Parent',potdepwt);
-        set(potdepwt,'YTick',[1 2],'YTickLabel',{'pot/dep','weight'});
+        set(potdepwt,'YTick',[1 2],'YTickLabel',{'pot/dep','weight'},'XTick',[],'FontSize',AxFontSizeS);
         xlabel(potdepwt,'Time','FontSize',AxFontSize);
-        colormap(potdepwt,'jet');
-        freezeColors(potdepwt);
+        colormap(potdepwt,'redblue');
+%         freezeColors(potdepwt);
         colormap(statepr,cmapname);
 %         cla(statepr);
 %         plot(st,'g','LineWidth',3,'Parent',statepr);
@@ -278,6 +295,9 @@ Update;
         cla(ax(2));
         cla(ax(3));
         modelobj.image(ax(3),ax(1:2),{'FontSize',AxFontSize});
+        colormap(ax(1),cmapname);
+        colormap(ax(2),cmapname);
+        colormap(ax(3),cmapname);
         cb=colorbar('peer',ax(3),'location','SouthOutside');
         cblabel(cb,'Probability','FontSize',AxFontSize);
     end

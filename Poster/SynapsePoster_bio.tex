@@ -17,8 +17,8 @@
 \newcommand{\myscale}{0.7}
 \usecolortheme[rgb={0.37843137 0.07058824 0.5372549}]{structure}
 % ----------------------------------------------------------------
-\input{sl_poster_preamble.tex}
 \input{sl_graphics_preamble.tex}
+\input{sl_poster_preamble.tex}
 \input{sl_definitions.tex}
 \input{sl_slide_symbols.tex}
 \graphicspath{{Figures/}}
@@ -108,15 +108,15 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{block}{Synaptic learning and memory}
 %
  Learning and memory involve the interplay between neuronal activity and synaptic plasticity.
- 
+
  %
  \begin{center}
    \includegraphics[width=0.4\linewidth]{synaptic_learning.svg}
  \end{center}
  %
- 
+
  Theorists frequently neglect the question of how plasticity is implemented.
- 
+
  A synapse is often modeled as a single number: the synaptic weight.
 %
 \end{block}
@@ -290,7 +290,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{itemize}
   \item Candidate plasticity events occur independently at each synapse,
   \item Each synapse responds with the same state-dependent rules,
-  \item Synaptic weight takes only two values, $\pm1$.
+  \item Synaptic weight takes only two values.
 %  \item Keep track of distribution of synapses across states.
  \end{itemize}
  }
@@ -305,18 +305,20 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{block}{Recognition memory}
 %
  The synapses are given a sequence of patterns (potentiation \& depression) to store
- 
+
  \vp
  \begin{center}
- 1. \aligntop{\includegraphics[width=0.12\linewidth]{network1.svg}}
+ \begin{inlineenumerate}
+ \item \aligntop{\includegraphics[width=0.12\linewidth]{network1.svg}}
  \hspace{0.03\linewidth}
- 2. \aligntop{\includegraphics[width=0.12\linewidth]{network2.svg}}
+ \item \aligntop{\includegraphics[width=0.12\linewidth]{network2.svg}}
  \hspace{0.03\linewidth}
- 3. \aligntop{\includegraphics[width=0.12\linewidth]{network3.svg}}
+ \item \aligntop{\includegraphics[width=0.12\linewidth]{network3.svg}}
  \hspace{0.03\linewidth}
- 4. \aligntop{\includegraphics[width=0.12\linewidth]{network4.svg}}
+ \item \aligntop{\includegraphics[width=0.12\linewidth]{network4.svg}}
+ \end{inlineenumerate}
  \end{center}
- 
+
  \vp Later: presented with a pattern.
  Has it been seen before?
 %
@@ -326,7 +328,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{Memory curve}
 %
- Ideal observer approach: read synaptic weights directly
+ Ideal obserXver approach: read synaptic weights directly
  $\ra$ upper bound on what could be read from network activity.
 
 % The reconstruction probability of a single synapse is:
@@ -337,7 +339,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 % %
 % Alternatively, if $\W$ is an $N$-element vector of synaptic strengths,
  \vp Measure overlap between $\W(t)$, the $N$-element vector of synaptic strengths, and $\W_\text{ideal}$, the pattern we are testing.
- 
+
  \vp Performance measured by signal-to-noise ratio, with mean recall time: $\tau$.
  %
  \begin{equation*}
@@ -604,8 +606,8 @@ Department of Applied Physics, Stanford University, Stanford CA
 }
 
  \citerr{Lahiri2013synapse}
- 
- \vp No model can ever go above this envelope. 
+
+ \vp No model can ever go above this envelope.
  Is it achievable?
 %
 \end{block}
@@ -613,10 +615,10 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Numeric upper bounds}
+\begin{block}{Numeric envelope for memory curves}
 %
  Find maximum memory curve at each time numerically:
- 
+
 \parbox[c]{0.45\linewidth}{
  %
  \begin{center}
@@ -632,7 +634,7 @@ Department of Applied Physics, Stanford University, Stanford CA
  \end{center}
  %
 }
- 
+
  At any single timescale: best model has serial topology.
  \hspace{1cm}
  \parbox[t]{0.5\linewidth}{
@@ -657,12 +659,13 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 %-------------Box--------------------------------------------------------
 
-\begin{block}{Take-home message}
+\begin{block}{Synaptic structures for different timescales of memory}
 %
  Real synaptic structures are limited by the set of molecular building blocks, and they have a larger set of priorities.
- 
+
  What can we conclude?
- 
+
+ \vp
  \begin{center}
  \begin{tabular}{ccccc}
    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
@@ -834,19 +837,37 @@ Department of Applied Physics, Stanford University, Stanford CA
 \begin{block}{Experimental tests?}
 %
  Subject a synapse to a sequence of candidate plasticity events.
- 
+
  Observe the changes in synaptic efficacy.
  
+ \begin{center}
+   \begin{inlineenumerate}
+     \item \aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depstrong.svg}} \hspace{0.02\linewidth}
+     \item \aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}} \hspace{0.02\linewidth}
+     \item \aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potweak.svg}} \hspace{0.02\linewidth}
+     \item \aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}} \hspace{0.02\linewidth}
+     \item \aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potstrong.svg}} \hspace{0.02\linewidth}
+     \item \aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potstrong.svg}}
+   \end{inlineenumerate}
+ \end{center}
+
  \vp Expectation-Maximization algorithms:
  \parbox[t]{0.5\linewidth}{
    Sequence of hidden states $\ra$ estimate transition probabilities \\
    Transition probabilities $\ra$ estimate sequence of hidden states
  }
  
+ %
+ \begin{center}
+   \includegraphics[width=0.87\linewidth]{FitVid939.svg}
+ \end{center}
+%
+
  \vp Problems:
  \begin{itemize}
-   \item Need a long sequence of plasticity events.
-   \item Need to control candidate plasticity events.
+   \item Need single synapses.
+   \item Need long sequences of plasticity events.
+   \item Need to control types of candidate plasticity events.
    \item Need to measure synaptic efficacies.
  \end{itemize}
 %
@@ -862,7 +883,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 %    \item The area under the memory curve of any synaptic transition diagram cannot exceed that of a linear chain with the same equilibrium probability distribution.
     \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
     \item    Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M)$.
-    \item We understood what types of synaptic structure are useful for storing memories for different timescales.
+    \item We understood which types of synaptic structure are useful for storing memories for different timescales.
 %    \item For times $< \CO(n^2)$ we conjecture the close to optimal synaptic model that reaches the envelope exploits deterministic transitions, resulting in diffusive forgetting.
   \end{itemize}
 %
@@ -872,7 +893,7 @@ Department of Applied Physics, Stanford University, Stanford CA
 
 \begin{block}{References}
 %
- {\small
+ {\tiny
  \bibliographystyle{unsrt_poster}
  \bibliography{neuro,maths,markov}
  }
