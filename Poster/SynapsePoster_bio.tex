@@ -1,0 +1,904 @@
+% -*- TeX -*- -*- US -*- -*- BMR -*- -*- PST -*-
+% ----------------------------------------------------------------
+% Beamer  Poster presentation ************************************************
+%
+% Subhaneil Lahiri's template
+%
+% To compile:
+%   Ctrl-Shift-P
+%
+% **** -----------------------------------------------------------
+\documentclass[final,hyperref={pdfpagelabels=false,bookmarks=false}]{beamer}
+%\documentclass{beamer}
+% ----------------------------------------------------------------
+% set poster height and length, font scale and colour
+\newcommand{\myposterwidth}{42in}
+\newcommand{\myposterheight}{32in}
+\newcommand{\myscale}{0.7}
+\usecolortheme[rgb={0.37843137 0.07058824 0.5372549}]{structure}
+% ----------------------------------------------------------------
+\input{sl_poster_preamble.tex}
+\input{sl_graphics_preamble.tex}
+\input{sl_definitions.tex}
+\input{sl_slide_symbols.tex}
+\graphicspath{{Figures/}}
+\DeclareMathOperator{\SNR}{SNR}
+\DeclareMathOperator{\snr}{SNR}
+\newcommand{\snrb}{\overline{\snr}}
+\newcommand{\SNRb}{\snrb}
+\newcommand{\net}{molecular network}
+\newcommand{\Net}{Molecular network}
+\newcommand{\pot}{^\text{pot}}
+\newcommand{\dep}{^\text{dep}}
+\newcommand{\frg}{^\text{forget}}
+%matrices
+\newcommand{\inv}{^{-1}}
+\newcommand{\dg}{^\mathrm{dg}}
+\newcommand{\trans}{^\mathrm{T}}
+\newcommand{\I}{\mathbf{I}}
+%vec of ones
+\newcommand{\onev}{\mathbf{e}}
+%mat of ones
+\newcommand{\onem}{\mathbf{E}}
+%Markov matrix
+\newcommand{\MM}{\mathbf{Q}}
+%equilibrium distribution
+\newcommand{\eq}{\mathbf{p}^\infty}
+%first passage times
+\newcommand{\fpt}{\mathbf{T}}
+%off-diag first passage times
+\newcommand{\fptb}{\overline{\fpt}}
+%fundamental matrix
+\newcommand{\fund}{\mathbf{Z}}
+%other symbols
+\newcommand{\Pb}{\mathbf{P}}
+\newcommand{\D}{\mathbf{D}}
+\newcommand{\pib}{\boldsymbol{\pi}}
+\newcommand{\Lb}{\boldsymbol{\Lambda}}
+\newcommand{\w}{\mathbf{w}}
+\newcommand{\W}{\vec{w}}
+\newcommand{\M}{\mathbf{M}}
+\newcommand{\F}{\boldsymbol{\Phi}}
+\newcommand{\CI}{\mathcal{I}}
+\newcommand{\CS}{\mathcal{S}}
+\newcommand{\CA}{\mathcal{A}}
+\newcommand{\CB}{\mathcal{B}}
+\newcommand{\comp}{^\mathrm{c}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%---------Title-----------------------------------------------------------
+
+\title{A memory frontier for complex synapses}
+%
+%\subtitle{\small{based on \texttt{arXiv: [hep-th]} with }}
+%
+\author{Subhaneil Lahiri and Surya Ganguli}
+%
+\institute[Stanford]{%
+Department of Applied Physics, Stanford University, Stanford CA
+}
+\date{December 6, 2013}
+\titlegraphicl{\includegraphics[height=0.5\linewidth]{SU_Seal_Card_pos.eps}%
+    \hspace{1cm}\includegraphics[height=0.5\linewidth]{bio-x.eps}}
+\titlegraphic{\includegraphics[height=0.4\linewidth]{Genentech.eps}%
+    \hspace{1cm}\includegraphics[height=0.4\linewidth]{swartz.eps}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%---------Setup--------------------------------------------------------
+
+\begin{document}
+
+\begin{frame}{}
+
+\begin{columns}[t]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-------------Beginning--------------------------------------------------------
+
+%-------------Column--------------------------------------------------------
+\begin{column}{0.33\linewidth}
+
+\section{Background}
+
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Synaptic learning and memory}
+%
+ Learning and memory involve the interplay between neuronal activity and synaptic plasticity.
+ 
+ %
+ \begin{center}
+   \includegraphics[width=0.4\linewidth]{synaptic_learning.svg}
+ \end{center}
+ %
+ 
+ Theorists frequently neglect the question of how plasticity is implemented.
+ 
+ A synapse is often modeled as a single number: the synaptic weight.
+%
+\end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Complex synapses}
+%
+ \begin{minipage}[t]{0.53\linewidth}
+   In reality, a synapse is a complex dynamical system.
+
+   \vp We will describe a synapse by stochastic processes on a finite number of states, $M$.
+
+   \vp Potentiation and depression cause transitions between these states.
+
+   \vp
+   \begin{center}
+    \aligntop{\includegraphics[width=0.54\linewidth]{2000102CobaFig4.pdf}}
+   \end{center}
+    \citerr{Coba2009phosphorylation}
+ \end{minipage}
+ %
+ %\hspace{1cm}
+ %
+ \begin{minipage}[t]{0.45\linewidth}
+   \begin{center}
+     \aligntop{\includegraphics[width=0.5\linewidth]{synapse.svg}}
+   \end{center}
+
+   \vspace{1cm}
+   \begin{center}
+   \aligntop{\includegraphics[width=0.2\linewidth]{pot.svg}}
+   \hspace{2cm}
+   \aligntop{\includegraphics[width=0.2\linewidth]{dep.svg}}
+   \end{center}
+ \end{minipage}
+%
+\end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Storage capacity of synaptic memory}
+%
+ A classical perceptron, when used as a recognition memory device, has a memory capacity $\propto N$, the number of synapses.
+
+ \parbox[t]{0.58\linewidth}{
+ \vp However, this requires synapses' dynamic range to be also $\propto N$.
+
+ \vp If synaptic efficacies are limited to a fixed dynamic range,\\
+ $\ra$ strong tradeoff between learning and forgetting \\
+ -- due to new memories overwriting old.
+
+ \vp If we wish to store new memories rapidly, then memory capacity is $\propto \log N$.
+
+ \citerr{amit1992constraints,amit1994learning}
+ }
+ %
+ \parbox[t]{0.4\linewidth}{
+   \begin{flushright}
+    \aligntop{\includegraphics[width=0.6\linewidth]{Petersen1998.jpg}}
+   \end{flushright}
+   \citerr{Petersen1998allornone,O'Connor2005switch}
+ }
+
+ \vp To circumvent this tradeoff, it is essential to enlarge our theoretical conception of a synapse as a single number.
+ %
+\end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Cascade and serial models}
+%
+ Two example models of complex synapses with different memory storage properties.
+% \begin{center}
+ \parbox[t]{0.47\linewidth}{
+ \begin{center}
+  \aligntop{\includegraphics[width=0.4\linewidth]{cascade.svg}}
+  \\%\hspace{2cm}
+  \vp\vp\aligntop{\includegraphics[width=0.4\linewidth]{serial.svg}}
+ \end{center}
+ }
+% \end{center}
+% These have different memory storage properties
+ \parbox[t]{0.47\linewidth}{
+ \begin{center}
+ \aligntop{\includegraphics[width=0.65\linewidth]{cascms.svg}}
+ \end{center}
+}
+
+ \citerr{Fusi2005cascade,Leibold2008serial,Ben-DayanRubin2007sparse}
+
+%
+\end{block}
+
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Timescales of memory}
+%
+ \parbox[t]{0.47\linewidth}{
+ Memories stored in different places for different timescales
+ \begin{center}
+   \aligntop{\includegraphics[width=0.4\linewidth]{SquireAlvarez.jpg}}
+ \end{center}
+ Also: Cerebellar cortex vs.\ cerebellar nuclei.
+
+ \citerr{Squire1995amnesia,Krakauer2006motorcons}
+ }
+ %
+ \hspace{0.5cm}
+ %
+ \parbox[t]{0.47\linewidth}{
+ Different synapses have different molecular structures.
+ \begin{center}
+   \aligntop{\includegraphics[width=0.6\linewidth]{Emes2012.jpeg}}
+ \end{center}
+ \citerr{Emes2012synapserev}
+ }
+ %
+%
+\end{block}
+
+
+%-------------Column--------------------------------------------------------
+\end{column}
+
+%-------------Column--------------------------------------------------------
+\begin{column}{0.33\linewidth}
+
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Questions}
+%
+ \begin{itemize}
+   \item Can we understand the space of \emph{all possible} synaptic models?
+   \item How does the structure (topology) of a synaptic model affect its function (memory curve)?
+   \item Can synaptic structure be tuned to store memories over different timescales?
+   \item How does synaptic complexity (number of states) extend the frontiers of possibility for memory?
+   \item Which synaptic state transition topologies maximize measures of memory?
+ \end{itemize}
+%
+\end{block}
+
+
+\section{Framework}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Synaptic state transition models}
+%
+% We have $N$ synapses with $n$ internal states.
+%
+%
+\parbox[c]{0.4\linewidth}{
+  \aligntop{\includegraphics[width=0.9\linewidth]{synapse_model_1.svg}}
+}%
+%
+% We have two Markov processes describing transition probabilities for potentiation, $\M\pot$, and depression, $\M\dep$.
+%
+% \vp Plasticity events are potentiating with probability $f\pot$ and depressing with probability $f\dep$.
+%
+% \vp After the memory we are tracking, subsequent plasticity events occur at rate $r$, with transition probabilities
+% %
+% \begin{equation*}
+%   \M\frg = f\pot\M\pot + f\dep\M\dep.
+% \end{equation*}
+% %
+% This will eventually return it to the equilibrium distribution, $\eq$.
+\parbox[c]{0.59\linewidth}{Assumptions:
+\begin{itemize}
+  \item Candidate plasticity events occur independently at each synapse,
+  \item Each synapse responds with the same state-dependent rules,
+  \item Synaptic weight takes only two values, $\pm1$.
+%  \item Keep track of distribution of synapses across states.
+ \end{itemize}
+ }
+
+ \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
+%
+\end{block}
+
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Recognition memory}
+%
+ The synapses are given a sequence of patterns (potentiation \& depression) to store
+ 
+ \vp
+ \begin{center}
+ 1. \aligntop{\includegraphics[width=0.12\linewidth]{network1.svg}}
+ \hspace{0.03\linewidth}
+ 2. \aligntop{\includegraphics[width=0.12\linewidth]{network2.svg}}
+ \hspace{0.03\linewidth}
+ 3. \aligntop{\includegraphics[width=0.12\linewidth]{network3.svg}}
+ \hspace{0.03\linewidth}
+ 4. \aligntop{\includegraphics[width=0.12\linewidth]{network4.svg}}
+ \end{center}
+ 
+ \vp Later: presented with a pattern.
+ Has it been seen before?
+%
+\end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Memory curve}
+%
+ Ideal observer approach: read synaptic weights directly
+ $\ra$ upper bound on what could be read from network activity.
+
+% The reconstruction probability of a single synapse is:
+% %
+% \begin{equation*}
+%   s(t) = f\pot P(\text{strong},t\mid\text{pot},0) + f\dep P(\text{weak},t\mid\text{dep},0)
+% \end{equation*}
+% %
+% Alternatively, if $\W$ is an $N$-element vector of synaptic strengths,
+ \vp Measure overlap between $\W(t)$, the $N$-element vector of synaptic strengths, and $\W_\text{ideal}$, the pattern we are testing.
+ 
+ \vp Performance measured by signal-to-noise ratio, with mean recall time: $\tau$.
+ %
+ \begin{equation*}
+   \begin{aligned}
+%     \text{Signal} &= \av{\W_\text{ideal} \cdot \W(t) -  \W_\text{ideal} \cdot \W(\infty)}, \\
+%     \text{Noise} &= \sqrt{\var\prn{\W_\text{ideal} \cdot \W(\infty)}}.
+     \SNRb(\tau) = \frac{1}{\tau}\intd[_0^\infty]{t}\e^{-t/\tau}\, \frac{\av{\W_\text{ideal} \cdot \W(t)} -  \av{\W_\text{ideal} \cdot \W(\infty)} }{ \sqrt{\var\prn{\W_\text{ideal} \cdot \W(\infty)}} }.
+   \end{aligned}
+ \end{equation*}
+ %
+% If we assume there are no correlations between different synapses, the signal-to-noise ratio is:
+% %
+% \begin{equation*}
+%%   \SNR(t) \sim \sqrt{N}(s(t)-s(\infty)).
+%   \SNR(t) = \sqrt{N}\prn{2 f\pot f\dep} \eq \prn{\M\pot-\M\dep} \exp\brk{rt\prn{f\pot\M\pot-f\dep\M\dep-\I}} \w.
+% \end{equation*}
+% %
+%
+\end{block}
+
+%\section{Upper bounds on performance}
+%
+%
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{Initial SNR bound}
+%%
+% Initial SNR is closely related to equilibrium flux between strong \& weak states
+% %
+% \begin{equation*}
+%   \SNR(0) \leq \frac{4\sqrt{N}}{r}\,\F_{-+}.
+% \end{equation*}
+% %
+%
+% \vp
+% Maximized when \parbox[t]{0.4\linewidth}{
+% potentiation guarantees $\W\to$ strong, \\
+% depression guarantees $\W\to$ weak.
+% }%
+% %
+%% \begin{center}
+%   \hspace{0.05\linewidth}
+%   \aligntop{\includegraphics[height=0.13\linewidth]{max_init_pot.svg}}
+%   \hspace{0.05\linewidth}
+%   \aligntop{\includegraphics[height=0.13\linewidth]{max_init_dep.svg}}
+%% \end{center}
+%
+% \vp \lto\ Equivalent to two-state model
+%  \begin{center}
+%  Transitions:\hspace{1cm}
+%   \parbox{2cm}{\includegraphics[height=1.5\linewidth]{binary_det.svg}}
+%   $\qquad\implies\qquad\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
+%  \end{center}
+%% \begin{center}
+%%   \alignmid{\includegraphics[height=0.08\linewidth]{max_init_pot.svg}}
+%%   \hspace{0.5cm}
+%%   \alignmid{\includegraphics[height=0.08\linewidth]{max_init_dep.svg}}
+%%   \hspace{1cm}
+%%  \lto\ Equivalent to:
+%%   \hspace{0.5cm}
+%%   \alignmid{\includegraphics[height=0.1\linewidth]{binary_det.svg}}
+%%   $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
+%%  \end{center}
+%
+% \vp Maximal initial SNR:\hspace{2cm}
+% %
+% $
+%   \snr(0) \leq \sqrt{N}.
+% $
+%%
+%\end{block}
+%
+%
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{Area bound}
+%%
+% \parbox[c]{0.6\linewidth}{
+% % We can show that the area under the SNR curve is bounded:
+% % %
+% % \begin{equation*}
+% %   A \leq \sqrt{N}(n-1)/r.
+% % \end{equation*}
+% % %
+% % This is saturated by a transition diagram with a linear chain topology.
+% %
+% % \vp This leads to a bound on the memory lifetime of \emph{any} synaptic model:
+% % %
+% % \begin{equation*}
+% % \begin{aligned}
+% %   \SNR(\text{lifetime})&=1
+% %   &\qquad
+% %   \implies
+% %   \quad
+% %   \text{lifetime} &< A.
+% % \end{aligned}
+% % \end{equation*}
+% % %
+%  The memory lifetime is bounded by the area under the SNR curve:
+%  %
+%  \begin{equation*}
+%  \begin{aligned}
+%    \SNR(\text{lifetime})&=1
+%    &\qquad
+%    \implies
+%    \quad
+%    \text{lifetime} &< A.
+%  \end{aligned}
+%  \end{equation*}
+%  %
+%  We can show that this area has an upper bound:
+%  %
+%  \begin{equation*}
+%    A \leq \sqrt{N}(M-1)/r.
+%  \end{equation*}
+%  %
+%  This is saturated by a transition diagram with the serial topology.
+% }
+% \hfill
+% \parbox[c]{0.37\linewidth}{
+%  %
+%  \begin{center}
+%    \includegraphics[width=0.9375\linewidth]{lifetime.eps}
+%  \end{center}
+%  %
+% }
+%%
+%\end{block}
+%
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{Proof: Impose an ordering on the states}
+%%
+% Let $\fpt_{ij}$ be the mean first passage time from state $i$ to state $j$.
+% The following quantity
+% %
+% \begin{equation*}
+%   \eta = \sum_j \fpt_{ij} \eq_j,
+% \end{equation*}
+% %
+% is independent of the initial state $i$.
+% It is known as Kemeney's constant. \citerr{kemeny1960finite}
+%
+% \vp We define:
+% %
+% \begin{equation*}
+%   \eta^+_i = \sum_{j\in\text{strong}} \fpt_{ij} \eq_j,
+%   \qquad
+%   \eta^-_i = \sum_{j\in\text{weak}} \fpt_{ij} \eq_j.
+% \end{equation*}
+% %
+% These measure ``distance'' to the strong/weak states.
+% They can be used to arrange the states in an order (increasing $\eta^-$ or decreasing $\eta^+$).
+%%
+%\end{block}
+%
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{Maximal area}
+%%
+% Given any synaptic model, we can construct one with a linear chain topology that has
+% \parbox[c]{0.34\linewidth}{
+%  \begin{itemize}
+%    \item the same state order,
+%    \item the same equilibrium distribution,
+%    \item a larger area.
+%  \end{itemize}
+% }
+% \parbox[c]{0.34\linewidth}{
+%  %
+%  \begin{center}
+%    \includegraphics[width=0.5\linewidth]{shortcut.svg}
+%  \end{center}
+%  %
+% }
+%
+% \vp Uses a deformation that reduces ``shortcut'' transition probabilities and increases the bypassed ``direct'' ones.
+%
+% \vp The area of this model is
+% %
+% \begin{equation*}
+%   A = \frac{2\sqrt{N}}{r}\sum_k \eq_k \abs{k-\av{k}}.
+% \end{equation*}
+% %
+%
+% \vp This is maximized when the equilibrium probability distribution is concentrated at both ends.
+%
+%   %
+%   \vp
+%   \begin{center}
+%     \includegraphics[width=0.35\linewidth]{multistate_sticky.svg}
+%   \end{center}
+%   %
+%   In the limit $\varepsilon\to0$.
+%%
+%\end{block}
+%
+%
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{Eigenmode decomposition}
+%%
+% We can split the system along eigenvectors of the stochastic forgetting process:
+% %
+% \begin{equation*}
+%   \SNR(t) = \sqrt{N} \, \sum_a \, \CI_a \, \e^{-rt/\tau_a}.
+% \end{equation*}
+% %
+%
+% \vp The upper bounds on initial SNR and area tell us:
+% %
+% \begin{equation*}
+%   \sum_a \, \CI_a \leq 1,
+%   \qquad\qquad
+%   \sum_a \, \CI_a \, \tau_a \leq M-1.
+% \end{equation*}
+% %
+%
+% \vp \begin{itemize}
+%   \item What are the implications for the full memory curve?
+%   \item Are there any other important constraints?
+% \end{itemize}
+%%
+%\end{block}
+
+
+
+
+\section{The memory envelope}
+
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Proven upper bounds}
+%
+ Proven upper bounds on initial SNR and late time tail
+ $\ra$ upper bound on memory curve at \emph{any} time.
+
+\vp
+\parbox[c]{0.45\linewidth}{
+ \begin{center}
+   \aligntop{\includegraphics[width=0.8\linewidth]{LenvProven.svg}}
+ \end{center}
+}
+\hspace{0.5cm}
+\parbox[c]{0.45\linewidth}{
+ %
+   Initial SNR: deterministic binary synapse
+   %
+   \begin{center}
+  %   \includegraphics[width=6cm]{multistate_shorten.svg}
+     \includegraphics[height=0.1\linewidth]{binary_det.svg}
+   \end{center}
+   %
+  % \note[item]{shorten length of chain, keeping deterministic}
+
+   %
+   \vp Late times: serial model with ``sticky'' end states
+   %
+   \begin{center}
+     \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
+   \end{center}
+   %
+}
+
+ \citerr{Lahiri2013synapse}
+ 
+ \vp No model can ever go above this envelope. 
+ Is it achievable?
+%
+\end{block}
+
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Numeric upper bounds}
+%
+ Find maximum memory curve at each time numerically:
+ 
+\parbox[c]{0.45\linewidth}{
+ %
+ \begin{center}
+   \aligntop{\includegraphics[height=0.6\linewidth]{LenvNum.svg}}
+ \end{center}
+ %
+}
+\hspace{0.5cm}
+\parbox[c]{0.45\linewidth}{
+ %
+ \begin{center}
+   \aligntop{\includegraphics[height=0.6\linewidth]{LenvHeuristic.svg}}
+ \end{center}
+ %
+}
+ 
+ At any single timescale: best model has serial topology.
+ \hspace{1cm}
+ \parbox[t]{0.5\linewidth}{
+ Earlier times: shorten the chain.\\
+ Later times: make end state ``sticky''.
+ }
+%
+\end{block}
+
+
+
+
+%-------------Column--------------------------------------------------------
+\end{column}
+
+%-------------Column--------------------------------------------------------
+\begin{column}{0.33\linewidth}
+
+
+\section{Conclusions}
+
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Take-home message}
+%
+ Real synaptic structures are limited by the set of molecular building blocks, and they have a larger set of priorities.
+ 
+ What can we conclude?
+ 
+ \begin{center}
+ \begin{tabular}{ccccc}
+   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+   Short timescales & $\longrightarrow$ & Intermediate timescales & $\longrightarrow$ & Long timescales \\[0.5cm]
+   \alignmid{\includegraphics[height=0.05\linewidth]{binary_det.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.05\linewidth]{multistate_uni.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.05\linewidth]{multistate_sticky.svg}} \\[1.5cm]
+   short \& wide & $\longrightarrow$ & long \& thin &  &  \\[0.5cm]
+    & & deterministic & $\longrightarrow$ & stochastic \\
+ \end{tabular}
+ \end{center}
+%
+\end{block}
+
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{The frontiers of possibility: a maximal SNR curve}
+%%
+% Markovian learning and forgetting $\implies$ SNR is a sum of decaying exponentials.
+%
+% \vp Optimizing the SNR \emph{at one time}, $t_0$, over the space of such curves,
+% subject to upper bounds on initial SNR and area,
+% yields an upper bound on SNR at $t_0$ for \emph{any} synaptic model.
+% The resulting optimal memory curve is a single exponential
+% (optimizing at two or more well separated times requires multiple exponentials).
+%
+% \vp Varying $t_0$ yields a memory envelope curve with a power law tail.
+%
+%\vp
+%\parbox[c]{0.45\linewidth}{
+% \begin{center}
+%   \aligntop{\includegraphics[width=0.89\linewidth]{env.svg}}
+% \end{center}
+%}
+%\hspace{0.5cm}
+%\parbox[c]{0.45\linewidth}{
+% %
+%   Early times: (varying $M$)
+%   %
+%   \begin{center}
+%  %   \includegraphics[width=6cm]{multistate_shorten.svg}
+%     \includegraphics[width=0.7\linewidth]{diffjump.svg}
+%   \end{center}
+%   %
+%  % \note[item]{shorten length of chain, keeping deterministic}
+%
+%   %
+%   \vp Late times: (varying $\varepsilon$)
+%   %
+%   \begin{center}
+%     \includegraphics[width=0.7\linewidth]{multistate_sticky.svg}
+%   \end{center}
+%   %
+%%% Proven:
+%% \begin{equation*}
+%%  \begin{aligned}
+%%   \text{Proven envelope} &\sim \sqrt{N}
+%%     \begin{cases}
+%%       \CO(1)                  & rt_0 <\CO(n),\\
+%%       \CO\prn{\frac{n}{rt_0}} & rt_0 >\CO(n).
+%%     \end{cases}
+%%   \\
+%%%  \end{aligned}
+%%% \end{equation*}
+%%% %
+%%% Conjectured:
+%%% %
+%%% \begin{equation*}
+%%%  \begin{aligned}
+%%   \text{Conj.\ envelope} &\sim \sqrt{N}
+%%     \begin{cases}
+%%       \CO\prn{\frac{1}{\sqrt{rt_0}}}  & rt_0 <\CO(n^2),\\
+%%       \CO\prn{\frac{n}{rt_0}}         & rt_0 >\CO(n^2).
+%%     \end{cases}
+%%  \end{aligned}
+%% \end{equation*}
+% %
+%}
+%%
+%\end{block}
+%
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{Envelope for running average memory curve}
+%%
+% We define the running average SNR:
+% %
+% \begin{equation*}
+%   \widehat{\SNR}(\tau) = \frac{1}{\tau}\intd[_0^\infty]{t}\e^{-t/\tau}\,\SNR(t)
+%     \sim \frac{1}{\tau}\intd[_0^\tau]{t}\SNR(t)
+% \end{equation*}
+% %
+% For any $\tau$, this is maximized by a model with the serial topology.
+%
+%\vp
+%\parbox[c]{0.45\linewidth}{
+% \begin{center}
+%   \aligntop{\includegraphics[width=0.89\linewidth]{RunningAveEnv.eps}}
+% \end{center}
+%}
+%\hspace{0.5cm}
+%\parbox[c]{0.45\linewidth}{
+% %
+%   Earlier times: shorten the chain
+%   %
+%   \begin{center}
+%     \includegraphics[width=0.7\linewidth]{multistate_shorten.svg}
+%  %   \includegraphics[width=0.7\linewidth]{diffjump.svg}
+%   \end{center}
+%   %
+%  % \note[item]{shorten length of chain, keeping deterministic}
+%
+%   %
+%   \vp Later times: make end state ``sticky''
+%   %
+%   \begin{center}
+%     \includegraphics[width=0.7\linewidth]{multistate_sticky.svg}
+%   \end{center}
+%   %
+% %
+%}
+%%
+%\end{block}
+%
+%
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{Extra constraint: limits of diffusive learning and forgetting}
+%%
+% The envelope above may not be tight.
+% We conjecture an additional constraint, which would yield a tight envelope (dashed line above).
+% Schematically, mode by mode:
+% %
+% \begin{equation*}
+%   \SNR(0)\sqrt{\text{time-scale}} \leq \sqrt{N}\cdot \CO(1).
+% \end{equation*}
+% %
+% We have found no model that can exceed this bound.
+% It is saturated by a diffusive chain:
+% %
+% \begin{equation*}
+%   \SNR(0) \sim \frac{1}{n},
+%   \qquad
+%   \text{time-scale} \sim n^2.
+% \end{equation*}
+% %
+%%
+%\end{block}
+%
+%%-------------Box--------------------------------------------------------
+%
+%\begin{block}{Maximum lifetime}
+%%
+% We can use the envelope to get a stricter bound on the lifetime of a memory
+% %
+% \begin{equation*}
+% \begin{aligned}
+%   \operatorname{Envelope}(\text{max lifetime}) = 1, \qquad
+%   \text{max lifetime}  = \frac{\sqrt{N}(n-1)}{\e r}.
+% \end{aligned}
+% \end{equation*}
+% %
+%%
+%\end{block}
+
+%\section{}
+
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Experimental tests?}
+%
+ Subject a synapse to a sequence of candidate plasticity events.
+ 
+ Observe the changes in synaptic efficacy.
+ 
+ \vp Expectation-Maximization algorithms:
+ \parbox[t]{0.5\linewidth}{
+   Sequence of hidden states $\ra$ estimate transition probabilities \\
+   Transition probabilities $\ra$ estimate sequence of hidden states
+ }
+ 
+ \vp Problems:
+ \begin{itemize}
+   \item Need a long sequence of plasticity events.
+   \item Need to control candidate plasticity events.
+   \item Need to measure synaptic efficacies.
+ \end{itemize}
+%
+\end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Summary}
+%
+  \begin{itemize}
+    \item We have formulated a general theory of learning and memory with complex synapses.
+%    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
+%    \item The area under the memory curve of any synaptic transition diagram cannot exceed that of a linear chain with the same equilibrium probability distribution.
+    \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
+    \item    Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M)$.
+    \item We understood what types of synaptic structure are useful for storing memories for different timescales.
+%    \item For times $< \CO(n^2)$ we conjecture the close to optimal synaptic model that reaches the envelope exploits deterministic transitions, resulting in diffusive forgetting.
+  \end{itemize}
+%
+\end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{References}
+%
+ {\small
+ \bibliographystyle{unsrt_poster}
+ \bibliography{neuro,maths,markov}
+ }
+%
+\end{block}
+
+%-------------Box--------------------------------------------------------
+
+\begin{block}{Acknowledgements}
+%
+ SL and SG thank the Swartz Foundation, Burroughs Wellcome Foundation, Stanford Bio-X Neuroventures, Genentech and DARPA for funding, and Larry Abbott, Stefano Fusi, Marcus Benna, David Sussillo and Jascha Sohl-Dickstein for useful conversations.
+
+%
+\end{block}
+
+
+\end{column}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%-----End----------------------------------------------------------------
+
+\end{columns}
+
+\end{frame}
+
+\end{document}

@@ -1,5 +1,5 @@
 function [ A ] = SNRrunAve( obj,t)
-%A=SynapseMemoryModel.SNRRUNAVE(tau,Wp,Wm,fp,w) running maverage of SNR
+%A=SynapseMemoryModel.SNRRUNAVE(tau) running maverage of SNR
 %curve for complex synapse (cts time), i.e. (Laplace Transform @ s=1/t)/t.
 %   A(tau) = int exp(-t/tau)*SNR(t) dt / tau
 %   tau  = time = 1/parameter of Laplace transform
