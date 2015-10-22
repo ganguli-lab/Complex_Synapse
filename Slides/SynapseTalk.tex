@@ -277,6 +277,69 @@ Stanford University, Applied Physics
 %
 %-------------Slide--------------------------------------------------------
 
+\begin{frame}{Recognition memory}
+%
+ Synapses given a sequence of patterns (pot \& dep) to store
+
+ \vp
+ \begin{center}
+ \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{network1.svg}}}%
+ \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{network2.svg}}}%
+ \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{network3.svg}}}%
+ \only<4>{\aligntop{\includegraphics[width=0.35\linewidth]{network4.svg}}}%
+ \end{center}
+
+ \vp \visible<4>{Later: presented with a pattern.
+ Has it been seen before?}
+%
+
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Quantifying memory quality}
+%
+ Have we seen pattern before?
+ Ask if $\synid \cdot \syn(t) \gtrless \theta$?
+ 
+ Use $\synid \cdot \syn(\infty)$ as a null distribution
+ $\implies$ ROC curve:
+ 
+ \vp
+ %
+ \parbox[t]{0.4\linewidth}{%
+ \aligntop{\includegraphics[width=0.9\linewidth]{roc.svg}}
+ }
+ %
+ \parbox[t]{0.55\linewidth}{%
+ \vspace{-\baselineskip}
+ \begin{equation*}
+   \begin{aligned}
+   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
+   %\quad\text{where } \quad
+     %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
+     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\
+     \operatorname{NNR}(t) &= \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
+   \end{aligned}
+ \end{equation*}
+ }
+ 
+ \vp
+ Look at:
+ %
+ $
+   \qquad
+   \snrb(\tau) = \av{\snr(t)}_{P\cond{t}{\tau}},
+   \qquad
+   P\cond{t}{\tau} = \frac{\e^{-t/\tau}}{\tau}.
+ $
+%
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
 \begin{frame}{Models of complex synaptic dynamics}
 %
 %  There are $N$ identical synapses with $M$ internal functional states.
@@ -393,70 +456,6 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Recognition memory}
-%
- Synapses given a sequence of patterns (pot \& dep) to store
-
- \vp
- \begin{center}
- \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{network1.svg}}}%
- \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{network2.svg}}}%
- \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{network3.svg}}}%
- \only<4>{\aligntop{\includegraphics[width=0.35\linewidth]{network4.svg}}}%
- \end{center}
-
- \vp \visible<4>{Later: presented with a pattern.
- Has it been seen before?}
-%
-
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Quantifying memory quality}
-%
- Have we seen pattern before?
- Ask if $\synid \cdot \syn(t) \gtrless \theta$?
- 
- Use $\synid \cdot \syn(\infty)$ as a null distribution
- $\implies$ ROC curve:
- 
- \vp
- %
- \parbox[t]{0.4\linewidth}{%
- \aligntop{\includegraphics[width=0.9\linewidth]{roc.svg}}
- }
- %
- \parbox[t]{0.55\linewidth}{%
- \vspace{-\baselineskip}
- \begin{equation*}
-   \begin{aligned}
-   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
-   %\quad\text{where } \quad
-     %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
-     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\
-     \operatorname{NNR}(t) &= \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
-   \end{aligned}
- \end{equation*}
- }
- 
- \vp
- Look at:
- %
- $
-   \qquad
-   \snrb(\tau) = \av{\snr(t)}_{P\cond{t}{\tau}},
-   \qquad
-   P\cond{t}{\tau} = \frac{\e^{-t/\tau}}{\tau}.
- $
-%
-%
-\end{frame}
-
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Example models}
@@ -537,7 +536,7 @@ Stanford University, Applied Physics
 %
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Dynamics}
+\begin{frame}{Parameters for synaptic dynamics}
 %
   There are $N$ identical synapses with $M$ internal functional states.
   %
@@ -624,10 +623,15 @@ Stanford University, Applied Physics
  Memory curve given by
  %
  \begin{equation*}
-   \snr(t) =
+ \begin{aligned}
+   \snr(t) &=
 %      \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{4\eq_+\eq_-}}\,
       \sqrt{N}(2f\pot f\dep)\,
-      \eq \prn{\M\pot-\M\dep}      \exp\prn{rt\frg}\w.
+      \eq \prn{\M\pot-\M\dep}      \exp\prn{rt\frg} \w, \\
+   \snrb(\tau) &=
+      \sqrt{N}(2f\pot f\dep)\,
+      \eq \prn{\M\pot-\M\dep}      \brk{\I - r\tau\frg}\inv \w. \\
+ \end{aligned}
  \end{equation*}
  %
  \note[item]{prefactors don't do anything, ignore}
@@ -654,6 +658,37 @@ Stanford University, Applied Physics
 %-------------Section--------------------------------------------------------
 
 \section{Upper bounds}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Upper bounds on measures of memory}
+%
+ Initial SNR:
+ %
+ \begin{equation*}
+   \snr(0) = \snrb(0) \leq \sqrt{N}.
+ \end{equation*}
+ %
+ %
+ \begin{center}
+   \includegraphics[height=0.1\linewidth]{binary_det.svg}
+ \end{center}
+ %
+ Area under curve:
+ %
+ \begin{equation*}
+   \area = \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\ra\infty} \tau \, \snrb(\tau) \leq \sqrt{N}(M-1)/r.
+ \end{equation*}
+ %
+ %
+ \begin{center}
+   \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
+ \end{center}
+ %
+ \citerr{Lahiri2013synapse}
+%
+\end{frame}
 
 %-------------Section--------------------------------------------------------
 
@@ -716,8 +751,18 @@ Stanford University, Applied Physics
 
 \begin{frame}{Area under memory curve}
 %
-  Memory lifetime bounded by area under SNR curve:\\
+  %
+  \begin{equation*}
+    \area = \intd[_0^\infty]{t} \snr(t),
+    \qquad
+    \snrb(\tau) \ra \frac{\area}{\tau} 
+    \quad \text{as} \quad \tau \ra \infty.
+  \end{equation*}
+%
+
+
   \vp\parbox{5cm}{
+  Area bounds memory lifetime:\\
   %
   \begin{equation*}
   \begin{aligned}
@@ -824,7 +869,10 @@ Stanford University, Applied Physics
  SNR curve:
  %
  \begin{equation*}
-   \snr(t) = \sqrt{N}\sum_a \initial_a \,\e^{-rt/\tau_a}.
+  \begin{aligned}
+%   \snr(t) &= \sqrt{N}\sum_a \initial_a \,\e^{-rt/\tau_a}, \\
+   \snrb(\tau) &= \sqrt{N}\sum_a \frac{\initial_a }{1+r\tau/\tau_a}, \\
+ \end{aligned}
  \end{equation*}
  %
  \note[item]{from eigenmode decomposition}
@@ -841,58 +889,98 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Constructing the envelope}
+%%
+% %
+% \begin{center}
+% \begin{overlayarea}{10cm}{4.5cm}
+%   \only<1>{\includegraphics[width=8cm]{env2_t1.eps}}
+%   \only<2>{\includegraphics[width=8cm]{env2_t2.eps}}
+%   \only<3>{\includegraphics[width=8cm]{env2_all.eps}}
+%%   \only<4>{\includegraphics[width=8cm]{env2_ex.eps}}
+% \end{overlayarea}
+% \end{center}
+% %
+% \begin{overlayarea}{10cm}{3cm}
+%  \only<1>{Maximise SNR at one time}
+%  %
+%  \note<1->[item]{One exp. only constrains SNR at that time, not others}
+%  %
+%  \only<2>{Another time}
+%  %
+%  \note<2->[item]{get another bound}
+%  %
+%  \only<3>{All times $\to$ envelope}
+%  %
+%  \note<3->[item]{vary time of max. no curve can cross this.}
+%  \note<3->[item]{Regions: init(1); area(1,2)}
+%  \note<3->[item]{Early: exp; Late: power-law, $\sim t\inv$}
+%  \note<3->[item]{snr(lifetime)=1. Bounded by envelope=1.}
+%  \note<3->[item]{is it tight? can any constrained set of exps be acheived?}
+% %
+% \only<3>{
+% \begin{equation*}
+% \begin{aligned}
+%%   N &> \CO(M^2) &\implies
+%   \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
+%%   N &< \CO(M^2) &\implies
+%%   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}.
+% \end{aligned}
+% \end{equation*}
+% }
+% %
+%  %
+%%  \only<4>{Memory curves of example models.}
+%%  %
+%%  \note<4->[item]{no}
+%%  \note<4->[item]{One exp. discuss models next slide}
+% \end{overlayarea}
+%%
+%\end{frame}
+%
+%
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Constructing the envelope}
+\begin{frame}{Proven envelope: memory frontier}
 %
- %
+ Upper bound on memory curve at \emph{any} time.
+
+\vp
+\parbox[c]{0.55\linewidth}{
  \begin{center}
- \begin{overlayarea}{10cm}{4.5cm}
-   \only<1>{\includegraphics[width=8cm]{env2_t1.eps}}
-   \only<2>{\includegraphics[width=8cm]{env2_t2.eps}}
-   \only<3>{\includegraphics[width=8cm]{env2_all.eps}}
-%   \only<4>{\includegraphics[width=8cm]{env2_ex.eps}}
- \end{overlayarea}
+   \aligntop{\includegraphics[width=0.9\linewidth]{LenvProven.svg}}
  \end{center}
+}
+\hspace{0.02\linewidth}
+\parbox[c]{0.4\linewidth}{
  %
- \begin{overlayarea}{10cm}{3cm}
-  \only<1>{Maximise SNR at one time}
-  %
-  \note<1->[item]{One exp. only constrains SNR at that time, not others}
-  %
-  \only<2>{Another time}
-  %
-  \note<2->[item]{get another bound}
-  %
-  \only<3>{All times $\to$ envelope}
-  %
-  \note<3->[item]{vary time of max. no curve can cross this.}
-  \note<3->[item]{Regions: init(1); area(1,2)}
-  \note<3->[item]{Early: exp; Late: power-law, $\sim t\inv$}
-  \note<3->[item]{snr(lifetime)=1. Bounded by envelope=1.}
-  \note<3->[item]{is it tight? can any constrained set of exps be acheived?}
- %
- \only<3>{
- \begin{equation*}
- \begin{aligned}
-%   N &> \CO(M^2) &\implies
-   \text{lifetime} &\leq \frac{\sqrt{N}(M-1)}{\e r}, \\
-%   N &< \CO(M^2) &\implies
-%   \text{lifetime} &\leq \frac{\gamma^2{N}}{2\e r}.
- \end{aligned}
- \end{equation*}
- }
- %
-  %
-%  \only<4>{Memory curves of example models.}
-%  %
-%  \note<4->[item]{no}
-%  \note<4->[item]{One exp. discuss models next slide}
- \end{overlayarea}
+   Initial SNR: %deterministic binary synapse
+   %
+   \begin{center}
+  %   \includegraphics[width=6cm]{multistate_shorten.svg}
+     \includegraphics[height=0.15\linewidth]{binary_det.svg}
+   \end{center}
+   %
+  % \note[item]{shorten length of chain, keeping deterministic}
+
+   %
+   \vp Late times: %serial model with ``sticky'' end states
+   %
+   \begin{center}
+     \includegraphics[height=0.15\linewidth]{multistate_sticky.svg}
+   \end{center}
+   %
+}
+
+ \citerr{Lahiri2013synapse}
+
+ \vp No model can ever go above this envelope.
+ Is it achievable?
 %
 \end{frame}
-
 
 %-------------Slide--------------------------------------------------------
 
@@ -900,35 +988,88 @@ Stanford University, Applied Physics
 %
  %
 % \begin{center}
- \parbox[c]{0.58\linewidth}{
-   \aligntop{\includegraphics[width=0.95\linewidth]{env_num.eps}}
+ \parbox[c]{0.67\linewidth}{
+   \aligntop{\includegraphics[width=0.95\linewidth]{LenvNum.svg}}
    \note[item]{Best we've found, by numerical opt and hand chosen models.}
 % \note[item]{Models on next slide}
  }
 % \end{center}
- \hp
+% \hspace{0.01\linewidth}
  %
- \parbox[c]{0.36\linewidth}{
-   Early times:
+ \parbox[c]{0.3\linewidth}{
+   Serial topology:
    %
    \begin{center}
   %   \includegraphics[width=6cm]{multistate_shorten.svg}
-     \includegraphics[width=0.99\linewidth]{diffjump.svg}
+     \includegraphics[width=0.99\linewidth]{multistate_uni.svg}
    \end{center}
    %
-  % \note[item]{shorten length of chain, keeping deterministic}
-   \note[item]{vary length, keeping deterministic}
-   %
-   Late times:
-   %
-   \begin{center}
-     \includegraphics[width=0.99\linewidth]{multistate_sticky.svg}
-   \end{center}
-   %
-   \note[item]{Area maximising.}
  }
  \note[item]{Gap $\sim\CO(\sqrt{N})$.}
  \note[item]{Area bound active at early times $\implies$ need more constraints.}
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Models that maximise memory for one timescale}
+%
+ %
+ \begin{center}
+   \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv30.svg}}}%
+   \only<3>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv34.svg}}}%
+   \only<4>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv42.svg}}}%
+   \only<5>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv47.svg}}}%
+   \only<6>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv51.svg}}}%
+   \only<7>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
+   \only<8>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv24.svg}}}%
+   \only<9>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv21.svg}}}%
+   \only<10>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv20.svg}}}%
+   \only<11>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv19.svg}}}%
+   \only<12>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv17.svg}}}%
+   \only<13>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv16.svg}}}%
+   \only<14>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv14.svg}}}%
+   \only<15>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv12.svg}}}%
+   \only<16>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv06.svg}}}%
+   \only<17>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv01.svg}}}%
+ \end{center}
+%
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Heuristic envelope}
+%
+ %
+ \begin{center}
+   \includegraphics[width=0.88\linewidth]{LenvHeuristic.svg}
+ \end{center}
+%
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Synaptic structures for different timescales of memory}
+%
+ Real synapses limited by molecular building blocks. \\
+ Evolution had larger set of priorities.
+
+ \vp What can we conclude?
+
+ \begin{center}
+ \begin{tabular}{ccccc}
+   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+   Short timescales & $\longrightarrow$ & Intermediate timescales & $\longrightarrow$ & Long timescales \\[0.5cm]
+   \alignmid{\includegraphics[height=0.05\linewidth]{binary_det.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.05\linewidth]{multistate_uni.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.05\linewidth]{multistate_sticky.svg}} \\[0.5cm]
+   \visible<2->{short \& wide} & \visible<2->{$\longrightarrow$} & \visible<2->{long \& thin} &  &  \\[0.5cm]
+    & & \visible<3->{strong transitions} & \visible<3->{$\longrightarrow$} & \visible<3->{weak transitions} \\
+ \end{tabular}
+ \end{center}
 %
 \end{frame}
 
@@ -1166,6 +1307,85 @@ Stanford University, Applied Physics
 %%
 %\end{frame}
 %
+
+%-------------Section--------------------------------------------------------
+
+\section{Experimental tests?}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Proposed Experimental design}
+%
+ Subject a synapse to a sequence of candidate plasticity events.
+
+ Observe the changes in synaptic efficacy.
+
+ \begin{center}
+     \only<1>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depstrong.svg}}}% 
+     \only<2>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}}}% 
+     \only<3>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potweak.svg}}}% 
+     \only<4>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}}}% 
+     \only<5>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potstrong.svg}}}% 
+     \only<6->{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potstrong.svg}}}%
+ \end{center}
+
+ \visible<7->{\textbf{EM algorithms:}
+ 
+   Sequence of hidden states $\ra$ estimate transition probabilities \\
+   Transition probabilities $\ra$ estimate sequence of hidden states
+   
+   \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
+
+ \vp \textbf{Spectral algorithms:}
+ 
+ Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
+ \parbox[t]{0.3\linewidth}{
+   from data, \\
+   from model.
+ }
+ 
+ \citerr{Hsu2008hmmspec}
+ }
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Fitting algorithm}
+%
+ %
+ \begin{center}
+   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
+   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
+   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
+   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
+   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
+   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
+   \only<8>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
+   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
+   \only<10>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
+ \end{center}
+ %
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Experimental problems}
+%
+ \begin{itemize}
+   \item Need single synapses.
+   \item Need long sequences of plasticity events.
+   \item Need to control types of candidate plasticity events.
+   \item Need to measure synaptic efficacies.
+ \end{itemize}
+ 
+ \vp When we patch the postsynaptic neuron \lto\ Ca washout.
+%
+\end{frame}
+
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Summary}
@@ -1176,6 +1396,7 @@ Stanford University, Applied Physics
     \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
     \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
     \item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M)$.
+    \item We understood which types of synaptic structure are useful for storing memories for different timescales.
     \item Gap between envelope and what we can achieve at early times?
     \item Trade-off between SNR at different times?
 %    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
