@@ -10,15 +10,15 @@
 % **** -----------------------------------------------------------
 \documentclass{beamer}%[hyperref={backref=slide}]
 
-\input{sl_slide_preamble.tex}
-%\input{sl_slide_preamble_nonotes.tex}
+%\input{sl_slide_preamble.tex}
+\input{sl_slide_preamble_nonotes.tex}
 \input{sl_slide_graphics_preamble.tex}
 \input{sl_definitions.tex}
 \input{sl_slide_symbols.tex}
 %
+\usecolortheme[rgb={0.37843137 0.07058824 0.5372549}]{structure}
+%
 \graphicspath{{"Figures/"}}
-\DeclareMathOperator{\SNR}{SNR}
-\DeclareMathOperator{\snr}{SNR}
 %matrices
 \newcommand{\inv}{^{-1}}
 \newcommand{\I}{\mathbf{I}}
@@ -36,7 +36,13 @@
 \newcommand{\frg}{\W^\mathrm{F}}
 \newcommand{\M}{\mathbf{M}}
 \newcommand{\F}{\boldsymbol{\Phi}}
-\newcommand{\wv}{\vec{w}}
+%\newcommand{\wv}{\vec{w}}
+%snr curves etc
+\newcommand{\syn}{\vec{w}}
+\newcommand{\synid}{\syn_\text{ideal}}
+\DeclareMathOperator{\SNR}{SNR}
+\DeclareMathOperator{\snr}{SNR}
+\newcommand{\snrb}{\overline{\snr}}
 %super/subscripts
 \newcommand{\pot}{^{\text{pot}}}
 \newcommand{\dep}{^{\text{dep}}}
@@ -93,26 +99,89 @@ Stanford University, Applied Physics
  \note[item]{finite number of values.}
 
  \vp We will study the entire space of a broad class of models of complex synapses to find upper bounds on their performance.
-
+ 
+ \vp This leads to understanding of what structures are useful for storing memories for different timescales.
 %
 \end{frame}
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Concepts}
+\begin{frame}{Synaptic learning and memory}
 %
- \textbf{Learning rule:} how activity $\to$ potentiation/depression.\\
- \hp \eg Hebb rule, STDP, Hopfield outer product, perceptron rule,\ldots
-
- \vp \textbf{Plasticity mechanism:} how synapse responds to potentiation/depression.\\
- \hp \eg Binary switch, Cascade model, Multistate model,\ldots
-
- \vp \textbf{Memory retrieval:} how synaptic state affects neural activity.\\
- \hp \eg Hopfield attractor,\ldots
+% \textbf{Learning rule:} how activity $\to$ potentiation/depression.\\
+% \hp \eg Hebb rule, STDP, Hopfield outer product, perceptron rule,\ldots
+%
+% \vp \textbf{Plasticity mechanism:} how synapse responds to potentiation/depression.\\
+% \hp \eg Binary switch, Cascade model, Multistate model,\ldots
+%
+% \vp \textbf{Memory retrieval:} how synaptic state affects neural activity.\\
+% \hp \eg Hopfield attractor,\ldots
+ \begin{center}
+  \only<1>{\includegraphics[width=0.7\linewidth]{synaptic_learning0.svg}}%
+  \only<2>{\includegraphics[width=0.7\linewidth]{synaptic_learning.svg}}%
+ \end{center}
 
  \note[item]{Avoid confusion: separate concepts}
  \note[item]{Talk exclusively about second one.}
  \note[item]{Abstract away other two.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}[label=fr_net]{Synapses are complex}
+%
+ \parbox[t]{0.45\linewidth}{%
+ \includegraphics[height=0.8\linewidth]{2000102CobaFig4.pdf}
+
+ \citerr{Coba2009phosphorylation}
+ }
+ \hspace{0.05\linewidth}
+ \parbox[t]{0.45\linewidth}{%
+ \hfill
+ \includegraphics[height=0.8\linewidth]{MadisonMontgomery.jpg}
+
+ \citerr{Montgomery2002765}
+ }
+ %
+ \note[item]{Molecular network, post-synaptic density, from Seth Grant}
+ \note[item]{Functional e-phys states from Montgomery and Madison}
+ 
+ \vp\hyperlink{fr_questions}{There} is a complex, dynamic system underlying synaptic plasticity.
+ %
+ \note[item]{Does this matter?}
+ \note[item]{Could just be the machinery for changing synaptic weight}
+ \note[item]{link back to questions on ``There''}
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Timescales of memory}
+%
+ \parbox[t]{0.47\linewidth}{
+ Memories stored in different places for different timescales
+ \begin{center}
+   \aligntop{\includegraphics[width=0.4\linewidth]{SquireAlvarez.jpg}}
+ \end{center}
+ \citerr{Squire1995amnesia}
+ 
+ \cf Cerebellar cortex vs.\ cerebellar nuclei.
+
+ \citerr{Krakauer2006motorcons}
+ }
+ %
+ \hspace{0.03\linewidth}
+ %
+ \parbox[t]{0.47\linewidth}{
+ Different synapses have different molecular structures.
+ \begin{center}
+   \aligntop{\includegraphics[width=0.6\linewidth]{Emes2012.jpeg}}
+ \end{center}
+ \citerr{Emes2012synapserev}
+ }
+ %
 %
 \end{frame}
 
@@ -135,103 +204,337 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}[label=fr_net]{Complex synapse}
-%
- \begin{center}
- \includegraphics[height=6cm]{2000102CobaFig4.pdf}\citerrr{Coba2009phosphorylation}
- \end{center}
- %
- \note[item]{Molecular network, post-synaptic density, from Seth Grant}
- %
- \hyperlink{fr_questions}{There} is a complex, dynamical molecular network underlying synaptic plasticity.
- %
- \note[item]{Does this matter?}
- \note[item]{Could just be the machinery for changing synaptic weight}
- \note[item]{link back to questions on ``There''}
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
 \begin{frame}{Storage capacity of synaptic memory}
 %
-  A classical perceptron (used as a recognition memory device) has a capacity $\propto N$, the number of synapses.
+  A classical perceptron has a capacity $\propto N$, (\# synapses).
 
- \vp Requires synapses' dynamic range also $\propto N$.
+\vp\parbox[t]{0.59\linewidth}{%
+  Requires synapses' dynamic range also $\propto N$.
 
- \vp If we restrict synaptic weight to a fixed, finite set of values,\\
- \hp $\implies$ \parbox[t]{8cm}{tradeoff between learning and forgetting:\\
- new memories overwriting old.}
+ \vp With discrete, finite synapses:\\
+ \hp $\implies$ new memories overwrite old.
  %
- \note[item]{very plastic: learn easy, forget easy}
- \note[item]{little plasticity, remember better, learn harder}
+ }
+ %
+ \parbox[t]{0.4\linewidth}{
+   %\begin{flushright}
+    \hfill\aligntop{\includegraphics[width=0.9\linewidth]{Petersen1998.jpg}}
+   %\end{flushright}
+ }
+ \\
+    \citerr{Petersen1998allornone,O'Connor2005switch}
 
- \vp If we wish to store new memories rapidly, memory capacity  $\sim\CO(\log N)$.
+ \vp When we store new memories rapidly, memory capacity  $\sim\CO(\log N)$.
  \\ \citerr{amit1992constraints,amit1994learning}
  %
  \note[item]{or sparse $\sim \log N / N$}
+%
+\end{frame}
 
- \vp To circumvent this tradeoff, need to go beyond model of a synapse as a single number.
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Trade-off between learning and remembering}
+%
+ {}
+ \begin{center}
+ \begin{tabular}{ccc}
+   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+                & \textbf{Learning} & \textbf{Remembering} \\[0.5cm]
+   \visible<1->{Very plastic} & \visible<1->{\alignmid{\includegraphics[width=0.1\linewidth]{Face-smile.svg}}} & \visible<2->{\alignmid{\includegraphics[width=0.1\linewidth]{Face-sad.svg}}} \\[1cm]
+   \visible<3->{Very rigid}   & \visible<4->{\alignmid{\includegraphics[width=0.1\linewidth]{Face-sad.svg}}} & \visible<3->{\alignmid{\includegraphics[width=0.1\linewidth]{Face-smile.svg}}} \\
+ \end{tabular}
+ \end{center}
+ \note[item]{very plastic: learn easy, forget easy}
+ \note[item]{little plasticity, remember better, learn harder}
+ 
+ \vp \visible<4->{Circumvent tradeoff: go beyond model of synapse as single number.}
  \note[item]{one way around limit: complexity}
 %
 \end{frame}
 
+
 %-------------Section--------------------------------------------------------
 
-\section{Modelling synaptic complexity}
+\section{Modelling synaptic memory}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Complex synapses}
+%%
+%  \aligntop{\includegraphics[width=5cm]{synapse.svg}}\hp
+%  %
+%  \note[item]{functional states, not molecules}
+%  \note[item]{synaptic weight depends on state}
+%  \note[item]{many states can have same weight}
+%  %
+%  \hp\aligntop{\includegraphics[width=2cm]{pot.svg}}
+%  \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
+%  %
+%  \note[item]{stochastic transitions}
+%%
+%\end{frame}
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Models of complex synaptic dynamics}
+%
+%  There are $N$ identical synapses with $M$ internal functional states.
+\visible<2->{
+\parbox[c]{0.82\linewidth}{%
+  \begin{itemize}
+    \item Internal functional state of synapse \lto\ synaptic weight.
+    \item Candidate plasticity events \lto\ transitions between states
+  \end{itemize}
+}\hfill
+\alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
+}
+
+  %
+  \vp
+%  \begin{overlayarea}{0.7\linewidth}{0.3\linewidth}
+%    \only<1>{\includegraphics[width=0.99\linewidth]{synapse_model_1.svg}}%
+%    \only<2>{\includegraphics[width=0.99\linewidth]{synapse_model_2.svg}}
+%  \end{overlayarea}
+%
+\begin{overlayarea}{0.95\linewidth}{0.4\textheight}
+  \begin{center}
+%\aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
+    \only<1>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal_1.svg}}}%
+    \only<2>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal.svg}}}%
+    \only<3->{\vp}
+    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
+    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
+    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
+    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
+    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
+    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
+    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
+    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
+    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
+    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
+    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
+    \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
+    \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
+    \only<16>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+%    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
+%    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
+%    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
+%    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
+%    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
+%    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
+%    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
+%    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
+%    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+    %
+%    \hspace{0.05\linewidth}\parbox[t]{0.45\linewidth}{\raggedright
+%    \visible<15>{
+%    Mutation: transition probabilities \\ \vp
+%    Training: rates of pot/dep events \\ \vp
+%    Learning: synaptic weight}}
+  \end{center}
+\end{overlayarea}
+
+%  \onslide<2>{\hfill
+%  \parbox[t]{0.3\linewidth}{PF+\cancel{CF} \lto\ LTP, \\
+%              PF+CF \lto\ LTD.}
+%  \parbox[t]{0.27\linewidth}{Lower threshold\\ for LTD}
+%  \parbox[t]{0.27\linewidth}{VOR gain increase}}
+\vp
+\begin{overlayarea}{0.95\linewidth}{0.3\textheight}
+  \only<2>{States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
+   CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
+
+  \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}}%
+  %\\\citerr{Smith2006savings,Lahiri2013synapse}}%
+
+  \only<9->{Metaplasticity: \parbox[t]{0.7\linewidth}{%
+     change propensity for plasticity \\
+     (independent of change in synaptic weight).}}
+\end{overlayarea}
+
+  %
+  \note[item]{complex synapse: not just synaptic weight. dynamical system}
+  \note[item]{important for memory with bounded synapses}
+  \note[item]{nodes \lto\ states}
+  \note[item]{color \lto\ sttrength}
+  \note[item]{arrows \lto\ plasticity}
+%  \note[item]{stoch process has steady state distribution.}
+%  \note[item]{Prior activity puts it in this state. row vec.}
+  \note[item]{plasticity events at rate r. indep at each synapse.}
+  \note[item]{fraction pot/dep}
+  \note[item]{Readout: synaptic weight vec when in each state.}
+    \note[item]{Mutation: lower threshold \lto\ increase transition probs}
+    \note[item]{Training: Changes statistics of LTP/LTD. Only parameters we have. Don't care about $r$.}
+    \note[item]{Learning: Only output we have. Don't keep track of synaptic identity.}
+%    \note<2>[item]{Same PF+CF input \lto\ same $r,f\pot,f\dep$ in each case.}
+%    \note<2>[item]{Input to Pk, some linear combination of $\w$'s. }
+% At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
+% \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
+%
+% \vp Forgetting caused by subsequent memories, evolving as
+%
+%  \begin{equation*}
+%  \begin{aligned}
+%    \diff{\pr(t)}{t} &= r\pr(t)\frg,
+%    &\qquad
+%    \frg &= f\pot\M\pot+f\dep\M\dep-\I,\\&&
+%    \eq\frg &=0.
+%  \end{aligned}
+%  \end{equation*}
+%%
+%  \note[item]{Memory at $t=0$, keep track of pot/dep}
+%  \note[item]{subsequent: average over pot/dep}
+% \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
+% Eventually, this will settle into the equilibrium distribution:
+% %
+% %
+% \note[item]{In equilibrium prior to memory creation}
+%
+\end{frame}
+
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Complex synapses}
+\begin{frame}{Recognition memory}
 %
-  \aligntop{\includegraphics[width=5cm]{synapse.svg}}\hp
-  %
-  \note[item]{functional states, not molecules}
-  \note[item]{synaptic weight depends on state}
-  \note[item]{many states can have same weight}
-  %
-  \hp\aligntop{\includegraphics[width=2cm]{pot.svg}}
-  \hp\aligntop{\includegraphics[width=2cm]{dep.svg}}
-  %
-  \note[item]{stochastic transitions}
+ Synapses given a sequence of patterns (pot \& dep) to store
+
+ \vp
+ \begin{center}
+ \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{network1.svg}}}%
+ \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{network2.svg}}}%
+ \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{network3.svg}}}%
+ \only<4>{\aligntop{\includegraphics[width=0.35\linewidth]{network4.svg}}}%
+ \end{center}
+
+ \vp \visible<4>{Later: presented with a pattern.
+ Has it been seen before?}
+%
+
 %
 \end{frame}
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Simplifying assumptions}
+\begin{frame}{Quantifying memory quality}
 %
-\begin{itemize}
-  \item No spatial/temporal correlations in plasticity events.
-      %
-      \note[item]{allows us to concentrate on synapse, not neuron/network}
-      %
-%  \item Which synapses eligible for plasticity chosen randomly.
-      %
-      \note[item]{No filing system}
-      %
-  \item Potentiating/depressing plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
-      %
-      \note[item]{don't care if STDP...}
-%      %
-%      \note[item]{$r=$ total rate of plasticity events per synapse, $f\potdep=$ fraction of events that are potentiating/depressing.}
-      %
-  \item Potentiation and depression are described by Markov processes.% with transition probabilities $\M\potdep$.
-%      %
-%      \note[item]{matrix elements: transition prob from $i\to j$, given pot/dep}
-  \item Ideal observer: read weights directly.
-      \note[item]{not electrical activity: don't model neurons/network}
-      \note[item]{upper bound on electrical activity readout}
-      %
-  \item Synaptic weights can only take values $\pm1$.
-      %
-  \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
-      %
-      \note[item]{looks like binary synapse from outside. Inside...}
-\end{itemize}
+ Have we seen pattern before?
+ Ask if $\synid \cdot \syn(t) \gtrless \theta$?
+ 
+ Use $\synid \cdot \syn(\infty)$ as a null distribution
+ $\implies$ ROC curve:
+ 
+ \vp
+ %
+ \parbox[t]{0.4\linewidth}{%
+ \aligntop{\includegraphics[width=0.9\linewidth]{roc.svg}}
+ }
+ %
+ \parbox[t]{0.55\linewidth}{%
+ \vspace{-\baselineskip}
+ \begin{equation*}
+   \begin{aligned}
+   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
+   %\quad\text{where } \quad
+     %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
+     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\
+     \operatorname{NNR}(t) &= \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
+   \end{aligned}
+ \end{equation*}
+ }
+ 
+ \vp
+ Look at:
+ %
+ $
+   \qquad
+   \snrb(\tau) = \av{\snr(t)}_{P\cond{t}{\tau}},
+   \qquad
+   P\cond{t}{\tau} = \frac{\e^{-t/\tau}}{\tau}.
+ $
+%
 %
 \end{frame}
 
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Example models}
+%
+ Two example models of complex synapses.
+ %
+ \begin{center}
+  \aligntop{\includegraphics[width=4cm]{cascade.svg}}
+  \hspace{2cm}
+  \aligntop{\includegraphics[width=4cm]{multistate.svg}}
+ \end{center}
+ \citerr{Fusi2005cascade,Leibold2008serial,Ben-DayanRubin2007sparse}
+ %
+ \note[item]{previous work, also: Benna-Fusi}
+
+ These have different memory storage properties
+ %
+ \begin{center}
+ \includegraphics[width=0.5\linewidth]{cascms.svg}
+ \end{center}
+ %
+ \note[item]{Multistate good at one time, bad at others,}
+ \note[item]{Cascade, less well at that time, better over range of times.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}[label=fr_questions]{Questions}
+%
+ \begin{itemize}
+   \item Can we understand the space of \emph{all possible} synaptic models?
+   \note[item]{not just individual models}
+   \item How does structure \hyperlink{fr_net<1>}{(topology)} of model $\to$ function (memory curve)?
+   \note[item]{understand net (link on topology)}
+   \item What are the limits on what can be achieved?
+   \note[item]{avoid using word ``optimal''. depends on what want to do.}
+   \item Which transition topologies saturate these limits?
+   \item Can synaptic structure be tuned for different timescales of memory?
+ \end{itemize}
+%
+\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Simplifying assumptions}
+%%
+%\begin{itemize}
+%  \item No spatial/temporal correlations in plasticity events.
+%      %
+%      \note[item]{allows us to concentrate on synapse, not neuron/network}
+%      %
+%%  \item Which synapses eligible for plasticity chosen randomly.
+%      %
+%      \note[item]{No filing system}
+%      %
+%  \item Candidate plasticity events $\sim$ Poisson processes.% with rates $rf\potdep$, where $f\pot+f\dep=1$.
+%      %
+%      \note[item]{don't care if STDP...}
+%%      %
+%%      \note[item]{$r=$ total rate of plasticity events per synapse, $f\potdep=$ fraction of events that are potentiating/depressing.}
+%      %
+%  \item Potentiation and depression $\sim$ Markov processes.% with transition probabilities $\M\potdep$.
+%%      %
+%%      \note[item]{matrix elements: transition prob from $i\to j$, given pot/dep}
+%  \item Ideal observer: read weights directly.
+%      \note[item]{not electrical activity: don't model neurons/network}
+%      \note[item]{upper bound on electrical activity readout}
+%      %
+%  \item Synaptic weights can only take 2 values.
+%      %
+%  \citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}
+%      %
+%      \note[item]{looks like binary synapse from outside. Inside...}
+%\end{itemize}
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Dynamics}
@@ -273,89 +576,47 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Memory curve}
+%%-------------Slide--------------------------------------------------------
 %
- $\wv$ is the $N$-element vector of synaptic weights.
- %
- \note[item]{of different synapses}
- \note[item]{ideal observer reads weights, not states}
- \note[item]{upper bound on electrical activity readout}
- %
- \begin{equation*}
-   \begin{aligned}
-     \text{Signal} &= \av{\wv_\text{ideal} \cdot \wv(t) -  \wv_\text{ideal} \cdot \wv(\infty)},\\
-     \text{Noise} &= \sqrt{\var\prn{\wv_\text{ideal} \cdot \wv(\infty)}} \sim \sqrt{N}.
-   \end{aligned}
- \end{equation*}
- %
- \note[item]{ideal: pot$\to$strong...}
- \note[item]{use $\wv_\text{ideal} \cdot \wv(\infty)$ as null model}
- \note[item]{Noise: ignore correction when asymmetric. No effect.}
-% \note[item]{if we ignore correlations...}
+%\begin{frame}{Memory curve}
+%%
+% $\syn$ is the $N$-element vector of synaptic weights.
 % %
-% Related to reconstruction probability of single synapses.
+% \note[item]{of different synapses}
+% \note[item]{ideal observer reads weights, not states}
+% \note[item]{upper bound on electrical activity readout}
 % %
 % \begin{equation*}
-%   \SNR(t) \sim \sqrt{N}\,P(\text{strong/weak},t|\text{pot/dep},t=0)-\ldots(t=\infty).
+%   \begin{aligned}
+%     \text{Signal} &= \av{\synid \cdot \syn(t) -  \synid \cdot \syn(\infty)},\\
+%     \text{Noise} &= \sqrt{\var\prn{\synid \cdot \syn(\infty)}} \sim \sqrt{N}.
+%   \end{aligned}
 % \end{equation*}
 % %
-  We find:
- %
- \begin{equation*}
-   \snr(t) =
-%      \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{4\eq_+\eq_-}}\,
-      \sqrt{N}(2f\pot f\dep)\,
-      \eq \prn{\M\pot-\M\dep} \exp\prn{rt\frg}\w.
- \end{equation*}
- %
- \note[item]{Using $\frg$ averages over pot/dep sequence (proof: expand)}
+% \note[item]{ideal: pot$\to$strong...}
+% \note[item]{use $\synid \cdot \syn(\infty)$ as null model}
+% \note[item]{Noise: ignore correction when asymmetric. No effect.}
+%% \note[item]{if we ignore correlations...}
+%% %
+%% Related to reconstruction probability of single synapses.
+%% %
+%% \begin{equation*}
+%%   \SNR(t) \sim \sqrt{N}\,P(\text{strong/weak},t|\text{pot/dep},t=0)-\ldots(t=\infty).
+%% \end{equation*}
+%% %
+%  We find:
+% %
+% \begin{equation*}
+%   \snr(t) =
+%%      \frac{\sqrt{N}(2f\pot f\dep)}{\sqrt{4\eq_+\eq_-}}\,
+%      \sqrt{N}(2f\pot f\dep)\,
+%      \eq \prn{\M\pot-\M\dep} \exp\prn{rt\frg}\w.
+% \end{equation*}
+% %
+% \note[item]{Using $\frg$ averages over pot/dep sequence (proof: expand)}
+%%
+%\end{frame}
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Example models}
-%
- Two example models of complex synapses.
- %
- \begin{center}
-  \aligntop{\includegraphics[width=4cm]{cascade.svg}}
-  \hspace{2cm}
-  \aligntop{\includegraphics[width=4cm]{multistate.svg}}
- \end{center}
- \citerr{Fusi2005cascade,Leibold2008serial,Ben-DayanRubin2007sparse}
- %
- \note[item]{previous work, also: Benna-Fusi}
-
- These have different memory storage properties
- %
- \begin{center}
- \includegraphics[width=0.5\linewidth]{cascms.eps}
- \end{center}
- %
- \note[item]{Multistate good at one time, bad at others,}
- \note[item]{Cascade, less well at that time, better over range of times.}
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}[label=fr_questions]{Questions}
-%
- \begin{itemize}
-   \item Can we understand the space of \emph{all possible} synaptic models?
-   \note[item]{not just individual models}
-   \item How does structure \hyperlink{fr_net<1>}{(topology)} of model $\to$ function (memory curve)?
-   \note[item]{understand net (link on topology)}
-   \item What are the limits on what can be achieved?
-   \note[item]{avoid using word ``optimal''. depends on what want to do.}
-   \item Which transition topologies saturate these limits?
- \end{itemize}
-%
-\end{frame}
-
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Constraints}
@@ -379,7 +640,10 @@ Stanford University, Applied Physics
  \vp Eigenmode decomposition:
  %
  \begin{equation*}
-   \snr(t) = \sqrt{N}\sum_a \initial_a \,\e^{-rt/\tau_a}.
+ \begin{aligned}
+   \snr(t) &= \sqrt{N}\sum_a \initial_a \,\e^{-rt/\tau_a}, \\
+   \snrb(\tau) &= \sqrt{N}\sum_a \frac{\initial_a }{1+r\tau/\tau_a}, \\
+ \end{aligned}
  \end{equation*}
  %
  \note[item]{what are constraints on these?}
@@ -507,7 +771,7 @@ Stanford University, Applied Physics
   \end{center}
   %
  }\\
- \eg decrease``shortcut'' transitions, increase bypassed ``direct'' ones.\\
+ \eg decrease ``shortcut'' transitions, increase bypassed ``direct'' ones.\\
  Endpoint: linear chain
 
  \vp The area of this model is
@@ -946,13 +1210,15 @@ Stanford University, Applied Physics
 \end{frame}
 
 %-------------Slide--------------------------------------------------------
+\appendix
+%-------------Slide--------------------------------------------------------
 
 \begin{frame}[allowframebreaks]{References}
 %
 
  {\small
  \bibliographystyle{unsrt_slides}
- \bibliography{maths,neuro}
+ \bibliography{maths,neuro,markov}
  }
 %
 \end{frame}
