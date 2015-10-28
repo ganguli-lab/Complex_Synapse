@@ -57,7 +57,7 @@
 \renewcommand{\e}{\mathsf{e}}
 %---------Title-----------------------------------------------------------
 
-\title[Complex synapses]{A general theory of learning and memory with Complex Synapses}
+\title[Complex synapses]{Learning and memory with complex synaptic plasticity}
 %
 \subtitle{\small{based on work with Surya Ganguli}
 }
@@ -99,7 +99,7 @@ Stanford University, Applied Physics
  \note[item]{finite number of values.}
 
  \vp We will study the entire space of a broad class of models of complex synapses to find upper bounds on their performance.
- 
+
  \vp This leads to understanding of what structures are useful for storing memories for different timescales.
 %
 \end{frame}
@@ -146,7 +146,7 @@ Stanford University, Applied Physics
  %
  \note[item]{Molecular network, post-synaptic density, from Seth Grant}
  \note[item]{Functional e-phys states from Montgomery and Madison}
- 
+
  \vp\hyperlink{fr_questions}{There} is a complex, dynamic system underlying synaptic plasticity.
  %
  \note[item]{Does this matter?}
@@ -166,7 +166,7 @@ Stanford University, Applied Physics
    \aligntop{\includegraphics[width=0.4\linewidth]{SquireAlvarez.jpg}}
  \end{center}
  \citerr{Squire1995amnesia}
- 
+
  \cf Cerebellar cortex vs.\ cerebellar nuclei.
 
  \citerr{Krakauer2006motorcons}
@@ -247,7 +247,7 @@ Stanford University, Applied Physics
  \end{center}
  \note[item]{very plastic: learn easy, forget easy}
  \note[item]{little plasticity, remember better, learn harder}
- 
+
  \vp \visible<4->{Circumvent tradeoff: go beyond model of synapse as single number.}
  \note[item]{one way around limit: complexity}
 %
@@ -301,11 +301,11 @@ Stanford University, Applied Physics
 \begin{frame}{Quantifying memory quality}
 %
  Have we seen pattern before?
- Ask if $\synid \cdot \syn(t) \gtrless \theta$?
- 
- Use $\synid \cdot \syn(\infty)$ as a null distribution
+ Test if $\synid \cdot \syn(t) \gtrless \theta$?
+
+ $\synid \cdot \syn(\infty) \sim$  null distribution
  $\implies$ ROC curve:
- 
+
  \vp
  %
  \parbox[t]{0.4\linewidth}{%
@@ -316,15 +316,15 @@ Stanford University, Applied Physics
  \vspace{-\baselineskip}
  \begin{equation*}
    \begin{aligned}
-   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
+%   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
    %\quad\text{where } \quad
      %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
-     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\
-     \operatorname{NNR}(t) &= \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
+     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\[1cm]
+    \color{darkgrey} \operatorname{NNR}(t) &= \color{darkgrey} \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
    \end{aligned}
  \end{equation*}
  }
- 
+
  \vp
  Look at:
  %
@@ -755,7 +755,7 @@ Stanford University, Applied Physics
   \begin{equation*}
     \area = \intd[_0^\infty]{t} \snr(t),
     \qquad
-    \snrb(\tau) \ra \frac{\area}{\tau} 
+    \snrb(\tau) \ra \frac{\area}{\tau}
     \quad \text{as} \quad \tau \ra \infty.
   \end{equation*}
 %
@@ -1321,29 +1321,29 @@ Stanford University, Applied Physics
  Observe the changes in synaptic efficacy.
 
  \begin{center}
-     \only<1>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depstrong.svg}}}% 
-     \only<2>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}}}% 
-     \only<3>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potweak.svg}}}% 
-     \only<4>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}}}% 
-     \only<5>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potstrong.svg}}}% 
+     \only<1>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depstrong.svg}}}%
+     \only<2>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}}}%
+     \only<3>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potweak.svg}}}%
+     \only<4>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}}}%
+     \only<5>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potstrong.svg}}}%
      \only<6->{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potstrong.svg}}}%
  \end{center}
 
  \visible<7->{\textbf{EM algorithms:}
- 
+
    Sequence of hidden states $\ra$ estimate transition probabilities \\
    Transition probabilities $\ra$ estimate sequence of hidden states
-   
+
    \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
 
  \vp \textbf{Spectral algorithms:}
- 
+
  Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
  \parbox[t]{0.3\linewidth}{
    from data, \\
    from model.
  }
- 
+
  \citerr{Hsu2008hmmspec}
  }
 %
@@ -1381,7 +1381,7 @@ Stanford University, Applied Physics
    \item Need to control types of candidate plasticity events.
    \item Need to measure synaptic efficacies.
  \end{itemize}
- 
+
  \vp When we patch the postsynaptic neuron \lto\ Ca washout.
 %
 \end{frame}
