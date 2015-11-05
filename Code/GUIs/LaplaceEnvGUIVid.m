@@ -49,7 +49,7 @@ figure1 = figure('Units','pixels','Position',[0 64 2560 1008],'PaperPositionMode
 %snr curves
 snr_ph=uipanel(figure1,'Units','normalized',...
     'BackgroundColor','w',...
-    'Position',[0 00 0.5 1]);%left bottom width height
+    'Position',[0 0 0.5 1]);%left bottom width height
 % set(snr_ph,'Title','SNR curves','FontSize',AxFontSize);
 
 %current model
