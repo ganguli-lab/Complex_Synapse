@@ -287,9 +287,13 @@ Stanford University, Applied Physics
  \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{network2.svg}}}%
  \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{network3.svg}}}%
  \only<4>{\aligntop{\includegraphics[width=0.35\linewidth]{network4.svg}}}%
+ \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{network5.svg}}}%
+ \only<6>{\aligntop{\includegraphics[width=0.35\linewidth]{network6.svg}}}%
+ \only<7>{\aligntop{\includegraphics[width=0.35\linewidth]{network7.svg}}}%
+ \only<8>{\aligntop{\includegraphics[width=0.35\linewidth]{network8.svg}}}%
  \end{center}
 
- \vp \visible<4>{Later: presented with a pattern.
+ \vp \visible<8>{Later: presented with a pattern.
  Has it been seen before?}
 %
 
@@ -325,16 +329,33 @@ Stanford University, Applied Physics
  \end{equation*}
  }
 
- \vp
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Averaging over recall times}
+%
  Look at:
  %
- $
+ \begin{equation*}
    \qquad
    \snrb(\tau) = \av{\snr(t)}_{P\cond{t}{\tau}},
    \qquad
    P\cond{t}{\tau} = \frac{\e^{-t/\tau}}{\tau}.
- $
-%
+ \end{equation*}
+ %
+ $\tau=$ mean recall time.
+ 
+ \vp Like a ``running average'':
+ %
+ \begin{equation*}
+   \widehat{\SNR}(\tau) = \frac{1}{\tau}\intd[_0^\infty]{t}\e^{-t/\tau}\,\SNR(t)
+     \sim \frac{1}{\tau}\intd[_0^\tau]{t}\SNR(t)
+ \end{equation*}
+ %
+ 
+ \vp Different brain regions \lto\ different $\tau$.
 %
 \end{frame}
 
