@@ -346,7 +346,7 @@ Stanford University, Applied Physics
  \end{equation*}
  %
  $\tau=$ mean recall time.
- 
+
  \vp Like a ``running average'':
  %
  \begin{equation*}
@@ -354,7 +354,7 @@ Stanford University, Applied Physics
      \sim \frac{1}{\tau}\intd[_0^\tau]{t}\SNR(t)
  \end{equation*}
  %
- 
+
  \vp Different brain regions \lto\ different $\tau$.
 %
 \end{frame}
@@ -1091,6 +1091,37 @@ Stanford University, Applied Physics
     & & \visible<3->{strong transitions} & \visible<3->{$\longrightarrow$} & \visible<3->{weak transitions} \\
  \end{tabular}
  \end{center}
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Two-time envelope: early constraint}
+%
+ Maximise $\snrb(\tau_1)$ subject to $\snrb(\tau_2) \geq S_2$.
+
+ %
+ \begin{center}
+   \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{LEnvConstrEarly09.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{LEnvConstrEarly44.svg}}}%
+ \end{center}
+%
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Two-time envelope: late constraint}
+%
+ Maximise $\snrb(\tau_1)$ subject to $\snrb(\tau_2) \geq S_2$.
+
+ %
+ \begin{center}
+   \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{LEnvConstrLate41.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{LEnvConstrLate06.svg}}}%
+ \end{center}
+%
 %
 \end{frame}
 
