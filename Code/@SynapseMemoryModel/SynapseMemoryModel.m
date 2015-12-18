@@ -84,6 +84,7 @@ classdef SynapseMemoryModel
     methods%for memory curves etc
         [qa,ca]=Spectrum(obj,varargin)
         S=SNRcurve(obj,t,varargin)
+        snr=SNRlearn(obj,t,rlearn,tlearn)
         area=SNRarea(obj)
         A=SNRlaplace(obj,s)
         A=SNRrunAve(obj,t)

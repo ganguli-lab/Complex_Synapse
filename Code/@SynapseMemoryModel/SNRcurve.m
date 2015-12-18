@@ -16,13 +16,13 @@ r=p.Results;
 
 if r.UseExpM
     S=zeros(size(t));
-    p=obj.EqProb(p.Unmatched);
+    pr=obj.EqProb(p.Unmatched);
     q=obj.GetEnc;
     W=obj.GetWf;
     for i=1:numel(t)
-        S(i) = p*q*expm(W*t(i))*obj.w;
+        S(i) = pr*q*expm(W*t(i))*obj.w;
     end
-    S=2*fp*(1-fp)*S;
+    S=2*obj.fp*(1-obj.fp)*S;
 else
     [ qa,ca ] = obj.Spectrum(p.Unmatched);
     S = (ca.*qa)'* exp(-qa*t);
