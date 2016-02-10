@@ -39,7 +39,8 @@
 %\newcommand{\wv}{\vec{w}}
 %snr curves etc
 \newcommand{\syn}{\vec{w}}
-\newcommand{\synid}{\syn_\text{ideal}}
+%\newcommand{\synid}{\syn_\text{ideal}}
+\newcommand{\synid}{\vec{s}}
 \DeclareMathOperator{\SNR}{SNR}
 \DeclareMathOperator{\snr}{SNR}
 \newcommand{\snrb}{\overline{\snr}}
@@ -110,12 +111,16 @@ Stanford University, Applied Physics
 %
  \parbox[t]{0.47\linewidth}{
  Memories stored in different places for different timescales
- \begin{center}
-   \aligntop{\includegraphics[width=0.4\linewidth]{SquireAlvarez.jpg}}
- \end{center}
+ 
  \citerr{Squire1995amnesia}
+ 
+ \citerr{McClelland1995consolidation}
+ \begin{center}
+   \aligntop{\includegraphics[width=0.9\linewidth]{sleepconsolidation.png}}
+ \end{center}
+ \citerr{Born2012sleep}
 
- \cf Cerebellar cortex vs.\ cerebellar nuclei.
+ \cf Cerebellar cortex vs.\ nuclei.
 
  \citerr{Krakauer2006motorcons}
  }
@@ -125,7 +130,7 @@ Stanford University, Applied Physics
  \parbox[t]{0.47\linewidth}{
  Different synapses have different molecular structures.
  \begin{center}
-   \aligntop{\includegraphics[width=0.6\linewidth]{Emes2012.jpeg}}
+   \aligntop{\includegraphics[width=0.8\linewidth]{Emes2012.jpeg}}
  \end{center}
  \citerr{Emes2012synapserev}
  }
@@ -170,57 +175,65 @@ Stanford University, Applied Physics
 %
  Synapses given a sequence of patterns (pot \& dep) to store
 
- \vp
+ %\vp
  \begin{center}
- \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{perceptron1.svg}}}%
- \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{perceptron2.svg}}}%
- \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{perceptron3.svg}}}%
- \only<4>{\aligntop{\includegraphics[width=0.35\linewidth]{perceptron4.svg}}}%
- \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{perceptron5.svg}}}%
- \only<6>{\aligntop{\includegraphics[width=0.35\linewidth]{perceptron6.svg}}}%
- \only<7>{\aligntop{\includegraphics[width=0.35\linewidth]{perceptron7.svg}}}%
- \only<8>{\aligntop{\includegraphics[width=0.35\linewidth]{perceptron8.svg}}}%
+ \only<1>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron1.svg}}}%
+ \only<2>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron2.svg}}}%
+ \only<3>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron3.svg}}}%
+ \only<4>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron4.svg}}}%
+ \only<5>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron5.svg}}}%
+ \only<6>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron6.svg}}}%
+ \only<7>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron7.svg}}}%
+ \only<8-9>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron8.svg}}}%
  \end{center}
 
- \vp \visible<8>{Later: presented with a pattern.
+ \visible<8-9>{Later: presented with a pattern.
  Has it been seen before?}
 %
 
-%
-\end{frame}
+ \vp \visible<9>{%
+ Compare $\synid \cdot \syn(t)$ to threshold.
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Quantifying memory quality}
-%
- Have we seen pattern before?
- Test if $\synid \cdot \syn(t) \gtrless \theta$?
-
- $\synid \cdot \syn(\infty) \sim$  null distribution
- $\implies$ ROC curve:
-
- \vp
  %
- \parbox[t]{0.4\linewidth}{%
- \aligntop{\includegraphics[width=0.9\linewidth]{roc.svg}}
- }
  %
- \parbox[t]{0.55\linewidth}{%
- \vspace{-\baselineskip}
  \begin{equation*}
-   \begin{aligned}
-%   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
-   %\quad\text{where } \quad
-     %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
-     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\[1cm]
-    \color{darkgrey} \operatorname{NNR}(t) &= \color{darkgrey} \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
-   \end{aligned}
+     \snr(t) = \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, 
+     \qquad
+     \snrb(\tau) = \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
  \end{equation*}
- }
-
+}
 %
 \end{frame}
 
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Quantifying memory quality}
+%%
+%% Have we seen pattern before?
+% Test if $\synid \cdot \syn(t) \gtrless \theta$?
+%
+%% $\synid \cdot \syn(\infty) \sim$  null distribution
+%% $\implies$ ROC curve:
+%
+% \vp
+% %
+% %
+% \begin{equation*}
+%   \begin{aligned}
+%%   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
+%   %\quad\text{where } \quad
+%     %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
+%     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\[1cm]
+%     \snrb(\tau) &= \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
+%%     \\[1cm]
+%%    \color{darkgrey} \operatorname{NNR}(t) &= \color{darkgrey} \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
+%   \end{aligned}
+% \end{equation*}
+%
+%
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Models of complex synaptic dynamics}
@@ -369,58 +382,16 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%-------------Section--------------------------------------------------------
-
-\subsection{Initial SNR}
-
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Proven envelope: memory frontier}
 %
  Upper bound on memory curve at \emph{any} time.
 
-\vp
-\parbox[c]{0.55\linewidth}{
- \begin{center}
-   \aligntop{\includegraphics[width=0.9\linewidth]{LenvProven.svg}}
- \end{center}
-}
-\hspace{0.02\linewidth}
-\parbox[c]{0.4\linewidth}{
- %
-   Initial SNR: %deterministic binary synapse
-   %
-   \begin{center}
-  %   \includegraphics[width=6cm]{multistate_shorten.svg}
-     \includegraphics[height=0.15\linewidth]{binary_det.svg}
-   \end{center}
-   %
-  % \note[item]{shorten length of chain, keeping deterministic}
-
-   %
-   \vp Late times: %serial model with ``sticky'' end states
-   %
-   \begin{center}
-     \includegraphics[height=0.15\linewidth]{multistate_sticky.svg}
-   \end{center}
-   %
-}
-
- \citerr{Lahiri2013synapse}
-
- \vp No model can ever go above this envelope.
- Is it achievable?
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Achievable envelope}
-%
- %
+ \vp
 % \begin{center}
  \parbox[c]{0.67\linewidth}{
-   \aligntop{\includegraphics[width=0.95\linewidth]{LenvNum.svg}}
+   \aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum.svg}}
    \note[item]{Best we've found, by numerical opt and hand chosen models.}
 % \note[item]{Models on next slide}
  }
@@ -432,7 +403,7 @@ Stanford University, Applied Physics
    %
    \begin{center}
   %   \includegraphics[width=6cm]{multistate_shorten.svg}
-     \includegraphics[width=0.99\linewidth]{multistate_uni.svg}
+     \includegraphics[width=0.99\linewidth]{multistate.svg}
    \end{center}
    %
  }
@@ -477,7 +448,7 @@ Stanford University, Applied Physics
 %
  %
  \begin{center}
-   \includegraphics[width=0.88\linewidth]{LenvHeuristic.svg}
+   \includegraphics[width=0.88\linewidth]{LenvAnalytic.svg}
  \end{center}
 %
 %
@@ -529,15 +500,15 @@ Stanford University, Applied Physics
 
    \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
 
- \vp \textbf{Spectral algorithms:}
-
- Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
- \parbox[t]{0.3\linewidth}{
-   from data, \\
-   from model.
- }
-
- \citerr{Hsu2008hmmspec}
+% \vp \textbf{Spectral algorithms:}
+%
+% Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
+% \parbox[t]{0.3\linewidth}{
+%   from data, \\
+%   from model.
+% }
+%
+% \citerr{Hsu2008hmmspec}
  }
 %
 \end{frame}
@@ -548,37 +519,47 @@ Stanford University, Applied Physics
 %
  %
  \begin{center}
+%   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
+%   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
+%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
+%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
+%   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
+%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
+%   \only<8>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
+%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
+%   \only<10>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
    \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
    \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
-   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
-   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
-   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
-   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
-   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
-   \only<8>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
-   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
-   \only<10>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
+%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
+   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
+   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
+%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
+   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
+%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
+   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
  \end{center}
  %
 %
 \end{frame}
 
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Experimental problems}
+%%-------------Slide--------------------------------------------------------
 %
- \begin{itemize}
-   \item Need single synapses.
-   \item Need long sequences of plasticity events.
-   \item Need to control types of candidate plasticity events.
-   \item Need to measure synaptic efficacies.
- \end{itemize}
-
- \vp When we patch the postsynaptic neuron \lto\ Ca washout.
+%\begin{frame}{Experimental problems}
+%%
+% \begin{itemize}
+%   \item Need single synapses.
+%   \item Need long sequences of plasticity events.
+%   \item Need to control types of candidate plasticity events.
+%   \item Need to measure synaptic efficacies.
+% \end{itemize}
 %
-\end{frame}
-
+% \vp When we patch the postsynaptic neuron \lto\ Ca washout.
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Summary}
@@ -586,12 +567,12 @@ Stanford University, Applied Physics
   \begin{itemize}
     \item We have formulated a general theory of learning and memory with complex synapses.
 %    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
-    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
+%    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
     \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
-    \item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M)$.
+    \item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
     \item We understood which types of synaptic structure are useful for storing memories for different timescales.
-    \item Gap between envelope and what we can achieve at early times?
-    \item Trade-off between SNR at different times?
+%    \item Gap between envelope and what we can achieve at early times?
+%    \item Trade-off between SNR at different times?
 %    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
   \end{itemize}
 
