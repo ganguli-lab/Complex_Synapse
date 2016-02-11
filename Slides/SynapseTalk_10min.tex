@@ -60,10 +60,10 @@
 
 \title[Complex synapses]{Learning and memory with complex synaptic plasticity}
 %
-\subtitle{\small{based on work with Surya Ganguli}
-}
+%\subtitle{\small{based on work with Surya Ganguli}
+%}
 %
-\author{Subhaneil Lahiri%\inst{1}
+\author[Lahiri and Ganguli]{Subhaneil Lahiri and Surya Ganguli%\inst{1}
 }
 %
 \institute[Stanford]{%
@@ -89,13 +89,13 @@ Stanford University, Applied Physics
 
 \begin{frame}{Introduction}
 %
- We often model synaptic plasticity as the change of a single number (synaptic weight).
+ Synaptic plasticity is often modelled as the change of a single number (synaptic weight).
  %
  \note[item]{amplitude of psp.}
  %
  In reality, there is a complex dynamical system inside a synapse.
 
- \vp Semi-realistic models of synaptic plasticity have terrible memory without synaptic complexity.
+ \vp Discrete models of synaptic plasticity have terrible memory without synaptic complexity.
  %
  \note[item]{finite number of values.}
 
@@ -111,18 +111,20 @@ Stanford University, Applied Physics
 %
  \parbox[t]{0.47\linewidth}{
  Memories stored in different places for different timescales
- 
+
  \citerr{Squire1995amnesia}
- 
+
  \citerr{McClelland1995consolidation}
  \begin{center}
    \aligntop{\includegraphics[width=0.9\linewidth]{sleepconsolidation.png}}
  \end{center}
  \citerr{Born2012sleep}
 
- \cf Cerebellar cortex vs.\ nuclei.
+ Also: Cerebellar cortex \lto\ nuclei.
 
- \citerr{Krakauer2006motorcons}
+ \citerr{Attwell2002consolidation}
+
+ \citerr{Cooke2004consolidation}
  }
  %
  \hspace{0.03\linewidth}
@@ -193,11 +195,11 @@ Stanford University, Applied Physics
 
  \vp \visible<9>{%
  Compare $\synid \cdot \syn(t)$ to threshold.
-
+ \citerr{Sommer1998retrieval}
  %
  %
  \begin{equation*}
-     \snr(t) = \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, 
+     \snr(t) = \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}},
      \qquad
      \snrb(\tau) = \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
  \end{equation*}
@@ -352,36 +354,36 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Upper bounds on measures of memory}
+%%-------------Slide--------------------------------------------------------
 %
- Initial SNR:
- %
- \begin{equation*}
-   \snr(0) = \snrb(0) \leq \sqrt{N}.
- \end{equation*}
- %
- %
- \begin{center}
-   \includegraphics[height=0.1\linewidth]{binary_det.svg}
- \end{center}
- %
- Area under curve:
- %
- \begin{equation*}
-   \area = \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\ra\infty} \tau \, \snrb(\tau) \leq \sqrt{N}(M-1)/r.
- \end{equation*}
- %
- %
- \begin{center}
-   \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
- \end{center}
- %
- \citerr{Lahiri2013synapse}
+%\begin{frame}{Upper bounds on measures of memory}
+%%
+% Initial SNR:
+% %
+% \begin{equation*}
+%   \snr(0) = \snrb(0) \leq \sqrt{N}.
+% \end{equation*}
+% %
+% %
+% \begin{center}
+%   \includegraphics[height=0.1\linewidth]{binary_det.svg}
+% \end{center}
+% %
+% Area under curve:
+% %
+% \begin{equation*}
+%   \area = \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\ra\infty} \tau \, \snrb(\tau) \leq \sqrt{N}(M-1)/r.
+% \end{equation*}
+% %
+% %
+% \begin{center}
+%   \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
+% \end{center}
+% %
+% \citerr{Lahiri2013synapse}
+%%
+%\end{frame}
 %
-\end{frame}
-
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Proven envelope: memory frontier}
@@ -391,13 +393,15 @@ Stanford University, Applied Physics
  \vp
 % \begin{center}
  \parbox[c]{0.67\linewidth}{
-   \aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum.svg}}
+   \only<1>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum1.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum.svg}}}%
    \note[item]{Best we've found, by numerical opt and hand chosen models.}
 % \note[item]{Models on next slide}
  }
 % \end{center}
 % \hspace{0.01\linewidth}
  %
+ \visible<2>{
  \parbox[c]{0.3\linewidth}{
    Serial topology:
    %
@@ -406,54 +410,55 @@ Stanford University, Applied Physics
      \includegraphics[width=0.99\linewidth]{multistate.svg}
    \end{center}
    %
- }
+ }}
  \note[item]{Gap $\sim\CO(\sqrt{N})$.}
  \note[item]{Area bound active at early times $\implies$ need more constraints.}
 %
 \end{frame}
 
 
-%%-------------Slide--------------------------------------------------------
-%
-%\begin{frame}{Models that maximise memory for one timescale}
-%%
-% %
-% \begin{center}
-%   \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
-%   \only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv30.svg}}}%
-%   \only<3>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv34.svg}}}%
-%   \only<4>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv42.svg}}}%
-%   \only<5>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv47.svg}}}%
-%   \only<6>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv51.svg}}}%
-%   \only<7>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
-%   \only<8>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv24.svg}}}%
-%   \only<9>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv21.svg}}}%
-%   \only<10>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv20.svg}}}%
-%   \only<11>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv19.svg}}}%
-%   \only<12>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv17.svg}}}%
-%   \only<13>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv16.svg}}}%
-%   \only<14>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv14.svg}}}%
-%   \only<15>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv12.svg}}}%
-%   \only<16>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv06.svg}}}%
-%   \only<17>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv01.svg}}}%
-% \end{center}
-%%
-%%
-%\end{frame}
-%
-%
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Heuristic envelope}
+\begin{frame}{Models that maximise memory for one timescale}
 %
  %
  \begin{center}
-   \includegraphics[width=0.88\linewidth]{LenvAnalytic.svg}
+   \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
+   %\only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv30.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv34.svg}}}%
+   %\only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv42.svg}}}%
+   \only<3>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv47.svg}}}%
+   %\only<6>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv51.svg}}}%
+   %
+   \only<4>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
+   %\only<8>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv24.svg}}}%
+   %\only<9>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv21.svg}}}%
+   \only<5>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv20.svg}}}%
+   %\only<11>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv19.svg}}}%
+   %\only<12>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv17.svg}}}%
+   \only<6>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv16.svg}}}%
+   %\only<14>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv14.svg}}}%
+   %\only<15>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv12.svg}}}%
+   \only<7>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv06.svg}}}%
+   %\only<17>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv01.svg}}}%
  \end{center}
 %
 %
 \end{frame}
 
+
+%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Heuristic envelope}
+%%
+% %
+% \begin{center}
+%   \includegraphics[width=0.88\linewidth]{LenvAnalytic.svg}
+% \end{center}
+%%
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Synaptic structures for different timescales of memory}
@@ -568,9 +573,9 @@ Stanford University, Applied Physics
     \item We have formulated a general theory of learning and memory with complex synapses.
 %    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
 %    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
-    \item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
-    \item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
-    \item We understood which types of synaptic structure are useful for storing memories for different timescales.
+    \vp\item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
+    \vp\item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
+    \vp\item We understood which types of synaptic structure are useful for storing memories for different timescales.
 %    \item Gap between envelope and what we can achieve at early times?
 %    \item Trade-off between SNR at different times?
 %    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
