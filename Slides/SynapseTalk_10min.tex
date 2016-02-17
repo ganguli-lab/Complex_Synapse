@@ -389,20 +389,21 @@ Stanford University, Applied Physics
 
 \begin{frame}{Proven envelope: memory frontier}
 %
- Upper bound on memory curve at \emph{any} time.
+ \visible<2->{Upper bound on memory curve at \emph{any} timescale.}
 
  \vp
 % \begin{center}
  \parbox[c]{0.67\linewidth}{
-   \only<1>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum1.svg}}}%
-   \only<2>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum.svg}}}%
+   \only<1>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum2.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum1.svg}}}%
+   \only<3>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum.svg}}}%
    \note[item]{Best we've found, by numerical opt and hand chosen models.}
 % \note[item]{Models on next slide}
  }
 % \end{center}
 % \hspace{0.01\linewidth}
  %
- \visible<2>{
+ \visible<3>{
  \parbox[c]{0.3\linewidth}{
    Serial topology:
    %
@@ -542,9 +543,9 @@ Stanford University, Applied Physics
 %   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
    \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
 %   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
-   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
 %   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
-   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
+   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
  \end{center}
  %
 %
@@ -575,7 +576,7 @@ Stanford University, Applied Physics
 %    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
 %    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
     \vp\item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
-    \vp\item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
+%    \vp\item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
     \vp\item We understood which types of synaptic structure are useful for storing memories for different timescales.
 %    \item Gap between envelope and what we can achieve at early times?
 %    \item Trade-off between SNR at different times?
