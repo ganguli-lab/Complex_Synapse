@@ -58,7 +58,7 @@
 \renewcommand{\e}{\mathsf{e}}
 %---------Title-----------------------------------------------------------
 
-\title[Complex synapses]{Learning and memory with complex synaptic plasticity}
+\title[Timescales of memory]{Optimal synaptic strategies for different timescales of memory}
 %
 %\subtitle{\small{based on work with Surya Ganguli}
 %}
@@ -72,6 +72,7 @@ Stanford University, Applied Physics
 }
 %
 %\slideCaption{}
+\date{February 26, 2016}
 
 %---------Beginning--------------------------------------------------------
 
@@ -85,23 +86,62 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Introduction}
+%%
+% Synaptic plasticity is often modelled as the change of a single number.% (synaptic weight).
+% %
+% \note[item]{amplitude of psp.}
+% %
+% But, there is a complex dynamical system inside a synapse.
+%
+% %\vp Discrete models of synaptic plasticity have terrible memory without synaptic complexity.
+% %
+% \note[item]{finite number of values.}
+%
+% \vp We will study the entire space of a broad class of models of complex synapses to find upper bounds on their performance.
+%
+% \vp This leads to understanding of what structures are useful for storing memories for different timescales.
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Introduction}
+\begin{frame}{What is a synapse?}
 %
- Synaptic plasticity is often modelled as the change of a single number.% (synaptic weight).
- %
- \note[item]{amplitude of psp.}
- %
- But, there is a complex dynamical system inside a synapse.
-
- %\vp Discrete models of synaptic plasticity have terrible memory without synaptic complexity.
- %
- \note[item]{finite number of values.}
-
- \vp We will study the entire space of a broad class of models of complex synapses to find upper bounds on their performance.
-
- \vp This leads to understanding of what structures are useful for storing memories for different timescales.
+ \begin{center}
+ \parbox[c]{0.45\linewidth}{
+  %
+  \begin{center}
+    Experimenters
+  \end{center}
+  %
+ }
+ \parbox[c]{0.45\linewidth}{
+  %
+  \begin{center}
+    \visible<2>{Theorists}
+  \end{center}
+  %
+ }
+ 
+ \parbox[c]{0.45\linewidth}{
+  %
+  \begin{center}
+    \includegraphics[width=0.95\linewidth]{plasticity-network.jpg}
+  \end{center}
+  %
+  \citerr{Klann2002metaplasticity}
+ }
+ \parbox[c]{0.45\linewidth}{
+  %
+  \begin{center}
+    \visible<2>{$W_{ij}$}
+  \end{center}
+  %
+ }
+ \end{center}
 %
 \end{frame}
 
@@ -180,14 +220,14 @@ Stanford University, Applied Physics
 
  %\vp
  \begin{center}
- \only<1>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron1.svg}}}%
- \only<2>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron2.svg}}}%
- \only<3>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron3.svg}}}%
- \only<4>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron4.svg}}}%
- \only<5>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron5.svg}}}%
- \only<6>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron6.svg}}}%
- \only<7>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron7.svg}}}%
- \only<8-9>{\aligntop{\includegraphics[width=0.25\linewidth]{perceptron8.svg}}}%
+ \only<1>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron1.svg}}}%
+ \only<2>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron2.svg}}}%
+ \only<3>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron3.svg}}}%
+ \only<4>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron4.svg}}}%
+ \only<5>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron5.svg}}}%
+ \only<6>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron6.svg}}}%
+ \only<7>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron7.svg}}}%
+ \only<8-9>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron8.svg}}}%
  \end{center}
 
  \visible<8-9>{Later: presented with a pattern.
