@@ -171,7 +171,7 @@ Stanford University, Applied Physics
  \\
     \citerr{Petersen1998allornone,O'Connor2005switch}
 
-% \vp When we store new memories rapidly, 
+% \vp When we store new memories rapidly,
 
  \vp New memories overwrite old
  $\implies$ stability-plasticity dilemma.
@@ -259,15 +259,15 @@ Stanford University, Applied Physics
   %
   \begin{center}
     \parbox[t]{0.25\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{cascade.svg}}
-      
+
        \citerr{Fusi2005cascade}}
     \hspace{0.05\linewidth}
     \parbox[t]{0.25\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{serial.svg}}
-      
+
        \citerr{Ben-DayanRubin2007sparse,Leibold2008serial}}
     \hspace{0.05\linewidth}
     \parbox[t]{0.35\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{BennaFusi.svg}}
-      
+
        \citerr{Benna2015complex}}
   \end{center}
   %
@@ -609,28 +609,29 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Proposed Experimental design}
+\begin{frame}{Experimental tests?}
 %
- Subject a synapse to a sequence of candidate plasticity events.
-
- Observe the changes in synaptic efficacy.
+ Traditional experiments:
 
  \begin{center}
-     \only<1>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depstrong.svg}}}%
-     \only<2>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}}}%
-     \only<3>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potweak.svg}}}%
-     \only<4>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_depweak.svg}}}%
-     \only<5>{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potstrong.svg}}}%
-     \only<6->{\aligntop{\includegraphics[width=0.1\linewidth]{single_synapse_potstrong.svg}}}%
+     \aligntop{\includegraphics[width=0.7\linewidth]{barrage.svg}}%
  \end{center}
 
- \visible<7->{\textbf{EM algorithms:}
+ \vp\visible<2>{Subject a synapse to a sequence of candidate plasticity events.
 
-   Sequence of hidden states $\ra$ estimate transition probabilities \\
-   Transition probabilities $\ra$ estimate sequence of hidden states
+ Observe the changes in synaptic efficacy.}
 
-   \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
+ \begin{center}
+     \visible<2>{\aligntop{\includegraphics[width=0.7\linewidth]{gentle.svg}}}%
+ \end{center}
 
+% \visible<7->{\textbf{EM algorithms:}
+%
+%   Sequence of hidden states $\ra$ estimate transition probabilities \\
+%   Transition probabilities $\ra$ estimate sequence of hidden states
+%
+%   \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
+%
 % \vp \textbf{Spectral algorithms:}
 %
 % Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
@@ -640,7 +641,7 @@ Stanford University, Applied Physics
 % }
 %
 % \citerr{Hsu2008hmmspec}
- }
+% }
 %
 \end{frame}
 
