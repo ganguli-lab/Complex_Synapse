@@ -1,4 +1,4 @@
-% -*- TeX -*- -*- UK -*- -*- BMR -*-
+% -*- TeX -*- -*- US -*- -*- BMR -*-
 % ----------------------------------------------------------------
 % Beamer presentation ************************************************
 %
@@ -114,69 +114,36 @@ Stanford University, Applied Physics
  \parbox[c]{0.45\linewidth}{
   %
   \begin{center}
-    Experimenters
+    \visible<2->{Theorists}
   \end{center}
   %
  }
  \parbox[c]{0.45\linewidth}{
   %
   \begin{center}
-    \visible<2>{Theorists}
+    \visible<3->{Experimenters}
   \end{center}
   %
  }
 
  \parbox[c]{0.45\linewidth}{
   %
+  \begin{center}
+    \visible<2->{\Huge $W_{ij}$}
+  \end{center}
+  %
+ }
+ \parbox[c]{0.45\linewidth}{
+  %
+  \visible<3->{
   \begin{center}
     \includegraphics[width=0.95\linewidth]{plasticity-network.jpg}
   \end{center}
   %
   \citerr{Klann2002metaplasticity}
- }
- \parbox[c]{0.45\linewidth}{
-  %
-  \begin{center}
-    \visible<2>{$W_{ij}$}
-  \end{center}
-  %
+  }
  }
  \end{center}
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Timescales of memory}
-%
- \parbox[t]{0.47\linewidth}{
- Memories stored in different places for different timescales
-
- \citerr{Squire1995amnesia}
-
- \citerr{McClelland1995consolidation}
- \begin{center}
-   \aligntop{\includegraphics[width=0.9\linewidth]{sleepconsolidation.png}}
- \end{center}
- \citerr{Born2012sleep}
-
- Also: Cerebellar cortex \lto\ nuclei.
-
- \citerr{Attwell2002consolidation}
-
- \citerr{Cooke2004consolidation}
- }
- %
- \hspace{0.03\linewidth}
- %
- \parbox[t]{0.47\linewidth}{
- Different synapses have different molecular structures.
- \begin{center}
-   \aligntop{\includegraphics[width=0.8\linewidth]{Emes2012.jpeg}}
- \end{center}
- \citerr{Emes2012synapserev}
- }
- %
 %
 \end{frame}
 
@@ -184,14 +151,15 @@ Stanford University, Applied Physics
 
 \begin{frame}{Storage capacity of synaptic memory}
 %
-  A classical perceptron has a capacity $\propto N$, (\# synapses).
+  Hopfield, perceptron have capacity $\propto N$, (\# synapses).
 
 \vp\parbox[t]{0.59\linewidth}{%
-  Requires synapses' dynamic range also $\propto N$.
+  Assumes unbounded analog synapses
+  %Requires synapses' dynamic range also $\propto N$.
 
  \vp With discrete, finite synapses:\\
- \hp $\implies$ new memories overwrite old,\\
- \hp $\implies$ stability-plasticity dilemma.
+ $\implies$ memory capacity  $\sim\CO(\log N)$.
+ \\ \citerr{amit1992constraints,amit1994learning}
  %
  }
  %
@@ -203,80 +171,16 @@ Stanford University, Applied Physics
  \\
     \citerr{Petersen1998allornone,O'Connor2005switch}
 
- \vp When we store new memories rapidly, memory capacity  $\sim\CO(\log N)$.
- \\ \citerr{amit1992constraints,amit1994learning}
+% \vp When we store new memories rapidly, 
+
+ \vp New memories overwrite old
+ $\implies$ stability-plasticity dilemma.
  %
  \note[item]{or sparse $\sim \log N / N$}
 %
 \end{frame}
 
 
-%-------------Slide--------------------------------------------------------
-
-
-\begin{frame}{Recognition memory}
-%
- Synapses given a sequence of patterns (pot \& dep) to store
-
- %\vp
- \begin{center}
- \only<1>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron1.svg}}}%
- \only<2>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron2.svg}}}%
- \only<3>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron3.svg}}}%
- \only<4>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron4.svg}}}%
- \only<5>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron5.svg}}}%
- \only<6>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron6.svg}}}%
- \only<7>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron7.svg}}}%
- \only<8-9>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron8.svg}}}%
- \end{center}
-
- \visible<8-9>{Later: presented with a pattern.
- Has it been seen before?
-%
-
- \vp Compare $\synid \cdt \syn(t)$ to threshold.
- \citerr{Sommer1998retrieval}}
- %
- \visible<9>{%
- %
- \begin{equation*}
-     \snr(t) = \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}},
-     \qquad
-     \snrb(\tau) = \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
- \end{equation*}
-}
-%
-\end{frame}
-
-%%-------------Slide--------------------------------------------------------
-%
-%\begin{frame}{Quantifying memory quality}
-%%
-%% Have we seen pattern before?
-% Test if $\synid \cdot \syn(t) \gtrless \theta$?
-%
-%% $\synid \cdot \syn(\infty) \sim$  null distribution
-%% $\implies$ ROC curve:
-%
-% \vp
-% %
-% %
-% \begin{equation*}
-%   \begin{aligned}
-%%   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
-%   %\quad\text{where } \quad
-%     %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
-%     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\[1cm]
-%     \snrb(\tau) &= \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
-%%     \\[1cm]
-%%    \color{darkgrey} \operatorname{NNR}(t) &= \color{darkgrey} \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
-%   \end{aligned}
-% \end{equation*}
-%
-%
-%%
-%\end{frame}
-%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Models of complex synaptic dynamics}
@@ -302,15 +206,18 @@ Stanford University, Applied Physics
 \begin{overlayarea}{0.95\linewidth}{0.4\textheight}
   \begin{center}
 %\aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
-    \only<1>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal_1.svg}}}%
-    \only<2>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal.svg}}}%
-    \only<3->{\vp}
-    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
-    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
-    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
-    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
-    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
-    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
+    \only<1>{\aligntop{\includegraphics[width=0.6\linewidth]{synapse_internal_1.svg}}}%
+    \only<2->{\aligntop{\includegraphics[width=0.6\linewidth]{synapse_internal.svg}}}%
+    \hspace{0.07\linewidth}
+    \visible<3->{\aligntop{\includegraphics[width=0.3\linewidth]{MadisonMontgomery.jpg}}
+    \\ \citerr{Montgomery2002765}}
+%    \only<3->{\vp}
+%    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
+%    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
+%    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
+%    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
+%    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
+%    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
 %    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
 %    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
 %    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
@@ -327,7 +234,7 @@ Stanford University, Applied Physics
 %    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
 %    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
 %    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
-    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+%    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
     %
 %    \hspace{0.05\linewidth}\parbox[t]{0.45\linewidth}{\raggedright
 %    \visible<15>{
@@ -344,11 +251,27 @@ Stanford University, Applied Physics
 %  \parbox[t]{0.27\linewidth}{VOR gain increase}}
 \vp
 \begin{overlayarea}{0.95\linewidth}{0.3\textheight}
-  \only<2>{States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
+  \only<2-3>{States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
    CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
 
-  \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}}%
-  %\\\citerr{Smith2006savings,Lahiri2013synapse}}%
+  \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}}%%\\\citerr{Smith2006savings,Lahiri2013synapse}}%
+  \only<4>{
+  %
+  \begin{center}
+    \parbox[t]{0.25\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{cascade.svg}}
+      
+       \citerr{Fusi2005cascade}}
+    \hspace{0.05\linewidth}
+    \parbox[t]{0.25\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{serial.svg}}
+      
+       \citerr{Ben-DayanRubin2007sparse,Leibold2008serial}}
+    \hspace{0.05\linewidth}
+    \parbox[t]{0.35\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{BennaFusi.svg}}
+      
+       \citerr{Benna2015complex}}
+  \end{center}
+  %
+  }
 
 %  \only<8->{Metaplasticity: \parbox[t]{0.7\linewidth}{%
 %     change propensity for plasticity \\
@@ -397,6 +320,104 @@ Stanford University, Applied Physics
 
 %%-------------Slide--------------------------------------------------------
 %
+%
+%\begin{frame}{Recognition memory}
+%%
+% Synapses given a sequence of patterns (pot \& dep) to store
+%
+% %\vp
+% \begin{center}
+% \only<1>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron1.svg}}}%
+% \only<2>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron2.svg}}}%
+%% \only<3>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron3.svg}}}%
+% \only<3>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron4.svg}}}%
+%% \only<5>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron5.svg}}}%
+% \only<4>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron6.svg}}}%
+%% \only<7>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron7.svg}}}%
+% \only<5->{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron8.svg}}}%
+% \end{center}
+%
+% \visible<5->{Later: presented with a pattern.
+% Has it been seen before?
+%%
+%
+% \vp Compare $\synid \cdt \syn(t)$ to threshold.
+% \citerr{Sommer1998retrieval}}
+% %
+% \visible<6>{%
+% %
+% \begin{equation*}
+%     \snr(t) = \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}},
+%     \qquad
+%     \snrb(\tau) = \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
+% \end{equation*}
+%}
+%%
+%\end{frame}
+%
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Synaptic memory curves}
+%
+ %
+ \begin{center}
+   \includegraphics[width=0.6\linewidth]{MemorySequence.svg}
+ \end{center}
+ %
+ Synapses store a sequence of memories.
+ %
+ \begin{center}
+   \visible<2>{\includegraphics[width=0.55\linewidth]{MemoryCurve.svg}}
+ \end{center}
+ %
+%
+\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Quantifying memory quality}
+%%
+%% Have we seen pattern before?
+% Test if $\synid \cdot \syn(t) \gtrless \theta$?
+%
+%% $\synid \cdot \syn(\infty) \sim$  null distribution
+%% $\implies$ ROC curve:
+%
+% \vp
+% %
+% %
+% \begin{equation*}
+%   \begin{aligned}
+%%   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
+%   %\quad\text{where } \quad
+%     %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
+%     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\[1cm]
+%     \snrb(\tau) &= \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
+%%     \\[1cm]
+%%    \color{darkgrey} \operatorname{NNR}(t) &= \color{darkgrey} \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
+%   \end{aligned}
+% \end{equation*}
+%
+%
+%%
+%\end{frame}
+%
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Questions}
+%
+ \begin{itemize}
+   \item What are the upper bounds?
+   \vp\item Which models achieve them?
+   \vp\item What are the theoretical principles behind them?
+ \end{itemize}
+%
+\end{frame}
+
+
+%%-------------Slide--------------------------------------------------------
+%
 %\begin{frame}{Upper bounds on measures of memory}
 %%
 % Initial SNR:
@@ -429,30 +450,30 @@ Stanford University, Applied Physics
 
 \begin{frame}{Proven envelope: memory frontier}
 %
- \visible<2->{Upper bound on memory curve at \emph{any} timescale.}
+ \visible<1->{Upper bound on memory curve at \emph{any} timescale.}
 
  \vp
-% \begin{center}
- \parbox[c]{0.67\linewidth}{
-   \only<1>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum2.svg}}}%
-   \only<2>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum1.svg}}}%
-   \only<3>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum.svg}}}%
+ \begin{center}
+% \parbox[c]{0.67\linewidth}{
+   %\only<1>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum2.svg}}}%
+   \only<1>{\aligntop{\includegraphics[width=0.67\linewidth]{RunAveProvenNum1.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.67\linewidth]{RunAveProvenNum.svg}}}%
    \note[item]{Best we've found, by numerical opt and hand chosen models.}
 % \note[item]{Models on next slide}
- }
-% \end{center}
+% }
+ \end{center}
 % \hspace{0.01\linewidth}
  %
- \visible<3>{
- \parbox[c]{0.3\linewidth}{
-   Serial topology:
-   %
-   \begin{center}
-  %   \includegraphics[width=6cm]{multistate_shorten.svg}
-     \includegraphics[width=0.99\linewidth]{multistate.svg}
-   \end{center}
-   %
- }}
+% \visible<3>{
+% \parbox[c]{0.3\linewidth}{
+%   Serial topology:
+%   %
+%   \begin{center}
+%  %   \includegraphics[width=6cm]{multistate_shorten.svg}
+%     \includegraphics[width=0.99\linewidth]{multistate.svg}
+%   \end{center}
+%   %
+% }}
  \note[item]{Gap $\sim\CO(\sqrt{N})$.}
  \note[item]{Area bound active at early times $\implies$ need more constraints.}
 %
@@ -461,7 +482,7 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Models that maximise memory for one timescale}
+\begin{frame}{Models that maximize memory for one timescale}
 %
  %
  \parbox[c]{0.67\linewidth}{
@@ -530,6 +551,42 @@ Stanford University, Applied Physics
 %
 %-------------Slide--------------------------------------------------------
 
+\begin{frame}{Synaptic diversity and timescales of memory}
+%
+ \parbox[t][][t]{0.47\linewidth}{
+ Different synapses have different molecular structures.
+ \begin{center}
+   \aligntop{\includegraphics[width=0.8\linewidth]{Emes2012.jpeg}}
+ \end{center}
+ \citerr{Emes2012synapserev}
+ }
+ %
+ \hspace{0.03\linewidth}
+ %
+ \visible<2->{%
+ \parbox[t][][t]{0.47\linewidth}{
+ Memories stored in different places for different timescales
+
+ \citerr{Squire1995amnesia}
+
+ \citerr{McClelland1995consolidation}
+ \begin{center}
+   \aligntop{\includegraphics[width=0.9\linewidth]{sleepconsolidation.png}}
+ \end{center}
+ \citerr{Born2012sleep}
+
+ Also: Cerebellar cortex \lto\ nuclei.
+
+ \citerr{Attwell2002consolidation}
+
+ \citerr{Cooke2004consolidation}
+ }}
+ %
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
 \begin{frame}{Synaptic structures for different timescales of memory}
 %
 % Real synapses limited by molecular building blocks. \\
@@ -540,10 +597,10 @@ Stanford University, Applied Physics
  \begin{center}
  \begin{tabular}{ccccc}
    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-   Short timescales & $\longrightarrow$ & Intermediate timescales & $\longrightarrow$ & Long timescales \\[0.5cm]
+   Short timescale & $\longrightarrow$ & Intermediate timescale & $\longrightarrow$ & Long timescale \\[0.5cm]
    \alignmid{\includegraphics[height=0.065\linewidth]{binary_det.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.065\linewidth]{multistate_uni.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.065\linewidth]{multistate_sticky.svg}} \\[0.5cm]
    \visible<2->{short topology} & \visible<2->{$\longrightarrow$} & \visible<2->{long topology} &  &  \\[0.5cm]
-    & & \visible<3->{strong transitions} & \visible<3->{$\longrightarrow$} & \visible<3->{weak transitions} \\
+    & & \visible<3->{deterministic synapse} & \visible<3->{$\longrightarrow$} & \visible<3->{stochastic synapse} \\
  \end{tabular}
  \end{center}
 %
@@ -587,38 +644,38 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Simulated experiment}
+%%-------------Slide--------------------------------------------------------
 %
- %
- \begin{center}
+%\begin{frame}{Simulated experiment}
+%%
+% %
+% \begin{center}
+%%   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
+%%   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
+%%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
+%%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
+%%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
+%%   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
+%%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
+%%   \only<8>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
+%%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
+%%   \only<10>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
 %   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
 %   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
-%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
-%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
-%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
-%   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
-%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
-%   \only<8>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
-%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
-%   \only<10>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
-   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
-   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
-%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
-   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
-%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
-   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
-%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
-%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
-%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
-   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
- \end{center}
- %
+%%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
+%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
+%%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
+%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
+%%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
+%%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
+%%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
+% \end{center}
+% %
+%%
+%\end{frame}
 %
-\end{frame}
-
-
+%
 %%-------------Slide--------------------------------------------------------
 %
 %\begin{frame}{Experimental problems}
