@@ -193,7 +193,7 @@ Stanford University, Applied Physics
     \item Candidate plasticity events \lto\ transitions between states
   \end{itemize}
 }\hfill
-\alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
+\alignmid{\includegraphics[width=0.12\linewidth]{state_key.svg}}
 }
 
   %
@@ -368,7 +368,7 @@ Stanford University, Applied Physics
  Synapses store a sequence of memories.
  %
  \begin{center}
-   \visible<2>{\includegraphics[width=0.55\linewidth]{MemoryCurve.svg}}
+   {\includegraphics[width=0.55\linewidth]{MemoryCurve.svg}}
  \end{center}
  %
 %
@@ -405,12 +405,28 @@ Stanford University, Applied Physics
 %
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Questions}
+\begin{frame}{General principles relating structure and function?}
 %
+ \vspace{-2\baselineskip}
+ \begin{center}
+ \parbox[t]{0.35\linewidth}{%
+ \begin{center}
+   Synaptic structure\\
+   \includegraphics[width=0.99\linewidth]{synapse_internal.svg}
+ \end{center}
+ }
+ \hspace{0.1\linewidth}
+ \parbox[t]{0.3\linewidth}{%
+ \begin{center}
+   Synaptic function\\
+   \includegraphics[width=0.99\linewidth]{MemoryCurve.svg}
+ \end{center}
+ }
+ \end{center}
  \begin{itemize}
-   \item What are the upper bounds?
-   \vp\item Which models achieve them?
-   \vp\item What are the theoretical principles behind them?
+   \item What are the fundamental limits of memory?
+   \vp\item Which models achieve these limits?
+   \vp\item What are the theoretical principles behind the optimal models?
  \end{itemize}
 %
 \end{frame}
@@ -452,7 +468,7 @@ Stanford University, Applied Physics
 %
  \visible<1->{Upper bound on memory curve at \emph{any} timescale.}
 
- \vp
+ %\vp
  \begin{center}
 % \parbox[c]{0.67\linewidth}{
    %\only<1>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum2.svg}}}%
@@ -587,7 +603,7 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Synaptic structures for different timescales of memory}
+\begin{frame}{Synaptic structure and function: general principles}
 %
 % Real synapses limited by molecular building blocks. \\
 % Evolution had larger set of priorities.
@@ -617,7 +633,7 @@ Stanford University, Applied Physics
      \aligntop{\includegraphics[width=0.7\linewidth]{barrage.svg}}%
  \end{center}
 
- \vp\visible<2>{Subject a synapse to a sequence of candidate plasticity events.
+ \vp\visible<2>{To fit a model: long sequence of small plasticity events.
 
  Observe the changes in synaptic efficacy.}
 
@@ -706,6 +722,7 @@ Stanford University, Applied Physics
 %    \item Gap between envelope and what we can achieve at early times?
 %    \item Trade-off between SNR at different times?
 %    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
+    \vp\item We studied more than a single model. We studied \emph{all possible models}, to extract general principles relating synaptic structure to function
   \end{itemize}
 
 %

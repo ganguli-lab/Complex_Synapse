@@ -1259,10 +1259,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.67192846"
-     inkscape:cx="1613.2579"
+     inkscape:cx="1359.5106"
      inkscape:cy="617.79083"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g3063"
      showgrid="false"
      fit-margin-top="0"
      fit-margin-left="0"
@@ -1270,7 +1270,7 @@
      fit-margin-bottom="0"
      inkscape:window-width="2560"
      inkscape:window-height="1538"
-     inkscape:window-x="-8"
+     inkscape:window-x="2552"
      inkscape:window-y="-8"
      inkscape:window-maximized="1" />
   <metadata
@@ -1281,7 +1281,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1301,7 +1301,8 @@
        id="g3063"
        transform="translate(12,0)">
       <g
-         id="g4021">
+         id="g4021"
+         transform="matrix(1.16625,0,0,1.16625,-419.68377,-46.065057)">
         <g
            transform="matrix(6.75,0,0,6.75,-340.10767,-2433.2052)"
            id="g3094">
@@ -1722,7 +1723,7 @@
          sodipodi:nodetypes="cc"
          inkscape:connector-curvature="0"
          id="path4058"
-         d="M 291.42857,437.65457 1315.1137,179.71599"
+         d="M 291.42857,437.65457 1097.8287,166.32171"
          style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <g
          id="g3059">
@@ -1736,7 +1737,7 @@
            ry="88.571434" />
         <path
            style="fill:none;stroke:#000000;stroke-width:4;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-           d="M 300.07537,605.64634 1283.8907,806.24027"
+           d="M 300.07537,605.64634 1135.0653,914.88279"
            id="path4060"
            inkscape:connector-curvature="0"
            sodipodi:nodetypes="cc" />
