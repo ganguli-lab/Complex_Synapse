@@ -9,11 +9,11 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="65.86348"
-   height="44.733387"
+   width="73.114456"
+   height="45.45409"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.4 r9939"
+   inkscape:version="0.91 r13725"
    sodipodi:docname="state_key.svg">
   <sodipodi:namedview
      id="base"
@@ -24,15 +24,15 @@
      inkscape:pageshadow="2"
      inkscape:zoom="3.2073513"
      inkscape:cx="46.120222"
-     inkscape:cy="63.873249"
+     inkscape:cy="63.802941"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:snap-global="false"
      showguides="true"
      inkscape:guide-bbox="true"
-     inkscape:window-width="2560"
-     inkscape:window-height="1538"
+     inkscape:window-width="1280"
+     inkscape:window-height="657"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
@@ -47,11 +47,11 @@
        visible="true"
        enabled="true"
        snapvisiblegridlinesonly="true"
-       originx="-136.50632px"
-       originy="-570.23771px" />
+       originx="-136.50632"
+       originy="-570.30802" />
     <sodipodi:guide
        orientation="1,0"
-       position="244.2479,-25.401561"
+       position="244.2479,-25.471869"
        id="guide3093" />
   </sodipodi:namedview>
   <defs
@@ -605,25 +605,22 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-136.50632,-437.39108)">
+     transform="translate(-136.50632,-436.60007)">
     <g
        id="g3158">
-      <path
-         d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z"
-         sodipodi:ry="5"
-         sodipodi:rx="5"
-         sodipodi:cy="347.36218"
-         sodipodi:cx="185"
+      <circle
          id="path2994-4"
          style="fill:#0000ff;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
-         sodipodi:type="arc"
-         transform="matrix(-1,0,0,1,327.00632,97.624601)" />
+         transform="matrix(-1,0,0,1,327.00632,97.624601)"
+         cx="185"
+         cy="347.36218"
+         r="5" />
       <text
          sodipodi:linespacing="125%"
          id="text3117"
          y="450.27585"
          x="154.02116"
-         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
          xml:space="preserve"><tspan
            style="font-size:18px"
            y="450.27585"
@@ -634,22 +631,19 @@
     <g
        id="g3163"
        transform="translate(-99.45901,28.060537)">
-      <path
-         d="m 190,347.36218 c 0,2.76143 -2.23858,5 -5,5 -2.76142,0 -5,-2.23857 -5,-5 0,-2.76142 2.23858,-5 5,-5 2.76142,0 5,2.23858 5,5 z"
-         sodipodi:ry="5"
-         sodipodi:rx="5"
-         sodipodi:cy="347.36218"
-         sodipodi:cx="185"
+      <circle
          id="path2994-3-2-9"
          style="fill:#d40000;stroke:#000000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
-         sodipodi:type="arc"
-         transform="matrix(-1,0,0,1,426.46533,97.624614)" />
+         transform="matrix(-1,0,0,1,426.46533,97.624614)"
+         cx="185"
+         cy="347.36218"
+         r="5" />
       <text
          sodipodi:linespacing="125%"
          id="text3117-1"
          y="450.27585"
          x="252.9792"
-         style="font-size:40px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         style="font-style:normal;font-weight:normal;font-size:40px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
          xml:space="preserve"><tspan
            style="font-size:18px"
            y="450.27585"
