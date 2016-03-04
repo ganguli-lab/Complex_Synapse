@@ -777,56 +777,56 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}[label=fr_tech]{Technical detail: ordering states}
+%%-------------Slide--------------------------------------------------------
 %
- Let $\fpt_{ij}=$ mean first passage time from state $i$ to state $j$.
- Then:
- %
- \begin{equation*}
-   \eta = \sum_j \fpt_{ij} \eq_j,
- \end{equation*}
- %
- is independent of the initial state $i$
- (Kemeney's constant).\\ \citerr{kemeny1960finite}
-
- \vp We define:
- %
- \begin{equation*}
-   \eta^+_i = \sum_{j\in\text{strong}} \fpt_{ij} \eq_j,
-   \qquad
-   \eta^-_i = \sum_{j\in\text{weak}} \fpt_{ij} \eq_j.
- \end{equation*}
- %
- \note[item]{Measure ``distance'' to the strong/weak states.}
- They can be used to arrange the states in an order (increasing $\eta^-$ or decreasing $\eta^+$).
- \hyperlink{fr_areaproof}{\beamerbutton{back}}
- \note[item]{sum to constant, $\implies$ two orders same}
+%\begin{frame}[label=fr_tech]{Technical detail: ordering states}
+%%
+% Let $\fpt_{ij}=$ mean first passage time from state $i$ to state $j$.
+% Then:
+% %
+% \begin{equation*}
+%   \eta = \sum_j \fpt_{ij} \eq_j,
+% \end{equation*}
+% %
+% is independent of the initial state $i$
+% (Kemeney's constant).\\ \citerr{kemeny1960finite}
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Technical detail: upper/lower triangular}
+% \vp We define:
+% %
+% \begin{equation*}
+%   \eta^+_i = \sum_{j\in\text{strong}} \fpt_{ij} \eq_j,
+%   \qquad
+%   \eta^-_i = \sum_{j\in\text{weak}} \fpt_{ij} \eq_j.
+% \end{equation*}
+% %
+% \note[item]{Measure ``distance'' to the strong/weak states.}
+% They can be used to arrange the states in an order (increasing $\eta^-$ or decreasing $\eta^+$).
+% \hyperlink{fr_areaproof}{\beamerbutton{back}}
+% \note[item]{sum to constant, $\implies$ two orders same}
+%%
+%\end{frame}
 %
- With states in order:
- %
- \begin{center}
-   \includegraphics[width=2cm]{triangular_right.svg}
-   \hp \hp \hp
-   \includegraphics[width=2cm]{triangular_left.svg}
- \end{center}
- %
- \note[item]{pot \& dep with same initial \& final state}
- Endpoint: potentiation goes right, depression goes left.
- \note[item]{pot/dep matrices are upper/lower triangular.}
- \note[item]{one other pert. too technical, even for bonus slide!}
-
- \hyperlink{fr_areaproof}{\beamerbutton{back}}
+%%-------------Slide--------------------------------------------------------
 %
-\end{frame}
-
+%\begin{frame}{Technical detail: upper/lower triangular}
+%%
+% With states in order:
+% %
+% \begin{center}
+%   \includegraphics[width=2cm]{triangular_right.svg}
+%   \hp \hp \hp
+%   \includegraphics[width=2cm]{triangular_left.svg}
+% \end{center}
+% %
+% \note[item]{pot \& dep with same initial \& final state}
+% Endpoint: potentiation goes right, depression goes left.
+% \note[item]{pot/dep matrices are upper/lower triangular.}
+% \note[item]{one other pert. too technical, even for bonus slide!}
+%
+% \hyperlink{fr_areaproof}{\beamerbutton{back}}
+%%
+%\end{frame}
+%
 
 %-----End----------------------------------------------------------------
 
