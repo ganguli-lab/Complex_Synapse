@@ -8,16 +8,128 @@
 
 %% ADDITIONAL OPTIONAL STYLE FILES
 %\usepackage{graphicx}
-\input{sl_graphics_preamble.tex}
+\usepackage{ifpdf}
+%\usepackage[hypcap]{caption}%links to figures
+\usepackage{graphicx}
+%\usepackage{graphics} for finding documentation only
+%
+\usepackage{epstopdf}
+\epstopdfsetup{update,suffix=-generated}
+%
+%\newcommand{\inkscapedir}{C:/Program Files/Inkscape/}
+%\IfFileExists{"C:/Program Files (x86)/Inkscape/inkscape.exe"}{\newcommand{\inkscapedir}{C:/Program Files (x86)/Inkscape/}}{}
+\IfFileExists{"C:/Program Files/Inkscape/inkscape.exe"}{\newcommand{\inkscapedir}{C:/Program Files/Inkscape/}}{}
+\IfFileExists{"/Applications/Inkscape.app/Contents/Resources/bin/inkscape"}{\newcommand{\inkscapedir}{/Applications/Inkscape.app/Contents/Resources/bin/}}{}
+%
+\ifpdf
+ \epstopdfDeclareGraphicsRule{.svg}{pdf}{.pdf}{%
+ "\inkscapedir inkscape" -f #1 -C -A \OutputFile
+ }
+\else
+ \DeclareGraphicsRule{.png}{eps}{.bb}{}
+\fi
+%
+\usepackage{adjustbox}
+\newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
+\newcommand{\alignmid}[1]{\adjustbox{valign=c}{#1}}
+%
+%\usepackage{paralist}
+%\newenvironment{myenuma}{\begin{inparaenum}[(a)]}{\end{inparaenum}}
+%\newenvironment{myenumi}{\begin{inparaenum}[i)]}{\end{inparaenum}}
+%\newenvironment{myenumA}{\begin{inparaenum}[\bfseries A.]}{\end{inparaenum}}
+%\newenvironment{myenumI}{\begin{inparaenum}[\bfseries I.]}{\end{inparaenum}}
+%\newenvironment{myenumr}{\begin{inparaenum}[1.]}{\end{inparaenum}}
+%%for nested lists, \ref only produces innermost item:  (hacky)
+%\makeatletter % for internal macros with @
+%\renewcommand\p@enumii{}
+%\makeatother
+%
+\usepackage[inline]{enumitem}
+\newlist{myenuma}{enumerate*}{4}
+\setlist[myenuma]{label=(\alph*),ref=\alph*}
+%\makeatletter
+%\DeclareRobustCommand{\ilabel}[1]{%
+%   \edef\@currentlabel{\themyenumai}%
+%   \label{#1}}
+%\makeatother
 \graphicspath{{"Figs/"}}
 %\usepackage{pnastwoF}
-\usepackage{amssymb,amsfonts}
+%\usepackage{amssymb,amsfonts}
 %\usepackage[centertags]{amsmath}
 %\usepackage{hyperref}
 
 
 %% OPTIONAL MACRO DEFINITIONS
-\input{sl_definitions.tex}
+\newcommand{\ra}{\rightarrow}
+\newcommand{\lr}{\leftrightarrow}
+\newcommand{\cdt}{\!\cdot\!}
+\newcommand{\vp}{\vspace{0.5cm}}
+\newcommand{\hp}{\hspace{0.5cm}}
+%
+%e.g., i.e. with normal spaces
+\newcommand{\eg}{e.g.\ }
+\newcommand{\ie}{i.e.\ }
+\newcommand{\cf}{cf.\ }
+\newcommand{\etc}{etc.\ }
+\newcommand{\wrt}{wrt.\ }
+\newcommand{\Eg}{E.g.\ }
+\newcommand{\Ie}{I.e.\ }
+\newcommand{\Cf}{Cf.\ }
+\newcommand{\Etc}{Etc.\ }
+%
+% indices
+%
+% brackets etc.
+\newcommand{\prn}[1]{\left ( #1 \right )}
+\newcommand{\brc}[1]{\left\{ #1 \right\}}
+\newcommand{\brk}[1]{\left [ #1 \right ]}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\nrm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\av}[1]{\left\langle #1 \right\rangle}
+\newcommand{\avc}[2]{\left\langle #1 \,\middle | \, #2 \right\rangle}
+%\newenvironment{cases}{\left\{\begin{aligned}}{\end{aligned}\right.}
+%
+% Sets
+\newcommand{\set}[2]{\left\{ #1 \,\middle |\, #2 \right\}}
+\newcommand{\cond}[2]{\!\left( #1 \,\middle | \, #2 \right)}
+\newcommand{\condb}[2]{\!\left[ #1 \,\middle | \, #2 \right]}
+%
+% Derivatives, etc. First argument is optional.
+\newcommand{\diff}[3][\rule{0mm}{0mm}]{\frac{\mathrm{d}^{#1} #2}{\mathrm{d}{#3}^{#1}}}
+\newcommand{\pdiff}[3][\rule{0mm}{0mm}]{\frac{\partial^{#1} #2}{\partial {#3}^{#1}}}
+\newcommand{\pdiffc}[3][\rule{0mm}{0mm}]{\left (\frac{\partial #2}{\partial {#3}}\right )_{\!\!#1}}
+\newcommand{\intd}[2][\rule{0mm}{0mm}]{\int #1\!\!\dr #2\,}
+%
+% Un-italicised letters
+\newcommand{\dr}{\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\ir}{\mathrm{i}}
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\Det}{Det}
+\DeclareMathOperator{\cov}{Cov}
+\DeclareMathOperator{\var}{Var}
+\DeclareMathOperator{\bias}{Bias}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\sech}{sech}
+\DeclareMathOperator{\diag}{diag}
+%
+% The default \Im and \Re look crap
+\renewcommand{\Im}{\operatorname{\mathfrak{Im}}}
+\renewcommand{\Re}{\operatorname{\mathfrak{Re}}}
+%
+% logic
+\newcommand{\means}{\Longleftrightarrow}
+\newcommand{\requires}{\Longleftarrow}
+%
+% Referencing sections, figures, etc
+\newcommand{\sref}[1]{\S\ref{#1}}
+\newcommand{\fref}[1]{fig.\ref{#1}}
+\newcommand{\Fref}[1]{Fig.~\ref{#1}}
+\newcommand{\tref}[1]{tab.\ref{#1}}
+\newcommand{\Tref}[1]{Tab.\ref{#1}}
+%
 %\input{sl_symbols.tex}
 %
 %additional symbols:
@@ -92,7 +204,7 @@
 
 \title{Optimal synaptic strategies for different timescales of memory}
 
-\author{Subhaneil Lahiri\affil{1}{Department of Applied Physics, Stanford University, Stanford CA},
+\author{Subhaneil Lahiri\affil{1}{Department of Applied Physics, Stanford University, Stanford CA}
 \and
 Surya Ganguli\affil{1}{}}
 
@@ -115,7 +227,7 @@ of the United States of America}
 
 \keywords{synaptic plasticity | learning | memory | neuroscience}
 
-\abbreviations{LTP, long term potentiation; 
+\abbreviations{SNR, signal-to-noise ratio; LTP, long term potentiation; 
 LTD, long term depression}
 
 \dropcap{I}t is widely thought that our very ability to remember the past over long time scales depends crucially on our ability to modify synapses in our brain in an experience dependent manner.
@@ -189,11 +301,11 @@ All of the preceding plasticity events, prior to $t=0$, will put the population 
 The memory we are tracking at $t=0$ will change the internal state distribution to $\eq\M\pot$ (or $\eq\M\dep$) in those synapses that experience a candidate potentiation (or depression) event.
 As the potentiating/depressing nature of the subsequent memories is independent of $\wvi$, we can average over all sequences, resulting in the evolution of the probability distribution:
 %
-\begin{equation}\label{eq:evol}
-  \diff{\pr(t)}{t} = r\pr(t)\frg,
-  \qquad \text{where} \quad
+\begin{multline}\label{eq:evol}
+  \diff{\prob(t)}{t} = r\prob(t)\frg,
+  \\ \text{where} \quad
   \frg = f\pot\M\pot + f\dep\M\dep - \I.
-\end{equation}
+\end{multline}
 %
 Here $\frg$ is a continuous time transition matrix that models the process of forgetting the memory stored at time $t=0$ due to random candidate potentiation/depression events occurring at each synapse due to the storage of subsequent memories.
 Its stationary distribution is $\eq$.
@@ -202,7 +314,7 @@ Its stationary distribution is $\eq$.
 This results in the following SNR
 %
 \begin{equation}\label{eq:SNRcalc}
-  \snr(t) = \sqrt{N}\prn{2 f\pot f\dep} \eq \prn{\M\pot-\M\dep} \e^{rt\frg} \w.
+  \snr(t) = \sqrt{N}(2 f\pot f\dep) \eq \brk{\M\pot-\M\dep} \e^{rt\frg} \w.
 \end{equation}
 %
 %The factor of $\eq$ describes the synapses being in the steady-state distribution before the memory is encoded. The factor of $(\M\pot-\M\dep)$ comes from the encoding of the memory at $t=0$, with $\wvi$ being $\pm1$ in synapses that are potentiated/depotentiated. The factor of $\e^{rt\frg}$ describes the subsequent evolution of the probability distribution, averaged over all sequences of plasticity events, and the factor of $\w$ indicates the readout via the synaptic weight.
@@ -228,7 +340,7 @@ The cascade model does not perform quite as well at that time, but it maintains 
   (\ref{fig:cascade}) The cascade model of \cite{Fusi2005cascade}, showing transitions between states of high/low synaptic weight (red/blue circles) due to potentiation/depression (solid red/dashed blue arrows).
   (\ref{fig:multistate}) The serial model of \cite{Leibold2008serial}.
   (\ref{fig:cascms}) The memory curves of these two models, showing the decay of the signal-to-noise ratio (to be defined \hyperref[sec:setup]{below}) as subsequent memories are stored.
-  }\label{fig:models}
+  \label{fig:models}}
 \end{figure}
 
 
@@ -238,15 +350,18 @@ The space of models with a fixed number of internal states $M$ is parameterized 
 transition matrices $\M\pot$ and $\M\dep$, in addition to $f\potdep$.  The parameters must satisfy the following constraints:
 %
 \begin{equation}\label{eq:constr}
+\begin{gathered}
 \begin{aligned}
-  \M\potdep_{ij} &\in [0,1], &\quad
-  f\potdep &\in [0,1], &\quad
-  \eq\frg &= 0, &\quad
-  \w_i &= \pm 1, \\
-  \sum_j \M\potdep_{ij} &= 1, &
-  f\pot + f\dep &= 1, &
-  \sum_i \eq_i &= 1.
+  \M\potdep_{ij} &\in [0,1], &\qquad
+  \sum_j \M\potdep_{ij} &= 1, \\
+  f\potdep &\in [0,1],&
+  f\pot + f\dep &= 1, 
 \end{aligned}
+\\
+  \eq\frg = 0, \qquad
+  \sum_i \eq_i = 1, \qquad
+  \w_i = \pm 1.
+\end{gathered}
 \end{equation}
 %
 The upper bounds on $\M\potdep_{ij}$ and $f\potdep$ follow automatically from the other constraints.
@@ -255,13 +370,15 @@ The critical question is: what do these constraints imply about the space of ach
 To answer this question, especially for limits on achievable memory at finite times, it will be useful to employ the eigenmode decomposition:
 %
 \begin{equation}\label{eq:eigendecomp}
-  \frg = \sum_a -q_a \uv^a \vv^a,
-  \quad
-  \vv^a \uv^b = \delta_{ab},
-  \quad
-  \frg \uv^a = -q_a \uv^a,
-  \quad
-  \vv^a \frg = -q_a \vv^a.
+\begin{aligned}
+  \frg &= \sum_a -q_a \uv^a \vv^a,
+  &\quad
+  \vv^a \uv^b &= \delta_{ab},
+  \\%\quad
+  \frg \uv^a &= -q_a \uv^a,
+  &\quad
+  \vv^a \frg &= -q_a \vv^a.
+\end{aligned}
 \end{equation}
 %
 Here $q_a$ are the negative of the eigenvalues of the forgetting process $\frg$, $\uv^a$ are the right (column) eigenvectors and $\vv^a$ are the left (row) eigenvectors.
@@ -286,7 +403,7 @@ We will derive some of these constraints in the next section.
 In the previous section, in \eqref{eq:SNRcalc} we have described an analytic expression for a memory curve as a function of the structure of a synaptic dynamical system, described by the pair of stochastic transition matrices  $\M\potdep$.
 Since the performance measure for memory is an entire memory curve, and not just a single number, there is no universal scalar notion of optimal memory in the space of synaptic dynamical systems.
 Instead there are tradeoffs between storing proximal and distal memories;  often attempts to increase memory at late (early) times by changing $\M\potdep$, incurs a performance loss in memory at early (late) times in specific models considered so far \cite{Fusi2005cascade,Fusi2007multistate,Leibold2008serial}.
-Thus our end goal, achieved in \sref{sec:env}, is to derive an envelope memory curve in the SNR-time plane, or a curve that forms an upper-bound on the {\it entire} memory curve of {\it any} model.
+Thus our end goal, achieved \hyperref[sec:env]{below}, is to derive an envelope memory curve in the SNR-time plane, or a curve that forms an upper-bound on the {\it entire} memory curve of {\it any} model.
 In order to achieve this goal, in this section, we must first derive upper bounds, over the space of all possible synaptic models, on two different scalar functions of the memory curve: its initial SNR, and the area under the memory curve.
 In the process of upper-bounding the area, we will develop an essential framework to organize the structure of synaptic dynamical systems based on first passage time theory.
 
@@ -332,16 +449,16 @@ This is one example of the tradeoff between optimizing memory at early versus la
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\hp\aligntop{\includegraphics[width=0.12\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
-  \item\aligntop{\includegraphics[width=0.12\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
-  \item\hp\aligntop{\includegraphics[width=0.05\linewidth]{binary_det.svg}}\label{fig:binary_det}
+  \item\hp\aligntop{\includegraphics[width=0.24\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
+  \item\aligntop{\includegraphics[width=0.24\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
+  \item\hp\aligntop{\includegraphics[width=0.1\linewidth]{binary_det.svg}}\label{fig:binary_det}
   \end{myenuma}
  \end{center}
   \caption{Synaptic models that maximize initial SNR.
   (\ref{fig:max_init_pot}) For potentiation, all transitions starting from a weak state lead to a strong state, and the probabilities for all transitions leaving a given weak state sum to 1.
   (\ref{fig:max_init_pot}) Depression is similar to potentiation, but with strong and weak interchanged.
   (\ref{fig:binary_det}) The equivalent two state model, with transition probabilities under potentiation and depression equal to one.
-  }\label{fig:max_init}
+  \label{fig:max_init}}
 \end{figure}
 
 
@@ -394,8 +511,8 @@ First passage time theory introduced in the \hyperref[sec:order]{previous sectio
 %
 \begin{equation}\label{eq:areaEta}
 \begin{aligned}
-  A &= \sqrt{N}(4f\pot f\dep) \sum_{ij} \eq_i \prn{\M\pot_{ij}-\M\dep_{ij}} \prn{\eta^+_i-\eta^+_j}\\
-    &= \sqrt{N}(4f\pot f\dep) \sum_{ij} \eq_i \prn{\M\pot_{ij}-\M\dep_{ij}} \prn{\eta^-_j-\eta^-_i}.
+  A &= \sqrt{N}(4f\pot f\dep) \sum_{ij} \eq_i \!\brk{\M\pot_{ij}-\M\dep_{ij}}\! (\eta^+_i-\eta^+_j)\\
+    &= \sqrt{N}(4f\pot f\dep) \sum_{ij} \eq_i \!\brk{\M\pot_{ij}-\M\dep_{ij}}\! (\eta^-_j-\eta^-_i).
 \end{aligned}
 \end{equation}
 %
@@ -423,15 +540,17 @@ Any other topology would allow some class of perturbations (\eg\ in \Fref{fig:pe
   (\ref{fig:tri_right}) Perturbations that increase elements of $\M\pot$ above the diagonal and decrease the corresponding elements of $\M\dep$. It can no longer be used when $\M\dep$ is lower triangular, \ie depression must move synapses to ``more depressed'' states.
   (\ref{fig:tri_left}) Perturbations that decrease elements of $\M\pot$ below the diagonal and increase the corresponding elements of $\M\dep$. It can no longer be used when $\M\pot$ is upper triangular, \ie potentiation must move synapses to ``more potentiated'' states.
   (\ref{fig:shortcut}) Perturbation that decreases ``shortcut'' transitions and increases the bypassed ``direct'' transitions. It can no longer be used when there are only nearest-neighbor ``direct'' transitions.
-  }\label{fig:perts}
+  \label{fig:perts}}
 \end{figure}
 
 As these perturbations do not change the equilibrium distribution, this means that the area of \emph{any} model is bounded by that of a linear chain with the same equilibrium distribution.
 The area of a linear chain model can be expressed directly in terms of its equilibrium state distribution, $\eq$, yielding the following upper bound on the area of any model with the same $\eq$ (see supplementary material):
 %
 \begin{equation}\label{eq:multistatearea}
-  A \leq \frac{2\sqrt{N}}{r} \sum_k \brk{k - \sum_j j\eq_j} \eq_k \w_k
-    = \frac{2\sqrt{N}}{r} \sum_k \abs{k - \sum_j j\eq_j} \eq_k ,
+\begin{aligned}
+  A &\leq \frac{2\sqrt{N}}{r} \sum_k \brk{k - \sum_j j\eq_j} \eq_k \w_k \\
+    &= \frac{2\sqrt{N}}{r} \sum_k \abs{k - \sum_j j\eq_j} \eq_k ,
+\end{aligned}
 \end{equation}
 %
 where we chose $\w_k=\sgn[{k - \sum_j j\eq_j}]$.
@@ -487,14 +606,14 @@ This always results in a single nonzero $\smash{\CI_a}$; in essence, optimizing 
 \begin{equation}\label{eq:env}
 \begin{aligned}
   t_0 &\leq \frac{M-1}{r} &
-   \implies
-  \snr(t) &= \sqrt{N}\e^{-rt/(M-1)} &
-   \implies
+   & \implies &
+  \snr(t) &= \sqrt{N}\e^{-rt/(M-1)} \\&&
+   & \implies &
   \snr(t_0) &= \sqrt{N}\e^{-rt_0/(M-1)},\\
   t_0 &\geq \frac{M-1}{r} &
-   \implies
-  \snr(t) &= \frac{\sqrt{N}(M-1)\e^{-t/t_0}}{rt_0} &
-   \implies
+   & \implies &
+  \snr(t) &= \frac{\sqrt{N}(M-1)\e^{-t/t_0}}{rt_0} \\&&
+   & \implies &
   \snr(t_0) &= \frac{\sqrt{N}(M-1)}{\e rt_0}.
 \end{aligned}
 \end{equation}
@@ -525,14 +644,15 @@ Nevertheless, we have proven rigorously that no model's memory curve can ever ex
 
 \begin{figure}
  \begin{center}
- \parbox[t]{0.44\linewidth}{
+ \parbox[t]{0.43\linewidth}{
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.95\linewidth]{env.svg}}\label{fig:envplot}
+  \item\aligntop{\includegraphics[width=0.85\linewidth]{env.svg}}\label{fig:envplot}
  \end{myenuma}
   }\hp
-  \parbox[t]{0.45\linewidth}{
+  \parbox[t]{0.44\linewidth}{
  \begin{myenuma}
- \addtocounter{myenumai}{1}
+ \stepcounter{myenumai}
+% \addtocounter{enumi}{1}
   \item\aligntop{\includegraphics[width=0.8\linewidth]{diffjump.svg}}\label{fig:diffjump}\\[0.1\linewidth]
   \item\aligntop{\includegraphics[width=0.8\linewidth]{multistate_sticky.svg}}\label{fig:sticky}
  \end{myenuma}
@@ -545,7 +665,7 @@ Nevertheless, we have proven rigorously that no model's memory curve can ever ex
   At early times these models are of the form shown in (\ref{fig:diffjump}) with different numbers of states, and all transition probabilities equal to $1$.
   At late times they are of the form shown in (\ref{fig:sticky}) with different values of $\varepsilon$.
   The model shown in (\ref{fig:sticky}) also saturates the area bound \eqref{eq:max_area} in the limit $\varepsilon\to0$.
-  }\label{fig:env}
+  \label{fig:env}}
 \end{figure}
 
 
@@ -558,7 +678,13 @@ Nevertheless, we have proven rigorously that no model's memory curve can ever ex
 
 We have initiated the development of  a general theory of learning and memory with complex synapses, allowing for an exploration of the entire space of complex synaptic models, rather than analyzing individual models one at a time.
 In doing so, we have obtained several new mathematical results delineating the functional limits of memory achievable by synaptic complexity, and the structural characterization of synaptic dynamical systems that achieve these limits.
-In particular, operating within the ideal observer framework of \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}, we have shown that for a population of $N$ synapses with $M$ internal states, (a) the initial SNR of any synaptic model cannot exceed $\sqrt{N}$, and any model that achieves this bound is equivalent to a binary synapse, (b) the area under the memory curve of any model cannot exceed that of a linear chain model with the same equilibrium distribution, (c) both the area and memory lifetime of any model cannot exceed $\CO(\sqrt{N}M)$, and the model that achieves this limit has a linear chain topology with only nearest neighbor transitions, (d) we have derived an envelope memory curve in the SNR-time plane that cannot be exceeded by the memory curve of any model, and models that approach this envelope for times greater than $\CO(\frac{M}{r})$ are linear chain models, and (e) this late-time envelope is a power-law proportional to $\smash{\CO({\sqrt{N} M}/{rt})}$, indicating that synaptic complexity can strongly enhance the limits of achievable memory.
+In particular, operating within the ideal observer framework of \cite{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}, we have shown that for a population of $N$ synapses with $M$ internal states, \begin{myenuma}
+\item the initial SNR of any synaptic model cannot exceed $\sqrt{N}$, and any model that achieves this bound is equivalent to a binary synapse,
+\item the area under the memory curve of any model cannot exceed that of a linear chain model with the same equilibrium distribution,
+\item both the area and memory lifetime of any model cannot exceed $\CO(\sqrt{N}M)$, and the model that achieves this limit has a linear chain topology with only nearest neighbor transitions,
+\item we have derived an envelope memory curve in the SNR-time plane that cannot be exceeded by the memory curve of any model, and models that approach this envelope for times greater than $\CO(\frac{M}{r})$ are linear chain models, and
+\item this late-time envelope is a power-law proportional to $\smash{\CO({\sqrt{N} M}/{rt})}$, indicating that synaptic complexity can strongly enhance the limits of achievable memory.
+\end{myenuma}
 
 This theoretical study opens up several avenues for further inquiry.
 In particular, the tightness of our envelope for early times, less than $\CO(\frac{M}{r})$, remains an open question, and we are currently pursuing several conjectures.
@@ -583,7 +709,7 @@ We thank Larry Abbott, Marcus Benna, Stefano Fusi, Jascha Sohl-Dickstein and Dav
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{pnas2011}
-\bibliography{maths,neuro}
+\bibliography{maths,neuro,markov}
 
 
 \end{article}
