@@ -305,7 +305,7 @@ If $t_0 \ll 0$, the effect of the large number of earlier events will be to put 
 where $n$ is the number of plasticity events that took place.
 
 If the plasticity events occur at Poisson rate $r$, the probability of $n$ events occurring in time $t$ is given by a Poisson distribution with mean $rt$.
-If we marginalise over $n$as well
+If we marginalise over $n$ as well
 %
 \begin{equation}\label{eq:plastseqav}
 \begin{aligned}
@@ -1240,7 +1240,7 @@ This is plotted in \autoref{fig:heuristicenv}.
 
 We do not expect to find precisely these models inside real synapses.
 First, evolution was faced with stronger constraints than us when designing these synapses as it had to build them out of real molecules.
-Second, the set of priorities faced by evolution would have been longer than just performance in recogniton memory at a single timescale.
+Second, the set of priorities faced by evolution would have been longer than just performance in recognition memory at a single timescale.
 
 Nevertheless, the qualitative message of our findings should be more robust to reality:
 %
@@ -1251,6 +1251,31 @@ Nevertheless, the qualitative message of our findings should be more robust to r
 %
 This is what we expect to find in the different brain regions that store memories for different timescales.
 
+The transition between the two regimes is set by the maximum number of states, $M$ (we can't set the number of states to be exactly $M$, as bigger models can always mimic smaller models).
+So, if we want to lengthen the timescale at which a synapse is optimal, we start by adding extra states, using the topology mechanism.
+When we run out of states, we switch to the stochasticity mechanism and make the end states sticky.
+The stochasticity mechanism is only used when we no longer have the option of using the topology mechanism.
+It is always better to add more states, if allowed, than to make transitions stochastic.
+
+We can get some insight into why this is by considering a serial model with $M$ states and all transition topologies equal to $q$.
+%
+\begin{equation*}
+\begin{aligned}
+  \snr(0) &\propto q,
+  &\qquad
+  \max_a \tau_a &\propto \frac{1}{q}, \\
+  \snr(0) &\propto \frac{1}{M},
+  &\qquad
+  \max_a \tau_a &\propto M^2. \\
+\end{aligned}
+\end{equation*}
+%
+The initial SNR scales as described because it is related to the equilibrium probability flux between the weak and strong states, and the equilibrium distribution is uniform over $M$ states.
+The lifetime scales as described because $rq$ sets the timescale for transitions, and for diffusion distance ($M$) scales as the square root of time.
+
+If we want to lengthen the lifetime with a fixed hit on initial SNR, we get a larger increase by increasing $M$ than by decreasing $q$.
+If we want to lengthen the lifetime by a fixed amount, we take a smaller hit on initial SNR by increasing $M$ than by decreasing $q$.
+Thus, we always get more bang for our buck using the topology mechanism than the stochasticity mechanism.
 
 
 %\subsection*{Acknowledgements}
