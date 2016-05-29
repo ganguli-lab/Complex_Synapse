@@ -13,6 +13,9 @@
 *.toc
 *.lof
 *.lot
+#endfloat
+*.fff
+*.ttt
 *-generated.pdf
 *.asv
 *.mat
