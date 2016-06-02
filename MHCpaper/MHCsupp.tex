@@ -47,8 +47,8 @@
 %\newcommand{\KO}{MHC}
 \newcommand{\tpre}{t_{\text{pre}}}
 \newcommand{\ttrain}{t_{\text{train}}}
-\newcommand{\lmax}{_{\text{max}}}
-\newcommand{\lmin}{_{\text{min}}}
+%\newcommand{\lmax}{_{\text{max}}}
+%\newcommand{\lmin}{_{\text{min}}}
 % ----------------------------------------------------------------
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -117,7 +117,6 @@ With this in mind, we define
 The quantities $f\potdep$ measure the fraction of candidate plasticity events that are potentiating/depressing.
 
 The independence and identicalness of synapses means that the state of the system can be completely described by the probability distribution of the internal states, the row vector $\pr(t)$.
-
 The evolution of this probability is described by a continuous time Markov matrix matrix, $\frg$:
 %
 \begin{equation}\label{eq:evolve}
@@ -130,7 +129,7 @@ where $\I$ is the identity matrix.
 Eventually, this will settle into the equilibrium distribution:
 %
 \begin{equation}\label{eq:eqprob}
-  \eq\frg=0.
+  \eq\frg = \mathbf{0}.
 \end{equation}
 %
 
@@ -686,7 +685,7 @@ However, this model can be solved exactly:
 \begin{multline}\label{eq:binarysol}
   \eq = \frac{(f\dep q\dep, f\pot q\pot)}{\lambda},
   \qquad
-  \pr(t) = \eq + (\pr(t)-\eq)\e^{-\lambda rt},\\
+  \pr(t) = \eq + (\pr(0)-\eq)\e^{-\lambda rt},\\
   \qquad \text{where} \quad
   \lambda = f\pot q\pot + f\dep q\dep.
 \end{multline}
