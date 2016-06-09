@@ -49,6 +49,7 @@
 \newcommand{\ttrain}{t_{\text{train}}}
 %\newcommand{\lmax}{_{\text{max}}}
 %\newcommand{\lmin}{_{\text{min}}}
+\newcommand{\modelfig}[1][a]{Figure 4#1 of the main text}
 % ----------------------------------------------------------------
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -116,8 +117,7 @@ With this in mind, we define
 %
 The quantities $f\potdep$ measure the fraction of candidate plasticity events that are potentiating/depressing.
 
-The independence and identicalness of synapses means that the state of the system can be completely described by the probability distribution of the internal states, the row vector $\pr(t)$.
-The evolution of this probability is described by a continuous time Markov matrix matrix, $\frg$:
+The independence and identicalness of synapses means that the state of the system can be completely described by the probability distribution over the internal states, the \emph{row} vector $\pr(t)$ which evolves as
 %
 \begin{equation}\label{eq:evolve}
   \diff{\pr(t)}{t} = r\pr(t)\frg,
@@ -125,7 +125,7 @@ The evolution of this probability is described by a continuous time Markov matri
   \frg = f\pot\M\pot+f\dep\M\dep-\I,
 \end{equation}
 %
-where $\I$ is the identity matrix.
+where $\frg$ is a continuous time Markov matrix matrix and $\I$ is the identity matrix.
 Eventually, this will settle into the equilibrium distribution:
 %
 \begin{equation}\label{eq:eqprob}
@@ -140,7 +140,7 @@ The \KO\ mice have a lower threshold for depression.
 We can model this by changing $\M\dep\wt$ to $\M\dep\ko$, which should have larger off-diagonal matrix elements.
 
 We will look at several different models,
-the serial model (see \cite{Leibold2008serial} and \autoref{fig:models}\ref{fig:serial_model}) which has only two values for the synaptic weight,
+the serial model (see \cite{Leibold2008serial,Ben-DayanRubin2007sparse} and \autoref{fig:models}\ref{fig:serial_model}) which has only two values for the synaptic weight,
 the two-state model (which can be thought of as a special case of the serial model, see \autoref{fig:models}\ref{fig:binary_model}),
 the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autoref{fig:models}\ref{fig:multistate_model}) which has a linearly varying synaptic weight,
 and the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}).
@@ -233,7 +233,7 @@ We will use the same values for potentiation and depression in the wild-type as 
 We will use larger values for depression in the \KO\ models.
 In the main text, we consider a version of this model that has resource depletion for depression only, so that potentiation transition probabilities are unaffected by the number of potentiated synapses.
 This is done by setting $q\pot\lmax=q\pot\lmin$.
-The values of these parameters are listed in \autoref{tab:params}.
+The values of these parameters are listed in \autoref{fig:sim_results}\ref{tab:params}.
 
 
 \begin{figure}
@@ -263,7 +263,7 @@ The diagonal elements are chosen so that the rows sum to one.
 
 This model is parameterised by the values of $x$ chosen for potentiation and depression.
 We will use a larger value for depression in the \KO\ models.
-The values used are listed in \autoref{tab:params}.
+The values used are listed in \autoref{fig:sim_results}\ref{tab:params}.
 
 
 
@@ -310,16 +310,17 @@ We will describe the effect of training by the decrease in mean synaptic weight:
   L(t) = \prn{\pr(0)-\pr(t)}\w.
 \end{equation}
 %
-If we imagine something like an LN model for the Purkinje cell, the output would depend on some linear combination of the synaptic weights (weighted by the activities of the corresponding parallel fibres).
-If we're not keeping track of synaptic identity, the most natural linear combination to use would be an equal sum of them all.
+One can approximate the input to a Purkinje cell as some linear combination of the synaptic weights (weighted by the activities of the corresponding parallel fibres).
+If we are not keeping track of synaptic identity, the most natural linear combination to use would be an equal sum of them all.
 The behavioural output (VOR gain) will be some unknown, non-linear function of the synaptic weights, so the best we can hope for is to reproduce qualitative features of the experiment, such as whether learning is enhanced or impaired by the mutation or pre-training.
 
-We will assume $f\dep\wt=f\dep\ko$.
-This is because the effects of the mutation are well localised to the Purkinje cells, so the activity of the parallel and climbing fibres should not change very much.
-Therefore the rates of potentiation and depression should not change very much either.
-This implies that the mean synaptic weight in equilibrium differs between the \KO\ models and wild type, but that is also suggested by the data regarding basal levels of phospho-GluR2 at serine 880.
-As the mutation produces no change in baseline performance, there must be a compensatory mechanism somewhere else.
+As the knockout produces no change in baseline performance, there must be a compensatory mechanism somewhere else.
 We will model this compensation as a simple linear offset, as could be produced by another population of neurons/synapses whose effect cancels with these neurons/synapses.
+
+We will assume $f\dep\wt=f\dep\ko$.
+This is because the relevant effects of the knockout are well localised to the Purkinje cells, as shown by the rescue data, so the activity of the parallel and climbing fibres should not change very much.
+Therefore the rates of potentiation and depression should not change very much either.
+%This implies that the mean synaptic weight in equilibrium differs between the \KO\ models and wild type, but that is also suggested by the data regarding basal levels of phospho-GluR2 at serine 880.
 
 For the most part, we set $f\dep\norm=\half$, $f\dep\inc=f\dep\norm+\Delta f$ and $f\dep\dec=f\dep\norm-\Delta f$, with $\Delta f>0$.
 We use the same values for wild-type and \KO\ models for the reasons discussed above.
@@ -335,7 +336,8 @@ This ensures that the qualitative questions mentioned above (enhancement or impa
 
 \section{Simulation and analysis of models}\label{sec:results}
 
-The features of the actual experiments that we'd like to capture are:
+The features of the experiments shown in \modelfig\ that we'd like to capture are:
+%
 \begin{enumerate}
   \item Without pre-training, gain-increase learning is significantly faster in the wild-type than in the \KO\ mice.
   \item For the wild-type, gain-increase learning is significantly faster without pre-training than with it.
@@ -343,6 +345,7 @@ The features of the actual experiments that we'd like to capture are:
   \item After pre-training, gain-increase learning is significantly faster in the \KO\ mice than in the wild-type.
 %  \item Gain-decrease pre-training is slightly faster in the wild-type, but not significantly so.\label{it:gaindown}
 \end{enumerate}
+%
 These questions will not be affected by any output nonlinearity, as long as it is monotonic and fixed.
 We will not study gain-decrease learning, as it uses a different mechanism to gain-increase.
 We are only modelling the effect of gain-decrease training on \emph{these} synapses.
@@ -350,9 +353,9 @@ We will also not discuss the curvature of the learning curves, as this can be ch
 %However, both the wild-type and \KO\ mice should be affected in the same way, so the difference in the curvature of the \KO\ mice and wild-type curves after pre-training would be nice to capture.
 
 We will try to gain some analytic insight to some of these models by looking at the slope of the learning curve at the start of gain-increase training.
-This is proportional to the net-flux from the states with strong synaptic weight to the weaker states, measured using the transition probabilities for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
-This should be multiplied by the difference in synaptic weights.
-But, as this quantity is constant within a model and doesn't change when comparing wild-type and \KO\ models or with/without pre-training, it can be ignored.
+This is proportional to the net-flux from the states with strong synaptic weight to the weaker states, measured using the transition rates for gain-increase but the equilibrium distribution for either untrained or gain-decrease, assuming that pre-training lasts long enough to reach the equilibrium distribution for gain-decrease.
+%This should be multiplied by the difference in synaptic weights.
+%But, as this quantity is constant within a model and doesn't change when comparing wild-type and \KO\ models or with/without pre-training, it can be ignored.
 
 The learning curves resulting from these simulations can be found in \autoref{fig:sim_results}.
 The values for all parameters we will use can be found in \autoref{fig:sim_results}\ref{tab:params}.
@@ -522,7 +525,7 @@ However, we can get some insight into this model analytically.
 
 
 
-Consider the general uniform multistate model.
+Consider the general uniform serial model.
 Then the equilibrium distribution is given by
 %
 \begin{equation}\label{eq:mutltieq}
@@ -536,10 +539,40 @@ If we take the limit $\alpha\rightarrow1$, this becomes $\frac{1}{M}$.
 The net-flux from the $\w=+1$ states to the $\w=-1$ states is:
 %
 \begin{equation}\label{eq:multiflux}
-  \Phi = \eq_{M/2+1}f'{}\dep q\dep - \eq_{M/2}f'{}\pot q\pot = \frac{1-\alpha}{1-\alpha^M}\,\alpha^{M/2-1}\prn{\alpha-\alpha'}f'{}\dep q\dep,
+  \Phi = \eq_{M/2+1}f'{}\dep q\dep - \eq_{M/2}f'{}\pot q\pot = \frac{1-\alpha}{1-\alpha^M} \, \alpha^{M/2-1} \prn{\frac{\alpha}{\alpha\inc} - 1} f\inc\pot  q\pot,
 \end{equation}
 %
-where primed values correspond to the new value of $f\pot$.
+where $\alpha\inc$ is $\alpha$, but with $f\potdep$ replaced by $f\potdep\inc$.
+
+To see the effects of the knockout, we can see if this increases or decreases with $q\dep$:
+%
+\begin{equation}\label{eq:serialderq}
+  q\dep \pdiff{\Phi}{q\dep} = 
+    \frac{\alpha^{\frac{M}{2} - 1}}{(1 - \alpha^M)^2} 
+    \brk{(1 - \alpha^M) - \frac{M}{2} (1 - \alpha) (1 + \alpha^M) } 
+    \prn{\frac{\alpha}{\alpha\inc} - 1} f\inc\pot  q\pot.
+\end{equation}
+%
+This quantity can have either sign, depending on $\alpha$ and $M$, so $\Phi$ is not a monotonic function of $q\dep$.
+Therefore, enhancing plasticity in this way can either enhance or impair the initial learning rate, depending on the parameters.
+
+The effect of pre-training is to replace $f\potdep$ with $f\potdep\dec$ without changing $f\potdep\inc$, which increases $f\pot$ and decreases $f\dep$.
+Therefore, we can see the effects of pre-training on the initial learning rate by seeing if it increases or decreases with $f\pot$ (with $f\dep = 1 - f\pot$):
+%
+\begin{equation}\label{eq:serialderf}
+  f\pot f\dep \pdiff{\Phi}{f\pot} =  
+    \frac{\alpha^{\frac{M}{2} - 1}}{(1 - \alpha^M)^2} 
+      \brk{ \prn{\frac{\alpha}{\alpha\inc} - 1} \frac{M}{2} (1 - \alpha) (1 + \alpha^M) 
+      - \prn{\frac{\alpha^2}{\alpha\inc} - 1} (1 - \alpha^M) }  
+      f\inc\pot  q\pot.
+\end{equation}
+%
+This quantity can have either sign, depending on $\alpha$ and $M$, so $\Phi$ is not a monotonic function of $f\pot$.
+Therefore, pre-training can either enhance or impair the initial learning rate, depending on the parameters.
+
+The lack of monotonicity shown above allows this model to reproduce the key qualitative features of the experiments outlined in \autoref{sec:results}.
+This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
+
 
 First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
@@ -559,7 +592,7 @@ With pre-training:
 \end{aligned}
 \end{equation}
 %
-So, we see that pre-training will speed up learning when $\Delta f$ is small (in absolute value).
+So, we see that pre-training will speed up learning when $\Delta f$ is small.
 %, as seen in \autoref{fig:multistate_weak}\ref{fig:multistate_weak_learnS} (black curves).
 On the other hand, if $\Delta f$ is close to $\half$, pre-training will initially slow down learning a lot due to the factor of $(1-2\Delta f)^{M/2-1}$.
 %, as seen in \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learnS}.
@@ -591,7 +624,7 @@ There are two effects here as well.
 Smaller $\beta$ will increase the probability of crossing the centre of the chain, speeding up learning, but it will also concentrate probability at the ends of the chain, depleting the centre and slowing down learning.
  %(see \autoref{fig:multistate_strong}\ref{fig:multistate_strong_eq}\ref{fig:multistate_strong_eq_KO}, blue trace).
 The first effect goes like $1/\beta$, whereas the second goes like $\beta^{M/2}$ and will be more significant for smaller $\beta$ or in a longer chain.
-This exponential decay in the initial distribution is what allows the saturation bias to overwhelm the increases intrinsic plasticity rate and lead to impaired learning with enhanced plasticity.
+This exponential decay in the initial distribution is what allows the saturation bias to overwhelm the increased intrinsic plasticity rate and lead to impaired learning with enhanced plasticity.
 It is important that a learning signal is only generated by the central transition so that the exponential decay can take effect.
 
 With pre-training:
@@ -691,7 +724,31 @@ However, this model can be solved exactly:
 \end{multline}
 %
 But it is easier to just substitute $M=2$ into the formulae in \autoref{sec:multistate}.
-In this case, the initial rate of change and the total change encapsulate the whole solution, as there is only a single exponential decay.
+%In this case, the initial rate of change and the total change encapsulate the whole solution, as there is only a single exponential decay.
+
+We find that
+%
+\begin{equation}\label{eq:binaryflux}
+\begin{aligned}
+  \Phi &= \frac{q\pot q\dep \Delta f}{f\pot q\pot + f\dep q\dep}, &\qquad
+  \pdiff{\Phi}{q\dep} &= \frac{f\pot (q\pot)^2 \Delta f}{(f\pot q\pot + f\dep q\dep)^2}, \\ &&
+  \pdiff{\Phi}{f\pot} &= \frac{(f\pot\inc q\pot + f\dep\inc q\dep) q\pot q\dep}{(f\pot q\pot + f\dep q\dep)^2}.
+\end{aligned}
+\end{equation}
+%
+The flux is a monotonically increasing function of $q\dep$ and $f\pot$.
+Therefore, enhancing plasticity in this way or pre-training can only enhance the initial learning rate, unlike the experimental results shown in \modelfig.
+
+
+
+The only thing we have to worry about is when the wild-type catches up with the \KO\ models.
+As the total change will be larger for the wild-type than \KO\ models, it must overtake eventually.
+If this happens early enough, the initial period, where the \KO\ models learns faster than wild-type, would not be seen in the experiment.
+However, the timescale for this crossover would be similar to the timescale of the exponentials.
+In the data, it looks like that timescale is longer than the gaps between successive measurements, so we needn't worry about this.
+
+The monotonicity shown above means that this model cannot reproduce the key qualitative features of the experiments outlined in \autoref{sec:results}, at least as for the initial learning rate.
+This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
 
 First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
@@ -708,7 +765,7 @@ With pre-training:
 \end{aligned}
 \end{equation}
 %
-So, we see that pre-training will always speed up learning, unlike what is seen in the experiment.
+So, we see that pre-training will speed up learning for all parameter values, unlike what is seen in the experiment.
 This can be seen in
 \autoref{fig:sim_results}\ref{fig:binary_sim} %\autoref{fig:binary}\ref{fig:binary_learnS}
 (black curves).
@@ -720,7 +777,7 @@ Without pre-training:
   \Phi = \frac{2{\Delta f}\, q}{1+\beta},
 \end{equation}
 %
-which is always larger that \eqref{eq:binWTnopre}, unlike what is seen in the experiment.
+which is always larger than \eqref{eq:binWTnopre}, unlike what is seen in the experiments (see \modelfig).
 This is also seen in
 \autoref{fig:sim_results}\ref{fig:binary_sim} %\autoref{fig:binary}\ref{fig:binary_learn},\ref{fig:binary_learnS}
 (solid curves).
@@ -741,38 +798,16 @@ With pre-training:
 %
 As we've already ruled out this model, we will not analyse this formula any further.
 
-We made a number of assumptions in our analysis so far.
-Before we declare this model to be falsified, we should think about what would happen if we relaxed these assumptions and explored a larger parameter space.
 
-First, we assumed that the wild type had symmetric potentiation and depression.
-Relaxing this assumption would correspond modelling the wild-type like the \KO\ mice, but with a different value for $\beta$.
-We will still have $\beta\ko<\beta\wt$, and looking at \eqref{eq:binKOnopre} tell us that we would still have faster learning in the \KO\ models.
-
-Secondly, we assumed that there would be equal rates of potentiation and depression in the untrained situation.
-However, relaxing this assumption merely changes \eqref{eq:binKOnopre} to
-%
-\begin{equation}\label{eq:binKOnoprediff}
-  \Phi = \frac{{\Delta f}\, q}{f\dep+\beta f\pot} = \frac{{\Delta f}\, q\pot q\dep}{f\dep q\dep+ f\pot q\pot}.
-\end{equation}
-%
-This will not change our conclusions either.
-
-Because for this simple binary synapse model, the ratio of the numbers of potentiated and depressed synapses is equal to the ratio of the potentiating and depressing transition rates.
+For this simple binary synapse model, the ratio of the numbers of potentiated and depressed synapses is equal to the ratio of the potentiating and depressing transition rates.
 This means that the leading effects of enhanced intrinsic plasticity rates and saturation bias cancel each other.
-This is eve true as the number of synapses available for further plasticity approaches zero, which requires that the depressing transition be infinitely stronger than the potentiating transition, compensating for the saturation.
+This is even true as the number of synapses available for further plasticity approaches zero, which requires that the depressing transition be infinitely stronger than the potentiating transition, compensating for the saturation.
 There is a requirement that the total number of synapses, potentiated and depressed, is fixed.
 This normalization effect always dampens the effect of saturation bias, so that the effect of enhanced intrinsic plasticity rates always dominates.
 Thus, we always see enhanced learning with enhanced plasticity with the binary synapse model.
 
-As we did not need the pre-training paradigm to rule out this model, we will not look at removing the symmetry between gain-increase and decrease in detail.
-However, one can see that pre-training will always increase the fraction of synapses available for depression.
+One can see that pre-training will always increase the fraction of synapses available for depression.
 This model has no mechanism that could ever result in this causing impaired learning.
-
-The only thing we have to worry about is when the wild-type catches up with the \KO\ models.
-As the total change will be larger for the wild-type than \KO\ models, it must overtake eventually.
-If this happens early enough, the initial period, where the \KO\ models learns faster than wild-type, would not be seen in the experiment.
-However, the timescale for this crossover would be similar to the timescale of the exponentials.
-In the data, it looks like that timescale is longer than the gaps between successive measurements, so we needn't worry about this.
 
 Intuitively, this model is missing two features of the \hyperref[sec:multistate]{serial model}.
 First, it does not have the exponential amplification of the effect of initial saturation bias because this model does not have a chain of states for the distribution to decay across.
@@ -802,20 +837,52 @@ However, now the rate of change of our learning metric, \eqref{eq:learning}, wil
 \begin{equation}\label{eq:multiLinFlux}
   \begin{aligned}
     \Phi &= \sum_{i=1}^{M-1} \eq_{i+1} f'{}\dep q\dep - \eq_i f'{}\pot q\pot
-         &= \sum_{i=1}^{M-1} \eq_i (\alpha-\alpha') f'{}\dep q\dep \\
-         &= \frac{1-\alpha^{M-1}}{1-\alpha^M} \, (\alpha-\alpha') f'{}\dep q\dep.
+         %&= \sum_{i=1}^{M-1} \eq_i (\alpha-\alpha') f'{}\dep q\dep \\
+         &= \frac{1-\alpha^{M-1}}{1-\alpha^M} \, \prn{\frac{\alpha}{\alpha\inc}} f\inc\pot q\pot.
   \end{aligned}
 \end{equation}
 %
+
+To see the effects of the knockout, we can see if this increases or decreases with $q\dep$:
+%
+\begin{equation}\label{eq:multiderq}
+  q\dep \pdiff{\Phi}{q\dep} = 
+    \frac{\alpha^{M - 1}}{(1 - \alpha^M)^2}
+    \brk{1 - \alpha}
+    \brk{M - \sum_{i=1}^M \alpha^{i-1}} 
+    \prn{\frac{\alpha}{\alpha\inc} - 1} f\inc\pot  q\pot.
+\end{equation}
+%
+If $\alpha < 1$, both quantities in square brackets are positive, as the sum contains $M$ terms that are all at most $1$.
+If $\alpha > 1$, both of them are negative.
+Therefore this quantity is positive, so $\Phi$ is a monotonically increasing function of $q\dep$.
+Therefore, enhancing plasticity in this way can only enhance the initial learning rate, for all values the parameters.
+
+The effect of pre-training is to replace $f\potdep$ with $f\potdep\dec$ without changing $f\potdep\inc$, which increases $f\pot$ and decreases $f\dep$.
+Therefore, we can see the effects of pre-training on the initial learning rate by seeing if it increases or decreases with $f\pot$ (with $f\dep = 1 - f\pot$):
+%
+\begin{equation}\label{eq:multiderf}
+  f\pot f\dep \pdiff{\Phi}{f\pot} =  
+    \frac{\alpha^{M - 2}}{(1 - \alpha^M)^2}
+      \brk{1 - \alpha} 
+      \prn{\brk{M - \sum_{i=1}^M \alpha^{i-1}} 
+      + \frac{\alpha}{\alpha\inc} \brk{\sum_{i=1}^M \alpha^{1-i} - M}}
+      f\inc\pot  q\pot.
+\end{equation}
+%
+This quantity is positive, for similar reasons to \eqref{eq:multiderq}, so $\Phi$ is a monotonically increasing function of $f\pot$.
+Therefore, pre-training can can only enhance the initial learning rate, for all values the parameters.
+
+The monotonicity shown above means that this model cannot reproduce the key qualitative features of the experiments outlined in \autoref{sec:results}, at least as for the initial learning rate.
+This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
 
 First, consider the wild-type, for which $q\pot=q\dep=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiLinWTnopre}
-  \Phi = 2{\Delta f}\,q\,\frac{M-1}{M},
+  \Phi = 2{\Delta f}\,q\,\frac{M-1}{M}.
 \end{equation}
 %
-where, once more, we should note that $\Delta f<0$.
 With pre-training:
 %
 \begin{equation}\label{eq:multiLinWTpre}
@@ -836,7 +903,7 @@ Without pre-training:
 %
 This decreases monotonically in the interval $\beta\in[0,1]$, therefore this will always be greater than \eqref{eq:multiLinWTnopre}.
 This means that the \KO\ models will initially learn faster than the wild-type.
-However, as the wild-type will eventually catch up, and this can happen very quickly, as seen in
+However the wild-type will eventually catch up, and this can happen very quickly, as seen in
 \autoref{fig:sim_results}\ref{fig:multistate_sim} %\autoref{fig:multistate_lin}\ref{fig:multistate_lin_learn},\ref{fig:multistate_lin_learnS}
 (solid curves).
 
@@ -858,7 +925,7 @@ The ratio of this to \eqref{eq:multiLinKOnopre} takes its minimum value at the u
 \end{equation}
 %
 which is always greater than 1.
-Therefore, pre-training will always enhance learning, for both \KO\ models and wild-type, as seen in
+Therefore, pre-training will enhance the initial learning rate for all parameter values, for both \KO\ models and wild-type, as seen in
 \autoref{fig:sim_results}\ref{fig:multistate_sim}. %\autoref{fig:multistate_lin}\ref{fig:multistate_lin_learnS}.
 
 
@@ -929,7 +996,7 @@ and the enhanced depression can speed up learning.
 %We can see from \autoref{fig:cascade_long}\ref{fig:cascade_long_pr}\ref{fig:cascade_long_pr_WT_pre} that longer
 
 Sufficiently long pre-training pushes the synapses far down the cascade, slowing down learning for the wild-type (see \autoref{fig:sim_results}\ref{fig:cascade_sim}, black curves).
-This effect is weaker for the \KO\ models, as the equilibrium distribution is not as heavily concentrated at the end.
+This effect is weaker for the \KO\ models, as the equilibrium distribution is not as heavily concentrated at the end, as the distribution before pre-training is shifted in the other direction.
 %(see \autoref{fig:cascade_long}\ref{fig:cascade_long_eq}\ref{fig:cascade_long_eq_KO}).
 
 
@@ -972,7 +1039,7 @@ Second, it has the metaplastic effect where repeated potentiation makes future d
 \subsection{Parameter fitting}\label{sec:fit}
 
 So far, we have only considered the comparisons listed at the start of \hyperref[sec:results]{this section}, as they raised important conceptual questions.
-We have not considered the other two comparisons, the lack of difference between wild-type without pre-training and \KO\ with pre-training and between wild-type with pre-training and \KO\ without pre-training (the ``diagonal'' comparisons in the language of the main text), as they depend more on the values used for the parameters than on any conceptual issues.
+We have not considered the other two comparisons, the lack of difference between wild-type without pre-training and \KO\ with pre-training and between wild-type with pre-training and \KO\ without pre-training (the ``diagonal'' comparisons in the language of \modelfig), as they depend more on the values used for the parameters than on any conceptual issues.
 
 However, to avoid confusion, we found parameter values performed reasonably in these other two comparisons for the three models that could reproduce the correct qualitative results of the four important comparisons: the \hyperref[sec:multistate]{serial model}, the \hyperref[sec:cascade]{cascade model} and the \hyperref[sec:nonuni]{non-uniform multistate model}. The learning curves are shown in \autoref{fig:fit} and the parameters are listed in \autoref{fig:fit}\ref{tab:fit}.
 
