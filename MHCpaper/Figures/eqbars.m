@@ -1,4 +1,4 @@
-vexpt = VORbuilder(@SerialBuilder, 10, 0.12, 0.14, 0.2, 0.5, 0.11, 0.89, 5, 100);
+vexpt = VORbuilder(@SerialBuilder, 10, 0.12, 0.14, 0.2, 0.5, 0.11, 0.89, 5, 100, false);
 yl=[0 0.2];
 yt=yl;
 xl=[0.5 10.5];
@@ -39,7 +39,7 @@ print(gcf,'serial_bar_ko_w.eps','-depsc')
 
 %%
 
-vexpt = VORbuilder(@SerialBuilder, 2, 0.3, 0.3, 0.4, 0.5, 0.2, 0.8, 5, 100);
+vexpt = VORbuilder(@SerialBuilder, 2, 0.3, 0.3, 0.4, 0.5, 0.2, 0.8, 5, 100, false);
 yl=[0 0.2];
 yt=yl;
 xl=[0.5 10.5];
