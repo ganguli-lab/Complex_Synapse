@@ -1,6 +1,6 @@
 function PlotLearnS( obj,varargin )
 %VORexperiment.PLOTLEARNS plot learning curves during taining
-%and pre-training for WT/KO
+%after any pre-training for WT/KO
 
 
 persistent p

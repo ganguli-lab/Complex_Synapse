@@ -1,35 +1,51 @@
 function printVORfigs( prefix,paramWT,paramKO,df,T_train,T_pre,varargin )
-%PRINTVORFIGS Summary of this function goes here
-%   Detailed explanation goes here
+%PRINTVORFIGS(prefix,paramWT,paramKO,df,T_train,T_pre) Print all figures
+%for specified parameter set 
+%
+%   prefix  = string prepended to all file names, must begin with model name
+%   paramWT = parameter used for WT (if different for pot/dep use vector [pot, dep],
+%                                   for pooled use [dep_max, dep_min, pot],
+%                                   otherwise use scalar for both pot and dep) 
+%   paramKO = parameter used for KO dep (for pooled use [dep_max, dep_min])
+%   df      = change in fpot for gain inc (if base fpNorm != 0.5, 
+%                                         or if different for train/pre,
+%                                         use fpots: {fpNorm,fpInc,fpDec})
+%   T_train = duration of training
+%   T_pre   = duration of pre-training
 
-paramPot=paramWT;
-pooled=false;
+paramPot = paramWT(1);
+param_WT_p = param_WT; %need to keep this for pooled)
+paramWT = paramWT(end);
+pooled = false;
+
 if strncmpi(prefix,'cascade',3)
-    builder_h=@CascadeBuilder;
-    n=10;
+    builder_h = @CascadeBuilder;
+    n = 10;
 elseif strncmpi(prefix,'nonuni',3)
-    builder_h=@NonuniBuilder;
-    n=10;
+    builder_h = @NonuniBuilder;
+    n = 10;
 elseif strncmpi(prefix,'serial',3)
-    builder_h=@SerialBuilder;
-    n=10;
+    builder_h = @SerialBuilder;
+    n = 10;
 elseif strncmpi(prefix,'multistate',3)
-    builder_h=@MultistateBuilder;
-    n=10;
+    builder_h = @MultistateBuilder;
+    n = 10;
 elseif strncmpi(prefix,'binary',3)
-    builder_h=@SerialBuilder;
-    n=2;
+    builder_h = @SerialBuilder;
+    n = 2;
 elseif strncmpi(prefix,'pooled',3)
-    builder_h=@PooledBuilder;
-    pooled=true;
-    paramPot=paramWT(3)*[1 1];
-    paramWT(3)=[];
-    n=7;
+    builder_h = @PooledBuilder;
+    pooled = true;
+    paramPot = param_WT_p(3)*[1 1];
+    paramWT = param_WT_p(1:2);
+    n = 7;
 end
 
+if isscalar(df)
+    df = {0.5, 0.5+df, 0.5-df};
+end
 
-
-vexpt=VORbuilder(builder_h,n,paramPot,paramWT,paramKO,0.5,0.5+df,0.5-df,T_train,T_pre,pooled);
+vexpt=VORbuilder(builder_h, n, paramPot, paramWT, paramKO, df{:}, T_train,T_pre, pooled);
 vexpt.PrintFigs(prefix);
 
 

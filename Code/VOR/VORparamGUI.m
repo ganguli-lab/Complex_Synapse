@@ -1,4 +1,10 @@
 function VORparamGUI(varargin)
+%VORparamGUI(...param,value,...) GUI for comparing learning curves for
+%different parameters
+%
+%   builder_h = function handle that builds transition matrices (see folder
+%               Builders, default: @SerialBuilder)
+%   FontSize  = Fonst size for control labels (default: 16)
 
 %initial params
 persistent p

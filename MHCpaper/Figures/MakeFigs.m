@@ -1,3 +1,4 @@
+%printVORfigs( prefix, paramWT ,paramKO, df, T_train, T_pre, varargin )
 printVORfigs('serial_med',0.3,0.4,-0.3,5,20,'print')
 % MakeVORfigs('multistate_strong',0.3,0.4,-0.45,5,30,'print')
 % MakeVORfigs('multistate_weak',0.3,0.4,-0.1,5,20,'print')
@@ -9,3 +10,7 @@ printVORfigs('multistate_lin',0.3,0.4,-0.3,5,5,'print')
 printVORfigs('cascade_long',0.25,0.33,-0.3,5,100,'print')
 printVORfigs('nonuni',0.25,0.33,-0.3,5,100,'print')
 printVORfigs('pooled_deponly',[0.6 0.0006 0.008],[1 0.001],-0.4,5,20,'print')
+%
+printVORfigs('serial_fit',[0.12 0.14], 0.2, -0.39, 5, 100)
+printVORfigs('cascade_fit',[0.386 0.398], 0.466, {0.522, 0.37, 0.998}, 1.5, 200)
+printVORfigs('nonuni_fit',0.4, 0.53, {0.5, 0.3, 0.9}, 5, 500)
