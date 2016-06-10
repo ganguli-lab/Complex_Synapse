@@ -11,9 +11,9 @@
 \graphicspath{{"Figures/"}}
 %
 \usepackage{array}
-\newcounter{tablerow}[table]
-\newcommand{\tablerowautorefname}{row}
-\newenvironment{tabularn}[1]{\begin{tabular}{#1>{\refstepcounter{tablerow}}l}}{\end{tabular}}
+%\newcounter{tablerow}[table]
+%\newcommand{\tablerowautorefname}{row}
+%\newenvironment{tabularn}[1]{\begin{tabular}{#1>{\refstepcounter{tablerow}}l}}{\end{tabular}}
 %\usepackage{etoolbox}
 %\AtBeginEnvironment{tabular}{\setcounter{tablerow}{0}}
 \renewcommand{\figureautorefname}{Supplementary Figure}
@@ -50,6 +50,7 @@
 %\newcommand{\lmax}{_{\text{max}}}
 %\newcommand{\lmin}{_{\text{min}}}
 \newcommand{\modelfig}[1][a]{Figure 4#1 of the main text}
+\newcommand{\datafig}[1][b]{Figure 3#1 of the main text}
 % ----------------------------------------------------------------
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -96,15 +97,14 @@
 
 We make the following assumptions:
 \begin{itemize}
-  \item There are $N$ identical synapses with $M$ internal functional states.
-  \item The states of different synapses are independent of each other.
-  \item The synapses that are eligible for plasticity are chosen randomly.
+  \item There synapses are identical and have $M$ internal functional states, where the states of different synapses are independent of each other.
+%  \item The synapses that are eligible for plasticity are chosen randomly.
   \item Candidate potentiating/depressing plasticity event timings are distributed as Poisson processes with rates $r\potdep$.
-  \item Potentiation and depression are described by Markov processes with transition probabilities $\M\potdep$.
+  \item Candidate potentiation and depression events are described by Markov processes with transition probabilities $\M\potdep$.
   \item The synaptic weights of the internal states are given by the column vector $\w$. This can only take values in a finite range that we can shift to $\pm1$. Most of the models will only use the two extreme values.
 \end{itemize}
 
-In practice, the overall rate of candidate plasticity events will only set the timescale, and only the relative rates will matter.
+The overall rate of candidate plasticity events will only set the timescale, and only the relative rates will matter.
 With this in mind, we define
 %
 \begin{equation}\label{eq:fpotdep}
@@ -112,10 +112,10 @@ With this in mind, we define
   \qquad
   f\pot = \frac{r\pot}{r},
   \qquad
-  f\dep = \frac{r\dep}{r}.
+  f\dep = \frac{r\dep}{r},
 \end{equation}
 %
-The quantities $f\potdep$ measure the fraction of candidate plasticity events that are potentiating/depressing.
+where $f\potdep$ is the fraction of candidate plasticity events that are potentiating/depressing.
 
 The independence and identicalness of synapses means that the state of the system can be completely described by the probability distribution over the internal states, the \emph{row} vector $\pr(t)$ which evolves as
 %
@@ -133,11 +133,11 @@ Eventually, this will settle into the equilibrium distribution:
 \end{equation}
 %
 
-For models with only two possible synaptic weights, the distribution of synaptic weights is completely described by the mean, $\pr(t)\w$.
+%For models with only two possible synaptic weights, the distribution of synaptic weights is completely described by the mean, $\pr(t)\w$.
 
 
 The \KO\ mice have a lower threshold for depression.
-We can model this by changing $\M\dep\wt$ to $\M\dep\ko$, which should have larger off-diagonal matrix elements.
+We can model this by changing $\M\dep\wt$ to $\M\dep\ko$, which has larger off-diagonal matrix elements.
 
 We will look at several different models,
 the serial model (see \cite{Leibold2008serial,Ben-DayanRubin2007sparse} and \autoref{fig:models}\ref{fig:serial_model}) which has only two values for the synaptic weight,
@@ -146,24 +146,26 @@ the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autore
 and the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}).
 We will also look at a new, pooled resource model that we will define below in \autoref{sec:pooledmodel} and a non-uniform version of the multistate model that we will describe in \autoref{sec:nonunimodel}.
 
-For the serial, multistate and two state models, we will use the same value for the transition probabilities, $q$, for potentiation and depression in the wild-type as well as potentiation in the \KO\ models.
-We will use a larger value for $q$ for depression in the \KO\ models.
+For the serial, multistate and two state models, we will use the same value for the transition probabilities, $q$, for potentiation in the wild-type and \KO\ models.
+We will use a larger value for $q$ for depression in the \KO\ models than in the wild-type.
 
-For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation and depression in the wild-type as well as potentiation in the \KO\ models.
-We will use a larger value for $x$ for depression in the \KO\ models.
+For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation in the wild-type and \KO\ models.
+We will use a larger value for $x$ for depression in the \KO\ models than in the wild-type.
 
 The values used for all these parameters in simulations are listed in \autoref{fig:sim_results}\ref{tab:params}.
 
 \begin{figure}
  \begin{center}
- \parbox{0.8\linewidth}{%
- \begin{myenuma}
-  \item\aligntop{\includegraphics[height=1.7cm]{serial.svg}}\label{fig:serial_model}\hspace{0.5cm}
-  \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary_model}\hspace{0.5cm}\\[1cm]
-  \item\aligntop{\includegraphics[height=1.7cm]{multistate.svg}}\label{fig:multistate_model}\hspace{0.5cm}
-  \item\aligntop{\includegraphics[height=2.5cm]{cascade.svg}}\label{fig:cascade_model}
- \end{myenuma}
- }
+   \begin{myenuma}
+  \begin{tabular}{l@{\hspace{0.05\linewidth}}l}
+    \item\aligntop{\includegraphics[height=1.7cm]{serial.svg}}\label{fig:serial_model}&
+    \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary_model}\\[1.7cm]
+    \item\aligntop{\includegraphics[height=1.7cm]{multistate.svg}}\label{fig:multistate_model}&
+    \item\aligntop{\includegraphics[height=2.5cm]{cascade.svg}}\label{fig:cascade_model}\\[2.5cm]
+    \item\aligntop{\includegraphics[height=2.3cm]{pooled.svg}}\label{fig:pooled_model}&
+    \item\aligntop{\includegraphics[height=2.3cm]{multistate_nonuni.svg}}\label{fig:nonuni_model}
+  \end{tabular}
+   \end{myenuma}
  \end{center}
   \caption[Transition probabilities for different models]{Transition probabilities for different models.
   Potentiation induces transitions indicated by orange arrows, depression indicated by blue arrows.
@@ -174,12 +176,18 @@ The values used for all these parameters in simulations are listed in \autoref{f
   (\ref{fig:multistate_model}) In the multistate model the transition probabilities for potentiation/depression are all equal and it is parameterised  by these two values.
   The synaptic weight varies linearly in the interval $[-1,1]$.
   (\ref{fig:cascade_model}) In the cascade model, the transition probabilities decay geometrically with a parameter $x$ (see \cite{Fusi2005cascade}) and synaptic weight takes only two values.
+  (\ref{fig:pooled_model}) In the pooled resource model,
+  Several two-state synapses share resources that are required for potentiation and depression.
+  These resources are depleted as more synapses are potentiated or depressed.
+  This pool of synapses can be modelled as one compound synapse.
+  (\ref{fig:nonuni_model}) In the non-uniform multistate model
+  the synaptic weight varies linearly in the interval $[-1,1]$, similar to the multistate model, but the transition probabilities between adjacent states decays exponentially away from the central transition for both potentiation and depression.
   } \label{fig:models}
 \end{figure}
 
 \subsubsection{Pooled resource model}\label{sec:pooledmodel}
 
-Suppose that there is some resource required for potentiation/depression that is shared between $P$ synapses and is depleted as more synapses are potentiated/depressed and replenished when this is reversed.
+Suppose that there is some resource required for potentiation/depression that is shared between $P$ synapses and is depleted as more synapses are potentiated/depressed and replenished when this is reversed, as shown in \autoref{fig:models}\ref{fig:pooled_model}.
 We can avoid going beyond the independent synapse model by modelling this pool of synapse as a single compound synapse.
 
 We will model the individual synapses with the two-state model.
@@ -206,9 +214,9 @@ The transition network will then have a multistate topology (see \autoref{fig:mo
 %
 
 
-The Markov process is lumpable \wrt this partition of states (see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time).
-The transition probabilities between lumps $i$ and $j$ is computed by choosing one state from lump $i$ and summing the transition probabilities to all states in lump $j$.
-The result must be the same for all states in lump $i$.
+The Markov process is lumpable \wrt this partition of states (see \cite{kemeny1960finite,burke1958markovian,Ball1993Lumpability}).
+The transition probabilities between lumps $i$ and $j$ is computed by choosing one state from lump $i$ and summing the transition probabilities to all states in lump $j$,
+which must be the same for all states in lump $i$.
 
 For any state in lump $i$, there are $P-i$ synapses that can be potentiated to go to lump $i+1$.
 Each of these transition probabilities is $q\pot/P$.
@@ -229,27 +237,27 @@ with all other off-diagonal elements equal to zero.
 The diagonal elements are chosen so that the rows sum to one.
 
 This model is parameterised by the range of values, $q\in[q\lmin,q\lmax]$, for potentiation and depression.
-We will use the same values for potentiation and depression in the wild-type as well as potentiation in the \KO\ models.
-We will use larger values for depression in the \KO\ models.
-In the main text, we consider a version of this model that has resource depletion for depression only, so that potentiation transition probabilities are unaffected by the number of potentiated synapses.
+We will use the same values for potentiation in the wild-type asnd \KO\ models.
+We will use larger values for depression in the \KO\ models than in the wild-type.
+we consider a version of this model that has resource depletion for depression only, so that potentiation transition probabilities are unaffected by the number of potentiated synapses.
 This is done by setting $q\pot\lmax=q\pot\lmin$.
 The values of these parameters are listed in \autoref{fig:sim_results}\ref{tab:params}.
 
 
-\begin{figure}
- \begin{center}
-  \aligntop{\includegraphics[height=4cm]{pooled.svg}}
- \end{center}
-  \caption[The pooled resource model]{The pooled resource model.
-  Several two-state synapses share resources that are required for potentiation and depression.
-  These resources are depleted as more synapses are potentiated or depressed.
-  This pool of synapses can be modelled as one compound synapse.} \label{fig:pooled_model}
-\end{figure}
+%\begin{figure}
+% \begin{center}
+%  \aligntop{\includegraphics[height=4cm]{pooled.svg}}
+% \end{center}
+%  \caption[The pooled resource model]{The pooled resource model.
+%  Several two-state synapses share resources that are required for potentiation and depression.
+%  These resources are depleted as more synapses are potentiated or depressed.
+%  This pool of synapses can be modelled as one compound synapse.} \label{fig:pooled_model}
+%\end{figure}
 
 
 \subsubsection{Non-uniform multistate model}\label{sec:nonunimodel}
 
-This model is similar to the multistate model (see \autoref{fig:models}\ref{fig:multistate_model})), as it only has transitions between adjacent states and a linearly varying synaptic weight.
+This model, shown in \autoref{fig:models}\ref{fig:nonuni_model}, is similar to the multistate model (see \autoref{fig:models}\ref{fig:multistate_model})), as it only has transitions between adjacent states and a linearly varying synaptic weight.
 However, like the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}), the transition probabilities decay exponentially away from the central transition.
 More precisely:
 %
@@ -267,13 +275,13 @@ The values used are listed in \autoref{fig:sim_results}\ref{tab:params}.
 
 
 
-\begin{figure}
- \begin{center}
-  \aligntop{\includegraphics[height=3cm]{multistate_nonuni.svg}}
- \end{center}
-  \caption[The non-uniform multistate model]{The non-uniform multistate model.
-  Similar to the multistate model, (\autoref{fig:models}\ref{fig:multistate_model}), the synaptic weight varies linearly in the interval $[-1,1]$, but the transition probabilities between adjacent states decays exponentially away from the central transition for both potentiation and depression.} \label{fig:nonuni_model}
-\end{figure}
+%\begin{figure}
+% \begin{center}
+%  \aligntop{\includegraphics[height=3cm]{multistate_nonuni.svg}}
+% \end{center}
+%  \caption[The non-uniform multistate model]{The non-uniform multistate model.
+%  Similar to the multistate model, (\autoref{fig:models}\ref{fig:multistate_model}), the synaptic weight varies linearly in the interval $[-1,1]$, but the transition probabilities between adjacent states decays exponentially away from the central transition for both potentiation and depression.} \label{fig:nonuni_model}
+%\end{figure}
 
 
 
@@ -281,7 +289,7 @@ The values used are listed in \autoref{fig:sim_results}\ref{tab:params}.
 
 Training the animal will not change the internal dynamics of a synapse under potentiation or depression.
 It will change the environment, which will lead to a change in how often potentiation and depression occur.
-It could be manifested in a change in which synapses are potentiated/depressed, but this could not be captured in this type of model.
+%It could be manifested in a change in which synapses are potentiated/depressed, but this could not be captured in this type of model.
 We will model this by changing $f\potdep$, leaving $\M\potdep$ unchanged.
 This approach was used to model motor learning in \cite{Smith2006savings}.
 
@@ -324,7 +332,7 @@ Therefore the rates of potentiation and depression should not change very much e
 
 For the most part, we set $f\dep\norm=\half$, $f\dep\inc=f\dep\norm+\Delta f$ and $f\dep\dec=f\dep\norm-\Delta f$, with $\Delta f>0$.
 We use the same values for wild-type and \KO\ models for the reasons discussed above.
-We will mostly treat gain-increase and decrease symmetrically, but this is not necessary.
+%We will mostly treat gain-increase and decrease symmetrically, but this is not necessary.
 We could adjust $r$ to keep $r\pot$ unchanged, if so desired, but this would only change the overall timescale and would not affect any of the qualitative comparisons that we are concerned with here.
 The values of these parameters are listed in \autoref{fig:sim_results}\ref{tab:params}.
 
@@ -362,54 +370,59 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
 
 \begin{figure}[p]
 \begin{myenuma}
-  \begin{tabular}{l@{\hspace{0.05\linewidth}}l@{\hspace{0.05\linewidth}}l}
+  \begin{tabular}{lll}
       \item\label{fig:seial_sim}
-      \aligntop{\includegraphics[width=0.25\linewidth]{serial.svg}}
+      \aligntop{\includegraphics[width=0.24\linewidth]{serial.svg}}
       &
       \item\label{fig:binary_sim}
-      \hspace{0.05\linewidth}\aligntop{\includegraphics[width=0.125\linewidth]{binary.svg}}
+      \hspace{0.05\linewidth}\aligntop{\includegraphics[width=0.12\linewidth]{binary.svg}}
       &
       \item\label{fig:multistate_sim}
-      \aligntop{\includegraphics[width=0.25\linewidth]{multistate.svg}}
-      \\[1.5cm]
-      \aligntop{\includegraphics[width=0.3\linewidth]{serial_med_learnS.eps}}
+      \aligntop{\includegraphics[width=0.24\linewidth]{multistate.svg}}
+      \\[1.3cm]
+      \aligntop{\includegraphics[width=0.29\linewidth]{serial_fit_learnS.eps}}
       &
-      \aligntop{\includegraphics[width=0.3\linewidth]{binary_learnS.eps}}
+      \aligntop{\includegraphics[width=0.29\linewidth]{binary_learnS.eps}}
       &
-      \aligntop{\includegraphics[width=0.3\linewidth]{multistate_lin_learnS.eps}}
-      \\[5.5cm]
+      \aligntop{\includegraphics[width=0.29\linewidth]{multistate_lin_learnS.eps}}
+      \\[3.5cm]
       \item\label{fig:pooled_sim}
-      \aligntop{\includegraphics[width=0.3\linewidth]{pooled_deponly.svg}}
+      \aligntop{\includegraphics[width=0.29\linewidth]{pooled_deponly.svg}}
       &
       \item\label{fig:cascade_sim}
-      \aligntop{\includegraphics[width=0.25\linewidth]{cascade.svg}}
+      \aligntop{\includegraphics[width=0.24\linewidth]{cascade.svg}}
       &
       \item\label{fig:nonuni_sim}
-      \aligntop{\includegraphics[width=0.25\linewidth]{multistate_nonuni.svg}}
-      \\[2cm]
-      \aligntop{\includegraphics[width=0.3\linewidth]{pooled_deponly_learnS.eps}}
+      \aligntop{\includegraphics[width=0.24\linewidth]{multistate_nonuni.svg}}
+      \\[1.8cm]
+      \aligntop{\includegraphics[width=0.29\linewidth]{pooled_deponly_learnS.eps}}
       &
-      \aligntop{\includegraphics[width=0.3\linewidth]{cascade_long_learnS.eps}}
+      \aligntop{\includegraphics[width=0.29\linewidth]{cascade_fit_learnS.eps}}
       &
-      \aligntop{\includegraphics[width=0.3\linewidth]{nonuni_learnS.eps}}
+      \aligntop{\includegraphics[width=0.29\linewidth]{nonuni_fit_learnS.eps}}
   \end{tabular}
 
-  \vspace{1cm}\item\label{tab:params}\aligntop{
-  \begin{tabularn}{|l|c|c|c|c|c|c|}
-    \cline{1-7}
-    Model & \# states & pot & WT dep & \KO\ dep & $\Delta f$ & $r\tpre$ \\
-    \cline{1-7}
-    Serial        & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.3  & 20  &\label{tr:multistate_med} \\
-    Two-state     & 2  & $q=0.1$  & $q=0.1$  & $q=0.2$  & 0.1  & 5   &\label{tr:binary} \\
-    Multistate    & 10 & $q=0.3$  & $q=0.3$  & $q=0.4$  & 0.3  & 5   &\label{tr:multistate_lin} \\
-    Pooled res. & 7  & $q=0.008$        & $q\in[0.0006,0.6]$  & $q\in[0.001,1]$
-                                          & 0.4 & 20 &\label{tr:pooled_deponly}\\
-    Cascade       & 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 100 &\label{tr:cascade_long} \\
-    Non-uni. MS& 10 & $x=0.25$ & $x=0.25$ & $x=0.33$ & 0.3  & 150 &\label{tr:nonuni} \\
-    \cline{1-7}
-  \end{tabularn}}
+  \vspace{0.5cm}
+  \item\label{tab:params}\aligntop{
+  \begin{tabular}{|l|c|c|c|c|c|c|c|c|}
+    \cline{1-9}
+    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+    Model & \#  & \multicolumn{3}{c|}{Plasticity parameter} & \multicolumn{3}{c|}{$f\dep$} & $r\tpre$ \\
+    \cline{3-8}
+    & states & pot & WT dep & {\footnotesize\KO} dep & base & inc & dec & {} \\
+
+    \cline{1-9}
+    Serial   & 10 & $0.12$  & $0.14$  & $0.2$  & 0.5 & 0.89 & 0.11  & 100  \\%&\label{tr:serial_fit} \\
+    Two-state     & 2  & $0.1$  & $0.1$  & $0.2$  & 0.5 & 0.6 & 0.4  & 5   \\%&\label{tr:binary} \\
+    Multistate    & 10 & $0.3$  & $0.3$  & $0.4$  & 0.5 & 0.8 & 0.2  & 5   \\%&\label{tr:multistate_lin} \\
+    Pooled res.\ & 7  & $0.008$        & $[0.0006,0.6]$  & $[0.001,1]$
+                                          & 0.5 & 0.9 & 0.1 & 20 \\%&\label{tr:pooled_deponly}\\
+    Cascade  & 14 & $0.386$  & $0.398$  & $0.466$  & 0.522 & 0.63 & 0.002  & 200  \\%&\label{tr:cascade_fit} \\
+    Non-uni.\ & 12 & $0.4$    & $0.4$    & $0.53$   & 0.5 & 0.7 & 0.1 & 500  \\%&\label{tr:nonuni_fit} \\
+    \cline{1-9}
+  \end{tabular}}
   \end{myenuma}
-  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models. (\ref{tab:params}) Parameters used for simulations.}\label{fig:sim_results}
+  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models. (\ref{tab:params}) Parameters used for simulations. For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states. For the cascade and non-uniform multistate models, the plasticity parameter is the ratio of adjacent transition probabilities.}\label{fig:sim_results}
 \end{figure}
 
 
@@ -574,7 +587,7 @@ The lack of monotonicity shown above allows this model to reproduce the key qual
 This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
 
 
-First, consider the wild-type, for which $q\pot=q\dep=q$.
+First, consider the wild-type.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiWTnopre}
@@ -610,7 +623,7 @@ Essentially, this model has a form of metaplasticity where repeated potentiation
 This allows excessive pre-training to impair learning, despite increasing the number of potentiated synapses.
 
 
-Now, consider the \KO\ models, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
+Now, consider the \KO\ models, for which we define $\beta=q\pot/q\dep<1$, and $q\pot=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:multiKOnopre}
@@ -663,7 +676,7 @@ As we see in \autoref{fig:multistate_star}\ref{fig:multistate_deltafstar}, $\Del
   \caption[The functions $\beta^*(M)$ and $\Delta f^*(\beta,M)$]{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the \KO\ models have impaired learning, and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
 \end{figure}
 
-In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f \in [\Delta f^*(1,M),\Delta f^*(\beta,M)]$ and look at intermediate time-scales, we will see that the \KO\ models learn slower than wild-type without pre-training, and that pre-training speeds up learning in the \KO\ models but slows it down in the wild-type.
+In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f \in [\Delta f^*(1,M),\Delta f^*(\beta,M)]$, we will see that the \KO\ models learn slower than wild-type without pre-training, and that pre-training speeds up learning in the \KO\ models but slows it down in the wild-type.
 %However, in this case pre-training proceeds much faster in the \KO\ models than wild-type (see \autoref{fig:multistate_med}\ref{fig:multistate_med_learn} and \autoref{fig:multistate_strong}\ref{fig:multistate_strong_learn}, lower curves), which is \emph{not} seen in the experiment.
 
 %Now consider what would happen if we did not treat gain-increase and gain-decrease symmetrically.
@@ -729,11 +742,9 @@ But it is easier to just substitute $M=2$ into the formulae in \autoref{sec:mult
 We find that
 %
 \begin{equation}\label{eq:binaryflux}
-\begin{aligned}
-  \Phi &= \frac{q\pot q\dep \Delta f}{f\pot q\pot + f\dep q\dep}, &\qquad
-  \pdiff{\Phi}{q\dep} &= \frac{f\pot (q\pot)^2 \Delta f}{(f\pot q\pot + f\dep q\dep)^2}, \\ &&
-  \pdiff{\Phi}{f\pot} &= \frac{(f\pot\inc q\pot + f\dep\inc q\dep) q\pot q\dep}{(f\pot q\pot + f\dep q\dep)^2}.
-\end{aligned}
+  \Phi = \frac{q\pot q\dep \Delta f}{\lambda}, \qquad
+  \pdiff{\Phi}{q\dep} = \frac{f\pot (q\pot)^2 \Delta f}{\lambda^2}, \qquad
+  \pdiff{\Phi}{f\pot} = \frac{\lambda\inc q\pot q\dep}{\lambda^2}.
 \end{equation}
 %
 The flux is a monotonically increasing function of $q\dep$ and $f\pot$.
@@ -741,16 +752,17 @@ Therefore, enhancing plasticity in this way or pre-training can only enhance the
 
 
 
-The only thing we have to worry about is when the wild-type catches up with the \KO\ models.
+We have only looked at the initial learning rate here, but for the experiments we looked at the learning after a finite period of time.
 As the total change will be larger for the wild-type than \KO\ models, it must overtake eventually.
-If this happens early enough, the initial period, where the \KO\ models learns faster than wild-type, would not be seen in the experiment.
-However, the timescale for this crossover would be similar to the timescale of the exponentials.
-In the data, it looks like that timescale is longer than the gaps between successive measurements, so we needn't worry about this.
+If this happens early enough (\ie between the first and second data point in \datafig), the initial period where the \KO\ models learns faster than wild-type would not be seen in the experiment.
+However, the timescale for this crossover would be similar to the timescale of the exponentials, which is at least as long as the timescale for saturation of learning.
+In \datafig\ we see that this timescale is longer than the gaps between successive measurements, so we would not miss any initial period of enhanced learning in the \KO\ mice if this were the correct model.
+In addition, the models without pre-training can never catch up with those with pre-training, and this is sufficient to rule out this model.
 
 The monotonicity shown above means that this model cannot reproduce the key qualitative features of the experiments outlined in \autoref{sec:results}, at least as for the initial learning rate.
 This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
 
-First, consider the wild-type, for which $q\pot=q\dep=q$.
+First, consider the wild-type.
 Without pre-training:
 %
 \begin{equation}\label{eq:binWTnopre}
@@ -787,16 +799,17 @@ For the serial model, we argued that the first effect goes like $1/\beta$, where
 Here $M=2$, so the leading part of the two effects will cancel.
 The subleading effects (the normalisation of the probabilities) are responsible for the faster learning in the \KO\ models.
 
-With pre-training:
-%
-\begin{equation}\label{eq:binKOpre}
-\begin{aligned}
-  \Phi &= 4{\Delta f}\, q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
-          {(1-2\Delta f)^2 - \beta^2(1+2\Delta f)^2}.
-\end{aligned}
-\end{equation}
-%
-As we've already ruled out this model, we will not analyse this formula any further.
+%With pre-training:
+%%
+%\begin{equation}\label{eq:binKOpre}
+%\begin{aligned}
+%  \Phi &= 4{\Delta f}\, q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
+%          {(1-2\Delta f)^2 - \beta^2(1+2\Delta f)^2}.
+%\end{aligned}
+%\end{equation}
+%%
+%As we've already ruled out this model, we will not analyse this formula any further.
+As this model is already ruled out, we will not analyse pre-training in the \KO\ models.
 
 
 For this simple binary synapse model, the ratio of the numbers of potentiated and depressed synapses is equal to the ratio of the potentiating and depressing transition rates.
@@ -819,12 +832,7 @@ Second, it does not have the metaplastic effect where repeated potentiation make
 %\resultsfign{multistate model}{multistate_lin}
 
 
-In this section, we will consider the multistate model as originally defined in \cite{amit1994learning}, \ie with linearly varying synaptic weight:
-%
-\begin{equation}\label{eq:multistateLinWeight}
-  \w_i = \frac{2i-M-1}{M-1}.
-\end{equation}
-%
+In this section, we will consider the multistate model as defined in \cite{amit1994learning}, \ie with linearly varying synaptic weight.
 The numerical results can be seen in
 \autoref{fig:sim_results}\ref{fig:multistate_sim}, %\autoref{fig:multistate_lin},
 but we can get some analytic insight into this model as well.
@@ -858,8 +866,7 @@ If $\alpha > 1$, both of them are negative.
 Therefore this quantity is positive, so $\Phi$ is a monotonically increasing function of $q\dep$.
 Therefore, enhancing plasticity in this way can only enhance the initial learning rate, for all values the parameters.
 
-The effect of pre-training is to replace $f\potdep$ with $f\potdep\dec$ without changing $f\potdep\inc$, which increases $f\pot$ and decreases $f\dep$.
-Therefore, we can see the effects of pre-training on the initial learning rate by seeing if it increases or decreases with $f\pot$ (with $f\dep = 1 - f\pot$):
+We can also see the effects of pre-training on the initial learning rate by seeing if it increases or decreases with $f\pot$ (with $f\dep = 1 - f\pot$):
 %
 \begin{equation}\label{eq:multiderf}
   f\pot f\dep \pdiff{\Phi}{f\pot} =  
@@ -874,59 +881,65 @@ This quantity is positive, for similar reasons to \eqref{eq:multiderq}, so $\Phi
 Therefore, pre-training can can only enhance the initial learning rate, for all values the parameters.
 
 The monotonicity shown above means that this model cannot reproduce the key qualitative features of the experiments outlined in \autoref{sec:results}, at least as for the initial learning rate.
-This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
+%This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
+%
+%First, consider the wild-type, for which $q\pot=q\dep=q$.
+%Without pre-training:
+%%
+%\begin{equation}\label{eq:multiLinWTnopre}
+%  \Phi = 2{\Delta f}\,q\,\frac{M-1}{M}.
+%\end{equation}
+%%
+%With pre-training:
+%%
+%\begin{equation}\label{eq:multiLinWTpre}
+%\begin{aligned}
+%  \Phi &= 4{\Delta f}\, q \, \frac{(1+2\Delta f)^{M-1} - (1-2\Delta f)^{M-1}}
+%          {(1+2\Delta f)^M - (1-2\Delta f)^M} \\
+%       &= {4{\Delta f}\, q}\,\frac{M-1}{M} + \CO(\Delta f)^2.
+%\end{aligned}
+%\end{equation}
+%%
+%
+%Now, consider the \KO\ models, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
+%Without pre-training:
+%%
+%\begin{equation}\label{eq:multiLinKOnopre}
+%  \Phi = 2{\Delta f}\, q\,\frac{1-\beta^{M-1}}{1-\beta^M}.
+%\end{equation}
+%%
+%This decreases monotonically in the interval $\beta\in[0,1]$, therefore this will always be greater than \eqref{eq:multiLinWTnopre}.
+%This means that the \KO\ models will initially learn faster than the wild-type.
+%However the wild-type will eventually catch up, and this can happen very quickly, as seen in
+%\autoref{fig:sim_results}\ref{fig:multistate_sim} %\autoref{fig:multistate_lin}\ref{fig:multistate_lin_learn},\ref{fig:multistate_lin_learnS}
+%(solid curves).
+%
+%With pre-training:
+%%
+%\begin{equation}\label{eq:multiLinKOpre}
+%\begin{aligned}
+%  \Phi &= 4{\Delta f}\, q \, \frac{(1-2\Delta f)^{M-1} - \beta^{M-1}(1+2\Delta f)^{M-1}}
+%          {(1-2\Delta f)^M - \beta^M(1+2\Delta f)^M} \\
+%       &= 4{\Delta f}\, q\,\frac{1-\beta^{M-1}}{1-\beta^M} + \CO(\Delta f)^2.
+%\end{aligned}
+%\end{equation}
+%%
+%The ratio of this to \eqref{eq:multiLinKOnopre} takes its minimum value at the upper end of the interval $\Delta f \in \brk{0,\half}$, where it takes the value
+%%
+%\begin{equation}\label{eq:multiLinprenopre}
+%  \frac{\Phi_{\text{w/ pre}}}{\Phi_{\text{w/o pre}}} = \frac{1-\beta^M}{\beta-\beta^M}
+%   \longrightarrow \frac{M}{M-1} \quad \text{as} \quad \beta\to1,
+%\end{equation}
+%%
+%which is always greater than 1.
+%Therefore, pre-training will enhance the initial learning rate for all parameter values, for both \KO\ models and wild-type, as seen in
+%\autoref{fig:sim_results}\ref{fig:multistate_sim}. %\autoref{fig:multistate_lin}\ref{fig:multistate_lin_learnS}.
 
-First, consider the wild-type, for which $q\pot=q\dep=q$.
-Without pre-training:
-%
-\begin{equation}\label{eq:multiLinWTnopre}
-  \Phi = 2{\Delta f}\,q\,\frac{M-1}{M}.
-\end{equation}
-%
-With pre-training:
-%
-\begin{equation}\label{eq:multiLinWTpre}
-\begin{aligned}
-  \Phi &= 4{\Delta f}\, q \, \frac{(1+2\Delta f)^{M-1} - (1-2\Delta f)^{M-1}}
-          {(1+2\Delta f)^M - (1-2\Delta f)^M} \\
-       &= {4{\Delta f}\, q}\,\frac{M-1}{M} + \CO(\Delta f)^2.
-\end{aligned}
-\end{equation}
-%
-
-Now, consider the \KO\ models, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
-Without pre-training:
-%
-\begin{equation}\label{eq:multiLinKOnopre}
-  \Phi = 2{\Delta f}\, q\,\frac{1-\beta^{M-1}}{1-\beta^M}.
-\end{equation}
-%
-This decreases monotonically in the interval $\beta\in[0,1]$, therefore this will always be greater than \eqref{eq:multiLinWTnopre}.
-This means that the \KO\ models will initially learn faster than the wild-type.
-However the wild-type will eventually catch up, and this can happen very quickly, as seen in
-\autoref{fig:sim_results}\ref{fig:multistate_sim} %\autoref{fig:multistate_lin}\ref{fig:multistate_lin_learn},\ref{fig:multistate_lin_learnS}
-(solid curves).
-
-With pre-training:
-%
-\begin{equation}\label{eq:multiLinKOpre}
-\begin{aligned}
-  \Phi &= 4{\Delta f}\, q \, \frac{(1-2\Delta f)^{M-1} - \beta^{M-1}(1+2\Delta f)^{M-1}}
-          {(1-2\Delta f)^M - \beta^M(1+2\Delta f)^M} \\
-       &= 4{\Delta f}\, q\,\frac{1-\beta^{M-1}}{1-\beta^M} + \CO(\Delta f)^2.
-\end{aligned}
-\end{equation}
-%
-The ratio of this to \eqref{eq:multiLinKOnopre} takes its minimum value at the upper end of the interval $\Delta f \in \brk{0,\half}$, where it takes the value
-%
-\begin{equation}\label{eq:multiLinprenopre}
-  \frac{\Phi_{\text{w/ pre}}}{\Phi_{\text{w/o pre}}} = \frac{1-\beta^M}{\beta-\beta^M}
-   \longrightarrow \frac{M}{M-1} \quad \text{as} \quad \beta\to1,
-\end{equation}
-%
-which is always greater than 1.
-Therefore, pre-training will enhance the initial learning rate for all parameter values, for both \KO\ models and wild-type, as seen in
-\autoref{fig:sim_results}\ref{fig:multistate_sim}. %\autoref{fig:multistate_lin}\ref{fig:multistate_lin_learnS}.
+We have only looked at the initial learning rate here, but for the experiments we looked at the learning after a finite period of time.
+Just as the case of the  \hyperref[sec:binary]{two state model}, the wild-type will eventually catch up with \KO\ model.
+This can happen very quickly, as seen in \autoref{fig:sim_results}\ref{fig:multistate_sim} (solid curves).
+This means that the initial period, where the \KO\ models learns faster than wild-type, might not be seen in the experiment.
+However, the models without pre-training can never catch up with those with pre-training, and this is sufficient to rule out this model.
 
 
 Like the \hyperref[sec:binary]{two state model}, this model is missing two features of the \hyperref[sec:multistate]{serial model}.
@@ -947,8 +960,9 @@ Second, it does not have the metaplastic effect where repeated potentiation make
 
 The results of simulations of the pooled resource model can be seen in
 \autoref{fig:sim_results}\ref{fig:pooled_sim}. %\autoref{fig:pooled_deponly}.
-It is difficult to study this model analytically.
-However, the numerical results can helps us understand it qualitatively.
+%It is difficult to study this model analytically.
+%However, the numerical results can help us understand it qualitatively.
+The numerical results can help us understand it qualitatively.
 
 If we compare gain-increase learning in the \KO\ models to wild-type, there are two effects: the increased transition rates speed up learning, but the equilibrium distribution is shifted to the depressed side,
 % (compare \autoref{fig:pooled_deponly}\ref{fig:pooled_deponly_eq}: \ref{fig:pooled_deponly_eq_WT} and \ref{fig:pooled_deponly_eq_KO}, blue traces),
@@ -970,7 +984,7 @@ However, it does not have the metaplastic effect where repeated potentiation mak
 
 
 
-\subsection{Cascade model}\label{sec:cascade}
+\subsection{Cascade and non-uniform multistate models}\label{sec:cascade}
 
 %\resultsfig{cascade}{short pre-training}{($rt_\text{pre}=20$)}{cascade_short}
 %
@@ -978,12 +992,13 @@ However, it does not have the metaplastic effect where repeated potentiation mak
 
 
 
-The results of simulations of the cascade model can be seen in
-\autoref{fig:sim_results}\ref{fig:cascade_sim}. %\autoref{fig:cascade_short} and \autoref{fig:cascade_long}.
-It is difficult to study this model analytically.
-However, the numerical results can helps us understand it qualitatively.
+The results of simulations of the cascade and non-uniform multistate models can be seen in
+\autoref{fig:sim_results}\ref{fig:cascade_sim},\ref{fig:nonuni_sim}. %\autoref{fig:cascade_short} and \autoref{fig:cascade_long}.
+%It is difficult to study these models analytically.
+%However, the numerical results can help us understand them qualitatively.
+The numerical results can help us understand them qualitatively.
 
-We see that the \KO\ models are slower than wild-type without pre-training but faster with it.
+For the cascade model, we see that the \KO\ models are slower than wild-type without pre-training but faster with it.
 This seems to be due to the fact that, without pre-training, very few synapses will be available for depression as most of them are already depressed.
 %(\autoref{fig:cascade_short}\ref{fig:cascade_short_eq}\ref{fig:cascade_short_eq_KO} and \ref{fig:cascade_short_pr}\ref{fig:cascade_short_pr_KO_nopre}).
 With pre-training, some of them will now be potentiated,
@@ -996,99 +1011,117 @@ and the enhanced depression can speed up learning.
 %We can see from \autoref{fig:cascade_long}\ref{fig:cascade_long_pr}\ref{fig:cascade_long_pr_WT_pre} that longer
 
 Sufficiently long pre-training pushes the synapses far down the cascade, slowing down learning for the wild-type (see \autoref{fig:sim_results}\ref{fig:cascade_sim}, black curves).
-This effect is weaker for the \KO\ models, as the equilibrium distribution is not as heavily concentrated at the end, as the distribution before pre-training is shifted in the other direction.
+This effect is weaker for the \KO\ models, as the equilibrium distribution is not as heavily concentrated at the end, as the distribution before pre-training is shifted in the opposite direction.
 %(see \autoref{fig:cascade_long}\ref{fig:cascade_long_eq}\ref{fig:cascade_long_eq_KO}).
 
 
-This model shares both features of the \hyperref[sec:multistate]{serial model}.
-First, the effect of initial saturation bias is amplified by the exponential decay of transition probabilities away from the middle.
-Second, it has the metaplastic effect where repeated potentiation makes future depression harder, also due to he exponential decay of transition probabilities.
-
-
-\subsection{Non-uniform multistate model}\label{sec:nonuni}
-
-%\resultsfign{non-uniform multistate}{nonuni}
-
-
-
-The results of simulations of the non-uniform multistate model can be seen in
-\autoref{fig:sim_results}\ref{fig:nonuni_sim}. %\autoref{fig:nonuni}.
-It is difficult to study this model analytically.
-However, the numerical results can helps us understand it qualitatively.
-
-First, we see that the \KO\ models are slower than wild-type without pre-training, as seen experimentally.
+For the non-uniform multistate model, we see that the \KO\ models are slower than wild-type without pre-training, as seen experimentally.
 This seems to be because the enhanced depression results in a greater fraction of synapses begin in states of weaker synaptic weight %(see \autoref{fig:nonuni}\ref{fig:nonuni_eq}\ref{fig:nonuni_eq_KO})
-where the depressing transitions have lower probability (see \autoref{fig:nonuni_model}).
+where the depressing transitions have lower probability (see \autoref{fig:models}\ref{fig:nonuni_model}).
 
 However, gain-decrease pre-training will push synapses towards the states of stronger synaptic weight.
 The wild-type will be pushed further that the \KO\ models, as the latter started further to the weaker side as explained above. %(compare \autoref{fig:nonuni}\ref{fig:nonuni_eq}\ref{fig:nonuni_eq_WT} and \ref{fig:nonuni_eq_KO}).
-As the depressing transitions have lower probability for the strongest states (see \autoref{fig:nonuni_model}), this, in addition to the enhanced depression of the \KO\ models, will result in the \KO\ models learning faster than wild-type, as seen experimentally.
+As the depressing transitions have lower probability for the strongest states (see \autoref{fig:models}\ref{fig:nonuni_model}), this, in addition to the enhanced depression of the \KO\ models, will result in the \KO\ models learning faster than wild-type, as seen experimentally.
 
 When comparing learning with and without gain-decrease pre-training, there are two effects to consider.
-First, the pushing synapses towards the states of stronger synaptic weight, resulting in more synapses being available for depression, speeding up learning.
+First, the synapses are pushing towards the states of stronger synaptic weight, resulting in more synapses being available for depression, speeding up learning.
 Second, it will also place synapses in states where transitions have lower probability, slowing down learning.
 The second effect will be weaker in the \KO\ models than in wild-type, as they started further to the weaker side as explained above.
 This means that, for appropriate parameter choices, gain-decrease pre-training can speed up learning in the \KO\ models, but also slow down learning in wild-type, as seen experimentally.
 
-Like the \hyperref[sec:cascade]{cascade model}, this model also shares both features of the \hyperref[sec:multistate]{serial model}.
+These models share both key features of the \hyperref[sec:multistate]{serial model}.
 First, the effect of initial saturation bias is amplified by the exponential decay of transition probabilities away from the middle.
-Second, it has the metaplastic effect where repeated potentiation makes future depression harder, also due to he exponential decay of transition probabilities.
+Second, they both have the metaplastic effect where repeated potentiation makes future depression harder, also due to he exponential decay of transition probabilities.
 
 
-
-\subsection{Parameter fitting}\label{sec:fit}
-
-So far, we have only considered the comparisons listed at the start of \hyperref[sec:results]{this section}, as they raised important conceptual questions.
-We have not considered the other two comparisons, the lack of difference between wild-type without pre-training and \KO\ with pre-training and between wild-type with pre-training and \KO\ without pre-training (the ``diagonal'' comparisons in the language of \modelfig), as they depend more on the values used for the parameters than on any conceptual issues.
-
-However, to avoid confusion, we found parameter values performed reasonably in these other two comparisons for the three models that could reproduce the correct qualitative results of the four important comparisons: the \hyperref[sec:multistate]{serial model}, the \hyperref[sec:cascade]{cascade model} and the \hyperref[sec:nonuni]{non-uniform multistate model}. The learning curves are shown in \autoref{fig:fit} and the parameters are listed in \autoref{fig:fit}\ref{tab:fit}.
-
-
-%\begin{table}
-% \begin{center}
-%  \begin{tabularn}{|l|c|c|c|c|c|c|c|c|c|}
-%    \cline{1-10}
-%    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-%    Model & \# states & \multicolumn{3}{c|}{parameter} & \multicolumn{3}{c|}{$f\dep$} & \multicolumn{2}{c|}{$rt$} \\
-%    \cline{3-10}
-%    & & pot & WT dep & \KO\ dep & base & inc & dec & train & pre \\
+%\subsection{Non-uniform multistate model}\label{sec:nonuni}
 %
-%    \cline{1-10}
-%    Serial   & 10 & $0.12$  & $0.14$  & $0.2$  & 0.5 & 0.11 & 0.89 & 5  & 100  &\label{tr:serial_fit} \\
-%    Cascade  & 14 & $0.386$  & $0.398$  & $0.466$  & 0.522 & 0.63 & 0.002 & 1.5  & 200  &\label{tr:cascade_fit} \\
-%    Non-uni. & 12 & $0.4$    & $0.4$    & $0.53$   & 0.5 & 0.7 & 0.1 & 5  & 500  &\label{tr:nonuni_fit} \\
-%    \cline{1-10}
-%  \end{tabularn}
+%%\resultsfign{non-uniform multistate}{nonuni}
+%
+%
+%
+%The results of simulations of the non-uniform multistate model can be seen in
+%\autoref{fig:sim_results}\ref{fig:nonuni_sim}. %\autoref{fig:nonuni}.
+%It is difficult to study this model analytically.
+%However, the numerical results can helps us understand it qualitatively.
+%
+%First, we see that the \KO\ models are slower than wild-type without pre-training, as seen experimentally.
+%This seems to be because the enhanced depression results in a greater fraction of synapses begin in states of weaker synaptic weight %(see \autoref{fig:nonuni}\ref{fig:nonuni_eq}\ref{fig:nonuni_eq_KO})
+%where the depressing transitions have lower probability (see \autoref{fig:nonuni_model}).
+%
+%However, gain-decrease pre-training will push synapses towards the states of stronger synaptic weight.
+%The wild-type will be pushed further that the \KO\ models, as the latter started further to the weaker side as explained above. %(compare \autoref{fig:nonuni}\ref{fig:nonuni_eq}\ref{fig:nonuni_eq_WT} and \ref{fig:nonuni_eq_KO}).
+%As the depressing transitions have lower probability for the strongest states (see \autoref{fig:nonuni_model}), this, in addition to the enhanced depression of the \KO\ models, will result in the \KO\ models learning faster than wild-type, as seen experimentally.
+%
+%When comparing learning with and without gain-decrease pre-training, there are two effects to consider.
+%First, the pushing synapses towards the states of stronger synaptic weight, resulting in more synapses being available for depression, speeding up learning.
+%Second, it will also place synapses in states where transitions have lower probability, slowing down learning.
+%The second effect will be weaker in the \KO\ models than in wild-type, as they started further to the weaker side as explained above.
+%This means that, for appropriate parameter choices, gain-decrease pre-training can speed up learning in the \KO\ models, but also slow down learning in wild-type, as seen experimentally.
+%
+%Like the \hyperref[sec:cascade]{cascade model}, this model also shares both features of the \hyperref[sec:multistate]{serial model}.
+%First, the effect of initial saturation bias is amplified by the exponential decay of transition probabilities away from the middle.
+%Second, it has the metaplastic effect where repeated potentiation makes future depression harder, also due to he exponential decay of transition probabilities.
+
+
+
+%\subsection{Parameter fitting}\label{sec:fit}
+%
+%So far, we have only considered the comparisons listed at the start of \hyperref[sec:results]{this section}, as they raised important conceptual questions.
+%We have not considered the other two comparisons, the lack of difference between wild-type without pre-training and \KO\ with pre-training and between wild-type with pre-training and \KO\ without pre-training (the ``diagonal'' comparisons in the language of \modelfig), as they depend more on the values used for the parameters than on any conceptual issues.
+%
+%However, to avoid confusion, we found parameter values performed reasonably in these other two comparisons for the three models that could reproduce the correct qualitative results of the four important comparisons: the \hyperref[sec:multistate]{serial model}, the \hyperref[sec:cascade]{cascade model} and the \hyperref[sec:nonuni]{non-uniform multistate model}. The learning curves are shown in \autoref{fig:fit} and the parameters are listed in \autoref{fig:fit}\ref{tab:fit}.
+%
+%
+%%\begin{table}
+%% \begin{center}
+%%  \begin{tabularn}{|l|c|c|c|c|c|c|c|c|c|}
+%%    \cline{1-10}
+%%    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+%%    Model & \# states & \multicolumn{3}{c|}{parameter} & \multicolumn{3}{c|}{$f\dep$} & \multicolumn{2}{c|}{$rt$} \\
+%%    \cline{3-10}
+%%    & & pot & WT dep & \KO\ dep & base & inc & dec & train & pre \\
+%%
+%%    \cline{1-10}
+%%    Serial   & 10 & $0.12$  & $0.14$  & $0.2$  & 0.5 & 0.11 & 0.89 & 5  & 100  &\label{tr:serial_fit} \\
+%%    Cascade  & 14 & $0.386$  & $0.398$  & $0.466$  & 0.522 & 0.63 & 0.002 & 1.5  & 200  &\label{tr:cascade_fit} \\
+%%    Non-uni. & 12 & $0.4$    & $0.4$    & $0.53$   & 0.5 & 0.7 & 0.1 & 5  & 500  &\label{tr:nonuni_fit} \\
+%%    \cline{1-10}
+%%  \end{tabularn}
+%% \end{center}
+%%  \caption{Parameters used to reproduce detailed experimental results. For the sewrial model, the parameter listed is the transition probability between adjacent states. For the cascade and non-uniform multistate models, the parameter is the ratio of adjacent transition probabilities.} \label{tab:fit}
+%%\end{table}
+%
+%\begin{figure}
+% \begin{center}
+% \begin{myenuma}
+%  \item\aligntop{\includegraphics[width=0.28\linewidth]{serial_fit_learnS.eps}}\label{fig:serial_fit}
+%  \item\aligntop{\includegraphics[width=0.28\linewidth]{cascade_fit_learnS.eps}}\label{fig:cascade_fit}
+%  \item\aligntop{\includegraphics[width=0.28\linewidth]{nonuni_fit_learnS.eps}}\label{fig:nonuni_fit}
+%
+%  \vspace{1cm}\item\label{tab:fit}\aligntop{
+%  \begin{tabularn}{|l|c|c|c|c|c|c|c|c|}
+%    \cline{1-9}
+%    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+%    Model & \#  & \multicolumn{3}{c|}{parameter} & \multicolumn{3}{c|}{$f\dep$} & $r\tpre$ \\
+%    \cline{3-8}
+%    & states & pot & WT dep & {\footnotesize\KO} dep & base & inc & dec &  \\
+%
+%    \cline{1-9}
+%    Serial   & 10 & $0.12$  & $0.14$  & $0.2$  & 0.5 & 0.89 & 0.11  & 100  &\label{tr:serial_fit} \\
+%    Two-state     & 2  & $0.1$  & $0.1$  & $0.2$  & 0.5 & 0.6 & 0.4  & 5   &\label{tr:binary} \\
+%    Multistate    & 10 & $0.3$  & $0.3$  & $0.4$  & 0.5 & 0.8 & 0.2  & 5   &\label{tr:multistate_lin} \\
+%    Pooled res. & 7  & $0.008$        & $[0.0006,0.6]$  & $[0.001,1]$
+%                                          & 0.5 & 0.9 & 0.1 & 20 &\label{tr:pooled_deponly}\\
+%    Cascade  & 14 & $0.386$  & $0.398$  & $0.466$  & 0.522 & 0.63 & 0.002  & 200  &\label{tr:cascade_fit} \\
+%    Non-uni. & 12 & $0.4$    & $0.4$    & $0.53$   & 0.5 & 0.7 & 0.1 & 500  &\label{tr:nonuni_fit} \\
+%    \cline{1-9}
+%  \end{tabularn}}
+% \end{myenuma}
 % \end{center}
-%  \caption{Parameters used to reproduce detailed experimental results. For the sewrial model, the parameter listed is the transition probability between adjacent states. For the cascade and non-uniform multistate models, the parameter is the ratio of adjacent transition probabilities.} \label{tab:fit}
-%\end{table}
-
-\begin{figure}
- \begin{center}
- \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.28\linewidth]{serial_fit_learnS.eps}}\label{fig:serial_fit}
-  \item\aligntop{\includegraphics[width=0.28\linewidth]{cascade_fit_learnS.eps}}\label{fig:cascade_fit}
-  \item\aligntop{\includegraphics[width=0.28\linewidth]{nonuni_fit_learnS.eps}}\label{fig:nonuni_fit}
-
-  \vspace{1cm}\item\label{tab:fit}\aligntop{
-  \begin{tabularn}{|l|c|c|c|c|c|c|c|c|c|}
-    \cline{1-10}
-    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-    Model & \#  & \multicolumn{3}{c|}{parameter} & \multicolumn{3}{c|}{$f\dep$} & \multicolumn{2}{c|}{$rt$} \\
-    \cline{3-10}
-    & states & pot & WT dep & {\footnotesize\KO} dep & base & inc & dec & train & pre \\
-
-    \cline{1-10}
-    Serial   & 10 & $0.12$  & $0.14$  & $0.2$  & 0.5 & 0.89 & 0.11 & 5  & 100  &\label{tr:serial_fit} \\
-    Cascade  & 14 & $0.386$  & $0.398$  & $0.466$  & 0.522 & 0.63 & 0.002 & 1.5  & 200  &\label{tr:cascade_fit} \\
-    Non-uni. & 12 & $0.4$    & $0.4$    & $0.53$   & 0.5 & 0.7 & 0.1 & 5  & 500  &\label{tr:nonuni_fit} \\
-    \cline{1-10}
-  \end{tabularn}}
- \end{myenuma}
- \end{center}
-  \caption[Learning curves for models after parameter fitting]{Learning curves restricted to gain-increase training, for (\ref{fig:serial_fit}) the serial model, (\ref{fig:cascade_fit}) the cascade model, and (\ref{fig:nonuni_fit}) the non-uniform multistate model.
-  (\ref{tab:fit}) Parameters used to reproduce detailed experimental results. For the serial model, the parameter listed is the transition probability between adjacent states. For the cascade and non-uniform multistate models, the parameter is the ratio of adjacent transition probabilities.}\label{fig:fit}
-\end{figure}
+%  \caption[Learning curves for models after parameter fitting]{Learning curves restricted to gain-increase training, for (\ref{fig:serial_fit}) the serial model, (\ref{fig:cascade_fit}) the cascade model, and (\ref{fig:nonuni_fit}) the non-uniform multistate model.
+%  (\ref{tab:fit}) Parameters used to reproduce detailed experimental results. For the serial model, the parameter listed is the transition probability between adjacent states. For the cascade and non-uniform multistate models, the parameter is the ratio of adjacent transition probabilities.}\label{fig:fit}
+%\end{figure}
 
 
 
