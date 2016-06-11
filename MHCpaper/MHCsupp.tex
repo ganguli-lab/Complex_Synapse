@@ -16,7 +16,7 @@
 %\newenvironment{tabularn}[1]{\begin{tabular}{#1>{\refstepcounter{tablerow}}l}}{\end{tabular}}
 %\usepackage{etoolbox}
 %\AtBeginEnvironment{tabular}{\setcounter{tablerow}{0}}
-\renewcommand{\figureautorefname}{Supplementary Figure}
+\renewcommand{\figureautorefname}{Supp.~Fig.}
 % ----------------------------------------------------------------
 % New commands etc.
 \input{sl_definitions.tex}
@@ -355,7 +355,7 @@ The features of the experiments shown in \modelfig\ that we'd like to capture ar
 \end{enumerate}
 %
 These questions will not be affected by any output nonlinearity, as long as it is monotonic and fixed.
-We will not study gain-decrease learning, as it uses a different mechanism to gain-increase.
+\emph{We will not study gain-decrease learning}, as its mechanisms are not fully understood, and known to be different to to gain-increase.
 We are only modelling the effect of gain-decrease training on \emph{these} synapses.
 We will also not discuss the curvature of the learning curves, as this can be changed by the nonlinear relation between synaptic weight and VOR gain.
 %However, both the wild-type and \KO\ mice should be affected in the same way, so the difference in the curvature of the \KO\ mice and wild-type curves after pre-training would be nice to capture.
@@ -422,7 +422,11 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
     \cline{1-9}
   \end{tabular}}
   \end{myenuma}
-  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models. (\ref{tab:params}) Parameters used for simulations. For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states. For the cascade and non-uniform multistate models, the plasticity parameter is the ratio of adjacent transition probabilities.}\label{fig:sim_results}
+  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models. 
+  (\ref{tab:params}) Parameters used for simulations. 
+  For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states.
+  For the pooled resource model, the plasticity parameters are the minimum and maximum transition probability for the constituent two-state synapses.
+  For the cascade and non-uniform multistate models, the plasticity parameter is the ratio of adjacent transition probabilities.}\label{fig:sim_results}
 \end{figure}
 
 
@@ -560,9 +564,9 @@ where $\alpha\inc$ is $\alpha$, but with $f\potdep$ replaced by $f\potdep\inc$.
 To see the effects of the knockout, we can see if this increases or decreases with $q\dep$:
 %
 \begin{equation}\label{eq:serialderq}
-  q\dep \pdiff{\Phi}{q\dep} = 
-    \frac{\alpha^{\frac{M}{2} - 1}}{(1 - \alpha^M)^2} 
-    \brk{(1 - \alpha^M) - \frac{M}{2} (1 - \alpha) (1 + \alpha^M) } 
+  q\dep \pdiff{\Phi}{q\dep} =
+    \frac{\alpha^{\frac{M}{2} - 1}}{(1 - \alpha^M)^2}
+    \brk{(1 - \alpha^M) - \frac{M}{2} (1 - \alpha) (1 + \alpha^M) }
     \prn{\frac{\alpha}{\alpha\inc} - 1} f\inc\pot  q\pot.
 \end{equation}
 %
@@ -573,10 +577,10 @@ The effect of pre-training is to replace $f\potdep$ with $f\potdep\dec$ without 
 Therefore, we can see the effects of pre-training on the initial learning rate by seeing if it increases or decreases with $f\pot$ (with $f\dep = 1 - f\pot$):
 %
 \begin{equation}\label{eq:serialderf}
-  f\pot f\dep \pdiff{\Phi}{f\pot} =  
-    \frac{\alpha^{\frac{M}{2} - 1}}{(1 - \alpha^M)^2} 
-      \brk{ \prn{\frac{\alpha}{\alpha\inc} - 1} \frac{M}{2} (1 - \alpha) (1 + \alpha^M) 
-      - \prn{\frac{\alpha^2}{\alpha\inc} - 1} (1 - \alpha^M) }  
+  f\pot f\dep \pdiff{\Phi}{f\pot} =
+    \frac{\alpha^{\frac{M}{2} - 1}}{(1 - \alpha^M)^2}
+      \brk{ \prn{\frac{\alpha}{\alpha\inc} - 1} \frac{M}{2} (1 - \alpha) (1 + \alpha^M)
+      - \prn{\frac{\alpha^2}{\alpha\inc} - 1} (1 - \alpha^M) }
       f\inc\pot  q\pot.
 \end{equation}
 %
@@ -736,7 +740,7 @@ However, this model can be solved exactly:
   \lambda = f\pot q\pot + f\dep q\dep.
 \end{multline}
 %
-But it is easier to just substitute $M=2$ into the formulae in \autoref{sec:multistate}.
+In practice, it is easier to just substitute $M=2$ into the formulae in \autoref{sec:multistate}.
 %In this case, the initial rate of change and the total change encapsulate the whole solution, as there is only a single exponential decay.
 
 We find that
@@ -744,11 +748,11 @@ We find that
 \begin{equation}\label{eq:binaryflux}
   \Phi = \frac{q\pot q\dep \Delta f}{\lambda}, \qquad
   \pdiff{\Phi}{q\dep} = \frac{f\pot (q\pot)^2 \Delta f}{\lambda^2}, \qquad
-  \pdiff{\Phi}{f\pot} = \frac{\lambda\inc q\pot q\dep}{\lambda^2}.
+  \pdiff{\Phi}{f\pot} = \frac{q\pot q\dep \lambda\inc}{\lambda^2}.
 \end{equation}
 %
 The flux is a monotonically increasing function of $q\dep$ and $f\pot$.
-Therefore, enhancing plasticity in this way or pre-training can only enhance the initial learning rate, unlike the experimental results shown in \modelfig.
+Therefore, enhancing plasticity in this way or pre-training can only enhance the initial learning rate for all values of the parameters, unlike the experimental results shown in \modelfig.
 
 
 
@@ -758,6 +762,45 @@ If this happens early enough (\ie between the first and second data point in \da
 However, the timescale for this crossover would be similar to the timescale of the exponentials, which is at least as long as the timescale for saturation of learning.
 In \datafig\ we see that this timescale is longer than the gaps between successive measurements, so we would not miss any initial period of enhanced learning in the \KO\ mice if this were the correct model.
 In addition, the models without pre-training can never catch up with those with pre-training, and this is sufficient to rule out this model.
+
+This assumed that all synapses have the same parameters.
+What would happen if there were a population of synapses with different parameters?
+In this case, the learning rate would be determined by the average flux over this distribution:
+%
+\begin{equation}\label{eq:meanflux}
+  \overline{\Phi} = \int \Phi(q\dep, \ldots) \,
+                            p(q\dep, \ldots) \,
+                          \dr q\dep \ldots,
+\end{equation}
+%
+where the dependence on all other parameters is omitted.
+
+The \KO\ mice will have a different distribution, $p\ko(q\dep, \ldots)$.
+It is helpful to introduce a function $P(q\dep, \ldots)$ that is a cumulative distribution \wrt $q\dep$, but a probability density \wrt all other parameters:
+%
+\begin{equation}\label{eq:cumul}
+  P(q\dep, \ldots) = \int_0^{q\pot} \!\!\! p(q, \ldots) \, \dr q.
+\end{equation}
+%
+Then, integration by parts leads to
+%
+\begin{equation}\label{eq:fluxcumul}
+  \overline{\Phi} = \av{\Phi(1, \ldots)} - 
+             \int \pdiff{\Phi}{q\pot} \,
+                            P(q\dep, \ldots) \,
+                          \dr q\dep \ldots,
+\end{equation}
+%
+where the first term is averaged over all the other omitted parameters and the partial derivative is positive for this model \eqref{eq:binaryflux}.
+
+The statement that the \KO\ models have larger $q\dep$ than wild-type is now a statement about the distributions, with the \KO\ models having more density at larger values.
+This is not a precise concept, but it will tend to lead to $P(q\dep, \ldots)$ being smaller for the \KO\ models than wild type, which makes the second term less negative and the average flux larger, in contradiction with the experimental results in \modelfig.
+
+If $P\ko \leq P\wt$ at all parameter values and the marginal distribution for all other parameters is the same for both models, then $\overline{\Phi}\ko \geq \overline{\Phi}\wt$.
+This is guaranteed if, for example, there is a one-to-one map between $q\dep$ for the two models, so that the cumulative distributions are the same at $q\dep\wt$ and $q\dep\ko = g(q\dep\wt)$ for some function $g(x) \geq x$.
+
+If the dependence of the distribution on $q\dep$ is mixed with the other parameters in some complicated way, or if the edges of the distributions are very unusual, it could be possible for the enhanced plasticity models to have an impaired initial learning rate, but this seems contrived and unlikely.
+A similar argument applies to the effect of pre-training and the distributions over $f\pot$.
 
 The monotonicity shown above means that this model cannot reproduce the key qualitative features of the experiments outlined in \autoref{sec:results}, at least as for the initial learning rate.
 This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
@@ -782,14 +825,14 @@ This can be seen in
 \autoref{fig:sim_results}\ref{fig:binary_sim} %\autoref{fig:binary}\ref{fig:binary_learnS}
 (black curves).
 
-Now, consider the \KO\ models, for which we define $\beta=q\pot/q\dep<1$, and we set $q\pot=q$.
+Now, consider the \KO\ models, for which we define $\beta=q\pot/q\dep<1$, and $q\pot=q$.
 Without pre-training:
 %
 \begin{equation}\label{eq:binKOnopre}
   \Phi = \frac{2{\Delta f}\, q}{1+\beta},
 \end{equation}
 %
-which is always larger than \eqref{eq:binWTnopre}, unlike what is seen in the experiments (see \modelfig).
+which is larger than \eqref{eq:binWTnopre} for all $\beta$, unlike what is seen in the experiments (see \modelfig).
 This is also seen in
 \autoref{fig:sim_results}\ref{fig:binary_sim} %\autoref{fig:binary}\ref{fig:binary_learn},\ref{fig:binary_learnS}
 (solid curves).
@@ -816,10 +859,10 @@ For this simple binary synapse model, the ratio of the numbers of potentiated an
 This means that the leading effects of enhanced intrinsic plasticity rates and saturation bias cancel each other.
 This is even true as the number of synapses available for further plasticity approaches zero, which requires that the depressing transition be infinitely stronger than the potentiating transition, compensating for the saturation.
 There is a requirement that the total number of synapses, potentiated and depressed, is fixed.
-This normalization effect always dampens the effect of saturation bias, so that the effect of enhanced intrinsic plasticity rates always dominates.
-Thus, we always see enhanced learning with enhanced plasticity with the binary synapse model.
+This normalization effect dampens the effect of saturation bias, so that the effect of enhanced intrinsic plasticity rates dominates for all parameter values.
+Thus, we must see enhanced initial learning with enhanced plasticity in the binary synapse model.
 
-One can see that pre-training will always increase the fraction of synapses available for depression.
+One can see that pre-training can only increase the fraction of synapses available for depression.
 This model has no mechanism that could ever result in this causing impaired learning.
 
 Intuitively, this model is missing two features of the \hyperref[sec:multistate]{serial model}.
@@ -854,31 +897,31 @@ However, now the rate of change of our learning metric, \eqref{eq:learning}, wil
 To see the effects of the knockout, we can see if this increases or decreases with $q\dep$:
 %
 \begin{equation}\label{eq:multiderq}
-  q\dep \pdiff{\Phi}{q\dep} = 
+  q\dep \pdiff{\Phi}{q\dep} =
     \frac{\alpha^{M - 1}}{(1 - \alpha^M)^2}
     \brk{1 - \alpha}
-    \brk{M - \sum_{i=1}^M \alpha^{i-1}} 
+    \brk{M - \sum_{i=1}^M \alpha^{i-1}}
     \prn{\frac{\alpha}{\alpha\inc} - 1} f\inc\pot  q\pot.
 \end{equation}
 %
 If $\alpha < 1$, both quantities in square brackets are positive, as the sum contains $M$ terms that are all at most $1$.
 If $\alpha > 1$, both of them are negative.
 Therefore this quantity is positive, so $\Phi$ is a monotonically increasing function of $q\dep$.
-Therefore, enhancing plasticity in this way can only enhance the initial learning rate, for all values the parameters.
+Therefore, enhancing plasticity in this way can only enhance the initial learning rate, for all values of the parameters.
 
 We can also see the effects of pre-training on the initial learning rate by seeing if it increases or decreases with $f\pot$ (with $f\dep = 1 - f\pot$):
 %
 \begin{equation}\label{eq:multiderf}
-  f\pot f\dep \pdiff{\Phi}{f\pot} =  
+  f\pot f\dep \pdiff{\Phi}{f\pot} =
     \frac{\alpha^{M - 2}}{(1 - \alpha^M)^2}
-      \brk{1 - \alpha} 
-      \prn{\brk{M - \sum_{i=1}^M \alpha^{i-1}} 
+      \brk{1 - \alpha}
+      \prn{\brk{M - \sum_{i=1}^M \alpha^{i-1}}
       + \frac{\alpha}{\alpha\inc} \brk{\sum_{i=1}^M \alpha^{1-i} - M}}
       f\inc\pot  q\pot.
 \end{equation}
 %
 This quantity is positive, for similar reasons to \eqref{eq:multiderq}, so $\Phi$ is a monotonically increasing function of $f\pot$.
-Therefore, pre-training can can only enhance the initial learning rate, for all values the parameters.
+Therefore, pre-training can can only enhance the initial learning rate, for all values of the parameters.
 
 The monotonicity shown above means that this model cannot reproduce the key qualitative features of the experiments outlined in \autoref{sec:results}, at least as for the initial learning rate.
 %This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
