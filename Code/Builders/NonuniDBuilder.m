@@ -1,5 +1,5 @@
 function [ Wp,Wm,w ] = NonuniDBuilder( n,x )
-%[Wp,Wm,w]=NonuniBuilder(n,x) build non-uniform multistate model
+%[Wp,Wm,w]=NonuniDBuilder(n,x) build non-uniform multistate model
 %   x  = ratio of nearby transition rates
 %   n  = number of states (even)
 %   WP = potentiation transition rates

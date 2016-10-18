@@ -1,5 +1,5 @@
 function [ Wp,Wm,w ] = RandTriBuilder( n,sp )
-%[Wp,Wm,w]=RANDTRIBUILDER(n,q) build serial model
+%[Wp,Wm,w]=RANDTRIBUILDER(n,q)random triangular model
 %   sp = sparsity
 %   n  = number of states (even)
 %   WP = potentiation transition rates

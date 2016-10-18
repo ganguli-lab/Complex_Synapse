@@ -3,7 +3,7 @@ function [ comps ] = ScanPooledLeft( ranges, n )
 %   comps  = learning rate differences: WT_nopre - WT_pre
 %   ranges = range for each parameter scan
 %   n      = number of states
-%   parametrs: Pot, Dep_min, 
+%   parametrs: pot, dep_min, dep_max, fp_norm, fp_inc, fp_dec
 
 builder_h = @PooledBuilder;
 
@@ -17,7 +17,7 @@ for i1 = range_ctr
     vexpt.WT = vexpt.WT.setWp(Wp);
     
     for i2 = range_ctr
-        for i3 = i2+1:range_ctr(end)
+        for i3 = 1:i2-1
             [~,Wm] = builder_h(n, ranges([i2 i3]));
             vexpt.WT = vexpt.WT.setWm(Wm);
             

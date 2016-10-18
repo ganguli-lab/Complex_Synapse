@@ -1,6 +1,10 @@
 function [ Wp,Wm,w ] = PooledBuilder( n,q )
-%[Wp,Wm,w]=POOLEDBUILDER(n,q) Summary of this function goes here
-%   Detailed explanation goes here
+%[Wp,Wm,w]=POOLEDBUILDER(n,q) Build pooled resource model
+%   q  = range of transition rates [qmax qmin]
+%   n  = number of states (even)
+%   Wp = potentiation transition rates
+%   Wm = depression transition rates
+%   w  = Weights of states (+/-1)
 
     w=(-1:2/(n-1):1)';
     if isscalar(q) || diff(q)==0
