@@ -16,7 +16,10 @@
 %\newenvironment{tabularn}[1]{\begin{tabular}{#1>{\refstepcounter{tablerow}}l}}{\end{tabular}}
 %\usepackage{etoolbox}
 %\AtBeginEnvironment{tabular}{\setcounter{tablerow}{0}}
-\renewcommand{\figureautorefname}{Supp.~Fig.}
+\renewcommand{\figurename}{Appendix-figure}
+\renewcommand{\figureautorefname}{Appendix-figure}
+\DeclareCaptionLabelFormat{supp}{\textbf{#1 #2}}
+\captionsetup{labelformat=supp}
 % ----------------------------------------------------------------
 % New commands etc.
 \input{sl_definitions.tex}
@@ -49,13 +52,13 @@
 \newcommand{\ttrain}{t_{\text{train}}}
 %\newcommand{\lmax}{_{\text{max}}}
 %\newcommand{\lmin}{_{\text{min}}}
-\newcommand{\modelfig}[1][a]{Figure 4#1 of the main text}
-\newcommand{\datafig}[1][b]{Figure 3#1 of the main text}
+\newcommand{\modelfig}[1][a]{Figure 3#1 of the main text}
+\newcommand{\datafig}[1][b]{Figure 2#1 of the main text}
 % ----------------------------------------------------------------
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Title info:
-\title{Understanding both enhanced and impaired learning with enhanced plasticity: a saturation hypothesis (supplementary material)}
+\title{Appendix to ``Understanding both enhanced and impaired learning with enhanced plasticity: a saturation hypothesis''}
 %
 %% Author List:
 %%
@@ -66,13 +69,11 @@
 %\small{\emph{$^c$ Address 3}}\\
 %}
 \date{}
-\DeclareCaptionLabelFormat{supp}{\textbf{#1 S#2}}
-\captionsetup{labelformat=supp}
 
 \begin{document}
 
-\setcounter{page}{8}
-\setcounter{figure}{7}
+%\setcounter{page}{8}
+%\setcounter{figure}{7}
 \maketitle
 
 
@@ -167,7 +168,7 @@ The values used for all these parameters in simulations are listed in \autoref{f
   \end{tabular}
    \end{myenuma}
  \end{center}
-  \caption[Transition probabilities for different models]{Transition probabilities for different models.
+  \caption[Transition probabilities for different models]{{Transition probabilities for different models.}
   Potentiation induces transitions indicated by orange arrows, depression indicated by blue arrows.
   States of strong/weak synaptic weight indicated by orange/blue circles.
   (\ref{fig:serial_model}) In the serial model the transition probabilities for potentiation/depression are all equal and it is parameterised by these two values.
@@ -422,8 +423,8 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
     \cline{1-9}
   \end{tabular}}
   \end{myenuma}
-  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models. 
-  (\ref{tab:params}) Parameters used for simulations. 
+  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models.
+  (\ref{tab:params}) Parameters used for simulations.
   For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states.
   For the pooled resource model, the plasticity parameters are the minimum and maximum transition probability for the constituent two-state synapses.
   For the cascade and non-uniform multistate models, the plasticity parameter is the ratio of adjacent transition probabilities.}\label{fig:sim_results}
@@ -785,7 +786,7 @@ It is helpful to introduce a function $P(q\dep, \ldots)$ that is a cumulative di
 Then, integration by parts leads to
 %
 \begin{equation}\label{eq:fluxcumul}
-  \overline{\Phi} = \av{\Phi(1, \ldots)} - 
+  \overline{\Phi} = \av{\Phi(1, \ldots)} -
              \int \pdiff{\Phi}{q\pot} \,
                             P(q\dep, \ldots) \,
                           \dr q\dep \ldots,
