@@ -16,9 +16,13 @@ classdef VORtrainSeq
             newobj.tTrain=newT;
         end            
         %
-        function newobj=setFp(obj,newFp)
+        function newobj=setFp(obj,newFp,varargin)
             newobj=obj;
-            newobj.fps=newFp;
+            if isempty(varargin)
+                newobj.fps=newFp;
+            else
+                newobj.fps(varargin{1})=newFp;
+            end
         end
     end
     

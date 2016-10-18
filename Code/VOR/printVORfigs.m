@@ -14,7 +14,7 @@ function printVORfigs( prefix,paramWT,paramKO,df,T_train,T_pre,varargin )
 %   T_pre   = duration of pre-training
 
 paramPot = paramWT(1);
-param_WT_p = param_WT; %need to keep this for pooled)
+param_WT_p = paramWT; %need to keep this for pooled)
 paramWT = paramWT(end);
 pooled = false;
 

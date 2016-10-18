@@ -44,6 +44,7 @@ classdef VORexperiment
         St=LearnSdata(obj,varargin);
         [P_WT_nopre,P_KO_nopre,P_WT_pre,P_KO_pre,t]=ProbEvolsData(obj)
         comps=InitialRateComps(obj)
+        comp=InitRComp_left(obj)
     end
     
     methods (Access=private)%for constructiuon
