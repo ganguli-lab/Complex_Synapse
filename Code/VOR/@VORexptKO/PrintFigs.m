@@ -1,5 +1,5 @@
 function PrintFigs( obj,prefix )
-%VORexperiment.PRINTFIGS(prefix) printing VOR comparisons between WT/KO
+%VORexptKO.PRINTFIGS(prefix) printing VOR comparisons between WT/KO
 %with/without pretraining
 %   prefix = string to prepend to eps file names
 
@@ -11,9 +11,12 @@ obj.ProbFontSize=4*obj.ProbFontSize;
 
     fig=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
     figs=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
-    figEq=figure('PaperPositionMode','auto','Position',[60 60 1000 500]);
+    figEq(1)=figure('PaperPositionMode','auto','Position',[60 60 1000 500]);
+    figEq(2)=figure('PaperPositionMode','auto','Position',[60 60 1000 500]);
     figEv(1)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
     figEv(2)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
+    figEv(3)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
+    figEv(4)=figure('PaperPositionMode','auto','Position',[60 60 600 500]);
     
     Parent=axes('Parent',fig);
 %     axes(Parent);
@@ -28,9 +31,12 @@ obj.ProbFontSize=4*obj.ProbFontSize;
 
     print(fig,[prefix '_learn.eps'],'-depsc');
     print(figs,[prefix '_learnS.eps'],'-depsc');
-    print(figEq,[prefix '_eq_WT.eps'],'-depsc');
+    print(figEq(1),[prefix '_eq_WT.eps'],'-depsc');
+    print(figEq(2),[prefix '_eq_KO.eps'],'-depsc');
     print(figEv(1),[prefix '_pr_WT_nopre.eps'],'-depsc');
     print(figEv(2),[prefix '_pr_WT_pre.eps'],'-depsc');
+    print(figEv(3),[prefix '_pr_KO_nopre.eps'],'-depsc');
+    print(figEv(4),[prefix '_pr_KO_pre.eps'],'-depsc');
     close('all');
 
 

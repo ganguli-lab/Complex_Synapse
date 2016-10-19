@@ -1,6 +1,6 @@
-function printVORfigs( prefix,paramWT,paramKO,df,T_train,T_pre,varargin )
-%PRINTVORFIGS(prefix,paramWT,paramKO,df,T_train,T_pre) Print all figures
-%for specified parameter set 
+function printVORfigsKO( prefix,paramWT,paramKO,df,T_train,T_pre,varargin )
+%PRINTVORFIGSKO(prefix,paramWT,paramKO,df,T_train,T_pre) Print all figures
+%for WT/KO comparison pre/nopre comparisons, for specified parameter set 
 %
 %   prefix  = string prepended to all file names, must begin with model name
 %   paramWT = parameter used for WT (if different for pot/dep use vector [pot, dep],
@@ -45,7 +45,7 @@ if isscalar(df)
     df = {0.5, 0.5+df, 0.5-df};
 end
 
-vexpt=VORbuilder(builder_h, n, paramPot, paramWT, paramKO, df{:}, T_train,T_pre, pooled);
+vexpt=VORbuilderKO(builder_h, n, paramPot, paramWT, paramKO, df{:}, T_train,T_pre, pooled);
 vexpt.PrintFigs(prefix);
 
 

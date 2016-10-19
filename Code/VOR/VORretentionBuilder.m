@@ -1,6 +1,6 @@
 function [ exptobj ] = VORretentionBuilder( builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,t_inc,t_dec )
 %VORexptobj=VORBUILDER(builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,fpDec,t_inc,t_dec)
-%building a VORexperiment object
+%building a VORexptKO object
 %   builder_h  = function handle [Wp,Wm,w]=builder_h(numStates,param)
 %   num_states = number of synaptic states
 %   paramPot   = paramter for Wp for both WT/KO
@@ -24,7 +24,7 @@ KOobj=SynapseMemoryModel('Wp',Wp,'Wm',WmKO,'w',w,'fp',fpNorm);
 nopreobj=VORtrainSeq('tTrain',t_dec+t_inc,'fps',[fpNorm fpInc]);
 withpreobj=VORtrainSeq('tTrain',[t_dec t_dec+t_inc],'fps',[fpNorm fpInc fpNorm]);
 
-exptobj=VORexperiment('WT',WTobj,'KO',KOobj,'nopre',nopreobj,'withpre',withpreobj);
+exptobj=VORexptKO('WT',WTobj,'KO',KOobj,'nopre',nopreobj,'withpre',withpreobj);
 
 end
 

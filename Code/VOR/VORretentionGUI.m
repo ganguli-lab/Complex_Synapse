@@ -4,7 +4,7 @@ function VORretentionGUI(varargin)
 persistent p
 if isempty(p)
     p=inputParser;
-    p.FunctionName='VORparamGUI';
+    p.FunctionName='VORretentionGUI';
     p.StructExpand=true;
     p.KeepUnmatched=false;
     p.addParameter('builder_h',@SerialBuilder);

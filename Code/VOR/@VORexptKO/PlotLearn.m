@@ -1,14 +1,14 @@
 function PlotLearn( obj,varargin )
-%VORexperiment.PLOTLEARN plot learning curves during taining
-%and pre-training for WT
+%VORexptKO.PLOTLEARN plot learning curves during taining
+%and pre-training for WT/KO
 
 persistent p
 if isempty(p)
     p=inputParser;
-    p.FunctionName='VORexperiment.PlotLearn';
+    p.FunctionName='VORexptKO.PlotLearn';
     p.StructExpand=true;
     p.KeepUnmatched=true;
-    p.addParameter('Parent',gca,@(x)validateattributes(x,{'numeric','matlab.graphics.axis.Axes'},{'scalar'},'VORexperiment.PlotLearn','Parent'));
+    p.addParameter('Parent',gca,@(x)validateattributes(x,{'numeric','matlab.graphics.axis.Axes'},{'scalar'},'VORexptKO.PlotLearn','Parent'));
 end
 p.parse(varargin{:});
 r=p.Results;
@@ -20,8 +20,12 @@ dt=obj.nopre.tTrain(end)/obj.numpts;
 [S,~,t]=obj.nopre.LearningCurve(obj.WT,dt);
 ph(1)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,p.Unmatched);
 hold(r.Parent,'on');
+[S]=obj.nopre.LearningCurve(obj.KO,dt);
+ph(2)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',r.Parent,p.Unmatched);
 [S]=obj.withpre.LearningCurve(obj.WT,dt);
-ph(2)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,p.Unmatched);
+ph(3)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,p.Unmatched);
+[S]=obj.withpre.LearningCurve(obj.KO,dt);
+ph(4)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',r.Parent,p.Unmatched);
 
 axes(r.Parent);
 set(r.Parent,'FontSize',obj.FontSize);
@@ -48,7 +52,7 @@ ylabel(r.Parent,'Learning (-\Delta mean w)','FontSize',obj.LabFontSize)
     annotation('textbox',pos,'String','training','VerticalAlignment','bottom','LineStyle','none',...
         'HorizontalAlignment','center','FontSize',obj.txFontSize);
      drawnow;
-   legend(r.Parent,[ph(1);ph(2)],{obj.noprelabel; obj.withprelabel},'Location','Best')
+   legend(r.Parent,[ph(1);ph(2)],{obj.WTlabel; obj.KOlabel},'Location','Best')
     drawnow;
 
 end

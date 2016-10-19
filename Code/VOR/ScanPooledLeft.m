@@ -7,7 +7,7 @@ function [ comps ] = ScanPooledLeft( ranges, n )
 
 builder_h = @PooledBuilder;
 
-vexpt=VORbuilder(builder_h, n, ranges(1)*[1 1], ranges(1:2), ranges(1:2), ranges(2), ranges(1), ranges(3), 1,1, true);
+vexpt=VORbuilderKO(builder_h, n, ranges(1)*[1 1], ranges(1:2), ranges(1:2), ranges(2), ranges(1), ranges(3), 1,1, true);
 range_ctr = 1:length(ranges);
 
 comps = -Inf(length(ranges) * ones(1,6));

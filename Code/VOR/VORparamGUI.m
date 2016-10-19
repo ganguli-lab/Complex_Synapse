@@ -190,7 +190,7 @@ MakePlot;
     end%function MakeEditBox
 
     function MakePlot
-        vorexptobj=VORbuilder(S.builder_h,S.numStates,S.paramPot,S.paramWT,S.paramKO,S.fpNorm,S.fpInc,S.fpDec,S.t_inc,S.t_dec);
+        vorexptobj=VORbuilderKO(S.builder_h,S.numStates,S.paramPot,S.paramWT,S.paramKO,S.fpNorm,S.fpInc,S.fpDec,S.t_inc,S.t_dec);
         vorexptobj.PlotLearnS('Parent',axes1,'LineWidth',2);
     end%function MakePlot
 

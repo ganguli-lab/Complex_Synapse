@@ -1,6 +1,6 @@
 function St=LearnSdata( obj,varargin )
 %VORexperiment.PLOTLEARNS plot learning curves during taining
-%and pre-training for WT/KO
+%and pre-training for WT
 
 
 tchange=obj.withpre.tTrain(1);
@@ -18,15 +18,6 @@ St.WTnopre=S(1)-S(t<=T);
 S(t<tchange)=[];
 % ph(3)=plot(t(t>=tchange)-tchange,S(1)-S,'Color',obj.WTcolor,'LineStyle',obj.withprestyle,'Parent',Parent,varargin{:});
 St.WTwithpre=S(1)-S;
-
-[S,~,t]=obj.nopre.LearningCurve(obj.KO,dt);
-T=t(end)-tchange;
-% ph(2)=plot(t(t<=T),S(1)-S(t<=T),'Color',obj.KOcolor,'LineStyle',obj.noprestyle,'Parent',Parent,varargin{:});
-St.KOnopre=S(1)-S(t<=T);
-[S]=obj.withpre.LearningCurve(obj.KO,dt);
-S(t<tchange)=[];
-% ph(4)=plot(t(t>=tchange)-tchange,S(1)-S,'Color',obj.KOcolor,'LineStyle',obj.withprestyle,'Parent',Parent,varargin{:});
-St.KOwithpre=S(1)-S;
 
 
 

@@ -1,7 +1,7 @@
 function [ comps ] = InitialRateComps( obj )
-%comps=obj.INITIALRATECOMPS Comparison of initial learning rates in all 4
+%comps=VORexptKO.INITIALRATECOMPS Comparison of initial learning rates in all 4
 %cases, no diagonal comparisons
-%   obj   = VORexperiment object
+%   obj   = VORexptKO object
 %   comps = learning rate differences: [left bottom right top]  
 %           +ve = same sign as real experiment
 %           -ve = opposite sign to real experiment

@@ -1,3 +1,5 @@
+% Br graphs for Fig in main text
+%%
 vexpt = VORbuilder(@SerialBuilder, 10, 0.12, 0.14, 0.2, 0.5, 0.11, 0.89, 5, 100, false);
 yl=[0 0.2];
 yt=yl;

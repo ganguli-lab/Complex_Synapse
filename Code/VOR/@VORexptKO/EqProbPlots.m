@@ -1,6 +1,6 @@
 function EqProbPlots( obj,fh,varargin )
-%VORexperiment.EQPROBPLOTS(fh) plot equilibrium distributions for baseline,
-%gain-increase, gain-decrease for WT
+%VORexptKO.EQPROBPLOTS(fh) plot equilibrium distributions for baseline,
+%gain-increase, gain-decrease for WT/KO
 %   fh = figure handle(s) for plots
 
 
@@ -13,9 +13,20 @@ else
     xlab='State';
 end
 
-h=axes('Parent',fh,'FontSize',obj.EqFontSize);
-
-PlotEqProbs(obj.WT,obj.WTlabel,h);
+if isscalar(fh)
+    clf(fh);
+    h(1)=subplot(1,2,1,'Parent',fh,'FontSize',obj.EqFontSize);
+    h(2)=subplot(1,2,2,'Parent',fh,'FontSize',obj.EqFontSize);
+elseif numel(fh)==2
+    clf(fh(1));clf(fh(2));
+    h(1)=axes('Parent',fh(1),'FontSize',obj.EqFontSize);
+    h(2)=axes('Parent',fh(2),'FontSize',obj.EqFontSize);
+else
+    error('Need 1 or 2 figure handles');
+end
+    
+PlotEqProbs(obj.WT,obj.WTlabel,h(1));
+PlotEqProbs(obj.KO,obj.KOlabel,h(2));
 
 
 
