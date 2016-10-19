@@ -18,10 +18,10 @@ cla(r.Parent);
 dt=obj.nopre.tTrain(end)/obj.numpts;
 
 [S,~,t]=obj.nopre.LearningCurve(obj.WT,dt);
-ph(1)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,p.Unmatched);
+ph(1)=plot(t,S(1)-S,'Color',obj.noprecolor,'Parent',r.Parent,p.Unmatched);
 hold(r.Parent,'on');
 [S]=obj.withpre.LearningCurve(obj.WT,dt);
-ph(2)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,p.Unmatched);
+ph(2)=plot(t,S(1)-S,'Color',obj.withprecolor,'Parent',r.Parent,p.Unmatched);
 
 axes(r.Parent);
 set(r.Parent,'FontSize',obj.FontSize);

@@ -28,8 +28,8 @@ else
     error('Need 1 or 2 figure handles');
 end
     
-PlotProbEvol(P_WT_nopre,[obj.WTlabel ' ' obj.noprelabel],h(1));
-PlotProbEvol(P_WT_pre,[obj.WTlabel ' ' obj.withprelabel],h(2));
+PlotProbEvol(P_WT_nopre,[obj.noprelabel],h(1));
+PlotProbEvol(P_WT_pre,[obj.withprelabel],h(2));
 
 drawnow;
 

@@ -19,9 +19,9 @@ cla(r.Parent);
 
 St=obj.LearnSdata();
 
-ph(1)=plot(St.t,St.WTnopre,'Color',obj.WTcolor,'LineStyle',obj.noprestyle,'Parent',r.Parent,p.Unmatched);
+ph(1)=plot(St.t,St.WTnopre,'Color',obj.noprecolor,'LineStyle',obj.noprestyle,'Parent',r.Parent,p.Unmatched);
 hold(r.Parent,'on');
-ph(2)=plot(St.t,St.WTwithpre,'Color',obj.WTcolor,'LineStyle',obj.withprestyle,'Parent',r.Parent,p.Unmatched);
+ph(2)=plot(St.t,St.WTwithpre,'Color',obj.withprecolor,'LineStyle',obj.withprestyle,'Parent',r.Parent,p.Unmatched);
 
 
 

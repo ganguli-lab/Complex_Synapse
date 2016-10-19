@@ -1,29 +1,31 @@
-classdef VORexptKO < VORexperiment
-    %VOREXPTKO class for plotting VOR comparisons between WT/KO
-    %with/without pretraining
+classdef VORtrainSeqDiff < VORtrainSeq
+    %VORtrainSeqDiff class for plotting VOR learning curves
     %   Detailed explanation goes here
     
-    properties
-        %SynapseMemoryModel for MHC-I DbKb knockout
-        KO=SynapseMemoryModel;
+    properties (SetAccess=protected)%data
+        %fraction of potentiating events in each training epoch, incl
+        %before, for "other" population of synapses
+        fps_other=0.5;
+        %fraction of total synapse poopulation from "other" population of synapses
+        frac_other=0.5;
     end
     
-    properties %labels
-        KOlabel='K^bD^{b-/-}';
-        KOcolor=[192 0 0]/255;
-        KOstyle='-';
+    methods %setting data
         %
+        function newobj=setFpo(obj,newFp,varargin)
+            newobj=obj;
+            if isempty(varargin)
+                newobj.fps_other=newFp;
+            else
+                newobj.fps_other(varargin{1})=newFp;
+            end
+        end
     end
     
     methods
-        ProbEvols( obj,fh,varargin )
-        EqProbPlots( obj,fh,varargin )
-        PlotLearn( obj,varargin )
-        PlotLearnS( obj,varargin )
-        PrintFigs( obj,prefix )
-        St=LearnSdata(obj,varargin);
-        [P_WT_nopre,P_KO_nopre,P_WT_pre,P_KO_pre,t]=ProbEvolsData(obj)
-        comps=InitialRateComps(obj)
+        [tf]=isvalid(obj)
+        [S,Pt,t]=LearningCurve(obj,modelobj,dt)
+        rate=InitialLearnRate(obj,modelobj)
     end
     
     methods (Access=private)%for constructiuon
@@ -33,16 +35,16 @@ classdef VORexptKO < VORexperiment
     end%methods
     
     methods%constructor
-        function obj=VORexptKO(varargin)
+        function obj=VORtrainSeqDiff(varargin)
             superargs=varargin;
                 if nargin>=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
                     superargs(1:2) = [];
                 end%if nargin>=2
-            obj@VORexperiment(superargs{:});
+            obj@VORtrainSeq(superargs{:});
             if nargin ~=0%false -> default constructor does nothing
                 if nargin==2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
                     %true -> preallocate with default constructor doing nothing
-                    obj(max(varargin{1},1),max(varargin{2},1))=VORexptKO;
+                    obj(max(varargin{1},1),max(varargin{2},1))=VORtrainSeqDiff;
                     if varargin{1}<1
                         obj(1,:)=[];
                     end
@@ -53,7 +55,7 @@ classdef VORexptKO < VORexperiment
                     %
                     %default parameters:
                     %if we're copying another obj
-                    [tempobj,varargin]=extractArgOfType(varargin,'VORexptKO');
+                    [tempobj,varargin]=extractArgOfType(varargin,'VORtrainSeqDiff');
                     %otherwise
                     if isempty(tempobj)
                         tempobj=obj;
@@ -62,7 +64,7 @@ classdef VORexptKO < VORexperiment
                     %Set size of object:
                     %
                     if nargin>=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
-                        obj(varargin{1},varargin{2})=VORexptKO;
+                        obj(varargin{1},varargin{2})=VORtrainSeqDiff;
                     end%if nargin>=2
                     %
                     %set parameter values:

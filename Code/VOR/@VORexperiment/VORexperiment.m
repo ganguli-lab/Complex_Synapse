@@ -17,8 +17,11 @@ classdef VORexperiment
         noprelabel='No Pre-training';
         withprelabel='w/ Pre-training';
         WTcolor='k';
+        WTstyle='-';
         noprestyle='-';
         withprestyle='--';
+        noprecolor='k';
+        withprecolor='c';
         %
         LabFontSize=20;
         FontSize=20;
