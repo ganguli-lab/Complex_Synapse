@@ -7,6 +7,8 @@ classdef VORtrainSeq
         tTrain=[];
         %fraction of potentiating events in each training epoch, incl before 
         fps=0.5;
+        %rate of candidate plasticity events in each epoch, incl before
+        rs=1;
     end
     
     methods %setting data
@@ -28,6 +30,7 @@ classdef VORtrainSeq
     
     methods
         function val=numTrain(obj)
+        %number of training epochs
             val=length(obj.tTrain);
         end
         [tf]=isvalid(obj)
@@ -76,6 +79,9 @@ classdef VORtrainSeq
                     %Extract data:
                     %
                 end% if nargin=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
+                if length(obj.rs) <= length(obj.fps)
+                    obj.rs = [obj.rs ones(1, length(obj.fps) - length(obj.rs))];
+                end%if length(rs)
             end%if nargin ~=0
         end%function SynapseIdModel
     end%methods constructor

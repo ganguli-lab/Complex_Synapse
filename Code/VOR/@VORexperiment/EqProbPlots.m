@@ -21,24 +21,31 @@ PlotEqProbs(obj.WT,obj.WTlabel,h);
 
 
     function PlotEqProbs(modelobj,titletext,Parent)
-        modelobj=modelobj.setFp(obj.withpre.fps(1));
-        p=modelobj.EqProb;
-        modelobj=modelobj.setFp(obj.withpre.fps(3));
-        p=[p;modelobj.EqProb];
-        modelobj=modelobj.setFp(obj.withpre.fps(2));
-        p=[p;modelobj.EqProb]';
+        leg = {'Untrained'};
+        modelobj = modelobj.setFp(obj.withpre.fps(1));
+        p = modelobj.EqProb;
+        if obj.withpre.numTrain >= 2
+            modelobj = modelobj.setFp(obj.withpre.fps(2));
+            p = [p; modelobj.EqProb];
+            leg{end+1} = 'After pretraining';
+        end
+        if obj.withpre.numTrain >= 1
+            modelobj = modelobj.setFp(obj.withpre.fps(end));
+            p = [p; modelobj.EqProb];
+            leg{end+1} = 'After training';
+        end
         %if we're using stairs:
-        p=[p;p(end,:)];
+        p = [p p(:,end)]';
 
-        stairs(Parent,n,p,varargin{:});
+        stairs(Parent, n, p, varargin{:});
         % plot(Parent,n(1:end-1)+0.5,p,varargin{:});
         % bar(Parent,n(1:end-1)+0.5,p,varargin{:});
-        xlim(Parent,[n(1) n(end)]);
-        set(Parent,'XTick',n(1:end-1)+0.5);
-        xlabel(Parent,xlab);
-        ylabel(Parent,'Equilibrium probability');
-        title(Parent,titletext);
-        legend(Parent,{'Untrained','Gain increase','Gain decrease'},'Location','Best');
+        xlim(Parent, [n(1) n(end)]);
+        set(Parent, 'XTick', n(1:end-1)+0.5);
+        xlabel(Parent, xlab);
+        ylabel(Parent, 'Equilibrium probability');
+        title(Parent, titletext);
+        legend(Parent, leg, 'Location', 'Best');
     end
 
 

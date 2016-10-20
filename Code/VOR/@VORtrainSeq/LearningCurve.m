@@ -11,21 +11,21 @@ function [ S,Pt,t ] = LearningCurve( obj,modelobj,dt )
 error(CheckType(modelobj,'SynapseMemoryModel'));
 error(CheckSize(modelobj,@isvalid));
 
-tchanges=[0 obj.tTrain];
-t=0:dt:tchanges(end);
+tchanges = [0 obj.tTrain];
+t = 0:dt:tchanges(end);
 
-modelobj=modelobj.setFp(obj.fps(1));
+modelobj = modelobj.setFp(obj.fps(1));
 %p0: ind(1,which state).
-p0=modelobj.EqProb;
+p0 = modelobj.EqProb;
 %pt: ind(what time,which state).
-pt=ones(length(t),1)*p0;
+pt = ones(length(t),1)*p0;
 %S: ind(1,what time).
-S=(pt*modelobj.w)';
-Pt=pt;
+S = (pt*modelobj.w)';
+Pt = pt;
 
 for i=1:obj.numTrain
     %
-    modelobj=modelobj.setFp(obj.fps(i+1));
+    modelobj = obj.rs(i+1) * modelobj.setFp(obj.fps(i+1));
 
     valid=t>tchanges(i);
     ix=find(~valid,1,'last');
@@ -33,13 +33,13 @@ for i=1:obj.numTrain
     p0=pt(ix,:);%ind(1,which state).
     %V: ind(which state,which eigenmode).
     %D: ind(which eigenmode,which eigenmode)
-    [V,D]=eig(modelobj.GetWf);
-    expqt=exp(diag(D)*(t-t(ix)))';%ind(what time,which eigenmode).
-    pt=(expqt*diag(p0*V))/V;%ind(what time,which state).
+    [V,D] = eig(modelobj.GetWf);
+    expqt = exp(diag(D)*(t-t(ix)))';%ind(what time,which eigenmode).
+    pt = (expqt*diag(p0*V))/V;%ind(what time,which state).
     
-    newS=(pt*modelobj.w)';
-    S(valid)=newS(valid);
-    Pt(ix+1:end,:)=pt(ix+1:end,:);
+    newS = (pt*modelobj.w)';
+    S(valid) = newS(valid);
+    Pt(ix+1:end,:) = pt(ix+1:end,:);
 end
 
 

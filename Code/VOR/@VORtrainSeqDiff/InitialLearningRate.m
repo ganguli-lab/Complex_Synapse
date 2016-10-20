@@ -13,14 +13,9 @@ function [ rate ] = InitialLearningRate( obj, modelobj )
 %          Wp,Wm,w from modelobj
 
 
-rate_rel = InitialLearningRate@VORtrainSeq(obj, modelobj);
+rate_rel = obj.VORrel.InitialLearningRate(modelobj);
 
-fps_old = obj.fps;
-obj = obj.setFp(obj.fps_other);
-
-rate_other = InitialLearningRate@VORtrainSeq(obj, modelobj);
-
-obj = obj.setFp(fps_old);
+rate_other = obj.VORcomp.InitialLearningRate(modelobj);
 
 rate = (1 - obj.frac_other) * rate_rel - obj.frac_other * rate_other;
 

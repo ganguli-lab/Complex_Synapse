@@ -12,13 +12,17 @@ function [ rate ] = InitialLearningRate( obj, modelobj )
 %          fp from obj, 
 %          Wp,Wm,w from modelobj
 
-modelobj = modelobj.setFp(obj.fps(end-1));
-p = modelobj.EqProb();
+rate = 0;
 
-modelobj = modelobj.setFp(obj.fps(end));
-W = modelobj.GetWf();
+if obj.numTrain > 0
+    modelobj = modelobj.setFp(obj.fps(end-1));
+    p = modelobj.EqProb();
 
-rate = - p * W * modelobj.w;
+    modelobj = obj.rs(end) * modelobj.setFp(obj.fps(end));
+    W = modelobj.GetWf();
+
+    rate = - p * W * modelobj.w;
+end%if numTrain
 
 end
 

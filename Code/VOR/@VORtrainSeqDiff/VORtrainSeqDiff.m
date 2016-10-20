@@ -1,13 +1,14 @@
-classdef VORtrainSeqDiff < VORtrainSeq
+classdef VORtrainSeqDiff
     %VORtrainSeqDiff class for plotting VOR learning curves
-    %   Detailed explanation goes here
+    %   Includes compensating synapses
     
     properties (SetAccess=protected)%data
-        %fraction of potentiating events in each training epoch, incl
-        %before, for "other" population of synapses
-        fps_other=0.5;
-        %fraction of total synapse poopulation from "other" population of synapses
-        frac_other=0.5;
+        %Training sequence of relevant synapses for VOR increase
+        VORrel = VORtrainSeq;
+        %Training sequence of synapses that cancel VOR increase
+        VORcomp = VORtrainSeq;
+        %fraction of total synapse poopulation in other population of synapses
+        frac_other = 0.5;
     end
     
     methods %setting data
@@ -23,8 +24,8 @@ classdef VORtrainSeqDiff < VORtrainSeq
     end
     
     methods
-        [tf]=isvalid(obj)
-        [S,Pt,t]=LearningCurve(obj,modelobj,dt)
+        tf=isvalid(obj)
+        [S,Pt,t,Pt_other]=LearningCurve(obj,modelobj,dt)
         rate=InitialLearnRate(obj,modelobj)
     end
     
@@ -36,11 +37,11 @@ classdef VORtrainSeqDiff < VORtrainSeq
     
     methods%constructor
         function obj=VORtrainSeqDiff(varargin)
-            superargs=varargin;
-                if nargin>=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
-                    superargs(1:2) = [];
-                end%if nargin>=2
-            obj@VORtrainSeq(superargs{:});
+%             superargs=varargin;
+%                 if nargin>=2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
+%                     superargs(1:2) = [];
+%                 end%if nargin>=2
+%             obj@VORtrainSeq(superargs{:});
             if nargin ~=0%false -> default constructor does nothing
                 if nargin==2 && isnumeric(varargin{1}) && isnumeric(varargin{2})
                     %true -> preallocate with default constructor doing nothing

@@ -11,12 +11,12 @@ function [ S,Pt,t,Pt_other ] = LearningCurve( obj,modelobj,dt )
 error(CheckType(modelobj,'SynapseMemoryModel'));
 error(CheckSize(modelobj,@isvalid));
 
-[S_rel,Pt,t] = LearningCurve@VORtrainSeq(obj, modelobj, dt);
+[S_rel,Pt,t] = obj.VORrel.LearningCurve(modelobj, dt);
 
 fps_old = obj.fps;
 obj = obj.setFp(obj.fps_other);
 
-[S_other, Pt_other] = LearningCurve@VORtrainSeq(obj, modelobj, dt);
+[S_other, Pt_other] = obj.VORcomp.LearningCurve(modelobj, dt);
 
 obj = obj.setFp(fps_old);
 
