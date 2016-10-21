@@ -1,5 +1,5 @@
 function [ exptobj ] = VORbuilderChR2eq( builder_h,numStates,paramPot,paramDep,fpNorm,fpInc,fpNS,t_inc,pooled )
-%VORexptobj=VORBUILDERCHR2EQ(builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,fpDec,t_inc,pooled)
+%VORexptobj=VORBUILDERCHR2EQ(builder_h,numStates,paramPot,paramDep,fpNorm,fpInc,fpNS,t_inc,pooled)
 %building a VORexperiment object with non-specific ChR2 CF stim, assuming
 %it is long enough to equilibriate
 %   builder_h  = function handle [Wp,Wm,w]=builder_h(numStates,param)
@@ -27,7 +27,8 @@ VORrel = VORtrainSeq('tTrain',t_inc, 'fps',[fpNS fpInc]);
 VORcomp = VORtrainSeq('tTrain',t_inc, 'fps',[fpNS fpNorm]);
 withpreobj = VORtrainSeqDiff('VORrel',VORrel, 'VORcomp',VORcomp);
 
-exptobj=VORexperiment('WT',WTobj,'nopre',nopreobj,'withpre',withpreobj,'pooled',pooled);
+exptobj=VORexperiment('WT',WTobj,'nopre',nopreobj,'withpre',withpreobj,...
+    'pooled',pooled,'withprestyle','-');
 
 end
 

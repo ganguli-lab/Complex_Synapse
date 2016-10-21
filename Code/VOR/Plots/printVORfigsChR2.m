@@ -1,6 +1,6 @@
-function printVORfigsKO( prefix,paramWT,paramKO,df,T_train,T_pre,varargin )
-%PRINTVORFIGSKO(prefix,paramWT,paramKO,df,T_train,T_pre) Print all figures
-%for WT/KO comparison pre/nopre comparisons, for specified parameter set 
+function printVORfigsChR2( prefix,param,df,T_train,T_pre,varargin )
+%PRINTVORFIGSCHR2(prefix,paramWT,paramKO,df,T_train,T_pre) Print all figures
+%for CF stim/no CF stim comparisons, for specified parameter set 
 %
 %   prefix  = string prepended to all file names, must begin with model name
 %   paramWT = parameter used for WT (if different for pot/dep use vector [pot, dep],
@@ -13,9 +13,9 @@ function printVORfigsKO( prefix,paramWT,paramKO,df,T_train,T_pre,varargin )
 %   T_train = duration of training
 %   T_pre   = duration of pre-training
 
-paramPot = paramWT(1);
-param_WT_p = paramWT; %need to keep this for pooled)
-paramWT = paramWT(end);
+paramPot = param(1);
+param_p = param; %need to keep this for pooled
+paramDep = param(end);
 pooled = false;
 
 if strncmpi(prefix,'cascade',3)
@@ -36,18 +36,25 @@ elseif strncmpi(prefix,'binary',3)
 elseif strncmpi(prefix,'pooled',3)
     builder_h = @PooledBuilder;
     pooled = true;
-    paramPot = param_WT_p(1);
-    paramWT = param_WT_p(2:3);
+    paramPot = param_p(1);
+    paramDep = param_p(2:3);
     n = 7;
 end
 
 if isscalar(df)
-    df = {0.5, 0.5+df, 0.5-df};
+    df = {0.5, 0.5+df, (0.5+df)^2};
 end
 
-vexpt=VORbuilderKO(builder_h, n, paramPot, paramWT, paramKO, df{:}, T_train,T_pre, pooled);
-vexpt.PrintFigs(prefix);
+% vexpt=VORbuilderChR2(builder_h, n, paramPot, paramDep, df{:}, T_train, T_pre, pooled);
+vexpt=VORbuilderChR2eq(builder_h, n, paramPot, paramDep, df{:}, T_train, pooled);
 
+%     fig=figure('WindowStyle','docked','PaperPositionMode','auto');
+%     Parent=axes('Parent',fig);
+%     vexpt.PlotLearn('LineWidth',2,'Parent',Parent);
+
+    figs=figure('WindowStyle','docked','PaperPositionMode','auto');
+    Parent=axes('Parent',figs);
+    vexpt.PlotLearnS('LineWidth',2,'Parent',Parent);
 
 end
 

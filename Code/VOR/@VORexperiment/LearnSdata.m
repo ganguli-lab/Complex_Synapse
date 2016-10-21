@@ -2,11 +2,13 @@ function St=LearnSdata( obj,varargin )
 %VORexperiment.PLOTLEARNS plot learning curves during taining
 %and pre-training for WT
 
-
-tchange=obj.withpre.tTrain(1);
-
-dt=diff(obj.withpre.tTrain)/obj.numpts;
-
+if obj.withpre.numTrain > 1
+    tchange=obj.withpre.tTrain(1);
+    dt=sum(diff(obj.withpre.tTrain))/obj.numpts;
+else
+    tchange=0;
+    dt=obj.withpre.tTrain/obj.numpts;
+end
 
 [S,~,t]=obj.nopre.LearningCurve(obj.WT,dt);
 T=t(end)-tchange;

@@ -1,5 +1,5 @@
 function [ exptobj ] = VORbuilderChR2( builder_h,numStates,paramPot,paramDep,fpNorm,fpInc,fpNS,t_inc,t_NS,pooled )
-%VORexptobj=VORBUILDERCHR2(builder_h,numStates,paramPot,paramWT,paramKO,fpNorm,fpInc,fpDec,t_inc,t_dec,pooled)
+%VORexptobj=VORBUILDERCHR2(builder_h,numStates,paramPot,paramDep,fpNorm,fpInc,fpNS,t_inc,t_NS,pooled)
 %building a VORexperiment object with non-specific ChR2 CF stim
 %   builder_h  = function handle [Wp,Wm,w]=builder_h(numStates,param)
 %   num_states = number of synaptic states
@@ -27,7 +27,8 @@ VORrel = VORtrainSeq('tTrain',[t_NS t_NS+t_inc], 'fps',[fpNorm fpNS fpInc]);
 VORcomp = VORtrainSeq('tTrain',[t_NS t_NS+t_inc], 'fps',[fpNorm fpNS fpNorm]);
 withpreobj = VORtrainSeqDiff('VORrel',VORrel, 'VORcomp',VORcomp);
 
-exptobj=VORexperiment('WT',WTobj,'nopre',nopreobj,'withpre',withpreobj,'pooled',pooled);
+exptobj=VORexperiment('WT',WTobj,'nopre',nopreobj,'withpre',withpreobj,...
+    'pooled',pooled,'withprestyle','-');
 
 end
 

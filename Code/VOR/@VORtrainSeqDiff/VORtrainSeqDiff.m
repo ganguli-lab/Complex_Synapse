@@ -11,19 +11,36 @@ classdef VORtrainSeqDiff
         frac_other = 0.5;
     end
     
-    methods %setting data
+    properties (Dependent=true)
+        tTrain;
+    end
+    
+    methods %setting/getting data
         %
-        function newobj=setFpo(obj,newFp,varargin)
+        function newobj=setFrac(obj,newF,varargin)
             newobj=obj;
             if isempty(varargin)
-                newobj.fps_other=newFp;
+                newobj.frac_other=newF;
             else
-                newobj.fps_other(varargin{1})=newFp;
+                newobj.frac_other(varargin{1})=newF;
             end
+        end
+        %
+        function value = get.tTrain(obj)
+            value = obj.VORrel.tTrain;
+        end
+        %
+        function obj = set.tTrain(obj, value)
+            obj.VORrel = obj.VORrel.setT(value);
+            obj.VORcomp = obj.VORcomp.setT(value);
         end
     end
     
     methods
+        function val=numTrain(obj)
+        %number of training epochs
+            val=length(obj.tTrain);
+        end
         tf=isvalid(obj)
         [S,Pt,t,Pt_other]=LearningCurve(obj,modelobj,dt)
         rate=InitialLearnRate(obj,modelobj)

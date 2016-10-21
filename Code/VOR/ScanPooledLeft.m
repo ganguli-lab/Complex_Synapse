@@ -18,7 +18,7 @@ for i1 = range_ctr
     
     for i2 = range_ctr
         for i3 = 1:i2-1
-            [~,Wm] = builder_h(n, ranges([i2 i3]));
+            [~,Wm] = builder_h(n, ranges([i3 i2]));
             vexpt.WT = vexpt.WT.setWm(Wm);
             
             for i4 = range_ctr

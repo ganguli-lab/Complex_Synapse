@@ -13,12 +13,7 @@ error(CheckSize(modelobj,@isvalid));
 
 [S_rel,Pt,t] = obj.VORrel.LearningCurve(modelobj, dt);
 
-fps_old = obj.fps;
-obj = obj.setFp(obj.fps_other);
-
 [S_other, Pt_other] = obj.VORcomp.LearningCurve(modelobj, dt);
-
-obj = obj.setFp(fps_old);
 
 S = (1 - obj.frac_other) * S_rel - obj.frac_other * S_other;
 
