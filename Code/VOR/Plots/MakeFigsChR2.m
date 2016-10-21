@@ -1,6 +1,7 @@
 %printVORfigsChR2( prefix, param, df, T_train, T_pre, varargin )
 printVORfigsChR2('serial_med',0.3,-0.3,5,20)
-printVORfigsChR2('binary',0.1,-0.1,5,5)
+% printVORfigsChR2('binary',0.1,-0.1,5,5)
+printVORfigsChR2('binary',[0.1 0.2],-0.2,5,5)
 printVORfigsChR2('multistate_lin',0.3,-0.3,5,5)
 printVORfigsChR2('cascade_long',0.25,-0.3,5,100)
 printVORfigsChR2('nonuni',0.25,-0.3,5,100)

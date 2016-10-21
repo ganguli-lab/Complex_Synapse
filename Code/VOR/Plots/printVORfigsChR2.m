@@ -45,16 +45,21 @@ if isscalar(df)
     df = {0.5, 0.5+df, (0.5+df)^2};
 end
 
-% vexpt=VORbuilderChR2(builder_h, n, paramPot, paramDep, df{:}, T_train, T_pre, pooled);
-vexpt=VORbuilderChR2eq(builder_h, n, paramPot, paramDep, df{:}, T_train, pooled);
+vexpt=VORbuilderChR2(builder_h, n, paramPot, paramDep, df{:}, T_train, T_pre, pooled);
+% vexpt=VORbuilderChR2eq(builder_h, n, paramPot, paramDep, df{:}, T_train, pooled);
 
-%     fig=figure('WindowStyle','docked','PaperPositionMode','auto');
-%     Parent=axes('Parent',fig);
-%     vexpt.PlotLearn('LineWidth',2,'Parent',Parent);
+fig=figure('WindowStyle','docked','PaperPositionMode','auto');
+Parent=axes('Parent',fig);
+vexpt.PlotLearn('LineWidth',2,'Parent',Parent);
+print(fig,[prefix '_ChR2_learn.eps'],'-depsc');
+close(fig);
 
-    figs=figure('WindowStyle','docked','PaperPositionMode','auto');
-    Parent=axes('Parent',figs);
-    vexpt.PlotLearnS('LineWidth',2,'Parent',Parent);
-
+figs=figure('WindowStyle','docked','PaperPositionMode','auto');
+Parent=axes('Parent',figs);
+vexpt.PlotLearnS('LineWidth',2,'Parent',Parent);
+print(figs,[prefix '_ChR2_learnS.eps'],'-depsc');
+close(figs);
+    
+    
 end
 
