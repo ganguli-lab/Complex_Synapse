@@ -5,12 +5,12 @@ ns = 4:10;
 ncomps=ScanPooledNum(paramvals,4:10);
 %%
 %plot
-txopts={'Interpreter','latex','FontSize',16};
+txopts={'Interpreter','latex','FontSize',20};
 ax=gca;
 bh=bar(ax, ns-1, ncomps','stacked');
 xlabel('Pool size', txopts{:});
-ylabel('max/min initial learning rate difference', txopts{:});
-title('Pooled resource model: no pre $-$ w/ pre for WT', txopts{:});
+ylabel('max/min $\{\dot{L}(0) - \dot{L}_\mathrm{pre}(0)\}$', txopts{:});
+title('Pooled resource model, WT', txopts{:});
 bh(1).FaceColor='none';
 bh(1).EdgeColor='none';
 bh(2).FaceColor=[0 0.4470 0.7410];

@@ -48,13 +48,13 @@ end
 vexpt=VORbuilderChR2(builder_h, n, paramPot, paramDep, df{:}, T_train, T_pre, pooled);
 % vexpt=VORbuilderChR2eq(builder_h, n, paramPot, paramDep, df{:}, T_train, pooled);
 
-fig=figure('WindowStyle','docked','PaperPositionMode','auto');
+fig=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
 Parent=axes('Parent',fig);
 vexpt.PlotLearn('LineWidth',2,'Parent',Parent);
 print(fig,[prefix '_ChR2_learn.eps'],'-depsc');
 close(fig);
 
-figs=figure('WindowStyle','docked','PaperPositionMode','auto');
+figs=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
 Parent=axes('Parent',figs);
 vexpt.PlotLearnS('LineWidth',2,'Parent',Parent);
 print(figs,[prefix '_ChR2_learnS.eps'],'-depsc');

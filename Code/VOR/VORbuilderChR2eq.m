@@ -28,7 +28,7 @@ VORcomp = VORtrainSeq('tTrain',t_inc, 'fps',[fpNS fpNorm]);
 withpreobj = VORtrainSeqDiff('VORrel',VORrel, 'VORcomp',VORcomp);
 
 exptobj=VORexperiment('WT',WTobj,'nopre',nopreobj,'withpre',withpreobj,...
-    'pooled',pooled,'withprestyle','-');
+    'pooled',pooled,'withprestyle','-','noprelabel','Sham stim','withprelabel','CF stim');
 
 end
 

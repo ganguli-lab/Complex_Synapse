@@ -1022,10 +1022,27 @@ Gain-decrease pre-training will shift the distribution to the potentiated side, 
 This means that the pre-trained animals will learn faster then the untrained one for both \KO\ models and wild-type (see \autoref{fig:sim_results}\ref{fig:pooled_sim}). %\autoref{fig:pooled_deponly}\ref{fig:pooled_deponly_learnS}).
 This differs from what is seen experimentally, where the pre-trained wild-type learns slower than the untrained one.
 
+\hypertarget{par:pooled_scan}{To} verify that this always happens, we scanned over acceptable values of the six parameters relevant to gain-decrease pre-training in wild-type models: $q\pot$, $q\dep\lmin < q\dep\lmax$, and $f\dep\dec < f\dep\norm < f\dep\inc$.
+Each parameter was scanned over 10 values from 0.05 to 0.95, rejecting values that do not respect the inequalities above.
+For each parameter set, we computed the initial learning rate, $\dot{L}(0)$ from \eqref{eq:learning}, with and without pre-training.
+To qualitatively reproduce the experimental results, we would need $\dot{L}_\text{no pre} - \dot{L}_\text{pre} > 0$ at $t = 0$.
+The range of values obtained is plotted in \autoref{fig:pooled_scan}, where we see that this difference is always negative, ruling out this model.
+
+\begin{figure}
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.4\linewidth]{pooled_deponly_scan.eps}
+  \caption{Difference in initial learning rate in wild-type models, without and with gain-decrease pre-training.
+  Learning, $L(t)$ is defined in \eqref{eq:learning}.
+  Here, we show the maximum and minimum values of this quantity when scanning all 6 relevant parameters (see \protect\hyperlink{par:pooled_scan}{text}).
+  We see that this quantity is always negative, whereas it was positive in the experiments.
+  }\label{fig:pooled_scan}
+\end{figure}
+
+
 This model shares one feature of the \hyperref[sec:multistate]{serial model}.
 The effect of initial saturation bias is amplified by resource depletion, allowing for impaired learning with enhanced plasticity.
 However, it does not have the metaplastic effect where repeated potentiation makes future depression harder, in fact it shows the opposite effect due to resource replenishment, so it can never show impaired learning after pre-training.
-
 
 
 \subsection{Cascade and non-uniform multistate models}\label{sec:cascade}
