@@ -285,6 +285,9 @@ The values used are listed in \autoref{fig:sim_results}\ref{tab:params}.
 %\end{figure}
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 \subsection{Model of VOR learning experiment}\label{sec:learning}
 
@@ -339,6 +342,9 @@ The values of these parameters are listed in \autoref{fig:sim_results}\ref{tab:p
 
 We are also assuming that the relation between VOR gain and mean synaptic weight is the same for \KO\ mice and wild-type, except for a linear offset to compensate for the difference in equilibrium weights mentioned above.
 This ensures that the qualitative questions mentioned above (enhancement or impairment of learning) will not be affected.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
@@ -523,6 +529,9 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
 %  \caption[\captionstartsn{#1}]{\captionstartn{#1}.
 %  Parameters \captiontext{#2} } \label{fig:#2}
 %\end{figure}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 
@@ -721,6 +730,9 @@ In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f \in [\Delta f^*(1,M),\
 %Now, the curvature can be changed by the nonlinear relation between synaptic weight and VOR gain, but both curves would be affected in the same way.
 %The difference in these two curvatures is therefore a good feature of this model.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 \subsection{Two-state model}\label{sec:binary}
 
@@ -753,7 +765,7 @@ We find that
 \end{equation}
 %
 The flux is a monotonically increasing function of $q\dep$ and $f\pot$.
-Therefore, enhancing plasticity in this way or pre-training can only enhance the initial learning rate for all values of the parameters, unlike the experimental results shown in \modelfig.
+Therefore, enhancing plasticity in this way, or pre-training, can only enhance the initial learning rate for all values of the parameters, unlike the experimental results shown in \modelfig.
 
 
 
@@ -821,7 +833,7 @@ With pre-training:
 \end{aligned}
 \end{equation}
 %
-So, we see that pre-training will speed up learning for all parameter values, unlike what is seen in the experiment.
+So, we see that pre-training will speed up learning, unlike what is seen in the experiment.
 This can be seen in
 \autoref{fig:sim_results}\ref{fig:binary_sim} %\autoref{fig:binary}\ref{fig:binary_learnS}
 (black curves).
@@ -869,6 +881,9 @@ This model has no mechanism that could ever result in this causing impaired lear
 Intuitively, this model is missing two features of the \hyperref[sec:multistate]{serial model}.
 First, it does not have the exponential amplification of the effect of initial saturation bias because this model does not have a chain of states for the distribution to decay across.
 Second, it does not have the metaplastic effect where repeated potentiation makes future depression harder, as potentiation will merely increase the number of potentiated synapses.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsection{Multistate model}\label{sec:multistate_lin}
@@ -992,6 +1007,9 @@ Second, it does not have the metaplastic effect where repeated potentiation make
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \subsection{Pooled resource model}\label{sec:pooled}
 %
 %
@@ -1043,6 +1061,9 @@ The range of values obtained is plotted in \autoref{fig:pooled_scan}, where we s
 This model shares one feature of the \hyperref[sec:multistate]{serial model}.
 The effect of initial saturation bias is amplified by resource depletion, allowing for impaired learning with enhanced plasticity.
 However, it does not have the metaplastic effect where repeated potentiation makes future depression harder, in fact it shows the opposite effect due to resource replenishment, so it can never show impaired learning after pre-training.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \subsection{Cascade and non-uniform multistate models}\label{sec:cascade}
@@ -1184,11 +1205,81 @@ Second, they both have the metaplastic effect where repeated potentiation makes 
 %  (\ref{tab:fit}) Parameters used to reproduce detailed experimental results. For the serial model, the parameter listed is the transition probability between adjacent states. For the cascade and non-uniform multistate models, the parameter is the ratio of adjacent transition probabilities.}\label{fig:fit}
 %\end{figure}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{Model of non-specific CF stimulation}\label{sec:chr2}
+
+
+
+
+\begin{figure}[p]
+\begin{myenuma}
+  \begin{tabular}{lll}
+      \item\label{fig:seial_ChR2}
+      \aligntop{\includegraphics[width=0.24\linewidth]{serial.svg}}
+      &
+      \item\label{fig:binary_ChR2}
+      \hspace{0.05\linewidth}\aligntop{\includegraphics[width=0.12\linewidth]{binary.svg}}
+      &
+      \item\label{fig:multistate_ChR2}
+      \aligntop{\includegraphics[width=0.24\linewidth]{multistate.svg}}
+      \\[1.3cm]
+      \aligntop{\includegraphics[width=0.29\linewidth]{serial_fit_ChR2_learnS.eps}}
+      &
+      \aligntop{\includegraphics[width=0.29\linewidth]{binary_ChR2_learnS.eps}}
+      &
+      \aligntop{\includegraphics[width=0.29\linewidth]{multistate_lin_ChR2_learnS.eps}}
+      \\[4.5cm]
+      \item\label{fig:pooled_ChR2}
+      \aligntop{\includegraphics[width=0.29\linewidth]{pooled_deponly.svg}}
+      &
+      \item\label{fig:cascade_ChR2}
+      \aligntop{\includegraphics[width=0.24\linewidth]{cascade.svg}}
+      &
+      \item\label{fig:nonuni_ChR2}
+      \aligntop{\includegraphics[width=0.24\linewidth]{multistate_nonuni.svg}}
+      \\[1.8cm]
+      \aligntop{\includegraphics[width=0.29\linewidth]{pooled_deponly_ChR2_learnS.eps}}
+      &
+      \aligntop{\includegraphics[width=0.29\linewidth]{cascade_fit_ChR2_learnS.eps}}
+      &
+      \aligntop{\includegraphics[width=0.29\linewidth]{nonuni_fit_ChR2_learnS.eps}}
+  \end{tabular}
+
+  \vspace{0.5cm}
+  \item\label{tab:params_ChR2}\aligntop{
+  \begin{tabular}{|l|c|c|c|c|c|c|c|}
+    \cline{1-8}
+    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+    Model & \#  & \multicolumn{2}{c|}{Plasticity param.} & \multicolumn{3}{c|}{$f\dep$} & $r\tpre$ \\
+    \cline{3-7}
+    & states & pot & dep & base & inc & CF Stim & {} \\
+
+    \cline{1-8}
+    Serial       & 10 & $0.12$  & $0.14$        & 0.5   & 0.89 & 0.9879 & 100 \\
+    Two-state    & 2  & $0.1$   & $0.4$         & 0.5   & 0.7  & 0.91   & 5   \\
+    Multistate   & 10 & $0.3$   & $0.3$         & 0.5   & 0.8  & 0.96   & 5   \\
+    Pooled res.\ & 7  & $0.08$  & $[0.006,0.6]$ & 0.5   & 0.9  & 0.99   & 20  \\
+    Cascade      & 14 & $0.386$ & $0.398$       & 0.522 & 0.63 & 0.99   & 200  \\ 
+    Non-uni.\    & 12 & $0.4$   & $0.4$         & 0.5   & 0.7  & 0.99   & 500  \\
+    \cline{1-8}
+  \end{tabular}}
+  \end{myenuma}
+  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (black) and after non-specific CF stimulation (cyan) for wild-type models.
+  (\ref{tab:params}) Parameters used for simulations.
+  For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states.
+  For the pooled resource model, the plasticity parameters are the minimum and maximum transition probability for the constituent two-state synapses.
+  For the cascade and non-uniform multistate models, the plasticity parameter is the ratio of adjacent transition probabilities.}\label{fig:sim_ChR2}
+\end{figure}
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \bibliographystyle{utcaps_sl}
-\bibliography{maths,neuro,markov}
+\bibliography{neuro,markov}
 
 \end{document}
