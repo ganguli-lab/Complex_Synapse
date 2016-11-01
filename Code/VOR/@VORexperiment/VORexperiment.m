@@ -25,6 +25,7 @@ classdef VORexperiment
         %
         LabFontSize=20;
         FontSize=20;
+        LegFontSize=20;
         txFontSize=10;
         EqFontSize=20;
         ProbFontSize=10;

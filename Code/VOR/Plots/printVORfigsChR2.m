@@ -1,12 +1,11 @@
 function printVORfigsChR2( prefix,param,df,T_train,T_pre,varargin )
-%PRINTVORFIGSCHR2(prefix,paramWT,paramKO,df,T_train,T_pre) Print all figures
+%PRINTVORFIGSCHR2(prefix,param,df,T_train,T_pre) Print all figures
 %for CF stim/no CF stim comparisons, for specified parameter set 
 %
 %   prefix  = string prepended to all file names, must begin with model name
-%   paramWT = parameter used for WT (if different for pot/dep use vector [pot, dep],
+%   param   = parameter used for WT (if different for pot/dep use vector [pot, dep],
 %                                   for pooled use [dep_max, dep_min, pot],
 %                                   otherwise use scalar for both pot and dep) 
-%   paramKO = parameter used for KO dep (for pooled use [dep_max, dep_min])
 %   df      = change in fpot for gain inc (if base fpNorm != 0.5, 
 %                                         or if different for train/pre,
 %                                         use fpots: {fpNorm,fpInc,fpDec})
@@ -48,11 +47,18 @@ end
 vexpt=VORbuilderChR2(builder_h, n, paramPot, paramDep, df{:}, T_train, T_pre, pooled);
 % vexpt=VORbuilderChR2eq(builder_h, n, paramPot, paramDep, df{:}, T_train, pooled);
 
-fig=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
-Parent=axes('Parent',fig);
-vexpt.PlotLearn('LineWidth',2,'Parent',Parent);
-print(fig,[prefix '_ChR2_learn.eps'],'-depsc');
-close(fig);
+vexpt.LegFontSize=2*vexpt.LegFontSize;
+vexpt.LabFontSize=2*vexpt.LabFontSize;
+vexpt.txFontSize=2*vexpt.txFontSize;
+vexpt.EqFontSize=2*vexpt.EqFontSize;
+vexpt.ProbFontSize=4*vexpt.ProbFontSize;
+
+
+% fig=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
+% Parent=axes('Parent',fig);
+% vexpt.PlotLearn('LineWidth',2,'Parent',Parent);
+% print(fig,[prefix '_ChR2_learn.eps'],'-depsc');
+% close(fig);
 
 figs=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
 Parent=axes('Parent',figs);

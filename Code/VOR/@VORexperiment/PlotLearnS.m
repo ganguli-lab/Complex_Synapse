@@ -29,7 +29,7 @@ ph(2)=plot(St.t,St.WTwithpre,'Color',obj.withprecolor,'LineStyle',obj.withpresty
 set(r.Parent,'FontSize',obj.FontSize);
 xlabel(r.Parent,'Training time','FontSize',obj.LabFontSize)
 ylabel(r.Parent,'Learning (-\Delta mean w)','FontSize',obj.LabFontSize)
-legend(r.Parent,ph,{obj.noprelabel; obj.withprelabel},'Location','Best')
+legend(r.Parent,ph,{obj.noprelabel; obj.withprelabel},'Location','NorthWest','FontSize',obj.LegFontSize)
 
 
 
