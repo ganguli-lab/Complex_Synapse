@@ -54,6 +54,8 @@
 %\newcommand{\lmin}{_{\text{min}}}
 \newcommand{\modelfig}[1][a]{Figure 3#1 of the main text}
 \newcommand{\datafig}[1][b]{Figure 2#1 of the main text}
+\newcommand{\chrfig}[1][b]{Figure 4#1 of the main text}
+\newcommand{\compfig}[1][a]{Figure 4 -- figure supplement 2#1}
 % ----------------------------------------------------------------
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1210,7 +1212,12 @@ Second, they both have the metaplastic effect where repeated potentiation makes 
 
 \section{Model of non-specific CF stimulation}\label{sec:chr2}
 
+Here, we model the effects of non-specific CF stimulation, as in \chrfig. 
+It is necessary to also model the ``other'' population of synapses that compensate for the change in baseline synaptic weight of the synapses considered up to now, either due to enhanced plasticity or non-specific CF stimulation.
 
+To be concrete, we model these other synapses as described in \compfig.
+We set the relative rate of depression events for these synapses during training to $f\dep = f\dep\norm$, \ie the baseline value, so that they are unaffected by training.
+For both sets of synapses during non-specific CF stimulation, we set $f\dep = > f\dep\norm$.
 
 
 \begin{figure}[p]
@@ -1261,7 +1268,7 @@ Second, they both have the metaplastic effect where repeated potentiation makes 
     Two-state    & 2  & $0.1$   & $0.4$         & 0.5   & 0.7  & 0.91   & 5   \\
     Multistate   & 10 & $0.3$   & $0.3$         & 0.5   & 0.8  & 0.96   & 5   \\
     Pooled res.\ & 7  & $0.08$  & $[0.006,0.6]$ & 0.5   & 0.9  & 0.99   & 20  \\
-    Cascade      & 14 & $0.386$ & $0.398$       & 0.522 & 0.63 & 0.99   & 200  \\ 
+    Cascade      & 14 & $0.386$ & $0.398$       & 0.522 & 0.63 & 0.99   & 200  \\
     Non-uni.\    & 12 & $0.4$   & $0.4$         & 0.5   & 0.7  & 0.99   & 500  \\
     \cline{1-8}
   \end{tabular}}
