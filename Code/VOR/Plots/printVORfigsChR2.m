@@ -54,11 +54,11 @@ vexpt.EqFontSize=2*vexpt.EqFontSize;
 vexpt.ProbFontSize=4*vexpt.ProbFontSize;
 
 
-% fig=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
-% Parent=axes('Parent',fig);
-% vexpt.PlotLearn('LineWidth',2,'Parent',Parent);
-% print(fig,[prefix '_ChR2_learn.eps'],'-depsc');
-% close(fig);
+fig=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
+Parent=axes('Parent',fig);
+vexpt.PlotLearn('LineWidth',2,'Parent',Parent);
+print(fig,[prefix '_ChR2_learn.eps'],'-depsc');
+close(fig);
 
 figs=figure('PaperPositionMode','auto','Position',[60 60 1000 1000]);
 Parent=axes('Parent',figs);

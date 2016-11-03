@@ -35,6 +35,7 @@ classdef VORtrainSeq
         end
         [tf]=isvalid(obj)
         [S,Pt,t]=LearningCurve(obj,modelobj,dt)
+        [S,Pt,t]=LearningCurveEnd(obj,modelobj,dt)
         rate=InitialLearnRate(obj,modelobj)
     end
     

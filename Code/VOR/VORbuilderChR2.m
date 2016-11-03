@@ -19,8 +19,8 @@ function [ exptobj ] = VORbuilderChR2( builder_h,numStates,paramPot,paramDep,fpN
 
 WTobj = SynapseMemoryModel('Wp',Wp,'Wm',Wm,'w',w,'fp',fpNorm);
 
-VORrel = VORtrainSeq('tTrain',t_NS+t_inc, 'fps',[fpNorm fpInc]);
-VORcomp = VORtrainSeq('tTrain',t_NS+t_inc, 'fps',[fpNorm fpNorm]);
+VORrel = VORtrainSeq('tTrain',[t_NS t_NS+t_inc], 'fps',[fpNorm fpNorm fpInc]);
+VORcomp = VORtrainSeq('tTrain',[t_NS t_NS+t_inc], 'fps',[fpNorm fpNorm fpNorm]);
 nopreobj = VORtrainSeqDiff('VORrel',VORrel, 'VORcomp',VORcomp);
 
 VORrel = VORtrainSeq('tTrain',[t_NS t_NS+t_inc], 'fps',[fpNorm fpNS fpInc]);

@@ -3,26 +3,26 @@ function St=LearnSdata( obj,varargin )
 %and pre-training for WT/KO
 
 
-tchange=obj.withpre.tTrain(1);
+% tchange=obj.withpre.tTrain(1);
 
 dt=diff(obj.withpre.tTrain)/obj.numpts;
 
 
-[S,~,t]=obj.nopre.LearningCurve(obj.WT,dt);
-T=t(end)-tchange;
-St.t=t(t<=T);
-St.WTnopre=S(1)-S(t<=T);
+[S,~,t]=obj.nopre.LearningCurveEnd(obj.WT,dt);
+%T=t(end)-tchange;
+St.t=t;%(t<=T);
+St.WTnopre=S(1)-S;%(t<=T);
 
-[S]=obj.withpre.LearningCurve(obj.WT,dt);
-S(t<tchange)=[];
+[S]=obj.withpre.LearningCurveEnd(obj.WT,dt);
+% S(t<tchange)=[];
 St.WTwithpre=S(1)-S;
 
-[S,~,t]=obj.nopre.LearningCurve(obj.KO,dt);
-T=t(end)-tchange;
-St.KOnopre=S(1)-S(t<=T);
+[S]=obj.nopre.LearningCurveEnd(obj.KO,dt);
+% T=t(end)-tchange;
+St.KOnopre=S(1)-S;%(t<=T);
 
-[S]=obj.withpre.LearningCurve(obj.KO,dt);
-S(t<tchange)=[];
+[S]=obj.withpre.LearningCurveEnd(obj.KO,dt);
+% S(t<tchange)=[];
 St.KOwithpre=S(1)-S;
 
 
