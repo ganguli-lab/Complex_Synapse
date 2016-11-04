@@ -1212,12 +1212,21 @@ Second, they both have the metaplastic effect where repeated potentiation makes 
 
 \section{Model of non-specific CF stimulation}\label{sec:chr2}
 
-Here, we model the effects of non-specific CF stimulation, as in \chrfig. 
+Here, we model the effects of non-specific CF stimulation, as in \chrfig.
 It is necessary to also model the ``other'' population of synapses that compensate for the change in baseline synaptic weight of the synapses considered up to now, either due to enhanced plasticity or non-specific CF stimulation.
 
 To be concrete, we model these other synapses as described in \compfig.
 We set the relative rate of depression events for these synapses during training to $f\dep = f\dep\norm$, \ie the baseline value, so that they are unaffected by training.
-For both sets of synapses during non-specific CF stimulation, we set $f\dep = > f\dep\norm$.
+Here we set the rate of plasticity events causing forgetting of the CF stimulation in these synapses is the same as the rate of plasticity events in the original synapses during training, although similar results could be acheived with other choices.
+For both sets of synapses during non-specific CF stimulation, we set $f\dep > f\dep\norm$ to model the increased rate of depression.
+The values of all parameters used can be seen in \autoref{fig:sim_ChR2}\ref{tab:params_ChR2}.
+
+In \autoref{fig:sim_ChR2}\ref{fig:seial_ChR2}--\ref{fig:nonuni_ChR2} we see examples of simulations of all of the models we have considered.
+We see that every single one of them is capable of reproducing the experimental results of \chrfig, for suitable parameter choices.
+This is because this intervention has the effect of depleting the population of synapses available for depression \emph{without} the competing effect of enhanced plasticity.
+Therefore the depletion effect is stronger (than 0) and learning is impaired.
+This means that these experiments cannot rule out any of the models.
+However these experiments do agree with the idea of impaired learning due to depletion of the population of labile synapses.
 
 
 \begin{figure}[p]

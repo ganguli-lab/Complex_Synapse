@@ -8,7 +8,7 @@ ncomps=ScanPooledNum(paramvals,4:10);
 txopts={'Interpreter','latex','FontSize',20};
 ax=gca;
 bh=bar(ax, ns-1, ncomps','stacked');
-xlabel('Pool size', txopts{:});
+xlabel('$\#$ of synapses in pool', txopts{:});
 ylabel('max/min $\{\dot{L}(0) - \dot{L}_\mathrm{pre}(0)\}$', txopts{:});
 title('Pooled resource model, WT', txopts{:});
 bh(1).FaceColor='none';
