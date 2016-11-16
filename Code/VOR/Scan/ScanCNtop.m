@@ -40,7 +40,7 @@ for i1 = range_ctr
 %             pause;
             
             [~,Wm] = builder_h(n, ranges(i3));
-            vexpt.WT = vexpt.WT.setWm(Wm);
+            vexpt.KO = vexpt.KO.setWm(Wm);
             
             DispCounter(1,m,'i4:');
             for i4 = range_ctr(2:end)
@@ -50,7 +50,7 @@ for i1 = range_ctr
                 
                 x = Find_pot_KO(builder_h,n,ranges(i1),ranges(i2),ranges(i3),ranges(i4)/maxv,reps,0,maxv);
                 Wp = builder_h(n, x);
-                vexpt.WT = vexpt.WT.setWp(Wp);
+                vexpt.KO = vexpt.KO.setWp(Wp);
                 
                 for i5 = range_ctr(range_ctr < i4)
 %                     DispCounter(i5,i4-1,'i5:');
