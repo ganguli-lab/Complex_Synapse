@@ -2,7 +2,7 @@
 paramvals = 0.05:0.1:0.95;
 ns = 4:10;
 %calculations
-ncomps=ScanPooledNum(paramvals,4:10);
+ncomps=ScanPooledNum(paramvals,ns);
 %%
 %plot
 txopts={'Interpreter','latex','FontSize',20};

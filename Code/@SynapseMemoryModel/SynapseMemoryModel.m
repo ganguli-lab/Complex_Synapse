@@ -79,6 +79,7 @@ classdef SynapseMemoryModel
         q=GetEnc(obj)
         [Zinv,piv]=GetZinv(obj,varargin)
         p=EqProb(obj,varargin)
+        mw=MeanWeight(obj,varargin)
     end
     
     methods%for memory curves etc
