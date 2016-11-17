@@ -35,12 +35,21 @@ lb = r.minval;
 ub = r.maxval; 
 
 minf = Inf;
+pot_KO = NaN;
 
 for i = 1:r.reps
-%     [x, fval, ef] = fmincon(optfun, x0, [],[],[],[], lb, ub, [], opts);
-    [x, fval] = fmincon(lossfun, x0, [],[],[],[], lb, ub, [], opts);
-    if fval < minf %&& ef > 0 
+     [x, fval, ef] = fmincon(lossfun, x0, [],[],[],[], lb, ub, [], opts);
+%     [x, fval] = fmincon(lossfun, x0, [],[],[],[], lb, ub, [], opts);
+    if fval < minf && fval < 1e-3 && ef > 0 
         pot_KO = x;
+        minf = fval;
+    end
+end
+
+if ~isnan(pot_KO)
+    y = BaselineWt(builder_h, n, pot_KO, dep_KO, fpNorm);
+    if (y - bw)^2 >= 1e-3 || pot_KO < lb || pot_KO > ub
+        error('invalid result:');
     end
 end
 

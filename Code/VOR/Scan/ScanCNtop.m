@@ -1,4 +1,4 @@
-function [ comps ] = ScanCNtop( ranges, n, reps, useCnotN  )
+function [ comps,wh ] = ScanCNtop( ranges, n, reps, useCnotN  )
 %comps=SCANCNTOP(ranges,n,reps,useCnotN) parameter scan for cascade/nonuni
 %multistate model
 %   comps  = learning rate differences: WT_nopre - KO_nopre
@@ -7,13 +7,15 @@ function [ comps ] = ScanCNtop( ranges, n, reps, useCnotN  )
 %   useCnotN = true for cascade, false for nonuniform multistate model
 %   parametrs: pot_wt, dep_wt, dep_ko, fp_norm, fp_inc
 
+minv = 1e-4;
 if useCnotN
     builder_h = @CascadeBuilder;
-    maxv = 0.5;
+    maxv = 0.5 - minv;
 else
     builder_h = @NonuniBuilder;
-    maxv = 1;
+    maxv = 1 - minv;
 end
+wh=[];
 
 vexpt=VORbuilderKO(builder_h, n, ranges(1), ranges(1), ranges(2), ranges(2), ranges(1), 0.5, 1,1, false);
 range_ctr = 1:length(ranges);
@@ -35,9 +37,7 @@ for i1 = range_ctr
         
         DispCounter(1,m,'i3:');
         for i3 = range_ctr(range_ctr > i2)
-%             pause;
             DispCounter(i3,m,'i3:');
-%             pause;
             
             [~,Wm] = builder_h(n, ranges(i3));
             vexpt.KO = vexpt.KO.setWm(Wm);
@@ -48,7 +48,10 @@ for i1 = range_ctr
                 
                 vexpt.nopre = vexpt.nopre.setFp(ranges(i4)/maxv,1);
                 
-                x = Find_pot_KO(builder_h,n,ranges(i1),ranges(i2),ranges(i3),ranges(i4)/maxv,reps,0,maxv);
+                x = Find_pot_KO(builder_h,n,ranges(i1),ranges(i2),ranges(i3),ranges(i4)/maxv,reps,minv,maxv);
+                if isnan(x)
+                    continue;
+                end
                 Wp = builder_h(n, x);
                 vexpt.KO = vexpt.KO.setWp(Wp);
                 
@@ -58,17 +61,17 @@ for i1 = range_ctr
                     vexpt.nopre = vexpt.nopre.setFp(ranges(i5)/maxv,2);
 
                     comps(i1,i2,i3,i4,i5) = vexpt.InitRComp_top();
-%                       pause;
+                    if comps(i1,i2,i3,i4,i5) > 0
+                        y1 = BaselineWt(@CascadeBuilder, 8, ranges(i1), ranges(i2), ranges(i4)/maxv);
+                        y2 = BaselineWt(@CascadeBuilder, 8, x, ranges((i3)), (ranges(i4))/maxv);
+                        wh = [wh; i1, i2, i3, i4, i5, x, y1, y2];
+                    end
                 end%for i5
 %                 DispCounter(i4,i4-1,'i5:');
             end%for i4
-%             pause;
             DispCounter(m+1,m,'i4:');
-%             pause;
         end%for i3
-%          pause;
         DispCounter(m+1,m,'i3:');
-%          pause;
     end%for i2
     DispCounter(m,m-1,'i2:');
 end%for i1
