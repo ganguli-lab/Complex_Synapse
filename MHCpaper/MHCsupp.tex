@@ -108,7 +108,9 @@ We make the following assumptions:
   \item The synaptic weights of the internal states are given by the column vector $\w$. This can only take values in a finite range that we can shift to $\pm1$. Most of the models will only use the two extreme values.
 \end{itemize}
 
-The overall rate of candidate plasticity events will only set the timescale, and only the relative rates will matter.
+The overall rate of candidate plasticity events will only affect the units we measure time in.
+For the questions we are investigating, qualitative understanding of when learning is enhanced/impaired rather than detailed numerical matching of learning curves, this is completely irrelevant.
+Only the relative rates will matter.
 With this in mind, we define
 %
 \begin{equation}\label{eq:fpotdep}
@@ -129,7 +131,7 @@ The independence and identicalness of synapses means that the state of the syste
   \frg = f\pot\M\pot+f\dep\M\dep-\I,
 \end{equation}
 %
-where $\frg$ is a continuous time Markov matrix matrix and $\I$ is the identity matrix.
+where $\frg$ is a continuous time Markov transition matrix and $\I$ is the identity matrix.
 Eventually, this will settle into the equilibrium distribution:
 %
 \begin{equation}\label{eq:eqprob}
@@ -139,9 +141,8 @@ Eventually, this will settle into the equilibrium distribution:
 
 %For models with only two possible synaptic weights, the distribution of synaptic weights is completely described by the mean, $\pr(t)\w$.
 
-
-The \KO\ mice have a lower threshold for depression.
-We can model this by changing $\M\dep\wt$ to $\M\dep\ko$, which has larger off-diagonal matrix elements.
+We model the \KO\ mice by changing $\M\dep\wt$ to $\M\dep\ko$, which has larger off-diagonal matrix elements.
+This reduces the typical number of candidate depression events required to induce a change in synaptic weight, modelling the observed lower threshold for LTD \cite{McConnell2009MHCcerebellum}.
 
 We will look at several different models,
 the serial model (see \cite{Leibold2008serial,Ben-DayanRubin2007sparse} and \autoref{fig:models}\ref{fig:serial_model}) which has only two values for the synaptic weight,
@@ -819,56 +820,56 @@ If the dependence of the distribution on $q\dep$ is mixed with the other paramet
 A similar argument applies to the effect of pre-training and the distributions over $f\pot$.
 
 The monotonicity shown above means that this model cannot reproduce the key qualitative features of the experiments outlined in \autoref{sec:results}, at least as for the initial learning rate.
-This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
-
-First, consider the wild-type.
-Without pre-training:
+%This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
 %
-\begin{equation}\label{eq:binWTnopre}
-  \Phi = {\Delta f}\, q.
-\end{equation}
-%
-With pre-training:
-%
-\begin{equation}\label{eq:binWTpre}
-\begin{aligned}
-  \Phi &= 2{\Delta f}\, q.
-\end{aligned}
-\end{equation}
-%
-So, we see that pre-training will speed up learning, unlike what is seen in the experiment.
-This can be seen in
-\autoref{fig:sim_results}\ref{fig:binary_sim} %\autoref{fig:binary}\ref{fig:binary_learnS}
-(black curves).
-
-Now, consider the \KO\ models, for which we define $\beta=q\pot/q\dep<1$, and $q\pot=q$.
-Without pre-training:
-%
-\begin{equation}\label{eq:binKOnopre}
-  \Phi = \frac{2{\Delta f}\, q}{1+\beta},
-\end{equation}
-%
-which is larger than \eqref{eq:binWTnopre} for all $\beta$, unlike what is seen in the experiments (see \modelfig).
-This is also seen in
-\autoref{fig:sim_results}\ref{fig:binary_sim} %\autoref{fig:binary}\ref{fig:binary_learn},\ref{fig:binary_learnS}
-(solid curves).
-As discussed above (below \eqref{eq:multiKOnopre}), the larger value of $q\dep=q/\beta$ has two effects.
-Smaller $\beta$ will increase the probability of depression, speeding up learning, but it will also decrease the probability of being ready for depression, slowing down learning.
-For the serial model, we argued that the first effect goes like $1/\beta$, whereas the second goes like $\beta^{M/2}$ to leading order.
-Here $M=2$, so the leading part of the two effects will cancel.
-The subleading effects (the normalisation of the probabilities) are responsible for the faster learning in the \KO\ models.
-
+%First, consider the wild-type.
+%Without pre-training:
+%%
+%\begin{equation}\label{eq:binWTnopre}
+%  \Phi = {\Delta f}\, q.
+%\end{equation}
+%%
 %With pre-training:
 %%
-%\begin{equation}\label{eq:binKOpre}
+%\begin{equation}\label{eq:binWTpre}
 %\begin{aligned}
-%  \Phi &= 4{\Delta f}\, q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
-%          {(1-2\Delta f)^2 - \beta^2(1+2\Delta f)^2}.
+%  \Phi &= 2{\Delta f}\, q.
 %\end{aligned}
 %\end{equation}
 %%
-%As we've already ruled out this model, we will not analyse this formula any further.
-As this model is already ruled out, we will not analyse pre-training in the \KO\ models.
+%So, we see that pre-training will speed up learning, unlike what is seen in the experiment.
+%This can be seen in
+%\autoref{fig:sim_results}\ref{fig:binary_sim} %\autoref{fig:binary}\ref{fig:binary_learnS}
+%(black curves).
+%
+%Now, consider the \KO\ models, for which we define $\beta=q\pot/q\dep<1$, and $q\pot=q$.
+%Without pre-training:
+%%
+%\begin{equation}\label{eq:binKOnopre}
+%  \Phi = \frac{2{\Delta f}\, q}{1+\beta},
+%\end{equation}
+%%
+%which is larger than \eqref{eq:binWTnopre} for all $\beta$, unlike what is seen in the experiments (see \modelfig).
+%This is also seen in
+%\autoref{fig:sim_results}\ref{fig:binary_sim} %\autoref{fig:binary}\ref{fig:binary_learn},\ref{fig:binary_learnS}
+%(solid curves).
+%As discussed above (below \eqref{eq:multiKOnopre}), the larger value of $q\dep=q/\beta$ has two effects.
+%Smaller $\beta$ will increase the probability of depression, speeding up learning, but it will also decrease the probability of being ready for depression, slowing down learning.
+%For the serial model, we argued that the first effect goes like $1/\beta$, whereas the second goes like $\beta^{M/2}$ to leading order.
+%Here $M=2$, so the leading part of the two effects will cancel.
+%The subleading effects (the normalisation of the probabilities) are responsible for the faster learning in the \KO\ models.
+%
+%%With pre-training:
+%%%
+%%\begin{equation}\label{eq:binKOpre}
+%%\begin{aligned}
+%%  \Phi &= 4{\Delta f}\, q \, \frac{(1-2\Delta f) - \beta(1+2\Delta f)}
+%%          {(1-2\Delta f)^2 - \beta^2(1+2\Delta f)^2}.
+%%\end{aligned}
+%%\end{equation}
+%%%
+%%As we've already ruled out this model, we will not analyse this formula any further.
+%As this model is already ruled out, we will not analyse pre-training in the \KO\ models.
 
 
 For this simple binary synapse model, the ratio of the numbers of potentiated and depressed synapses is equal to the ratio of the potentiating and depressing transition rates.
@@ -1320,7 +1321,8 @@ For the other models, a numerical analysis is required, as shown in \autoref{fig
 $0 \leq f\dep\norm < f\dep\inc \leq 1$, for the pooled resource model $0 \leq q\dep_\text{min,WT} < q\dep_\text{min,\KO}, q\dep_\text{max,WT} < q\dep_\text{max,\KO}$ and $0 \leq q\pot\wt$, for the cascade model $0 \leq x\dep\wt < x\dep\ko \leq \frac{1}{2}$ and $0 \leq x\pot\wt \leq \frac{1}{2}$, and for the nonuniform multistate model $0 \leq x\dep\wt < x\dep\ko \leq 1$ and $0 \leq x\pot\wt \leq 1$.
 In each case, the \KO\ potentiation parameter, $q\pot\ko$ for the pooled resource model and $x\pot\ko$ for the others, was adjusted to match the baseline mean synaptic weight. $\pr(0)\w$, with wild-type.
 
-
+We see that, for most parameter values, such models do not reproduce the observed learning impairment with enhanced plasticity.
+In some cases a very small learning impairment was seen, but these occurred at extreme parameter values where floating point precision could become an issue.
 
 
 
@@ -1336,6 +1338,7 @@ In each case, the \KO\ potentiation parameter, $q\pot\ko$ for the pooled resourc
   Learning, $L(t)$ is defined in \eqref{eq:learning}.
   Here, we show the maximum and minimum values of this quantity when scanning all 7/5 relevant parameters (see \protect\hyperlink{par:bal_scan}{text}).
   We see that this quantity is usually negative, whereas it was positive in the experiments.
+  The exceptions are very small, and tend to occur at extreme parameter values where rounding errors may occur.
   }\label{fig:bal}
 \end{figure}
 
