@@ -52,10 +52,11 @@
 \newcommand{\ttrain}{t_{\text{train}}}
 %\newcommand{\lmax}{_{\text{max}}}
 %\newcommand{\lmin}{_{\text{min}}}
-\newcommand{\modelfig}[1][a]{Figure 3#1 of the main text}
-\newcommand{\datafig}[1][b]{Figure 2#1 of the main text}
-\newcommand{\chrfig}[1][b]{Figure 4#1 of the main text}
-\newcommand{\compfig}[1][a]{Figure 4 -- figure supplement 2#1}
+\newcommand{\modelfig}[1][A]{Figure 3#1 of the main text}
+\newcommand{\datafig}[1][B]{Figure 2#1 of the main text}
+\newcommand{\chrfig}[1][B]{Figure 4#1 of the main text}
+\newcommand{\compfig}[1][A]{Figure 4 -- figure supplement 2#1}
+\newcommand{\basefig}{Figure 1 -- figure supplement 2}
 % ----------------------------------------------------------------
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1287,6 +1288,55 @@ However these experiments do agree with the idea of impaired learning due to dep
   For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states.
   For the pooled resource model, the plasticity parameters are the minimum and maximum transition probability for the constituent two-state synapses.
   For the cascade and non-uniform multistate models, the plasticity parameter is the ratio of adjacent transition probabilities.}\label{fig:sim_ChR2}
+\end{figure}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Balanced potentiation and depression}\label{sec:bal}
+
+
+As the baseline oculomotor performance was normal in the \KO\ mice (see \basefig), one might ask if it is possible that potentiation is also enhanced by the knockout, in such a way that the baseline mean synaptic weight is unchanged.
+
+Intuitively, this seems impossible.
+The impaired learning observed in some of the models considered depended on the competition between the enhanced intrinsic plasticity rate and the depletion of the population of synapses available for depression.
+If the second effect is removed, the first must dominate and learning will be enhanced.
+
+However, enhancing potentiation will increase the number of synapses making transitions in the ``wrong'' direction, impairing learning.
+Furthermore, the distribution of synapses across labile and stubborn states may be altered, also affecting the learning rate.
+
+For the \hyperref[sec:multistate]{serial}, \hyperref[sec:binary]{two-state} and \hyperref[sec:multistate_lin]{multistate} models, the validity of the intuition can be seen analytically.
+From \eqref{eq:mutltieq}, we can see that the baseline mean synaptic weight depends monotonically on the quantity
+%
+\begin{equation*}
+  \alpha=\frac{f\pot q\pot}{f\dep q\dep}.
+\end{equation*}
+%
+Maintaining the same baseline would then require increasing $q\pot$ in proportion to $q\dep$.
+As one can see from \eqref{eq:multiflux}, \eqref{eq:binaryflux} and \eqref{eq:multiLinFlux}, this will always lead to an enhanced initial learning rate.
+
+For the other models, a numerical analysis is required, as shown in \autoref{fig:bal}.
+\hypertarget{par:bal_scan}{To} see if learning is impaired with enhanced plasticity each relevant parameter was scanned over 10 values from 0.05 to 0.95, rejecting values that do not respect the inequalities:
+$0 \leq f\dep\norm < f\dep\inc \leq 1$, for the pooled resource model $0 \leq q\dep_\text{min,WT} < q\dep_\text{min,\KO}, q\dep_\text{max,WT} < q\dep_\text{max,\KO}$ and $0 \leq q\pot\wt$, for the cascade model $0 \leq x\dep\wt < x\dep\ko \leq \frac{1}{2}$ and $0 \leq x\pot\wt \leq \frac{1}{2}$, and for the nonuniform multistate model $0 \leq x\dep\wt < x\dep\ko \leq 1$ and $0 \leq x\pot\wt \leq 1$.
+In each case, the \KO\ potentiation parameter, $q\pot\ko$ for the pooled resource model and $x\pot\ko$ for the others, was adjusted to match the baseline mean synaptic weight. $\pr(0)\w$, with wild-type.
+
+
+
+
+
+
+\begin{figure}
+  \centering
+  \begin{myenuma}
+    \item\aligntop{\includegraphics[width=0.29\linewidth]{pooled_deponly_scan.eps}}\label{fig:pooled_bal}
+    \item\aligntop{\includegraphics[width=0.29\linewidth]{cascade_scan.eps}}\label{fig:cascade_bal}
+    \item\aligntop{\includegraphics[width=0.29\linewidth]{nonuni_scan.eps}}\label{fig:nonuni_bal}
+  \end{myenuma}
+  \caption{Difference in initial learning rate in wild-type and \KO\ models, without gain-decrease pre-training.
+  Learning, $L(t)$ is defined in \eqref{eq:learning}.
+  Here, we show the maximum and minimum values of this quantity when scanning all 7/5 relevant parameters (see \protect\hyperlink{par:bal_scan}{text}).
+  We see that this quantity is usually negative, whereas it was positive in the experiments.
+  }\label{fig:bal}
 \end{figure}
 
 

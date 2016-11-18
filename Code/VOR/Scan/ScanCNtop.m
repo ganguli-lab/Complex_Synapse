@@ -11,9 +11,11 @@ minv = 1e-4;
 if useCnotN
     builder_h = @CascadeBuilder;
     maxv = 0.5 - minv;
+    fr = 2;
 else
     builder_h = @NonuniBuilder;
     maxv = 1 - minv;
+    fr = 1;
 end
 wh=[];
 
@@ -46,9 +48,9 @@ for i1 = range_ctr
             for i4 = range_ctr(2:end)
                 DispCounter(i4,m,'i4:');
                 
-                vexpt.nopre = vexpt.nopre.setFp(ranges(i4)/maxv,1);
+                vexpt.nopre = vexpt.nopre.setFp(ranges(i4)*fr,1);
                 
-                x = Find_pot_KO(builder_h,n,ranges(i1),ranges(i2),ranges(i3),ranges(i4)/maxv,reps,minv,maxv);
+                x = Find_pot_KO(builder_h,n,ranges(i1),ranges(i2),ranges(i3),ranges(i4)*fr,reps,minv,maxv);
                 if isnan(x)
                     continue;
                 end
@@ -58,12 +60,12 @@ for i1 = range_ctr
                 for i5 = range_ctr(range_ctr < i4)
 %                     DispCounter(i5,i4-1,'i5:');
                     
-                    vexpt.nopre = vexpt.nopre.setFp(ranges(i5)/maxv,2);
+                    vexpt.nopre = vexpt.nopre.setFp(ranges(i5)*fr,2);
 
                     comps(i1,i2,i3,i4,i5) = vexpt.InitRComp_top();
                     if comps(i1,i2,i3,i4,i5) > 0
-                        y1 = BaselineWt(@CascadeBuilder, 8, ranges(i1), ranges(i2), ranges(i4)/maxv);
-                        y2 = BaselineWt(@CascadeBuilder, 8, x, ranges((i3)), (ranges(i4))/maxv);
+                        y1 = BaselineWt(@CascadeBuilder, 8, ranges(i1), ranges(i2), ranges(i4)*fr);
+                        y2 = BaselineWt(@CascadeBuilder, 8, x, ranges((i3)), (ranges(i4))*fr);
                         wh = [wh; i1, i2, i3, i4, i5, x, y1, y2];
                     end
                 end%for i5
