@@ -1,4 +1,4 @@
-function [ comps ] = ScanCNNum( ranges, ns, reps, useCnotN )
+function [ comps ] = ScanCNNum( ranges, ns, reps, useCnotN, varargin )
 %comps=SCANPOOLEDNUM(ranges,ns) parameter scan for pooled resource model
 %   comps  = learning rate differences: WT_nopre - WT_pre
 %   ranges = range for each parameter scan
@@ -9,7 +9,7 @@ comps = -Inf(2,length(ns));
 DispCounter(1,ns(end),'n:');
 for n = ns
     DispCounter(n,ns(end),'n:');
-    pcomps = ScanCNtop(ranges, n, reps, useCnotN);
+    pcomps = ScanCNtop(ranges, n, reps, useCnotN, varargin{:});
     comps(1,ns==n) = max(pcomps(:));
     comps(2,ns==n) = min(pcomps(~isinf(pcomps)));
 end

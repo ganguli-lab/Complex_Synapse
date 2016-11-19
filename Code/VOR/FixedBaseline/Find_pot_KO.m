@@ -17,7 +17,7 @@ if isempty(p)
     p=inputParser;
     p.FunctionName='Find_pot_KO';
     p.StructExpand=true;
-    p.KeepUnmatched=false;
+    p.KeepUnmatched=true;
     p.addOptional('reps',20,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative','integer'},'Find_pot_KO','reps'));
     p.addOptional('minval',0,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'Find_pot_KO','minval'));
     p.addOptional('maxval',1,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'Find_pot_KO','maxval'));
@@ -28,7 +28,10 @@ r=p.Results;
 bw = BaselineWt(builder_h, n, pot_WT, dep_WT, fpNorm);
 lossfun = @(x) (BaselineWt(builder_h, n, x, dep_KO, fpNorm) - bw)^2;
 
-opts = optimoptions('fmincon','Display','off');
+optcell = inputparser2pv(p);
+opts = optimoptions('fmincon','Display','off','Algorithm','interior-point',...
+    'FunctionTolerance',1e-6,'StepTolerance',1e-10,'OptimalityTolerance',1e-6,...
+    optcell{:});
 
 x0 = r.minval + (r.maxval - r.minval) * rand;
 lb = r.minval; 
@@ -40,18 +43,18 @@ pot_KO = NaN;
 for i = 1:r.reps
      [x, fval, ef] = fmincon(lossfun, x0, [],[],[],[], lb, ub, [], opts);
 %     [x, fval] = fmincon(lossfun, x0, [],[],[],[], lb, ub, [], opts);
-    if fval < minf && fval < 1e-3 && ef > 0 
+    if fval < minf && fval < 1e-7 && ef > 0 
         pot_KO = x;
         minf = fval;
     end
 end
 
-if ~isnan(pot_KO)
-    y = BaselineWt(builder_h, n, pot_KO, dep_KO, fpNorm);
-    if (y - bw)^2 >= 1e-3 || pot_KO < lb || pot_KO > ub
-        error('invalid result:');
-    end
-end
+% if ~isnan(pot_KO)
+%     y = BaselineWt(builder_h, n, pot_KO, dep_KO, fpNorm);
+%     if (y - bw)^2 >= 1e-6 || pot_KO < lb || pot_KO > ub
+%         error('invalid result:');
+%     end
+% end
 
 
 end

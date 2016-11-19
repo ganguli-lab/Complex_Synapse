@@ -4,14 +4,14 @@ cn = true;
 %parameter ranges
 paramvals = (0.05:0.1:0.95);
 ns = 4:10;
-reps=2;
+reps=10;
 if cn
     ns = 4:2:16;
     paramvals = paramvals/2;
 end
 %%
 %calculations
-ncomps=ScanCNNum(paramvals,ns,reps,cn);
+ncomps=ScanCNNum(paramvals,ns,reps,cn,'FunctionTolerance',1e-7,'StepTolerance',1e-11,'OptimalityTolerance',1e-7);
 %%
 %plot
 txopts={'Interpreter','latex','FontSize',20};

@@ -1,4 +1,4 @@
-function [ comps,wh ] = ScanCNtop( ranges, n, reps, useCnotN  )
+function [ comps,wh ] = ScanCNtop( ranges, n, reps, useCnotN, varargin  )
 %comps=SCANCNTOP(ranges,n,reps,useCnotN) parameter scan for cascade/nonuni
 %multistate model
 %   comps  = learning rate differences: WT_nopre - KO_nopre
@@ -50,7 +50,7 @@ for i1 = range_ctr
                 
                 vexpt.nopre = vexpt.nopre.setFp(ranges(i4)*fr,1);
                 
-                x = Find_pot_KO(builder_h,n,ranges(i1),ranges(i2),ranges(i3),ranges(i4)*fr,reps,minv,maxv);
+                x = Find_pot_KO(builder_h,n,ranges(i1),ranges(i2),ranges(i3),ranges(i4)*fr,reps,minv,maxv,varargin{:});
                 if isnan(x)
                     continue;
                 end
