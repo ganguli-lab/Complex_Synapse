@@ -1322,7 +1322,7 @@ $0 \leq f\dep\norm < f\dep\inc \leq 1$, for the pooled resource model $0 \leq q\
 In each case, the \KO\ potentiation parameter, $q\pot\ko$ for the pooled resource model and $x\pot\ko$ for the others, was adjusted to match the baseline mean synaptic weight. $\pr(0)\w$, with wild-type.
 
 We see that, for most parameter values, such models do not reproduce the observed learning impairment with enhanced plasticity.
-In some cases a very small learning impairment was seen, but these occurred at extreme parameter values where floating point precision could become an issue.
+In some cases a very small learning impairment was seen ($\CO(10^{-5})$), but these occurred at extreme parameter values where the tolerances used in fitting the potentiation parameter could have a noticeable impact.
 
 
 
@@ -1330,7 +1330,7 @@ In some cases a very small learning impairment was seen, but these occurred at e
 \begin{figure}
   \centering
   \begin{myenuma}
-    \item\aligntop{\includegraphics[width=0.29\linewidth]{pooled_deponly_scan.eps}}\label{fig:pooled_bal}
+    \item\aligntop{\includegraphics[width=0.29\linewidth]{pooled_scan.eps}}\label{fig:pooled_bal}
     \item\aligntop{\includegraphics[width=0.29\linewidth]{cascade_scan.eps}}\label{fig:cascade_bal}
     \item\aligntop{\includegraphics[width=0.29\linewidth]{nonuni_scan.eps}}\label{fig:nonuni_bal}
   \end{myenuma}
@@ -1338,7 +1338,7 @@ In some cases a very small learning impairment was seen, but these occurred at e
   Learning, $L(t)$ is defined in \eqref{eq:learning}.
   Here, we show the maximum and minimum values of this quantity when scanning all 7/5 relevant parameters (see \protect\hyperlink{par:bal_scan}{text}).
   We see that this quantity is usually negative, whereas it was positive in the experiments.
-  The exceptions are very small, and tend to occur at extreme parameter values where rounding errors may occur.
+  The exceptions are very small, $\CO(10^{-5})$, and tend to occur at extreme parameter values where the accuracy of fitting the potentiation parameter could become an issue.
   }\label{fig:bal}
 \end{figure}
 

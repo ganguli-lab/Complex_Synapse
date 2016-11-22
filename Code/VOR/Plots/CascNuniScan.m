@@ -17,6 +17,7 @@ ncomps=ScanCNNum(paramvals,ns,reps,cn,'FunctionTolerance',1e-7,'StepTolerance',1
 txopts={'Interpreter','latex','FontSize',20};
 ax=gca;
 bh=bar(ax, ns, ncomps','stacked');
+ax.FontSize=16;
 xlabel('$\#$ of synapstic states', txopts{:});
 ylabel('max/min $\{\dot{L}_{\mathrm{WT}}(0) - \dot{L}_{\mathrm{K}^b\mathrm{D}^{b-/-}}(0)\}$', txopts{:});
 if cn
@@ -27,6 +28,12 @@ end
 bh(1).FaceColor='none';
 bh(1).EdgeColor='none';
 bh(2).FaceColor=[0 0.4470 0.7410];
+if cn
+    xlim([ns(1)-1 ns(end)+1]);
+else
+    xlim([ns(1)-0.5 ns(end)+0.5]);
+end
+ylim([1.1*min(ncomps(:)) 0.02]);
 % ax.YAxis.Scale = 'log';
 %%
 if cn
