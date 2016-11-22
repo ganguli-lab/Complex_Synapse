@@ -7,11 +7,11 @@ error(CheckSize(qvec,@isrow));
 Wp=diag(qvec,1)-diag([qvec 0]);
 
 if nargout>1
-Wm=rot90(Wp,2);
+    Wm=rot90(Wp,2);
 end
 
 if nargout>2
-w=[-ones((length(qvec)+1)/2,1);ones((length(qvec)+1)/2,1)];
+    w=BinaryWeights(length(qvec)+1);
 end
 
 end

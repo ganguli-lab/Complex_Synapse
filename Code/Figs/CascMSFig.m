@@ -1,14 +1,8 @@
 t=10.^(-1:0.2:4);
 x=0.5;
-% q=(x.^abs((1:19)-10))/(1-x);
-% [Wp,Wm,w]=CascadeMSinterp(q,q,0.5,1);
-% casc=SNRcurve(t,Wp,Wm,0.5,w);
 casc_model=SynapseMemoryModel.Build(@CascadeBuilder,0.5,{20,x});
 casc=casc_model.SNRrunAve(t);
 %%
-% qm=ones(1,19);
-% [Wp,Wm,w]=MakeSMS(qm);
-% m1=SNRcurve(t,Wp,Wm,0.5,w);
 serial_model=SynapseMemoryModel.Build(@SerialBuilder,0.5,{20,0.5});
 serial=serial_model.SNRrunAve(t);
 %%

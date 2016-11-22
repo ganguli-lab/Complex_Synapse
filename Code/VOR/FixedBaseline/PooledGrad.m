@@ -6,7 +6,7 @@ function [ dWp,dWm ] = PooledGrad( q,n )
 %   dWM = gradient of depression transition rates
 
 
-[dWp,dWm] = SerialBuilder(n,1);
+[dWp,dWm] = MultistateBuilder(n,1);
 
 end
 
