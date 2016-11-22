@@ -1,4 +1,4 @@
-function [ comps,wh ] = ScanPooledtop( prm, n, reps  )
+function [ comps,wh ] = ScanPooledTop( prm, n, reps, varargin  )
 %comps=SCANCNTOP(ranges,n,reps) parameter scan for pooled
 %resource model (dep only)
 %   comps  = learning rate differences: WT_nopre - KO_nopre
@@ -7,6 +7,7 @@ function [ comps,wh ] = ScanPooledtop( prm, n, reps  )
 %   parametrs: pot_wt, dep_wt, dep_ko, fp_norm, fp_inc
 
 builder_h = @PooledBuilder;
+grad_h = @PooledGrad;
 minv = 1e-4;
 maxv = 1 - minv;
 
@@ -15,7 +16,7 @@ m = 1:length(prm);
 M = m(end);
 wh=[];
 
-comps = -Inf(length(prm) * ones(1,5));
+comps = -Inf(length(prm) * ones(1,7));
 
 for i1 = m
     DispCounter(i1,M,'i1:');
@@ -48,7 +49,7 @@ for i1 = m
 
                         vexpt.nopre = vexpt.nopre.setFp(prm(i4),1);
 
-                        x = Find_pot_KO(builder_h,n,prm(i1),[prm(i2b) prm(i2)],[prm(i3b) prm(i3)],prm(i4),reps,minv,maxv);
+                        x = Find_pot_KO(builder_h,n,prm(i1),[prm(i2b) prm(i2)],[prm(i3b) prm(i3)],prm(i4),reps,minv,maxv,'ObjGrad',grad_h,varargin{:});
                         if isnan(x)
                             continue;
                         end
@@ -60,11 +61,11 @@ for i1 = m
 
                             vexpt.nopre = vexpt.nopre.setFp(prm(i5),2);
 
-                            comps(i1,i2,i3,i4,i5) = vexpt.InitRComp_top();
+                            comps(i1,i2,i2b,i3,i3b,i4,i5) = vexpt.InitRComp_top();
                             if comps(i1,i2,i3,i4,i5) > 0
                                 y1 = BaselineWt(@CascadeBuilder, 8, prm(i1), [prm(i2b) prm(i2)], prm(i4));
                                 y2 = BaselineWt(@CascadeBuilder, 8, x, [prm(i3b) prm(i3)], (prm(i4)));
-                                wh = [wh; i1, i2, i3, i4, i5, x, y1, y2];
+                                wh = [wh; i1, i2, i2b, i3, i3b, i4, i5, x, y1 - y2, comps(i1,i2,i2b,i3,i3b,i4,i5)];
                             end
                         end%for i5
 %                          DispCounter(i4,i4-1,'i5:');

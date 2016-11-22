@@ -21,17 +21,24 @@ if isempty(p)
     p.addOptional('reps',20,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative','integer'},'Find_pot_KO','reps'));
     p.addOptional('minval',0,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'Find_pot_KO','minval'));
     p.addOptional('maxval',1,@(x)validateattributes(x,{'numeric'},{'scalar','nonnegative'},'Find_pot_KO','maxval'));
+    p.addParameter('ObjGrad',false,@(x)validateattributes(x,{'function_handle','logical'},{'scalar'},'Find_pot_KO','ObjGrad'));
 end
 p.parse(varargin{:});
 r=p.Results;
-
-bw = BaselineWt(builder_h, n, pot_WT, dep_WT, fpNorm);
-lossfun = @(x) (BaselineWt(builder_h, n, x, dep_KO, fpNorm) - bw)^2;
 
 optcell = inputparser2pv(p);
 opts = optimoptions('fmincon','Display','off','Algorithm','interior-point',...
     'FunctionTolerance',1e-6,'StepTolerance',1e-10,'OptimalityTolerance',1e-6,...
     optcell{:});
+
+bw = BaselineWt(builder_h, n, pot_WT, dep_WT, fpNorm);
+if islogical(r.ObjGrad)
+    lossfun = @(x) (BaselineWt(builder_h, n, x, dep_KO, fpNorm) - bw)^2;
+else
+    lossfun = @lossfungrad;
+    opts.SpecifyObjectiveGradient = true;
+    grad_h = r.ObjGrad;
+end
 
 x0 = r.minval + (r.maxval - r.minval) * rand;
 lb = r.minval; 
@@ -55,6 +62,12 @@ end
 %         error('invalid result:');
 %     end
 % end
+
+    function [objval, objgrad] = lossfungrad(x)
+        [bwko,gr] = BaselineWt( builder_h, n, x, dep_KO, fpNorm, grad_h );
+        objval = (bwko - bw)^2;
+        objgrad = 2 * (bwko - bw) * gr;
+    end
 
 
 end

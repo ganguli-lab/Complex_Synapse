@@ -10,10 +10,12 @@ function [ comps,wh ] = ScanCNtop( ranges, n, reps, useCnotN, varargin  )
 minv = 1e-4;
 if useCnotN
     builder_h = @CascadeBuilder;
+    grad_h = @CascGrad;
     maxv = 0.5 - minv;
     fr = 2;
 else
     builder_h = @NonuniBuilder;
+    grad_h = @NonuniGrad;
     maxv = 1 - minv;
     fr = 1;
 end
@@ -50,7 +52,7 @@ for i1 = range_ctr
                 
                 vexpt.nopre = vexpt.nopre.setFp(ranges(i4)*fr,1);
                 
-                x = Find_pot_KO(builder_h,n,ranges(i1),ranges(i2),ranges(i3),ranges(i4)*fr,reps,minv,maxv,varargin{:});
+                x = Find_pot_KO(builder_h,n,ranges(i1),ranges(i2),ranges(i3),ranges(i4)*fr,reps,minv,maxv,'ObjGrad',grad_h,varargin{:});
                 if isnan(x)
                     continue;
                 end
@@ -66,7 +68,7 @@ for i1 = range_ctr
                     if comps(i1,i2,i3,i4,i5) > 0
                         y1 = BaselineWt(@CascadeBuilder, 8, ranges(i1), ranges(i2), ranges(i4)*fr);
                         y2 = BaselineWt(@CascadeBuilder, 8, x, ranges((i3)), (ranges(i4))*fr);
-                        wh = [wh; i1, i2, i3, i4, i5, x, y1, y2];
+                        wh = [wh; i1, i2, i3, i4, i5, x, y1 - y2, comps(i1,i2,i3,i4,i5)];
                     end
                 end%for i5
 %                 DispCounter(i4,i4-1,'i5:');
