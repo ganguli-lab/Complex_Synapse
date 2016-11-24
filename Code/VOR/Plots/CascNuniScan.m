@@ -11,7 +11,7 @@ if cn
 end
 %%
 %calculations
-ncomps=ScanCNNum(paramvals,ns,reps,cn,'FunctionTolerance',1e-7,'StepTolerance',1e-11,'OptimalityTolerance',1e-7);
+ncomps=ScanCNNum(paramvals,ns,reps,cn,'FunctionTolerance',1e-10,'StepTolerance',1e-14,'OptimalityTolerance',1e-8);
 %%
 %plot
 txopts={'Interpreter','latex','FontSize',20};

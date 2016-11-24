@@ -7,7 +7,7 @@ function [ comps,wh ] = ScanCNtop( ranges, n, reps, useCnotN, varargin  )
 %   useCnotN = true for cascade, false for nonuniform multistate model
 %   parametrs: pot_wt, dep_wt, dep_ko, fp_norm, fp_inc
 
-minv = 1e-4;
+minv = 1e-8;
 if useCnotN
     builder_h = @CascadeBuilder;
     grad_h = @CascGrad;
