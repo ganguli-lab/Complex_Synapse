@@ -28,14 +28,20 @@ r=p.Results;
 
 optcell = inputparser2pv(p);
 opts = optimoptions('fmincon','Display','off','Algorithm','interior-point',...
-    'FunctionTolerance',1e-6,'StepTolerance',1e-10,'OptimalityTolerance',1e-6,...
+    'ConstraintTolerance',1e-6,'FunctionTolerance',1e-6,'StepTolerance',1e-10,'OptimalityTolerance',1e-6,...
     optcell{:});
 
 bw = BaselineWt(builder_h, n, pot_WT, dep_WT, fpNorm);
 if islogical(r.ObjGrad)
-    lossfun = @(x) (BaselineWt(builder_h, n, x, dep_KO, fpNorm) - bw)^2;
+%     lossfun = @(x) (BaselineWt(builder_h, n, x, dep_KO, fpNorm) - bw)^2;
+%     nlcon = [];
+    lossfun = @(x) 0;
+    nlcon = @constrfun;
 else
-    lossfun = @lossfungrad;
+%     lossfun = @lossfungrad;
+%     nlcon=[];
+    lossfun = @dummy;
+    nlcon = @constrfungrad;
     opts.SpecifyObjectiveGradient = true;
     grad_h = r.ObjGrad;
 end
@@ -48,8 +54,8 @@ minf = Inf;
 pot_KO = NaN;
 
 for i = 1:r.reps
-     [x, fval, ef] = fmincon(lossfun, x0, [],[],[],[], lb, ub, [], opts);
-%     [x, fval] = fmincon(lossfun, x0, [],[],[],[], lb, ub, [], opts);
+     [x, fval, ef] = fmincon(lossfun, x0, [],[],[],[], lb, ub, nlcon, opts);
+%     [x, fval] = fmincon(lossfun, x0, [],[],[],[], lb, ub, nlcon, opts);
     if fval < minf && fval < 1e-7 && ef > 0 
         pot_KO = x;
         minf = fval;
@@ -63,12 +69,28 @@ end
 %     end
 % end
 
-    function [objval, objgrad] = lossfungrad(x)
-        [bwko,gr] = BaselineWt( builder_h, n, x, dep_KO, fpNorm, grad_h );
-        objval = (bwko - bw)^2;
-        objgrad = 2 * (bwko - bw) * gr;
+%     function [objval, objgrad] = lossfungrad(x)
+%         [bwko,gr] = BaselineWt( builder_h, n, x, dep_KO, fpNorm, grad_h );
+%         objval = (bwko - bw)^2;
+%         objgrad = 2 * (bwko - bw) * gr;
+%     end
+
+    function [f,gr] = dummy(~)
+        f=0;
+        gr=0;
     end
 
+    function [c, ceq] = constrfun(x)
+        c=[];
+        ceq = BaselineWt( builder_h, n, x, dep_KO, fpNorm ) - bw;
+    end
+
+    function [c, ceq, cgr, ceqgr] = constrfungrad(x)
+        c=[];
+        cgr=[];
+        [ceq, ceqgr] = BaselineWt( builder_h, n, x, dep_KO, fpNorm, grad_h );
+        ceq = ceq - bw;
+    end
 
 end
 
