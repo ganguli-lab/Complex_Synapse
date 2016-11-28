@@ -18,7 +18,7 @@ bh(1).FaceColor='none';
 bh(1).EdgeColor='none';
 bh(2).FaceColor=[0 0.4470 0.7410];
 xlim([ns(1)-1.5 ns(end)-0.5]);
-ylim([1.1*min(ncomps(:)) 0.02]);
-% ax.YAxis.Scale = 'log';
+ylim([-0.5 -1e-4]);
+ax.YAxis.Scale = 'log';
 %%
 print('pooled_scan.eps','-depsc');

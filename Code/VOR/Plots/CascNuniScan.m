@@ -6,14 +6,14 @@ cn = false;
 %parameter ranges
 paramvals = (0.05:0.1:0.95);
 ns = 4:10;
-reps=10;
+reps=20;
 if cn
-    ns = 4:2:16;
+    ns = 14:2:16;
     paramvals = paramvals/2;
 end
 %%
 %calculations
-ncomps=ScanCNNum(paramvals,ns,reps,cn,'StepTolerance',1e-12,'ConstraintTolerance',1e-12);
+ncomps2=ScanCNNum(paramvals,ns,reps,cn,'StepTolerance',1e-12,'ConstraintTolerance',1e-12);
 %%
 %plot
 txopts={'Interpreter','latex','FontSize',20};
@@ -31,12 +31,13 @@ bh(1).FaceColor='none';
 bh(1).EdgeColor='none';
 bh(2).FaceColor=[0 0.4470 0.7410];
 if cn
-    xlim([ns(1)-1 ns(end)+1]);
+    xlim([ns(1)-1 ns(end-2)+1]);
 else
     xlim([ns(1)-0.5 ns(end)+0.5]);
 end
-ylim([1.1*min(ncomps(:)) 0.02]);
-% ax.YAxis.Scale = 'log';
+
+ylim([-1 -1e-7]);
+ax.YAxis.Scale = 'log';
 %%
 if cn
     print('cascade_scan.eps','-depsc');
