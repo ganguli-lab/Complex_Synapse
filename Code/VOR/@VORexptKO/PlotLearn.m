@@ -20,11 +20,11 @@ dt=obj.nopre.tTrain(end)/obj.numpts;
 [S,~,t]=obj.nopre.LearningCurve(obj.WT,dt);
 ph(1)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,p.Unmatched);
 hold(r.Parent,'on');
-[S]=obj.nopre.LearningCurve(obj.KO,dt);
+[S,~,t]=obj.nopre.LearningCurve(obj.KO,dt);
 ph(2)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',r.Parent,p.Unmatched);
-[S]=obj.withpre.LearningCurve(obj.WT,dt);
+[S,~,t]=obj.withpre.LearningCurve(obj.WT,dt);
 ph(3)=plot(t,S(1)-S,'Color',obj.WTcolor,'Parent',r.Parent,p.Unmatched);
-[S]=obj.withpre.LearningCurve(obj.KO,dt);
+[S,~,t]=obj.withpre.LearningCurve(obj.KO,dt);
 ph(4)=plot(t,S(1)-S,'Color',obj.KOcolor,'Parent',r.Parent,p.Unmatched);
 
 axes(r.Parent);

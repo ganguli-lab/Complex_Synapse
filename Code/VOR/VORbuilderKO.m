@@ -22,7 +22,7 @@ function [ exptobj ] = VORbuilderKO( builder_h,numStates,paramPot,paramWT,paramK
 WTobj=SynapseMemoryModel('Wp',Wp,'Wm',WmWT,'w',w,'fp',fpNorm);
 KOobj=SynapseMemoryModel('Wp',Wp,'Wm',WmKO,'w',w,'fp',fpNorm);
 
-nopreobj=VORtrainSeq('tTrain',t_dec+t_inc,'fps',[fpNorm fpInc]);
+nopreobj=VORtrainSeq('tTrain',t_inc,'fps',[fpNorm fpInc]);
 withpreobj=VORtrainSeq('tTrain',[t_dec t_dec+t_inc],'fps',[fpNorm fpDec fpInc]);
 
 exptobj=VORexptKO('WT',WTobj,'KO',KOobj,'nopre',nopreobj,'withpre',withpreobj,'pooled',pooled);
