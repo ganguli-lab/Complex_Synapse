@@ -71,6 +71,7 @@
 %\small{\emph{$^b$ Address 2}}\\
 %\small{\emph{$^c$ Address 3}}\\
 %}
+\author{}
 \date{}
 
 \begin{document}
@@ -382,7 +383,7 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
 \begin{figure}[p]
 \begin{myenuma}
   \begin{tabular}{lll}
-      \item\label{fig:seial_sim}
+      \item\label{fig:serial_sim}
       \aligntop{\includegraphics[width=0.24\linewidth]{serial.svg}}
       &
       \item\label{fig:binary_sim}
@@ -433,7 +434,7 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
     \cline{1-9}
   \end{tabular}}
   \end{myenuma}
-  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models.
+  \caption[Simulation results for various models]{(\ref{fig:serial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models.
   (\ref{tab:params}) Parameters used for simulations.
   For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states.
   For the pooled resource model, the plasticity parameters are the minimum and maximum transition probability for the constituent two-state synapses.
@@ -550,7 +551,7 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
 
 
 The results of simulations of the serial model can be seen in
-\autoref{fig:sim_results}\ref{fig:seial_sim}.
+\autoref{fig:sim_results}\ref{fig:serial_sim}.
 %\autoref{fig:multistate_weak}, \autoref{fig:multistate_med} and \autoref{fig:multistate_strong}.
 However, we can get some insight into this model analytically.
 
@@ -1212,29 +1213,44 @@ Second, they both have the metaplastic effect where repeated potentiation makes 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
+\section{Long term effects of pre-training}\label{sec:longterm}
+
+
+The fact that after pre-training, gain-increase learning is significantly faster in the \KO\ models than in the wild-type, as discussed in the \hyperref[sec:results]{previous section}, is true of the initial learning rate.
+With a long enough duration of training, memory of the initial conditions should be erased and the final learning outcome should be the same with or without pre-training.
+In \autoref{fig:longterm} we show the result of longer training durations on the three models that were not ruled out on the basis of the initial learning rate, the serial, cascade and nonuniform multistate models.
+For all of these models, we see that the wild-type models eventually catch up and overtake the \KO\.
+The initial learning enhancement is a transient effect, and at later times it turns into a learning impairment.
+
+
+
+
+\begin{figure}
+  \centering
+  \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.29\linewidth]{serial_longterm.eps}}\label{fig:serial_longterm}
+  \item\aligntop{\includegraphics[width=0.29\linewidth]{cascade_longterm.eps}}\label{fig:cascade_longterm}
+  \item\aligntop{\includegraphics[width=0.29\linewidth]{nonuni_longterm.eps}}\label{fig:nonuni_longterm}
+  \end{myenuma}
+  \caption{ Simulation of training for long times after pre-training shows that it erases the effect of pre-training.
+  These simulations were performed with the same parameters as in \autoref{fig:sim_results}\ref{tab:params}, but with much longer training times, for the (\ref{fig:serial_longterm}) serial, (\ref{fig:cascade_longterm} cascade and (\ref{fig:nonuni_longterm}) non-uniform multistate models.
+  Compare with \autoref{fig:sim_results}\ref{fig:serial_sim},\ref{fig:cascade_sim},\ref{fig:nonuni_sim}.
+  }\label{fig:longterm}
+\end{figure}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \section{Model of non-specific CF stimulation}\label{sec:chr2}
-
-Here, we model the effects of non-specific CF stimulation, as in \chrfig.
-It is necessary to also model the ``other'' population of synapses that compensate for the change in baseline synaptic weight of the synapses considered up to now, either due to enhanced plasticity or non-specific CF stimulation.
-
-To be concrete, we model these other synapses as described in \compfig.
-We set the relative rate of depression events for these synapses during training to $f\dep = f\dep\norm$, \ie the baseline value, so that they are unaffected by training.
-Here we set the rate of plasticity events causing forgetting of the CF stimulation in these synapses is the same as the rate of plasticity events in the original synapses during training, although similar results could be acheived with other choices.
-For both sets of synapses during non-specific CF stimulation, we set $f\dep > f\dep\norm$ to model the increased rate of depression.
-The values of all parameters used can be seen in \autoref{fig:sim_ChR2}\ref{tab:params_ChR2}.
-
-In \autoref{fig:sim_ChR2}\ref{fig:seial_ChR2}--\ref{fig:nonuni_ChR2} we see examples of simulations of all of the models we have considered.
-We see that every single one of them is capable of reproducing the experimental results of \chrfig, for suitable parameter choices.
-This is because this intervention has the effect of depleting the population of synapses available for depression \emph{without} the competing effect of enhanced plasticity.
-Therefore the depletion effect is stronger (than 0) and learning is impaired.
-This means that these experiments cannot rule out any of the models.
-However these experiments do agree with the idea of impaired learning due to depletion of the population of labile synapses.
-
 
 \begin{figure}[p]
 \begin{myenuma}
   \begin{tabular}{lll}
-      \item\label{fig:seial_ChR2}
+      \item\label{fig:serial_ChR2}
       \aligntop{\includegraphics[width=0.24\linewidth]{serial.svg}}
       &
       \item\label{fig:binary_ChR2}
@@ -1284,12 +1300,29 @@ However these experiments do agree with the idea of impaired learning due to dep
     \cline{1-8}
   \end{tabular}}
   \end{myenuma}
-  \caption[Simulation results for various models]{(\ref{fig:seial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (black) and after non-specific CF stimulation (cyan) for wild-type models.
+  \caption[Simulation results for various models]{(\ref{fig:serial_ChR2}-\ref{fig:nonuni_ChR2}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (black) and after non-specific CF stimulation (cyan) for wild-type models.
   (\ref{tab:params}) Parameters used for simulations.
   For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states.
   For the pooled resource model, the plasticity parameters are the minimum and maximum transition probability for the constituent two-state synapses.
   For the cascade and non-uniform multistate models, the plasticity parameter is the ratio of adjacent transition probabilities.}\label{fig:sim_ChR2}
 \end{figure}
+
+
+Here, we model the effects of non-specific climbing fibre stimulation, as in \chrfig.
+It is necessary to also model the ``other'' population of synapses that compensate for the change in baseline synaptic weight of the synapses considered up to now, either due to enhanced plasticity or non-specific CF stimulation.
+
+To be concrete, we model these other synapses as described in \compfig.
+We set the relative rate of depression events for these synapses during training to $f\dep = f\dep\norm$, \ie the baseline value, so that they are unaffected by training.
+Here we set the rate of plasticity events causing forgetting of the CF stimulation in these synapses is the same as the rate of plasticity events in the original synapses during training, although similar results could be acheived with other choices.
+For both sets of synapses during non-specific CF stimulation, we set $f\dep > f\dep\norm$ to model the increased rate of depression.
+The values of all parameters used can be seen in \autoref{fig:sim_ChR2}\ref{tab:params_ChR2}.
+
+In \autoref{fig:sim_ChR2}\ref{fig:serial_ChR2}--\ref{fig:nonuni_ChR2} we see examples of simulations of all of the models we have considered.
+We see that every single one of them is capable of reproducing the experimental results of \chrfig, for suitable parameter choices.
+This is because this intervention has the effect of depleting the population of synapses available for depression \emph{without} the competing effect of enhanced plasticity.
+Therefore the depletion effect is stronger (than 0) and learning is impaired.
+This means that these experiments cannot rule out any of the models.
+However these experiments do agree with the idea of impaired learning due to depletion of the population of labile synapses.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
