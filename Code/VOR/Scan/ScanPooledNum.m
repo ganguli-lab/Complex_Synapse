@@ -1,8 +1,9 @@
 function [ comps ] = ScanPooledNum( ranges, ns, side, varargin )
-%comps=SCANPOOLEDNUM(ranges,ns) parameter scan for pooled resource model
+%comps=SCANPOOLEDNUM(ranges,ns,side) parameter scan for pooled resource model
 %   comps  = learning rate differences: WT_nopre - WT_pre
 %   ranges = range for each parameter scan
 %   ns     = list of numbers of states
+%   side   = string for which test 'Top' (default) or 'Left'?
 %   parametrs: pot, dep_min, dep_max, fp_norm, fp_inc, fp_dec
 
 if ~exist('side','var') || isempty(side)

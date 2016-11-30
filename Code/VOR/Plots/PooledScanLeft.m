@@ -1,12 +1,14 @@
 %parameter ranges
 paramvals = 0.05:0.1:0.95;
 ns = 4:10;
+%%
 %calculations
 ncomps=ScanPooledNum(paramvals,ns);
 %%
 %plot
 txopts={'Interpreter','latex','FontSize',20};
 ax=gca;
+ax.FontSize=16;
 bh=bar(ax, ns-1, ncomps','stacked');
 xlabel('$\#$ of synapses in pool', txopts{:});
 ylabel('max/min $\{\dot{L}(0) - \dot{L}_\mathrm{pre}(0)\}$', txopts{:});

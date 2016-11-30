@@ -18,7 +18,7 @@ ncomps2=ScanCNNum(paramvals,ns,reps,cn,'StepTolerance',1e-12,'ConstraintToleranc
 %plot
 txopts={'Interpreter','latex','FontSize',20};
 ax=gca;
-bh=bar(ax, ns, ncomps','stacked');
+bh=bar(ax, ns, ncomps(:,1:6)','stacked');
 ax.FontSize=16;
 bh(1).FaceColor='none';
 bh(1).EdgeColor='none';
@@ -27,8 +27,8 @@ xlabel('$\#$ of synapstic states', txopts{:});
 ylabel('max/min $\{\dot{L}_{\mathrm{WT}}(0) - \dot{L}_{\mathrm{K}^b\mathrm{D}^{b-/-}}(0)\}$', txopts{:});
 if cn
     title('Cascade model, no pre', txopts{:});
-    xlim([ns(1)-1 ns(end-2)+1]);
-    ylim([-1 -1e-12]);
+    xlim([ns(1)-1 ns(end)+1]);
+    ylim([-1 -1e-14]);
 else
     title('Nonuniform multistate model, no pre', txopts{:});
     xlim([ns(1)-0.5 ns(end)+0.5]);

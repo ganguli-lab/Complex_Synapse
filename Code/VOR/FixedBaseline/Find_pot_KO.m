@@ -54,7 +54,9 @@ minf = Inf;
 pot_KO = NaN;
 
 for i = 1:r.reps
-     [x, fval, ef] = fmincon(lossfun, x0, [],[],[],[], lb, ub, nlcon, opts);
+     [x, ~, ef] = fmincon(lossfun, x0, [],[],[],[], lb, ub, nlcon, opts);
+     [~,fval] = nlcon(x);
+     fval=abs(fval);
 %     [x, fval] = fmincon(lossfun, x0, [],[],[],[], lb, ub, nlcon, opts);
     if fval < minf && fval < 1e-7 && ef > 0 
         pot_KO = x;
