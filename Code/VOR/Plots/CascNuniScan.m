@@ -8,7 +8,7 @@ paramvals = (0.05:0.1:0.95);
 ns = 4:10;
 reps=20;
 if cn
-    ns = 14:2:16;
+    ns = 4:2:16;
     paramvals = paramvals/2;
 end
 %%
@@ -18,7 +18,8 @@ ncomps2=ScanCNNum(paramvals,ns,reps,cn,'StepTolerance',1e-12,'ConstraintToleranc
 %plot
 txopts={'Interpreter','latex','FontSize',20};
 ax=gca;
-bh=bar(ax, ns, ncomps(:,1:6)','stacked');
+bh=bar(ax, ns, ncomps','stacked');
+% bh=bar(ax, ns, ncomps(:,1:6)','stacked');
 ax.FontSize=16;
 bh(1).FaceColor='none';
 bh(1).EdgeColor='none';
