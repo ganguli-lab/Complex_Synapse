@@ -8,8 +8,8 @@ ncomps=ScanPooledNum(paramvals,ns);
 %plot
 txopts={'Interpreter','latex','FontSize',20};
 ax=gca;
-ax.FontSize=16;
 bh=bar(ax, ns-1, ncomps','stacked');
+ax.FontSize=16;
 xlabel('$\#$ of synapses in pool', txopts{:});
 ylabel('max/min $\{\dot{L}(0) - \dot{L}_\mathrm{pre}(0)\}$', txopts{:});
 title('Pooled resource model, WT', txopts{:});
