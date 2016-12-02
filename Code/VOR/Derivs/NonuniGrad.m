@@ -1,7 +1,7 @@
-function [ dWp, dWm ] = NonuniGrad( x,n )
-%[dWp,dWm]=NONUNIGRAD(x,n) gradient of matrix elements wrt parameter
-%   x  = ratio of nearby transition rates
+function [ dWp, dWm ] = NonuniGrad( n, x )
+%[dWp,dWm]=NONUNIGRAD(n,x) gradient of matrix elements wrt parameter
 %   n  = number of states (even)
+%   x  = ratio of nearby transition rates
 %   dWP = gradient of potentiation transition rates
 %   dWM = gradient of depression transition rates
 

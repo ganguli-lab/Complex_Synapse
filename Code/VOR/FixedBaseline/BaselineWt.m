@@ -18,8 +18,8 @@ mw = model.MeanWeight;
 if exist('grad_h','var') && ~isempty(grad_h)
     [Zinv,piv] = model.GetZinv;
     p = piv / Zinv;
-    dWp = grad_h(pot, n);
-    [~,dWm] = grad_h(dep, n);
+    dWp = grad_h(n, pot);
+    [~,dWm] = grad_h(n, dep);
     gradp = (p * dWp / Zinv) * model.w * model.fp;
     gradm = (p * dWm / Zinv) * model.w * (1 - model.fp);
 end

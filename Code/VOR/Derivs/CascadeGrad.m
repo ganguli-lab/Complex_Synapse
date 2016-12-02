@@ -1,7 +1,7 @@
-function [ dWp, dWm ] = CascGrad( x,n )
-%[dWp,dWm]=CASCGRAD(x,n) gradient of matrix elements wrt parameter
-%   x  = ratio of nearby transition rates
+function [ dWp, dWm ] = CascadeGrad( n, x )
+%[dWp,dWm]=CASCGRAD(n,x) gradient of matrix elements wrt parameter
 %   n  = number of states (even)
+%   x  = ratio of nearby transition rates
 %   dWP = gradient of potentiation transition rates
 %   dWM = gradient of depression transition rates
 

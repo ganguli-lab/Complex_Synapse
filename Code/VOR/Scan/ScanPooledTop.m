@@ -4,6 +4,7 @@ function [ comps,wh ] = ScanPooledTop( prm, n, reps, varargin  )
 %   comps  = learning rate differences: WT_nopre - KO_nopre
 %   ranges = range for each parameter scan
 %   n      = number of states
+%   reps   = number of attempts
 %   parametrs: pot_wt, dep_wt, dep_ko, fp_norm, fp_inc
 
 builder_h = @PooledBuilder;
