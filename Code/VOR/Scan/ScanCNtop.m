@@ -11,7 +11,7 @@ function [ comps,wh ] = ScanCNtop( ranges, n, reps, useCnotN, varargin  )
 minv = 1e-8;
 if useCnotN
     builder_h = @CascadeBuilder;
-    grad_h = @CascGrad;
+    grad_h = @CascadeGrad;
     maxv = 0.5 - minv;
     fr = 2;
 else

@@ -10,8 +10,8 @@ comps = -Inf(2,length(ns));
 DispCounter(1,ns(end),'n:');
 for n = ns
     DispCounter(n,ns(end),'n:');
-%     pcomps = ScanCNtop(ranges, n, reps, useCnotN, varargin{:});
-    pcomps = ScanCNtop2(ranges, n, useCnotN, varargin{:});
+    pcomps = ScanCNtop(ranges, n, reps, useCnotN, varargin{:});
+%     pcomps = ScanCNtop2(ranges, n, useCnotN, varargin{:});
     comps(1,ns==n) = max(pcomps(~isnan(pcomps)));
     comps(2,ns==n) = min(pcomps(~isnan(pcomps)));
 end

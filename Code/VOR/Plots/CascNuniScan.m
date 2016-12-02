@@ -9,7 +9,7 @@ ns = 4:10;
 reps=20;
 if cn
     ns = 4:2:16;
-    paramvals = paramvals/2;
+    paramvals = (0.05:0.05:0.5);
 end
 %%
 %calculations
