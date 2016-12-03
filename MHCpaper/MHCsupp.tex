@@ -211,8 +211,8 @@ At each plasticity event for the compound synapse, one of the individual synapse
 This effectively reduces the transition probabilities by $1/P$.
 
 This compound synapse would seem to have $2^P$ internal states.
-However, we need only keep track of the number of potentiated synapses, not their identity, leaving $M=P+1$ states.
-We can group those states of the pool of synapses that have the same total number of potentiated synapses into a single state of the equivalent compound synapse.
+However, we need only keep track of the number of potentiated synapses, not their identity.
+We can group those states of the pool of synapses that have the same total number of potentiated synapses into a single state of the equivalent compound synapse, leaving $M=P+1$ states.
 The transition network will then have a multistate topology (see \autoref{fig:models}\ref{fig:multistate_model}) but the transition probabilities will no longer be uniform and the weight of the compound synapse is the mean of its constituent synapses:
 %
 \begin{equation}\label{eq:pooledweight}
