@@ -13,7 +13,7 @@ for n = ns
     pcomps = ScanCNtop(ranges, n, reps, useCnotN, varargin{:});
 %     pcomps = ScanCNtop2(ranges, n, useCnotN, varargin{:});
     comps(1,ns==n) = max(pcomps(~isnan(pcomps)));
-    comps(2,ns==n) = min(pcomps(~isnan(pcomps)));
+    comps(2,ns==n) = min(pcomps(~(isnan(pcomps) | isinf(pcomps))));
 end
 DispCounter(ns(end)+1,ns(end),'n:');
 end

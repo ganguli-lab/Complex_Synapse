@@ -13,7 +13,7 @@ if cn
 end
 %%
 %calculations
-ncomps2=ScanCNNum(paramvals,ns,reps,cn,'StepTolerance',1e-12,'ConstraintTolerance',1e-12);
+ncomps=ScanCNNum(paramvals,ns,reps,cn,'StepTolerance',1e-12,'ConstraintTolerance',1e-12);
 %%
 %plot
 txopts={'Interpreter','latex','FontSize',20};

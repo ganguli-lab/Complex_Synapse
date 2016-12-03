@@ -102,7 +102,7 @@
 
 We make the following assumptions:
 \begin{itemize}
-  \item There synapses are identical and have $M$ internal functional states, where the states of different synapses are independent of each other.
+  \item The synapses are identical and have $M$ internal functional states, where the states of different synapses are independent of each other.
 %  \item The synapses that are eligible for plasticity are chosen randomly.
   \item Candidate potentiating/depressing plasticity event timings are distributed as Poisson processes with rates $r\potdep$.
   \item Candidate potentiation and depression events are described by Markov processes with transition probabilities $\M\potdep$.
@@ -152,10 +152,10 @@ the multistate model (see \cite{amit1994learning,Fusi2007multistate} and \autore
 and the cascade model (see \cite{Fusi2005cascade} and \autoref{fig:models}\ref{fig:cascade_model}).
 We will also look at a new, pooled resource model that we will define below in \autoref{sec:pooledmodel} and a non-uniform version of the multistate model that we will describe in \autoref{sec:nonunimodel}.
 
-For the serial, multistate and two state models, we will use the same value for the transition probabilities, $q$, for potentiation in the wild-type and \KO\ models.
+For the serial, multistate and two state models, we will use the same value for $q$, the transition rate between adjacent states, for potentiation in the wild-type and \KO\ models.
 We will use a larger value for $q$ for depression in the \KO\ models than in the wild-type.
 
-For the cascade model, we will use the same value for the parameter $x$ (which controls the decay of transition rates, see \cite{Fusi2005cascade}) for potentiation in the wild-type and \KO\ models.
+For the cascade model, we will use the same value for the parameter $x$ (which controls the ratio of adjacent transition rates, see \cite{Fusi2005cascade}) for potentiation in the wild-type and \KO\ models.
 We will use a larger value for $x$ for depression in the \KO\ models than in the wild-type.
 
 The values used for all these parameters in simulations are listed in \autoref{fig:sim_results}\ref{tab:params}.
@@ -194,7 +194,7 @@ The values used for all these parameters in simulations are listed in \autoref{f
 \subsubsection{Pooled resource model}\label{sec:pooledmodel}
 
 Suppose that there is some resource required for potentiation/depression that is shared between $P$ synapses and is depleted as more synapses are potentiated/depressed and replenished when this is reversed, as shown in \autoref{fig:models}\ref{fig:pooled_model}.
-We can avoid going beyond the independent synapse model by modelling this pool of synapse as a single compound synapse.
+We can avoid going beyond the independent synapse model by modelling the pool of synapses that share the resource as a single compound synapse.
 
 We will model the individual synapses with the two-state model.
 Let $i=0\ldots P$ be the number of them that are potentiated.
@@ -212,6 +212,7 @@ This effectively reduces the transition probabilities by $1/P$.
 
 This compound synapse would seem to have $2^P$ internal states.
 However, we need only keep track of the number of potentiated synapses, not their identity, leaving $M=P+1$ states.
+We can group those states of the pool of synapses that have the same total number of potentiated synapses into a single state of the equivalent compound synapse.
 The transition network will then have a multistate topology (see \autoref{fig:models}\ref{fig:multistate_model}) but the transition probabilities will no longer be uniform and the weight of the compound synapse is the mean of its constituent synapses:
 %
 \begin{equation}\label{eq:pooledweight}
@@ -220,7 +221,7 @@ The transition network will then have a multistate topology (see \autoref{fig:mo
 %
 
 
-The Markov process is lumpable \wrt this partition of states (see \cite{kemeny1960finite,burke1958markovian,Ball1993Lumpability}).
+The Markov process is lumpable when partitioning states by total number of potentiated synapses (see \cite{kemeny1960finite,burke1958markovian,Ball1993Lumpability}).
 The transition probabilities between lumps $i$ and $j$ is computed by choosing one state from lump $i$ and summing the transition probabilities to all states in lump $j$,
 which must be the same for all states in lump $i$.
 
@@ -367,7 +368,7 @@ The features of the experiments shown in \modelfig\ that we'd like to capture ar
 \end{enumerate}
 %
 These questions will not be affected by any output nonlinearity, as long as it is monotonic and fixed.
-\emph{We will not study gain-decrease learning}, as its mechanisms are not fully understood, and known to be different to to gain-increase.
+\emph{We will not study gain-decrease learning}, as its mechanisms are not fully understood, and known to be different to gain-increase.
 We are only modelling the effect of gain-decrease training on \emph{these} synapses.
 We will also not discuss the curvature of the learning curves, as this can be changed by the nonlinear relation between synaptic weight and VOR gain.
 %However, both the wild-type and \KO\ mice should be affected in the same way, so the difference in the curvature of the \KO\ mice and wild-type curves after pre-training would be nice to capture.
