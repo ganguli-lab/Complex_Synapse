@@ -29,7 +29,7 @@ ylabel('max/min $\{\dot{L}_{\mathrm{WT}}(0) - \dot{L}_{\mathrm{K}^b\mathrm{D}^{b
 if cn
     title('Cascade model, no pre', txopts{:});
     xlim([ns(1)-1 ns(end)+1]);
-    ylim([-1 -1e-14]);
+    ylim([-2 -1e-12]);
 else
     title('Nonuniform multistate model, no pre', txopts{:});
     xlim([ns(1)-0.5 ns(end)+0.5]);
