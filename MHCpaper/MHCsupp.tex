@@ -1219,7 +1219,7 @@ Second, they both have the metaplastic effect where repeated potentiation makes 
 
 The fact that after pre-training, gain-increase learning is significantly faster in the \KO\ models than in the wild-type, as discussed in the \hyperref[sec:results]{previous section}, is true of the initial learning rate.
 With a long enough duration of training, memory of the initial conditions should be erased and the final learning outcome should be the same with or without pre-training.
-In \autoref{fig:longterm} we show the result of longer training durations on the three models that were not ruled out on the basis of the initial learning rate, the serial, cascade and nonuniform multistate models.
+In \autoref{fig:longterm} we show the result of longer training durations on all models considered in \autoref{sec:results}.
 For all of these models, we see that the wild-type models eventually catch up and overtake the \KO\.
 The initial learning enhancement is a transient effect, and at later times it turns into a learning impairment.
 This is consistent with an extrapolation of the trend in \datafig.
@@ -1231,12 +1231,15 @@ This is consistent with an extrapolation of the trend in \datafig.
   \centering
   \begin{myenuma}
   \item\aligntop{\includegraphics[width=0.29\linewidth]{serial_longterm.eps}}\label{fig:serial_longterm}
+  \item\aligntop{\includegraphics[width=0.29\linewidth]{binary_longterm.eps}}\label{fig:binary_longterm}
+  \item\aligntop{\includegraphics[width=0.29\linewidth]{multistate_longterm.eps}}\label{fig:multistate_longterm} \\
+  \item\aligntop{\includegraphics[width=0.29\linewidth]{pooled_longterm.eps}}\label{fig:pooled_longterm}
   \item\aligntop{\includegraphics[width=0.29\linewidth]{cascade_longterm.eps}}\label{fig:cascade_longterm}
   \item\aligntop{\includegraphics[width=0.29\linewidth]{nonuni_longterm.eps}}\label{fig:nonuni_longterm}
   \end{myenuma}
   \caption{ Simulation of training for long times after pre-training shows that it erases the effect of pre-training.
-  These simulations were performed with the same parameters as in \autoref{fig:sim_results}\ref{tab:params}, but with much longer training times, for the (\ref{fig:serial_longterm}) serial, (\ref{fig:cascade_longterm} cascade and (\ref{fig:nonuni_longterm}) non-uniform multistate models.
-  Compare with \autoref{fig:sim_results}\ref{fig:serial_sim},\ref{fig:cascade_sim},\ref{fig:nonuni_sim}.
+  These simulations were performed with the same parameters as in \autoref{fig:sim_results}\ref{tab:params}, but with much longer training times, for the (\ref{fig:serial_longterm}) serial, (\ref{fig:binary_longterm}) two-state, (\ref{fig:multistate_longterm}) multistate, (\ref{fig:pooled_longterm}) pooled resource, (\ref{fig:cascade_longterm} cascade and (\ref{fig:nonuni_longterm}) non-uniform multistate models.
+  Compare with \autoref{fig:sim_results}.
   }\label{fig:longterm}
 \end{figure}
 
