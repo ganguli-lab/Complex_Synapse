@@ -168,7 +168,7 @@ The values used for all these parameters in simulations are listed in \autoref{f
     \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary_model}\\[1.7cm]
     \item\aligntop{\includegraphics[height=1.7cm]{multistate.svg}}\label{fig:multistate_model}&
     \item\aligntop{\includegraphics[height=2.5cm]{cascade.svg}}\label{fig:cascade_model}\\[2.5cm]
-    \item\aligntop{\includegraphics[height=2.3cm]{pooled.svg}}\label{fig:pooled_model}&
+    \item\aligntop{\includegraphics[height=2.3cm]{pooled_deponly.svg}}\label{fig:pooled_model}&
     \item\aligntop{\includegraphics[height=2.3cm]{multistate_nonuni.svg}}\label{fig:nonuni_model}
   \end{tabular}
    \end{myenuma}
@@ -246,7 +246,7 @@ The diagonal elements are chosen so that the rows sum to one.
 This model is parameterised by the range of values, $q\in[q\lmin,q\lmax]$, for potentiation and depression.
 We will use the same values for potentiation in the wild-type asnd \KO\ models.
 We will use larger values for depression in the \KO\ models than in the wild-type.
-we consider a version of this model that has resource depletion for depression only, so that potentiation transition probabilities are unaffected by the number of potentiated synapses.
+We consider a version of this model that has resource depletion for depression only, so that potentiation transition probabilities are unaffected by the number of potentiated synapses.
 This is done by setting $q\pot\lmax=q\pot\lmin$.
 The values of these parameters are listed in \autoref{fig:sim_results}\ref{tab:params}.
 
@@ -1352,8 +1352,8 @@ Maintaining the same baseline would then require increasing $q\pot$ in proportio
 As one can see from \eqref{eq:multiflux}, \eqref{eq:binaryflux} and \eqref{eq:multiLinFlux}, this will always lead to an enhanced initial learning rate.
 
 For the other models, a numerical analysis is required, as shown in \autoref{fig:bal}.
-\hypertarget{par:bal_scan}{To} see if learning is impaired with enhanced plasticity each relevant parameter was scanned over 10 values from 0.05 to 0.95, rejecting values that do not respect the inequalities:
-$0 \leq f\dep\norm < f\dep\inc \leq 1$, for the pooled resource model $0 \leq q\dep_\text{min,WT} < q\dep_\text{min,\KO}, q\dep_\text{max,WT} < q\dep_\text{max,\KO}$ and $0 \leq q\pot\wt$, for the cascade model $0 \leq x\dep\wt < x\dep\ko \leq \frac{1}{2}$ and $0 \leq x\pot\wt \leq \frac{1}{2}$, and for the nonuniform multistate model $0 \leq x\dep\wt < x\dep\ko \leq 1$ and $0 \leq x\pot\wt \leq 1$.
+\hypertarget{par:bal_scan}{To} see if learning is impaired with enhanced plasticity each relevant parameter was scanned over 10 values from 0.05 to 0.95 (or from 0.05 to 0.5 for the $x$ parameter of the cascade model), rejecting values that do not respect the inequalities:
+$0 \leq f\dep\norm < f\dep\inc \leq 1$, for the pooled resource model $0 \leq q\dep_\text{min,WT} < q\dep_\text{min,\KO}, q\dep_\text{max,WT} < q\dep_\text{max,\KO} \leq 1$ and $0 \leq q\pot\wt \leq 1$, for the cascade model $0 \leq x\dep\wt < x\dep\ko \leq \frac{1}{2}$ and $0 \leq x\pot\wt \leq \frac{1}{2}$, and for the nonuniform multistate model $0 \leq x\dep\wt < x\dep\ko \leq 1$ and $0 \leq x\pot\wt \leq 1$.
 In each case, the \KO\ potentiation parameter, $q\pot\ko$ for the pooled resource model and $x\pot\ko$ for the others, was adjusted to match the baseline mean synaptic weight. $\pr(0)\w$, with wild-type.
 
 %We see that, for most parameter values, such models do not reproduce the observed learning impairment with enhanced plasticity.
