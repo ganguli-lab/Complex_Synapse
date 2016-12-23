@@ -4,6 +4,7 @@
 %\usepackage[printfigures]{figcaps}
 %\usepackage[nolists,nomarkers]{endfloat}
 %Preamble:
+\usepackage[inactive,tightpage]{preview}
 \usepackage{a4wide}
 \input{sl_preamble.tex}
 \hypersetup{colorlinks,linkcolor=blue,citecolor=teal,urlcolor=teal}
@@ -20,7 +21,8 @@
 \renewcommand{\figureautorefname}{Appendix-figure}
 \DeclareCaptionLabelFormat{supp}{\textbf{#1 #2}}
 \captionsetup{labelformat=supp}
-% ----------------------------------------------------------------
+\renewenvironment{myenumA}{\begin{inparaenum}[\bfseries A]}{\end{inparaenum}}
+% ---------------------------------------------------------------
 % New commands etc.
 \input{sl_definitions.tex}
 \input{sl_symbols.tex}
@@ -161,8 +163,9 @@ We will use a larger value for $x$ for depression in the \KO\ models than in the
 The values used for all these parameters in simulations are listed in \autoref{fig:sim_results}\ref{tab:params}.
 
 \begin{figure}
+\begin{preview}
  \begin{center}
-   \begin{myenuma}
+   \begin{myenumA}
   \begin{tabular}{l@{\hspace{0.05\linewidth}}l}
     \item\aligntop{\includegraphics[height=1.7cm]{serial.svg}}\label{fig:serial_model}&
     \item\aligntop{\includegraphics[height=1.7cm]{binary.svg}}\label{fig:binary_model}\\[1.7cm]
@@ -171,8 +174,9 @@ The values used for all these parameters in simulations are listed in \autoref{f
     \item\aligntop{\includegraphics[height=2.3cm]{pooled_deponly.svg}}\label{fig:pooled_model}&
     \item\aligntop{\includegraphics[height=2.3cm]{multistate_nonuni.svg}}\label{fig:nonuni_model}
   \end{tabular}
-   \end{myenuma}
+   \end{myenumA}
  \end{center}
+\end{preview}
   \caption[Transition probabilities for different models]{{Transition probabilities for different models.}
   Potentiation induces transitions indicated by orange arrows, depression indicated by blue arrows.
   States of strong/weak synaptic weight indicated by orange/blue circles.
@@ -382,7 +386,8 @@ The learning curves resulting from these simulations can be found in \autoref{fi
 The values for all parameters we will use can be found in \autoref{fig:sim_results}\ref{tab:params}.
 
 \begin{figure}[p]
-\begin{myenuma}
+\begin{preview}
+\begin{myenumA}
   \begin{tabular}{lll}
       \item\label{fig:serial_sim}
       \aligntop{\includegraphics[width=0.24\linewidth]{serial.svg}}
@@ -434,7 +439,8 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
     Non-uni.\ & 12 & $0.4$    & $0.4$    & $0.53$   & 0.5 & 0.7 & 0.1 & 500  \\%&\label{tr:nonuni_fit} \\
     \cline{1-9}
   \end{tabular}}
-  \end{myenuma}
+  \end{myenumA}
+\end{preview}
   \caption[Simulation results for various models]{(\ref{fig:serial_sim}-\ref{fig:nonuni_sim}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (solid) and after gain-decrease pre-training (dashed) for wild-type (black) and \KO\ (red) models.
   (\ref{tab:params}) Parameters used for simulations.
   For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states.
@@ -492,7 +498,7 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
 %\end{table}
 
 %\newcommand{\arrangefig}[1]{\begin{center}
-% \begin{myenuma}
+% \begin{myenumA}
 %  \item\aligntop{\includegraphics[width=7cm]{#1_learn.eps}}\label{fig:#1_learn}
 %  \item\aligntop{\includegraphics[width=7cm]{#1_learnS.eps}}\label{fig:#1_learnS}
 %  \\ \vp\vp
@@ -507,7 +513,7 @@ The values for all parameters we will use can be found in \autoref{fig:sim_resul
 %                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_KO_nopre.eps}}\label{fig:#1_pr_KO_nopre}
 %                    \item\aligntop{\includegraphics[width=3cm]{#1_pr_KO_pre.eps}}\label{fig:#1_pr_KO_pre}
 %                  \end{myenumi}
-% \end{myenuma}
+% \end{myenumA}
 % \end{center}}
 %
 %\newcommand{\captiontext}[1]{ can be found in \autoref{tr:#1} of \autoref{tab:params}.
@@ -604,7 +610,7 @@ This quantity can have either sign, depending on $\alpha$ and $M$, so $\Phi$ is 
 Therefore, pre-training can either enhance or impair the initial learning rate, depending on the parameters.
 
 The lack of monotonicity shown above allows this model to reproduce the key qualitative features of the experiments outlined in \autoref{sec:results}.
-This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} - \Delta f$.
+This can be illustrated by looking at a special case, where $q\pot = q\dep = q$ for the wild type, $f\dep_0 = \frac{1}{2}$, $f\dep\dec = \frac{1}{2} - \Delta f$ and $f\dep\inc = \frac{1}{2} + \Delta f$.
 
 
 First, consider the wild-type.
@@ -671,7 +677,7 @@ With pre-training:
 \end{aligned}
 \end{equation}
 %
-Once again, we see that pre-training will speed up learning when $\Delta f$ is small, whereas, if $\Delta f$ is close to $-\half$, pre-training will initially slow down learning.
+Once again, we see that pre-training will speed up learning when $\Delta f$ is small, whereas, if $\Delta f$ is close to $\half$, pre-training will initially slow down learning.
 
 Let us define $\Delta f^*(\beta,M)$ to be the value at which \eqref{eq:multiKOnopre} and \eqref{eq:multiKOpre} are equal.
 Values of $\Delta f$ that are larger than this (stronger training) will correspond to slower learning after pre-training.
@@ -687,13 +693,17 @@ As we see in \autoref{fig:multistate_star}\ref{fig:multistate_deltafstar}, $\Del
 %As we see in \autoref{fig:multistate_med}\ref{fig:multistate_med_learnS} (black curves), even when we are in this range, the period of time for which pre-training impairs learning in the wild-type can be very small.
 
 \begin{figure}
+\begin{preview}
  \begin{center}
- \begin{myenuma}
+ \begin{myenumA}
   \item\aligntop{\includegraphics[width=0.45\linewidth]{multistate_betastar.eps}}\label{fig:multistate_betastar}
   \item\aligntop{\includegraphics[width=0.45\linewidth]{multistate_deltafstar.eps}}\label{fig:multistate_deltafstar}
- \end{myenuma}
+ \end{myenumA}
  \end{center}
-  \caption[The functions $\beta^*(M)$ and $\Delta f^*(\beta,M)$]{The functions (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the \KO\ models have impaired learning, and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
+\end{preview}
+  \caption[The functions $\beta^*(M)$ and $\Delta f^*(\beta,M)$]{The functions
+  (\ref{fig:multistate_betastar}) $\beta^*(M)$, which describes when the \KO\ models have impaired learning,
+  and (\ref{fig:multistate_deltafstar}) $\Delta f^*(\beta,M)$ for $M=10$, which describes when pre-training enhances learning.}\label{fig:multistate_star}
 \end{figure}
 
 In conclusion, if we choose $\beta<\beta^*(M)$, $\Delta f \in [\Delta f^*(1,M),\Delta f^*(\beta,M)]$, we will see that the \KO\ models learn slower than wild-type without pre-training, and that pre-training speeds up learning in the \KO\ models but slows it down in the wild-type.
@@ -1053,9 +1063,11 @@ To qualitatively reproduce the experimental results, we would need $\dot{L}_\tex
 The range of values obtained is plotted in \autoref{fig:pooled_scan}, where we see that this difference is always negative, ruling out this model.
 
 \begin{figure}
+\begin{preview}
   \centering
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.4\linewidth]{pooled_deponly_scan.eps}
+\end{preview}
   \caption{Difference in initial learning rate in wild-type models, without and with gain-decrease pre-training.
   Learning, $L(t)$ is defined in \eqref{eq:learning}.
   Here, we show the maximum and minimum values of this quantity when scanning all 6 relevant parameters (see \protect\hyperlink{par:pooled_scan}{text}).
@@ -1182,7 +1194,7 @@ Second, they both have the metaplastic effect where repeated potentiation makes 
 %
 %\begin{figure}
 % \begin{center}
-% \begin{myenuma}
+% \begin{myenumA}
 %  \item\aligntop{\includegraphics[width=0.28\linewidth]{serial_fit_learnS.eps}}\label{fig:serial_fit}
 %  \item\aligntop{\includegraphics[width=0.28\linewidth]{cascade_fit_learnS.eps}}\label{fig:cascade_fit}
 %  \item\aligntop{\includegraphics[width=0.28\linewidth]{nonuni_fit_learnS.eps}}\label{fig:nonuni_fit}
@@ -1205,7 +1217,7 @@ Second, they both have the metaplastic effect where repeated potentiation makes 
 %    Non-uni. & 12 & $0.4$    & $0.4$    & $0.53$   & 0.5 & 0.7 & 0.1 & 500  &\label{tr:nonuni_fit} \\
 %    \cline{1-9}
 %  \end{tabularn}}
-% \end{myenuma}
+% \end{myenumA}
 % \end{center}
 %  \caption[Learning curves for models after parameter fitting]{Learning curves restricted to gain-increase training, for (\ref{fig:serial_fit}) the serial model, (\ref{fig:cascade_fit}) the cascade model, and (\ref{fig:nonuni_fit}) the non-uniform multistate model.
 %  (\ref{tab:fit}) Parameters used to reproduce detailed experimental results. For the serial model, the parameter listed is the transition probability between adjacent states. For the cascade and non-uniform multistate models, the parameter is the ratio of adjacent transition probabilities.}\label{fig:fit}
@@ -1228,15 +1240,17 @@ This is consistent with an extrapolation of the trend in \datafig.
 
 
 \begin{figure}
+\begin{preview}
   \centering
-  \begin{myenuma}
+  \begin{myenumA}
   \item\aligntop{\includegraphics[width=0.29\linewidth]{serial_longterm.eps}}\label{fig:serial_longterm}
   \item\aligntop{\includegraphics[width=0.29\linewidth]{binary_longterm.eps}}\label{fig:binary_longterm}
   \item\aligntop{\includegraphics[width=0.29\linewidth]{multistate_longterm.eps}}\label{fig:multistate_longterm} \\
   \item\aligntop{\includegraphics[width=0.29\linewidth]{pooled_longterm.eps}}\label{fig:pooled_longterm}
   \item\aligntop{\includegraphics[width=0.29\linewidth]{cascade_longterm.eps}}\label{fig:cascade_longterm}
   \item\aligntop{\includegraphics[width=0.29\linewidth]{nonuni_longterm.eps}}\label{fig:nonuni_longterm}
-  \end{myenuma}
+  \end{myenumA}
+\end{preview}
   \caption{ Simulation of training for long times after pre-training shows that it erases the effect of pre-training.
   These simulations were performed with the same parameters as in \autoref{fig:sim_results}\ref{tab:params}, but with much longer training times, for the (\ref{fig:serial_longterm}) serial, (\ref{fig:binary_longterm}) two-state, (\ref{fig:multistate_longterm}) multistate, (\ref{fig:pooled_longterm}) pooled resource, (\ref{fig:cascade_longterm} cascade and (\ref{fig:nonuni_longterm}) non-uniform multistate models.
   Compare with \autoref{fig:sim_results}.
@@ -1252,8 +1266,9 @@ This is consistent with an extrapolation of the trend in \datafig.
 
 \section{Model of non-specific CF stimulation}\label{sec:chr2}
 
-\begin{figure}[p]
-\begin{myenuma}
+\begin{figure}
+\begin{preview}
+\begin{myenumA}
   \begin{tabular}{lll}
       \item\label{fig:serial_ChR2}
       \aligntop{\includegraphics[width=0.24\linewidth]{serial.svg}}
@@ -1304,9 +1319,10 @@ This is consistent with an extrapolation of the trend in \datafig.
     Non-uni.\    & 12 & $0.4$   & $0.4$         & 0.5   & 0.7  & 0.99   & 500  \\
     \cline{1-8}
   \end{tabular}}
-  \end{myenuma}
+  \end{myenumA}
+\end{preview}
   \caption[Simulation results for various models]{(\ref{fig:serial_ChR2}-\ref{fig:nonuni_ChR2}) Simulation results for various models, showing decrease in mean synaptic weight over time during gain increase training from the normal state (black) and after non-specific CF stimulation (cyan) for wild-type models.
-  (\ref{tab:params}) Parameters used for simulations.
+  (\ref{tab:params_ChR2}) Parameters used for simulations.
   For the serial, two state and multistate models, the plasticity parameter listed is the transition probability between adjacent states.
   For the pooled resource model, the plasticity parameters are the minimum and maximum transition probability for the constituent two-state synapses.
   For the cascade and non-uniform multistate models, the plasticity parameter is the ratio of adjacent transition probabilities.}\label{fig:sim_ChR2}
@@ -1369,17 +1385,18 @@ The normal baseline oculomotor performance must have some other explanation, suc
 
 
 \begin{figure}
+\begin{preview}
   \centering
-  \begin{myenuma}
+  \begin{myenumA}
     \item\aligntop{\includegraphics[width=0.29\linewidth]{pooled_scan.eps}}\label{fig:pooled_bal}
     \item\aligntop{\includegraphics[width=0.29\linewidth]{cascade_scan.eps}}\label{fig:cascade_bal}
     \item\aligntop{\includegraphics[width=0.29\linewidth]{nonuni_scan.eps}}\label{fig:nonuni_bal}
-  \end{myenuma}
+  \end{myenumA}
+\end{preview}
   \caption{Difference in initial learning rate in wild-type and \KO\ models, without gain-decrease pre-training.
   Learning, $L(t)$ is defined in \eqref{eq:learning}.
   Here, we show the maximum and minimum values of this quantity when scanning all 7/5 relevant parameters (see \protect\hyperlink{par:bal_scan}{text}).
-  We see that this quantity is usually negative, whereas it was positive in the experiments.
-  The exceptions are very small, $\CO(10^{-5})$, and tend to occur at extreme parameter values where the accuracy of fitting the potentiation parameter could become an issue.
+  We see that this quantity is always negative, whereas it was positive in the experiments.
   }\label{fig:bal}
 \end{figure}
 
