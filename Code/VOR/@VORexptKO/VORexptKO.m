@@ -9,7 +9,7 @@ classdef VORexptKO < VORexperiment
     end
     
     properties %labels
-        KOlabel='K^bD^{b-/-}';
+        KOlabel='DKO';
         KOcolor=[192 0 0]/255;
         KOstyle='-';
         %

@@ -12,7 +12,7 @@ ax=gca;
 bh=bar(ax, ns-1, ncomps','stacked');
 ax.FontSize=16;
 xlabel('$\#$ of synapses in pool', txopts{:});
-ylabel('max/min $\{\dot{L}_{\mathrm{WT}}(0) - \dot{L}_{\mathrm{K}^b\mathrm{D}^{b-/-}}(0)\}$', txopts{:});
+ylabel('max/min $\{\dot{L}_{\mathrm{WT}}(0) - \dot{L}_{DKO}(0)\}$', txopts{:});
 title('Pooled resource model, no pre', txopts{:});
 bh(1).FaceColor='none';
 bh(1).EdgeColor='none';
