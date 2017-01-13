@@ -46,8 +46,8 @@
 \newcommand{\dec}{_{\text{dec}}}
 \newcommand{\incdec}{_{\text{inc/dec}}}
 \newcommand{\wt}{_{\text{WT}}}
-\newcommand{\ko}{_{\text{K$^\mathrm{b}$D$^\mathrm{b}$-/-}}}
-\newcommand{\KO}{K$^\mathrm{b}$D$^{\mathrm{b}-/-}$}
+\newcommand{\ko}{_{\text{\KO}}}
+\newcommand{\KO}{DKO}
 %\newcommand{\ko}{_{\text{MHC}}}
 %\newcommand{\KO}{MHC}
 \newcommand{\tpre}{t_{\text{pre}}}
@@ -1064,9 +1064,10 @@ The range of values obtained is plotted in \autoref{fig:pooled_scan}, where we s
 
 \begin{figure}
 \begin{preview}
-  \centering
+  \begin{center}
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.4\linewidth]{pooled_deponly_scan.eps}
+  \end{center}
 \end{preview}
   \caption{Difference in initial learning rate in wild-type models, without and with gain-decrease pre-training.
   Learning, $L(t)$ is defined in \eqref{eq:learning}.
