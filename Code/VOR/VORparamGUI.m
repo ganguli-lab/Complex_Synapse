@@ -63,10 +63,10 @@ phe=zeros(1,numed);
 
 %-------------------------------------------------------------------------
 %Create param panels
-for i=1:numsl;
+for i=1:numsl
     MakeSlider(i,slparams{i});
 end
-for i=1:numed;
+for i=1:numed
     MakeEditBox(i,edparams{i})
 end
 
@@ -76,7 +76,7 @@ MakePlot;
 
 %-------------------------------------------------------------------------
 
-%  Callbacks for PertGui
+%  Callbacks for Gui
 
     %callback for sliders
     function sl_callback(source,~,which,varname)
