@@ -91,7 +91,7 @@ F=FF-FF.';
 qa=qa*ones(1,length(r.w));
 qa=qa.'-qa;
 %check for degenerate evals
-degenerate= qa<r.thresh;
+degenerate=abs(qa)<r.thresh;
 qa(degenerate)=1;
 F(degenerate)=t*FF(degenerate);
 %
