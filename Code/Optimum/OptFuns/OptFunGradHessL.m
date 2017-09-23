@@ -77,7 +77,7 @@ if nargout>=3
 end
 
     function tens=outer3(vec1,mat,vec2)
-    %outer produxt ov vector, matrix and vector
+    %outer product of vector, matrix and vector
         tens=outer(vec1, outer(mat,vec2,false), true); 
     end
 
@@ -93,7 +93,7 @@ end
 
     function [tens1,tens2]=subtracttranspose(tens)
     %subtract diagonal element from each row for first two indices, and
-    %lsst two indices, and compute transposed tensor
+    %last two indices, and compute transposed tensor
         tens1 = subtractdiag(tens);
         tens2 = transposetens(tens1);
         tens2=subtractdiag(tens2);

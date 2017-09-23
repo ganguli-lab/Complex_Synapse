@@ -1,4 +1,4 @@
-function [ hessV ] = OptHessMultL( x0,s,fp,w,xp )
+ function [ hessV ] = OptHessMultL( x0,s,fp,w,xp )
 %[hess]=OPTHESSL(x0,s,fp,w,xp) multiplies diff of transtion matrices by
 %hessian of Laplace transform of SNR curve
 %   x0 = parameters (off diagonal matrix elements) where hessian evaluated
@@ -33,17 +33,17 @@ Zwc=Zw*c;
 
 ZqZ = (Zinv \ q) / Zinvs;
 
-hess2p  = Zinv  \ Vp * Zap;
-hess4p  = ZqZ   * Vp * Zwp;
-hess10p = Zinvs \ Vp * Zwc;
-hess3p  = Zinv  \ Vp * Zwp;
-hess6p  = Zinvs \ Vp * Zwp;
+hess2p  = Zinv  \ Vp * Zap + Zap * Vp / Zinv;
+hess4p  = ZqZ   * Vp * Zwp + Zwp * Vp * ZqZ;
+hess10p = Zinvs \ Vp * Zwc + Zwc * Vp / Zinvs;
+hess3p  = Zinv  \ Vp * Zwp + Zwp * Vp / Zinvs;
+hess6p  = Zinvs \ Vp * Zwp + Zwp * Vp / Zinv;
 
-hess2m  = Zinv  \ Vm * Zap;
-hess4m  = ZqZ   * Vm * Zwp;
-hess10m = Zinvs \ Vm * Zwc;
-hess3m  = Zinv  \ Vm * Zwp;
-hess6m  = Zinvs \ Vm * Zwp;
+hess2m  = Zinv  \ Vm * Zap + Zap * Vm / Zinv;
+hess4m  = ZqZ   * Vm * Zwp + Zwp * Vm * ZqZ;
+hess10m = Zinvs \ Vm * Zwc + Zwc * Vm / Zinvs;
+hess3m  = Zinv  \ Vm * Zwp + Zwp * Vm / Zinvs;
+hess6m  = Zinvs \ Vm * Zwp + Zwp * Vm / Zinv;
 
 hessVpp = fp^2  * (hess2p + hess4p + hess10p) + fp * (hess3p +      hess6p);
 hessVmp = fp*fm * (hess2p + hess4p + hess10p) + fm *  hess3p - fp * hess6p;
