@@ -33,10 +33,6 @@
 \input{sl_definitions.tex}
 \input{sl_symbols.tex}
 %matrices
-\newcommand{\inv}{^{-1}}
-\newcommand{\dg}{^\mathrm{dg}}
-\newcommand{\trans}{^\mathrm{T}}
-\newcommand{\I}{\mathbf{I}}
 %vec of ones
 \newcommand{\onev}{\mathbf{e}}
 %mat of ones
@@ -81,17 +77,16 @@
 \newcommand{\evl}{\boldsymbol{\eta}}
 %snr curves etc
 \newcommand{\syn}{\vec{w}}
-\newcommand{\synid}{\syn_\text{ideal}}
+\newcommand{\synid}{\syn_\text{id}}
 \DeclareMathOperator{\SNR}{SNR}
 \DeclareMathOperator{\snr}{SNR}
+\DeclareMathOperator{\NNR}{NNR}
+\DeclareMathOperator{\nnr}{NNR}
 \newcommand{\snrb}{\overline{\snr}}
 \DeclareMathOperator{\env}{Env}
 \newcommand{\rh}{\hat{r}}
-\newcommand{\CI}{\mathcal{I}}
-\newcommand{\CS}{\mathcal{S}}
 \newcommand{\CA}{\mathcal{A}}
 \newcommand{\CB}{\mathcal{B}}
-\newcommand{\comp}{^\mathrm{c}}
 %avoid double superscripts
 \renewcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}}
 
@@ -152,11 +147,11 @@ There will be a ROC curve as a function of this threshold:
 %
 \begin{equation}\label{eq:ROC}
   \begin{aligned}
-  \operatorname{TPR} &= \Phi_c \prn{ \frac{ \Phi_c\inv(\operatorname{FPR}) - \snr }{ \operatorname{NNR} } },
+  \operatorname{TPR} &= \Phi_c \prn{ \frac{ \Phi_c\inv(\operatorname{FPR}) - \snr }{ \NNR } },
   \quad\text{where } &
     \Phi_c(x) &= \int_x^\infty \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dz, \\&&
     \snr &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\&&
-    \operatorname{NNR} &= \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }},
+    \NNR &= \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }},
   \end{aligned}
 \end{equation}
 %
@@ -164,6 +159,22 @@ and TPR/FPR are the true/false positive rates.
 When the signal-to-noise ratio, $\snr$ is larger than $\Phi_c\inv(\operatorname{FPR})$, it is beneficial to decrease the noise-to-noise ratio, NNR.
 In the other case, it is beneficial to increase it.
 The expectations and variances are over the probability distribution of the synaptic states given the sequence of plasticity events, the probability distribution of the sequence of plasticity events themselves and the probability distribution of the pattern we are testing, $\synid$.
+
+There are other measures of memory one could consider, \eg asymptotic error exponents.
+For the Neyman-Pearson approach to hypothesis testing, the error exponent is the KL divergence:
+%
+\begin{equation*}
+  D_\text{KL}\prn{P_0 \middle\Vert P_1} = \ln\nnr + \frac{1 + \snr^2}{2\nnr^2} - \frac{1}{2}.
+\end{equation*}
+%
+For Bayesian hypothesis testing, the error exponent is the Chernoff distance:
+%
+\begin{equation*}
+  D^*\prn{P_0 \middle\Vert P_1} = \max_\alpha \brc{
+    \frac{1}{2} \ln\brk{\frac{1 + \alpha(\nnr^2-1)}{\nnr^{2\alpha}}} + \frac{\alpha(1-\alpha)\snr^2}{2[1 + \alpha(\nnr^2-1)]}
+  }.
+\end{equation*}
+%
 
 The formulae above assumed that we know the time between storage and recognition.
 We should also compute the expectations and variances over probability distribution of the recall time, $t$, as well.
@@ -202,9 +213,9 @@ This is similar to the average SNR up to time $\tau$, but with the hard cut-off 
 This can be expressed in terms of he Laplace transform of the SNR curve in \eqref{eq:SNRdef}:
 %
 \begin{equation}\label{eq:laplacedef}
-  A(s) = \intd[_0^\infty]{t} \e^{-st} \snr(t).
+  A(s) = \intd[_0^\infty]{t} \e^{-st} \snr(t),
   \qquad
-  \snrb(\tau) = \frac{A(1/\tau)}{\tau},
+  \snrb(\tau) = \frac{A(1/\tau)}{\tau}.
 \end{equation}
 %
 
@@ -213,17 +224,17 @@ First, let's look at the variances, remembering that the states and plasticity e
 %
 \begin{equation}\label{eq:noise}
 \begin{aligned}
-  \var(\syn_\text{ideal}\cdt\syn(t))
-    &= \sum_{\alpha\beta} \av{\syn^\alpha_\text{ideal}\syn^\alpha(t) \syn^\beta_\text{ideal}\syn^\beta(t)}
-    - \prn{\sum_\alpha \av{\syn^\alpha_\text{ideal}\syn^\alpha(t)}}^2 \\
-    &= \sum_{\alpha} \av{(\syn^\alpha_\text{ideal})^2(\syn^\alpha(t))^2}
-    + \sum_{\alpha\neq\beta} \av{\syn^\alpha_\text{ideal}\syn^\alpha(t)}\av{\smash{\syn^\beta}_\text{ideal}\smash{\syn^\beta}(t)}
-    \\&\phantom{= \sum_{\alpha}  \av{(\syn^\alpha_\text{ideal})^2(\syn^\alpha(t))^2}}
-    - \prn{\sum_\alpha \av{\syn^\alpha_\text{ideal}\syn^\alpha(t)}}^2  \\
+  \var(\synid\cdt\syn(t))
+    &= \sum_{\alpha\beta} \av{\synid^\alpha \syn^\alpha(t) \synid^\beta \syn^\beta(t)}
+    - \Big(\sum_{\alpha} \av{\synid^\alpha \syn^\alpha(t)} \Big)^2 \\
+    &= \sum_{\alpha} \av{(\synid^\alpha)^2(\syn^\alpha(t))^2}
+    + \sum_{\alpha\neq\beta} \av{\synid^\alpha\syn^\alpha(t)}\av{\smash{\synid^\beta}\smash{\syn^\beta}(t)}
+    %\\&\phantom{= \sum_{\alpha}  \av{(\synid^\alpha)^2(\syn^\alpha(t))^2}}
+    - \Big(\sum_{\alpha} \av{\synid^\alpha \syn^\alpha(t)} \Big)^2  \\
     &= N\av{1}
-    + N(N-1)\av{\syn^1_\text{ideal}\syn^1(t)}^2
-    - N^2\av{\syn^1_\text{ideal}\syn^1(t)}^2 \\
-    &= N(1-\av{\syn^1_\text{ideal}\syn^1(t)}^2),
+    + N(N-1)\av{\synid^1 \syn^1(t)}^2
+    - N^2\av{\synid^1 \syn^1(t)}^2 \\
+    &= N(1-\av{\synid^1 \syn^1(t)}^2),
 \end{aligned}
 \end{equation}
 %
@@ -589,7 +600,7 @@ Then we can write the hessian as
   \pdiff{^2\hat{A}(s)}{\M\dep_{ij} \partial\M\pot_{kl}} &=
      f\pot f\dep (R_{ijkl} + R\trans_{ijkl})
      - f\pot S\trans_{ijkl} + f\dep S_{ijkl}, \\
-  \pdiff{^2\hat{A}(s)}{\M\pot_{ij} \partial\M\pot_{kl}} &=
+  \pdiff{^2\hat{A}(s)}{\M\dep_{ij} \partial\M\dep_{kl}} &=
      (f\dep)^2 (R_{ijkl} + R\trans_{ijkl})
      - f\dep(S_{ijkl} + S\trans_{ijkl}), \\
 \end{aligned}
