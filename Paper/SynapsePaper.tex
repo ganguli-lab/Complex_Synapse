@@ -8,8 +8,9 @@
 % {pnasmathematics} = Template for a one-column mathematics article
 % {pnasinvited} = Template for a PNAS invited submission
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% ADDITIONAL OPTIONAL STYLE FILES
-%\usepackage[hypcap]{caption}%links to figures
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{graphicx}
 %\usepackage{graphics} for finding documentation only
 \pdfsuppresswarningpagegroup=1
@@ -25,17 +26,14 @@
 \usepackage{adjustbox}
 \newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
 %
-%\usepackage{paralist}
-%\newenvironment{myenuma}{\begin{inparaenum}[(a)]}{\end{inparaenum}}
-%\newenvironment{myenumA}{\begin{inparaenum}[\bfseries A.]}{\end{inparaenum}}
-%
 %\usepackage[inline]{enumitem}
 \newlist{myenuma}{enumerate*}{4}
 \setlist[myenuma]{label=(\alph*),ref=\alph*}
-\newcommand{\itemp}[1]{\item\aligntop{#1}}
-
+\newcommand{\panel}[1]{\item\aligntop{#1}}
 \graphicspath{{"Figs/"}}
+
 \usepackage{amssymb,amsfonts}
+\usepackage{amsthm}
 %\usepackage[centertags]{amsmath}
 %\usepackage{hyperref}
 \usepackage[capitalise,nameinlink]{cleveref}
@@ -46,7 +44,42 @@
 %\crefmultiformat{equation}{Eqs.~[#2#1#3}{,2#1#3]}{,#2#1#3}{,#2#1#3]}
 %\crefrangemultiformat{equation}{Eqs.~[#3#1#4--#5#2#6}{,#3#1#4--#5#2#6]}{,#3#1#4--#5#2#6}{,#3#1#4--#5#2#6]}
 
+% ----------------------------------------------------------------
+\newtheoremstyle{sldefinition}%
+  {3pt}%space above
+  {3pt}%space below
+  {}%body font
+  {}%indent amount
+  {\bfseries}%theorem head font
+  {}%theorem head punctuation
+  {\newline}%space after head
+  {\thmname{#1}\thmnumber{ #2}:{\bfseries\thmnote{ #3}}}%head spec
+\newtheoremstyle{slplain}%
+  {3pt}%space above
+  {3pt}%space below
+  {}%body font
+  {}%indent amount
+  {\bfseries}%theorem head font
+  {}%theorem head punctuation
+  {\newline}%space after head
+  {\thmname{#1}\thmnumber{ #2}{\bfseries\thmnote{ (#3)}}: }%head spec
+%
+\theoremstyle{slplain}
+\newtheorem{thm}{Theorem}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+%
+\theoremstyle{sldefinition}
+\newtheorem{defn}{Definition}
+%
+\theoremstyle{remark}
+\newtheorem*{notn}{Notation}
+\newtheorem*{rem}{Remark}
+% ----------------------------------------------------------------
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% OPTIONAL MACRO DEFINITIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\ra}{\rightarrow}
 \newcommand{\lr}{\leftrightarrow}
 \newcommand{\cdt}{\!\cdot\!}
@@ -165,16 +198,12 @@
 \newcommand{\uv}{\mathbf{u}}
 \newcommand{\vv}{\mathbf{v}}
 \newcommand{\CI}{\mathcal{I}}
-
-% ----------------------------------------------------------------
-\input{sl_theorems_preamble.tex}
-% ----------------------------------------------------------------
-\providecommand\hyperref[2][1]{#2}
-\providecommand\texorpdfstring[2]{#1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{Optimal synaptic strategies for different timescales of memory}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % Use letters for affiliations, numbers to show equal authorship (if applicable) and to indicate the corresponding author
 \author[a,1,2]{Subhaneil Lahiri}
 \author[b,1]{Surya Ganguli}
@@ -218,6 +247,7 @@
 \dates{This manuscript was compiled on \today}
 \doi{\url{www.pnas.org/cgi/doi/10.1073/pnas.XXXXXXXXXX}}
 
+\setboolean{displaywatermark}{false}
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\begin{article}
@@ -331,9 +361,9 @@ The cascade model does not perform quite as well at that time, but it maintains 
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \protect\item\aligntop{\includegraphics[width=0.25\linewidth]{cascade.svg}}\label{fig:cascade}
-  \item\aligntop{\includegraphics[width=0.25\linewidth]{multistate.svg}}\label{fig:multistate}
-  \item\aligntop{\includegraphics[width=0.3\linewidth]{cascms.eps}}\label{fig:cascms}
+  \panel{\includegraphics[width=0.25\linewidth]{cascade.svg}}\label{fig:cascade}
+  \panel{\includegraphics[width=0.25\linewidth]{multistate.svg}}\label{fig:multistate}
+  \panel{\includegraphics[width=0.3\linewidth]{cascms.eps}}\label{fig:cascms}
  \end{myenuma}
  \end{center}
   \caption{Models of complex synapses.
@@ -449,9 +479,9 @@ This is one example of the tradeoff between optimizing memory at early versus la
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\hp\aligntop{\includegraphics[width=0.24\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
-  \item\aligntop{\includegraphics[width=0.24\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
-  \item\hp\aligntop{\includegraphics[width=0.1\linewidth]{binary_det.svg}}\label{fig:binary_det}
+  \panel{\hp\includegraphics[width=0.24\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
+  \panel{\includegraphics[width=0.24\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
+  \panel{\hp\includegraphics[width=0.1\linewidth]{binary_det.svg}}\label{fig:binary_det}
   \end{myenuma}
  \end{center}
   \caption{Synaptic models that maximize initial SNR.
@@ -492,7 +522,7 @@ Because $\smash{\eta^+_i+\eta^-_i=\eta}$ is independent of $i$, the two ordering
 In this order, which depends sensitively on the structure of $\M\potdep$, states later (to the right in figures below) can be considered to be more potentiated than states earlier (to the left in figures below), despite the fact that they have the same synaptic efficacy.
 In essence, in this order, a state is considered to be more potentiated if the average time it takes to reach all the strong efficacy states is shorter.
 We will see that synaptic models that optimize various measures of memory have an exceedingly simple structure when, and only when, their states are arranged in this order.%
-\footnote{Note that we do not need to worry about the order of the $\eta^\pm_i$ changing during the optimization: necessary conditions for a maximum only require that there is no infinitesimal perturbation that increases the area. Therefore we need only consider an infinitesimal neighborhood of the model, in which the order will not change.}
+\footnote{Note that we do not need to worry about the order of the $\eta^\pm_i$ changing during the optimization: necessary conditions for a maximum only require that there is no infinitesimal perturbation that increases the area. Therefore we need only consider an infinitesimal neighborhood of the model, in which the order will not change.\label{ft:etaorder}}
 
 
 
@@ -531,9 +561,9 @@ Any other topology would allow some class of perturbations (\eg\ in \cref{fig:pe
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.14\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
-  \item\aligntop{\includegraphics[width=0.14\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
-  \item\aligntop{\includegraphics[width=0.28\linewidth]{shortcut.svg}}\label{fig:shortcut}
+  \panel{\includegraphics[width=0.14\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
+  \panel{\includegraphics[width=0.14\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
+  \panel{\includegraphics[width=0.28\linewidth]{shortcut.svg}}\label{fig:shortcut}
  \end{myenuma}
  \end{center}
   \caption{Perturbations that increase the area.
@@ -644,17 +674,17 @@ Nevertheless, we have proven rigorously that no model's memory curve can ever ex
 
 \begin{figure}
  \begin{center}
-% \parbox[t]{0.43\linewidth}{%
+ \parbox[t]{0.43\linewidth}{%
  \begin{myenuma}
-   \item\aligntop{\includegraphics[width=0.85\linewidth]{env.svg}}\label{fig:envplot}
-% \end{myenuma}}\hp
-% \parbox[t]{0.44\linewidth}{%
-% \begin{myenuma}
-%  \stepcounter{myenumai}
-%% \addtocounter{enumi}{1}
-   \item\aligntop{\includegraphics[width=0.8\linewidth]{diffjump.svg}}\label{fig:diffjump}%\\[0.1\linewidth]
-   \item\aligntop{\includegraphics[width=0.8\linewidth]{multistate_sticky.svg}}\label{fig:sticky}
- \end{myenuma}%}
+   \panel{\includegraphics[width=0.85\linewidth]{env.svg}}\label{fig:envplot}
+ \end{myenuma}}\hp
+ \parbox[t]{0.44\linewidth}{%
+ \begin{myenuma}
+  \stepcounter{myenumai}
+% \addtocounter{enumi}{1}
+   \panel{\includegraphics[width=0.8\linewidth]{diffjump.svg}}\label{fig:diffjump}\\[0.1\linewidth]
+   \panel{\includegraphics[width=0.8\linewidth]{multistate_sticky.svg}}\label{fig:sticky}
+ \end{myenuma}}
  \end{center}
   \caption{The memory curve envelope for $N=100$, $M=12$.
   (\protect\protect\ref{fig:envplot}) An upper bound on the SNR at any time is shown in green.
@@ -710,18 +740,18 @@ We thank Larry Abbott, Marcus Benna, Stefano Fusi, Jascha Sohl-Dickstein and Dav
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\bibliographystyle{pnas-new}
-\bibliography{maths,neuro,markov}
+%\bibliography{maths,neuro,markov}
 
 
 %\end{article}
-\clearpage
+%\clearpage
 
 \begin{strip}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 \appendix
 \begin{center}
-  \textbf{\Large Supplementary material}
+  \textbf{\Large Supporting information}
 \end{center}
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1282,7 +1312,7 @@ which describes the synapses starting in the equilibrium distribution, changing 
 \end{equation*}
 %
 Thus, evolving according to \cref{eq:rowsum} results in averaging over all sequences of plasticity events,
-as we only need linear expectations of $\wv(t)$ in the end.}
+as we only need linear expectations of $\wv(t)$ in the end.\label{ft:avexp}}
 This results in
 %
 \begin{equation}\label{eq:overlapwt}
@@ -1741,14 +1771,14 @@ But more interestingly for our purposes:
 \end{align}
 %
 
-In the \hyperref[sec:areacoeffincr]{section below}, we will show that the $c_k$ are non-decreasing, if we put the states in order of decreasing $\eta^+_k$.
+In the \hyperref[sec:areacoeffincr]{\lcnamecref{sec:areacoeffincr} below}, we will show that the $c_k$ are non-decreasing, if we put the states in order of decreasing $\eta^+_k$.
 This implies that the last term of the final expression in \cref{eq:shortcutarea} is non-negative.
 If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu\potdep _{g,g\pm m}>0$, which in turn implies that $\W\potdep _{g,g\pm m}=0$.
 This would tell us that the process with the maximal area has to have a multi-state topology.
 
 \subsubsection{Increasing \texorpdfstring{$c_k$}{c(k)}}\label{sec:areacoeffincr}
 
-In the \hyperref[sec:shortcuts]{previous subsection} we defined perturbations corresponding to Figure 3(c) of the main text.
+In the \hyperref[sec:shortcuts]{previous \lcnamecref{sec:shortcuts}} we defined perturbations corresponding to Figure 3(c) of the main text.
 In order to show that those perturbations increase the area, we must now show that the $c_k$ are non-decreasing, if we put the states in order of decreasing $\eta^+_k$.
 
 Consider the following combinations of derivatives:
@@ -1968,7 +1998,6 @@ This yields the area bound of equation (16) of the main text.
 
 Note that the chain that achieves this is not ergodic, the two states at each end are absorbing. This is similar to the results found numerically in \cite{Barrett2008discrete} in a slightly different situation.
 
-
 \end{strip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1978,7 +2007,7 @@ Note that the chain that achieves this is not ergodic, the two states at each en
 %\pnasbreak
 
 %\bibliographystyle{utcaps_sl}
-%\bibliography{maths,neuro,markov}
+\bibliography{maths,neuro,markov}
 
 
 
