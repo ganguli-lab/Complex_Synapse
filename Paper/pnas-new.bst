@@ -3,8 +3,9 @@
 %%%     author          = "Russell Standish"
 %%%  }
 %%% ====================================================================
-% This is "pnas2011.bst, adapted from "pnas2009.bst" and "pnas.bst", modified
-% from "unsrt.bst"
+% This is "pnas2016.bst", adapted from 
+% "pnas2011.bst" "pnas2009.bst" and "pnas.bst", 
+% modified from "unsrt.bst"
 % BibTeX standard bibliography style `unsrt'
 	% version 0.99a for BibTeX versions 0.99a or later, LaTeX version 2.09.
 	% Copyright (C) 1985, all rights reserved.
@@ -29,8 +30,10 @@ ENTRY
     month
     note
     number
+    issue
     organization
     pages
+    eid
     publisher
     school
     series
@@ -220,7 +223,7 @@ FUNCTION {format.names}
 		'skip$
 	      if$
 	      t "others" =
-		{ " et~al." * }
+		{ ", et~al." * }
 		{ t * }
 	      if$
 	    }
@@ -231,7 +234,7 @@ FUNCTION {format.names}
       nameptr #1 + 'nameptr :=
       namesleft #1 - 'namesleft :=
       namesleft #4 >
-      { " et~al." *
+      { ", et~al." *
         #0 'namesleft :=
       }
       'skip$
@@ -444,21 +447,38 @@ FUNCTION {format.pages}
 FUNCTION {format.vol.num.pages}
 { volume field.or.null
   number empty$
+  {
+    issue empty$
     'skip$
-    { "(" number * ")" * *
+    { "(" issue * ")" * * }
+    if$
+  }
+  {
+    "(" number * ")" * *
       volume empty$
-	{ "there's a number but no volume in " cite$ * warning$ }
-	'skip$
+	    { "there's a number but no volume in " cite$ * warning$ }
+	    'skip$
       if$
-    }
+  }
   if$
   pages empty$
+  {
+    eid empty$
     'skip$
-    { duplicate$ empty$
-	{ pop$ format.pages }
-	{ ":" * pages n.dashify * }
+	  {
+      duplicate$ empty$
+	    { pop$ format.pages }
+	    { ":" * eid n.dashify * }
       if$
     }
+    if$
+  }
+  {
+    duplicate$ empty$
+	  { pop$ format.pages }
+	  { ":" * pages n.dashify * }
+    if$
+  }
   if$
 }
 
@@ -542,11 +562,11 @@ FUNCTION {format.crossref.editor}
 { editor #1 "{vv~}{ll}" format.name$
   editor num.names$ duplicate$
   #2 >
-    { pop$ " et~al." * }
+    { pop$ ", et~al." * }
     { #2 <
 	'skip$
 	{ editor #2 "{vv }{ll}{ jj}{, f}" format.name$ "others" =
-	    { " et~al." * }
+	    { ", et~al." * }
 	    { " and " * editor #2 "{vv~}{ll}" format.name$ * }
 	  if$
 	}
@@ -719,9 +739,11 @@ FUNCTION {inproceedings}
 { output.bibitem
   format.authors "author" output.check
   format.date "year" output.check
+  format.title "title" output.check
+  format.in.ed.booktitle "title" output.check
+  new.sentence
   crossref missing$
-    { format.btitle.series "title" output.check
-      format.editors output
+    { format.editors output
       new.block
       organization publisher comma.connect
       address comma.connect
@@ -733,6 +755,8 @@ FUNCTION {inproceedings}
     { format.incoll.inproc.crossref output.nonnull
     }
   if$
+  format.edition output
+  new.sentence
   format.pages output
   new.block
   note output

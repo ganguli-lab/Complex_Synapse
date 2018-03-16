@@ -1,63 +1,50 @@
-%% PNAStwoS.tex
-%% For two column PNAS articles
-%% Version: Apr 15, 2008
+\documentclass[9pt,twocolumn,twoside,lineno]{pnas-new}
+% Use the lineno option to display guide line numbers if required.
+% Note that the use of elements such as single-column equations
+% may affect the guide line number alignment.
 
-
-%% BASIC CLASS FILE
-\documentclass{pnastwo}
+\templatetype{pnasresearcharticle} % Choose template
+% {pnasresearcharticle} = Template for a two-column research article
+% {pnasmathematics} = Template for a one-column mathematics article
+% {pnasinvited} = Template for a PNAS invited submission
 
 %% ADDITIONAL OPTIONAL STYLE FILES
-%\usepackage{graphicx}
-\usepackage{ifpdf}
 %\usepackage[hypcap]{caption}%links to figures
 \usepackage{graphicx}
 %\usepackage{graphics} for finding documentation only
-%
+\pdfsuppresswarningpagegroup=1
 \usepackage{epstopdf}
 \epstopdfsetup{update,suffix=-generated}
 %
-%\newcommand{\inkscapedir}{C:/Program Files/Inkscape/}
-%\IfFileExists{"C:/Program Files (x86)/Inkscape/inkscape.exe"}{\newcommand{\inkscapedir}{C:/Program Files (x86)/Inkscape/}}{}
-\IfFileExists{"C:/Program Files/Inkscape/inkscape.exe"}{\newcommand{\inkscapedir}{C:/Program Files/Inkscape/}}{}
+\IfFileExists{"C:/Progra\string~1/Inkscape/inkscape.exe"}{\newcommand{\inkscapedir}{C:/Progra\string~1/Inkscape/}}{}
 \IfFileExists{"/Applications/Inkscape.app/Contents/Resources/bin/inkscape"}{\newcommand{\inkscapedir}{/Applications/Inkscape.app/Contents/Resources/bin/}}{}
+\providecommand{\inkscapedir}{}
 %
-\ifpdf
- \epstopdfDeclareGraphicsRule{.svg}{pdf}{.pdf}{%
- "\inkscapedir inkscape" -f #1 -C -A \OutputFile
- }
-\else
- \DeclareGraphicsRule{.png}{eps}{.bb}{}
-\fi
+\epstopdfDeclareGraphicsRule{.svg}{pdf}{.pdf}{"\inkscapedir inkscape" -f #1 -C -A \OutputFile}
 %
 \usepackage{adjustbox}
 \newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
-\newcommand{\alignmid}[1]{\adjustbox{valign=c}{#1}}
 %
 %\usepackage{paralist}
 %\newenvironment{myenuma}{\begin{inparaenum}[(a)]}{\end{inparaenum}}
-%\newenvironment{myenumi}{\begin{inparaenum}[i)]}{\end{inparaenum}}
 %\newenvironment{myenumA}{\begin{inparaenum}[\bfseries A.]}{\end{inparaenum}}
-%\newenvironment{myenumI}{\begin{inparaenum}[\bfseries I.]}{\end{inparaenum}}
-%\newenvironment{myenumr}{\begin{inparaenum}[1.]}{\end{inparaenum}}
-%%for nested lists, \ref only produces innermost item:  (hacky)
-%\makeatletter % for internal macros with @
-%\renewcommand\p@enumii{}
-%\makeatother
 %
-\usepackage[inline]{enumitem}
+%\usepackage[inline]{enumitem}
 \newlist{myenuma}{enumerate*}{4}
 \setlist[myenuma]{label=(\alph*),ref=\alph*}
-%\makeatletter
-%\DeclareRobustCommand{\ilabel}[1]{%
-%   \edef\@currentlabel{\themyenumai}%
-%   \label{#1}}
-%\makeatother
+\newcommand{\itemp}[1]{\item\aligntop{#1}}
+
 \graphicspath{{"Figs/"}}
-%\usepackage{pnastwoF}
-%\usepackage{amssymb,amsfonts}
+\usepackage{amssymb,amsfonts}
 %\usepackage[centertags]{amsmath}
 %\usepackage{hyperref}
-
+\usepackage[capitalise,nameinlink]{cleveref}
+\creflabelformat{equation}{[#2#1#3]}
+\crefrangelabelformat{equation}{[#3#1#4--#5#2#6]}
+%\crefformat{equation}{#2Eq.~[#1]#3}
+%\crefrangeformat{equation}{Eqs.~[#3#1#4--#5#2#6]}
+%\crefmultiformat{equation}{Eqs.~[#2#1#3}{,2#1#3]}{,#2#1#3}{,#2#1#3]}
+%\crefrangemultiformat{equation}{Eqs.~[#3#1#4--#5#2#6}{,#3#1#4--#5#2#6]}{,#3#1#4--#5#2#6}{,#3#1#4--#5#2#6]}
 
 %% OPTIONAL MACRO DEFINITIONS
 \newcommand{\ra}{\rightarrow}
@@ -77,28 +64,27 @@
 \newcommand{\Cf}{Cf.\ }
 \newcommand{\Etc}{Etc.\ }
 %
-% indices
-%
+\usepackage{delim}
 % brackets etc.
-\newcommand{\prn}[1]{\left ( #1 \right )}
-\newcommand{\brc}[1]{\left\{ #1 \right\}}
-\newcommand{\brk}[1]{\left [ #1 \right ]}
-\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
-\newcommand{\nrm}[1]{\left\lVert #1 \right\rVert}
-\newcommand{\av}[1]{\left\langle #1 \right\rangle}
-\newcommand{\avc}[2]{\left\langle #1 \,\middle | \, #2 \right\rangle}
-%\newenvironment{cases}{\left\{\begin{aligned}}{\end{aligned}\right.}
+\delimdef\prn#1{\dleft( #1 \dright)}
+\delimdef\brc#1{\dleft\{ #1 \dright\}}
+\delimdef\brk#1{\dleft[ #1 \dright]}
+\delimdef\abs#1{\dleft\lvert #1 \dright\rvert}
+\delimdef\nrm#1{\dleft\lVert #1 \dright\rVert}
+\delimdef\av#1{\dleft\langle #1 \dright\rangle}
+\delimdef\avc#1#2{\dleft\langle #1 \dmiddle\vert #2 \dright\rangle}
+%\newenvironment{cases}{\dleft\{\begin{aligned}}{\end{aligned}\dright.}
 %
 % Sets
-\newcommand{\set}[2]{\left\{ #1 \,\middle |\, #2 \right\}}
-\newcommand{\cond}[2]{\!\left( #1 \,\middle | \, #2 \right)}
-\newcommand{\condb}[2]{\!\left[ #1 \,\middle | \, #2 \right]}
+\delimdef\set#1#2{\dleft\{ #1 \dmiddle\vert #2 \dright\}}
+\delimdef\cond#1#2{\!\dleft( #1 \dmiddle\vert #2 \dright)}
+\delimdef\condb#1#2{\!\dleft[ #1 \dmiddle\vert #2 \dright]}
 %
 % Derivatives, etc. First argument is optional.
-\newcommand{\diff}[3][\rule{0mm}{0mm}]{\frac{\mathrm{d}^{#1} #2}{\mathrm{d}{#3}^{#1}}}
-\newcommand{\pdiff}[3][\rule{0mm}{0mm}]{\frac{\partial^{#1} #2}{\partial {#3}^{#1}}}
-\newcommand{\pdiffc}[3][\rule{0mm}{0mm}]{\left (\frac{\partial #2}{\partial {#3}}\right )_{\!\!#1}}
-\newcommand{\intd}[2][\rule{0mm}{0mm}]{\int #1\!\!\dr #2\,}
+\newcommand{\diff}[3][]{\frac{\mathrm{d}^{#1} #2}{\mathrm{d}{#3}^{#1}}}
+\newcommand{\pdiff}[3][]{\frac{\partial^{#1} #2}{\partial {#3}^{#1}}}
+\newcommand{\pdiffc}[3][]{\left(\frac{\partial #2}{\partial {#3}}\right)_{\!\!#1}}
+\newcommand{\intd}[2][]{\int #1\!\!\dr #2\,}
 %
 % Un-italicised letters
 \newcommand{\dr}{\mathrm{d}}
@@ -122,13 +108,6 @@
 % logic
 \newcommand{\means}{\Longleftrightarrow}
 \newcommand{\requires}{\Longleftarrow}
-%
-% Referencing sections, figures, etc
-\newcommand{\sref}[1]{\S\ref{#1}}
-\newcommand{\fref}[1]{fig.\ref{#1}}
-\newcommand{\Fref}[1]{Fig.~\ref{#1}}
-\newcommand{\tref}[1]{tab.\ref{#1}}
-\newcommand{\Tref}[1]{Tab.\ref{#1}}
 %
 %\input{sl_symbols.tex}
 %
@@ -190,35 +169,41 @@
 % ----------------------------------------------------------------
 \input{sl_theorems_preamble.tex}
 % ----------------------------------------------------------------
-%\renewcommand\Fref[1]{}
 \providecommand\hyperref[2][1]{#2}
 \providecommand\texorpdfstring[2]{#1}
 
-%%%%%%%%%%%%
-%% For PNAS Only:
-%\url{www.pnas.org/cgi/doi/10.1073/pnas.0709640104}
-\renewcommand{\theurl}{www.pnas.org/cgi/doi/10.1073/pnas.0709640104}
-\copyrightyear{2016}
-\issuedate{Issue Date}
-\volume{Volume}
-\issuenumber{Issue Number}
-%\setcounter{page}{2687} %Set page number here if desired
-%%%%%%%%%%%%
-
-\begin{document}
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{Optimal synaptic strategies for different timescales of memory}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Use letters for affiliations, numbers to show equal authorship (if applicable) and to indicate the corresponding author
+\author[a,1,2]{Subhaneil Lahiri}
+\author[b,1]{Surya Ganguli}
 
-\author{Subhaneil Lahiri\affil{1}{Department of Applied Physics, Stanford University, Stanford CA}
-\and
-Surya Ganguli\affil{1}{}}
+\affil[a]{Department of Applied Physics, Stanford University, Stanford CA}
 
-\contributor{Submitted to Proceedings of the National Academy of Sciences
-of the United States of America}
+% Please give the surname of the lead author for the running footer
+\leadauthor{Lahiri}
 
-\maketitle
+% Please add here a significance statement to explain the relevance of your work
+\significancestatement{Authors must submit a 120-word maximum statement about the significance of their research paper written at a level understandable to an undergraduate educated scientist outside their field of speciality.}
 
-\begin{article}
+% Please include corresponding author, author contribution and author declaration information
+\authorcontributions{Please provide details of author contributions here.}
+\authordeclaration{Please declare any conflict of interest here.}
+%\equalauthors{\textsuperscript{1}A.O.(Author One) and A.T. (Author Two) contributed equally to this work (remove if not applicable).}
+\correspondingauthor{\textsuperscript{2}To whom correspondence should be addressed. E-mail: sulahiri@stanford.edu}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Keywords are not mandatory, but authors are strongly encouraged to provide them. If provided, please include two to five keywords, separated by the pipe symbol, e.g:
+\keywords{synaptic plasticity | learning | memory | neuroscience}
+
+%\abbreviations{SNR, signal-to-noise ratio; LTP, long term potentiation;LTD, long term depression}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\begin{article}
 \begin{abstract}
   An incredible gulf separates theoretical models of synapses, often described solely by a single scalar value denoting the size of a postsynaptic potential, from the immense complexity of molecular signaling pathways underlying real synapses.
   To understand the functional contribution of such molecular complexity to learning and memory, it is essential to expand our theoretical conception of a synapse from a single scalar to an entire dynamical system with many internal molecular functional states.
@@ -230,10 +215,20 @@ of the United States of America}
   Overall, we uncover general design principles governing the functional organization of complex molecular networks, and suggest new experimental observables in synaptic physiology, based on first %passage time theory, that connect molecular complexity to memory.
 \end{abstract}
 
-\keywords{synaptic plasticity | learning | memory | neuroscience}
+\dates{This manuscript was compiled on \today}
+\doi{\url{www.pnas.org/cgi/doi/10.1073/pnas.XXXXXXXXXX}}
 
-\abbreviations{SNR, signal-to-noise ratio; LTP, long term potentiation;
-LTD, long term depression}
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{article}
+
+% Optional adjustment to line up main text (after abstract) of first page with line numbers, when using both lineno and twocolumn options.
+% You should only change this length when you've finalised the article contents.
+\verticaladjustment{-2pt}
+
+\maketitle
+\thispagestyle{firststyle}
+\ifthenelse{\boolean{shortarticle}}{\ifthenelse{\boolean{singlecolumn}}{\abscontentformatted}{\abscontent}}{}
 
 \dropcap{I}t is widely thought that our very ability to remember the past over long time scales depends crucially on our ability to modify synapses in our brain in an experience dependent manner.
 Classical models of synaptic plasticity model synaptic efficacy as an analog scalar value, denoting the size of a post-synaptic potential injected into one neuron from another.
@@ -247,7 +242,7 @@ This conceptual expansion is further necessitated by the experimental reality th
 While externally, synaptic efficacy could be digital, candidate patterns of electrical activity leading to potentiation or depression could yield transitions between these internal molecular states without necessarily inducing an associated change in synaptic efficacy.
 This form of synaptic change, known as metaplasticity \cite{Abraham1996metaplasticity,Montgomery2002765}, can allow the probability of synaptic potentiation or depression to acquire a rich dependence on the history of prior changes in efficacy, thereby potentially improving memory capacity.
 
-Theoretical studies of complex, metaplastic synapses have focused on analyzing the memory performance of a limited number of very specific molecular dynamical systems, characterized by a number of internal states in which potentiation and depression each induce a specific set of allowable transitions between states (\eg see \Fref{fig:models} below).
+Theoretical studies of complex, metaplastic synapses have focused on analyzing the memory performance of a limited number of very specific molecular dynamical systems, characterized by a number of internal states in which potentiation and depression each induce a specific set of allowable transitions between states (\eg see \cref{fig:models} below).
 While these models can vastly outperform simple binary synaptic switches, these analyses leave open several deep and important questions.
 For example, how does the structure of a synaptic dynamical system determine its memory performance?  What are the fundamental limits of memory performance over the space of all possible synaptic dynamical systems?
 What is the structural organization of synaptic dynamical systems that achieve these limits?
@@ -276,8 +271,8 @@ We use a well established formalism for the study of learning and memory with co
 In this approach, electrical patterns of activity corresponding to candidate potentiating and depressing plasticity events occur randomly and independently at all synapses at a Poisson rate $r$.  These events reflect possible synaptic changes due to either spontaneous network activity, or the storage of new memories.
 We let  $f\pot$ and  $f\dep$ denote the fraction of these events that are candidate potentiating or depressing events respectively.
 Furthermore, we assume our synaptic model has $M$ internal molecular functional states, and that a candidate potentiating (depotentiating) event induces a stochastic transition in the internal state described by an $M \times M$ discrete time Markov transition matrix  $\M\pot$ ($\M\dep$).
-In this framework, the states of different synapses will be independent, and the entire synaptic population can be fully described by the probability distribution across these states, which we will indicate with the row-vector $\pr(t)$.
-Thus the $i$'th component of $\pr(t)$ denotes the fraction of the synaptic population in state $i$.
+In this framework, the states of different synapses will be independent, and the entire synaptic population can be fully described by the probability distribution across these states, which we will indicate with the row-vector $\prob(t)$.
+Thus the $i$'th component of $\prob(t)$ denotes the fraction of the synaptic population in state $i$.
 Furthermore, each state $i$ has its own synaptic weight, $\w_i$, which we take, in the worst case scenario, to be restricted to two values.
 After shifting and scaling these two values,  we can assume they are $\pm1$, without loss of generality.
 
@@ -329,14 +324,14 @@ It can be thought of as the excess fraction of synapses (relative to equilibrium
 
 
 Much of the previous work on these types of complex synaptic models has focused on understanding the memory curves of specific models, or choices of $\M\potdep$.
-Two examples of these models are shown in \Fref{fig:models}. We see that they have different memory properties.
+Two examples of these models are shown in \cref{fig:models}. We see that they have different memory properties.
 The serial model performs relatively well at one particular timescale, but it performs poorly at other times.
 The cascade model does not perform quite as well at that time, but it maintains its performance over a wider range of timescales.
 
 \begin{figure}[tbp]
  \begin{center}
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.25\linewidth]{cascade.svg}}\label{fig:cascade}
+  \protect\item\aligntop{\includegraphics[width=0.25\linewidth]{cascade.svg}}\label{fig:cascade}
   \item\aligntop{\includegraphics[width=0.25\linewidth]{multistate.svg}}\label{fig:multistate}
   \item\aligntop{\includegraphics[width=0.3\linewidth]{cascms.eps}}\label{fig:cascms}
  \end{myenuma}
@@ -371,7 +366,7 @@ transition matrices $\M\pot$ and $\M\dep$, in addition to $f\potdep$.  The param
 %
 The upper bounds on $\M\potdep_{ij}$ and $f\potdep$ follow automatically from the other constraints.
 
-The critical question is: what do these constraints imply about the space of achievable memory curves in \eqref{eq:SNRcalc}?
+The critical question is: what do these constraints imply about the space of achievable memory curves in \cref{eq:SNRcalc}?
 To answer this question, especially for limits on achievable memory at finite times, it will be useful to employ the eigenmode decomposition:
 %
 \begin{equation}\label{eq:eigendecomp}
@@ -400,12 +395,12 @@ This decomposition allows us to write the memory curve as a sum of exponentials,
 \end{equation}
 %
 where $\;\CI_a = (2 f\pot f\dep) \eq (\M\pot-\M\dep) \uv^a  \vv^a \w\;$ and $\;\tau_a = {1}/{q_a}$.
-We can then ask the question: what are the constraints on these quantities, namely eigenmode initial SNR's, $\CI_a$, and time constants, $\tau_a$, implied by the constraints in \eqref{eq:constr}?
+We can then ask the question: what are the constraints on these quantities, namely eigenmode initial SNR's, $\CI_a$, and time constants, $\tau_a$, implied by the constraints in \cref{eq:constr}?
 We will derive some of these constraints in the next section.
 
 \section{Upper bounds on achievable memory capacity}\label{sec:bounds}
 
-In the previous section, in \eqref{eq:SNRcalc} we have described an analytic expression for a memory curve as a function of the structure of a synaptic dynamical system, described by the pair of stochastic transition matrices  $\M\potdep$.
+In the previous section, in \cref{eq:SNRcalc} we have described an analytic expression for a memory curve as a function of the structure of a synaptic dynamical system, described by the pair of stochastic transition matrices  $\M\potdep$.
 Since the performance measure for memory is an entire memory curve, and not just a single number, there is no universal scalar notion of optimal memory in the space of synaptic dynamical systems.
 Instead there are tradeoffs between storing proximal and distal memories;  often attempts to increase memory at late (early) times by changing $\M\potdep$, incurs a performance loss in memory at early (late) times in specific models considered so far \cite{Fusi2005cascade,Fusi2007multistate,Leibold2008serial}.
 Thus our end goal, achieved \hyperref[sec:env]{below}, is to derive an envelope memory curve in the SNR-time plane, or a curve that forms an upper-bound on the {\it entire} memory curve of {\it any} model.
@@ -437,9 +432,9 @@ The initial SNR is closely related to the flux from the states with $\w_i=-1$ to
 This inequality becomes an equality if potentiation never decreases the synaptic weight and depression never increases it, which should be a property of any sensible model.
 
 To maximize this flux, potentiation from a weak state must be guaranteed to end in a strong state, and depression must do the reverse.
-An example of such a model is shown in \Fref{fig:max_init}(\ref{fig:max_init_pot},\ref{fig:max_init_dep}).
+An example of such a model is shown in \cref{fig:max_init}(\ref{fig:max_init_pot},\ref{fig:max_init_dep}).
 These models have a property known as ``lumpability'' (see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time).
-They are completely equivalent (\ie have the same memory curve) as a two state model with transition probabilities equal to 1, as shown in \Fref{fig:max_init}(\ref{fig:binary_det}).
+They are completely equivalent (\ie have the same memory curve) as a two state model with transition probabilities equal to 1, as shown in \cref{fig:max_init}(\ref{fig:binary_det}).
 
 This two state model has the equilibrium distribution $\eq=(f\dep,f\pot)$ and its flux is given by $\F_{-+} = rf\pot f\dep$.
 This is maximized when $f\pot=f\dep=\half$, leading to the upper bound:
@@ -481,7 +476,7 @@ A remarkable theorem we will exploit is that the quantity
 \end{equation}
 %
 known as Kemeny's constant (see \cite[\S4.4]{kemeny1960finite}), is independent of the starting state $i$.
-Intuitively, \eqref{eq:kemenyconst} states that the average time it takes to reach any state, weighted by its equilibrium probability, is independent of the starting state, implying a hidden constancy inherent in any stochastic process.
+Intuitively, \cref{eq:kemenyconst} states that the average time it takes to reach any state, weighted by its equilibrium probability, is independent of the starting state, implying a hidden constancy inherent in any stochastic process.
 
 In the context of complex synapses, we can define the partial sums
 %
@@ -512,7 +507,7 @@ Now consider the area under the memory curve:
 We will find an upper bound on this quantity as well as the model that saturates this bound.
 
 
-First passage time theory introduced in the \hyperref[sec:order]{previous section} becomes useful because the area has a simple expression in terms of quantities introduced in \eqref{eq:kemenypm} (see supplementary material):
+First passage time theory introduced in the \hyperref[sec:order]{previous section} becomes useful because the area has a simple expression in terms of quantities introduced in \cref{eq:kemenypm} (see supplementary material):
 %
 \begin{equation}\label{eq:areaEta}
 \begin{aligned}
@@ -524,13 +519,13 @@ First passage time theory introduced in the \hyperref[sec:order]{previous sectio
 
 
 With the states in the order described above, we can find perturbations of $\M\potdep$ that will always increase the area, whilst leaving the equilibrium distribution, $\eq$, unchanged.
-Some of these perturbations are shown in \Fref{fig:perts}, see supplementary material for details.
-For example, in \Fref{fig:perts}(\ref{fig:tri_right}), for two states $i$ on the left and $j$ on the right, with $j$ being more ``potentiated" than $i$ (i.e. $\smash{\eta^+_i > \eta^+_j}$), we have proven that increasing $\smash{\M\pot_{ij}}$ and decreasing $\smash{\M\dep_{ij}}$ leads to an increase in area.
+Some of these perturbations are shown in \cref{fig:perts}, see supplementary material for details.
+For example, in \cref{fig:perts}(\ref{fig:tri_right}), for two states $i$ on the left and $j$ on the right, with $j$ being more ``potentiated" than $i$ (i.e. $\smash{\eta^+_i > \eta^+_j}$), we have proven that increasing $\smash{\M\pot_{ij}}$ and decreasing $\smash{\M\dep_{ij}}$ leads to an increase in area.
 The only thing that can prevent these perturbations from increasing the area is when they require the decrease of a matrix element that has already been set to 0.
 This determines the topology (non-zero transition probabilities) of the model with maximal area.
-It is of the form shown in \Fref{fig:env}(\ref{fig:sticky}),%\Fref{fig:max_area},
+It is of the form shown in \cref{fig:env}(\ref{fig:sticky}),%\cref{fig:max_area},
 with potentiation moving one step to the right and depression moving one step to the left.
-Any other topology would allow some class of perturbations (\eg\ in \Fref{fig:perts}) to further increase the area.
+Any other topology would allow some class of perturbations (\eg\ in \cref{fig:perts}) to further increase the area.
 
 
 \begin{figure}[tbp]
@@ -560,7 +555,7 @@ The area of a linear chain model can be expressed directly in terms of its equil
 %
 where we chose $\w_k=\sgn[{k - \sum_j j\eq_j}]$.
 We can then maximize this by pushing all of the equilibrium distribution symmetrically to the two end states.
-This can be done by reducing the transition probabilities out of these states, as in \Fref{fig:env}(\ref{fig:sticky}). %\Fref{fig:max_area}.
+This can be done by reducing the transition probabilities out of these states, as in \cref{fig:env}(\ref{fig:sticky}). %\cref{fig:max_area}.
 This makes it very difficult to exit these states once they have been entered.
 The resulting area is
 %
@@ -588,13 +583,13 @@ Thus models that maximize area optimize memory at late times, at the expense of 
 \section{Memory curve envelope}\label{sec:env}
 
 Now we will look at the implications of the upper bounds found in the \hyperref[sec:bounds]{previous section} for the SNR at finite times.
-As argued in \eqref{eq:SNReigen}, the memory curve can be written in the form
+As argued in \cref{eq:SNReigen}, the memory curve can be written in the form
 %
 \begin{equation}\label{eq:SNRmodes}
   \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-rt/\tau_a}.
 \end{equation}
 %
-The upper bounds on the initial SNR, \eqref{eq:max_init}, and the area, \eqref{eq:max_area}, imply the following constraints on the parameters $\brc{\CI_a,\tau_a}$:
+The upper bounds on the initial SNR, \cref{eq:max_init}, and the area, \cref{eq:max_area}, imply the following constraints on the parameters $\brc{\CI_a,\tau_a}$:
 %
 \begin{equation}\label{eq:modeconstr}
   \sum_a \CI_a \leq 1,
@@ -625,7 +620,7 @@ This always results in a single nonzero $\smash{\CI_a}$; in essence, optimizing 
 %
 Both the initial SNR bound and the area bound are saturated at early times.
 At late times, only the area bound is saturated.
-The function $\snr(t_0)$, the green curve in \Fref{fig:env}(\ref{fig:envplot}), above forms a memory curve envelope with late-time power-law decay $\sim \smash{t_0\inv}$.
+The function $\snr(t_0)$, the green curve in \cref{fig:env}(\ref{fig:envplot}), above forms a memory curve envelope with late-time power-law decay $\sim \smash{t_0\inv}$.
 No synaptic model can have an SNR that is greater than this at any time.
 We can use this to find an upper bound on the memory lifetime, $\tau(\epsilon)$, by finding the point at which the envelope crosses $\epsilon$:
 %
@@ -638,38 +633,36 @@ Intriguingly, both the lifetime and memory envelope expand linearly with the num
 
 This leaves the question of whether this bound is achievable.
 At any time, can we find a model whose memory curve touches the envelope?
-The red curves in \Fref{fig:env}(\ref{fig:envplot}) show the closest we have come to the envelope with actual models, by repeated numerical optimization of $\SNR(t_0)$ over $\M\potdep$ with random initialization and by hand designed models.
+The red curves in \cref{fig:env}(\ref{fig:envplot}) show the closest we have come to the envelope with actual models, by repeated numerical optimization of $\SNR(t_0)$ over $\M\potdep$ with random initialization and by hand designed models.
 
 We see that at early, but not late times, there is a gap between the upper bound that we can prove and what we can achieve with actual models.
 There may be other models we haven't found that could beat the ones we have, and come closer to our proven envelope.
 However, we suspect that the area constraint is not the bottleneck for optimizing memory at times less than  $\CO(\frac{M}{r})$.
 We believe there is some other constraint that prevents models from approaching the envelope, and currently are exploring several mathematical conjectures for the precise form of this constraint in order to obtain a potentially tighter envelope.
-Nevertheless, we have proven rigorously that no model's memory curve can ever exceed this envelope, and that it is at least tight for late times, longer than $\CO(\frac{M}{r})$, where models of the form in \Fref{fig:env}(\ref{fig:sticky})%\Fref{fig:max_area}
+Nevertheless, we have proven rigorously that no model's memory curve can ever exceed this envelope, and that it is at least tight for late times, longer than $\CO(\frac{M}{r})$, where models of the form in \cref{fig:env}(\ref{fig:sticky})%\cref{fig:max_area}
  can come close to the envelope.
 
 \begin{figure}
  \begin{center}
- \parbox[t]{0.43\linewidth}{
+% \parbox[t]{0.43\linewidth}{%
  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.85\linewidth]{env.svg}}\label{fig:envplot}
- \end{myenuma}
-  }\hp
-  \parbox[t]{0.44\linewidth}{
- \begin{myenuma}
- \stepcounter{myenumai}
-% \addtocounter{enumi}{1}
-  \item\aligntop{\includegraphics[width=0.8\linewidth]{diffjump.svg}}\label{fig:diffjump}\\[0.1\linewidth]
-  \item\aligntop{\includegraphics[width=0.8\linewidth]{multistate_sticky.svg}}\label{fig:sticky}
- \end{myenuma}
-  }
+   \item\aligntop{\includegraphics[width=0.85\linewidth]{env.svg}}\label{fig:envplot}
+% \end{myenuma}}\hp
+% \parbox[t]{0.44\linewidth}{%
+% \begin{myenuma}
+%  \stepcounter{myenumai}
+%% \addtocounter{enumi}{1}
+   \item\aligntop{\includegraphics[width=0.8\linewidth]{diffjump.svg}}\label{fig:diffjump}%\\[0.1\linewidth]
+   \item\aligntop{\includegraphics[width=0.8\linewidth]{multistate_sticky.svg}}\label{fig:sticky}
+ \end{myenuma}%}
  \end{center}
   \caption{The memory curve envelope for $N=100$, $M=12$.
-  (\ref{fig:envplot}) An upper bound on the SNR at any time is shown in green.
+  (\protect\protect\ref{fig:envplot}) An upper bound on the SNR at any time is shown in green.
   The red dashed curve shows the result of numerical optimization of synaptic models with random initialization.
   The solid red curve shows the highest SNR we have found with hand designed models.
   At early times these models are of the form shown in (\ref{fig:diffjump}) with different numbers of states, and all transition probabilities equal to $1$.
   At late times they are of the form shown in (\ref{fig:sticky}) with different values of $\varepsilon$.
-  The model shown in (\ref{fig:sticky}) also saturates the area bound \eqref{eq:max_area} in the limit $\varepsilon\to0$.
+  The model shown in (\ref{fig:sticky}) also saturates the area bound \cref{eq:max_area} in the limit $\varepsilon\to0$.
   \label{fig:env}}
 \end{figure}
 
@@ -704,24 +697,29 @@ Then given our theory, we could match this measured synaptic model to optimal mo
 
 In summary, we hope that a deeper theoretical understanding of the functional role of synaptic complexity, initiated here, will help advance our understanding of the neurobiology of learning and memory, aid in the design of engineered memory circuits, and lead to new mathematical theorems about stochastic processes.
 
-
-
-\begin{acknowledgments}
-We thank Sloan, Genenetech, Burroughs-Wellcome, and Swartz foundations for support.
-We thank Larry Abbott, Marcus Benna, Stefano Fusi, Jascha Sohl-Dickstein and David Sussillo for useful discussions.
-\end{acknowledgments}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\bibliographystyle{pnas2011}
+\acknow{We thank Sloan, Genenetech, Burroughs-Wellcome, and Swartz foundations for support.
+We thank Larry Abbott, Marcus Benna, Stefano Fusi, Jascha Sohl-Dickstein and David Sussillo for useful discussions.}
+\showacknow % Display the acknowledgments section
+
+% \pnasbreak splits and balances the columns before the references.
+% If you see unexpected formatting errors, try commenting out this line
+% as it can run into problems with floats and footnotes on the final page.
+%\pnasbreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\bibliographystyle{pnas-new}
 \bibliography{maths,neuro,markov}
 
 
-\end{article}
+%\end{article}
+\clearpage
 
-
+\begin{strip}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+\appendix
 \begin{center}
   \textbf{\Large Supplementary material}
 \end{center}
@@ -841,7 +839,7 @@ All quantities that we calculate using $\fund$ below will be independent of this
     \pib \mathbf{x} = 0.
   \end{equation}
   %
-  Substituting back into \eqref{eq:fundinvkern} gives
+  Substituting back into \cref{eq:fundinvkern} gives
   %
   \begin{equation*}
     \MM\mathbf{x}=0.
@@ -849,7 +847,7 @@ All quantities that we calculate using $\fund$ below will be independent of this
   %
   As we assume an ergodic process, the zero eigenvalue is non-degenerate.
   Therefore, $\mathbf{x}=\lambda\onev$.
-  Substituting this into \eqref{eq:fundinvpix} gives
+  Substituting this into \cref{eq:fundinvpix} gives
   %
   \begin{equation*}
     \lambda\pib\onev = \frac{\lambda}{\tau} = 0.
@@ -869,7 +867,7 @@ All quantities that we calculate using $\fund$ below will be independent of this
   %
 \end{cor}
 \begin{proof}
-  We can deduce \eqref{eq:fundprob} and \eqref{eq:fundrowsum} be pre/post-multiplying the following equations by $\fund$:
+  We can deduce \cref{eq:fundprob,eq:fundrowsum} be pre/post-multiplying the following equations by $\fund$:
   %
   \begin{equation*}
     \begin{aligned}
@@ -878,7 +876,7 @@ All quantities that we calculate using $\fund$ below will be independent of this
     \end{aligned}
   \end{equation*}
   %
-  We can then deduce \eqref{eq:fundQZ} and \eqref{eq:fundZQ} by substituting these into
+  We can then deduce \cref{eq:fundQZ,eq:fundZQ} by substituting these into
   %
   \begin{equation*}
     (-\MM + \onev\pib)\fund = \fund(-\MM + \onev\pib) = \I.
@@ -886,7 +884,7 @@ All quantities that we calculate using $\fund$ below will be independent of this
   %
 \end{proof}
 
-%We will not need to use the concept of a g-inverse anywhere, so you can skip ahead to \sref{sec:fpt} now. For the sake of completeness, we can define $\MM^\#$ as
+%We will not need to use the concept of a g-inverse anywhere, so you can skip ahead to \cref{sec:fpt} now. For the sake of completeness, we can define $\MM^\#$ as
 %%
 %\begin{equation}\label{eq:ginvdef}
 %  \MM^\# \equiv \tau\onev\eq - \fund
@@ -901,10 +899,10 @@ All quantities that we calculate using $\fund$ below will be independent of this
 %    \MM \MM^\#        &= \MM^\# \MM, \label{eq:ginvcomm}
 %  \end{align}
 %  %
-%  with \eqref{eq:ginvcomm} holding iff $\eq$ and $\pib$ are proportional to each other.
+%  with \cref{eq:ginvcomm} holding iff $\eq$ and $\pib$ are proportional to each other.
 %\end{thm}
 %\begin{proof}
-%  Using \eqref{eq:rowsum}, \eqref{eq:equilibrium}, \eqref{eq:fundprob} and \eqref{eq:fundrowsum}, one can verify
+%  Using \cref{eq:rowsum}, \cref{eq:equilibrium}, \cref{eq:fundprob} and \cref{eq:fundrowsum}, one can verify
 %  %
 %  \begin{alignat*}{2}
 %    \MM \MM^\# &= -\MM \fund,
@@ -916,7 +914,7 @@ All quantities that we calculate using $\fund$ below will be independent of this
 %    \MM^\# \onev &= 0.
 %  \end{alignat*}
 %  %
-%  Substituting into \eqref{eq:fundQZ} and \eqref{eq:fundZQ} leads to
+%  Substituting into \cref{eq:fundQZ} and \cref{eq:fundZQ} leads to
 %  %
 %  \begin{equation*}
 %    \I - \MM \MM^\# = \onev \eq,
@@ -924,7 +922,7 @@ All quantities that we calculate using $\fund$ below will be independent of this
 %    \I - \MM^\# \MM = \tau \onev \pib.
 %  \end{equation*}
 %  %
-%  Pre/post-multiplying these by $\MM$ or $\MM^\#$ produces \eqref{eq:ginvpropo} and \eqref{eq:ginvpropi}. Subtracting produces
+%  Pre/post-multiplying these by $\MM$ or $\MM^\#$ produces \cref{eq:ginvpropo} and \cref{eq:ginvpropi}. Subtracting produces
 %  %
 %  \begin{equation*}
 %    [\MM,\MM^\#] = \onev(\tau\pib-\eq),
@@ -991,7 +989,7 @@ or in component form:
 \end{thm}
 \begin{proof}
   For discrete time, a proof can be found in \cite[Th.4.4.10]{kemeny1960finite}.
-  For continuous time, we use \eqref{eq:fptfund}, \eqref{eq:fundrowsum} and the transpose of \eqref{eq:pdotD}:
+  For continuous time, we use \cref{eq:fptfund}, \cref{eq:fundrowsum} and the transpose of \cref{eq:pdotD}:
   %
   \begin{equation*}
     \begin{aligned}
@@ -1002,7 +1000,7 @@ or in component form:
     \end{aligned}
   \end{equation*}
   %
-  which proves \eqref{eq:mixdef} with $\eta = \tr\fund - \tau$.
+  which proves \cref{eq:mixdef} with $\eta = \tr\fund - \tau$.
 \end{proof}
 
 Note that it is essential that we use $\fptb$ and not $\fpt$ here, as that would lead to $\eta_i=\eta+\Lb_{ii}$, unlike the discrete time version, where this would only shift $\eta$ by 1.
@@ -1010,13 +1008,13 @@ Note that it is essential that we use $\fptb$ and not $\fpt$ here, as that would
 \subsection{Sensitivity of equilibrium distribution}\label{sec:sensitivity}
 
 Suppose that the Markov process, defined by $\MM$, depends on some parameter $\alpha$.
-Differentiating \eqref{eq:funddef} gives
+Differentiating \cref{eq:funddef} gives
 %
 \begin{equation}\label{eq:diffZ}
   \diff{\fund}{\alpha} = \fund \diff{\MM}{\alpha} \fund.
 \end{equation}
 %
-We can substitute this into the derivative of \eqref{eq:fundprob}:
+We can substitute this into the derivative of \cref{eq:fundprob}:
 %
 \begin{equation}\label{eq:diffp}
   \diff{\eq}{\alpha} = \pib \fund \diff{\MM}{\alpha} \fund = \eq \diff{\MM}{\alpha} \fund.
@@ -1070,7 +1068,7 @@ where $\pib$ is a row vector, $\M$ is a matrix and $\mathbf{x}$ is a column vect
 
 We can define a flux matrix, a.k.a.\ ergodic flow:
 %
-\begin{equation}\label{eq:flux}
+\begin{equation}\label{eq:flux:s}
   \F = \D\inv\MM,
   \qquad
   \F_{ij} = \eq_i \MM_{ij}.
@@ -1158,7 +1156,7 @@ This means that the right eigenvectors with eigenvalue 1 will be those that are 
 \end{equation}
 %
 
-This allows us to write the lumpability condition \eqref{eq:lump}, and the transition matrix for the lumped process compactly:
+This allows us to write the lumpability condition \cref{eq:lump}, and the transition matrix for the lumped process compactly:
 %
 \begin{equation}\label{eq:lumpcompact}
   VU\MM V = \MM V,
@@ -1220,15 +1218,15 @@ We only require that this Markov chain is ergodic.
 The Markov chains described by $\M\potdep $ need not be.
 
 
-We assume that the probability distribution starts in the equilibrium distribution \eqref{eq:equilibrium}.
+We assume that the probability distribution starts in the equilibrium distribution \cref{eq:equilibrium}.
 During the initial signal creation, a fraction $f\pot$ will change to $\eq\M\pot$ and a fraction $f\dep$ will change to $\eq\M\dep$.
-After this, probabilities will evolve according to \eqref{eq:rowsum}.
+After this, probabilities will evolve according to \cref{eq:rowsum}.
 
 \subsection{SNR curve}\label{sec:SNRcurve}
 
 As discussed in the main text, the signal-to-noise ratio is given by
 %
-\begin{equation}\label{eq:SNRdef}
+\begin{equation}\label{eq:SNRdef:s}
   \snr(t) = \frac{\av{\wv_\text{ideal}\cdt\wv(t)} - \av{\wv_\text{ideal}\cdt\wv(\infty)}}
      {\sqrt{\var(\wv_\text{ideal}\cdt\wv(\infty))}}.
 \end{equation}
@@ -1275,7 +1273,7 @@ From the previous section,
   P(\text{state}=i,t \mid \text{pot/dep},0) = \brk{ \eq \M\potdep\, \e^{rt\frg} }_i,
 \end{equation}
 %
-which describes the synapses starting in the equilibrium distribution, changing state due to the plasticity event at $t=0$ and subsequent evolution according to \eqref{eq:rowsum} due to plasticity events uncorrelated with $\wvi$.%
+which describes the synapses starting in the equilibrium distribution, changing state due to the plasticity event at $t=0$ and subsequent evolution according to \cref{eq:rowsum} due to plasticity events uncorrelated with $\wvi$.%
 \footnote{Note that expanding the exponential gives
 %
 \begin{equation*}
@@ -1283,7 +1281,7 @@ which describes the synapses starting in the equilibrium distribution, changing 
   \brk{ \M\pot \M\dep \M\pot \M\pot \ldots + \text{permutations}}.
 \end{equation*}
 %
-Thus, evolving according to \eqref{eq:rowsum} results in averaging over all sequences of plasticity events,
+Thus, evolving according to \cref{eq:rowsum} results in averaging over all sequences of plasticity events,
 as we only need linear expectations of $\wv(t)$ in the end.}
 This results in
 %
@@ -1310,7 +1308,7 @@ Combining these allows us to write the numerator as
 \end{equation}
 %
 where we used $\eq\frg=0$ in going from the first to second lines.
-Combining with \eqref{eq:noise} gives
+Combining with \cref{eq:noise} gives
 %
 \begin{equation}\label{eq:SNRcurveExact}
   \SNR(t) = \frac{\sqrt{N} (2f\pot f\dep ) \eq (\W\pot  - \W\dep )\,\e^{rt\frg}\w}
@@ -1340,7 +1338,7 @@ We can express this in terms of the one parameter family of transition matrices:
   \end{aligned}
 \end{equation}
 %
-Then \eqref{eq:SNRcurve} becomes
+Then \cref{eq:SNRcurve} becomes
 %
 \begin{equation}\label{eq:SNRalpha}
   \SNR(t) = \sqrt{N} (2f\pot f\dep ) \diff{\eq}{\alpha}(-\frg)\,\e^{rt\frg}\w.
@@ -1352,7 +1350,7 @@ Then \eqref{eq:SNRcurve} becomes
 
 \subsection{Lumpability and the SNR curve}\label{sec:SNRlump}
 
-Suppose that we have a partition such that $\W\pot $ and $\W\dep $ are simultaneously lumpable, and that all the states in each subset have the same synaptic strength (see \sref{sec:lump}):
+Suppose that we have a partition such that $\W\pot $ and $\W\dep $ are simultaneously lumpable, and that all the states in each subset have the same synaptic strength (see \cref{sec:lump}):
 %
 \begin{equation}\label{eq:lumpablesynapse}
   VU\W\potdep  V = \W\potdep  V,
@@ -1387,21 +1385,21 @@ This synapse has an SNR curve:
 
 \subsection{Initial SNR and flux}\label{sec:initflux}
 
-Using $\eq\frg=0$ and the first line of \eqref{eq:signal}, we can write the initial SNR as
+Using $\eq\frg=0$ and the first line of \cref{eq:signal}, we can write the initial SNR as
 %
-\begin{equation}\label{eq:init}
+\begin{equation}\label{eq:init:s}
   \frac{\SNR(0)}{\sqrt{N}} = I = ({\eq}^++{\eq}^-)(f\pot \W\pot -f\dep \W\dep )(\onev^+-\onev^-).
 \end{equation}
 %
-Using $\W\potdep (\onev^++\onev^-)=0$ and \eqref{eq:compflux}:
+Using $\W\potdep (\onev^++\onev^-)=0$ and \cref{eq:compflux}:
 %
 \begin{equation*}
   r{\eq}^-(f\pot \W\pot +f\dep \W\dep )\onev^+ = \F_{-+} = \F_{+-} = r{\eq}^+(f\pot \W\pot +f\dep \W\dep )\onev^-,
 \end{equation*}
 %
-we can rewrite \eqref{eq:init} as
+we can rewrite \cref{eq:init} as
 %
-\begin{equation}\label{eq:initflux}
+\begin{equation}\label{eq:initflux:s}
   I = \frac{4\F_{-+}}{r} - 4{\eq}^+f\pot \W\pot \onev^- - 4{\eq}^-f\dep \W\dep \onev^+.
 \end{equation}
 %
@@ -1418,12 +1416,12 @@ This inequality is saturated if potentiation never takes it from a $+$ state to 
 \section{Area maximisation}\label{sec:areamax}
 
 In this section we will find an upper bound on the area under the signal-to-noise curve.
-As in \sref{sec:SNR}, we will only consider ergodic Markov chains.
-We will see in \sref{sec:multistate} that the optimal chain is absorbing, so it lies on the boundary of the (open) set of ergodic chains, but it still puts an upper bound on the area for any chain in the interior.
+As in \cref{sec:SNR}, we will only consider ergodic Markov chains.
+We will see in \cref{sec:multistate} that the optimal chain is absorbing, so it lies on the boundary of the (open) set of ergodic chains, but it still puts an upper bound on the area for any chain in the interior.
 
-\subsection{Area under signal-to-noise curve}\label{sec:area}
+\subsection{Area under signal-to-noise curve}\label{sec:areadef}
 
-The signal-to-noise curve is given by \eqref{eq:SNRalpha}.
+The signal-to-noise curve is given by \cref{eq:SNRalpha}.
 %%
 %\begin{equation}\label{eq:SNR}
 %  \SNR(t) = \sqrt{N}(2f^+f\dep ) \diff{\eq}{\alpha} (-\frg) \e^{rt\frg} \w.
@@ -1431,7 +1429,7 @@ The signal-to-noise curve is given by \eqref{eq:SNRalpha}.
 %%
 The area is computed by integrating this
 %
-\begin{equation}\label{eq:area}
+\begin{equation}\label{eq:area:s}
 \begin{aligned}
   A &= \frac{\sqrt{N}(2f\pot f\dep )}{r} \diff{\eq}{\alpha} \brk{-\e^{rt\frg}}_0^\infty \w \\
     &= \frac{\sqrt{N}(2f\pot f\dep )}{r} \diff{\eq}{\alpha} (\I-\onev\eq) \w \\
@@ -1440,7 +1438,7 @@ The area is computed by integrating this
 \end{equation}
 %
 
-We can rewrite this using \eqref{eq:diffpT}, with $A=\sqrt{N}(2f\pot f\dep )\hat{A}$ and $\enc_{ij} \equiv \diff{\frg_{ij}}{\alpha}=\W\pot _{ij}-\W\dep _{ij}$
+We can rewrite this using \cref{eq:diffpT}, with $A=\sqrt{N}(2f\pot f\dep )\hat{A}$ and $\enc_{ij} \equiv \diff{\frg_{ij}}{\alpha}=\W\pot _{ij}-\W\dep _{ij}$
 %
 \begin{equation}\label{eq:areaT}
   \hat{A} = \sum_{i,j,k} \eq_i \enc_{ij} (\fptb_{ik} - \fptb_{jk}) \eq_k \w_k.
@@ -1462,7 +1460,7 @@ We define the $\pm$ mixing times as
 %
 We can think of $\eta^+_i$ as a measure of the ``distance'' to the $\w_k=+1$ states and $\eta^-_i$ as the ``distance'' to the $\w_k=-1$ states.
 \end{defn}
-Using \eqref{eq:mixdef}, we can write:
+Using \cref{eq:mixdef}, we can write:
 %
 \begin{equation}\label{eq:mixingrels}
 \begin{aligned}
@@ -1474,9 +1472,9 @@ Using \eqref{eq:mixdef}, we can write:
 %
 We could arrange the states in order of decreasing $\eta^+$, which is the same as the order of increasing $\eta^-$.
 
-We can rewrite \eqref{eq:areaT} as
+We can rewrite \cref{eq:areaT} as
 %
-\begin{equation}\label{eq:areaEta}
+\begin{equation}\label{eq:areaEta:s}
 \begin{aligned}
   \hat{A} &= 2\sum_{i,j} \enc_{ij} \eq_i (\eta^+_{i} - \eta^+_{j}) &
     &= -2\sum_{i,j} \enc_{ij} \eq_i \eta^+_{j} \\
@@ -1485,7 +1483,7 @@ We can rewrite \eqref{eq:areaT} as
 \end{aligned}
 \end{equation}
 %
-We can also express it in terms of the fundamental matrix \eqref{eq:funddef} as
+We can also express it in terms of the fundamental matrix \cref{eq:funddef} as
 %
 \begin{equation}\label{eq:areaZ}
   \hat{A} = \sum_{i,j,k,l} \enc_{ij} \pib_{l} \fund_{li} (\fund_{jk}-\fund_{ik}) \w_k
@@ -1528,13 +1526,13 @@ Thus,
 %
 The implicit $g \neq h$ that comes with all derivatives is unnecessary, as the derivatives above vanish when $g=h$.
 
-In particular, differentiating \eqref{eq:funddef},
+In particular, differentiating \cref{eq:funddef},
 %
 \begin{equation}\label{eq:derivZ}
   \pdiff{\fund_{ij}}{\W\potdep _{gh}} = rf\potdep  \fund_{ig} (\fund_{hj}-\fund_{gj}).
 \end{equation}
 %
-We can then differentiate expression \eqref{eq:areaZ} to get
+We can then differentiate expression \cref{eq:areaZ} to get
 %
 \begin{equation}\label{eq:derivA}
   \begin{aligned}
@@ -1557,7 +1555,7 @@ We can then differentiate expression \eqref{eq:areaZ} to get
   \end{aligned}
 \end{equation}
 %
-where $a_i$ and $c_k$ were defined in \eqref{eq:areacoeffs}.
+where $a_i$ and $c_k$ were defined in \cref{eq:areacoeffs}.
 
 It is sometimes useful to consider the following derivatives:
 %
@@ -1618,7 +1616,7 @@ Consider the Lagrangian
   \CL = \hat{A} + \sum_{\text{pot/dep}}\sum_{i\neq j} \mu\potdep _{ij} \W\potdep _{ij} .%  +\lambda\eq\w.
 \end{equation}
 %
-%The last term ensures that we hold $\eq_\pm$ fixed during this extremisation, so that we can safely ignore the factors that we dropped from the noise in \eqref{eq:noisepm}.
+%The last term ensures that we hold $\eq_\pm$ fixed during this extremisation, so that we can safely ignore the factors that we dropped from the noise in \cref{eq:noisepm}.
 Necessary conditions for an extremum are
 %
 \begin{equation}\label{eq:extremum}
@@ -1629,7 +1627,7 @@ Necessary conditions for an extremum are
     \mu\potdep _{gh}\W\potdep _{gh} = 0.
 \end{equation}
 %
-with $g \neq h$. This enforces the positivity constraints on the off-diagonal elements, but not the diagonals. As discussed in \sref{sec:rescale}, that can be enforced after finding the maximum using the null scaling degree of freedom.
+with $g \neq h$. This enforces the positivity constraints on the off-diagonal elements, but not the diagonals. As discussed in \cref{sec:rescale}, that can be enforced after finding the maximum using the null scaling degree of freedom.
 
 \subsubsection{Triangularity}\label{sec:triangular}
 
@@ -1680,7 +1678,7 @@ Thus, if we arrange the states in order of decreasing $\eta^+$, $\W\pot $ is upp
 
 We have ignored the possibility that $\eq_g=0$, as this would imply that $\fpt_{ig}=\infty$, which would in turn imply that the Markov process is not ergodic.
 
-%Note that if we multiply \eqref{eq:shiftqderiv} by $\enc_{gh}$ and sum over $(g,h)$, we get
+%Note that if we multiply \cref{eq:shiftqderiv} by $\enc_{gh}$ and sum over $(g,h)$, we get
 %%
 %\begin{equation}\label{eq:stupid}
 %  \hat{A} = \sum_\pm\sum_{g\neq h} \mu\potdep _{gh} \frg_{gh},
@@ -1703,9 +1701,9 @@ Now consider the following combinations of derivatives for $m>1$:
 %  \end{aligned}
 \end{align}
 %
-Once again, they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \sref{sec:triangular} about this being satisfied for ergodic chains).
+Once again, they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \cref{sec:triangular} about this being satisfied for ergodic chains).
 
-One can show that the equilibrium probabilities, $\eq$, are invariant under these operators \eqref{eq:diffpT}:
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators \cref{eq:diffpT}:
 %
 \begin{equation}\label{eq:shortcutprob}
   \widetilde{\Delta}\potdep _{g,m} \eq_i = 0,
@@ -1744,7 +1742,7 @@ But more interestingly for our purposes:
 %
 
 In the \hyperref[sec:areacoeffincr]{section below}, we will show that the $c_k$ are non-decreasing, if we put the states in order of decreasing $\eta^+_k$.
-This implies that the last term of the final expression in \eqref{eq:shortcutarea} is non-negative.
+This implies that the last term of the final expression in \cref{eq:shortcutarea} is non-negative.
 If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu\potdep _{g,g\pm m}>0$, which in turn implies that $\W\potdep _{g,g\pm m}=0$.
 This would tell us that the process with the maximal area has to have a multi-state topology.
 
@@ -1764,9 +1762,9 @@ Consider the following combinations of derivatives:
 %  \end{aligned}
 \end{align}
 %
-Note that they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \sref{sec:triangular} about this being satisfied for ergodic chains).
+Note that they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \cref{sec:triangular} about this being satisfied for ergodic chains).
 
-One can show that the equilibrium probabilities, $\eq$, are invariant under these operators using \eqref{eq:diffpT}:
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators using \cref{eq:diffpT}:
 %
 \begin{equation}\label{eq:sareacoeffincrprob}
   \Delta_{gh} \eq_i = 0,
@@ -1795,16 +1793,16 @@ But more interestingly:
 %  \end{aligned}
 \end{align}
 %
-where $c_k$ were defined in \eqref{eq:areacoeffs}.
+where $c_k$ were defined in \cref{eq:areacoeffs}.
 
-Using the non-negativity of the Kuhn-Tucker multipliers, $\mu\potdep _{ij}$, \eqref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\eta^+_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\eta^+_k$ are degenerate, we can choose their order to ensure this).
+Using the non-negativity of the Kuhn-Tucker multipliers, $\mu\potdep _{ij}$, \cref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\eta^+_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\eta^+_k$ are degenerate, we can choose their order to ensure this).
 
-Note that, according to \sref{sec:triangular}, either $\W\pot _{gh}$ or $\W\dep _{gh}$ will be zero at the maximum, therefore we can expect one of $\mu\pot _{gh}+\mu\dep _{gh}$ to be non-zero.
+Note that, according to \cref{sec:triangular}, either $\W\pot _{gh}$ or $\W\dep _{gh}$ will be zero at the maximum, therefore we can expect one of $\mu\pot _{gh}+\mu\dep _{gh}$ to be non-zero.
 This would rule out degeneracy of the $c_k$ or $\eta^+_k$.
-Looking at \eqref{eq:shiftqderiv} closely, the only way $\mu\pot _{gh}+\mu\dep _{gh}$ could be zero is if $\eta^+_g=\eta^+_h$ or $\eq_g=0$.
+Looking at \cref{eq:shiftqderiv} closely, the only way $\mu\pot _{gh}+\mu\dep _{gh}$ could be zero is if $\eta^+_g=\eta^+_h$ or $\eq_g=0$.
 
 
-%From the expression for the area in \eqref{eq:areacoeffs}, it will clearly also be optimal to have the $\w_k$ non-decreasing, \ie all the positive $\w_k$ should lie ahead of all the negative $\w_k$.
+%From the expression for the area in \cref{eq:areacoeffs}, it will clearly also be optimal to have the $\w_k$ non-decreasing, \ie all the positive $\w_k$ should lie ahead of all the negative $\w_k$.
 
 \subsubsection{Summary}\label{sec:KTsummary}
 
@@ -1820,26 +1818,26 @@ with the states arranged in order of non-increasing $\eta^+_i$:
 %
 These were shown by finding allowed perturbations that increase the area.
 
-%Suppose we start with some arbitrary ergodic process. If $\W\potdep $ contain backwards/forwards transitions or the $c_k$ decrease, then we can increase the area by applying the perturbations \eqref{eq:shiftqderiv} and \eqref{eq:areacoeffincrderiv}.
+%Suppose we start with some arbitrary ergodic process. If $\W\potdep $ contain backwards/forwards transitions or the $c_k$ decrease, then we can increase the area by applying the perturbations \cref{eq:shiftqderiv} and \cref{eq:areacoeffincrderiv}.
 %The second perturbation will generate the unwanted backwards/forwards transitions, requiring subsequent application of first perturbation.
 %The first perturbation will change the $c_k$, possibly changing their order, requiring subsequent application of second perturbation.
 %
 %This procedure can end in several ways:
 %%
 %\begin{itemize}
-%  \item Applying \eqref{eq:areacoeffincrderiv} an infinite amount sends two transition rates to infinity, which due to the scaling mode (\sref{sec:rescale}), is equivalent to sending all other transitions to zero.
-%      Subsequent application of \eqref{eq:shiftqderiv} just removes the backwards transition from $\W\pot $ and the forward transition from $\W\dep $.
-%  \item Applying \eqref{eq:areacoeffincrderiv} ends in a process with degenerate $c_k$ or $\eta^+_k$, and the subsequent application of \eqref{eq:shiftqderiv} doesn't change this degeneracy.
-%  \item As above, but the subsequent application of \eqref{eq:shiftqderiv} lifts the degeneracy, resulting in a chain with increasing $c_k$.
+%  \item Applying \cref{eq:areacoeffincrderiv} an infinite amount sends two transition rates to infinity, which due to the scaling mode (\cref{sec:rescale}), is equivalent to sending all other transitions to zero.
+%      Subsequent application of \cref{eq:shiftqderiv} just removes the backwards transition from $\W\pot $ and the forward transition from $\W\dep $.
+%  \item Applying \cref{eq:areacoeffincrderiv} ends in a process with degenerate $c_k$ or $\eta^+_k$, and the subsequent application of \cref{eq:shiftqderiv} doesn't change this degeneracy.
+%  \item As above, but the subsequent application of \cref{eq:shiftqderiv} lifts the degeneracy, resulting in a chain with increasing $c_k$.
 %\end{itemize}
 %%
-%In the third case, we can then apply the perturbation \eqref{eq:shortcutderiv} to remove all the shortcuts.
+%In the third case, we can then apply the perturbation \cref{eq:shortcutderiv} to remove all the shortcuts.
 %Either this, or the first case, results in a multi-state topology, possibly disconnected or without the full set of states.
 
 This leaves two possibilities for the maximum area Markov chain.
-Either there is no degeneracy and no shortcuts, which implies the Multi-state/serial topology that we'll discuss in \sref{sec:multistate}, or there is some degeneracy, which would allow shortcuts provided that they do not bypass an entire degenerate set (see \eqref{eq:shortcutarea}).
+Either there is no degeneracy and no shortcuts, which implies the Multi-state/serial topology that we'll discuss in \cref{sec:multistate}, or there is some degeneracy, which would allow shortcuts provided that they do not bypass an entire degenerate set (see \cref{eq:shortcutarea}).
 
-Degeneracy tends to be very delicate. It is usually hard to arrange without some symmetry relating degenerate states. Such a symmetry would imply lumpability (see \sref{sec:lump}). The lumped chain would not have any shortcuts, as an entire degenerate set cannot be bypassed. As this lumped chain has the same area (see \sref{sec:SNRlump}), we would need only consider the multi-state topology.
+Degeneracy tends to be very delicate. It is usually hard to arrange without some symmetry relating degenerate states. Such a symmetry would imply lumpability (see \cref{sec:lump}). The lumped chain would not have any shortcuts, as an entire degenerate set cannot be bypassed. As this lumped chain has the same area (see \cref{sec:SNRlump}), we would need only consider the multi-state topology.
 
 
 \subsection{Multi-state/Serial topology}\label{sec:multistate}
@@ -1894,15 +1892,15 @@ This allows us to calculate the $c_k$'s:
 \end{aligned}
 \end{equation}
 %
-where we used \eqref{eq:multistateineq} to derive the first two equations respectively and Th.\ref{th:kemenyconst} to derive the third. This allows us to write the area as
+where we used \cref{eq:multistateineq} to derive the first two equations respectively and Th.\ref{th:kemenyconst} to derive the third. This allows us to write the area as
 %
-\begin{equation}\label{eq:multistatearea}
+\begin{equation}\label{eq:multistatearea:s}
  % A = 2\sqrt{N} \sum_k \brk{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j} \eq_k \w_k.
   A = \frac{2\sqrt{N}}{r} \sum_k \brk{k - \sum_j j\eq_j} \eq_k \w_k
     = \frac{2\sqrt{N}}{r} \sum_k \abs{k - \sum_j j\eq_j} \eq_k ,
 \end{equation}
 %
-where we used $\w_k=\sgn(c_k)$, as discussed after \eqref{eq:areacoeffs}.
+where we used $\w_k=\sgn(c_k)$, as discussed after \cref{eq:areacoeffs}.
 This reproduces equation (15) of the main paper.
 
 %It will also help to define $\eq_\pm = \sum_k \eq_k \prn{\frac{1\pm\w_k}{2}}$.
@@ -1931,7 +1929,7 @@ This reproduces equation (15) of the main paper.
 %  \CL = \frac{A}{2\sqrt{N}} + \lambda\prn{1-\sum_i \eq_i} + \sum_i \mu_i \eq_i,
 %\end{equation}
 %%
-%where $\lambda$ is a Lagrange multiplier and $\mu_i$ are Kuhn-Tucker multipliers (see \eqref{eq:extremum}). Extremising \wrt $\eq_i$:
+%where $\lambda$ is a Lagrange multiplier and $\mu_i$ are Kuhn-Tucker multipliers (see \cref{eq:extremum}). Extremising \wrt $\eq_i$:
 %%
 %\begin{equation}\label{eq:multistateext}
 %%  \pdiff{\CL}{\eq_i} = \brk{\prn{i-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j} \w_i
@@ -1946,14 +1944,14 @@ This reproduces equation (15) of the main paper.
 %  \mu_{i+1} - \mu_i = \prn{\eq_+-\eq_-} - \w_i.
 %\end{equation}
 %%
-%As $\abs{\eq_+-\eq_-}<1$ (unless we want $A=0$, \eqref{eq:allpplusorminus}), this means the $\mu_i$ increase amongst the negative $\w_i$ and decrease amongst the positive $\w_i$.
+%As $\abs{\eq_+-\eq_-}<1$ (unless we want $A=0$, \cref{eq:allpplusorminus}), this means the $\mu_i$ increase amongst the negative $\w_i$ and decrease amongst the positive $\w_i$.
 %Therefore the only non-zero equilibrium probabilities at optimum are $\eq_1$ and $\eq_n$.
 
 In order to obtain an upper bound on the area under the memory curve of any model, we now maximise the area of the serial model with respect to its equilibrium distribution.
-First let us maximise \eqref{eq:multistatearea} at fixed $\eq_\pm = \sum_k \eq_k \prn{\frac{1\pm\w_k}{2}}$.
+First let us maximise \cref{eq:multistatearea} at fixed $\eq_\pm = \sum_k \eq_k \prn{\frac{1\pm\w_k}{2}}$.
 Clearly this will happen when we put all of the probability at the ends: $\eq_1=\eq_-$ and $\eq_n=\eq_+$ are the only non-zero $\eq_k$.
 This gives an area of
-%\footnote{Note that including the dropped factors in \eqref{eq:noisepm} would only change this to $A \leq \sqrt{N(4\eq_+\eq_-)}(n-1)/r$, which would have no effect on what follows.}
+%\footnote{Note that including the dropped factors in \cref{eq:noisepm} would only change this to $A \leq \sqrt{N(4\eq_+\eq_-)}(n-1)/r$, which would have no effect on what follows.}
 
 %
 \begin{equation}\label{eq:multistateextarea}
@@ -1971,12 +1969,16 @@ This yields the area bound of equation (16) of the main text.
 Note that the chain that achieves this is not ergodic, the two states at each end are absorbing. This is similar to the results found numerically in \cite{Barrett2008discrete} in a slightly different situation.
 
 
-
+\end{strip}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \pnasbreak splits and balances the columns before the references.
+% If you see unexpected formatting errors, try commenting out this line
+% as it can run into problems with floats and footnotes on the final page.
+%\pnasbreak
 
 %\bibliographystyle{utcaps_sl}
-%\bibliography{maths,neuro}
+%\bibliography{maths,neuro,markov}
 
 
 
