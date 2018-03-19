@@ -18,11 +18,11 @@
 \input{synapse_preamble.tex}
 \setboolean{displaywatermark}{false}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\externaldocument{SynapseSI}
 \input{synapse_title.tex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{article}
 
 % Optional adjustment to line up main text (after abstract) of first page with line numbers, when using both lineno and twocolumn options.
 % You should only change this length when you've finalised the article contents.
@@ -44,7 +44,33 @@
 %\bibliographystyle{pnas-new}
 \bibliography{maths,neuro,markov}
 
+%\clearpage
 
+\begin{strip}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\appendix
+\pdfbookmark[0]{Supporting information}{appendix}
+\renewcommand{\thesubsection}{\thesection.\arabic{subsection}}
+\begin{center}
+  \textbf{\Large Supporting information}
+\end{center}
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\input{synapse_supp.tex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{strip}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \pnasbreak splits and balances the columns before the references.
+% If you see unexpected formatting errors, try commenting out this line
+% as it can run into problems with floats and footnotes on the final page.
+%\pnasbreak
+
+%\bibliographystyle{utcaps_sl}
+\begingroup
+\renewcommand{\bibitem}[1]{\item[\citenum{#1}.]}
+\bibliography{maths,neuro,markov}
+\endgroup
 
 
 \end{document}

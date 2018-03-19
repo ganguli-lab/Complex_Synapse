@@ -1,11 +1,11 @@
 \RequirePackage{xr-hyper}
 \PassOptionsToPackage{hyperfootnotes=false}{hyperref}
-\documentclass[9pt,twocolumn,twoside,lineno]{pnas-new}
+\documentclass[9pt,twoside,lineno]{pnas-new}
 % Use the lineno option to display guide line numbers if required.
 % Note that the use of elements such as single-column equations
 % may affect the guide line number alignment.
-
-\templatetype{pnasresearcharticle} % Choose template
+%
+\templatetype{pnassupportinginfo} % Choose template
 % {pnasresearcharticle} = Template for a two-column research article
 % {pnasmathematics} = Template for a one-column mathematics article
 % {pnasinvited} = Template for a PNAS invited submission
@@ -14,38 +14,29 @@
 %% ADDITIONAL OPTIONAL STYLE FILES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newtoggle{main}
-\toggletrue{main}
+\togglefalse{main}
 \input{synapse_preamble.tex}
 \setboolean{displaywatermark}{false}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\externaldocument{SynapseSI}
+\externaldocument{SynapsePaper}
 \input{synapse_title.tex}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{document}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Optional adjustment to line up main text (after abstract) of first page with line numbers, when using both lineno and twocolumn options.
-% You should only change this length when you've finalised the article contents.
-\verticaladjustment{-2pt}
+\begin{document}
 
 \maketitle
-\thispagestyle{firststyle}
-\ifthenelse{\boolean{shortarticle}}{\ifthenelse{\boolean{singlecolumn}}{\abscontentformatted}{\abscontent}}{}
-
-\input{synapse_main.tex}
-
-
-% \pnasbreak splits and balances the columns before the references.
-% If you see unexpected formatting errors, try commenting out this line
-% as it can run into problems with floats and footnotes on the final page.
-%\pnasbreak
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\bibliographystyle{pnas-new}
+
+\input{synapse_supp.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\bibliographystyle{utcaps_sl}
+%\begingroup
+%\renewcommand{\bibitem}[1]{\item[\citenum{#1}.]}
 \bibliography{maths,neuro,markov}
-
-
+%\endgroup
 
 
 \end{document}
-

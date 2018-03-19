@@ -1,0 +1,41 @@
+%%% PNAS Supporting Information style file
+%%% For use with pnas-new.cls
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{pnassupportinginfo}[2017/10/16 v1.41 PNAS supporting information style]
+
+%% Set whether the abstract is set into the first column
+\setboolean{shortarticle}{true} 
+% true = set into first column
+% false = spans page width
+
+%% Remove "DRAFT" watermark
+\setboolean{displaywatermark}{false}
+
+%% Set colors
+\definecolor{color2}{RGB}{130,0,0} % color
+
+%% keep the value of author for the footer
+\RequirePackage{authoraftertitle}
+\patchcmd{\@maketitle}{\@author}{\@author\space\@doi}{}{}
+
+\additionalelement{}
+\appto{\maketitle}{\thispagestyle{fancy}}
+
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thefigure}{S\arabic{figure}}
+
+\fancyfoot[RO,LE]{\bfseries\sffamily\thepage\space of \pageref{LastPage}}
+\fancyfoot[LO,RE]{\bfseries\sffamily\MyAuthor\space\@doi}
+
+%% Break at end of article (before references)
+% The blank line before the strip command ensures there is nothing placed
+% directly before the break (which can cause formatting issues).
+\newcommand{\pnasbreak}{
+
+\begin{strip}
+\vskip-11pt
+\end{strip}
+}
+
+
+\endinput
