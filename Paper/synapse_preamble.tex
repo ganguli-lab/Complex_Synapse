@@ -30,17 +30,41 @@
 \renewcommand{\p@subsubsection}{\thesection.}
 \makeatother
 \usepackage{xr-hyper}
-\hypersetup{bookmarksopenlevel=1,bookmarksnumbered,extension=pdf,pdfstartview=FitH}
-\usepackage[capitalise,nameinlink]{cleveref}
-\Crefname{appendix}{Section}{Sections}
-\creflabelformat{equation}{[#2#1#3]}
-\crefrangelabelformat{equation}{[#3#1#4--#5#2#6]}
-%\crefformat{equation}{#2Eq.~[#1]#3}
-%\crefrangeformat{equation}{Eqs.~[#3#1#4--#5#2#6]}
-%\crefmultiformat{equation}{Eqs.~[#2#1#3}{,2#1#3]}{,#2#1#3}{,#2#1#3]}
-%\crefrangemultiformat{equation}{Eqs.~[#3#1#4--#5#2#6}{,#3#1#4--#5#2#6]}{,#3#1#4--#5#2#6}{,#3#1#4--#5#2#6]}
 \newcommand{\main}{the main paper}
 \newcommand{\supp}{supporting information}
+\hypersetup{bookmarksopenlevel=1,bookmarksnumbered,extension=pdf,pdfstartview=FitH}
+%--------------------------------------------------------------------------------
+\usepackage[capitalise,nameinlink]{cleveref}
+\Crefname{appendix}{Section}{Sections}
+%--------------------------------------------------------------------------------
+\makeatletter
+\newcommand{\eq@pre}{[}
+\newcommand{\eq@post}{]}
+\crefformat{equation}{#2\cref@equation@name~\eq@pre#1\eq@post#3}
+\crefrangeformat{equation}{\cref@equation@name@plural~\eq@pre#3#1#4--#5#2#6\eq@post}
+\crefmultiformat{equation}%
+    {\cref@equation@name@plural~\eq@pre#2#1#3}%
+    {,#2#1#3\eq@post}%
+    {,#2#1#3}%
+    {,#2#1#3\eq@post}
+\crefrangemultiformat{equation}%
+    {\cref@equation@name@plural~\eq@pre#3#1#4--#5#2#6}%
+    {,#3#1#4--#5#2#6\eq@post}%
+    {,#3#1#4--#5#2#6}%
+    {,#3#1#4--#5#2#6\eq@post}
+\Crefformat{equation}{#2\Cref@equation@name~\eq@pre#1\eq@post#3}
+\Crefrangeformat{equation}{\Cref@equation@name@plural~\eq@pre#3#1#4--#5#2#6\eq@post}
+\Crefmultiformat{equation}%
+    {\Cref@equation@name@plural~\eq@pre{#1}#2#1#3}%
+    {,#2#1#3\eq@post}%
+    {,#2#1#3}%
+    {,#2#1#3\eq@post}
+\Crefrangemultiformat{equation}%
+    {\Cref@equation@name@plural~\eq@pre#3#1#4--#5#2#6}%
+    {,#3#1#4--#5#2#6\eq@post}%
+    {,#3#1#4--#5#2#6}%
+    {,#3#1#4--#5#2#6\eq@post}
+\makeatother
 % ----------------------------------------------------------------
 \newtheoremstyle{sldefinition}%
   {3pt}%space above
