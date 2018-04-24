@@ -1,0 +1,95 @@
+%%  Update cleveref formats with compact equation references
+%%
+%% Requires packages: cleveref, etoolbox,
+%%
+%%
+%--------------------------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{eqcref}[2018/3/31 v1.0 compact equation cleveref (SL)]
+%--------------------------------------------------------------------------------
+\makeatletter
+\RequirePackage{etoolbox}
+%--------------------------------------------------------------------------------
+\newtoggle{eqc@nameinlink}
+\@ifpackagewith{cleveref}{nameinlink}%
+    {\toggletrue{eqc@nameinlink}}%
+    {\togglefalse{eqc@nameinlink}}
+%--------------------------------------------------------------------------------
+\newcommand{\eq@pre}{}
+\newcommand{\eq@post}{}
+%--------------------------------------------------------------------------------
+\DeclareOption{nameinlink}{\toggletrue{eqc@nameinlink}}
+\DeclareOption{nonameinlink}{\togglefalse{eqc@nameinlink}}
+%
+\DeclareOption{noparens}{%
+  \renewcommand{\eq@pre}{}
+  \renewcommand{\eq@post}{}
+}
+\DeclareOption{parens}{%
+  \renewcommand{\eq@pre}{(}
+  \renewcommand{\eq@post}{)}
+}
+\DeclareOption{bracks}{%
+  \renewcommand{\eq@pre}{[}
+  \renewcommand{\eq@post}{]}
+}
+%\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{cleveref}}
+\ExecuteOptions{parens}
+\ProcessOptions
+%--------------------------------------------------------------------------------
+% Make sure this package is necessary
+\@ifpackageloaded{cleveref}{% rest of package in this case!
+%--------------------------------------------------------------------------------
+% Factory for cleveref formats with compact equation references, name outside link
+\newcommand{\eqcref@nameout}[1]{% #1: c or C for lower/uppercase version.
+%  \csuse{#1refname}{equation}%
+%      {\csuse{#1ref@equation@name}}{\csuse{#1ref@equation@name@plural}}
+  \csuse{#1refformat}{equation}%
+      {\csuse{#1ref@equation@name}~\eq@pre##2##1##3\eq@post}
+  \csuse{#1refrangeformat}{equation}%
+      {\csuse{#1ref@equation@name@plural}~\eq@pre##3##1##4--##5\crefstripprefix{##1}{##2}##6\eq@post}
+  \csuse{#1refmultiformat}{equation}%
+      {\csuse{#1ref@equation@name@plural}~\eq@pre##2##1##3\edef\eqcref@prefix{##1}}%
+      {,##2\crefstripprefix{\eqcref@prefix}{##1}##3\eq@post}%
+      {,##2\crefstripprefix{\eqcref@prefix}{##1}##3}%
+      {,##2\crefstripprefix{\eqcref@prefix}{##1}##3\eq@post}
+  \csuse{#1refrangemultiformat}{equation}%
+      {\csuse{#1ref@equation@name@plural}~\eq@pre##3##1##4--##5\crefstripprefix{##1}{##2}##6\edef\eqcref@prefix{##1}}%
+      {,##3\crefstripprefix{\eqcref@prefix}{##1}##4--##5\crefstripprefix{##1}{##2}##6\eq@post}%
+      {,##3\crefstripprefix{\eqcref@prefix}{##1}##4--##5\crefstripprefix{##1}{##2}##6}%
+      {,##3\crefstripprefix{\eqcref@prefix}{##1}##4--##5\crefstripprefix{##1}{##2}##6\eq@post}
+}
+%--------------------------------------------------------------------------------
+% Factory for cleveref formats with compact equation references, name in link
+\newcommand{\eqcref@namein}[1]{% #1: c or C for lower/uppercase version.
+%  \csuse{#1refname}{equation}%
+%      {\csuse{#1ref@equation@name}}{\csuse{#1ref@equation@name@plural}}
+  \csuse{#1refformat}{equation}%
+      {##2\csuse{#1ref@equation@name}~\eq@pre##1\eq@post##3}
+  \csuse{#1refrangeformat}{equation}%
+      {##3\csuse{#1ref@equation@name@plural}~\eq@pre##1##4--##5\crefstripprefix{##1}{##2}\eq@post##6}
+  \csuse{#1refmultiformat}{equation}%
+      {##2\csuse{#1ref@equation@name@plural}~\eq@pre##1##3\edef\eqcref@prefix{##1}}%
+      {,##2\crefstripprefix{\eqcref@prefix}{##1}\eq@post##3}%
+      {,##2\crefstripprefix{\eqcref@prefix}{##1}##3}%
+      {,##2\crefstripprefix{\eqcref@prefix}{##1}\eq@post##3}
+  \csuse{#1refrangemultiformat}{equation}%
+      {##3\csuse{#1ref@equation@name@plural}~\eq@pre##1##4--##5\crefstripprefix{##1}{##2}##6\edef\eqcref@prefix{##1}}%
+      {,##3\crefstripprefix{\eqcref@prefix}{##1}##4--##5\crefstripprefix{##1}{##2}\eq@post##6}%
+      {,##3\crefstripprefix{\eqcref@prefix}{##1}##4--##5\crefstripprefix{##1}{##2}##6}%
+      {,##3\crefstripprefix{\eqcref@prefix}{##1}##4--##5\crefstripprefix{##1}{##2}\eq@post##6}
+}
+%--------------------------------------------------------------------------------
+\@ifpackagewith{cleveref}{nameinlink}{%
+  \eqcref@namein{c}
+  \eqcref@namein{C}
+}{%
+  \eqcref@nameout{c}
+  \eqcref@nameout{C}
+}
+%--------------------------------------------------------------------------------
+%\@ifpackageloaded{cleveref} closed here
+}{\PackageWarning{eqcref}{Package eqcref disabled! Load cleveref before eqcref.}}
+%--------------------------------------------------------------------------------
+\makeatother
+\endinput

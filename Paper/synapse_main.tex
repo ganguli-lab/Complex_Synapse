@@ -98,16 +98,16 @@ The cascade model does not perform quite as well at that time, but it maintains 
 
 \begin{figure}[tbp]
  \begin{center}
- \begin{myenuma}
-  \panel{\includegraphics[width=0.25\linewidth]{cascade.svg}}\label{fig:cascade}
-  \panel{\includegraphics[width=0.25\linewidth]{multistate.svg}}\label{fig:multistate}
-  \panel{\includegraphics[width=0.3\linewidth]{cascms.eps}}\label{fig:cascms}
- \end{myenuma}
+ %\begin{myenuma}
+  \panel{\includegraphics[width=0.25\linewidth]{cascade.svg}\label{fig:cascade}}
+  \panel{\includegraphics[width=0.25\linewidth]{multistate.svg}\label{fig:multistate}}
+  \panel{\includegraphics[width=0.3\linewidth]{cascms.eps}\label{fig:cascms}}
+ %\end{myenuma}
  \end{center}
   \caption[Models of complex synapses]{Models of complex synapses.
-  (\ref{fig:cascade}) The cascade model of \cite{Fusi2005cascade}, showing transitions between states of high/low synaptic weight (red/blue circles) due to potentiation/depression (solid red/dashed blue arrows).
-  (\ref{fig:multistate}) The serial model of \cite{Leibold2008serial}.
-  (\ref{fig:cascms}) The memory curves of these two models, showing the decay of the signal-to-noise ratio (to be defined \hyperref[sec:setup]{below}) as subsequent memories are stored.
+  \panelcap{fig:cascade} The cascade model of \cite{Fusi2005cascade}, showing transitions between states of high/low synaptic weight (red/blue circles) due to potentiation/depression (solid red/dashed blue arrows).
+  \panelcap{fig:multistate} The serial model of \cite{Leibold2008serial}.
+  \panelcap{fig:cascms} The memory curves of these two models, showing the decay of the signal-to-noise ratio (to be defined \hyperref[sec:setup]{below}) as subsequent memories are stored.
   \label{fig:models}}
 \end{figure}
 
@@ -200,9 +200,9 @@ The initial SNR is closely related to the flux from the states with $\w_i=-1$ to
 This inequality becomes an equality if potentiation never decreases the synaptic weight and depression never increases it, which should be a property of any sensible model.
 
 To maximize this flux, potentiation from a weak state must be guaranteed to end in a strong state, and depression must do the reverse.
-An example of such a model is shown in \cref{fig:max_init}(\ref{fig:max_init_pot},\ref{fig:max_init_dep}).
+An example of such a model is shown in \cref{fig:max_init_pot,fig:max_init_dep}.
 These models have a property known as ``lumpability'' (see \cite[\S6.3]{kemeny1960finite} for the discrete time version and \cite{burke1958markovian,Ball1993Lumpability} for continuous time).
-In terms of their memory curves, they are completely equivalent to a two state model with transition probabilities equal to 1, as shown in \cref{fig:max_init}(\ref{fig:binary_det}).
+In terms of their memory curves, they are completely equivalent to a two state model with transition probabilities equal to 1, as shown in \cref{fig:binary_det}.
 
 This two state model has the equilibrium distribution $\eq=(f\dep,f\pot)$ and its flux is given by $\F_{-+} = rf\pot f\dep$.
 This is maximized when $f\pot=f\dep=\half$, leading to the upper bound:
@@ -216,16 +216,16 @@ As the synapse is very plastic, the initial memory is encoded very easily, but t
 This is one example of the tradeoff between optimizing memory at early versus late times.
 \begin{figure}[tbp]
  \begin{center}
- \begin{myenuma}
-  \panel{\hp\includegraphics[width=0.24\linewidth]{max_init_pot.svg}}\label{fig:max_init_pot}\hp
-  \panel{\includegraphics[width=0.24\linewidth]{max_init_dep.svg}}\label{fig:max_init_dep}\hp
-  \panel{\hp\includegraphics[width=0.1\linewidth]{binary_det.svg}}\label{fig:binary_det}
-  \end{myenuma}
+ %%\begin{myenuma}
+  \panel{\hp\includegraphics[width=0.24\linewidth]{max_init_pot.svg}\label{fig:max_init_pot}}\hp
+  \panel{\includegraphics[width=0.24\linewidth]{max_init_dep.svg}\label{fig:max_init_dep}}\hp
+  \panel{\hp\includegraphics[width=0.1\linewidth]{binary_det.svg}\label{fig:binary_det}}
+  %\end{myenuma}
  \end{center}
   \caption[Synaptic models that maximize initial SNR]{Synaptic models that maximize initial SNR.
-  (\ref{fig:max_init_pot}) For potentiation, all transitions starting from a weak state lead to a strong state, and the probabilities for all transitions leaving a given weak state sum to 1.
-  (\ref{fig:max_init_pot}) Depression is similar to potentiation, but with strong and weak interchanged.
-  (\ref{fig:binary_det}) The equivalent two state model, with transition probabilities under potentiation and depression equal to one.
+  \panelcap{fig:max_init_pot} For potentiation, all transitions starting from a weak state lead to a strong state, and the probabilities for all transitions leaving a given weak state sum to 1.
+  \panelcap{fig:max_init_dep} Depression is similar to potentiation, but with strong and weak interchanged.
+  \panelcap{fig:binary_det} The equivalent two state model, with transition probabilities under potentiation and depression equal to one.
   \label{fig:max_init}}
 \end{figure}
 
@@ -291,26 +291,26 @@ First passage time theory introduced in the \hyperref[sec:order]{previous \lcnam
 
 With the states in the order described above, we can find perturbations of $\M\potdep$ that will always increase the area, whilst leaving the equilibrium distribution, $\eq$, unchanged.
 Some of these perturbations are shown in \cref{fig:perts}, see \cref{sec:kuhntucker} of the \supp\ for details.
-For example, in \cref{fig:perts}(\ref{fig:tri_right}), for two states $i$ on the left and $j$ on the right, with $j$ being more ``potentiated" than $i$ (i.e. $\smash{\eta^+_i > \eta^+_j}$), we have proven that increasing $\smash{\M\pot_{ij}}$ and decreasing $\smash{\M\dep_{ij}}$ leads to an increase in area.
+For example, in \cref{fig:tri_right}, for two states $i$ on the left and $j$ on the right, with $j$ being more ``potentiated" than $i$ (i.e. $\smash{\eta^+_i > \eta^+_j}$), we have proven that increasing $\smash{\M\pot_{ij}}$ and decreasing $\smash{\M\dep_{ij}}$ leads to an increase in area.
 The only thing that can prevent these perturbations from increasing the area is when they require the decrease of a matrix element that has already been set to 0.
 This determines the topology (non-zero transition probabilities) of the model with maximal area.
-It is of the form shown in \cref{fig:env}(\ref{fig:sticky}),%\cref{fig:max_area},
+It is of the form shown in \cref{fig:sticky}, %\cref{fig:max_area},
 with potentiation moving one step to the right and depression moving one step to the left.
 Any other topology would allow some class of perturbations (\eg in \cref{fig:perts}) to further increase the area.
 
 
 \begin{figure}[tbp]
  \begin{center}
- \begin{myenuma}
-  \panel{\includegraphics[width=0.14\linewidth]{triangular_right.svg}}\label{fig:tri_right}\hp
-  \panel{\includegraphics[width=0.14\linewidth]{triangular_left.svg}}\label{fig:tri_left}\hp
-  \panel{\includegraphics[width=0.28\linewidth]{shortcut.svg}}\label{fig:shortcut}
- \end{myenuma}
+ %%\begin{myenuma}
+  \panel{\includegraphics[width=0.14\linewidth]{triangular_right.svg}\label{fig:tri_right}}\hp
+  \panel{\includegraphics[width=0.14\linewidth]{triangular_left.svg}\label{fig:tri_left}}\hp
+  \panel{\includegraphics[width=0.28\linewidth]{shortcut.svg}\label{fig:shortcut}}
+ %\end{myenuma}
  \end{center}
   \caption[Perturbations that increase the area]{Perturbations that increase the area.
-  (\ref{fig:tri_right}) Perturbations that increase elements of $\M\pot$ above the diagonal and decrease the corresponding elements of $\M\dep$. It can no longer be used when $\M\dep$ is lower triangular, \ie depression must move synapses to ``more depressed'' states.
-  (\ref{fig:tri_left}) Perturbations that decrease elements of $\M\pot$ below the diagonal and increase the corresponding elements of $\M\dep$. It can no longer be used when $\M\pot$ is upper triangular, \ie potentiation must move synapses to ``more potentiated'' states.
-  (\ref{fig:shortcut}) Perturbation that decreases ``shortcut'' transitions and increases the bypassed ``direct'' transitions. It can no longer be used when there are only nearest-neighbor ``direct'' transitions.
+  \panelcap{fig:tri_right} Perturbations that increase elements of $\M\pot$ above the diagonal and decrease the corresponding elements of $\M\dep$. It can no longer be used when $\M\dep$ is lower triangular, \ie depression must move synapses to ``more depressed'' states.
+  \panelcap{fig:tri_left} Perturbations that decrease elements of $\M\pot$ below the diagonal and increase the corresponding elements of $\M\dep$. It can no longer be used when $\M\pot$ is upper triangular, \ie potentiation must move synapses to ``more potentiated'' states.
+  \panelcap{fig:shortcut} Perturbation that decreases ``shortcut'' transitions and increases the bypassed ``direct'' transitions. It can no longer be used when there are only nearest-neighbor ``direct'' transitions.
   \label{fig:perts}}
 \end{figure}
 
@@ -326,7 +326,7 @@ The area of a linear chain model can be expressed directly in terms of its equil
 %
 where we chose $\w_k=\sgn[{k - \sum_j j\eq_j}]$.
 We can then maximize this by pushing all of the equilibrium distribution symmetrically to the two end states.
-This can be done by reducing the transition probabilities out of these states, as in \cref{fig:env}(\ref{fig:sticky}). %\cref{fig:max_area}.
+This can be done by reducing the transition probabilities out of these states, as in \cref{fig:sticky}. %\cref{fig:max_area}.
 This makes it very difficult to exit these states once they have been entered.
 The resulting area is
 %
@@ -391,7 +391,7 @@ This always results in a single nonzero $\smash{\CI_a}$; in essence, optimizing 
 %
 Both the initial SNR bound and the area bound are saturated at early times.
 At late times, only the area bound is saturated.
-The function $\snr(t_0)$, the green curve in \cref{fig:env}(\ref{fig:envplot}), above forms a memory curve envelope with late-time power-law decay $\sim \smash{t_0\inv}$.
+The function $\snr(t_0)$, the green curve in \cref{fig:envplot}, above forms a memory curve envelope with late-time power-law decay $\sim \smash{t_0\inv}$.
 No synaptic model can have an SNR that is greater than this at any time.
 We can use this to find an upper bound on the memory lifetime, $\tau(\epsilon)$, by finding the point at which the envelope crosses $\epsilon$:
 %
@@ -404,36 +404,38 @@ Intriguingly, both the lifetime and memory envelope expand linearly with the num
 
 This leaves the question of whether this bound is achievable.
 At any time, can we find a model whose memory curve touches the envelope?
-The red curves in \cref{fig:env}(\ref{fig:envplot}) show the closest we have come to the envelope with actual models, by repeated numerical optimization of $\SNR(t_0)$ over $\M\potdep$ with random initialization and by hand designed models.
+The red curves in \cref{fig:envplot} show the closest we have come to the envelope with actual models, by repeated numerical optimization of $\SNR(t_0)$ over $\M\potdep$ with random initialization and by hand designed models.
 
 We see that at early, but not late times, there is a gap between the upper bound that we can prove and what we can achieve with actual models.
 There may be other models we haven't found that could beat the ones we have, and come closer to our proven envelope.
 However, we suspect that the area constraint is not the bottleneck for optimizing memory at times less than  $\CO(\frac{M}{r})$.
 We believe there is some other constraint that prevents models from approaching the envelope, and currently are exploring several mathematical conjectures for the precise form of this constraint in order to obtain a potentially tighter envelope.
-Nevertheless, we have proven rigorously that no model's memory curve can ever exceed this envelope, and that it is at least tight for late times, longer than $\CO(\frac{M}{r})$, where models of the form in \cref{fig:env}(\ref{fig:sticky})%\cref{fig:max_area}
+Nevertheless, we have proven rigorously that no model's memory curve can ever exceed this envelope, and that it is at least tight for late times, longer than $\CO(\frac{M}{r})$, where models of the form in \cref{fig:sticky} %\cref{fig:max_area}
  can come close to the envelope.
 
 \begin{figure}
  \begin{center}
  \parbox[t]{0.43\linewidth}{%
- \begin{myenuma}
-   \panel{\includegraphics[width=0.85\linewidth]{env.svg}}\label{fig:envplot}
- \end{myenuma}}\hp
+ %%\begin{myenuma}
+   \panel{\includegraphics[width=0.85\linewidth]{env.svg}\label{fig:envplot}}
+ %\end{myenuma}
+ }\hp
  \parbox[t]{0.44\linewidth}{%
- \begin{myenuma}
+ %%\begin{myenuma}
   \stepcounter{myenumai}
 % \addtocounter{enumi}{1}
-   \panel{\includegraphics[width=0.8\linewidth]{diffjump.svg}}\label{fig:diffjump}\\[0.1\linewidth]
-   \panel{\includegraphics[width=0.8\linewidth]{multistate_sticky.svg}}\label{fig:sticky}
- \end{myenuma}}
+   \panel{\includegraphics[width=0.8\linewidth]{diffjump.svg}\label{fig:diffjump}}\\[0.1\linewidth]
+   \panel{\includegraphics[width=0.8\linewidth]{multistate_sticky.svg}\label{fig:sticky}}
+ %\end{myenuma}
+ }
  \end{center}
   \caption[The memory curve envelope for $N=100$, $M=12$]{The memory curve envelope for $N=100$, $M=12$.
   (\protect\protect\ref{fig:envplot}) An upper bound on the SNR at any time is shown in green.
   The red dashed curve shows the result of numerical optimization of synaptic models with random initialization.
   The solid red curve shows the highest SNR we have found with hand designed models.
-  At early times these models are of the form shown in (\ref{fig:diffjump}) with different numbers of states, and all transition probabilities equal to $1$.
-  At late times they are of the form shown in (\ref{fig:sticky}) with different values of $\varepsilon$.
-  The model shown in (\ref{fig:sticky}) also saturates the area bound \cref{eq:max_area} in the limit $\varepsilon\to0$.
+  At early times these models are of the form shown in \panelcap{fig:diffjump} with different numbers of states, and all transition probabilities equal to $1$.
+  At late times they are of the form shown in \panelcap{fig:sticky} with different values of $\varepsilon$.
+  The model shown in \panelcap{fig:sticky} also saturates the area bound \cref{eq:max_area} in the limit $\varepsilon\to0$.
   \label{fig:env}}
 \end{figure}
 

@@ -11,19 +11,16 @@
 \epstopdfDeclareGraphicsRule{.svg}{pdf}{.pdf}{%
   "\inkscapedir inkscape" -f #1 -C -A \OutputFile}
 %
-\usepackage{adjustbox}
-\newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
-%\usepackage[inline]{enumitem}
 \newlist{myenuma}{enumerate*}{4}
 \setlist[myenuma]{label=(\alph*),ref=\alph*}
-\newcommand{\panel}[1]{\item\aligntop{#1}}
 \graphicspath{{"Figs/"}}
+\usepackage[compactref]{sl-panels}
 }{}%\iftoggle{main}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \usepackage{amssymb,amsfonts}
 \usepackage{amsthm}
 %\usepackage[notref,notcite]{showkeys}
-%\usepackage[centertags]{amsmath}
+%\usepackage{amsmath}
 %\usepackage{hyperref}
 \makeatletter
 \renewcommand{\p@subsection}{\thesection.}
@@ -36,66 +33,9 @@
 %--------------------------------------------------------------------------------
 \usepackage[capitalise,nameinlink]{cleveref}
 \Crefname{appendix}{Section}{Sections}
+\crefname{equation}{eq.}{eqs.}
 %--------------------------------------------------------------------------------
-\makeatletter
-\newcommand{\eq@pre}{[}
-\newcommand{\eq@post}{]}
-\crefformat{equation}{#2\cref@equation@name~\eq@pre#1\eq@post#3}
-\crefrangeformat{equation}{\cref@equation@name@plural~\eq@pre#3#1#4--#5#2#6\eq@post}
-\crefmultiformat{equation}%
-    {\cref@equation@name@plural~\eq@pre#2#1#3}%
-    {,#2#1#3\eq@post}%
-    {,#2#1#3}%
-    {,#2#1#3\eq@post}
-\crefrangemultiformat{equation}%
-    {\cref@equation@name@plural~\eq@pre#3#1#4--#5#2#6}%
-    {,#3#1#4--#5#2#6\eq@post}%
-    {,#3#1#4--#5#2#6}%
-    {,#3#1#4--#5#2#6\eq@post}
-\Crefformat{equation}{#2\Cref@equation@name~\eq@pre#1\eq@post#3}
-\Crefrangeformat{equation}{\Cref@equation@name@plural~\eq@pre#3#1#4--#5#2#6\eq@post}
-\Crefmultiformat{equation}%
-    {\Cref@equation@name@plural~\eq@pre{#1}#2#1#3}%
-    {,#2#1#3\eq@post}%
-    {,#2#1#3}%
-    {,#2#1#3\eq@post}
-\Crefrangemultiformat{equation}%
-    {\Cref@equation@name@plural~\eq@pre#3#1#4--#5#2#6}%
-    {,#3#1#4--#5#2#6\eq@post}%
-    {,#3#1#4--#5#2#6}%
-    {,#3#1#4--#5#2#6\eq@post}
-\makeatother
-% ----------------------------------------------------------------
-\newtheoremstyle{sldefinition}%
-  {3pt}%space above
-  {3pt}%space below
-  {}%body font
-  {}%indent amount
-  {\bfseries}%theorem head font
-  {}%theorem head punctuation
-  {\newline}%space after head
-  {\thmname{#1}\thmnumber{ #2}:{\bfseries\thmnote{ #3}}}%head spec
-\newtheoremstyle{slplain}%
-  {3pt}%space above
-  {3pt}%space below
-  {}%body font
-  {}%indent amount
-  {\bfseries}%theorem head font
-  {}%theorem head punctuation
-  {\newline}%space after head
-  {\thmname{#1}\thmnumber{ #2}{\bfseries\thmnote{ (#3)}}: }%head spec
-%
-\theoremstyle{slplain}
-\newtheorem{thm}{Theorem}
-\newtheorem{cor}[thm]{Corollary}
-\newtheorem{lem}[thm]{Lemma}
-%
-\theoremstyle{sldefinition}
-\newtheorem{defn}{Definition}
-%
-\theoremstyle{remark}
-\newtheorem*{notn}{Notation}
-\newtheorem*{rem}{Remark}
+\usepackage[bracks]{eqcref}
 % ----------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -127,7 +67,6 @@
 \delimdef\nrm#1{\dleft\lVert #1 \dright\rVert}
 \delimdef\av#1{\dleft\langle #1 \dright\rangle}
 \delimdef\avc#1#2{\dleft\langle #1 \dmiddle\vert #2 \dright\rangle}
-%\newenvironment{cases}{\dleft\{\begin{aligned}}{\end{aligned}\dright.}
 %
 % Sets
 \delimdef\set#1#2{\dleft\{ #1 \dmiddle\vert #2 \dright\}}
@@ -143,21 +82,12 @@
 % Un-italicised letters
 \newcommand{\dr}{\mathrm{d}}
 \newcommand{\e}{\mathrm{e}}
-\newcommand{\ir}{\mathrm{i}}
 \DeclareMathOperator{\tr}{tr}
-\DeclareMathOperator{\Tr}{Tr}
-\DeclareMathOperator{\Det}{Det}
-\DeclareMathOperator{\cov}{Cov}
-\DeclareMathOperator{\var}{Var}
-\DeclareMathOperator{\bias}{Bias}
-\DeclareMathOperator{\rank}{rank}
-\DeclareMathOperator{\sgn}{sgn}
-\DeclareMathOperator{\sech}{sech}
 \DeclareMathOperator{\diag}{diag}
-%
-% The default \Im and \Re look crap
-\renewcommand{\Im}{\operatorname{\mathfrak{Im}}}
-\renewcommand{\Re}{\operatorname{\mathfrak{Re}}}
+\DeclareMathOperator{\var}{Var}
+\DeclareMathOperator{\sgn}{sgn}
+%\DeclareMathOperator{\Det}{Det}
+%\DeclareMathOperator{\cov}{Cov}
 %
 % logic
 \newcommand{\means}{\Longleftrightarrow}

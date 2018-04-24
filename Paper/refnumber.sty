@@ -1,0 +1,208 @@
+%%  Get numbers from labels.
+%%
+%% Requires packages: etoolbox, xstring,
+%%
+%%
+%--------------------------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{refnumber}[2018/3/31 v1.0 get numbers from labels (SL)]
+%--------------------------------------------------------------------------------
+\makeatletter
+%--------------------------------------------------------------------------------
+
+%\RequirePackage{refcount} % we're replacing this!
+\RequirePackage{etoolbox}
+\RequirePackage{xstring}
+\RequirePackage[log-declarations=false]{xparse}
+
+\@ifpackageloaded{hyperref}{}{\PackageWarning{refnumber}{%
+Load hyperref before refnumber.
+I'm loading it now, so you can't choose your options.}
+\RequirePackage{hyperref}}
+
+%--------------------------------------------------------------------------------
+
+%get hyperdest info from hyperref label as string
+\newcommand{\refnum@text}[2]{%
+\begingroup%
+\edef\refnum@text@all{\csname r@#2\endcsname}%         get second argument of \newlabel
+\StrChar{\refnum@text@all}{4}[\refnum@text@temp]%      get 4th element: the hyperdest
+\StrRemoveBraces{\refnum@text@temp}[\refnum@text@out]% remove braces to get string
+\xdef#1{\refnum@text@out}%                             assign string to output macro
+\endgroup%
+}
+
+%get counter name
+\newcommand{\refnum@name}[2]{%
+\begingroup%
+\refnum@text{\refnum@name@temp}{#2}%
+\StrPosition[1]{\refnum@name@temp}{.}[\firstdot]%
+\StrMid{\refnum@name@temp}{1}{\numexpr\firstdot-1}[\refnum@name@out]%
+\xdef#1{\refnum@name@out}%
+\endgroup%
+}
+
+%get counter / parent counter value as string
+\newcommand{\refnum@count}[3]{%
+\begingroup%
+\refnum@text{\refnum@count@temp}{#3}%
+\StrCount{\refnum@count@temp}{.}[\refnum@numdot]%
+\ifnumless{#2}{1}%
+ {\StrLen{\refnum@count@temp}[\numchar]\edef\refnum@lastdot{\numexpr\numchar+1}}%
+ {\StrPosition[\numexpr\refnum@numdot-#2+1]{\refnum@count@temp}{.}[\refnum@lastdot]}%
+\StrPosition[\numexpr\refnum@numdot-#2]{\refnum@count@temp}{.}[\refnum@firstdot]%
+\StrMid{\refnum@count@temp}{\numexpr\refnum@firstdot+1}{\numexpr\refnum@lastdot-1}[\refnum@count@out]%
+\xdef#1{\refnum@count@out}%
+\endgroup%
+}
+
+%assign ref counter to other counter
+\newcommand{\refnum@tocounter}[3]{%
+\ifcsvoid{r@#3}{}{%
+\begingroup%
+ \refnum@count{\refnum@val}{#2}{#3}%
+ \setcounter{#1}{\refnum@val}%
+\endgroup}}
+
+%temp assign ref counter to other counter & display
+\newcommand{\refnum@ascounter}[4]{%
+\ifcsvoid{r@#4}{\def#2{}}{%
+\begingroup%
+ \refnum@count{\refnum@as@val}{#3}{#4}%
+ \defcounter{#1}{\refnum@as@val}%
+ \xdef#2{\csname the#1\endcsname}%
+\endgroup}}
+
+%--------------------------------------------------------------------------------
+
+%output the counter info.
+\newcommand{\refnum@out}[2]{% #1: macro or -NoValue-, #2: temporary macro holding output.
+  \IfNoValueTF{#1}% Have we been given a macro to assign to?
+    {#2}%           No. Print out.
+    {\edef#1{#2}}%  Yes. Assign.
+  \undef#2%         Clear out temporary output storage.
+}
+
+%--------------------------------------------------------------------------------
+
+%get counter name
+% Mandatory argument: label to ref.
+% Last optional argument assigned to.
+\NewDocumentCommand \refcountname {m o}
+  {\refnum@name{\refnum@temp}{#1}%
+  \refnum@out{#2}{\refnum@temp}}
+
+%get counter / parent counter value as string
+% Mandatory argument: label to ref.
+% Last optional argument assigned to.
+\NewDocumentCommand \refnum {O{0} m o}
+  {\refnum@count{\refnum@temp}{#1}{#2}%
+  \refnum@out{#3}{\refnum@temp}}
+
+%temporarily assign ref counter to other counter & display
+% Mandatory argument: label to ref.
+% Last optional argument assigned to.
+\NewDocumentCommand \asref {s O{0} d<> m o}
+  {% If we haven't been given a counter name, get it from ref
+   \IfNoValueTF{#3}%
+     {\refnum@name{\refnum@@temp}{#4}}%
+     {\def\refnum@@temp{#3}}%
+   \refnum@ascounter{\refnum@@temp}{\refnum@temp}{#2}{#4}%
+   \IfBooleanTF{#1}%
+     {}%
+     {\let\refnum@@temp\refnum@temp%
+      \def\refnum@temp{\hyperref[#4]{\refnum@@temp}}}
+   \refnum@out{#5}{\refnum@temp}}
+
+%assign ref counter to other counter
+% Mandatory argument: label to ref.
+\NewDocumentCommand \reftocounter {O{0} d<> m}
+  {% If we haven't been given a counter name, get it from ref
+   \IfNoValueTF{#2}%
+     {\refnum@name{\refnum@temp}{#3}}%
+     {\def\refnum@temp{#2}}%
+   \refnum@tocounter{\refnum@temp}{#1}{#3}}
+
+%--------------------------------------------------------------------------------
+\makeatother
+\endinput
+%--------------------------------------------------------------------------------
+
+The package \texttt{refcount} fails if the counter is displayed with anything
+other than \arabic, or if it has any prefix, and any suffix will be output.
+This package gets around that, but it relies on \texttt{hyperref} instead.
+It will load \texttt{hyperref} if it has not been loaded earlier.
+It would be better to load \texttt{hyperref} yourself, before \texttt{refnumber},
+so that you can choose your options.
+
+The basic commands are:
+
+\refcountname{(label)}[(def-to)]               The ref counter type.
+\refnum[(level)]{(label)}[(def-to)]            The ref counter number as a string.
+\asref(*)[(level)]<(type)>{(label)}[(def-to)]  The ref counter as displayed by \the(type).
+\reftocounter[(level)]<(type)>{(label)}        Assign ref counter to (type) counter.
+
+(label)  The label we are referencing.
+(level)  How many generations up parent counters do we go?
+         Default: 0.
+(type)   Type of counter to display it as/assign to?
+         Default: \refcountname{(label)}.
+(def-to) The result will be stored in this macro.
+         The result is printed if this is omitted.
+
+[] and <> both denote optional arguments.
+The different delimiters allow the command to determine which one has been omitted.
+The starred version of \asref suppresses the hyperlink.
+
+Let's look at an example.
+Say we have a hierarchy of counters:
+
+\newcounter{greatgrandparent}
+\newcounter{grandparent}[greatgrandparent]
+\newcounter{parent}[grandparent]
+\newcounter{child}[parent]
+
+Suppose the counter formats are:
+
+\renewcommand{\thegreatgrandparent}{\arabic{greatgrandparent}}
+\renewcommand{\thegrandparent}{\Alph{grandparent}}
+\renewcommand{\theparent}{\Roman{parent}}
+\renewcommand{\thechild}{\theparent.\alph{child})}
+
+They have prefixes when referenced.
+
+\renewcommand{\p@grandparent}{\thegreatgrandparent.}
+\renewcommand{\p@parent}{\p@grandparent.\thegrandparent.}
+\renewcommand{\p@child}{\p@parent.\theparent.}
+
+Let's advance these counters and use the last one for a label.
+
+\stepcounter{greatgrandparent}
+\stepcounter{grandparent}\stepcounter{grandparent}
+\stepcounter{parent}\stepcounter{parent}\stepcounter{parent}
+\stepcounter{child}\stepcounter{child}\stepcounter{child}\refstepcounter{child}
+\label{ch:now}
+
+Now \ref{ch:now} will produce 1.B.III.d).
+The newlabel entry will be \newlabel{ch:now}{{1.B.III.d)}{1}{}{child.1.2.3.4}{}}.
+To pick out individual parts:
+
+\begin{tabular}{llll}
+  \refcountname{ch:now} & child \\
+  \refnum{ch:now}    & 4 & \asref{ch:now}    & 4  \\
+  \refnum[1]{ch:now} & 3 & \asref[1]{ch:now} & c) \\
+  \refnum[2]{ch:now} & 2 & \asref[2]{ch:now} & b) \\
+  \refnum[3]{ch:now} & 1 & \asref[3]{ch:now} & a) \\
+\end{tabular}
+
+They can also be used to assign to a macro/counter with the optional final/second
+argument, \textit{\`a la} \texttt{xstring}:
+
+\begin{tabular}{ll}
+  \refcountname{ch:now}[\macro]     & \macro = child     \\
+  \asref[1]{ch:now}[\macro]         & \macro = c         \\
+  \asref[1]<parent>{ch:now}[\macro] & \macro = III       \\
+  \reftocounter[1]{ch:now}          & \value{child}  = 3 \\
+  \reftocounter[1]<parent>{ch:now}  & \value{parent} = 3 \\
+  \reftocounter<parent>{ch:now}     & \value{parent} = 4 \\
+\end{tabular}

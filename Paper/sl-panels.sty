@@ -1,0 +1,354 @@
+%%  Numbering figure panels.
+%%
+%% Requires packages: refcount, adjustbox, etoolbox, xkeyval, xparse, xstrng, hyperref
+%%
+%%
+%--------------------------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sl-panels}[2018/3/18 v1.0 numbering figure panels (SL)]
+%--------------------------------------------------------------------------------
+\makeatletter
+%--------------------------------------------------------------------------------
+\RequirePackage{etoolbox}
+\RequirePackage{xkeyval}
+\RequirePackage[log-declarations=false]{xparse}
+\RequirePackage{xstring}
+\newtoggle{sl@panel@compact}
+\newtoggle{sl@panel@reset}
+%================================================================================
+% format hooks:
+%  @ label
+%  @@ caption
+%  @@@ ref
+%--------------------------------------------------------------------------------
+% Option Key factory for counter
+\newcommand{\@panel@countkeys}[1]{%
+ \csdef{sl@f#1@cnt}{\Alph{f#1}}
+ \csdef{sl@#1@refpre}{\relax}
+ \csdef{sl@t#1@cnt}{\Alph{t#1}}
+ %
+ \define@key[slpanel]{#1}{alph}[]{\csdef{sl@f#1@cnt}{\alph{f#1}}\csdef{sl@t#1@cnt}{\alph{t#1}}}
+ \define@key[slpanel]{#1}{Alph}[]{\csdef{sl@f#1@cnt}{\Alph{f#1}}\csdef{sl@t#1@cnt}{\Alph{t#1}}}
+ \define@key[slpanel]{#1}{roman}[]{\csdef{sl@f#1@cnt}{\roman{f#1}}\csdef{sl@t#1@cnt}{\roman{t#1}}}
+ \define@key[slpanel]{#1}{Roman}[]{\csdef{sl@f#1@cnt}{\Roman{f#1}}\csdef{sl@t#1@cnt}{\Roman{t#1}}}
+ \define@key[slpanel]{#1}{arabic}[]{\csdef{sl@f#1@cnt}{\arabic{f#1}}\csdef{sl@t#1@cnt}{\arabic{t#1}}}
+ %
+ \define@key[slpanel]{#1}{refpre}[.]{\csdef{sl@#1@refpre}{##1\relax}}
+}
+% Key factory for formatting
+\newcommand{\@panel@keys}[1]{%
+ \csdef{sl@#1@font}{}
+ \csdef{sl@#1@pre}{}
+ \csdef{sl@#1@post}{}
+ %
+ \define@key[slpanel]{#1}{bf}[]{\cspreto{sl@#1@font}{\bfseries}}
+ \define@key[slpanel]{#1}{it}[]{\cspreto{sl@#1@font}{\itshape}}
+ \define@key[slpanel]{#1}{sf}[]{\cspreto{sl@#1@font}{\sffamily}}
+ \define@key[slpanel]{#1}{tt}[]{\cspreto{sl@#1@font}{\ttfamily}}
+ %
+ \define@key[slpanel]{#1}{paren}[]{\csappto{sl@#1@post}{)}}
+ \define@key[slpanel]{#1}{parens}[]{\cspreto{sl@#1@pre}{(}\csappto{sl@#1@post}{)}}
+ \define@key[slpanel]{#1}{brack}[]{\csappto{sl@#1@post}{]}}
+ \define@key[slpanel]{#1}{bracks}[]{\cspreto{sl@#1@pre}{[}\csappto{sl@#1@post}{]}}
+ \define@key[slpanel]{#1}{brace}[]{\csappto{sl@#1@post}{\}}}
+ \define@key[slpanel]{#1}{braces}[]{\cspreto{sl@#1@pre}{\{}\csappto{sl@#1@post}{\}}}
+ \define@key[slpanel]{#1}{dot}[]{\csappto{sl@#1@post}{.}}
+ %
+ \define@key[slpanel]{#1}{font}[]{\csdef{sl@#1@font}{##1}}
+ \define@key[slpanel]{#1}{pre}[]{\csdef{sl@#1@pre}{##1}}
+ \define@key[slpanel]{#1}{post}[]{\csdef{sl@#1@post}{##1}}
+ \define@key[slpanel]{#1}{reset}[]{\@panel@reset@now{#1}}
+}
+%--------------------------------------------------------------------------------
+\newcommand{\@panel@cap@copy}[1]{%
+ \csletcs{sl@#1@@font}{sl@#1@font}%
+ \csletcs{sl@#1@@pre}{sl@#1@pre}%
+ \csletcs{sl@#1@@post}{sl@#1@post}%
+}
+\newcommand{\@panel@ref@copy}[1]{%
+ \csletcs{sl@#1@@@font}{sl@#1@font}%
+ \csletcs{sl@#1@@@pre}{sl@#1@pre}%
+ \csletcs{sl@#1@@@post}{sl@#1@post}%
+}
+\newcommand{\@panel@reset@now}[1]{%
+ \cslet{sl@#1@font}{\relax}%
+ \cslet{sl@#1@pre}{\relax}%
+ \cslet{sl@#1@post}{\relax}%
+}
+\newcommand{\@panel@reset}[1]{%
+ \iftoggle{sl@panel@reset}{\@panel@reset@now{#1}}{}}
+%--------------------------------------------------------------------------------
+% Multi-key factory (lab, cap, ref)
+\newcommand{\@panel@allkeys}[1]{%
+ \@panel@countkeys{#1}
+ \@panel@keys{#1}
+ \@panel@keys{#1@}
+ \@panel@keys{#1@@}
+ %
+ \define@key[slpanel]{#1@}{label}[]{\@panel@cap@copy{#1}}
+ \define@key[slpanel]{#1@@}{label}[]{\@panel@ref@copy{#1}}
+}
+%--------------------------------------------------------------------------------
+% deploy key factories
+\@panel@allkeys{panel}
+\@panel@allkeys{subpanel}
+\@panel@allkeys{subsubpanel}
+%================================================================================
+% Define options
+\newcommand{\@panel@def@option}[2]{\@panel@reset{#1}\setkeys[slpanel]{#1}{#2}}
+%--------------------------------------------------------------------------------
+\DeclareOptionX[slpanel]<options>{panel}[Alph,refpre,bf,dot]{\@panel@def@option{panel}{#1}}
+\DeclareOptionX[slpanel]<options>{sub}[Roman,refpre,bf,dot]{\@panel@def@option{subpanel}{#1}}
+\DeclareOptionX[slpanel]<options>{subsub}[arabic,refpre,bf,dot]{\@panel@def@option{subsubpanel}{#1}}
+%
+\DeclareOptionX[slpanel]<options>{cap}[label]{\@panel@def@option{panel@}{#1}}
+\DeclareOptionX[slpanel]<options>{subcap}[label]{\@panel@def@option{subpanel@}{#1}}
+\DeclareOptionX[slpanel]<options>{subsubcap}[label]{\@panel@def@option{subsubpanel@}{#1}}
+%
+\DeclareOptionX[slpanel]<options>{ref}[label]{\@panel@def@option{panel@@}{#1}}
+\DeclareOptionX[slpanel]<options>{subref}[label]{\@panel@def@option{subpanel@@}{#1}}
+\DeclareOptionX[slpanel]<options>{subsubref}[label]{\@panel@def@option{subsubpanel@@}{#1}}
+%
+\DeclareOptionX[slpanel]<options>{compactref}[]{\toggletrue{sl@panel@compact}}
+%\DeclareOptionX*{\setkeys[slpanel]{panel}{\CurrentOption}}
+%--------------------------------------------------------------------------------
+\ExecuteOptionsX[slpanel]<options>{panel,sub,subsub,cap,subcap,subsubcap}
+\toggletrue{sl@panel@reset}
+\ProcessOptionsX[slpanel]<options>
+\togglefalse{sl@panel@reset}
+%================================================================================
+\newcommand{\panelsetup}[1]{\setkeys[slpanel]{options}{#1}}
+%--------------------------------------------------------------------------------
+\RequirePackage{refnumber}
+\RequirePackage{adjustbox}
+% alignment of panel labels
+\newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
+\newcommand{\alignmid}[1]{\adjustbox{valign=c}{#1}}
+%================================================================================
+%Counter formats
+\newrobustcmd{\panel@frmt}[2]{{\csuse{sl@#1@font}\csuse{sl@#1@pre}#2\csuse{sl@#1@post}}}
+\newcommand{\panel@frmtb}[2]{{\csuse{sl@#1@font}\csuse{sl@#1@pre}#2}}
+\newcommand{\panel@frmte}[2]{{\csuse{sl@#1@font}#2\csuse{sl@#1@post}}}
+\newcommand{\panel@frmtm}[2]{{\csuse{sl@#1@font}#2}}
+%--------------------------------------------------------------------------------
+%these don't work with prefixes & parentheses, so...
+\renewcommand{\panel@frmtb}[2]{\panel@frmt{#1}{#2}}
+\renewcommand{\panel@frmte}[2]{\panel@frmt{#1}{#2}}
+\renewcommand{\panel@frmtm}[2]{\panel@frmt{#1}{#2}}
+%================================================================================
+% Building label, caption, reference commands
+%--------------------------------------------------------------------------------
+%Factory loop helper
+\newrobustcmd{\@panel@loop}[5]{% #1-5: counter, label, first, later, both
+  \numdef\panel@label{\panel@label+1}%
+  \reftocounter<#1>{#2}%
+  \ifnumequal{\panel@label}{1}{#3}{#4}#5%
+}
+%Factory final helper
+\newrobustcmd{\@panel@finish}[3]{% #1-3: counter, label list, last
+ \panel@frmt{#1@}{\docsvlist{#2}%
+    \ifnumgreater{\panel@label}{1}{#3}{}}%
+}
+%--------------------------------------------------------------------------------
+%
+% Factory for panel captions
+\newcommand{\@panel@label}[2]{% #1: name of counter, #2: label
+\begingroup%
+ \numdef\panel@label{0}%
+ \renewcommand*{\do}[1]{\@panel@loop{f#1}{##1}{}{,}{\csuse{sl@f#1@cnt}}}%
+ \@panel@finish{#1}{#2}{}%
+\endgroup}
+%
+% Factory for panel range captions
+\newcommand{\@panel@range}[2]{% #1: name of counter, #2: label
+\begingroup%
+ \numdef\panel@label{0}%
+ \renewcommand*{\do}[1]{\@panel@loop{f#1}{##1}{\csuse{sl@f#1@cnt}}{}{}}%
+ \@panel@finish{#1}{#2}{--\csuse{sl@f#1@cnt}}%
+\endgroup}
+%--------------------------------------------------------------------------------
+% Factory for panel labels & captions
+\newcommand{\@panel@all}[1]{%
+ \expandafter\NewDocumentCommand \csname #1\endcsname {m}%
+    {\begingroup%
+     \StrChar{\@captype}{1}[\temp]%
+     \addtocounter{\@captype}{1}%
+     \refstepcounter{\temp#1}%
+     \addtocounter{\@captype}{-1}%
+     \panel@frmt{#1}{\csuse{sl@\temp#1@cnt}}%
+     \aligntop{##1}%
+    \endgroup}
+ \expandafter\NewDocumentCommand \csname #1cap\endcsname {m}
+    {\@panel@label{#1}{##1}}
+ \expandafter\NewDocumentCommand \csname #1rangecap\endcsname {m}
+    {\@panel@range{#1}{##1}}
+}
+%--------------------------------------------------------------------------------
+% Factory for defining \p@counter
+\newcommand{\@panel@counter@pref}[2]{% #1: name of counter, #2: name of parent counter.
+\ifblank{#2}%
+ {\csdef{p@f#1}{\p@figure\thefigure\csuse{sl@#1@refpre}}
+  \csdef{p@t#1}{\p@table\thetable\csuse{sl@#1@refpre}}}
+ {\csdef{p@f#1}{\csuse{p@f#2}}
+  \csdef{p@t#1}{\csuse{p@t#2}}
+  \iftoggle{sl@panel@compact}
+   {\csappto{p@f#1}{\panel@frmt{#2@@}{\csuse{thef#2}}}
+    \csappto{p@t#1}{\panel@frmt{#2@@}{\csuse{thet#2}}}}
+   {\csappto{p@f#1}{\csuse{thef#2}}
+    \csappto{p@t#1}{\csuse{thet#2}}}
+  \csappto{p@f#1}{\csuse{sl@#1@refpre}}
+  \csappto{p@t#1}{\csuse{sl@#1@refpre}}}
+}
+%--------------------------------------------------------------------------------
+% Factory for creating counters and panel labels
+\newcommand{\@panel@counter}[2]{% #1: name of counter, #2: name of parent counter.
+ \ifblank{#2}%
+   {\newcounter{f#1}[figure]
+    \newcounter{t#1}[table]}
+   {\newcounter{f#1}[f#2]
+    \newcounter{t#1}[t#2]}
+ \AtEndPreamble%
+  {\iftoggle{sl@panel@compact}
+    {\csdef{thef#1}{\csuse{sl@f#1@cnt}}
+     \csdef{thet#1}{\csuse{sl@t#1@cnt}}}
+    {\csdef{thef#1}{\panel@frmt{#1@@}{\csuse{sl@f#1@cnt}}}
+     \csdef{thet#1}{\panel@frmt{#1@@}{\csuse{sl@t#1@cnt}}}}
+   \@panel@counter@pref{#1}{#2}}
+ \@panel@all{#1}
+ \csdef{f#1autorefname}{\figureautorefname}
+ \csdef{t#1autorefname}{\tableautorefname}
+}
+%--------------------------------------------------------------------------------
+% Deploy label factories
+\@panel@counter{panel}{}
+\@panel@counter{subpanel}{panel}
+\@panel@counter{subsubpanel}{subpanel}
+%--------------------------------------------------------------------------------
+\AtBeginEnvironment{figure}{\setcounter{fpanel}{0}}
+\AtBeginEnvironment{table}{\setcounter{tpanel}{0}}
+%================================================================================
+% Compact multi-references with cleveref
+%Range compression with doubly nested counters is unlikely to work well.
+%--------------------------------------------------------------------------------
+%Extracting prefixes for compact references
+\newcommand{\panel@pref@get}[3]% string, refpre, output macro
+ {\begingroup%
+   \StrCount{#1}{\csuse{sl@#2@refpre}}[\panel@prefix@num]%
+   \StrBehind[\panel@prefix@num]{#1}{\csuse{sl@#2@refpre}}[\panel@suffix@str]%
+   \xdef#3{\panel@suffix@str}%
+   \StrBefore[\panel@prefix@num]{#1}{\csuse{sl@#2@refpre}}\csuse{sl@#2@refpre}%
+ \endgroup}
+%
+\newcommand{\panel@pref@strip}[3]% string, refpre/preprefix, output macro
+ {\begingroup%
+   \StrCount{#1}{\csuse{sl@#2@refpre}}[\panel@prefix@num]%
+   \StrBehind[\panel@prefix@num]{#1}{\csuse{sl@#2@refpre}}[\panel@suffix@str]%
+   \xdef#3{\panel@suffix@str}%
+   \StrBefore[\panel@prefix@num]{#1}{\csuse{sl@#2@refpre}}[\panel@prefix@str]%
+   \StrCompare{\csuse{sl@#2@@@prefix}}{\panel@prefix@str}[\panel@prefix@num]%
+   \StrLen{\panel@prefix@str}[\panel@prefix@len]%
+   \IfEq{\panel@prefix@num}{0}{}%nothing if true
+      {\StrRight{\panel@prefix@str}{\numexpr\panel@prefix@len-\panel@prefix@num+3}%
+       \csuse{sl@#2@refpre}}%
+ \endgroup}
+%--------------------------------------------------------------------------------
+% Factories for cleveref formats
+\newcommand{\panel@cref@name}[3]{% #1: counter, #2 c or C, #3 figure/table
+  \csuse{#2refname}{#1}%
+      {\csuse{#2ref@#3@name}}{\csuse{#2ref@#3@name@plural}}
+ }
+% Factories for cleveref formats with compact panel references, name not in link
+\newcommand{\panel@cref@nameout}[3]{% #1: counter, #2 c or C, #3 f or t
+  \csuse{#2refformat}{#3#1}%
+      {\csuse{#2ref@#3#1@name}~\panel@pref@get{##1}{#1}{\@sl@tempa}%
+       \panel@frmt{#1@@}{##2\@sl@tempa##3}}%
+  %
+  \csuse{#2refrangeformat}{#3#1}%
+      {\csuse{#2ref@#3#1@name@plural}~\csxdef{sl@#1@@@prefix}{##1}%
+         \panel@pref@get{##1}{#1}{\@sl@tempa}\panel@frmtb{#1@@}{##3\@sl@tempa##4}--%
+       \panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmte{#1@@}{##5\@sl@tempb##6}}%
+  %
+  \csuse{#2refmultiformat}{#3#1}%
+      {\csuse{#2ref@#3#1@name@plural}~\csxdef{sl@#1@@@prefix}{##1}%
+          \panel@pref@get{##1}{#1}{\@sl@tempa}\panel@frmtb{#1@@}{##2\@sl@tempa##3}}%
+      {,\panel@pref@strip{##1}{#1}{\@sl@tempb}\panel@frmte{#1@@}{##2\@sl@tempb##3}}%
+      {,\panel@pref@strip{##1}{#1}{\@sl@tempb}\panel@frmtm{#1@@}{##2\@sl@tempb##3}}%
+      {,\panel@pref@strip{##1}{#1}{\@sl@tempb}\panel@frmte{#1@@}{##2\@sl@tempb##3}}%
+  %
+  \csuse{#2refrangemultiformat}{#3#1}%
+      {\csuse{#2ref@#3#1@name@plural}~\csxdef{sl@#1@@@prefix}{##1}%
+         \panel@pref@get{##1}{#1}{\@sl@tempa}\panel@frmtb{#1@@}{##3\@sl@tempa##4}--%
+       \panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmtm{#1@@}{##5\@sl@tempb##6}}%
+      {,\csxdef{sl@#1@@@prefix}{##1}%
+       \panel@pref@strip{##1}{#1}{\@sl@tempa}\panel@frmtm{#1@@}{##3\@sl@tempa##4}--%
+       \panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmte{#1@@}{##5\@sl@tempb##6}}%
+      {,\csxdef{sl@#1@@@prefix}{##1}%
+       \panel@pref@strip{##1}{#1}{\@sl@tempa}\panel@frmtm{#1@@}{##3\@sl@tempa##4}--%
+       \panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmtm{#1@@}{##5\@sl@tempb##6}}%
+      {,\csxdef{sl@#1@@@prefix}{##1}%
+       \panel@pref@strip{##1}{#1}{\@sl@tempa}\panel@frmtm{#1@@}{##3\@sl@tempa##4}--%
+       \panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmte{#1@@}{##5\@sl@tempb##6}}
+}
+% Factories for cleveref formats with compact panel references, name in link
+\newcommand{\panel@cref@namein}[3]{% #1: counter, #2 c or C, #3 f or t
+  \csuse{#2refformat}{#3#1}%
+      {##2\csuse{#2ref@#3#1@name}~\panel@pref@get{##1}{#1}{\@sl@tempa}%
+       \panel@frmt{#1@@}{\@sl@tempa}##3}%
+  %
+  \csuse{#2refrangeformat}{#3#1}%
+      {##3\csuse{#2ref@#3#1@name@plural}~\csxdef{sl@#1@@@prefix}{##1}%
+            \panel@pref@get{##1}{#1}{\@sl@tempa}\panel@frmtb{#1@@}{\@sl@tempa}##4--%
+       ##5\panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmte{#1@@}{\@sl@tempb}##6}%
+  %
+  \csuse{#2refmultiformat}{#3#1}%
+      {##2\csuse{#2ref@#3#1@name@plural}~\csxdef{sl@#1@@@prefix}{##1}%
+             \panel@pref@get{##1}{#1}{\@sl@tempa}\panel@frmtb{#1@@}{\@sl@tempa}##3}%
+      {,##2\panel@pref@strip{##1}{#1}{\@sl@tempb}\panel@frmte{#1@@}{\@sl@tempb}##3}%
+      {,##2\panel@pref@strip{##1}{#1}{\@sl@tempb}\panel@frmtm{#1@@}{\@sl@tempb}##3}%
+      {,##2\panel@pref@strip{##1}{#1}{\@sl@tempb}\panel@frmte{#1@@}{\@sl@tempb}##3}%
+  %
+  \csuse{#2refrangemultiformat}{#3#1}%
+      {##3\csuse{#2ref@#3#1@name@plural}~\csxdef{sl@#1@@@prefix}{##1}%
+            \panel@pref@get{##1}{#1}{\@sl@tempa}\panel@frmtb{#1@@}{\@sl@tempa}##4--%
+       ##5\panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmtm{#1@@}{\@sl@tempb}##6}%
+      {,##3\csxdef{sl@#1@@@prefix}{##1}%
+          \panel@pref@strip{##1}{#1}{\@sl@tempa}\panel@frmtm{#1@@}{\@sl@tempa}##4--%
+       ##5\panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmte{#1@@}{\@sl@tempb}##6}%
+      {,##3\csxdef{sl@#1@@@prefix}{##1}%
+          \panel@pref@strip{##1}{#1}{\@sl@tempa}\panel@frmtm{#1@@}{\@sl@tempa}##4--%
+       ##5\panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmtm{#1@@}{\@sl@tempb}##6}%
+      {,##3\csxdef{sl@#1@@@prefix}{##1}%
+          \panel@pref@strip{##1}{#1}{\@sl@tempa}\panel@frmtm{#1@@}{\@sl@tempa}##4--%
+       ##5\panel@pref@strip{##2}{#1}{\@sl@tempb}\panel@frmte{#1@@}{\@sl@tempb}##6}
+}
+% Choose name in link(*) or not, apply to lower and uppercase.
+\NewDocumentCommand \panel@cref@def {s m o}
+    {\panel@cref@name{f#2}{c}{figure}\panel@cref@name{f#2}{C}{figure}
+     \panel@cref@name{t#2}{c}{table}\panel@cref@name{t#2}{C}{table}
+     \iftoggle{sl@panel@compact}{\IfBooleanTF{#1}
+        {\panel@cref@namein{#2}{c}{f}\panel@cref@namein{#2}{C}{f}
+         \panel@cref@namein{#2}{c}{t}\panel@cref@namein{#2}{C}{t}}
+        {\panel@cref@nameout{#2}{c}{f}\panel@cref@nameout{#2}{C}{f}
+         \panel@cref@nameout{#2}{c}{t}\panel@cref@nameout{#2}{C}{t}}
+        }{}
+     \IfNoValueTF{#3}
+        {\cref@also@resetby{f#2}{figure}\cref@also@resetby{t#2}{table}}
+        {\cref@also@resetby{f#2}{f#3}\cref@also@resetby{t#2}{t#3}}
+    }
+%--------------------------------------------------------------------------------
+%Deploy after cleveref is loaded
+\AtEndPreamble{%
+\@ifpackageloaded{cleveref}%
+  {\RequirePackage{cref-resetby}
+   \@ifpackagewith{cleveref}{nameinlink}%
+     {\panel@cref@def*{panel}%
+      \panel@cref@def*{subpanel}[panel]%
+      \panel@cref@def*{subsubpanel}[subpanel]}
+     {\panel@cref@def{panel}%
+      \panel@cref@def{subpanel}[panel]%
+      \panel@cref@def{subsubpanel}[subpanel]}}
+  {}
+}
+%================================================================================
+\makeatother
+\endinput

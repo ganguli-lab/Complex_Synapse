@@ -1,0 +1,59 @@
+%%  Numbering figure panels.
+%%
+%% Requires packages: refcount, adjustbox, etoolbox, xkeyval, xparse, xstrng
+%%
+%%
+%--------------------------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{cref-resetby}[2018/04/02 v1.0 nested counters with cref (SL)]
+%--------------------------------------------------------------------------------
+\makeatletter
+%--------------------------------------------------------------------------------
+\RequirePackage{etoolbox}
+%================================================================================
+\@ifpackageloaded{cleveref}{}% otherwise, why bother
+    {\PackageError{cref-resetby}{This package must be loaded after cleveref.}
+                  {This package modifies an internal cleveref command,
+                   so that command must have been defined!}}
+%--------------------------------------------------------------------------------
+%% List of potential {child counter}{parent counter} pairs stored in this mcro:
+\newcommand{\cref@resetby@list}{}
+%% Command to add {child-counter}{parent-counter} pair to list.
+\newcommand{\cref@also@resetby}[2]{\listadd{\cref@resetby@list}{{#1}{#2}}%
+    \PackageInfo{cref-resetby}{Letting cleveref know that #1 is reset by #2.}}
+%--------------------------------------------------------------------------------
+%% FYI, current definition of \cref@resetby:
+%\def\cref@resetby#1#2{%
+%  \let#2\relax%
+%  \cref@ifstreq{#1}{subfigure}{%
+%    \cref@isinresetlist{#1}{figure}%
+%    \if@cref@inresetlist%
+%      \def#2{figure}%
+%    \fi%
+%  }{}%
+%}
+%etc.
+%--------------------------------------------------------------------------------
+%% Process a list entry, will get called with arguments:
+%%   {current-counter}{output-macro}{listed-counter}{parent-counter}.
+\newcommand{\cref@resetby@checkone}[4]{%
+   \cref@ifstreq{#1}{#3}%           check if current counter the listed counter.
+     {\cref@isinresetlist{#1}{#4}%  verify that counter is actually reset by parent.
+      \if@cref@inresetlist%
+        \gdef#2{#4}%                if yes, store parent in output macro.
+      \fi%
+     }{}%\cref@ifstreq
+}
+%% Run through list to check if current counter is listed, then store parent in #2.
+\newcommand{\cref@resetby@check}[2]{%
+   \begingroup
+     \renewcommand*{\do}[1]{\cref@resetby@checkone{#1}{#2}##1}% ##1 is {child}{parent} -> {#3}{#4} for \cref@resetby@checkone.
+     \dolistloop{\cref@resetby@list}%                           run through list.
+   \endgroup}%
+%% Append the list checker to \cref@resetby.
+\apptocmd{\cref@resetby}{\cref@resetby@check{#1}{#2}}%
+    {\PackageInfo{cref-resetby}{Added flexibility to cleveref counter reset detection}}%
+    {\PackageWarning{cref-resetby}{Failed to update cleveref counter reset detection.}}%
+%================================================================================
+\makeatother
+\endinput
