@@ -4,11 +4,11 @@ Created on Mon Sep 18 15:49:42 2017
 
 @author: Subhy
 """
-from typing import ClassVar, Union, Sequence
+from typing import ClassVar, Union, Sequence, Dict
 from numbers import Number
 import numpy as np
-from . import builders as bld
 from .builders import la
+from . import builders as bld
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
@@ -19,7 +19,10 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
 
     Contains methods that modify instance variables, those that do not
     perform calculations and overloads of arithmetic operators, str and repr.
-    Subclasses should override `init`, `copy`, `fix`, `valid_{shapes,values}`.
+    Subclasses should override: `__init__`, `dict_copy`, `fix`, `valid_shapes`,
+    `valid_values}`, `normalise` if necessary, including calls to super().
+    Beware of `fix`: it is called in super().__init__, so any reference to
+    subclass attributes should be enclosed by `try ... except AttributeError`.
 
     Parameters (and attributes)
     ---------------------------
@@ -73,12 +76,6 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
     (__matmul__,
      __rmatmul__,
      __imatmul__) = np.lib.mixins._numeric_methods(la.matmul, 'matmul')
-
-    def copy(self) -> 'SynapseBase':
-        """Copy of object, with copies of attributes
-        """
-        return type(self)(plast=self.plast.copy(),
-                          frac=self.frac.copy())
 
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         """Handling ufunce with SynapseBases
@@ -166,6 +163,16 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         vld &= (self.frac >= 0.).all()
         vld &= bld.isstochastic_d(self.frac, self.StochThresh)
         return vld
+
+    def dict_copy(self) -> Dict[str, la.lnarray]:
+        """Dictionary with copies of data attributes
+        """
+        return {'plast': self.plast.copy(), 'frac': self.frac.copy()}
+
+    def copy(self) -> 'SynapseBase':
+        """Copy of object, with copies of attributes
+        """
+        return type(self)(**self.dict_copy())
 
     @classmethod
     def build(cls, builder, nst: int, frac: ArrayLike = 0.5,

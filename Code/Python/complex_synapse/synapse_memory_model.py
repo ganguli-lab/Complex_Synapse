@@ -6,7 +6,7 @@ Created on Fri Jun 23 18:22:05 2017
 """
 
 
-from typing import ClassVar, Optional
+from typing import ClassVar, Optional, Dict
 import numpy as np
 from .synapse_base import SynapseBase, ArrayLike, la
 
@@ -53,8 +53,8 @@ class SynapseMemoryModel(SynapseBase):
     OrphanThresh: ClassVar[float] = 1e-3
 
     def __init__(self, plast: la.lnarray,
-                 weight: la.lnarray,
                  frac: ArrayLike = 0.5,
+                 weight: la.lnarray,
                  signal: ArrayLike = np.nan,
                  **kwargs):
         """Class for complex synapse models.
@@ -76,13 +76,13 @@ class SynapseMemoryModel(SynapseBase):
         self.signal = la.asarray(signal).ravel()
         self.fix()
 
-    def copy(self) -> 'SynapseBase':
-        """Make copy of object
+    def dict_copy(self) -> Dict[str, la.lnarray]:
+        """Dictionary with copies of data attributes
         """
-        return type(self)(plast=self.plast.copy(),
-                          weight=self.weight.copy(),
-                          frac=self.frac.copy(),
-                          signal=self.signal.copy())
+        out = super().dict_copy()
+        my_out = {'weight': self.weight.copy(), 'signal': self.signal.copy()}
+        out.update(my_out)
+        return out
 
     def fix(self):
         """Complete frac and signal vectors
