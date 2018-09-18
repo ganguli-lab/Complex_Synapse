@@ -6,15 +6,15 @@ Created on Mon Sep 18 16:06:34 2017
 """
 
 from numbers import Number
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union
 import numpy as np
-from . import builders as _bld
-from . import synapse_memory_model as _smm
-from . import synapse_base as _sb
-from .synapse_base import la
+from .builders import la
+from .builders import stochastify_c as _stochastify_c
+from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
+from .synapse_base import SynapseBase as _SynapseBase
 
 
-class SynapseOptModel(_smm.SynapseMemoryModel):
+class SynapseOptModel(_SynapseMemoryModel):
     """Class for complex synapses, suitable for optimisation
 
     Subclass of SynapseMemoryModel.
@@ -36,7 +36,7 @@ class SynapseOptModel(_smm.SynapseMemoryModel):
         --------
         mat2params
         """
-        return np.hstack((mat2params(self.plast[0]),
+        return la.hstack((mat2params(self.plast[0]),
                           mat2params(self.plast[1])))
 
     def set_params(self, params: np.ndarray):
@@ -52,10 +52,10 @@ class SynapseOptModel(_smm.SynapseMemoryModel):
 
         See Also
         --------
-        mat2params
+        params2mat
         """
-        num = params.shape[0] // 2
-        self.plast = np.stack((params2mat(params[:num]),
+        num = params.shape[-1] // 2
+        self.plast = la.stack((params2mat(params[:num]),
                                params2mat(params[num:])))
 
     def _derivs(self, rate: Optional[Number] = None,
@@ -111,7 +111,7 @@ class SynapseOptModel(_smm.SynapseMemoryModel):
         """
         peq = self.peq()
 
-        eig = _sb.la.wrappers.wrap_several(np.linalg.eig)
+        eig = la.wrappers.wrap_several(np.linalg.eig)
         qas, evs = eig(self.markov)
         expqt = np.exp(qas * time)
         expwftw = (evs * expqt) @ (evs.inv @ self.weight)
@@ -135,7 +135,7 @@ class SynapseOptModel(_smm.SynapseMemoryModel):
 
         return func, grad
 
-    def laplace_grad(self, rate: Number) -> (float, la.lnarray):
+    def laplace_grad(self, rate: Optional[Number]) -> (float, la.lnarray):
         """Gradient of Laplace transform of SNR memory curve.
 
         Parameters
@@ -172,7 +172,7 @@ class SynapseOptModel(_smm.SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of `snr_area` with respect to parameters.
         """
-        return self.laplace_grad(0.)
+        return self.laplace_grad(None)
 
     def laplace_hess(self, rate: Number) -> la.lnarray:
         """Hessian of Laplace transform of SNR memory curve.
@@ -208,7 +208,7 @@ class SynapseOptModel(_smm.SynapseMemoryModel):
                            [hesspm.T, hessmm]])
 
     def laplace_hessp(self, rate: Number,
-                      other: _sb.SynapseBase) -> la.lnarray:
+                      other: _SynapseBase) -> la.lnarray:
         """Matrix product of snr_laplace's hessian and change in parameters.
 
         Parameters
@@ -292,6 +292,31 @@ class SynapseOptModel(_smm.SynapseMemoryModel):
 # =============================================================================
 
 
+def offdiag_inds(nst: int) -> la.lnarray:
+    """Indices of independent parameters of transition matrix.
+
+    Parameters
+    ----------
+    nst : la.lnarray (n,n)
+        Continuous time stochastic matrix.
+
+    Returns
+    -------
+    K : la.lnarray (n(n-1),)
+        Vector of ravel indices of off-diagonal elements, in order:
+        mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2,n-1.
+    """
+    # when put into groups of size nst+1:
+    # M[0,0], M[0,1], M[0,2], ..., M[0,n-1], M[1,0],
+    # M[1,1], M[1,2], ..., M[1,n-1], M[2,0], M[2,1],
+    # ...
+    # M[n-2,n-2], M[n-2,n-1], M[n-1,0], ..., M[n-1,n-2],
+    # unwanted elements are 1st in each group
+    k_1st = (nst+1) * np.arange(nst-1)  # ravel ind of 1st element in group
+    k = np.arange(nst**2 - 1)  # exclude final unwanted element
+    return np.delete(k, k_1st)
+
+
 def mat2params(mat: la.lnarray) -> la.lnarray:
     """Independent parameters of transition matrix.
 
@@ -307,9 +332,10 @@ def mat2params(mat: la.lnarray) -> la.lnarray:
         mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2,n-1.
     """
     nst = mat.shape[0]
-    param = mat.flatten()[:-1]
-    param.resize((nst-1, nst+1))
-    return param[:, 1:].ravel()
+    # m_00, m_01, m_02, ..., m_0n-1, m_10,
+    # mat_12, ..., mat_n-2,n
+    param = mat.flatten()
+    return param[offdiag_inds(nst)]
 
 
 @la.wrappers.wrap_one
@@ -328,10 +354,10 @@ def params2mat(params: la.lnarray) -> la.lnarray:
         Continuous time stochastic matrix.
     """
     nst = ((1. + np.sqrt(1. + 4. * params.size)) / 2.).astype(int)
-    mat = np.reshape(params, (nst-1, nst))
-    mat = np.hstack((np.zeros((nst-1, 1)), mat)).ravel()
-    mat = np.hstack((mat, la.array([0]))).reshape((nst, nst))
-    _bld.stochastify_c(mat)
+    mat = np.empty(nst**2)
+    mat[offdiag_inds(nst)] = params
+    mat.resize((nst, nst))
+    _stochastify_c(mat)
     return mat
 
 
@@ -350,7 +376,7 @@ def tens2mat(tens: la.lnarray) -> la.lnarray:
     """
     nst = tens.shape[0]
     mat = tens.reshape((nst**2, nst**2))
-    k = (sum(np.ix_((nst+1) * np.arange(nst-1), np.arange(nst))) + 1).ravel()
+    k = offdiag_inds(nst)
     return mat[np.ix_(k, k)]
 
 
@@ -373,7 +399,7 @@ def _outer3(vec1: la.lnarray, mat: la.lnarray, vec2: la.lnarray) -> la.lnarray:
     return vec1[..., None, None, None] * mat[..., None] * vec2
 
 
-def _outer3p(vec1: la.lnarray, mat1: _sb.Union[la.lnarray, la.invarray],
+def _outer3p(vec1: la.lnarray, mat1: Union[la.lnarray, la.invarray],
              vec2: la.lnarray, mat2: la.lnarray) -> la.lnarray:
     """Outer product of vector, matrix and vector, multiplying matrix
     Returns: mat1: lnarray (n,n), mat2: lnarray (n,n)
@@ -391,13 +417,12 @@ def _outer3ps(vec1: la.lnarray, mat1: la.lnarray, vec2: la.lnarray,
     return mats[0] + mats[1]
 
 
-@la.wrappers.wrap_one
 def _outerdiv3p(vec1: la.lnarray, mat1: la.lnarray, vec2: la.lnarray,
                 mat2: la.lnarray) -> la.lnarray:
     """Outer product of vector, inverse matrix and vector, multiplying matrix
     Returns: mats: lnarray (2,n,n)
     """
-    return np.stack(_outer3p(vec1, mat1.inv, vec2, mat2))
+    return la.stack(_outer3p(vec1, mat1.inv, vec2, mat2))
 
 
 def _trnsp4(tens: la.lnarray) -> la.lnarray:
@@ -407,11 +432,10 @@ def _trnsp4(tens: la.lnarray) -> la.lnarray:
     return tens.transpose(2, 3, 0, 1)
 
 
-@la.wrappers.wrap_one
 def _dbl_diagsub(tens: la.lnarray) -> la.lnarray:
     """Subtract diagonal elements from each element of corresponding row
     for 1st two and last two indices.
     Returns: tens: lnarray (2,n,n,n,n)
     """
     tens_trn = _diagsub(_trnsp4(_diagsub(tens)))
-    return np.stack(_trnsp4(tens_trn), tens_trn)
+    return la.stack(_trnsp4(tens_trn), tens_trn)
