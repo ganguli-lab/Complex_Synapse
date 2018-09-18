@@ -12,6 +12,8 @@ from . import builders as bld
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
+# helpers for array_ufunc
+cvl = la.convert_loop
 
 
 class SynapseBase(np.lib.NDArrayOperatorsMixin):
@@ -55,8 +57,7 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
     StochThresh: ClassVar[float] = 1e-5
 
     def __init__(self, plast: la.lnarray,
-                 frac: ArrayLike = 0.5,
-                 **kwargs):
+                 frac: ArrayLike = 0.5):
         """Class for complex synapse models.
 
         Parameters (and attributes)
@@ -80,33 +81,18 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         """Handling ufunce with SynapseBases
         """
-        args = []
-        # For most inputs, we swap multiplication & division instead of inverse
-        for input_ in inputs:
-            if isinstance(input_, SynapseBase):
-                args.append(input_.plast)
-            else:
-                args.append(input_)
-        args = tuple(args)
+        args = cvl.conv_loop_in(SynapseBase, 'plast', inputs)[0]
 
-        conv_out = [False] * ufunc.nout
-        conv_out[0] = True
+        conv = [False] * ufunc.nout
+        conv[0] = True
         outputs = kwargs.pop('out', None)
         if outputs:
-            out_args = []
-            for j, output in enumerate(outputs):
-                if isinstance(output, SynapseBase):
-                    out_args.append(output.plast)
-                    conv_out[j] = True
-                else:
-                    out_args.append(output)
-                    conv_out[j] = False
+            out_args, conv = cvl.conv_loop_in(SynapseBase, 'plast', outputs)
             kwargs['out'] = tuple(out_args)
         else:
             outputs = (None,) * ufunc.nout
 
-        results = self._to_invert.__array_ufunc__(ufunc, method, *args,
-                                                  **kwargs)
+        results = self.plast.__array_ufunc__(ufunc, method, *args, **kwargs)
 
         if results is NotImplemented:
             return NotImplemented
@@ -114,30 +100,13 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         if ufunc.nout == 1:
             results = (results,)
 
-        converted_results = []
-        for result, output, cout in zip(results, outputs, conv_out):
-            if output is None:
-                if cout:
-                    conv = self.copy()
-                    conv.plast = result
-                    converted_results.append(conv)
-                else:
-                    converted_results.append(result)
-            else:
-                converted_results.append(output)
-        results = tuple(converted_results)
+        results = cvl.conv_loop_out(self, 'plast', results, outputs, conv)
 
         return results[0] if len(results) == 1 else results
 
-    @property
-    def nplast(self) -> int:
-        """number of plasticity types."""
-        return self.frac.size
-
-    @property
-    def nstates(self) -> int:
-        """Number of states."""
-        return self.plast.shape[-1]
+    # -------------------------------------------------------------------------
+    # %%* Housekeeping
+    # -------------------------------------------------------------------------
 
     def normalise(self):
         """Ensure that all attributes are valid.
@@ -169,10 +138,41 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         """
         return {'plast': self.plast.copy(), 'frac': self.frac.copy()}
 
+    def __repr__(self) -> str:
+        """Accurate representation of object"""
+        rpr = " Wpm = {}\n fpm = {}"
+        rpr = rpr.format(str(self.plast).replace("\n", "\n" + " " * 7),
+                         self.frac)
+        return rpr
+
+    def __str__(self) -> str:
+        """Short representation of object"""
+        rpr = "{} with {} states, fpm = {}"
+        rpr = rpr.format(type(self).__name__, self.nstates, self.frac)
+        return rpr
+
+    # -------------------------------------------------------------------------
+    # %%* Utility methods
+    # -------------------------------------------------------------------------
+
     def copy(self) -> 'SynapseBase':
         """Copy of object, with copies of attributes
         """
         return type(self)(**self.dict_copy())
+
+    @property
+    def nplast(self) -> int:
+        """number of plasticity types."""
+        return self.frac.size
+
+    @property
+    def nstates(self) -> int:
+        """Number of states."""
+        return self.plast.shape[-1]
+
+    # -------------------------------------------------------------------------
+    # %%* Factory methods
+    # -------------------------------------------------------------------------
 
     @classmethod
     def build(cls, builder, nst: int, frac: ArrayLike = 0.5,
@@ -282,17 +282,3 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
             SynapseBase instance
         """
         return cls.build(bld.build_rand, *args, **kwargs)
-
-    def __repr__(self) -> str:
-        """Accurate representation of object"""
-        rpr = " Wpm = {}\n fpm = {}\n   w = {}"
-        rpr = rpr.format(str(self.plast).replace("\n", "\n" + " " * 7),
-                         self.frac, self.weight)
-        return rpr
-
-    def __str__(self) -> str:
-        """Short representation of object"""
-        rpr = "{} with {} states, fpm = {}, w = {}"
-        rpr = rpr.format(type(self).__name__, self.nstates, self.frac,
-                         self.weight)
-        return rpr

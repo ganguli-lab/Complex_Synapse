@@ -100,14 +100,14 @@ class SynapseOptModel(_SynapseMemoryModel):
         Parameters
         ----------
         time : float
-            Recall time, :math:`t`.
+            Recall time.
 
         Returns
         -------
         func : float
-            Value of SNR at :math:`t`.
+            Value of ``SNR`` at ``time``.
         grad : la.lnarray (2n(n-1),)
-            Gradient of SNR at :math:`t` with respect to parameters.
+            Gradient of ``SNR`` at ``time`` with respect to parameters.
         """
         peq = self.peq()
 
@@ -121,10 +121,10 @@ class SynapseOptModel(_SynapseMemoryModel):
         dsdq = _diagsub(peq.c * expwftw)
         dsdw = _diagsub(peq.c * (self.zinv().inv @ (self.enc() @ expwftw)))
 
-        lab = qas.c - qas.r
-        degenerate = np.fabs(lab) < self.DegThresh
-        lab[degenerate] = 1.
-        fab = (expqt.c - expqt.r) / lab
+        fab = qas.c - qas.r
+        degenerate = np.fabs(fab) < self.DegThresh
+        fab[degenerate] = 1.
+        fab = (expqt.c - expqt.r) / fab
         fab[degenerate] = expqt[degenerate.nonzero()[0]] * time
         fab *= ((peq @ self.enc()) @ evs).c * (evs.inv @ self.weight)
 
@@ -141,14 +141,14 @@ class SynapseOptModel(_SynapseMemoryModel):
         Parameters
         ----------
         rate : float, optional
-            Parameter of Laplace transform, :math:`s`.
+            Parameter of Laplace transform, ``s``.
 
         Returns
         -------
         func : float
-            Value of `snr_laplace` at :math:`s`.
+            Value of ``snr_laplace`` at ``s``.
         grad : la.lnarray (2n(n-1),)
-            Gradient of `snr_laplace` at :math:`s` with respect to parameters.
+            Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
         # (p,c), (eta,theta)
         rows, cols = self._derivs(rate)[:2]
@@ -168,9 +168,9 @@ class SynapseOptModel(_SynapseMemoryModel):
         Returns
         -------
         func : float
-            Value of `snr_area`.
+            Value of ``snr_area``.
         grad : la.lnarray (2n(n-1),)
-            Gradient of `snr_area` with respect to parameters.
+            Gradient of ``snr_area`` with respect to parameters.
         """
         return self.laplace_grad(None)
 
@@ -180,12 +180,12 @@ class SynapseOptModel(_SynapseMemoryModel):
         Parameters
         ----------
         rate : float, optional
-            Parameter of Laplace transform, :math:`s`.
+            Parameter of Laplace transform, ``s``.
 
         Returns
         -------
         hess : la.lnarray (2n(n-1),2n(n-1))
-            Hessian of `snr_laplace` at :math:`s` with respect to parameters.
+            Hessian of ``snr_laplace`` at ``s`` with respect to parameters.
         """
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         rows, cols, mats = self._derivs(rate, True)
@@ -214,15 +214,15 @@ class SynapseOptModel(_SynapseMemoryModel):
         Parameters
         ----------
         rate : float, optional
-            Parameter of Laplace transform, :math:`s`.
+            Parameter of Laplace transform, ``s``.
         other : synapse_base
             CHange in parameters stored as a synapse model.
 
         Returns
         -------
         hessp : la.lnarray (2n(n-1),)
-            Matrix product of hessian of `snr_laplace` at :math:`s` with
-            respect to parameters and change in parameters.
+            Change in parameters matrix-multiplied by hessian of
+            ``snr_laplace`` at ``s`` with respect to parameters.
         """
         # (p,c), (eta,theta), (Zi,Zis)
         rows, cols, mats = self._derivs(rate)
@@ -264,7 +264,6 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         Parameters
         ----------
-            All passed to `cls.build`, `builders.build_empty`
         params : np.ndarray
             Vector of off-diagonal elements, potentiation before depression,
             each in order:

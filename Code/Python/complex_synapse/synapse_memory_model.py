@@ -54,9 +54,8 @@ class SynapseMemoryModel(SynapseBase):
 
     def __init__(self, plast: la.lnarray,
                  frac: ArrayLike = 0.5,
-                 weight: la.lnarray,
-                 signal: ArrayLike = np.nan,
-                 **kwargs):
+                 weight: Optional[la.lnarray] = None,
+                 signal: ArrayLike = np.nan):
         """Class for complex synapse models.
 
         Parameters (and attributes)
@@ -72,12 +71,19 @@ class SynapseMemoryModel(SynapseBase):
         """
         # store inputs
         super().__init__(plast, frac)
-        self.weight = la.asarray(weight)
+        if weight is None:
+            self.weight = la.linspace(-1., 1., self.nstates)
+        else:
+            self.weight = la.asarray(weight)
         self.signal = la.asarray(signal).ravel()
         self.fix()
 
+    # -------------------------------------------------------------------------
+    # %%* Housekeeping
+    # -------------------------------------------------------------------------
+
     def dict_copy(self) -> Dict[str, la.lnarray]:
-        """Dictionary with copies of data attributes
+        """Dictionary with copies of data attributes.
         """
         out = super().dict_copy()
         my_out = {'weight': self.weight.copy(), 'signal': self.signal.copy()}
@@ -85,7 +91,7 @@ class SynapseMemoryModel(SynapseBase):
         return out
 
     def fix(self):
-        """Complete frac and signal vectors
+        """Complete frac and signal vectors.
         """
         super().fix()
         try:
@@ -100,6 +106,22 @@ class SynapseMemoryModel(SynapseBase):
         vld &= len(self.weight) == self.plast.shape[-1]
         vld &= len(self.frac) == len(self.signal)
         return vld
+
+    def __repr__(self) -> str:
+        """Accurate representation of object"""
+        rpr = super().__repr__()
+        rpr += "\n   w = {}".format(self.weight)
+        return rpr
+
+    def __str__(self) -> str:
+        """Short representation of object"""
+        rpr = super().__str__()
+        rpr += ", w = {}".format(self.weight)
+        return rpr
+
+    # -------------------------------------------------------------------------
+    # %%* Markov quantities
+    # -------------------------------------------------------------------------
 
     def markov(self) -> la.lnarray:
         """Average transition rate matrix.
@@ -121,15 +143,15 @@ class SynapseMemoryModel(SynapseBase):
 
         Parameters
         ----------
-        rate : float, optional
-            Parameter of Laplace transform, :math:`s`. Default: 0.
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
         rowv : la.lnarray, optional
-            Arbitrary row vector, :math:`\xi`. Default: vector of ones.
+            Arbitrary row vector, ``xi``. Default: vector of ones.
 
         Returns
         -------
         Zi : la.lnarray
-            inverse of generalised fundamental matrix, :math:`Z`.
+            inverse of generalised fundamental matrix, ``Z``.
 
         Notes
         -----
@@ -150,9 +172,10 @@ class SynapseMemoryModel(SynapseBase):
         --------
         zinv_s : specialised fundamental matrix
         """
+        onev = la.ones_like(self.weight)
         if rowv is None:
-            rowv = la.ones_like(self.weight)
-        fundi = la.ones((self.nstates, 1)) * rowv - self.markov()
+            rowv = onev
+        fundi = onev.c * rowv - self.markov()
         if rate is not None:
             # convert to ndarray, add singletons to broadcast with matrix
             s_arr = la.asarray(rate).s
@@ -160,13 +183,13 @@ class SynapseMemoryModel(SynapseBase):
         return fundi
 
     def peq(self) -> la.lnarray:
-        r"""Steady state distribution.
+        """Steady state distribution.
 
         Returns
         -------
         peq : la.lnarray
-            Steady state distribution, :math:`\pi`.
-            Solution of: :math:`\pi W^f = 0`.
+            Steady state distribution, :math:`\\pi`.
+            Solution of: :math:`\\pi W^f = 0`.
         """
         rowv = la.ones_like(self.weight)
         fundi = self.zinv(rowv=rowv)
@@ -177,13 +200,13 @@ class SynapseMemoryModel(SynapseBase):
 
         Parameters
         ----------
-        rate : float, optional
-            Parameter of Laplace transform, :math:`s`. Default: 0.
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
 
         Returns
         -------
         Zi : la.lnarray
-            inverse of special fundamental matrix, :math:`Z`.
+            inverse of special fundamental matrix, ``Z``.
 
         Notes
         -----
@@ -217,25 +240,33 @@ class SynapseMemoryModel(SynapseBase):
         return self.peq() @ self.weight
 
     def deta(self, rate: Optional[ArrayLike] = None) -> la.lnarray:
-        r"""Weighted Laplacian mean first passage time
+        """Weighted Laplacian mean first passage time
 
         A measure of how far a state is from the potentiated states, related to
         Kemeney's constant:
 
-        .. math:: \eta_i = \sum_j T_{ij} \pi_j w_j.
-
         Parameters
         ----------
-        rate : float, optional
-            Parameter of Laplace transform, :math:`s`. Default: 0.
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
 
         Returns
         -------
         deta : la.lnarray
-            :math:`\delta \eta_{ij} = \eta_i - \eta_j`.
+            Matrix of differences in ``eta(s)``
+
+        Notes
+        -----
+
+        .. math:: \\eta_i = \\sum_j T_{ij}(s) \\pi_j w_j.
+        .. math:: \\delta \\eta_{ij}(s) = \\eta_i(s) - \\eta_j(s).
         """
         eta = - self.zinv(rate).inv @ self.weight
         return eta.c - eta
+
+    # -------------------------------------------------------------------------
+    # %%* Memory curves
+    # -------------------------------------------------------------------------
 
     def spectrum(self) -> (la.lnarray, la.lnarray):
         """Timescales and coefficients of eigenmodes.
@@ -256,12 +287,12 @@ class SynapseMemoryModel(SynapseBase):
         return taua, inita
 
     def snr(self, time: ArrayLike) -> la.lnarray:
-        """SNR memory curve
+        """Memory SNR as a function of recall time (memory curve).
 
         Parameters
         ----------
-        time : float, la.lnarray, optional
-            Recall time, :math:`t`.
+        time : float, array
+            Recall time.
         """
         # convert to lnarray if needed, add singleton to broadcast with vector
         t_arr = la.array(time).c
@@ -273,8 +304,8 @@ class SynapseMemoryModel(SynapseBase):
 
         Parameters
         ----------
-        rate : float, optional
-            Parameter of Laplace transform, :math:`s`.
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
         """
         return np.sum(self.peq() @ (self.enc() * self.deta(rate)))
 
@@ -285,8 +316,8 @@ class SynapseMemoryModel(SynapseBase):
 
         Parameters
         ----------
-        tau : float, optional
-            Mean recall time, :math:`\\tau`
+        tau : float, array
+            Mean recall time.
         """
         return self.snr_laplace(1. / tau) / tau
 

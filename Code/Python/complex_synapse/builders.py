@@ -66,7 +66,7 @@ def linear_weights(nst: int) -> la.lnarray:  # linear synaptic weights
     w : la.lnarray
         vector of synaptic weights
     """
-    return la.linspace(-1., 1, nst)
+    return la.linspace(-1., 1., nst)
 
 
 def stochastify_c(mat: la.lnarray):  # make cts time stochastic
