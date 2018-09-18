@@ -81,13 +81,13 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         """Handling ufunce with SynapseBases
         """
-        args = cvl.conv_loop_in(SynapseBase, 'plast', inputs)[0]
+        args = cvl.conv_loop_in(SynapseBase, inputs)[0]
 
         conv = [False] * ufunc.nout
         conv[0] = True
         outputs = kwargs.pop('out', None)
         if outputs:
-            out_args, conv = cvl.conv_loop_in(SynapseBase, 'plast', outputs)
+            out_args, conv = cvl.conv_loop_in(SynapseBase, outputs)
             kwargs['out'] = tuple(out_args)
         else:
             outputs = (None,) * ufunc.nout
@@ -154,6 +154,11 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
     # -------------------------------------------------------------------------
     # %%* Utility methods
     # -------------------------------------------------------------------------
+
+    def view(self, typ):
+        """View of plasticity matrices as typ
+        """
+        return self.plast.view(typ)
 
     def copy(self) -> 'SynapseBase':
         """Copy of object, with copies of attributes
