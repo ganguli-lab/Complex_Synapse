@@ -8,7 +8,7 @@ Created on Fri Jun 23 18:22:05 2017
 
 from typing import ClassVar, Optional
 import numpy as np
-from synapse_base import SynapseBase, ArrayLike, la
+from .synapse_base import SynapseBase, ArrayLike, la
 
 
 class SynapseMemoryModel(SynapseBase):

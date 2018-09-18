@@ -7,8 +7,8 @@ Created on Mon Sep 18 15:49:42 2017
 from typing import ClassVar, Union, Sequence
 from numbers import Number
 import numpy as np
-from sl_py_tools.numpy_tricks import linalg as la
-import builders as bld
+from . import builders as bld
+from .builders import la
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]

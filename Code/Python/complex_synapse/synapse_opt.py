@@ -8,10 +8,10 @@ Created on Mon Sep 18 16:06:34 2017
 from numbers import Number
 from typing import Tuple, Optional
 import numpy as np
-import builders as bld
-import synapse_memory_model as _smm
-import synapse_base as _sb
-from synapse_base import la
+from . import builders as _bld
+from . import synapse_memory_model as _smm
+from . import synapse_base as _sb
+from .synapse_base import la
 
 
 class SynapseOptModel(_smm.SynapseMemoryModel):
@@ -312,6 +312,7 @@ def mat2params(mat: la.lnarray) -> la.lnarray:
     return param[:, 1:].ravel()
 
 
+@la.wrappers.wrap_one
 def params2mat(params: la.lnarray) -> la.lnarray:
     """Transition matrix from independent parameters.
 
@@ -328,9 +329,9 @@ def params2mat(params: la.lnarray) -> la.lnarray:
     """
     nst = ((1. + np.sqrt(1. + 4. * params.size)) / 2.).astype(int)
     mat = np.reshape(params, (nst-1, nst))
-    mat = np.hstack((np.zeros((nst-1, 1)), mat))
-    mat.resize((nst, nst))
-    bld.stochastify_c(mat)
+    mat = np.hstack((np.zeros((nst-1, 1)), mat)).ravel()
+    mat = np.hstack((mat, la.array([0]))).reshape((nst, nst))
+    _bld.stochastify_c(mat)
     return mat
 
 
@@ -390,6 +391,7 @@ def _outer3ps(vec1: la.lnarray, mat1: la.lnarray, vec2: la.lnarray,
     return mats[0] + mats[1]
 
 
+@la.wrappers.wrap_one
 def _outerdiv3p(vec1: la.lnarray, mat1: la.lnarray, vec2: la.lnarray,
                 mat2: la.lnarray) -> la.lnarray:
     """Outer product of vector, inverse matrix and vector, multiplying matrix
@@ -405,6 +407,7 @@ def _trnsp4(tens: la.lnarray) -> la.lnarray:
     return tens.transpose(2, 3, 0, 1)
 
 
+@la.wrappers.wrap_one
 def _dbl_diagsub(tens: la.lnarray) -> la.lnarray:
     """Subtract diagonal elements from each element of corresponding row
     for 1st two and last two indices.

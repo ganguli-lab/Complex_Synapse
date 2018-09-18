@@ -31,9 +31,11 @@ build_multistate(nst, q)
 
 from typing import Dict
 import numpy as np
+from sl_py_tools.numpy_tricks import linalg as la
 
 
-def binary_weights(nst: int) -> np.ndarray:  # binary synaptic weights
+@la.wrappers.wrap_one
+def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
     """
     Make binary (+/-1) weight vector
 
@@ -44,14 +46,14 @@ def binary_weights(nst: int) -> np.ndarray:  # binary synaptic weights
 
     Returns
     -------
-    w : np.ndarray
+    w : la.lnarray
         vector of synaptic weights
     """
-    weight = np.ones(nst // 2)
+    weight = la.ones(nst // 2)
     return np.hstack((-weight, weight))
 
 
-def linear_weights(nst: int) -> np.ndarray:  # linear synaptic weights
+def linear_weights(nst: int) -> la.lnarray:  # linear synaptic weights
     """
     Make linear (-1,...,1) weight vector
 
@@ -62,13 +64,13 @@ def linear_weights(nst: int) -> np.ndarray:  # linear synaptic weights
 
     Returns
     -------
-    w : np.ndarray
+    w : la.lnarray
         vector of synaptic weights
     """
-    return np.linspace(-1., 1, nst)
+    return la.linspace(-1., 1, nst)
 
 
-def stochastify_c(mat: np.ndarray):  # make cts time stochastic
+def stochastify_c(mat: la.lnarray):  # make cts time stochastic
     """
     Make a matrix the generator of a continuous time Markov process.
     Changes diagonal to make row sums zero.
@@ -76,40 +78,41 @@ def stochastify_c(mat: np.ndarray):  # make cts time stochastic
 
     Parameters
     ----------
-    mat : np.ndarray
+    mat : la.lnarray (...,n,n)
         square matrix with non-negative off-diagonal elements.
         **Modified** in place.
     """
-    mat -= np.apply_along_axis(np.diag, -1, mat.sum(axis=-1))
+    mat -= np.apply_along_axis(np.diagflat, -1, mat.sum(axis=-1))
 
 
-def stochastify_d(mat: np.ndarray):  # make dsc time stochastic
+def stochastify_d(mat: la.lnarray):  # make dsc time stochastic
     """
     Make a matrix the generator of a discrete time Markov process.
     Scales rows to make row sums one.
 
     Parameters
     ----------
-    mat : np.ndarray
+    mat : la.lnarray (...,n,n)
         square matrix with non-negative elements.
         **Modified** in place
     """
     mat /= mat.sum(axis=-1, keepdims=True)
 
 
-def isstochastic_c(mat: np.ndarray, thresh: float = 1e-5) -> bool:
+def isstochastic_c(mat: la.lnarray, thresh: float = 1e-5) -> bool:
     """Are row sums zero?
     """
     return (np.fabs(mat.sum(axis=-1)) < thresh).all()
 
 
-def isstochastic_d(mat: np.ndarray, thresh: float = 1e-5) -> bool:
+def isstochastic_d(mat: la.lnarray, thresh: float = 1e-5) -> bool:
     """Are row sums one?
     """
     return (np.fabs(mat.sum(axis=-1) - 1.) < thresh).all()
 
 
-def rand_trans(nst: int, sparsity: float = 1.) -> np.ndarray:
+@la.wrappers.wrap_one
+def rand_trans(nst: int, sparsity: float = 1.) -> la.lnarray:
     """
     Make a random transition matrix (continuous time).
 
@@ -122,7 +125,7 @@ def rand_trans(nst: int, sparsity: float = 1.) -> np.ndarray:
 
     Returns
     -------
-    mat : np.ndarray
+    mat : la.lnarray
         transition matrix
     """
     mat = np.random.rand(nst, nst)
@@ -132,8 +135,31 @@ def rand_trans(nst: int, sparsity: float = 1.) -> np.ndarray:
     return mat
 
 
+@la.wrappers.wrap_one
+def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
+    """
+    Make a random transition matrix (continuous time).
+
+    Parameters
+    ----------
+    n : int
+        total number of states
+    sparsity : float
+        sparsity
+
+    Returns
+    -------
+    mat : la.lnarray
+        transition matrix
+    """
+    mat = np.stack((la.diag(jmp * np.ones(nst-1), 1),
+                    la.diag(jmp * np.ones(nst-1), -1)))
+    stochastify_c(mat)
+    return mat
+
+
 def build_generic(nst: int, func, npl: int = 2,
-                  binary: bool = False) -> Dict[str, np.ndarray]:
+                  binary: bool = False) -> Dict[str, la.lnarray]:
     """Make a model from a matrix creating function.
 
     Factory for model builderss.
@@ -144,7 +170,7 @@ def build_generic(nst: int, func, npl: int = 2,
     n : int
         total number of states
     Func : function
-        function with signature `func(nst: int) -> np.ndarray` and
+        function with signature `func(nst: int) -> la.lnarray` and
         func(nst).shape = (nst, nst)
     npl : optional, int = 2
         number of plasticity matrices
@@ -154,11 +180,11 @@ def build_generic(nst: int, func, npl: int = 2,
     Returns
     -------
     dictionary:
-        plast : np.ndarray
+        plast : la.lnarray
             potentiation/depression transition matrices
-        weight : np.ndarray
+        weight : la.lnarray
             synaptic weights (linear/binary)
-        signal : np.ndarray
+        signal : la.lnarray
             desired signal contribution from each plasticity type
     """
     plast = [func(nst) for __ in range(npl)]
@@ -166,12 +192,12 @@ def build_generic(nst: int, func, npl: int = 2,
         weight = binary_weights(nst)
     else:
         weight = linear_weights(nst)
-    signal = np.linspace(1, -1, npl)
-    return {'plast': np.array(plast), 'weight': weight, 'signal': signal}
+    signal = la.linspace(1, -1, npl)
+    return {'plast': la.array(plast), 'weight': weight, 'signal': signal}
 
 
 def build_zero(nst: int, npl: int = 2,
-               binary: bool = False) -> Dict[str, np.ndarray]:
+               binary: bool = False) -> Dict[str, la.lnarray]:
     """Make an empty model.
 
     Make an empty model, i.e. all transition rates are zero.
@@ -187,18 +213,18 @@ def build_zero(nst: int, npl: int = 2,
     Returns
     -------
     dictionary:
-        plast : np.ndarray
+        plast : la.lnarray
             potentiation/depression transition matrices
-        weight : np.ndarray
+        weight : la.lnarray
             synaptic weights (linear/binary)
-        signal : np.ndarray
+        signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(nst, lambda n: np.zeros((n, n)), npl, binary)
+    return build_generic(nst, lambda n: la.zeros((n, n)), npl, binary)
 
 
 def build_empty(nst: int, npl: int = 2,
-                binary: bool = False) -> Dict[str, np.ndarray]:
+                binary: bool = False) -> Dict[str, la.lnarray]:
     """Make an empty model.
 
     Make an empty model, i.e. all transition rates uninitialised.
@@ -214,18 +240,18 @@ def build_empty(nst: int, npl: int = 2,
     Returns
     -------
     dictionary:
-        plast : np.ndarray
+        plast : la.lnarray
             potentiation/depression transition matrices
-        weight : np.ndarray
+        weight : la.lnarray
             synaptic weights (linear/binary)
-        signal : np.ndarray
+        signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(nst, lambda n: np.empty((n, n)), npl, binary)
+    return build_generic(nst, lambda n: la.empty((n, n)), npl, binary)
 
 
 def build_rand(nst: int, npl: int = 2, binary: bool = False,
-               sparsity: float = 1.) -> Dict[str, np.ndarray]:
+               sparsity: float = 1.) -> Dict[str, la.lnarray]:
     """Make a random model.
 
     Make a random model, i.e. transition rates are random numbers.
@@ -245,17 +271,17 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
     Returns
     -------
     dictionary:
-        plast : np.ndarray
+        plast : la.lnarray
             potentiation/depression transition matrices
-        weight : np.ndarray
+        weight : la.lnarray
             synaptic weights (linear/binary)
-        signal : np.ndarray
+        signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(nst, lambda n: rand_trans(nst, sparsity), npl, binary)
+    return build_generic(nst, lambda n: rand_trans(n, sparsity), npl, binary)
 
 
-def build_serial(nst: int, jmp: float) -> Dict[str, np.ndarray]:
+def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
     """Make a serial model.
 
     Make a serial model, i.e. uniform nearest neighbour transition rates,
@@ -272,21 +298,19 @@ def build_serial(nst: int, jmp: float) -> Dict[str, np.ndarray]:
     Returns
     -------
     dictionary:
-        plast : np.ndarray
+        plast : la.lnarray
             potentiation/depression transition matrices
-        weight : np.ndarray
+        weight : la.lnarray
             synaptic weights (linear/binary)
-        signal : np.ndarray
+        signal : la.lnarray
             desired signal contribution from each plasticity type
     """
     out = build_empty(nst, 2, True)
-    out['plast'] = np.stack((np.diag(jmp * np.ones(nst-1), 1),
-                             np.diag(jmp * np.ones(nst-1), -1)))
-    stochastify_c(out['plast'])
+    out['plast'][...] = serial_trans(nst, jmp)
     return out
 
 
-def build_multistate(nst: int, jmp: float) -> Dict[str, np.ndarray]:
+def build_multistate(nst: int, jmp: float) -> Dict[str, la.lnarray]:
     """Make a multistate model.
 
     Make a multistate model, i.e. uniform nearest neighbour transition rates,
@@ -304,21 +328,19 @@ def build_multistate(nst: int, jmp: float) -> Dict[str, np.ndarray]:
     Returns
     -------
     dictionary:
-        plast : np.ndarray
+        plast : la.lnarray
             potentiation/depression transition matrices
-        weight : np.ndarray
+        weight : la.lnarray
             synaptic weights (linear/binary)
-        signal : np.ndarray
+        signal : la.lnarray
             desired signal contribution from each plasticity type
     """
     out = build_empty(nst, 2, False)
-    out['plast'] = np.stack((np.diag(jmp * np.ones(nst-1), 1),
-                             np.diag(jmp * np.ones(nst-1), -1)))
-    stochastify_c(out['plast'])
+    out['plast'] = serial_trans(nst, jmp)
     return out
 
 
-def build_cascade(nst: int, jmp: float) -> Dict[str, np.ndarray]:
+def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
     """Make a cascade model.
 
     Make a cascade model with geometric transition rates and binary weights.
@@ -334,29 +356,29 @@ def build_cascade(nst: int, jmp: float) -> Dict[str, np.ndarray]:
     Returns
     -------
     dictionary:
-        plast : np.ndarray
+        plast : la.lnarray
             potentiation/depression transition matrices
-        weight : np.ndarray
+        weight : la.lnarray
             synaptic weights (linear/binary)
-        signal : np.ndarray
+        signal : la.lnarray
             desired signal contribution from each plasticity type
     """
     out = build_zero(nst, 2, True)
     plast = out['plast']
     n = nst // 2
     jmp_vec = np.logspace(n-2, 0, num=n-1, base=jmp)
-    jmps = jmp / (1-jmp)
+    jmp /= (1-jmp)
 
     inds = np.arange(1, n)
     plast[0, inds, n] = jmp_vec
-    plast[0, 0, n] = jmp_vec[0] * jmps
-    plast[0, inds, inds-1] = jmp_vec * jmps
+    plast[0, 0, n] = jmp_vec[0] * jmp
+    plast[0, inds, inds-1] = jmp_vec * jmp
 
     inds = nst - 1 - inds
     plast[1, inds, n-1] = jmp_vec
-    plast[1, -1, n-1] = jmp_vec[0] * jmps
-    plast[1, inds, inds+1] = jmp_vec * jmps
+    plast[1, -1, n-1] = jmp_vec[0] * jmp
+    plast[1, inds, inds+1] = jmp_vec * jmp
 
     stochastify_c(plast)
-    out['plast'] = plast
+#    out['plast'] = plast
     return out
