@@ -34,7 +34,6 @@ import numpy as np
 from sl_py_tools.numpy_tricks import linalg as la
 
 
-@la.wrappers.wrap_one
 def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
     """
     Make binary (+/-1) weight vector
@@ -50,7 +49,7 @@ def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
         vector of synaptic weights
     """
     weight = la.ones(nst // 2)
-    return np.hstack((-weight, weight))
+    return la.hstack((-weight, weight))
 
 
 def linear_weights(nst: int) -> la.lnarray:  # linear synaptic weights
@@ -112,7 +111,7 @@ def isstochastic_d(mat: la.lnarray, thresh: float = 1e-5) -> bool:
 
 
 @la.wrappers.wrap_one
-def rand_trans(nst: int, sparsity: float = 1.) -> la.lnarray:
+def rand_trans(nst: int, npl: int = 1, sparsity: float = 1.) -> la.lnarray:
     """
     Make a random transition matrix (continuous time).
 
@@ -120,6 +119,8 @@ def rand_trans(nst: int, sparsity: float = 1.) -> la.lnarray:
     ----------
     n : int
         total number of states
+    npl : int
+        number of plasticity types
     sparsity : float
         sparsity
 
@@ -128,14 +129,13 @@ def rand_trans(nst: int, sparsity: float = 1.) -> la.lnarray:
     mat : la.lnarray
         transition matrix
     """
-    mat = np.random.rand(nst, nst)
-    ind = np.random.rand(nst, nst)
+    mat = np.random.rand(npl, nst, nst)
+    ind = np.random.rand(npl, nst, nst)
     mat[ind > sparsity] = 0.
     stochastify_c(mat)
     return mat
 
 
-@la.wrappers.wrap_one
 def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     """
     Make a random transition matrix (continuous time).
@@ -152,13 +152,13 @@ def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     mat : la.lnarray
         transition matrix
     """
-    mat = np.stack((la.diag(jmp * np.ones(nst-1), 1),
+    mat = la.stack((la.diag(jmp * np.ones(nst-1), 1),
                     la.diag(jmp * np.ones(nst-1), -1)))
     stochastify_c(mat)
     return mat
 
 
-def build_generic(nst: int, func, npl: int = 2,
+def build_generic(func, nst: int, npl: int = 2,
                   binary: bool = False) -> Dict[str, la.lnarray]:
     """Make a model from a matrix creating function.
 
@@ -167,11 +167,11 @@ def build_generic(nst: int, func, npl: int = 2,
 
     Parameters
     ----------
-    n : int
-        total number of states
     Func : function
-        function with signature `func(nst: int) -> la.lnarray` and
-        func(nst).shape = (nst, nst)
+        function with signature `func(nst: int, npl: int) -> la.lnarray` and
+        func(nst).shape = (npl, nst, nst)
+    nst : int
+        total number of states
     npl : optional, int = 2
         number of plasticity matrices
     binary : optional, bool = True
@@ -187,13 +187,13 @@ def build_generic(nst: int, func, npl: int = 2,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    plast = [func(nst) for __ in range(npl)]
+    plast = func(nst, npl)
     if binary:
         weight = binary_weights(nst)
     else:
         weight = linear_weights(nst)
     signal = la.linspace(1, -1, npl)
-    return {'plast': la.array(plast), 'weight': weight, 'signal': signal}
+    return {'plast': plast, 'weight': weight, 'signal': signal}
 
 
 def build_zero(nst: int, npl: int = 2,
@@ -220,7 +220,8 @@ def build_zero(nst: int, npl: int = 2,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(nst, lambda n: la.zeros((n, n)), npl, binary)
+    return build_generic(lambda n, p: la.zeros((p, n, n)),
+                         nst, npl, binary)
 
 
 def build_empty(nst: int, npl: int = 2,
@@ -247,7 +248,8 @@ def build_empty(nst: int, npl: int = 2,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(nst, lambda n: la.empty((n, n)), npl, binary)
+    return build_generic(lambda n, p: la.empty((p, n, n)),
+                         nst, npl, binary)
 
 
 def build_rand(nst: int, npl: int = 2, binary: bool = False,
@@ -278,7 +280,8 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(nst, lambda n: rand_trans(n, sparsity), npl, binary)
+    return build_generic(lambda n, p: rand_trans(n, p, sparsity),
+                         nst, npl, binary)
 
 
 def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
@@ -306,7 +309,7 @@ def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
             desired signal contribution from each plasticity type
     """
     out = build_empty(nst, 2, True)
-    out['plast'][...] = serial_trans(nst, jmp)
+    out['plast'] = serial_trans(nst, jmp)
     return out
 
 
