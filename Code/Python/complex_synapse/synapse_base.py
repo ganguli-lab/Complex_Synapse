@@ -133,10 +133,12 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         vld &= bld.isstochastic_d(self.frac, self.StochThresh)
         return vld
 
-    def dict_copy(self) -> Dict[str, la.lnarray]:
+    def dict_copy(self, order='C', **kwargs) -> Dict[str, la.lnarray]:
         """Dictionary with copies of data attributes
         """
-        return {'plast': self.plast.copy(), 'frac': self.frac.copy()}
+        self._copy_attr('plast', kwargs, order)
+        self._copy_attr('plast', kwargs, order)
+        return kwargs
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
@@ -160,10 +162,16 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         """
         return self.plast.view(typ)
 
-    def copy(self) -> 'SynapseBase':
+    def copy(self, *args, **kwargs) -> 'SynapseBase':
         """Copy of object, with copies of attributes
         """
-        return type(self)(**self.dict_copy())
+        return type(self)(**self.dict_copy(*args, **kwargs))
+
+    def _copy_attr(self, attr, kwds, order='C'):
+        """helper for dict_copy
+        """
+        if attr not in kwds.keys():
+            kwds[attr] = getattr(self, attr).copy(order)
 
     @property
     def nplast(self) -> int:

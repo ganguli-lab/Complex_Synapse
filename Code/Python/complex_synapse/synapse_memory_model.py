@@ -82,12 +82,12 @@ class SynapseMemoryModel(SynapseBase):
     # %%* Housekeeping
     # -------------------------------------------------------------------------
 
-    def dict_copy(self) -> Dict[str, la.lnarray]:
+    def dict_copy(self, order='C', **kwargs) -> Dict[str, la.lnarray]:
         """Dictionary with copies of data attributes.
         """
-        out = super().dict_copy()
-        my_out = {'weight': self.weight.copy(), 'signal': self.signal.copy()}
-        out.update(my_out)
+        out = super().dict_copy(order=order, **kwargs)
+        self._copy_attr('weight', out, order)
+        self._copy_attr('signal', out, order)
         return out
 
     def fix(self):
