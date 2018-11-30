@@ -100,7 +100,7 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         if ufunc.nout == 1:
             results = (results,)
 
-        results = cvl.conv_loop_out(self, 'plast', results, outputs, conv)
+        results = cvl.conv_loop_out_attr(self, 'plast', results, outputs, conv)
 
         return results[0] if len(results) == 1 else results
 
