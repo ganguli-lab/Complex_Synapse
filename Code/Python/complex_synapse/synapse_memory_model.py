@@ -177,7 +177,7 @@ class SynapseMemoryModel(SynapseBase):
             rowv = onev
         fundi = onev.c * rowv - self.markov()
         if rate is not None:
-            # convert to ndarray, add singletons to broadcast with matrix
+            # convert to lnarray, add singletons to broadcast with matrix
             s_arr = la.asarray(rate).s
             fundi += s_arr * np.eye(self.nstates)
         return fundi
