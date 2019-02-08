@@ -4,6 +4,7 @@ Created on Mon Sep 18 15:49:42 2017
 
 @author: Subhy
 """
+from __future__ import annotations
 from typing import ClassVar, Union, Sequence, Dict
 from numbers import Number
 import numpy as np
@@ -16,7 +17,7 @@ ArrayLike = Union[Number, Sequence[Number], np.ndarray]
 cvl = la.convert_loop
 
 
-class SynapseBase(np.lib.NDArrayOperatorsMixin):
+class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
     """Base class for complex synapses.
 
     Contains methods that modify instance variables, those that do not
@@ -73,10 +74,6 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         self.plast = la.asarray(plast)
         self.frac = la.asarray(frac).ravel()
         self.fix()
-
-    (__matmul__,
-     __rmatmul__,
-     __imatmul__) = np.lib.mixins._numeric_methods(la.matmul, 'matmul')
 
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         """Handling ufunce with SynapseBases
@@ -163,7 +160,7 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         """
         return self.plast.view(typ)
 
-    def copy(self, *args, **kwargs) -> 'SynapseBase':
+    def copy(self, *args, **kwargs) -> SynapseBase:
         """Copy of object, with copies of attributes
         """
         return type(self)(**self.dict_copy(*args, **kwargs))
@@ -213,7 +210,7 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         return cls(**builder(nst, *extra_args, **kwargs), frac=frac)
 
     @classmethod
-    def zero(cls, *args, **kwargs) -> 'SynapseBase':
+    def zero(cls, *args, **kwargs) -> SynapseBase:
         """Zero model
 
         Synapse model with all transition rates set to zero
@@ -240,7 +237,7 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         return cls.build(bld.build_zero, *args, **kwargs)
 
     @classmethod
-    def empty(cls, *args, **kwargs) -> 'SynapseBase':
+    def empty(cls, *args, **kwargs) -> SynapseBase:
         """Empty model
 
         Synapse model with all transition rates uninitialised.
@@ -267,7 +264,7 @@ class SynapseBase(np.lib.NDArrayOperatorsMixin):
         return cls.build(bld.build_empty, *args, **kwargs)
 
     @classmethod
-    def rand(cls, *args, **kwargs) -> 'SynapseBase':
+    def rand(cls, *args, **kwargs) -> SynapseBase:
         """Random model
 
         Synapse model with random transition matrices

@@ -68,15 +68,18 @@ class SynapseOptModel(_SynapseMemoryModel):
         ----------
         rate : float, optional
             Parameter of Laplace transform, :math:`s`.
+        inv : bool, default: False
+            Should we compute matrix inverses?
 
         Returns
         -------
         rows : tuple(la.lnarray)
             (p,c),
-        rows : tuple(la.lnarray)
+        cols : tuple(la.lnarray)
             (eta,theta),
-        rows : tuple(la.lnarray)
-            (Z,Zs,ZQZs)
+        mats : tuple(la.lnarray)
+            if inv: (Z,Zs,ZQZs)
+            if not inv: (Z^-1,Zs^-1)
         """
         fundi = self.zinv()
         fundis = self.zinv(rate)
@@ -191,17 +194,17 @@ class SynapseOptModel(_SynapseMemoryModel):
         rows, cols, mats = self._derivs(rate, True)
 
         # (n,n,n,n)
-        hessww = _dbl_diagsub(_outer3(rows[0], mats[0], cols[1]) +
-                              _outer3(rows[0], mats[2], cols[0]) +
-                              _outer3(rows[1], mats[1], cols[0])).sum(0)
+        hessww = _dbl_diagsub(_outer3(rows[0], mats[0], cols[1])
+                              + _outer3(rows[0], mats[2], cols[0])
+                              + _outer3(rows[1], mats[1], cols[0])).sum(0)
         # (2,n,n,n,n)
-        hesswq = _dbl_diagsub(_outer3(rows[0], mats[0], cols[0]) +
-                              _trnsp4(_outer3(rows[0], mats[1], cols[0])))
+        hesswq = _dbl_diagsub(_outer3(rows[0], mats[0], cols[0])
+                              + _trnsp4(_outer3(rows[0], mats[1], cols[0])))
 
         # (n(n-1),n(n-1))
         hesspp = tens2mat(hessww + hesswq.sum(0)/self.frac[0])*self.frac[0]**2
-        hesspm = tens2mat(hessww - hesswq[0]/self.frac[1] +
-                          hesswq[1]/self.frac[0]) * self.frac[0]*self.frac[1]
+        hesspm = tens2mat(hessww - hesswq[0]/self.frac[1]
+                          + hesswq[1]/self.frac[0]) * self.frac[0]*self.frac[1]
         hessmm = tens2mat(hessww - hesswq.sum(0)/self.frac[1])*self.frac[1]**2
         # (2n(n-1),2n(n-1))
         return - np.block([[hesspp, hesspm],
@@ -237,15 +240,15 @@ class SynapseOptModel(_SynapseMemoryModel):
             # p Z theta V  -> (2,n,n) -> (n,n)
             # c Zs eta V   -> (2,n,n) -> (n,n)
             # p ZQZs eta V -> (n,n)
-            hessww = (_outerdiv3p(rows[0], mats[0], cols[1], vecm).sum(0) +
-                      _outerdiv3p(rows[1], mats[1], cols[0], vecm).sum(0) +
-                      _outer3ps(rows[0], mats[2], cols[0], vecm)) * frc
+            h_ww = (_outerdiv3p(rows[0], mats[0], cols[1], vecm).sum(0)
+                    + _outerdiv3p(rows[1], mats[1], cols[0], vecm).sum(0)
+                    + _outer3ps(rows[0], mats[2], cols[0], vecm)) * frc
             # p Z eta V  -> (2,n,n)
             # p Zs eta V -> (2,n,n)
-            hesswq = (_outerdiv3p(rows[0], mats[0], cols[0], vecm) +
-                      np.flip(_outerdiv3p(rows[0], mats[1], cols[0], vecm), 0))
+            h_wq = (_outerdiv3p(rows[0], mats[0], cols[0], vecm)
+                    + np.flip(_outerdiv3p(rows[0], mats[1], cols[0], vecm), 0))
             # (n,n), (2,n,n)
-            return hessww, hesswq
+            return h_ww, h_wq
 
         # (n,n), (2,n,n)
         hwwp, hwqp = _hesspr(other.plast[0], self.frac[0])
@@ -296,8 +299,8 @@ def offdiag_inds(nst: int) -> la.lnarray:
 
     Parameters
     ----------
-    nst : la.lnarray (n,n)
-        Continuous time stochastic matrix.
+    nst : int
+        Number of states.
 
     Returns
     -------

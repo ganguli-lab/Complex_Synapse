@@ -31,7 +31,7 @@ build_multistate(nst, q)
 
 from typing import Dict
 import numpy as np
-from sl_py_tools.numpy_tricks import linalg as la
+import numpy_linalg as la
 
 
 def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
