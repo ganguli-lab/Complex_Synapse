@@ -385,3 +385,28 @@ def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
     stochastify_c(plast)
 #    out['plast'] = plast
     return out
+
+
+def adjoint(tensor: la.lnarray, measure: la.lnarray) -> la.lnarray:
+    """Adjoint with respect to L2 inner product with measure
+
+    Parameters
+    ----------
+    tensor : la.lnarray (...,n,n) or (...,1,n) or (...,n,1)
+        The matrix/row/column vector to be adjointed.
+    measure : la.lnarray (...,n)
+        The measure for the inner-product wrt which we adjoint
+
+    Parameters
+    ----------
+    tensor : la.lnarray (...,n,n) or (...,n,1) or (...,1,n)
+        The adjoint matrix/column/row vector.
+    """
+    adj = tensor.t
+    if adj.shape[-1] == 1:  # row -> col
+        adj /= measure.c
+    elif adj.shape[-2] == 1:  # col -> row
+        adj *= measure.r
+    else:  # mat -> mat
+        adj *= measure.r / measure.c
+    return adj

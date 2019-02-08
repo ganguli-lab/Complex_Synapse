@@ -128,14 +128,14 @@ class SynapseMemoryModel(SynapseBase):
 
         .. math:: W^f = fp Wp + fm Wm
         """
-        return (self.frac.s * self.plast).sum(0)
+        return (self.frac.s * self.plast).sum(-3)
 
     def enc(self) -> la.lnarray:
         """Average transition rate matrix, weighted by initial desired weight.
 
         .. math:: Q = fp Wp - fm Wm
         """
-        return (self.signal.s * self.frac.s * self.plast).sum(0)
+        return (self.signal.s * self.frac.s * self.plast).sum(-3)
 
     def zinv(self, rate: Optional[ArrayLike] = None,
              rowv: Optional[la.lnarray] = None) -> la.lnarray:
