@@ -116,7 +116,7 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
         """Complete frac vector
         """
         if len(self.frac) == len(self.plast) - 1:
-            self.frac = np.concatenate((self.frac, [1. - self.frac.sum()]))
+            self.frac = la.concatenate((self.frac, [1. - self.frac.sum()]))
 
     def valid_shapes(self) -> bool:
         """Do attributes (plast, weight, frac) have correct shapes?"""

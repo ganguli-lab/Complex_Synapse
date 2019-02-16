@@ -129,8 +129,8 @@ def rand_trans(nst: int, npl: int = 1, sparsity: float = 1.) -> la.lnarray:
     mat : la.lnarray
         transition matrix
     """
-    mat = np.random.rand(npl, nst, nst)
-    ind = np.random.rand(npl, nst, nst)
+    mat = la.random.rand(npl, nst, nst)
+    ind = la.random.rand(npl, nst, nst)
     mat[ind > sparsity] = 0.
     stochastify_c(mat)
     return mat
@@ -187,7 +187,7 @@ def build_generic(func, nst: int, npl: int = 2,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    plast = func(nst, npl)
+    plast = la.asarray(func(nst, npl))
     if binary:
         weight = binary_weights(nst)
     else:

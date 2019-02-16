@@ -175,12 +175,12 @@ class SynapseMemoryModel(SynapseBase):
         onev = la.ones_like(self.weight)
         if rowv is None:
             rowv = onev
-        fundi = onev.c * rowv - self.markov()
-        if rate is not None:
+        if rate is None:
+            s_arr = 0
+        else:
             # convert to lnarray, add singletons to broadcast with matrix
-            s_arr = la.asarray(rate).s
-            fundi += s_arr * np.eye(self.nstates)
-        return fundi
+            s_arr = la.asarray(rate).s * np.eye(self.nstates)
+        return onev.c * rowv - self.markov() + s_arr
 
     def peq(self) -> la.lnarray:
         """Steady state distribution.
@@ -221,7 +221,7 @@ class SynapseMemoryModel(SynapseBase):
         .. math:: Z(s) = (s I + e \pi - W^f)^{-1} \simeq \int e^{t(W^f-sI)} dt,
 
         i.e. :math:`Z^{-1}` with :math:`s` added to the diagonal.
-        Effectively the matrix inverse of the genarator's Laplace transform.
+        Effectively the matrix inverse of the propagator's Laplace transform.
 
         See Also
         --------
@@ -261,8 +261,8 @@ class SynapseMemoryModel(SynapseBase):
         .. math:: \\eta_i = \\sum_j T_{ij}(s) \\pi_j w_j.
         .. math:: \\delta \\eta_{ij}(s) = \\eta_i(s) - \\eta_j(s).
         """
-        eta = - self.zinv(rate).inv @ self.weight
-        return eta.c - eta
+        eta = - self.zinv(rate).inv @ self.weight.c
+        return eta - eta.t
 
     # -------------------------------------------------------------------------
     # %%* Memory curves
@@ -307,7 +307,7 @@ class SynapseMemoryModel(SynapseBase):
         rate : float, array, optional
             Parameter of Laplace transform, ``s``. Default: 0.
         """
-        return np.sum(self.peq() @ (self.enc() * self.deta(rate)))
+        return np.sum(self.peq() @ (self.enc() * self.deta(rate)), axis=-1)
 
     def snr_exp_ave(self, tau: ArrayLike) -> la.lnarray:
         """Exponential running average of SNR memory curve.
