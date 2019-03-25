@@ -19,6 +19,7 @@
 %================================================================================
 \DeclareMathOperator{\SNR}{SNR}
 \DeclareMathOperator{\snr}{SNR}
+\newcommand{\snrb}{\overline{\snr}}
 %matrices
 %prob vector
 \newcommand{\pr}{\mathbf{p}}
@@ -809,8 +810,6 @@ Stanford University, Applied Physics
  \\
     \citerr{Petersen1998allornone,OConnor2005switch}
 
-% \vp When we store new memories rapidly,
-
  \vp New memories overwrite old
  $\implies$ stability-plasticity dilemma.
  %
@@ -823,8 +822,8 @@ Stanford University, Applied Physics
 
 \begin{frame}{Models of complex synaptic dynamics}
 %
-%  There are $N$ identical synapses with $M$ internal functional states.
-\visible<2->{
+  There are $N$ identical synapses with $M$ internal functional states.
+%
 \parbox[c]{0.82\linewidth}{%
   \begin{itemize}
     \item Internal functional state of synapse \lto\ synaptic weight.
@@ -832,69 +831,37 @@ Stanford University, Applied Physics
   \end{itemize}
 }\hfill
 \alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
-}
-
-  %
-  \vp
-%  \begin{overlayarea}{0.7\linewidth}{0.3\linewidth}
-%    \only<1>{\includegraphics[width=0.99\linewidth]{synapse_model_1.svg}}%
-%    \only<2>{\includegraphics[width=0.99\linewidth]{synapse_model_2.svg}}
-%  \end{overlayarea}
 %
-\begin{overlayarea}{0.95\linewidth}{0.4\textheight}
+
   \begin{center}
-%\aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
-    \only<1>{\aligntop{\includegraphics[width=0.6\linewidth]{synapse_internal_1.svg}}}%
-    \only<2->{\aligntop{\includegraphics[width=0.6\linewidth]{synapse_internal.svg}}}%
-    \hspace{0.07\linewidth}
-    \visible<3->{\aligntop{\includegraphics[width=0.3\linewidth]{MadisonMontgomery.jpg}}
-    \\ \citerr{Montgomery2002765}}
-%    \only<3->{\vp}
-%    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
-%    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
-%    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
-%    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
-%    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
-%    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
-%    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
-%    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
-%    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
-%    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
-%    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
-%    \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
-%    \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
-%    \only<16>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
-%    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
-%    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
-%    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
-%    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
-%    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
-%    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
-%    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
-%    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
-%    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
-    %
-%    \hspace{0.05\linewidth}\parbox[t]{0.45\linewidth}{\raggedright
-%    \visible<15>{
-%    Mutation: transition probabilities \\ \vp
-%    Training: rates of pot/dep events \\ \vp
-%    Learning: synaptic weight}}
+    \aligntop{\includegraphics[width=0.6\linewidth]{synapse_internal.svg}}
+%    \hspace{0.07\linewidth}
+%    \aligntop{\includegraphics[width=0.3\linewidth]{MadisonMontgomery.jpg}}
+%    \\ \citerr{Montgomery2002765}
   \end{center}
-\end{overlayarea}
+  \vp
+  States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
+  CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
 
-%  \onslide<2>{\hfill
-%  \parbox[t]{0.3\linewidth}{PF+\cancel{CF} \lto\ LTP, \\
-%              PF+CF \lto\ LTD.}
-%  \parbox[t]{0.27\linewidth}{Lower threshold\\ for LTD}
-%  \parbox[t]{0.27\linewidth}{VOR gain increase}}
-\vp
-\begin{overlayarea}{0.95\linewidth}{0.3\textheight}
-  \only<2-3>{States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
-   CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
-
-  \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}}%%\\\citerr{Smith2006savings,Lahiri2013synapse}}%
-  \only<4>{
+  \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}%%\\\citerr{Smith2006savings,Lahiri2013synapse}}%
   %
+  \note[item]{complex synapse: not just synaptic weight. dynamical system}
+  \note[item]{important for memory with bounded synapses}
+  \note[item]{nodes \lto\ states}
+  \note[item]{color \lto\ sttrength}
+  \note[item]{arrows \lto\ plasticity}
+%  \note[item]{stoch process has steady state distribution.}
+%  \note[item]{Prior activity puts it in this state. row vec.}
+  \note[item]{plasticity events at rate r. indep at each synapse.}
+  \note[item]{fraction pot/dep}
+  \note[item]{Readout: synaptic weight vec when in each state.}
+  %
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Specific models of complex synaptic dynamics}
+%
   \begin{center}
     \parbox[t]{0.25\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{cascade.svg}}
 
@@ -908,53 +875,12 @@ Stanford University, Applied Physics
 
        \citerr{Benna2015complex}}
   \end{center}
-  %
-  }
-
-%  \only<8->{Metaplasticity: \parbox[t]{0.7\linewidth}{%
-%     change propensity for plasticity \\
-%     (independent of change in synaptic weight).}}
-\end{overlayarea}
-
-  %
-  \note[item]{complex synapse: not just synaptic weight. dynamical system}
-  \note[item]{important for memory with bounded synapses}
-  \note[item]{nodes \lto\ states}
-  \note[item]{color \lto\ sttrength}
-  \note[item]{arrows \lto\ plasticity}
-%  \note[item]{stoch process has steady state distribution.}
-%  \note[item]{Prior activity puts it in this state. row vec.}
-  \note[item]{plasticity events at rate r. indep at each synapse.}
-  \note[item]{fraction pot/dep}
-  \note[item]{Readout: synaptic weight vec when in each state.}
-    \note[item]{Mutation: lower threshold \lto\ increase transition probs}
-    \note[item]{Training: Changes statistics of LTP/LTD. Only parameters we have. Don't care about $r$.}
-    \note[item]{Learning: Only output we have. Don't keep track of synaptic identity.}
-%    \note<2>[item]{Same PF+CF input \lto\ same $r,f\pot,f\dep$ in each case.}
-%    \note<2>[item]{Input to Pk, some linear combination of $\w$'s. }
-% At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
-% \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
-%
-% \vp Forgetting caused by subsequent memories, evolving as
-%
-%  \begin{equation*}
-%  \begin{aligned}
-%    \diff{\pr(t)}{t} &= r\pr(t)\frg,
-%    &\qquad
-%    \frg &= f\pot\M\pot+f\dep\M\dep-\I,\\&&
-%    \eq\frg &=0.
-%  \end{aligned}
-%  \end{equation*}
-%%
-%  \note[item]{Memory at $t=0$, keep track of pot/dep}
-%  \note[item]{subsequent: average over pot/dep}
-% \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
-% Eventually, this will settle into the equilibrium distribution:
-% %
-% %
-% \note[item]{In equilibrium prior to memory creation}
 %
 \end{frame}
+
+% ----Section--------------------------------------------------------------
+
+\subsection{Quantifying memory quality}
 
 %%-------------Slide--------------------------------------------------------
 %
@@ -1070,36 +996,100 @@ Stanford University, Applied Physics
 \end{frame}
 
 
-%%-------------Slide--------------------------------------------------------
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Parameters for synaptic dynamics}
 %
-%\begin{frame}{Upper bounds on measures of memory}
-%%
-% Initial SNR:
-% %
-% \begin{equation*}
-%   \snr(0) = \snrb(0) \leq \sqrt{N}.
-% \end{equation*}
-% %
-% %
-% \begin{center}
-%   \includegraphics[height=0.1\linewidth]{binary_det.svg}
-% \end{center}
-% %
-% Area under curve:
-% %
-% \begin{equation*}
-%   \area = \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\ra\infty} \tau \, \snrb(\tau) \leq \sqrt{N}(M-1)/r.
-% \end{equation*}
-% %
-% %
-% \begin{center}
-%   \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
-% \end{center}
-% %
-% \citerr{Lahiri2013synapse}
-%%
-%\end{frame}
+%  There are $N$ identical synapses with $M$ internal functional states.
+%  %
+%  \begin{center}
+%    \includegraphics[width=0.7\linewidth]{model.svg}
+%  \end{center}
+%  %
+%  \note[item]{stoch process has steady state.}
+%  \note[item]{Prior activity puts it in this state. row vec.}
+%  \note[item]{plasticity events at rate r}
+%  \note[item]{fraction pot/dep}
+%  \note[item]{probs changed by Markov matrices, prob $i\to j$}
+%  \note[item]{Readout: synaptic weight vec when in each state.}
+%  \vp
+% At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
+% \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
 %
+  %
+  \begin{equation*}
+  \begin{aligned}
+     f\potdep &= \text{fraction of events that are pot/dep,} \\
+    \text{pot. event: } M\pot_{ij} &= \text{transition prob. } i \to j, \\
+    \text{dep. event: } M\dep_{ij} &= \text{transition prob. } i \to j. \\
+  \end{aligned}
+  \end{equation*}
+%
+ Constraints:  
+ %
+ \begin{equation*}
+   \M\potdep_{ij}, f\potdep \in [0,1], \qquad 
+   \sum_j \M\potdep_{ij} = f\pot + f\dep = 1.
+ \end{equation*}
+ %
+ \note[item]{difficult to to apply}
+ \note[item]{Memory at $t=0$, keep track of pot/dep}
+ \note[item]{subsequent: average over pot/dep}
+ \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
+%
+%
+ Memory curve given by
+ %
+ \begin{equation*}
+ \begin{aligned}
+    \frg &= f\pot\M\pot+f\dep\M\dep-\I, \qquad
+    \eq \frg =0, \\
+   \snrb(\tau) 
+        &= \sqrt{N}(2f\pot f\dep)\, \eq \prn{\M\pot-\M\dep} \brk{\I - r\tau\frg}\inv \w. \\
+        &= \sqrt{N}\sum_a \frac{\initial_a }{1+r \tau / \tau_a}. \\
+ \end{aligned}
+ \end{equation*}
+ %
+ \note[item]{prefactors don't do anything, ignore}
+ \note[item]{prior state, encoding, forgetting, readout}
+
+%
+\end{frame}
+
+% ----------------------------------------------------------------
+
+\section{Proven limits of memory}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Upper bounds on measures of memory}
+%
+ Initial SNR:
+ %
+ \begin{equation*}
+   \snr(0) = \sum_a \initial_a \leq \sqrt{N}.
+ \end{equation*}
+ %
+ %
+ \begin{center}
+   \includegraphics[height=0.1\linewidth]{binary_det.svg}
+ \end{center}
+ %
+ Area under curve:
+ %
+ \begin{equation*}
+   \area = \int_0^\infty \!\snr(t)\, \dt = \sum_a \initial_a \tau_a \leq \sqrt{N}(M-1)/r.
+ \end{equation*}
+ %
+ %
+ \begin{center}
+   \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
+ \end{center}
+ %
+ \citerr{Lahiri2013synapse}
+%
+\end{frame}
+
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Proven envelope: memory frontier}
@@ -1202,7 +1192,11 @@ Stanford University, Applied Physics
 %%
 %%
 %\end{frame}
-%
+
+% ----------------------------------------------------------------
+
+\section{Implications of memory limits}
+
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Synaptic diversity and timescales of memory}
@@ -1243,10 +1237,10 @@ Stanford University, Applied Physics
 
 \begin{frame}{Synaptic structure and function: general principles}
 %
-% Real synapses limited by molecular building blocks. \\
-% Evolution had larger set of priorities.
-%
-% \vp What can we conclude?
+ Real synapses limited by molecular building blocks. \\
+ Evolution had larger set of priorities.
+
+ \vp What can we conclude?
 
  \begin{center}
  \begin{tabular}{ccccc}
@@ -1260,6 +1254,9 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+% ----------------------------------------------------------------
+
+\section{Designing experiments}
 
 %-------------Slide--------------------------------------------------------
 
@@ -1299,53 +1296,70 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%%-------------Slide--------------------------------------------------------
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Simulated experiment}
 %
-%\begin{frame}{Simulated experiment}
-%%
-% %
-% \begin{center}
-%%   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
-%%   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
-%%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
-%%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
-%%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
-%%   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
-%%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
-%%   \only<8>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
-%%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
-%%   \only<10>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
+ %
+ \begin{center}
 %   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
 %   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
-%%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
-%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
-%%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
-%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
-%%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
-%%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
-%%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
-%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
-% \end{center}
-% %
-%%
-%\end{frame}
+%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
+%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
+%   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
+%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
+%   \only<8>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
+%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
+%   \only<10>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
+   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
+%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
+   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
+   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
+%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
+%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
+   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
+ \end{center}
+ %
+ \textbf{EM algorithms:}
+
+   Sequence of hidden states $\ra$ estimate transition probabilities \\
+   Transition probabilities $\ra$ estimate sequence of hidden states
+
+   \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
+
+ \vp \textbf{Spectral algorithms:}
+
+ Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
+ \parbox[t]{0.3\linewidth}{
+   from data, \\
+   from model.
+ }
+
+ \citerr{Hsu2008hmmspec}
+
 %
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Experimental problems}
 %
-%%-------------Slide--------------------------------------------------------
+ \begin{itemize}
+   \item Need single synapses.
+   \item Need long sequences of plasticity events.
+   \item Need to control types of candidate plasticity events.
+   \item Need to measure synaptic efficacies.
+ \end{itemize}
+
+ \vp When we patch the postsynaptic neuron \lto\ Ca washout.
 %
-%\begin{frame}{Experimental problems}
-%%
-% \begin{itemize}
-%   \item Need single synapses.
-%   \item Need long sequences of plasticity events.
-%   \item Need to control types of candidate plasticity events.
-%   \item Need to measure synaptic efficacies.
-% \end{itemize}
-%
-% \vp When we patch the postsynaptic neuron \lto\ Ca washout.
-%%
-%\end{frame}
-%
+\end{frame}
+
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Summary}
@@ -1528,6 +1542,215 @@ Stanford University, Applied Physics
 
  \vp For $M=2$: larger $q\dep \implies$ larger $\CN \implies$ faster learning.
  \note[item]{Other factor in $\eq$ smaller $\implies \CN$ larger.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Initial SNR as flux}
+%
+ Initial SNR is closely related to flux between strong \& weak states
+ %
+ \note[item]{flux = eq prob $\times$ trans prob}
+ %
+ \begin{equation*}
+   \SNR(0) \leq \frac{4\sqrt{N}}{r}\,\F_{-+}.
+ \end{equation*}
+ %
+ \note[item]{usually saturated: pot never dec, dep never inc}
+ Max when {\parbox[t]{8cm}{potentiation guarantees $\w\to+1$,\\
+ depression guarantees $\w\to-1$.}}
+ %
+ \begin{center}
+   \includegraphics[height=3cm]{max_init_pot.svg}
+   \hp \hp
+   \includegraphics[height=3cm]{max_init_dep.svg}
+ \end{center}
+ %
+ \note[item]{transitions out of one node sum to 1}
+ \note[item]{equivalent to two-state model: doesn't matter which strong/weak state, same prob of going to other set.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Two-state model}
+%
+ Two-state model equivalent to previous slide:
+  \begin{center}
+  Transitions:
+   \parbox{2cm}{\includegraphics[height=2cm]{binary_det.svg}}
+   $\implies\snr(t)=\sqrt{N}\,(4 f\pot f\dep)\,\e^{-rt}.$
+  \end{center}
+  \note[item]{decays very quickly}
+
+ \vp Maximal initial SNR:\note[item]{$f\pot=\half$}
+ %
+ \begin{equation*}
+   \snr(0) \leq \sqrt{N}.
+ \end{equation*}
+ %
+ \note[item]{Initial SNR not a good thing to optimise.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Area under memory curve}
+%
+  %
+  \begin{equation*}
+    \area = \intd[_0^\infty]{t} \snr(t),
+    \qquad
+    \snrb(\tau) \ra \frac{\area}{\tau}
+    \quad \text{as} \quad \tau \ra \infty.
+  \end{equation*}
+%
+
+
+  \vp\parbox{5cm}{
+  Area bounds memory lifetime:\\
+  %
+  \begin{equation*}
+  \begin{aligned}
+    \SNR(\text{lifetime})&=1
+    \\
+    \implies
+    \quad
+    \text{lifetime} &< \area.
+  \end{aligned}
+  \end{equation*}
+  %
+  }
+  \parbox{6.5cm}{
+    \includegraphics[width=6cm]{lifetime.eps}
+  }
+  %
+  \note[item]{lifetime = area under green < area under blue}
+  \note[item]{capacity $\sim r$ lifetime, \#new memories before we forget original.}
+
+  %
+  \vp This area has an upper bound:
+  %
+  \begin{equation*}
+    \area \leq \sqrt{N}(M-1)/r.
+  \end{equation*}
+  %
+  \note[item]{reminder: $N=$\#synapses, $M=$\#states}
+  Saturated by a model with linear chain topology.
+  \note[item]{proof next slide}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}[label=fr_areaproof]{Proof of area bound}
+%
+ For any model, we can construct perturbations that
+ \parbox[c]{5cm}{
+  \begin{itemize}
+    \item preserve equilibrium distribution,
+    \item increase area.
+  \end{itemize}
+  \hyperlink{fr_tech}{\beamerbutton{details}}
+  %
+  \note[item]{relies on order \& technical condition}
+ }
+ \parbox[c]{5cm}{
+  %
+  \begin{center}
+    \includegraphics[width=4cm]{shortcut.svg}
+  \end{center}
+  %
+ }\\
+ \eg decrease ``shortcut'' transitions, increase bypassed ``direct'' ones.\\
+ Endpoint: linear chain
+
+ \vp The area of this model is
+ %
+ \begin{equation*}
+   A = \frac{2\sqrt{N}}{r}\sum_k \eq_k \abs{k-\av{k}}.
+ \end{equation*}
+ %
+ \note[item]{max given $\eq$}
+ \note[item]{now max \wrt $\eq$}
+ Max: equilibrium probability distribution concentrated at both ends.
+ \note[item]{keep c.o.m.\ in middle}
+ \\
+ \citerr{Barrett2008discrete}
+ \note[item]{similar result, slightly different conditions: linear weights, mutual info}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Saturating model}
+%
+ Make end states ``sticky''
+ %
+ \begin{center}
+   \includegraphics[width=8cm]{multistate_sticky.svg}
+ \end{center}
+ %
+ Has long decay time, but terrible initial SNR.
+ %
+ \note[item]{Difficult to get out of end state.}
+ \note[item]{Area not a good thing to optimise}
+ %
+ \begin{equation*}
+   \lim_{\varepsilon\to0}A=\sqrt{N}(M-1)/r.
+ \end{equation*}
+ %
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}[label=fr_tech]{Technical detail: ordering states}
+%
+ Let $\fpt_{ij}=$ mean first passage time from state $i$ to state $j$.
+ Then:
+ %
+ \begin{equation*}
+   \eta = \sum_j \fpt_{ij} \eq_j,
+ \end{equation*}
+ %
+ is independent of the initial state $i$
+ (Kemeney's constant).\\ \citerr{kemeny1960finite}
+
+ \vp We define:
+ %
+ \begin{equation*}
+   \eta^+_i = \sum_{j\in\text{strong}} \fpt_{ij} \eq_j,
+   \qquad
+   \eta^-_i = \sum_{j\in\text{weak}} \fpt_{ij} \eq_j.
+ \end{equation*}
+ %
+ \note[item]{Measure ``distance'' to the strong/weak states.}
+ They can be used to arrange the states in an order (increasing $\eta^-$ or decreasing $\eta^+$).
+ \hyperlink{fr_areaproof}{\beamerbutton{back}}
+ \note[item]{sum to constant, $\implies$ two orders same}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Technical detail: upper/lower triangular}
+%
+ With states in order:
+ %
+ \begin{center}
+   \includegraphics[width=2cm]{triangular_right.svg}
+   \hp \hp \hp
+   \includegraphics[width=2cm]{triangular_left.svg}
+ \end{center}
+ %
+ \note[item]{pot \& dep with same initial \& final state}
+ Endpoint: potentiation goes right, depression goes left.
+ \note[item]{pot/dep matrices are upper/lower triangular.}
+ \note[item]{one other pert. too technical, even for bonus slide!}
+
+ \hyperlink{fr_areaproof}{\beamerbutton{back}}
 %
 \end{frame}
 
