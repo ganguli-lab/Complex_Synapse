@@ -20,11 +20,13 @@
 \DeclareMathOperator{\SNR}{SNR}
 \DeclareMathOperator{\snr}{SNR}
 \newcommand{\snrb}{\overline{\snr}}
+\newcommand{\syn}{\vec{w}}
+\newcommand{\synid}{\syn_\text{ideal}}
 %matrices
 %prob vector
 \newcommand{\pr}{\mathbf{p}}
 %equilibrium distribution
-\newcommand{\eq}{\pr^\infty}
+\newcommand{\eq}{\boldsymbol{\pi}}
 %first passage times
 \newcommand{\fpt}{\mathbf{T}}
 %off-diag first passage times
@@ -81,15 +83,6 @@ Stanford University, Applied Physics
  \begin{center}
  \parbox[c]{0.45\linewidth}{
   %
-%  \visible<2->{
-  \begin{center}
-    Theorists
-  \end{center}
-%  }
-  %
- }
- \parbox[c]{0.45\linewidth}{
-  %
 %  \visible<3->{
   \begin{center}
     Experimentalists
@@ -97,16 +90,16 @@ Stanford University, Applied Physics
 %  }
   %
  }
-
  \parbox[c]{0.45\linewidth}{
   %
 %  \visible<2->{
   \begin{center}
-    \Huge $W_{ij}$
+    Theorists
   \end{center}
 %  }
   %
  }
+
  \parbox[c]{0.45\linewidth}{
   %
 %  \visible<3->{
@@ -116,6 +109,15 @@ Stanford University, Applied Physics
   %
   \citerr{Klann2002metaplasticity}
 %  }
+ }
+ \parbox[c]{0.45\linewidth}{
+  %
+%  \visible<2->{
+  \begin{center}
+    \Huge $W_{ij}$
+  \end{center}
+%  }
+  %
  }
  \end{center}
 %
@@ -128,7 +130,7 @@ Stanford University, Applied Physics
   Hopfield, perceptron have capacity $\propto N$, (\# synapses).
 
 \vp\parbox[t]{0.59\linewidth}{%
-  Assumes unbounded analog synapses
+  Assumes unbounded analogue synapses
   %Requires synapses' dynamic range also $\propto N$.
 
  \vp With discrete, finite synapses:\\
@@ -475,24 +477,24 @@ Stanford University, Applied Physics
 
 \subsection{Synaptic models of VOR learning}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Synapses are complex}
+%%-------------Slide--------------------------------------------------------
 %
- \parbox[t]{0.45\linewidth}{%
- \includegraphics[height=0.8\linewidth]{2000102CobaFig4.pdf}
-
- \citerr{Coba2009phosphorylation}
- }
- \hspace{0.05\linewidth}
- \parbox[t]{0.45\linewidth}{%
- \hfill
- \includegraphics[height=0.8\linewidth]{MadisonMontgomery.jpg}
-
- \citerr{Montgomery2002765}
- }
+%\begin{frame}{Synapses are complex}
+%%
+% \parbox[t]{0.45\linewidth}{%
+% \includegraphics[height=0.8\linewidth]{2000102CobaFig4.pdf}
 %
-\end{frame}
+% \citerr{Coba2009phosphorylation}
+% }
+% \hspace{0.05\linewidth}
+% \parbox[t]{0.45\linewidth}{%
+% \hfill
+% \includegraphics[height=0.8\linewidth]{MadisonMontgomery.jpg}
+%
+% \citerr{Montgomery2002765}
+% }
+%%
+%\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
@@ -839,11 +841,11 @@ Stanford University, Applied Physics
 %    \aligntop{\includegraphics[width=0.3\linewidth]{MadisonMontgomery.jpg}}
 %    \\ \citerr{Montgomery2002765}
   \end{center}
-  \vp
+
   States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
   CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
 
-  \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}%%\\\citerr{Smith2006savings,Lahiri2013synapse}}%
+  \vp \footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}%%\\\citerr{Smith2006savings,Lahiri2013synapse}}%
   %
   \note[item]{complex synapse: not just synaptic weight. dynamical system}
   \note[item]{important for memory with bounded synapses}
@@ -863,17 +865,18 @@ Stanford University, Applied Physics
 \begin{frame}{Specific models of complex synaptic dynamics}
 %
   \begin{center}
-    \parbox[t]{0.25\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{cascade.svg}}
-
-       \citerr{Fusi2005cascade}}
+    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{cascade.svg}}
+                               \par\citerr{Fusi2005cascade}}
     \hspace{0.05\linewidth}
-    \parbox[t]{0.25\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{serial.svg}}
+    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{serial.svg}}
+                               \par\citerr{Ben-DayanRubin2007sparse} \par\citerr{Leibold2008serial}}
 
-       \citerr{Ben-DayanRubin2007sparse,Leibold2008serial}}
+    \vp
+    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{BennaFusi.svg}}
+                               \par\citerr{Benna2015complex}}
     \hspace{0.05\linewidth}
-    \parbox[t]{0.35\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{BennaFusi.svg}}
-
-       \citerr{Benna2015complex}}
+    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{integ_express.pdf}}
+                               \par\citerr{Elliott2011}}
   \end{center}
 %
 \end{frame}
@@ -926,10 +929,11 @@ Stanford University, Applied Physics
 %
  %
  \begin{center}
-   \includegraphics[width=0.6\linewidth]{MemorySequence.svg}
+   \includegraphics[width=0.5\linewidth]{MemorySequence.svg}
  \end{center}
  %
- Synapses store a sequence of memories.
+ Synapses store a sequence of memories.\\
+ Recognition memory performance described by SNR.
  %
  \begin{center}
    {\includegraphics[width=0.55\linewidth]{MemoryCurve.svg}}
@@ -938,35 +942,6 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%%-------------Slide--------------------------------------------------------
-%
-%\begin{frame}{Quantifying memory quality}
-%%
-%% Have we seen pattern before?
-% Test if $\synid \cdot \syn(t) \gtrless \theta$?
-%
-%% $\synid \cdot \syn(\infty) \sim$  null distribution
-%% $\implies$ ROC curve:
-%
-% \vp
-% %
-% %
-% \begin{equation*}
-%   \begin{aligned}
-%%   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
-%   %\quad\text{where } \quad
-%     %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
-%     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, \\[1cm]
-%     \snrb(\tau) &= \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
-%%     \\[1cm]
-%%    \color{darkgrey} \operatorname{NNR}(t) &= \color{darkgrey} \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
-%   \end{aligned}
-% \end{equation*}
-%
-%
-%%
-%\end{frame}
-%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{General principles relating structure and function?}
@@ -1019,17 +994,21 @@ Stanford University, Applied Physics
   %
   \begin{equation*}
   \begin{aligned}
-     f\potdep &= \text{fraction of events that are pot/dep,} \\
-    \text{pot. event: } M\pot_{ij} &= \text{transition prob. } i \to j, \\
-    \text{dep. event: } M\dep_{ij} &= \text{transition prob. } i \to j. \\
+     \alert{f\potdep} &= \text{fraction of events that are pot/dep,} \\
+    \text{pot. event: } \alert{M\pot_{ij}} &= \text{transition prob. } i \to j, \quad  
+    &{\scriptstyle
+    \W\pot =  f\pot \prn{\M\pot - I},} \\
+    \text{dep. event: } \alert{M\dep_{ij}} &= \text{transition prob. } i \to j, \quad   
+    &{\scriptstyle
+    \W\dep =  f\dep \prn{\M\dep - I}.} \\
   \end{aligned}
   \end{equation*}
 %
- Constraints:  
+ Constraints:
  %
  \begin{equation*}
-   \M\potdep_{ij}, f\potdep \in [0,1], \qquad 
-   \sum_j \M\potdep_{ij} = f\pot + f\dep = 1.
+   f\potdep, \M\potdep_{ij} \in [0,1], \qquad
+   f\pot + f\dep = \sum_j \M\potdep_{ij} = 1.
  \end{equation*}
  %
  \note[item]{difficult to to apply}
@@ -1042,12 +1021,14 @@ Stanford University, Applied Physics
  %
  \begin{equation*}
  \begin{aligned}
-    \frg &= f\pot\M\pot+f\dep\M\dep-\I, \qquad
-    \eq \frg =0, \\
-   \snrb(\tau) 
-        &= \sqrt{N}(2f\pot f\dep)\, \eq \prn{\M\pot-\M\dep} \brk{\I - r\tau\frg}\inv \w. \\
+%    \frg &= f\pot\M\pot+f\dep\M\dep-\I, \qquad
+%    \eq \frg =0, \\
+   \snrb(\tau)
+        &= \sqrt{N}\, \eq \prn{\W\pot-\W\dep} \brk{\I - r\tau\prn{\W\pot + \W\dep}}\inv \w. \\
         &= \sqrt{N}\sum_a \frac{\initial_a }{1+r \tau / \tau_a}. \\
+  %
  \end{aligned}
+ %
  \end{equation*}
  %
  \note[item]{prefactors don't do anything, ignore}
@@ -1058,16 +1039,17 @@ Stanford University, Applied Physics
 
 % ----------------------------------------------------------------
 
-\section{Proven limits of memory}
+\subsection{Frontiers of memory}
 
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Upper bounds on measures of memory}
 %
+\parbox[t]{0.6\linewidth}{
  Initial SNR:
  %
  \begin{equation*}
-   \snr(0) = \sum_a \initial_a \leq \sqrt{N}.
+   \initial = \snr(0) = \sum_a \initial_a \leq \sqrt{N}.
  \end{equation*}
  %
  %
@@ -1075,6 +1057,10 @@ Stanford University, Applied Physics
    \includegraphics[height=0.1\linewidth]{binary_det.svg}
  \end{center}
  %
+ }
+ \parbox[t]{0.39\linewidth}{
+    \aligntop{\includegraphics[width=0.96\linewidth]{snr_props.svg}}
+ } \par
  Area under curve:
  %
  \begin{equation*}
@@ -1195,7 +1181,7 @@ Stanford University, Applied Physics
 
 % ----------------------------------------------------------------
 
-\section{Implications of memory limits}
+\subsection{Implications of memory limits}
 
 %-------------Slide--------------------------------------------------------
 
@@ -1245,8 +1231,8 @@ Stanford University, Applied Physics
  \begin{center}
  \begin{tabular}{ccccc}
    % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-   Short timescale & $\longrightarrow$ & Intermediate timescale & $\longrightarrow$ & Long timescale \\[0.5cm]
-   \alignmid{\includegraphics[height=0.065\linewidth]{multistate_uni4.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.065\linewidth]{multistate_uni.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.065\linewidth]{multistate_sticky.svg}} \\[0.5cm]
+   Short timescale & $\longrightarrow$ & Moderate timescale & $\longrightarrow$ & Long timescale \\[0.5cm]
+   \alignmid{\includegraphics[height=0.064\linewidth]{multistate_uni4.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.064\linewidth]{multistate_uni.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.064\linewidth]{multistate_sticky.svg}} \\[0.5cm]
    \visible<2->{short topology} & \visible<2->{$\longrightarrow$} & \visible<2->{long topology} &  &  \\[0.5cm]
     & & \visible<3->{deterministic synapse} & \visible<3->{$\longrightarrow$} & \visible<3->{stochastic synapse} \\
  \end{tabular}
@@ -1547,6 +1533,41 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
+\begin{frame}{Quantifying memory quality}
+%
+% Have we seen pattern before?
+ Test if $\synid \cdot \syn(t) \gtrless \theta$?
+
+% $\synid \cdot \syn(\infty) \sim$  null distribution
+% $\implies$ ROC curve:
+
+ \vp
+ \parbox[t]{0.4\linewidth}{%
+ \aligntop{\includegraphics[width=0.9\linewidth]{roc.svg}}
+ }
+ %
+ \parbox[t]{0.55\linewidth}{%
+ \vspace{-\baselineskip}
+ %
+ \begin{equation*}
+   \begin{aligned}
+%   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
+   %\quad\text{where } \quad
+     %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
+     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, 
+     \\[\baselineskip]
+     \snrb(\tau) &= \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
+     \\[\baselineskip]
+     \color{darkgrey} \operatorname{NNR}(t) &= \color{darkgrey} \sqrt{\frac{ \var(\synid\cdt\syn(t)) }{ \var(\synid\cdt\syn(\infty)) }}.
+   \end{aligned}
+ \end{equation*}
+ }
+ Also: KL divergence, Chernoff distance, \ldots
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
 \begin{frame}{Initial SNR as flux}
 %
  Initial SNR is closely related to flux between strong \& weak states
@@ -1751,6 +1772,38 @@ Stanford University, Applied Physics
  \note[item]{one other pert. too technical, even for bonus slide!}
 
  \hyperlink{fr_areaproof}{\beamerbutton{back}}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Intuition for using topology}
+%
+ %
+ \begin{center}
+   \includegraphics[width=0.5\linewidth]{serial_sym_label.svg}
+ \end{center}
+%
+%
+\begin{equation*}
+  \begin{aligned}
+    \initial &\propto q,
+    &\quad
+    \max_a \tau_a &\propto \frac{1}{q}, \\
+    \initial &\propto \frac{1}{M},
+    &
+    \max_a \tau_a &\propto M^2, \\
+  \end{aligned}
+  %
+  \quad\implies\quad
+  %
+  \begin{aligned}
+    &\text{Stochasticity:} & \initial &\propto \frac{1}{\tau\lmax}, \\
+    &\text{Topology:}      & \initial &\propto \frac{1}{\sqrt{\tau\lmax}}.
+  \end{aligned}
+\end{equation*}
+%
+
 %
 \end{frame}
 
