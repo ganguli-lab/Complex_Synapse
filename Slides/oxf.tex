@@ -1,4 +1,5 @@
 % -*- TeX -*- -*- UK -*- -*- BMR -*-
+% !Compiler:: "PDFTeXify"
 % ----------------------------------------------------------------
 % Beamer presentation ************************************************
 % **** -----------------------------------------------------------
@@ -102,21 +103,21 @@ Stanford University, Applied Physics
 
  \parbox[c]{0.45\linewidth}{
   %
-%  \visible<3->{
+  \visible<2->{
   \begin{center}
     \includegraphics[width=0.95\linewidth]{plasticity-network.jpg}
   \end{center}
   %
   \citerr{Klann2002metaplasticity}
-%  }
+  }
  }
  \parbox[c]{0.45\linewidth}{
   %
-%  \visible<2->{
+  \visible<3->{
   \begin{center}
     \Huge $W_{ij}$
   \end{center}
-%  }
+  }
   %
  }
  \end{center}
@@ -127,14 +128,14 @@ Stanford University, Applied Physics
 
 \begin{frame}{Storage capacity of synaptic memory}
 %
-  Hopfield, perceptron have capacity $\propto N$, (\# synapses).
+  Hopfield, perceptron have capacity \alert{$\propto N$}, (\# synapses).
 
 \vp\parbox[t]{0.59\linewidth}{%
   Assumes unbounded analogue synapses
   %Requires synapses' dynamic range also $\propto N$.
 
  \vp With discrete, finite synapses:\\
- $\implies$ memory capacity  $\sim\CO(\log N)$.
+ $\implies$ memory capacity  \alert{$\sim\CO(\log N)$}.
  \\ \citerr{amit1992constraints,amit1994learning}
  %
  }
@@ -149,8 +150,8 @@ Stanford University, Applied Physics
 
 % \vp When we store new memories rapidly,
 
- \vp New memories overwrite old
- \impl stability-plasticity dilemma.
+% \vp New memories overwrite old
+% \impl stability-plasticity dilemma.
  %
  \note[item]{or sparse $\sim \log N / N$}
 %
@@ -297,7 +298,7 @@ Stanford University, Applied Physics
 
 %-------------Section--------------------------------------------------------
 
-\subsection{Effects of enhanced plasticity on VOR learning}
+\subsection{Effects of enhanced plasticity on cerebellar learning}
 %\subsection{VOR learning and the cerebellum}
 
 %-------------Slide--------------------------------------------------------
@@ -475,7 +476,7 @@ Stanford University, Applied Physics
 
 % -----Section-------------------------------------------------------------
 
-\subsection{Synaptic models of VOR learning}
+\subsection{Synaptic models of cerebellar learning}
 
 %%-------------Slide--------------------------------------------------------
 %
@@ -792,25 +793,25 @@ Stanford University, Applied Physics
 
 \begin{frame}{Storage capacity of synaptic memory}
 %
-  Hopfield, perceptron have capacity $\propto N$, (\# synapses).
+  Hopfield, perceptron have capacity \alert{$\propto N$}, (\# synapses).
 
 \vp\parbox[t]{0.59\linewidth}{%
   Assumes unbounded analog synapses
   %Requires synapses' dynamic range also $\propto N$.
 
  \vp With discrete, finite synapses:\\
- $\implies$ memory capacity  $\sim\CO(\log N)$.
+ $\implies$ memory capacity  \alert{$\sim\CO(\log N)$}.
  \\ \citerr{amit1992constraints,amit1994learning}
  %
  }
  %
- \parbox[t]{0.4\linewidth}{
-   %\begin{flushright}
-    \hfill\aligntop{\includegraphics[width=0.9\linewidth]{Petersen1998.jpg}}
-   %\end{flushright}
- }
- \\
-    \citerr{Petersen1998allornone,OConnor2005switch}
+% \parbox[t]{0.4\linewidth}{
+%   %\begin{flushright}
+%    \hfill\aligntop{\includegraphics[width=0.9\linewidth]{Petersen1998.jpg}}
+%   %\end{flushright}
+% }
+% \\
+%    \citerr{Petersen1998allornone,OConnor2005switch}
 
  \vp New memories overwrite old
  $\implies$ stability-plasticity dilemma.
@@ -995,10 +996,10 @@ Stanford University, Applied Physics
   \begin{equation*}
   \begin{aligned}
      \alert{f\potdep} &= \text{fraction of events that are pot/dep,} \\
-    \text{pot. event: } \alert{M\pot_{ij}} &= \text{transition prob. } i \to j, \quad  
+    \text{pot. event: } \alert{M\pot_{ij}} &= \text{transition prob. } i \to j, \quad
     &{\scriptstyle
     \W\pot =  f\pot \prn{\M\pot - I},} \\
-    \text{dep. event: } \alert{M\dep_{ij}} &= \text{transition prob. } i \to j, \quad   
+    \text{dep. event: } \alert{M\dep_{ij}} &= \text{transition prob. } i \to j, \quad
     &{\scriptstyle
     \W\dep =  f\dep \prn{\M\dep - I}.} \\
   \end{aligned}
@@ -1554,7 +1555,7 @@ Stanford University, Applied Physics
 %   \operatorname{TPR} &= \Phi \prn{ \frac{ \snr(t) +\Phi\inv(\operatorname{FPR}) }{ \operatorname{NNR}(t) } }, \\[0.5cm]
    %\quad\text{where } \quad
      %\Phi(x) &= \int_{-\infty}^x \frac{ \e^{-\frac{z^2}{2}} }{ \sqrt{2\pi} }\, \dr z, \\
-     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}}, 
+     \snr(t) &= \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}},
      \\[\baselineskip]
      \snrb(\tau) &= \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
      \\[\baselineskip]
