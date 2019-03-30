@@ -294,7 +294,7 @@ Given a sequence of plasticity events at times $t_1,t_2,t_3,\ldots$, the probabi
   \pr(t_n) = \pr(t_0)  \M\pot \M\dep \M\dep \M\pot \M\dep \M\pot \M\pot \M\dep \ldots \M\pot .
 \end{equation}
 %
-If the probability of a given plasticity event being poetitiating/depressing os $f\potdep$, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
+If the probability of a given plasticity event being potentiating/depressing is $f\potdep$, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
 
 In computing the expectation in \eqref{eq:overlapone} the plasticity event that occurs at $t=0$ is fixed, but all of the previous and subsequent events are marginalised over.
 If we marginalise over the types (potentiating/depressing) of these other events (conditioned on the number of events) we find
@@ -363,29 +363,29 @@ Combining these allows us to write the numerator of \eqref{eq:SNRdef} as
 Combining with \eqref{eq:noise} gives
 %
 \begin{equation}\label{eq:SNRcurveExact}
-  \SNR(t) = \frac{\sqrt{N} \eq \enc\,\e^{(r\frg+\hom)t}\w}
+  \SNR(t) = \frac{\sqrt{N} \eq \enc\,\e^{rt\frg}\w}
                  {\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
 \end{equation}
 %
-We can absorb $\hom$ into $\M\potdep$ by defining
-%
-\begin{equation}\label{eq:absorbhom}
-\begin{aligned}
-  \Mh\potdep &= \M\potdep + \frac{\hom}{2rf\potdep},
-  &\qquad
-  \frgh &= f\pot\Mh\pot + f\dep\Mh\dep - \I,
-  \\&&
-  \ench &= f\pot(\Mh\pot-\I)-f\dep(\Mh\dep-\I).
-\end{aligned}
-\end{equation}
-%
-Then the SNR curve is
-%
-\begin{equation}\label{eq:SNRcurvehom}
-  \SNR(t) = \frac{\sqrt{N}  \eq \ench \,\e^{rt\frgh}\w}
-                 {\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
-\end{equation}
-%
+%We can absorb $\hom$ into $\M\potdep$ by defining
+%%
+%\begin{equation}\label{eq:absorbhom}
+%\begin{aligned}
+%  \Mh\potdep &= \M\potdep + \frac{\hom}{2rf\potdep},
+%  &\qquad
+%  \frgh &= f\pot\Mh\pot + f\dep\Mh\dep - \I,
+%  \\&&
+%  \ench &= f\pot(\Mh\pot-\I)-f\dep(\Mh\dep-\I).
+%\end{aligned}
+%\end{equation}
+%%
+%Then the SNR curve is
+%%
+%\begin{equation}\label{eq:SNRcurvehom}
+%  \SNR(t) = \frac{\sqrt{N}  \eq \enc \,\e^{rt\frg}\w}
+%                 {\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
+%\end{equation}
+%%
 The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with $f\pot=f\dep$ or $\eq_+=\eq_-$.
 We can perform the maximisation in two steps.
 First maximise the numerator at fixed $\eq\w$.
@@ -394,7 +394,7 @@ This will allow us to ignore the denominator until the very end.
 
 
 
-We can then treat the off-diagonal elements of $\Mh\potdep$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
+We can then treat the off-diagonal elements of $\M\potdep$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
 The diagonal elements are determined by setting the row sums to 1.
 We then have
 %
@@ -522,7 +522,7 @@ As $(s-\MM)$ is invertible for $\Re s>0$, because the real part of all eigenvalu
 %
 For $s=0$, we can avoid problems by replacing $\mathbf{G}(s) \to \fund(s)$.
 
-Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurvehom} (ignoring the denominator)
+Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurveExact} (ignoring the denominator)
 %
 \begin{equation}\label{eq:lsnr}
 \begin{aligned}
@@ -549,18 +549,19 @@ In analogy with the case $s=0$, we define
 %
 \begin{equation}\label{eq:lareacoeffs}
   \begin{aligned}
-    c_k(s) &= \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \\
-    a_i(s) &= \sum_j \eq_i \enc_{ij} (\etw_{i}(s) - \etw_{j}(s)),\\
-    \implies
-    \hat{A}(s) &= \sum_k c_k(s) \eq_k \w_k
-      = \sum_i a_i(s).
+    c_k(s) &= \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)}, \\
+    a_j(s) &= \sum_{jk} \eq_j \enc_{jk} (\etw_{j}(s) - \etw_{k}(s)), \\
+    \thb_i(s) &= \sum_j \fptb_{ij}(0)\ a_j(s), \\
   \end{aligned}
+    \implies
+    \hat{A}(s) = \sum_k c_k(s) \eq_k \w_k
+      = \sum_i a_i(s).
 \end{equation}
 %
 
 \subsection{Derivatives}\label{sec:lderiv}
 
-Using the same approach as the area bound in \cite{Lahiri2013synapse}, and defining $\thb_i(s) = \sum_j \fptb_{ij}(0) a_j(s)$,  we find that the derivatives are
+Using the same approach as the area bound in \cite{Lahiri2013synapse} we find that the derivatives are
 %
 \begin{equation}\label{eq:lAdiff}
   \pdiff{\hat{A}(s)}{\M\potdep_{mn}}
@@ -572,14 +573,15 @@ with the upper/lower sign in $\pm$ corresponding to derivatives \wrt $\M\potdep$
 The term with $\Theta(s)$ comes from differentiating $\eq$, the term with $c(s)$ comes from differentiating $\etw(s)$ and the term with $\pm1$ comes from differentiating $\enc$ in \eqref{eq:larea}.
 
 To write down the Hessian, we will first define some notation.
-Given a four-index array $H_{ijkl}$, we define $H\trans_{ijkl} = H_{klij}$
+We define the matrix $\mathbf{X}(s) = \fund(0) \enc \fund(s)$.
+Given a four-index array $H_{ijkl}$, we define $H\trans_{ijkl} = H_{klij}$.
 Then we denote
 %
 \begin{equation}\label{eq:hessparts}
 \begin{aligned}
   R_{ijkl} &=
     &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\thb_k(s) - \thb_l(s)} \\
-    &&&+ \eq_i \brc{[\fund(0)\enc\fund(s)]_{ik} - [\fund(0)\enc\fund(s)]_{jk}} \brc{\etw_k(s) - \etw_l(s)} \\
+    &&&+ \eq_i \brc{\mathbf{X}_{ik}(s) - \mathbf{X}_{jk}(s)} \brc{\etw_k(s) - \etw_l(s)} \\
     &&&+ \eq_i c_i(s) \brc{\fund_{ik}(s) - \fund_{jk}(s)} \brc{\etw_k(s) - \etw_l(s)},  \\
   S_{ijkl} &=
     &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\etw_k(s) - \etw_l(s)} \\
@@ -587,22 +589,18 @@ Then we denote
 \end{aligned}
 \end{equation}
 %
-Then we can write the hessian as
+Then we can write the Hessian as
 %
 \begin{equation}\label{eq:hessian}
 \begin{aligned}
   \pdiff{^2\hat{A}(s)}{\M\pot_{ij} \partial\M\pot_{kl}} &=
-     (f\pot)^2 (R_{ijkl} + R\trans_{ijkl})
-     + f\pot(S_{ijkl} + S\trans_{ijkl}), \\
+     (f\pot)^2   [R + R\trans + S + S\trans]_{ijkl}, \\
   \pdiff{^2\hat{A}(s)}{\M\pot_{ij} \partial\M\dep_{kl}} &=
-     f\pot f\dep (R_{ijkl} + R\trans_{ijkl})
-     - f\pot S_{ijkl} + f\dep S\trans_{ijkl}, \\
+     f\pot f\dep [R + R\trans - S + S\trans]_{ijkl}, \\
   \pdiff{^2\hat{A}(s)}{\M\dep_{ij} \partial\M\pot_{kl}} &=
-     f\pot f\dep (R_{ijkl} + R\trans_{ijkl})
-     - f\pot S\trans_{ijkl} + f\dep S_{ijkl}, \\
+     f\pot f\dep [R + R\trans + S - S\trans]_{ijkl}, \\
   \pdiff{^2\hat{A}(s)}{\M\dep_{ij} \partial\M\dep_{kl}} &=
-     (f\dep)^2 (R_{ijkl} + R\trans_{ijkl})
-     - f\dep(S_{ijkl} + S\trans_{ijkl}), \\
+     (f\dep)^2   [R + R\trans - S - S\trans]_{ijkl}, \\
 \end{aligned}
 \end{equation}
 %

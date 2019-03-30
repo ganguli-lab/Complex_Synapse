@@ -11,7 +11,7 @@
 \input{sl_slide_preamble_nonotes.tex}
 %\usecolortheme[named=darkblue]{structure}
 \usecolortheme[rgb={0.6372549 0.27843137 0.27058824}]{structure}
-\setbeamercolor{alerted text}{fg=red!80!black}
+\setbeamercolor{alerted text}{fg=red!60!black}
 \input{sl_slide_graphics_preamble.tex}
 \input{sl_definitions.tex}
 \input{sl_slide_symbols.tex}
@@ -50,7 +50,7 @@
 %================================================================================
 %---------Title-----------------------------------------------------------
 
-\title[Complex synapses]{Learning and memory with complex synaptic plasticity}
+\title[Complex synaptic plasticity]{Learning and memory with complex synaptic plasticity}
 %
 %\subtitle{\small{based on work with Surya Ganguli}}
 %
@@ -161,6 +161,7 @@ Stanford University, Applied Physics
 
 \begin{frame}{Synapses are complex}
 %
+\only<1>{
  \parbox[t]{0.45\linewidth}{%
  \includegraphics[height=0.8\linewidth]{2000102CobaFig4.pdf}
 
@@ -173,6 +174,35 @@ Stanford University, Applied Physics
 
  \citerr{Montgomery2002765}
  }
+}
+\only<2-4>{
+ \parbox[t]{0.225\linewidth}{%
+ \includegraphics[height=0.8\linewidth]{2000102CobaFig4.pdf}
+
+ \citerr{Coba2009phosphorylation}
+ }
+ \hfill
+ \parbox[t]{0.45\linewidth}{%
+ \hfill
+ \includegraphics[height=0.4\linewidth]{MadisonMontgomery.jpg}
+
+ \citerr{Montgomery2002765}
+ }
+
+\invisible<2>{
+ \vp\vp
+ \aligntop{\includegraphics[width=0.4\linewidth]{cascade.svg}}
+ \hp
+ \parbox[t]{0.5\linewidth}{
+   Capacity \alert{$\propto N^{2/3}$}.
+   \citerr{Fusi2005cascade}
+
+   \invisible<3>{
+   Capacity \alert{$\propto N$}.
+   \citerr{Benna2015complex}
+   }
+ }
+}}
 %
 \end{frame}
 
@@ -197,7 +227,7 @@ Stanford University, Applied Physics
 % ------Section------------------------------------------------------------
 
 \section[Learning with enhanced plasticity]{Learning with enhanced plasticity}
-\frame{\sectionpage 
+\frame{\sectionpage
 % \parbox[t]{0.3\linewidth}{
 % \begin{center}
 % \includegraphics[height=0.55\linewidth]{barbara.jpg}\\
@@ -211,106 +241,69 @@ Stanford University, Applied Physics
 % \small Grace Zhao
 % \end{center}
 % }
-\begin{center}
-\newblock 
-``{A saturation hypothesis to explain both enhanced and impaired learning with enhanced plasticity}''.
-\newblock
+%\begin{center}
+
+\vp
+``{A saturation hypothesis to explain both enhanced and impaired learning with enhanced plasticity}'',
+%
+%\vpp
  {\alert{TDB~Nguyen-Vu, GQ~Zhao,} S~Lahiri, RR~Kimpo, H~Lee, S~Ganguli, CJ~ Shatz, JL~Raymond}.
-\newblock 
-\href{http://dx.doi.org/10.7554/eLife.20147}{\emph{eLife}, 6:\penalty0 e20147}, (February, 2017).
-\end{center}
+%\vpp
+\\%\newblock
+\href{http://dx.doi.org/10.7554/eLife.20147}{\emph{eLife, 6:\penalty0 e20147, (Feb., 2017)}}.
+%\end{center}
 
  \note[item]{Acknowledge Barbara and Grace}
 }
-%-------------Slide--------------------------------------------------------
 
-\begin{frame}{Benefits of enhanced plasticity?}
+%%-------------Slide--------------------------------------------------------
 %
- Learning requires synaptic plasticity.
- %
- \begin{center}
-   \includegraphics[width=0.4\linewidth]{NeuronsActive.jpg}
- \end{center}
- %
- Can we enhance learning by enhancing plasticity?
-
- \vp
- %
- \begin{center}
-   \alignmid{\includegraphics[width=0.4\linewidth]{Limitless1noblkborders.png}}
- \end{center}
- %
+%\begin{frame}{Benefits of enhanced plasticity?}
+%%
+% Learning requires synaptic plasticity.
+% %
+% \begin{center}
+%   \includegraphics[width=0.4\linewidth]{NeuronsActive.jpg}
+% \end{center}
+% %
+% Can we enhance learning by enhancing plasticity?
 %
-\end{frame}
-
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Enhanced plasticity \texorpdfstring{\emph{can}}{can} enhance learning}
-%
-% \parbox[t]{0.3\linewidth}{
-%   Overexpress NR2B  \\[0.5cm]
-%   \includegraphics[width=0.97\linewidth]{enh-Tang.jpg} \\
-%   Fear conditioning  \\
-%   \citerr{Tang1999enhancedLearning}
-% }
-% \hspace{0.03\linewidth}
-% \parbox[t]{0.3\linewidth}{
-%   Inhibit CN \\[0.5cm]
-%   \includegraphics[width=0.97\linewidth]{enh-Malleret.jpg} \\
-%   Novel object recognition \\
-%   \citerr{Malleret2001enhancedLearning} \\
-% }
-% \hspace{0.03\linewidth}
-% \parbox[t]{0.3\linewidth}{
-%   Knockout Hdac2 \\[0.5cm]
-%   \includegraphics[width=0.97\linewidth]{enh-Guan.jpg} \\
-%   Fear conditioning \\
-%   \citerr{Guan2009enhancedLearning} \\
-% }
- \begin{tabular}{p{0.3\linewidth}@{\hspace{0.03\linewidth}}p{0.3\linewidth}@{\hspace{0.03\linewidth}}p{0.3\linewidth}}
-   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-   Overexpress NR2B & Inhibit CN & Knockout Hdac2 \\[0.5cm]
-   \aligntop{\includegraphics[width=0.7\linewidth]{enh-Tang.jpg}} &
-   \aligntop{\includegraphics[width=0.97\linewidth]{enh-Malleret.jpg}} &
-   \aligntop{\includegraphics[width=0.97\linewidth]{enh-Guan.jpg}} \\
-   Fear conditioning & Novel object recog. & Fear conditioning \\
-   \citerr{Tang1999enhancedLearning} & \citerr{Malleret2001enhancedLearning} & \citerr{Guan2009enhancedLearning} \\
- \end{tabular}
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Enhanced plasticity can \texorpdfstring{\emph{impair}}{impair} learning}
-%
- \begin{tabular}{p{0.22\linewidth}@{\hspace{0.03\linewidth}}p{0.22\linewidth}@{\hspace{0.03\linewidth}}p{0.22\linewidth}@{\hspace{0.03\linewidth}}p{0.22\linewidth}}
-   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-   Mutate PSD-95 & Knockout PTP$\delta$ & Delete Tmod2 & Knockout FMR1 \\[0.5cm]
-   \aligntop{\includegraphics[width=0.7\linewidth]{imp-Migaud.jpg}} &
-   \aligntop{\includegraphics[width=0.97\linewidth]{imp-Uetani.jpg}} &
-   \aligntop{\includegraphics[width=0.97\linewidth]{imp-Cox.jpg}} &
-   \aligntop{\includegraphics[width=0.97\linewidth]{imp-Koekkoek.jpg}} \\
-   Water maze & Water maze & Fear cond. & Eyeblink \\
-   \citerrr{Migaud1998impairedLearning} & \citerrr{Uetani2000impairedLearning} & \citerrr{Cox2003impairedLearning} & \citerrr{Koekkoek2005impairedConditioning}
- \end{tabular}
-
- \vp\hfill also: \citerrr{Hayashi2004impairedConsolidation,Rutten2008impairedLearning}
-%
-\end{frame}
+% \vp
+% %
+% \begin{center}
+%   \alignmid{\includegraphics[width=0.4\linewidth]{Limitless1noblkborders.png}}
+% \end{center}
+% %
+%%
+%\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Overview}
 %
- \parbox[c]{0.8\linewidth}{%
- Sometimes enhanced plasticity \lto\ enhanced learning.\\
- Sometimes enhanced plasticity \lto\ impaired learning.
+\parbox[t]{0.69\linewidth}{%
+ Learning requires synaptic plasticity.\\
+ Expect: enhanced plasticity \lto\ enhanced learning.
+}
+\parbox[t]{0.29\linewidth}{%
+ \hfill{\alignmid{\includegraphics[width=0.4\linewidth]{the_brain_by_lonewolf16.jpg}}}
+}
+ \\
+ \citerr{Tang1999enhancedLearning,Malleret2001enhancedLearning,Guan2009enhancedLearning}\\
+ \note[item]{It does help in some cases}
+\onslide<2->
+\parbox[t]{0.69\linewidth}{%
+ But often: enhanced plasticity \lto\ impaired learning.
+}
+\parbox[t]{0.29\linewidth}{%
+ \hfill{\alignmid{\includegraphics[width=0.4\linewidth]{pinky_by_lonewolf16.jpg}}}
+}
+ \\
+ \citerr{Migaud1998impairedLearning,Uetani2000impairedLearning,Hayashi2004impairedConsolidation}\\
+ \citerr{Cox2003impairedLearning,Rutten2008impairedLearning,Koekkoek2005impairedConditioning}\\
+ \note[item]{Want to understand when and why}
 
- \vp Why? How? When?}
-     \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
-
- \onslide<2->\vp Mice with enhanced cerebellar plasticity can show \alert{both} impaired and enhanced learning.
+ \onslide<3->\vp Mice with enhanced cerebellar plasticity can show both impaired and enhanced learning.
  \note[item]{Depends on circumstance. Rich pattern of behaviour}
 
  \vp Simple synapses \alert{cannot} explain behaviour.
@@ -319,6 +312,62 @@ Stanford University, Applied Physics
  \note[item]{Develop understanding of when and why learning is enhanced/impaired}
 %
 \end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Enhanced plasticity \texorpdfstring{\emph{can}}{can} enhance learning}
+%%
+% \begin{tabular}{p{0.3\linewidth}@{\hspace{0.03\linewidth}}p{0.3\linewidth}@{\hspace{0.03\linewidth}}p{0.3\linewidth}}
+%   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+%   Overexpress NR2B & Inhibit CN & Knockout Hdac2 \\[0.5cm]
+%   \aligntop{\includegraphics[width=0.7\linewidth]{enh-Tang.jpg}} &
+%   \aligntop{\includegraphics[width=0.97\linewidth]{enh-Malleret.jpg}} &
+%   \aligntop{\includegraphics[width=0.97\linewidth]{enh-Guan.jpg}} \\
+%   Fear conditioning & Novel object recog. & Fear conditioning \\
+%   \citerr{Tang1999enhancedLearning} & \citerr{Malleret2001enhancedLearning} & \citerr{Guan2009enhancedLearning} \\
+% \end{tabular}
+%%
+%\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Enhanced plasticity can \texorpdfstring{\emph{impair}}{impair} learning}
+%%
+% \begin{tabular}{p{0.22\linewidth}@{\hspace{0.03\linewidth}}p{0.22\linewidth}@{\hspace{0.03\linewidth}}p{0.22\linewidth}@{\hspace{0.03\linewidth}}p{0.22\linewidth}}
+%   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+%   Mutate PSD-95 & Knockout PTP$\delta$ & Delete Tmod2 & Knockout FMR1 \\[0.5cm]
+%   \aligntop{\includegraphics[width=0.7\linewidth]{imp-Migaud.jpg}} &
+%   \aligntop{\includegraphics[width=0.97\linewidth]{imp-Uetani.jpg}} &
+%   \aligntop{\includegraphics[width=0.97\linewidth]{imp-Cox.jpg}} &
+%   \aligntop{\includegraphics[width=0.97\linewidth]{imp-Koekkoek.jpg}} \\
+%   Water maze & Water maze & Fear cond. & Eyeblink \\
+%   \citerrr{Migaud1998impairedLearning} & \citerrr{Uetani2000impairedLearning} & \citerrr{Cox2003impairedLearning} & \citerrr{Koekkoek2005impairedConditioning}
+% \end{tabular}
+%
+% \vp\hfill also: \citerrr{Hayashi2004impairedConsolidation,Rutten2008impairedLearning}
+%%
+%\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Overview}
+%%
+% \parbox[c]{0.8\linewidth}{%
+% Sometimes enhanced plasticity \lto\ enhanced learning.\\
+% Sometimes enhanced plasticity \lto\ impaired learning.
+%
+% \vp Why? How? When?}
+%     \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
+%
+% \onslide<2->\vp Mice with enhanced cerebellar plasticity can show \alert{both} impaired and enhanced learning.
+% \note[item]{Depends on circumstance. Rich pattern of behaviour}
+%
+% \vp Simple synapses \alert{cannot} explain behaviour.
+% \alert{Complex synapses} are required.\\
+% \lto\ predictions for synaptic physiology.
+% \note[item]{Develop understanding of when and why learning is enhanced/impaired}
+%%
+%\end{frame}
 
 %-------------Section--------------------------------------------------------
 
@@ -357,7 +406,10 @@ Stanford University, Applied Physics
    }
  \hspace{0.15\linewidth}
  \parbox[t]{0.59\linewidth}{%
-   \aligntop{\includegraphics[width=0.99\linewidth]{VORcircuit.svg}}
+ \raggedleft
+   \aligntop{\includegraphics[width=0.5\linewidth]{pk.png}}\\
+   \rref{Cajal}
+%   \aligntop{\includegraphics[width=0.99\linewidth]{VORcircuit.svg}}
 
 %   \vp PF-Pk: \parbox[t]{0.5\linewidth}{PF+CF \lto LTD, \\
 %              PF+\cancel{CF} \lto LTP.}
@@ -369,14 +421,6 @@ Stanford University, Applied Physics
    \end{tabular}
  }
 % \parbox[t]{0.59\linewidth}{%
-% \raggedleft
-%   \aligntop{\includegraphics[width=0.5\linewidth]{pk.png}}\\
-%   \rref{Cajal}
-%
-%   \vp \begin{tabular}{ll}
-%   VOR increase: & LTD in PF-Pk synapses.\\
-%   \end{tabular}
-%
 %   \vp  \aligntop{\includegraphics[width=0.8\linewidth]{ltd.svg}}
 %
 % }
@@ -405,6 +449,13 @@ Stanford University, Applied Physics
 %
  \alert{Expectation:} enhanced LTD \lto\ enhanced learning.
 
+ \vp \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
+ Knockout of MHC-I K$^\mathsf{b}$D$^\mathsf{b}$ molecules in PF-Pk synapses\\
+  \lto\ lower threshold for LTD
+  \lto\ enhanced learning of Rotarod task.\\
+  \citerr{McConnell2009MHCcerebellum}
+
+
  \begin{center}
  \begin{tabular}{lr}
 %   Baseline & \hspace{0.1\linewidth} &
@@ -419,10 +470,6 @@ Stanford University, Applied Physics
  \note[item]{Impairment of learning}
  \note[item]{Looking at change of VOR gain during gain-up training}
 
-\vp
- \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
- Knockout of MHC-I K$^\mathsf{b}$D$^\mathsf{b}$ molecules in PF-Pk synapses\\
-  \lto\ lower threshold for LTD  \citerr{McConnell2009MHCcerebellum}
 
 
 %
@@ -653,6 +700,10 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+% -------Section-----------------------------------------------------------
+
+\subsection{Learning outcomes of mice and models}
+
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Questions}
@@ -670,10 +721,6 @@ Stanford University, Applied Physics
  \vp\alert{Big question:} Why? When?
 %
 \end{frame}
-
-% -------Section-----------------------------------------------------------
-
-\subsection{Learning outcomes of mice and models}
 
 %-------------Slide--------------------------------------------------------
 
@@ -779,46 +826,49 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Conclusions}
+%%-------------Slide--------------------------------------------------------
 %
- \begin{itemize}
-%   \item The saturation effect can overcome faster depression, if it is enhanced.
-%   \alert{Requires complexity}
-%   \note[item]{\eg exponential deacy, resource depletion,\ldots}
-%   \item A little reverse bias can help, but too much hurts, if repeated potentiation makes depression harder.
-%   \alert{Requires metaplasticity}
-%   \note[item]{\eg moving away from weight boundary, or weaker transitions.}
-   \item Diverse behavioural patterns:\\
-   \alert{Enhanced plasticity \lto\ enhance/impair} learning (prior experience).\\
-   \alert{Reverse-training \lto\ enhance/impair} learning (plasticity rates).
-
-   \item \alert{enhanced LTD} vs.\ \alert{depletion} \lto\ learning outcome.
-    \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
-
-
-
-   \item Predictions for synaptic physiology:\\
-   \alert{Complexity:} necessary to amplify depletion.\\
-   \alert{Stubbornness:} repeated potentiation impairs subsequent depression.
-
-   \vp\item  We used behaviour to constrain the dynamics of synaptic plasticity.
-\end{itemize}
+%\begin{frame}{Conclusions}
+%%
+% \begin{itemize}
+%%   \item The saturation effect can overcome faster depression, if it is enhanced.
+%%   \alert{Requires complexity}
+%%   \note[item]{\eg exponential deacy, resource depletion,\ldots}
+%%   \item A little reverse bias can help, but too much hurts, if repeated potentiation makes depression harder.
+%%   \alert{Requires metaplasticity}
+%%   \note[item]{\eg moving away from weight boundary, or weaker transitions.}
+%   \item Diverse behavioural patterns:\\
+%   \alert{Enhanced plasticity \lto\ enhance/impair} learning (prior experience).\\
+%   \alert{Reverse-training \lto\ enhance/impair} learning (plasticity rates).
 %
-\end{frame}
+%   \item \alert{enhanced LTD} vs.\ \alert{depletion} \lto\ learning outcome.
+%    \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
+%
+%
+%
+%   \item Predictions for synaptic physiology:\\
+%   \alert{Complexity:} necessary to amplify depletion.\\
+%   \alert{Stubbornness:} repeated potentiation impairs subsequent depression.
+%
+%   \vp\item  We used behaviour to constrain the dynamics of synaptic plasticity.
+%\end{itemize}
+%%
+%\end{frame}
 
 
 % -------Section-----------------------------------------------------------
 
 \section{Memory over different timescales}
 \frame{\sectionpage
-\begin{center}
-\newblock ``A memory frontier for complex synapses''.
-\newblock Subhaneil Lahiri and Surya Ganguli.
-\newblock \href{https://papers.nips.cc/paper/4872-a-memory-frontier-for-complex-synapses}
-{\emph{Adv. Neural Inf. Process. Syst. 26}, pp.\ 1034--1042.} NeurIPS, 2013.
-\end{center}
+%\begin{center}
+\vp%\newblock
+``A memory frontier for complex synapses'',
+%\newblock
+S Lahiri and S Ganguli.
+\\%\newblock
+\href{https://papers.nips.cc/paper/4872-a-memory-frontier-for-complex-synapses}
+{\emph{Adv.\ Neural Inf.\ Process.\ Syst.\ 26, pp.~1034--1042., (2013)}}.
+%\end{center}
 }
 
 %-------------Slide--------------------------------------------------------
@@ -853,45 +903,45 @@ Stanford University, Applied Physics
 \end{frame}
 
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Models of complex synaptic dynamics}
+%%-------------Slide--------------------------------------------------------
 %
-  There are $N$ identical synapses with $M$ internal functional states.
+%\begin{frame}{Models of complex synaptic dynamics}
+%%
+%  There are $N$ identical synapses with $M$ internal functional states.
+%%
+%\parbox[c]{0.82\linewidth}{%
+%  \begin{itemize}
+%    \item Internal functional state of synapse \lto\ synaptic weight.
+%    \item Candidate plasticity events \lto\ transitions between states
+%  \end{itemize}
+%}\hfill
+%\alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
+%%
 %
-\parbox[c]{0.82\linewidth}{%
-  \begin{itemize}
-    \item Internal functional state of synapse \lto\ synaptic weight.
-    \item Candidate plasticity events \lto\ transitions between states
-  \end{itemize}
-}\hfill
-\alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
+%  \begin{center}
+%    \aligntop{\includegraphics[width=0.6\linewidth]{synapse_internal.svg}}
+%%    \hspace{0.07\linewidth}
+%%    \aligntop{\includegraphics[width=0.3\linewidth]{MadisonMontgomery.jpg}}
+%%    \\ \citerr{Montgomery2002765}
+%  \end{center}
 %
-
-  \begin{center}
-    \aligntop{\includegraphics[width=0.6\linewidth]{synapse_internal.svg}}
-%    \hspace{0.07\linewidth}
-%    \aligntop{\includegraphics[width=0.3\linewidth]{MadisonMontgomery.jpg}}
-%    \\ \citerr{Montgomery2002765}
-  \end{center}
-
-%  States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
-%  CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
-%
-  \vp \footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}%%\\\citerr{Smith2006savings,Lahiri2013synapse}}%
-  %
-  \note[item]{complex synapse: not just synaptic weight. dynamical system}
-  \note[item]{important for memory with bounded synapses}
-  \note[item]{nodes \lto\ states}
-  \note[item]{color \lto\ sttrength}
-  \note[item]{arrows \lto\ plasticity}
-%  \note[item]{stoch process has steady state distribution.}
-%  \note[item]{Prior activity puts it in this state. row vec.}
-  \note[item]{plasticity events at rate r. indep at each synapse.}
-  \note[item]{fraction pot/dep}
-  \note[item]{Readout: synaptic weight vec when in each state.}
-  %
-\end{frame}
+%%  States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
+%%  CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
+%%
+%  \vp \footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}%%\\\citerr{Smith2006savings,Lahiri2013synapse}}%
+%  %
+%  \note[item]{complex synapse: not just synaptic weight. dynamical system}
+%  \note[item]{important for memory with bounded synapses}
+%  \note[item]{nodes \lto\ states}
+%  \note[item]{color \lto\ sttrength}
+%  \note[item]{arrows \lto\ plasticity}
+%%  \note[item]{stoch process has steady state distribution.}
+%%  \note[item]{Prior activity puts it in this state. row vec.}
+%  \note[item]{plasticity events at rate r. indep at each synapse.}
+%  \note[item]{fraction pot/dep}
+%  \note[item]{Readout: synaptic weight vec when in each state.}
+%  %
+%\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
@@ -962,16 +1012,19 @@ Stanford University, Applied Physics
 %
  %
  \begin{center}
-   \includegraphics[width=0.5\linewidth]{MemorySequence.svg}
+   \only<1>{\includegraphics[width=0.5\linewidth]{MemorySequence.svg}}%
+   \only<2->{\includegraphics[width=0.5\linewidth]{MemoryRecognise.svg}}%
  \end{center}
  %
  Synapses store a sequence of memories.\\
- Recognition memory performance described by SNR.
+ \visible<2->{Recognition memory: has this pattern been seen before?}\\
+ \visible<3>{Performance described by SNR.
  %
  \begin{center}
-   {\includegraphics[width=0.55\linewidth]{MemoryCurve.svg}}
+   {\includegraphics[width=0.5\linewidth]{MemoryCurve.svg}}
  \end{center}
  %
+ }
 %
 \end{frame}
 
@@ -1005,118 +1058,118 @@ Stanford University, Applied Physics
 
 
 %-------------Slide--------------------------------------------------------
-
-\begin{frame}{Parameters for synaptic dynamics}
 %
-%  There are $N$ identical synapses with $M$ internal functional states.
+%\begin{frame}{Parameters for synaptic dynamics}
+%%
+%%  There are $N$ identical synapses with $M$ internal functional states.
+%%  %
+%%  \begin{center}
+%%    \includegraphics[width=0.7\linewidth]{model.svg}
+%%  \end{center}
+%%  %
+%%  \note[item]{stoch process has steady state.}
+%%  \note[item]{Prior activity puts it in this state. row vec.}
+%%  \note[item]{plasticity events at rate r}
+%%  \note[item]{fraction pot/dep}
+%%  \note[item]{probs changed by Markov matrices, prob $i\to j$}
+%%  \note[item]{Readout: synaptic weight vec when in each state.}
+%%  \vp
+%% At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
+%% \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
+%%
+%  Parameters:
 %  %
-%  \begin{center}
-%    \includegraphics[width=0.7\linewidth]{model.svg}
-%  \end{center}
+%  \begin{equation*}
+%  \begin{aligned}
+%    \alert{f\potdep} &= \text{fraction of events that are pot/dep,}
+%    \\
+%    \text{pot. event: } \alert{M\pot_{ij}} &= \text{transition prob. } i \to j,% \quad
+%    %&{\scriptstyle \W\pot =  f\pot \prn{\M\pot - I},}
+%    \\
+%    \text{dep. event: } \alert{M\dep_{ij}} &= \text{transition prob. } i \to j.% \quad
+%    %&{\scriptstyle \W\dep =  f\dep \prn{\M\dep - I}.}
+%    \\
+%  \end{aligned}
+%  \end{equation*}
 %  %
-%  \note[item]{stoch process has steady state.}
-%  \note[item]{Prior activity puts it in this state. row vec.}
-%  \note[item]{plasticity events at rate r}
-%  \note[item]{fraction pot/dep}
-%  \note[item]{probs changed by Markov matrices, prob $i\to j$}
-%  \note[item]{Readout: synaptic weight vec when in each state.}
-%  \vp
-% At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
-% \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
 %
-  Parameters:
-  %
-  \begin{equation*}
-  \begin{aligned}
-    \alert{f\potdep} &= \text{fraction of events that are pot/dep,}
-    \\
-    \text{pot. event: } \alert{M\pot_{ij}} &= \text{transition prob. } i \to j,% \quad
-    %&{\scriptstyle \W\pot =  f\pot \prn{\M\pot - I},}
-    \\
-    \text{dep. event: } \alert{M\dep_{ij}} &= \text{transition prob. } i \to j.% \quad
-    %&{\scriptstyle \W\dep =  f\dep \prn{\M\dep - I}.}
-    \\
-  \end{aligned}
-  \end{equation*}
-  %
-
- \vp\vp Constraints:
- %
- \begin{equation*}
-   f\potdep, \M\potdep_{ij} \in [0,1], \qquad
-   f\pot + f\dep = \sum_j \M\potdep_{ij} = 1.
- \end{equation*}
- %
- \note[item]{difficult to to apply}
- \note[item]{Memory at $t=0$, keep track of pot/dep}
- \note[item]{subsequent: average over pot/dep}
- \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
-%
-%
-% Memory curve given by
+% \vp\vp Constraints:
 % %
 % \begin{equation*}
-% \begin{aligned}
-%%    \frg &= f\pot\M\pot+f\dep\M\dep-\I, \qquad
-%%    \eq \frg =0, \\
-%   \snrb(\tau)
-%        &= \sqrt{N}\, \eq \prn{\W\pot-\W\dep} \brk{\I - r\tau\prn{\W\pot + \W\dep}}\inv \w. \\
-%        &= \sqrt{N}\sum_a \frac{\initial_a }{1+r \tau / \tau_a}. \\
-%  %
-% \end{aligned}
-% %
+%   f\potdep, \M\potdep_{ij} \in [0,1], \qquad
+%   f\pot + f\dep = \sum_j \M\potdep_{ij} = 1.
 % \end{equation*}
 % %
-% \note[item]{prefactors don't do anything, ignore}
-% \note[item]{prior state, encoding, forgetting, readout}
-
+% \note[item]{difficult to to apply}
+% \note[item]{Memory at $t=0$, keep track of pot/dep}
+% \note[item]{subsequent: average over pot/dep}
+% \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
+%%
+%%
+%% Memory curve given by
+%% %
+%% \begin{equation*}
+%% \begin{aligned}
+%%%    \frg &= f\pot\M\pot+f\dep\M\dep-\I, \qquad
+%%%    \eq \frg =0, \\
+%%   \snrb(\tau)
+%%        &= \sqrt{N}\, \eq \prn{\W\pot-\W\dep} \brk{\I - r\tau\prn{\W\pot + \W\dep}}\inv \w. \\
+%%        &= \sqrt{N}\sum_a \frac{\initial_a }{1+r \tau / \tau_a}. \\
+%%  %
+%% \end{aligned}
+%% %
+%% \end{equation*}
+%% %
+%% \note[item]{prefactors don't do anything, ignore}
+%% \note[item]{prior state, encoding, forgetting, readout}
 %
-\end{frame}
+%%
+%\end{frame}
 
 % ----------------------------------------------------------------
 
 \subsection{Frontiers of memory}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Upper bounds on measures of memory}
+%%-------------Slide--------------------------------------------------------
 %
-\parbox[c]{0.6\linewidth}{
- Initial SNR:
- %
- \begin{equation*}
-   \initial
-%     = \snr(0)
-%     = \sum_a \initial_a
-     \leq \sqrt{N}.
- \end{equation*}
- %
- %
- \begin{center}
-   \includegraphics[height=0.2\linewidth]{binary_det.svg}
- \end{center}
- %
- Area under curve:
- %
- \begin{equation*}
-   \area
-%     = \int_0^\infty \!\snr(t)\, \dt
-%     = \sum_a \initial_a \tau_a
-     \leq \sqrt{N}(M-1)/r.
- \end{equation*}
- %
- %
- \begin{center}
-   \includegraphics[height=0.2\linewidth]{multistate_sticky.svg}
- \end{center}
- %
- }
- \parbox[c]{0.39\linewidth}{
-    \aligntop{\includegraphics[width=0.96\linewidth]{snr_props.svg}}
- } \par
- \citerr{Lahiri2013synapse}
-%
-\end{frame}
+%\begin{frame}{Upper bounds on measures of memory}
+%%
+%\parbox[c]{0.6\linewidth}{
+% Initial SNR:
+% %
+% \begin{equation*}
+%   \initial
+%%     = \snr(0)
+%%     = \sum_a \initial_a
+%     \leq \sqrt{N}.
+% \end{equation*}
+% %
+% %
+% \begin{center}
+%   \includegraphics[height=0.2\linewidth]{binary_det.svg}
+% \end{center}
+% %
+% Area under curve:
+% %
+% \begin{equation*}
+%   \area
+%%     = \int_0^\infty \!\snr(t)\, \dt
+%%     = \sum_a \initial_a \tau_a
+%     \leq \sqrt{N}(M-1)/r.
+% \end{equation*}
+% %
+% %
+% \begin{center}
+%   \includegraphics[height=0.2\linewidth]{multistate_sticky.svg}
+% \end{center}
+% %
+% }
+% \parbox[c]{0.39\linewidth}{
+%    \aligntop{\includegraphics[width=0.96\linewidth]{snr_props.svg}}
+% } \par
+% \citerr{Lahiri2013synapse}
+%%
+%\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
@@ -1285,7 +1338,7 @@ Stanford University, Applied Physics
 % ----------------------------------------------------------------
 
 \section{Designing experiments}
-\frame{\sectionpage}
+%\frame{\sectionpage}
 
 %-------------Slide--------------------------------------------------------
 
@@ -1346,10 +1399,14 @@ Stanford University, Applied Physics
 %   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
 %   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
 %   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
-   \includegraphics[height=0.8\textheight]{Animation/FitVidFinal.svg}
+   \includegraphics[height=0.6\textheight]{Animation/FitVidFinal.svg}
  \end{center}
  %
+ \visible<2>{
+ Problem: need \emph{long} sequences.
 
+ Whole cell patch of postsynaptic neuron \lto\ Ca washout.
+ }
 % \textbf{EM algorithms:}
 %
 %   Sequence of hidden states $\ra$ estimate transition probabilities \\
@@ -1371,38 +1428,59 @@ Stanford University, Applied Physics
 \end{frame}
 
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Experimental problems}
+%%-------------Slide--------------------------------------------------------
 %
- \begin{itemize}
-   \item Need single synapses.
-   \item Need long sequences of plasticity events.
-   \item Need to control types of candidate plasticity events.
-   \item Need to measure synaptic efficacies.
- \end{itemize}
-
- \vp When we patch the postsynaptic neuron \lto\ Ca washout.
+%\begin{frame}{Experimental problems}
+%%
+% \begin{itemize}
+%   \item Need single synapses.
+%   \item Need long sequences of plasticity events.
+%   \item Need to control types of candidate plasticity events.
+%   \item Need to measure synaptic efficacies.
+% \end{itemize}
 %
-\end{frame}
+% \vp When we patch the postsynaptic neuron \lto\ Ca washout.
+%%
+%\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Summary}
+%%
+%  \begin{itemize}
+%    \item We have formulated a general theory of learning and memory with complex synapses.
+%%    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
+%%    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
+%    \vp\item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
+%%    \vp\item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
+%    \vp\item We understood which types of synaptic structure are useful for storing memories for different timescales.
+%%    \item Gap between envelope and what we can achieve at early times?
+%%    \item Trade-off between SNR at different times?
+%%    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
+%    \vp\item We studied more than a single model. We studied \emph{all possible models}, to extract general principles relating synaptic structure to function
+%  \end{itemize}
+%
+%%
+%\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Summary}
 %
-  \begin{itemize}
-    \item We have formulated a general theory of learning and memory with complex synapses.
-%    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
-%    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
-    \vp\item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
-%    \vp\item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
-    \vp\item We understood which types of synaptic structure are useful for storing memories for different timescales.
-%    \item Gap between envelope and what we can achieve at early times?
-%    \item Trade-off between SNR at different times?
-%    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
-    \vp\item We studied more than a single model. We studied \emph{all possible models}, to extract general principles relating synaptic structure to function
-  \end{itemize}
+ \begin{itemize}
+   \item Internal dynamics of synaptic plasticity \lto\ understand learning and memory.
 
+   \vp\item Behaviour \lto\ subcellular dynamics of synapses.
+
+   \vp\item Why \& when enhanced plasticity \lto\ enhanced/impaired learning.
+
+   \vp\item Memory envelope: cannot be exceeded by \emph{any} model's memory curve.
+
+   \vp\item Which synaptic structures are useful for different memory timescales.
+
+   \vp\item Not just a single model, \emph{all possible models} \\
+   \hfill\lto\ general principles relating synaptic structure to function.
+ \end{itemize}
 %
 \end{frame}
 
