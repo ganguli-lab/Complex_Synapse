@@ -523,10 +523,10 @@ Stanford University, Applied Physics
 
    \vp
   \begin{overlayarea}{0.7\linewidth}{0.25\linewidth}
-   \only<4>{\includegraphics[width=0.9\linewidth]{gain_dec.svg}}%
+%   \only<4>{\includegraphics[width=0.9\linewidth]{gain_dec.svg}}%
 %
 %   \vp
-   \only<5->{
+   \only<4->{
    \begin{tabular}{c@{\hspace{0.2\linewidth}}c}
    \color{red!60!black}{Enh.\ Plast.} & WT \\[0.2cm]
    \aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_KO.svg}}
@@ -665,7 +665,7 @@ Stanford University, Applied Physics
 
 \begin{frame}{Modelling VOR experiments}
 %
- \visible<3->{PF-Pk LTD \lto\ VOR increase}
+% \visible<3->{PF-Pk LTD \lto\ VOR increase}
  %
  \begin{center}
     \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{multi-serial.svg}}}%
@@ -676,14 +676,14 @@ Stanford University, Applied Physics
     \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_61.svg}}}%
     \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_81.svg}}}%
     \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_101.svg}}}%
-    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_wt.svg}}}%
-    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_ko.svg}}}%
+    %\only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_wt.svg}}}%
+    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/learn_anim_ko.svg}}}%
 
  \end{center}
  %
  \visible<3->{
  Training: \parbox[t]{0.7\linewidth}{%
- different CF activity $\implies$\\
+% different CF activity $\implies$\\
  change frequency of pot/dep events.
  } }
 
@@ -694,7 +694,7 @@ Stanford University, Applied Physics
 
  \visible<9->{
  \vp Mutation: \parbox[t]{0.7\linewidth}{%
- lower threshold for LTD $\implies$\\
+% lower threshold for LTD $\implies$\\
  increase transition probability for depression events.
  } }
 %
@@ -729,23 +729,23 @@ Stanford University, Applied Physics
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
    \only<1>{\aligntop{\includegraphics[height=0.15\linewidth]{multistate.svg}}}%
-   \only<2-6>{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
+   \only<2->{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
    &
-   \visible<1-3,5>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
+   \visible<1-3>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{blank_learnS.svg}}}%
    \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS.svg}}}%
    \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_top.svg}}}%
    \only<4>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_ko_wo_s.svg}}}%
-   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_left.svg}}}%
-   \only<6>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_left.svg}}}%
+%   \only<6>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
    &
    \only<1-2>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_nl.svg}}}%
    \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_top_nl.svg}}}%
    \only<4>{\parbox[t]{0.35\linewidth}{\centering \vp depletion effect\\ $<$ \\ enhanced plasticity \\
    \vp $\implies$  enhanced learning}}%
-   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_left_nl.svg}}}%
-   \only<6>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $\implies$ \\ replenishment \\
-    $\implies$ \\ enhanced learning}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+%   \only<6>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $\implies$ \\ replenishment \\
+%    $\implies$ \\ enhanced learning}}%
  \end{tabular}
  \end{center}
  \note[item]{Binary fails -- mathematical proof for any params}
