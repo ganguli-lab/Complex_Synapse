@@ -128,7 +128,7 @@ Stanford University, Applied Physics
 
 \begin{frame}{Storage capacity of synaptic memory}
 %
-  Hopfield, perceptron have capacity \alert{$\propto N$}, (\# synapses).
+  Hopfield, perceptron models have capacity \alert{$\propto N$}, (\# synapses).
 
 \vp\parbox[t]{0.59\linewidth}{%
   Assumes unbounded analogue synapses
@@ -175,7 +175,7 @@ Stanford University, Applied Physics
  \citerr{Montgomery2002765}
  }
 }
-\only<2-4>{
+\only<2-3>{
  \parbox[t]{0.225\linewidth}{%
  \includegraphics[height=0.8\linewidth]{2000102CobaFig4.pdf}
 
@@ -189,7 +189,7 @@ Stanford University, Applied Physics
  \citerr{Montgomery2002765}
  }
 
-\invisible<2>{
+%\invisible<2>{
  \vp\vp
  \aligntop{\includegraphics[width=0.4\linewidth]{cascade.svg}}
  \hp
@@ -197,12 +197,32 @@ Stanford University, Applied Physics
    Capacity \alert{$\propto N^{2/3}$}.
    \citerr{Fusi2005cascade}
 
-   \invisible<3>{
+   \invisible<2>{
    Capacity \alert{$\propto N$}.
    \citerr{Benna2015complex}
    }
  }
-}}
+}%}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{My approach}
+%
+ We want to study the structure-function relationship of biological processes.
+ 
+ \vp Not trying to build a model for ``X''.
+ 
+ \vp Instead, we study a broad class of models to find:
+ 
+ \begin{itemize}
+   \item[\lto] underlying mechanisms and principles.
+ 
+   \vpp\item[\lto] trade-offs between aspects of performance (\eg learning vs.\ memory).
+ 
+   \vpp\item[\lto] properties of models that best manage these trade-offs.
+ \end{itemize}
 %
 \end{frame}
 
@@ -224,9 +244,11 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+
+
 % ------Section------------------------------------------------------------
 
-\section[Learning with enhanced plasticity]{Learning with enhanced plasticity}
+\section{Learning with enhanced plasticity}
 \frame{\sectionpage
 % \parbox[t]{0.3\linewidth}{
 % \begin{center}
@@ -376,20 +398,19 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Vestibulo-Occular Reflex}
+%\begin{frame}{Vestibulo-Occular Reflex}
+%%
+% \parbox[t]{0.35\linewidth}{\aligntop{\includegraphics[width=0.99\linewidth]{VOR.svg}}}
+% \parbox[t]{0.64\linewidth}{%
+% Eye movements compensate for head movements $\implies$ stabilise image on retina.
 %
- \parbox[t]{0.35\linewidth}{\aligntop{\includegraphics[width=0.99\linewidth]{VOR.svg}}}
- \parbox[t]{0.64\linewidth}{%
- Eye movements compensate for head movements $\implies$ stabilise image on retina.
-
- \vp Requires control of $\text{VOR gain} = \frac{\text{eye velocity}}{\text{head velocity}}$.
-
- \vp Needs to be adjusted as eye muscles age, \etc
- }
-
+% \vp Requires control of $\text{VOR gain} = \frac{\text{eye velocity}}{\text{head velocity}}$.
 %
-\end{frame}
-
+% \vp Needs to be adjusted as eye muscles age, \etc
+% }
+%
+%%
+%\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
@@ -445,52 +466,59 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Enhanced plasticity impairs learning}
+%\begin{frame}{Enhanced plasticity impairs learning}
+%%
+% \alert{Expectation:} enhanced LTD \lto\ enhanced learning.
 %
- \alert{Expectation:} enhanced LTD \lto\ enhanced learning.
-
- \vp \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
- Knockout of MHC-I K$^\mathsf{b}$D$^\mathsf{b}$ molecules in PF-Pk synapses\\
-  \lto\ lower threshold for LTD
-  \lto\ enhanced learning of Rotarod task.\\
-  \citerr{McConnell2009MHCcerebellum}
-
-
- \begin{center}
- \begin{tabular}{lr}
-%   Baseline & \hspace{0.1\linewidth} &
-%   Gain increase \\[0.5cm]
-%   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} &&
-   \alignmid{\includegraphics[width=0.2\linewidth]{VORinc.svg}}&
-   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}\\
-   &\alert{Experiment:} enhanced plasticity \lto\ impaired learning.
- \end{tabular}
- \end{center}
-% \note[item]{No difference in baseline occulomotor performance}
- \note[item]{Impairment of learning}
- \note[item]{Looking at change of VOR gain during gain-up training}
-
-
-
+% \vp \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
+% Knockout of MHC-I K$^\mathsf{b}$D$^\mathsf{b}$ molecules in PF-Pk synapses\\
+%  \lto\ lower threshold for LTD
+%  \lto\ enhanced learning of Rotarod task.\\
+%  \citerr{McConnell2009MHCcerebellum}
 %
-\end{frame}
+%
+% \begin{center}
+% \begin{tabular}{lr}
+%%   Baseline & \hspace{0.1\linewidth} &
+%%   Gain increase \\[0.5cm]
+%%   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} &&
+%   \alignmid{\includegraphics[width=0.2\linewidth]{VORinc.svg}}&
+%   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}\\
+%   &\alert{Experiment:} enhanced plasticity \lto\ impaired learning.
+% \end{tabular}
+% \end{center}
+%% \note[item]{No difference in baseline occulomotor performance}
+% \note[item]{Impairment of learning}
+% \note[item]{Looking at change of VOR gain during gain-up training}
+%%
+%\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Depletion hypothesis}
 %
-{}
- {\color{darkgrey} Learning rate} $\sim$ {\color{darkgreen}intrinsic plasticity rate} $\times$ {\color{darkblue}\# synapses available for LTD}.
-
- \vp
+\begin{overlayarea}{0.98\linewidth}{4em}
+\only<1>{ Knockout of MHC-I K$^\mathsf{b}$D$^\mathsf{b}$ molecules in PF-Pk synapses\\
+  \lto\ lower threshold for LTD
+  \lto\ enhanced learning of Rotarod task.\\
+  \citerr{McConnell2009MHCcerebellum}
+}
+\only<2->{
+ {\color{darkgrey} Learning rate} $\sim$
+ {\color{darkgreen}intrinsic plasticity rate} $\times$
+ {\color{darkblue}\# synapses available for LTD}.
+}
+\end{overlayarea}
  \begin{center}
 
 %   \parbox[t]{0.25\linewidth}{%\raggedright
 %     \visible<1,2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_wt_wo_n.svg}}}
 %   }
+   \aligntop{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}\hp
    %
-   \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_1.svg}}}%
-   \only<2->{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_2.svg}}}%
+   \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_0.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_1.svg}}}%
+   \only<3->{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_2.svg}}}%
    %
 %   \hspace{0.3\linewidth}
 %   %
@@ -498,7 +526,7 @@ Stanford University, Applied Physics
 %     \visible<2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_ko_wo_n.svg}}}
 %   }
 
-   \vp\visible<3>{\alert{Question 1:} {\color{darkblue}depletion effect} competes with {\color{darkgreen}enhanced intrinsic plasticity}.
+   \vp\visible<4>{\alert{Question 1:} {\color{darkblue}depletion effect} competes with {\color{darkgreen}enhanced intrinsic plasticity}.
    When is depletion effect stronger?}
 
 % \end{tabular}
@@ -523,21 +551,22 @@ Stanford University, Applied Physics
 
    \vp
   \begin{overlayarea}{0.7\linewidth}{0.25\linewidth}
-%   \only<4>{\includegraphics[width=0.9\linewidth]{gain_dec.svg}}%
+   \only<4->{\includegraphics[width=0.9\linewidth]{gain_dec.svg}}%
 %
 %   \vp
-   \only<4->{
-   \begin{tabular}{c@{\hspace{0.2\linewidth}}c}
-   \color{red!60!black}{Enh.\ Plast.} & WT \\[0.2cm]
-   \aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_KO.svg}}
-   &
-   \aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_WT.svg}}
-   \end{tabular}
-   }
+%   \only<5->{
+%   \begin{tabular}{c@{\hspace{0.2\linewidth}}c}
+%   \color{red!60!black}{Enh.\ Plast.} & WT \\[0.2cm]
+%   \aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_KO.svg}}
+%   &
+%   \aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_WT.svg}}
+%   \end{tabular}
+%   }
    \end{overlayarea}
  \end{center}
 
- \visible<5->{\vp\alert{Question 2:} How can replenishment \emph{ever} impair learning?}
+ \visible<5>{\vp\alert{Question 2:} When does enhanced plasticity impair learning?}
+% \visible<6->{\vp\alert{Question 2:} How can replenishment \emph{ever} impair learning?}
  %
  \note[item]{precede gain inc training w/ gain dec rev-training: reverses LTD}
  \note[item]{(but behaviour from elsewhere \lto\ not modelled)}
@@ -547,7 +576,7 @@ Stanford University, Applied Physics
 
 % -----Section-------------------------------------------------------------
 
-\subsection{Synaptic models of cerebellar learning}
+\subsection{Synaptic models of learning}
 
 %%-------------Slide--------------------------------------------------------
 %
@@ -609,7 +638,7 @@ Stanford University, Applied Physics
     \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
     \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
     \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
-    \only<16>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+%    \only<16>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
 %    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
 %    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
 %    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
@@ -704,23 +733,23 @@ Stanford University, Applied Physics
 
 \subsection{Learning outcomes of mice and models}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Questions}
+%%-------------Slide--------------------------------------------------------
 %
- Depletion effect competes with enhanced intrinsic plasticity.
-
- \vp\alert{Question 1:}  When is the depletion effect stronger?
-
- \vp\vp Reverse training impairs learning in wild-type.
-
- \vp\alert{Question 2:} How can replenishment \emph{ever} impair learning?
-
- \vp\vp Enhanced plasticity \lto\ enhanced/impaired learning
-
- \vp\alert{Big question:} Why? When?
+%\begin{frame}{Questions}
+%%
+% Depletion effect competes with enhanced intrinsic plasticity.
 %
-\end{frame}
+% \vp\alert{Question 1:}  When is the depletion effect stronger?
+%
+% \vp\vp Reverse training impairs learning in wild-type.
+%
+% \vp\alert{Question 2:} How can replenishment \emph{ever} impair learning?
+%
+% \vp\vp Enhanced plasticity \lto\ enhanced/impaired learning
+%
+% \vp\alert{Big question:} Why? When?
+%%
+%\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
@@ -761,27 +790,30 @@ Stanford University, Applied Physics
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
    \aligntop{\includegraphics[height=0.15\linewidth]{serial.svg}} &
-   \visible<1,2,4>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
+   \visible<1,2>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS.svg}}}%
    \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_top.svg}}}%
    \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_wo_s.svg}}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_left.svg}}}%
+%   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_left.svg}}}%
 %   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
-   \only<5,6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
-   \only<7>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering starting point:\\ labile states \\ $\downarrow$ \\
-   enhanced plasticity \\ $\implies$  impaired learning}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_wo_s.svg}}}%
+   \only<5>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering  %
+        starting point:\\ labile states \\ $\downarrow$ \\
+        enhanced plasticity \\ $\implies$  impaired learning}}%
    &
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
    \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
-   \only<3>{\parbox[t]{0.35\linewidth}{\centering \vp amplified depletion\\ $>$ \\ enhanced plasticity \\
-   \vp $\implies$  impaired learning}}%
+   \only<3>{\parbox[t]{0.35\linewidth}{\centering \vp %
+        amplified depletion\\ $>$ \\ enhanced plasticity \\
+        \vp $\implies$  impaired learning}}%
 %   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_right_nl.svg}}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
-   \only<5>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $+$ \\ ``stubborn'' metaplasticity \\
-   \vp $\implies$  impaired learning}}%
-   \only<6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
-   \only<7>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering starting point:\\ stubborn states \\ $\downarrow$ \\
-   enhanced plasticity \\ $\implies$  enhanced learning}}%
+%   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+%   \only<5>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $+$ \\ ``stubborn'' metaplasticity \\
+%   \vp $\implies$  impaired learning}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
+   \only<5>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering  %
+        starting point:\\ stubborn states \\ $\downarrow$ \\
+        enhanced plasticity \\ $\implies$  enhanced learning}}%
  \end{tabular}
  \end{center}
 %  \visible<3>{\alert{Key:} ``Stubborn'' metaplasticity}\\
@@ -875,7 +907,7 @@ S Lahiri and S Ganguli.
 
 \begin{frame}{Storage capacity of synaptic memory}
 %
-  Hopfield, perceptron have capacity \alert{$\propto N$}, (\# synapses).
+  Hopfield, perceptron models have capacity \alert{$\propto N$}, (\# synapses).
 
 \vp%\parbox[t]{0.59\linewidth}{%
   Assumes unbounded analogue synapses
@@ -907,7 +939,7 @@ S Lahiri and S Ganguli.
 %
 %\begin{frame}{Models of complex synaptic dynamics}
 %%
-%  There are $N$ identical synapses with $M$ internal functional states.
+%%  There are $N$ identical synapses with $M$ internal functional states.
 %%
 %\parbox[c]{0.82\linewidth}{%
 %  \begin{itemize}
@@ -1012,8 +1044,8 @@ S Lahiri and S Ganguli.
 %
  %
  \begin{center}
-   \only<1>{\includegraphics[width=0.5\linewidth]{MemorySequence.svg}}%
-   \only<2->{\includegraphics[width=0.5\linewidth]{MemoryRecognise.svg}}%
+   \only<1,3>{\includegraphics[width=0.5\linewidth]{MemorySequence.svg}}%
+   \only<2>{\includegraphics[width=0.5\linewidth]{MemoryRecognise.svg}}%
  \end{center}
  %
  Synapses store a sequence of memories.\\
@@ -1402,11 +1434,11 @@ S Lahiri and S Ganguli.
    \includegraphics[height=0.6\textheight]{Animation/FitVidFinal.svg}
  \end{center}
  %
- \visible<2>{
+ %\visible<2>{
  Problem: need \emph{long} sequences.
 
  Whole cell patch of postsynaptic neuron \lto\ Ca washout.
- }
+ %}
 % \textbf{EM algorithms:}
 %
 %   Sequence of hidden states $\ra$ estimate transition probabilities \\
@@ -1512,7 +1544,6 @@ S Lahiri and S Ganguli.
 %    \stoppagecounthere
 %
 \end{frame}
-
 %-------------Bonus--------------------------------------------------------
 \appendix
 %-------------Bonus--------------------------------------------------------
