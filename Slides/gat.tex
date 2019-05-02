@@ -363,7 +363,7 @@ Stanford University, Applied Physics
  Sometimes enhanced plasticity \lto\ impaired learning.
 
  \vp Why? How? When?}
-     \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
+%     \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
 
  \onslide<2->\vp Mice with enhanced cerebellar plasticity can show \alert{both} impaired and enhanced learning.
  \note[item]{Depends on circumstance. Rich pattern of behaviour}
@@ -740,7 +740,7 @@ Stanford University, Applied Physics
    \only<1>{\aligntop{\includegraphics[height=0.15\linewidth]{multistate.svg}}}%
    \only<2->{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
    &
-   \visible<1-3,5>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
+   \visible<1-3>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{blank_learnS.svg}}}%
    \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS.svg}}}%
    \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_top.svg}}}%
@@ -778,10 +778,9 @@ Stanford University, Applied Physics
 %   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_left.svg}}}%
 %   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
 %   \only<5,6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_wo_s.svg}}}%
-   \only<5>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering %
-        starting point:\\ labile states \\ $\downarrow$ \\
-        enhanced plasticity \\ $\implies$  impaired learning}}%
+   \only<4-5>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_wo_s.svg}}}%
+   \only<6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_bottom.svg}}}%
+   \only<7-8>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
    &
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
    \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
@@ -793,9 +792,14 @@ Stanford University, Applied Physics
 %   \only<5>{\parbox[t]{0.35\linewidth}{\centering \vp %
 %        reverse training\\ $+$ \\ ``stubborn'' metaplasticity \\
 %        \vp $\implies$  impaired learning}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
-   \only<5>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering %
-        starting point:\\ stubborn states \\ $\downarrow$ \\
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_wo_s.svg}}}%
+   \only<5>{\parbox[t]{0.35\linewidth}{\centering \vp %
+        start in: labile states \\ $\Downarrow$  \\
+        enhanced plasticity \\ $\implies$  impaired learning}}%
+   \only<6>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_bottom_nl.svg}}}%
+   \only<7>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
+   \only<8>{\parbox[t]{0.35\linewidth}{\centering \vp %
+        start in: stubborn states \\ $\Downarrow$ \\
         enhanced plasticity \\ $\implies$  enhanced learning}}%
  \end{tabular}
  \end{center}
@@ -809,7 +813,7 @@ Stanford University, Applied Physics
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Essential features}
+\begin{frame}{Essential features of successful models}
 %
  %
  \begin{center}
@@ -848,20 +852,22 @@ Stanford University, Applied Physics
  \begin{itemize}
 %   \item The saturation effect can overcome faster depression, if it is enhanced.
 %   \alert{Requires complexity}
-%   \note[item]{\eg exponential deacy, resource depletion,\ldots}
+%   \note[item]{\eg exponential decay, resource depletion,\ldots}
 %   \item A little reverse bias can help, but too much hurts, if repeated potentiation makes depression harder.
 %   \alert{Requires metaplasticity}
 %   \note[item]{\eg moving away from weight boundary, or weaker transitions.}
-   \item Diverse behavioural patterns:\\
-   \alert{Enhanced plasticity \lto\ enhance/impair} learning (prior experience).\\
-   \alert{Reverse-training \lto\ enhance/impair} learning (plasticity rates).
+   \item %Diverse behavioural patterns:\\
+   In VOR learning, depending on prior experience: \\
+   \alert{Enhanced plasticity \lto\ enhance/impair} learning.
+    
+   %\alert{Reverse-training \lto\ enhance/impair} learning (plasticity rates).
 
-   \item \alert{enhanced LTD} vs.\ \alert{depletion} \lto\ learning outcome.
-    \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
+   \vp\item \alert{enhanced LTD} vs.\ \alert{depletion} \lto\ learning outcome.
+   % \hfill{\alignmid{\includegraphics[width=0.1\linewidth]{pinky_by_lonewolf16.jpg}}} {\alignmid{\includegraphics[width=0.07\linewidth]{the_brain_by_lonewolf16.jpg}}}
 
 
 
-   \item Predictions for synaptic physiology:\\
+   \vp\item Predictions for synaptic physiology:\\
    \alert{Complexity:} necessary to amplify depletion.\\
    \alert{Stubbornness:} repeated potentiation impairs subsequent depression.
 
@@ -1340,7 +1346,7 @@ S Lahiri and S Ganguli.
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Summary}
+\begin{frame}{Conclusions}
 %
   \begin{itemize}
     \item We have formulated a general theory of learning and memory with complex synapses.
@@ -1500,7 +1506,8 @@ S Lahiri and S Ganguli.
 \begin{frame}{Summary}
 %
  \begin{itemize}
-   \item Internal dynamics of synaptic plasticity \lto\ understand learning and memory.
+   \item Internal dynamics of synaptic plasticity \\ \hfill
+   \lto\ understand learning and memory.
 
    \vp\item Behaviour \lto\ subcellular dynamics of synapses.
 
@@ -1510,8 +1517,8 @@ S Lahiri and S Ganguli.
 
    \vp\item Which synaptic structures are useful for different memory timescales.
 
-   \vp\item Not just a single model, \emph{all possible models} \\
-   \hfill\lto\ general principles relating synaptic structure to function.
+   \vp\item Not just a single model, \emph{all possible models} \\ \hfill
+   \lto\ general principles relating synaptic structure to function.
  \end{itemize}
 %
 \end{frame}
