@@ -247,6 +247,35 @@ Stanford University, Applied Physics
 % ------Section------------------------------------------------------------
 
 \section{Learning with enhanced plasticity}
+\frame{\sectionpage
+% \parbox[t]{0.3\linewidth}{
+% \begin{center}
+% \includegraphics[height=0.55\linewidth]{barbara.jpg}\\
+% \small Barbara Nguyen-Vu
+% \end{center}
+% }
+% \hfill
+% \parbox[t]{0.3\linewidth}{
+% \begin{center}
+% \includegraphics[height=0.55\linewidth]{grace.jpg}\\
+% \small Grace Zhao
+% \end{center}
+% }
+%\begin{center}
+
+\vp
+``{A saturation hypothesis to explain both enhanced and impaired learning with enhanced plasticity}'',
+%
+%\vpp
+ {{TDB~Nguyen-Vu, GQ~Zhao,} S~Lahiri, RR~Kimpo, H~Lee, S~Ganguli, CJ~ Shatz, JL~Raymond}.
+%\vpp
+\\%\newblock
+\href{http://dx.doi.org/10.7554/eLife.20147}{\emph{eLife, 6:\penalty0 e20147, (Feb., 2017)}}.
+%\end{center}
+
+ \note[item]{Acknowledge Barbara and Grace}
+}
+
 
 %-------------Slide--------------------------------------------------------
 
@@ -351,21 +380,21 @@ Stanford University, Applied Physics
 \subsection{Effects of enhanced plasticity on cerebellar learning}
 %\subsection{VOR learning and the cerebellum}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Vestibulo-Occular Reflex}
+%%-------------Slide--------------------------------------------------------
 %
- \parbox[t]{0.35\linewidth}{\aligntop{\includegraphics[width=0.99\linewidth]{VOR.svg}}}
- \parbox[t]{0.64\linewidth}{%
- Eye movements compensate for head movements $\implies$ stabilise image on retina.
-
- \vp Requires control of $\text{VOR gain} = \frac{\text{eye velocity}}{\text{head velocity}}$.
-
- \vp Needs to be adjusted as eye muscles age, \etc
- }
-
+%\begin{frame}{Vestibulo-Occular Reflex}
+%%
+% \parbox[t]{0.35\linewidth}{\aligntop{\includegraphics[width=0.99\linewidth]{VOR.svg}}}
+% \parbox[t]{0.64\linewidth}{%
+% Eye movements compensate for head movements $\implies$ stabilise image on retina.
 %
-\end{frame}
+% \vp Requires control of $\text{VOR gain} = \frac{\text{eye velocity}}{\text{head velocity}}$.
+%
+% \vp Needs to be adjusted as eye muscles age, \etc
+% }
+%
+%%
+%\end{frame}
 
 
 %-------------Slide--------------------------------------------------------
@@ -502,21 +531,22 @@ Stanford University, Applied Physics
 
    \vp
   \begin{overlayarea}{0.7\linewidth}{0.25\linewidth}
-   \only<4>{\includegraphics[width=0.9\linewidth]{gain_dec.svg}}%
+   \only<4->{\includegraphics[width=0.9\linewidth]{gain_dec.svg}}%
 %
 %   \vp
-   \only<5->{
-   \begin{tabular}{c@{\hspace{0.2\linewidth}}c}
-   \color{red!60!black}{Enh.\ Plast.} & WT \\[0.2cm]
-   \aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_KO.svg}}
-   &
-   \aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_WT.svg}}
-   \end{tabular}
-   }
+%   \only<5->{
+%   \begin{tabular}{c@{\hspace{0.2\linewidth}}c}
+%   \color{red!60!black}{Enh.\ Plast.} & WT \\[0.2cm]
+%   \aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_KO.svg}}
+%   &
+%   \aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_WT.svg}}
+%   \end{tabular}
+%   }
    \end{overlayarea}
  \end{center}
 
- \visible<5->{\vp\alert{Question 2:} How can replenishment \emph{ever} impair learning?}
+ \visible<5>{\vp\alert{Question 2:} When does enhanced plasticity impair learning?}
+% \visible<5->{\vp\alert{Question 2:} How can replenishment \emph{ever} impair learning?}
  %
  \note[item]{precede gain inc training w/ gain dec rev-training: reverses LTD}
  \note[item]{(but behaviour from elsewhere \lto\ not modelled)}
@@ -679,23 +709,23 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Questions}
+%%-------------Slide--------------------------------------------------------
 %
- Depletion effect competes with enhanced intrinsic plasticity.
-
- \vp\alert{Question 1:}  When is the depletion effect stronger?
-
- \vp\vp Reverse training impairs learning in wild-type.
-
- \vp\alert{Question 2:} How can replenishment \emph{ever} impair learning?
-
- \vp\vp Enhanced plasticity \lto\ enhanced/impaired learning
-
- \vp\alert{Big question:} Why? When?
+%\begin{frame}{Questions}
+%%
+% Depletion effect competes with enhanced intrinsic plasticity.
 %
-\end{frame}
+% \vp\alert{Question 1:}  When is the depletion effect stronger?
+%
+% \vp\vp Reverse training impairs learning in wild-type.
+%
+% \vp\alert{Question 2:} How can replenishment \emph{ever} impair learning?
+%
+% \vp\vp Enhanced plasticity \lto\ enhanced/impaired learning
+%
+% \vp\alert{Big question:} Why? When?
+%%
+%\end{frame}
 
 % -------Section-----------------------------------------------------------
 
@@ -708,23 +738,24 @@ Stanford University, Applied Physics
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
    \only<1>{\aligntop{\includegraphics[height=0.15\linewidth]{multistate.svg}}}%
-   \only<2-6>{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
+   \only<2->{\aligntop{\includegraphics[height=0.15\linewidth]{binary.svg}}}%
    &
    \visible<1-3,5>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[width=0.35\linewidth]{blank_learnS.svg}}}%
    \only<2>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS.svg}}}%
    \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_top.svg}}}%
    \only<4>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_ko_wo_s.svg}}}%
-   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_left.svg}}}%
-   \only<6>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_learnS_left.svg}}}%
+%   \only<6>{\aligntop{\includegraphics[width=0.35\linewidth]{binary_bar_wt_w_s.svg}}}%
    &
    \only<1-2>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_nl.svg}}}%
    \only<3>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_top_nl.svg}}}%
-   \only<4>{\parbox[t]{0.35\linewidth}{\centering \vp depletion effect\\ $<$ \\ enhanced plasticity \\
-   \vp $\implies$  enhanced learning}}%
-   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_left_nl.svg}}}%
-   \only<6>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $\implies$ \\ replenishment \\
-    $\implies$ \\ enhanced learning}}%
+   \only<4>{\parbox[t]{0.35\linewidth}{\centering \vp %
+     depletion effect\\ $<$ \\ enhanced plasticity \\
+     \vp $\implies$  enhanced learning}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+%   \only<6>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $\implies$ \\ replenishment \\
+%    $\implies$ \\ enhanced learning}}%
  \end{tabular}
  \end{center}
  \note[item]{Binary fails -- mathematical proof for any params}
@@ -740,27 +771,32 @@ Stanford University, Applied Physics
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
    \aligntop{\includegraphics[height=0.15\linewidth]{serial.svg}} &
-   \visible<1,2,4>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
+   \visible<1,2>{\aligntop{\includegraphics[height=0.19\linewidth]{VORinc.svg}}}\\[2cm]
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS.svg}}}%
    \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_top.svg}}}%
    \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_wo_s.svg}}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_left.svg}}}%
+%   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_left.svg}}}%
 %   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
-   \only<5,6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
-   \only<7>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering starting point:\\ labile states \\ $\downarrow$ \\
-   enhanced plasticity \\ $\implies$  impaired learning}}%
+%   \only<5,6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_wo_s.svg}}}%
+   \only<5>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering %
+        starting point:\\ labile states \\ $\downarrow$ \\
+        enhanced plasticity \\ $\implies$  impaired learning}}%
    &
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
    \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
-   \only<3>{\parbox[t]{0.35\linewidth}{\centering \vp amplified depletion\\ $>$ \\ enhanced plasticity \\
-   \vp $\implies$  impaired learning}}%
+   \only<3>{\parbox[t]{0.35\linewidth}{\centering \vp  %
+        amplified depletion\\ $>$ \\ enhanced plasticity \\
+        \vp $\implies$  impaired learning}}%
 %   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_right_nl.svg}}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
-   \only<5>{\parbox[t]{0.35\linewidth}{\centering \vp reverse training\\ $+$ \\ ``stubborn'' metaplasticity \\
-   \vp $\implies$  impaired learning}}%
-   \only<6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
-   \only<7>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering starting point:\\ stubborn states \\ $\downarrow$ \\
-   enhanced plasticity \\ $\implies$  enhanced learning}}%
+%   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_left_nl.svg}}}%
+%   \only<5>{\parbox[t]{0.35\linewidth}{\centering \vp %
+%        reverse training\\ $+$ \\ ``stubborn'' metaplasticity \\
+%        \vp $\implies$  impaired learning}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
+   \only<5>{\parbox[t][0.343\linewidth]{0.35\linewidth}{\centering %
+        starting point:\\ stubborn states \\ $\downarrow$ \\
+        enhanced plasticity \\ $\implies$  enhanced learning}}%
  \end{tabular}
  \end{center}
 %  \visible<3>{\alert{Key:} ``Stubborn'' metaplasticity}\\
@@ -838,6 +874,17 @@ Stanford University, Applied Physics
 % -------Section-----------------------------------------------------------
 
 \section{Memory over different timescales}
+\frame{\sectionpage
+%\begin{center}
+\vp%\newblock
+``A memory frontier for complex synapses'',
+%\newblock
+S Lahiri and S Ganguli.
+\\%\newblock
+\href{https://papers.nips.cc/paper/4872-a-memory-frontier-for-complex-synapses}
+{\emph{Adv.\ Neural Inf.\ Process.\ Syst.\ 26, pp.~1034--1042., (2013)}}.
+%\end{center}
+}
 
 %-------------Slide--------------------------------------------------------
 
@@ -849,7 +896,7 @@ Stanford University, Applied Physics
   Assumes unbounded analog synapses
   %Requires synapses' dynamic range also $\propto N$.
 
- \vp With discrete, finite synapses:\\
+ \vp With discrete, finite synapses:
  $\implies$ memory capacity  \alert{$\sim\CO(\log N)$}.
  \\ \citerr{amit1992constraints,amit1994learning}
  %
@@ -1291,6 +1338,26 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Summary}
+%
+  \begin{itemize}
+    \item We have formulated a general theory of learning and memory with complex synapses.
+%    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
+%    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
+    \vp\item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
+%    \vp\item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
+    \vp\item We understood which types of synaptic structure are useful for storing memories for different timescales.
+%    \item Gap between envelope and what we can achieve at early times?
+%    \item Trade-off between SNR at different times?
+%    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
+    \vp\item We studied more than a single model. We studied \emph{all possible models}, to extract general principles relating synaptic structure to function
+  \end{itemize}
+
+%
+\end{frame}
+
 % ----------------------------------------------------------------
 
 \section{Designing experiments}
@@ -1398,25 +1465,6 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Summary}
-%
-  \begin{itemize}
-    \item We have formulated a general theory of learning and memory with complex synapses.
-%    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
-%    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
-    \vp\item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
-%    \vp\item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
-    \vp\item We understood which types of synaptic structure are useful for storing memories for different timescales.
-%    \item Gap between envelope and what we can achieve at early times?
-%    \item Trade-off between SNR at different times?
-%    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
-    \vp\item We studied more than a single model. We studied \emph{all possible models}, to extract general principles relating synaptic structure to function
-  \end{itemize}
-
-%
-\end{frame}
 
 
 %================================================================================
@@ -1444,6 +1492,27 @@ Stanford University, Applied Physics
 %                           Brain Corporation,
 %                           Evolved Machines.
 %    \stoppagecounthere
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Summary}
+%
+ \begin{itemize}
+   \item Internal dynamics of synaptic plasticity \lto\ understand learning and memory.
+
+   \vp\item Behaviour \lto\ subcellular dynamics of synapses.
+
+   \vp\item Why \& when enhanced plasticity \lto\ enhanced/impaired learning.
+
+   \vp\item Memory envelope: cannot be exceeded by \emph{any} model's memory curve.
+
+   \vp\item Which synaptic structures are useful for different memory timescales.
+
+   \vp\item Not just a single model, \emph{all possible models} \\
+   \hfill\lto\ general principles relating synaptic structure to function.
+ \end{itemize}
 %
 \end{frame}
 
