@@ -212,9 +212,9 @@ Stanford University, Applied Physics
 %
  We want to study the structure-function relationship of biological processes.
 
- \vp Not trying to build a model for ``X''.
+ \vp Not trying to build a \emph{single} model.
 
- \vp Instead, we study a broad class of models to find:
+ \vp Instead, we build a broad framework of models to find:
 
  \begin{itemize}
    \item[\lto] underlying mechanisms and principles.
@@ -820,7 +820,7 @@ Stanford University, Applied Physics
    \includegraphics[width=0.4\linewidth]{serial_s.svg}
  \end{center}
  %
- \vp The success of the serial model relies on two features:
+ \vp The success of the serial model in reproducing data relies on two features:
  \begin{itemize}
    \item Complexity - needed for depletion to dominate enhanced plasticity,
    \note[item]{due to exponential decay}
@@ -859,7 +859,7 @@ Stanford University, Applied Physics
    \item %Diverse behavioural patterns:\\
    In VOR learning, depending on prior experience: \\
    \alert{Enhanced plasticity \lto\ enhance/impair} learning.
-    
+
    %\alert{Reverse-training \lto\ enhance/impair} learning (plasticity rates).
 
    \vp\item \alert{enhanced LTD} vs.\ \alert{depletion} \lto\ learning outcome.
@@ -1043,6 +1043,7 @@ S Lahiri and S Ganguli.
    {\includegraphics[width=0.55\linewidth]{MemoryCurve.svg}}
  \end{center}
  %
+ \note{What is SNR, what is time.}
 %
 \end{frame}
 
@@ -1145,40 +1146,41 @@ S Lahiri and S Ganguli.
 
 \subsection{Frontiers of memory}
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Upper bounds on measures of memory}
+%%-------------Slide--------------------------------------------------------
 %
-\parbox[t]{0.6\linewidth}{
- Initial SNR:
- %
- \begin{equation*}
-   \initial = \snr(0) = \sum_a \initial_a \leq \sqrt{N}.
- \end{equation*}
- %
- %
- \begin{center}
-   \includegraphics[height=0.1\linewidth]{binary_det.svg}
- \end{center}
- %
- }
- \parbox[t]{0.39\linewidth}{
-    \aligntop{\includegraphics[width=0.96\linewidth]{snr_props.svg}}
- } \par
- Area under curve:
- %
- \begin{equation*}
-   \area = \int_0^\infty \!\snr(t)\, \dt = \sum_a \initial_a \tau_a \leq \sqrt{N}(M-1)/r.
- \end{equation*}
- %
- %
- \begin{center}
-   \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
- \end{center}
- %
- \citerr{Lahiri2013synapse}
-%
-\end{frame}
+%\begin{frame}{Upper bounds on measures of memory}
+%%
+%\parbox[t]{0.6\linewidth}{
+% Initial SNR:
+% %
+% \begin{equation*}
+%   \initial = \snr(0) = \sum_a \initial_a \leq \sqrt{N}.
+% \end{equation*}
+% %
+% \note{intuition}
+% %
+% \begin{center}
+%   \includegraphics[height=0.1\linewidth]{binary_det.svg}
+% \end{center}
+% %
+% }
+% \parbox[t]{0.39\linewidth}{
+%    \aligntop{\includegraphics[width=0.96\linewidth]{snr_props.svg}}
+% } \par
+% Area under curve:
+% %
+% \begin{equation*}
+%   \area = \int_0^\infty \!\snr(t)\, \dt = \sum_a \initial_a \tau_a \leq \sqrt{N}(M-1)/r.
+% \end{equation*}
+% %
+% %
+% \begin{center}
+%   \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
+% \end{center}
+% %
+% \citerr{Lahiri2013synapse}
+%%
+%\end{frame}
 
 %-------------Slide--------------------------------------------------------
 
