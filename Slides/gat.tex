@@ -246,6 +246,456 @@ Stanford University, Applied Physics
 
 % ------Section------------------------------------------------------------
 
+\section{Memory over different timescales}
+\frame{\sectionpage
+%\begin{center}
+\vp%\newblock
+``A memory frontier for complex synapses'',
+%\newblock
+S Lahiri and S Ganguli.
+\\%\newblock
+\href{https://papers.nips.cc/paper/4872-a-memory-frontier-for-complex-synapses}
+{\emph{Adv.\ Neural Inf.\ Process.\ Syst.\ 26, pp.~1034--1042., (2013)}}.
+\\%\newblock
+NeurIPS 2013 Outstanding Paper Award.
+%\end{center}
+}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Storage capacity of synaptic memory}
+%
+  Hopfield, perceptron have capacity \alert{$\propto N$}, (\# synapses).
+
+\vp%\parbox[t]{0.59\linewidth}{%
+  Assumes unbounded analog synapses
+  %Requires synapses' dynamic range also $\propto N$.
+
+ \vp With discrete, finite synapses:
+ $\implies$ memory capacity  \alert{$\sim\CO(\log N)$}.
+ \\ \citerr{amit1992constraints,amit1994learning}
+ %
+ %}
+ %
+% \parbox[t]{0.4\linewidth}{
+%   %\begin{flushright}
+%    \hfill\aligntop{\includegraphics[width=0.9\linewidth]{Petersen1998.jpg}}
+%   %\end{flushright}
+% }
+% \\
+%    \citerr{Petersen1998allornone,OConnor2005switch}
+
+ \vp New memories overwrite old
+ $\implies$ stability-plasticity dilemma.
+ %
+ \note[item]{or sparse $\sim \log N / N$}
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Models of complex synaptic dynamics}
+%
+%  There are $N$ identical synapses with $M$ internal functional states.
+\visible<2->{
+\parbox[c]{0.82\linewidth}{%
+  \begin{itemize}
+    \item Internal functional state of synapse \lto\ synaptic weight.
+    \item Candidate plasticity events \lto\ transitions between states
+  \end{itemize}
+}\hfill
+\alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
+}
+
+  %
+  \vp
+%  \begin{overlayarea}{0.7\linewidth}{0.3\linewidth}
+%    \only<1>{\includegraphics[width=0.99\linewidth]{synapse_model_1.svg}}%
+%    \only<2>{\includegraphics[width=0.99\linewidth]{synapse_model_2.svg}}
+%  \end{overlayarea}
+%
+\begin{overlayarea}{0.95\linewidth}{0.4\textheight}
+  \begin{center}
+%\aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
+    \only<1>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal_1.svg}}}%
+    \only<2>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal.svg}}}%
+    \only<3->{\vp}
+    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
+    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
+    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
+    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
+    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
+    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
+    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
+    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
+    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
+    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
+    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
+    \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
+    \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
+    \only<16>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
+  \end{center}
+\end{overlayarea}
+
+%  \onslide<2>{\hfill
+%  \parbox[t]{0.3\linewidth}{PF+\cancel{CF} \lto\ LTP, \\
+%              PF+CF \lto\ LTD.}
+%  \parbox[t]{0.27\linewidth}{Lower threshold\\ for LTD}
+%  \parbox[t]{0.27\linewidth}{VOR gain increase}}
+\vp
+\begin{overlayarea}{0.95\linewidth}{0.3\textheight}
+  \only<2>{States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
+  CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
+
+  \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}\\\citerr{Smith2006savings,Lahiri2013synapse}}%
+
+  \only<9->{Metaplasticity: \parbox[t]{0.7\linewidth}{%
+     change propensity for plasticity \\
+     (independent of change in synaptic weight).}}
+\end{overlayarea}
+
+  %
+  \note[item]{complex synapse: not just synaptic weight. dynamical system}
+  \note[item]{important for memory with bounded synapses}
+  \note[item]{nodes \lto\ states}
+  \note[item]{color \lto\ sttrength}
+  \note[item]{arrows \lto\ plasticity}
+%  \note[item]{stoch process has steady state distribution.}
+%  \note[item]{Prior activity puts it in this state. row vec.}
+  \note[item]{plasticity events at rate r. indep at each synapse.}
+  \note[item]{fraction pot/dep}
+  \note[item]{Readout: synaptic weight vec when in each state.}
+    \note[item]{Mutation: lower threshold \lto\ increase transition probs}
+    \note[item]{Training: Changes statistics of LTP/LTD. Only parameters we have. Don't care about $r$.}
+    \note[item]{Learning: Only output we have. Don't keep track of synaptic identity.}
+\end{frame}
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Example models}
+%%
+%  \begin{center}
+%    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{cascade.svg}}
+%                               \par\citerr{Fusi2005cascade}}
+%    \hspace{0.05\linewidth}
+%    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{serial.svg}}
+%                               \par\citerr{Ben-DayanRubin2007sparse} \par\citerr{Leibold2008serial}}
+%
+%    \vp
+%    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{BennaFusi.svg}}
+%                               \par\citerr{Benna2015complex}}
+%    \hspace{0.05\linewidth}
+%    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{integ_express.pdf}}
+%                               \par\citerr{Elliott2011}}
+%  \end{center}
+%%
+%\end{frame}
+
+% ----Section--------------------------------------------------------------
+
+\subsection{Quantifying memory quality}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Synaptic memory curves}
+%
+ %
+\begin{overlayarea}{0.95\linewidth}{0.2\textheight}
+ \begin{center}
+   \only<1>{\includegraphics[width=0.5\linewidth]{MemorySequence_a1.svg}}%
+   \only<2>{\includegraphics[width=0.5\linewidth]{MemorySequence_a2.svg}}%
+   \only<3>{\includegraphics[width=0.5\linewidth]{MemorySequence_a3.svg}}%
+   \only<4>{\includegraphics[width=0.5\linewidth]{MemorySequence_a4.svg}}%
+   \only<5>{\includegraphics[width=0.5\linewidth]{MemorySequence_a5.svg}}%
+   \only<6,8>{\includegraphics[width=0.5\linewidth]{MemorySequence_a6.svg}}%
+   \only<7>{\includegraphics[width=0.5\linewidth]{MemorySequence_a7.svg}}%
+ \end{center}
+\end{overlayarea}
+ %
+\begin{overlayarea}{0.95\linewidth}{0.6\textheight}
+\only<1-7>{
+ \begin{center}
+   \only<1>{\includegraphics[width=0.5\linewidth]{MemorySequence_b1.svg}}%
+   \only<2>{\includegraphics[width=0.5\linewidth]{MemorySequence_b2.svg}}%
+   \only<3>{\includegraphics[width=0.5\linewidth]{MemorySequence_b3.svg}}%
+   \only<4>{\includegraphics[width=0.5\linewidth]{MemorySequence_b4.svg}}%
+   \only<5>{\includegraphics[width=0.5\linewidth]{MemorySequence_b5.svg}}%
+   \only<6>{\includegraphics[width=0.5\linewidth]{MemorySequence_b6.svg}}%
+   \only<7>{\includegraphics[width=0.5\linewidth]{MemorySequence_b7.svg}}%
+ \end{center}
+ \begin{center}
+   \only<1>{\includegraphics[width=0.5\linewidth]{MemorySequence_c1.svg}}%
+   \only<2>{\includegraphics[width=0.5\linewidth]{MemorySequence_c2.svg}}%
+   \only<3>{\includegraphics[width=0.5\linewidth]{MemorySequence_c3.svg}}%
+   \only<4>{\includegraphics[width=0.5\linewidth]{MemorySequence_c4.svg}}%
+   \only<5>{\includegraphics[width=0.5\linewidth]{MemorySequence_c5.svg}}%
+   \only<6>{\includegraphics[width=0.5\linewidth]{MemorySequence_c6.svg}}%
+   \only<7>{\includegraphics[width=0.5\linewidth]{MemorySequence_c7.svg}}%
+ \end{center}
+}
+\only<8>{%
+ Synapses store a sequence of memories.\\
+ Recognition memory: has this pattern been seen before?\\
+ Performance described by SNR of $\syn(t)\cdot\syn_\text{test}$.
+ %
+ \begin{center}
+   {\includegraphics[width=0.5\linewidth]{MemoryCurve.svg}}
+ \end{center}
+}
+\end{overlayarea}
+ %
+ \note{What is SNR, what is time.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Specific models of complex synaptic dynamics}
+%
+ Two example models of complex synapses.
+ %
+ \begin{center}
+  \aligntop{\includegraphics[width=4cm]{cascade.svg}}
+  \hspace{2cm}
+  \aligntop{\includegraphics[width=4cm]{multistate.svg}}
+ \end{center}
+ \citerr{Fusi2005cascade,Leibold2008serial,Ben-DayanRubin2007sparse}
+ %
+ \note[item]{previous work, also: Benna-Fusi}
+
+ These have different memory storage properties
+ %
+ \begin{center}
+   \includegraphics[width=0.5\linewidth]{cascms.svg}
+ \end{center}
+ %
+ \note[item]{Multistate good at one time, bad at others,}
+ \note[item]{Cascade, less well at that time, better over range of times.}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{General principles relating structure and function?}
+%
+ \vspace{-2\baselineskip}
+ \begin{center}
+ \parbox[t]{0.35\linewidth}{%
+ \begin{center}
+   Synaptic structure\\
+   \includegraphics[width=0.99\linewidth]{synapse_internal.svg}
+ \end{center}
+ }
+ \hspace{0.1\linewidth}
+ \parbox[t]{0.3\linewidth}{%
+ \begin{center}
+   Synaptic function\\
+   \includegraphics[width=0.99\linewidth]{MemoryCurve.svg}
+ \end{center}
+ }
+ \end{center}
+ \begin{itemize}
+   \item What are the fundamental limits of memory?
+   \vp\item Which models achieve these limits?
+   \vp\item What are the theoretical principles behind the optimal models?
+ \end{itemize}
+%
+\end{frame}
+
+
+
+% ----------------------------------------------------------------
+
+\subsection{Frontiers of memory}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Proven envelope: memory frontier}
+%
+ \visible<1->{Upper bound on memory curve at \emph{any} timescale.}
+
+ %\vp
+ \begin{center}
+% \parbox[c]{0.67\linewidth}{
+   %\only<1>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum2.svg}}}%
+   \only<1>{\aligntop{\includegraphics[width=0.67\linewidth]{RunAveProvenNum1.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.67\linewidth]{RunAveProvenNum.svg}}}%
+   \note[item]{Best we've found, by numerical opt and hand chosen models.}
+% \note[item]{Models on next slide}
+% }
+ \end{center}
+% \hspace{0.01\linewidth}
+ %
+% \visible<3>{
+% \parbox[c]{0.3\linewidth}{
+%   Serial topology:
+%   %
+%   \begin{center}
+%  %   \includegraphics[width=6cm]{multistate_shorten.svg}
+%     \includegraphics[width=0.99\linewidth]{multistate.svg}
+%   \end{center}
+%   %
+% }}
+ \note[item]{Gap $\sim\CO(\sqrt{N})$.}
+ \note[item]{Area bound active at early times $\implies$ need more constraints.}
+%
+\end{frame}
+
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Models that maximize memory for one timescale}
+%
+ %
+ \parbox[c]{0.67\linewidth}{
+ \begin{center}
+   \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{RunAveModels1.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{RunAveModels2.svg}}}%
+   \only<3>{\aligntop{\includegraphics[width=0.9\linewidth]{RunAveModels3.svg}}}%
+ \end{center}
+ }
+%
+ \parbox[c]{0.3\linewidth}{
+   %
+   \begin{center}
+     \visible<1>{\includegraphics[width=0.99\linewidth]{multistate_uni4.svg}}
+     \visible<2>{\includegraphics[width=0.99\linewidth]{multistate_uni.svg}}
+     \visible<3>{\includegraphics[width=0.99\linewidth]{multistate_sticky.svg}}
+   \end{center}
+   %
+ }
+
+%
+\end{frame}
+
+
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Models that maximise memory for one timescale}
+%%
+% %
+% \begin{center}
+%   \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
+%   %\only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv30.svg}}}%
+%   \only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv34.svg}}}%
+%   %\only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv42.svg}}}%
+%   \only<3>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv47.svg}}}%
+%   %\only<6>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv51.svg}}}%
+%   %
+%   \only<4>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
+%   %\only<8>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv24.svg}}}%
+%   %\only<9>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv21.svg}}}%
+%   \only<5>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv20.svg}}}%
+%   %\only<11>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv19.svg}}}%
+%   %\only<12>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv17.svg}}}%
+%   \only<6>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv16.svg}}}%
+%   %\only<14>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv14.svg}}}%
+%   %\only<15>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv12.svg}}}%
+%   \only<7>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv06.svg}}}%
+%   %\only<17>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv01.svg}}}%
+% \end{center}
+%%
+%%
+%\end{frame}
+%
+%
+%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Heuristic envelope}
+%%
+% %
+% \begin{center}
+%   \includegraphics[width=0.88\linewidth]{LenvAnalytic.svg}
+% \end{center}
+%%
+%%
+%\end{frame}
+
+% ----------------------------------------------------------------
+
+\subsection{Implications of memory limits}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Synaptic diversity and timescales of memory}
+%
+ \parbox[t][][t]{0.47\linewidth}{
+ Different synapses have different molecular structures.
+ \begin{center}
+   \aligntop{\includegraphics[width=0.8\linewidth]{Emes2012.jpeg}}
+ \end{center}
+ \citerr{Emes2012synapserev}
+ }
+ %
+ \hspace{0.03\linewidth}
+ %
+ \visible<2->{%
+ \parbox[t][][t]{0.47\linewidth}{
+ Memories stored in different places for different timescales
+
+ \citerr{Squire1995amnesia}
+
+ \citerr{McClelland1995consolidation}
+ \begin{center}
+   \aligntop{\includegraphics[width=0.9\linewidth]{sleepconsolidation.png}}
+ \end{center}
+ \citerr{Born2012sleep}
+
+ Also: Cerebellar cortex \lto\ nuclei.
+
+ \citerr{Attwell2002consolidation}
+
+ \citerr{Cooke2004consolidation}
+ }}
+ %
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Synaptic structure and function: general principles}
+%
+ Real synapses limited by molecular building blocks. \\
+ Evolution had larger set of priorities.
+
+ \vp What can we conclude?
+
+ \begin{center}
+ \begin{tabular}{ccccc}
+   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
+   Short timescale & $\longrightarrow$ & Moderate timescale & $\longrightarrow$ & Long timescale \\[0.5cm]
+   \alignmid{\includegraphics[height=0.064\linewidth]{multistate_uni4.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.064\linewidth]{multistate_uni.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.064\linewidth]{multistate_sticky.svg}} \\[0.5cm]
+   \visible<2->{short topology} & \visible<2->{$\longrightarrow$} & \visible<2->{long topology} &  &  \\[0.5cm]
+    & & \visible<3->{deterministic synapse} & \visible<3->{$\longrightarrow$} & \visible<3->{stochastic synapse} \\
+ \end{tabular}
+ \end{center}
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Conclusions}
+%
+  \begin{itemize}
+    \item We have formulated a general theory of learning and memory with complex synapses.
+%    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
+%    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
+    \vp\item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
+%    \vp\item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
+    \vp\item We understood which types of synaptic structure are useful for storing memories for different timescales.
+%    \item Gap between envelope and what we can achieve at early times?
+%    \item Trade-off between SNR at different times?
+%    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
+    \vp\item We studied more than a single model. We studied \emph{all possible models}, to extract general principles relating synaptic structure to function
+  \end{itemize}
+
+%
+\end{frame}
+
+% -------Section-----------------------------------------------------------
+
 \section{Learning with enhanced plasticity}
 \frame{\sectionpage
 % \parbox[t]{0.3\linewidth}{
@@ -271,6 +721,8 @@ Stanford University, Applied Physics
 %\vpp
 \\%\newblock
 \href{http://dx.doi.org/10.7554/eLife.20147}{\emph{eLife, 6:\penalty0 e20147, (Feb., 2017)}}.
+\\%\newblock
+Highest rated abstract at Cosyne 2014.
 %\end{center}
 
  \note[item]{Acknowledge Barbara and Grace}
@@ -458,47 +910,28 @@ Stanford University, Applied Physics
 
 \begin{frame}{Enhanced plasticity impairs learning}
 %
- \alert{Expectation:} enhanced LTD \lto\ enhanced learning.
-
- \begin{center}
- \begin{tabular}{lr}
-%   Baseline & \hspace{0.1\linewidth} &
-%   Gain increase \\[0.5cm]
-%   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} &&
-   \alignmid{\includegraphics[width=0.2\linewidth]{VORinc.svg}}&
-   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}\\
-   &\alert{Experiment:} enhanced plasticity \lto\ impaired learning.
- \end{tabular}
- \end{center}
-% \note[item]{No difference in baseline occulomotor performance}
- \note[item]{Impairment of learning}
- \note[item]{Looking at change of VOR gain during gain-up training}
-
-\vp
- \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
- Knockout of MHC-I K$^\mathsf{b}$D$^\mathsf{b}$ molecules in PF-Pk synapses\\
-  \lto\ lower threshold for LTD  \citerr{McConnell2009MHCcerebellum}
-
-
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Depletion hypothesis}
-%
-{}
- {\color{darkgrey} Learning rate} $\sim$ {\color{darkgreen}intrinsic plasticity rate} $\times$ {\color{darkblue}\# synapses available for LTD}.
-
- \vp
+\begin{overlayarea}{0.98\linewidth}{4em}
+\only<1>{ Knockout of MHC-I K$^\mathsf{b}$D$^\mathsf{b}$ molecules in PF-Pk synapses\\
+  \lto\ lower threshold for LTD
+  \lto\ enhanced learning of Rotarod task.\\
+  \citerr{McConnell2009MHCcerebellum}
+}
+\only<2->{
+ {\color{darkgrey} Learning rate} $\sim$
+ {\color{darkgreen}intrinsic plasticity rate} $\times$
+ {\color{darkblue}\# synapses available for LTD}.
+}
+\end{overlayarea}
  \begin{center}
 
 %   \parbox[t]{0.25\linewidth}{%\raggedright
 %     \visible<1,2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_wt_wo_n.svg}}}
 %   }
+   \aligntop{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}\hp
    %
-   \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_1.svg}}}%
-   \only<2->{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_2.svg}}}%
+   \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_0.svg}}}%
+   \only<2>{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_1.svg}}}%
+   \only<3->{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_2.svg}}}%
    %
 %   \hspace{0.3\linewidth}
 %   %
@@ -506,7 +939,7 @@ Stanford University, Applied Physics
 %     \visible<2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_ko_wo_n.svg}}}
 %   }
 
-   \vp\visible<3>{\alert{Question 1:} {\color{darkblue}depletion effect} competes with {\color{darkgreen}enhanced intrinsic plasticity}.
+   \vp\visible<4>{\alert{Question 1:} {\color{darkblue}depletion effect} competes with {\color{darkgreen}enhanced intrinsic plasticity}.
    When is depletion effect stronger?}
 
 % \end{tabular}
@@ -519,6 +952,71 @@ Stanford University, Applied Physics
 %
 \end{frame}
 
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Enhanced plasticity impairs learning}
+%%
+% \alert{Expectation:} enhanced LTD \lto\ enhanced learning.
+%
+% \begin{center}
+% \begin{tabular}{lr}
+%%   Baseline & \hspace{0.1\linewidth} &
+%%   Gain increase \\[0.5cm]
+%%   \alignmid{\includegraphics[width=0.4\linewidth]{baseline.svg}} &&
+%   \alignmid{\includegraphics[width=0.2\linewidth]{VORinc.svg}}&
+%   \alignmid{\includegraphics[width=0.3\linewidth]{gain_inc.svg}}\\
+%   &\alert{Experiment:} enhanced plasticity \lto\ impaired learning.
+% \end{tabular}
+% \end{center}
+%% \note[item]{No difference in baseline occulomotor performance}
+% \note[item]{Impairment of learning}
+% \note[item]{Looking at change of VOR gain during gain-up training}
+%
+%\vp
+% \note[item]{Major Histocompatibility Complex - involved in synaptic plasticity (Carla Shatz lab)}
+% Knockout of MHC-I K$^\mathsf{b}$D$^\mathsf{b}$ molecules in PF-Pk synapses\\
+%  \lto\ lower threshold for LTD  \citerr{McConnell2009MHCcerebellum}
+%
+%
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Depletion hypothesis}
+%%
+%{}
+% {\color{darkgrey} Learning rate} $\sim$ {\color{darkgreen}intrinsic plasticity rate} $\times$ {\color{darkblue}\# synapses available for LTD}.
+%
+% \vp
+% \begin{center}
+%
+%%   \parbox[t]{0.25\linewidth}{%\raggedright
+%%     \visible<1,2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_wt_wo_n.svg}}}
+%%   }
+%   %
+%   \only<1>{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_1.svg}}}%
+%   \only<2->{\aligntop{\includegraphics[width=0.5\linewidth]{sat_model_2.svg}}}%
+%   %
+%%   \hspace{0.3\linewidth}
+%%   %
+%%   \parbox[t]{0.25\linewidth}{%\raggedleft
+%%     \visible<2>{\aligntop{\includegraphics[height=\linewidth]{binary_bar_ko_wo_n.svg}}}
+%%   }
+%
+%   \vp\visible<3>{\alert{Question 1:} {\color{darkblue}depletion effect} competes with {\color{darkgreen}enhanced intrinsic plasticity}.
+%   When is depletion effect stronger?}
+%
+%% \end{tabular}
+%%   \vp
+%
+% \end{center}
+%% \note[item]{Older explanation: error model}
+% \note[item]{Our model: baseline activity \lto\ saturation \lto\ less depression possible}
+% \note[item]{Saturation has to compete with enhanced plasticity. Which will win?}
+%%
+%\end{frame}
+%
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Replenishment by reverse-training}
@@ -581,8 +1079,8 @@ Stanford University, Applied Physics
 
 \begin{frame}{Models of complex synaptic dynamics}
 %
-%  There are $N$ identical synapses with $M$ internal functional states.
-\visible<2->{
+  There are $N$ identical synapses with $M$ internal functional states.
+%
 \parbox[c]{0.82\linewidth}{%
   \begin{itemize}
     \item Internal functional state of synapse \lto\ synaptic weight.
@@ -590,70 +1088,19 @@ Stanford University, Applied Physics
   \end{itemize}
 }\hfill
 \alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
-}
-
-  %
-  \vp
-%  \begin{overlayarea}{0.7\linewidth}{0.3\linewidth}
-%    \only<1>{\includegraphics[width=0.99\linewidth]{synapse_model_1.svg}}%
-%    \only<2>{\includegraphics[width=0.99\linewidth]{synapse_model_2.svg}}
-%  \end{overlayarea}
 %
-\begin{overlayarea}{0.95\linewidth}{0.4\textheight}
+
   \begin{center}
-%\aligntop{\movie[width=200px,height=92px,showcontrols=true,loop]{\includegraphics[width=200px,height=92px]{Vids/plast_00.png}}{plast.avi}}
-    \only<1>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal_1.svg}}}%
-    \only<2>{\aligntop{\includegraphics[width=0.7\linewidth]{serial_internal.svg}}}%
-    \only<3->{\vp}
-    \only<3>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_01.svg}}}%
-    \only<4>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_02.svg}}}%
-    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_03.svg}}}%
-    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_04.svg}}}%
-    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_05.svg}}}%
-    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
-    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
-    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
-    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
-    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
-    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
-    \only<14>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
-    \only<15>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
-    \only<16>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
-%    \only<5>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_06.svg}}}%
-%    \only<6>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_07.svg}}}%
-%    \only<7>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_08.svg}}}%
-%    \only<8>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_09.svg}}}%
-%    \only<9>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_10.svg}}}%
-%    \only<10>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_11.svg}}}%
-%    \only<11>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_12.svg}}}%
-%    \only<12>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial_anim_13.svg}}}%
-%    \only<13>{\aligntop{\includegraphics[width=0.5\linewidth]{Animation/serial.svg}}}%
-    %
-%    \hspace{0.05\linewidth}\parbox[t]{0.45\linewidth}{\raggedright
-%    \visible<15>{
-%    Mutation: transition probabilities \\ \vp
-%    Training: rates of pot/dep events \\ \vp
-%    Learning: synaptic weight}}
+    \aligntop{\includegraphics[width=0.6\linewidth]{synapse_internal.svg}}
+%    \hspace{0.07\linewidth}
+%    \aligntop{\includegraphics[width=0.3\linewidth]{MadisonMontgomery.jpg}}
+%    \\ \citerr{Montgomery2002765}
   \end{center}
-\end{overlayarea}
 
-%  \onslide<2>{\hfill
-%  \parbox[t]{0.3\linewidth}{PF+\cancel{CF} \lto\ LTP, \\
-%              PF+CF \lto\ LTD.}
-%  \parbox[t]{0.27\linewidth}{Lower threshold\\ for LTD}
-%  \parbox[t]{0.27\linewidth}{VOR gain increase}}
-\vp
-\begin{overlayarea}{0.95\linewidth}{0.3\textheight}
-  \only<2>{States: \parbox[t]{0.85\linewidth}{NMDAR subunit composition, CaMK II autophosphorylation,\\
-                                              activating PKC, p38 MAPK,...}
+  States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
+  CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
 
-  \vp\footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}\\\citerr{Smith2006savings,Lahiri2013synapse}}%
-
-  \only<9->{Metaplasticity: \parbox[t]{0.7\linewidth}{%
-     change propensity for plasticity \\
-     (independent of change in synaptic weight).}}
-\end{overlayarea}
-
+  \vp \footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}%%\\\citerr{Smith2006savings,Lahiri2013synapse}}%
   %
   \note[item]{complex synapse: not just synaptic weight. dynamical system}
   \note[item]{important for memory with bounded synapses}
@@ -665,10 +1112,9 @@ Stanford University, Applied Physics
   \note[item]{plasticity events at rate r. indep at each synapse.}
   \note[item]{fraction pot/dep}
   \note[item]{Readout: synaptic weight vec when in each state.}
-    \note[item]{Mutation: lower threshold \lto\ increase transition probs}
-    \note[item]{Training: Changes statistics of LTP/LTD. Only parameters we have. Don't care about $r$.}
-    \note[item]{Learning: Only output we have. Don't keep track of synaptic identity.}
+  %
 \end{frame}
+
 
 %-------------Slide--------------------------------------------------------
 
@@ -778,9 +1224,9 @@ Stanford University, Applied Physics
 %   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_left.svg}}}%
 %   \only<3>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
 %   \only<5,6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
-   \only<4-5>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_wo_s.svg}}}%
-   \only<6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_bottom.svg}}}%
-   \only<7-8>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_fit_learnS_bottom.svg}}}%
+   \only<5,6>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_wo_s.svg}}}%
+   \only<7,8>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_wt_w_s.svg}}}%
    &
    \only<1>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_nl.svg}}}%
    \only<2>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_top_nl.svg}}}%
@@ -792,11 +1238,11 @@ Stanford University, Applied Physics
 %   \only<5>{\parbox[t]{0.35\linewidth}{\centering \vp %
 %        reverse training\\ $+$ \\ ``stubborn'' metaplasticity \\
 %        \vp $\implies$  impaired learning}}%
-   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_wo_s.svg}}}%
-   \only<5>{\parbox[t]{0.35\linewidth}{\centering \vp %
+   \only<4>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_bottom_nl.svg}}}%
+   \only<5>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_wo_s.svg}}}%
+   \only<6>{\parbox[t]{0.35\linewidth}{\centering \vp %
         start in: labile states \\ $\Downarrow$  \\
         enhanced plasticity \\ $\implies$  impaired learning}}%
-   \only<6>{\aligntop{\includegraphics[height=0.35\linewidth]{data_shifted_bottom_nl.svg}}}%
    \only<7>{\aligntop{\includegraphics[height=0.35\linewidth]{serial_bar_ko_w_s.svg}}}%
    \only<8>{\parbox[t]{0.35\linewidth}{\centering \vp %
         start in: stubborn states \\ $\Downarrow$ \\
@@ -820,7 +1266,7 @@ Stanford University, Applied Physics
    \includegraphics[width=0.4\linewidth]{serial_s.svg}
  \end{center}
  %
- \vp The success of the serial model in reproducing data relies on two features:
+ \vp The serial model successfully reproduced the data due to two features:
  \begin{itemize}
    \item Complexity - needed for depletion to dominate enhanced plasticity,
    \note[item]{due to exponential decay}
@@ -878,495 +1324,6 @@ Stanford University, Applied Physics
 
 
 % -------Section-----------------------------------------------------------
-
-\section{Memory over different timescales}
-\frame{\sectionpage
-%\begin{center}
-\vp%\newblock
-``A memory frontier for complex synapses'',
-%\newblock
-S Lahiri and S Ganguli.
-\\%\newblock
-\href{https://papers.nips.cc/paper/4872-a-memory-frontier-for-complex-synapses}
-{\emph{Adv.\ Neural Inf.\ Process.\ Syst.\ 26, pp.~1034--1042., (2013)}}.
-%\end{center}
-}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Storage capacity of synaptic memory}
-%
-  Hopfield, perceptron have capacity \alert{$\propto N$}, (\# synapses).
-
-\vp\parbox[t]{0.59\linewidth}{%
-  Assumes unbounded analog synapses
-  %Requires synapses' dynamic range also $\propto N$.
-
- \vp With discrete, finite synapses:
- $\implies$ memory capacity  \alert{$\sim\CO(\log N)$}.
- \\ \citerr{amit1992constraints,amit1994learning}
- %
- }
- %
-% \parbox[t]{0.4\linewidth}{
-%   %\begin{flushright}
-%    \hfill\aligntop{\includegraphics[width=0.9\linewidth]{Petersen1998.jpg}}
-%   %\end{flushright}
-% }
-% \\
-%    \citerr{Petersen1998allornone,OConnor2005switch}
-
- \vp New memories overwrite old
- $\implies$ stability-plasticity dilemma.
- %
- \note[item]{or sparse $\sim \log N / N$}
-%
-\end{frame}
-
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Models of complex synaptic dynamics}
-%
-  There are $N$ identical synapses with $M$ internal functional states.
-%
-\parbox[c]{0.82\linewidth}{%
-  \begin{itemize}
-    \item Internal functional state of synapse \lto\ synaptic weight.
-    \item Candidate plasticity events \lto\ transitions between states
-  \end{itemize}
-}\hfill
-\alignmid{\includegraphics[width=0.13\linewidth]{state_key.svg}}
-%
-
-  \begin{center}
-    \aligntop{\includegraphics[width=0.6\linewidth]{synapse_internal.svg}}
-%    \hspace{0.07\linewidth}
-%    \aligntop{\includegraphics[width=0.3\linewidth]{MadisonMontgomery.jpg}}
-%    \\ \citerr{Montgomery2002765}
-  \end{center}
-
-  States: \parbox[t]{0.85\linewidth}{\#AMPAR, \#NMDAR, NMDAR subunit composition, \\
-  CaMK II autophosphorylation, activating PKC, p38 MAPK,...}
-
-  \vp \footnotesize\citerr{Fusi2005cascade,Fusi2007multistate,Barrett2008discrete}%%\\\citerr{Smith2006savings,Lahiri2013synapse}}%
-  %
-  \note[item]{complex synapse: not just synaptic weight. dynamical system}
-  \note[item]{important for memory with bounded synapses}
-  \note[item]{nodes \lto\ states}
-  \note[item]{color \lto\ sttrength}
-  \note[item]{arrows \lto\ plasticity}
-%  \note[item]{stoch process has steady state distribution.}
-%  \note[item]{Prior activity puts it in this state. row vec.}
-  \note[item]{plasticity events at rate r. indep at each synapse.}
-  \note[item]{fraction pot/dep}
-  \note[item]{Readout: synaptic weight vec when in each state.}
-  %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Specific models of complex synaptic dynamics}
-%
-  \begin{center}
-    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{cascade.svg}}
-                               \par\citerr{Fusi2005cascade}}
-    \hspace{0.05\linewidth}
-    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{serial.svg}}
-                               \par\citerr{Ben-DayanRubin2007sparse} \par\citerr{Leibold2008serial}}
-
-    \vp
-    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{BennaFusi.svg}}
-                               \par\citerr{Benna2015complex}}
-    \hspace{0.05\linewidth}
-    \parbox[t]{0.4\linewidth}{\aligntop{\includegraphics[width=0.95\linewidth]{integ_express.pdf}}
-                               \par\citerr{Elliott2011}}
-  \end{center}
-%
-\end{frame}
-
-% ----Section--------------------------------------------------------------
-
-\subsection{Quantifying memory quality}
-
-%%-------------Slide--------------------------------------------------------
-%
-%
-%\begin{frame}{Recognition memory}
-%%
-% Synapses given a sequence of patterns (pot \& dep) to store
-%
-% %\vp
-% \begin{center}
-% \only<1>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron1.svg}}}%
-% \only<2>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron2.svg}}}%
-%% \only<3>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron3.svg}}}%
-% \only<3>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron4.svg}}}%
-%% \only<5>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron5.svg}}}%
-% \only<4>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron6.svg}}}%
-%% \only<7>{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron7.svg}}}%
-% \only<5->{\aligntop{\includegraphics[width=0.275\linewidth]{perceptron8.svg}}}%
-% \end{center}
-%
-% \visible<5->{Later: presented with a pattern.
-% Has it been seen before?
-%%
-%
-% \vp Compare $\synid \cdt \syn(t)$ to threshold.
-% \citerr{Sommer1998retrieval}}
-% %
-% \visible<6>{%
-% %
-% \begin{equation*}
-%     \snr(t) = \frac{ \av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)} }{ \sqrt{\var(\synid\cdt\syn(\infty))}},
-%     \qquad
-%     \snrb(\tau) = \intd{\tau} \frac{\e^{-t/\tau}}{\tau} \snr(t).
-% \end{equation*}
-%}
-%%
-%\end{frame}
-%
-%
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Synaptic memory curves}
-%
- %
- \begin{center}
-   \includegraphics[width=0.5\linewidth]{MemorySequence.svg}
- \end{center}
- %
- Synapses store a sequence of memories.\\
- Recognition memory performance described by SNR.
- %
- \begin{center}
-   {\includegraphics[width=0.55\linewidth]{MemoryCurve.svg}}
- \end{center}
- %
- \note{What is SNR, what is time.}
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{General principles relating structure and function?}
-%
- \vspace{-2\baselineskip}
- \begin{center}
- \parbox[t]{0.35\linewidth}{%
- \begin{center}
-   Synaptic structure\\
-   \includegraphics[width=0.99\linewidth]{synapse_internal.svg}
- \end{center}
- }
- \hspace{0.1\linewidth}
- \parbox[t]{0.3\linewidth}{%
- \begin{center}
-   Synaptic function\\
-   \includegraphics[width=0.99\linewidth]{MemoryCurve.svg}
- \end{center}
- }
- \end{center}
- \begin{itemize}
-   \item What are the fundamental limits of memory?
-   \vp\item Which models achieve these limits?
-   \vp\item What are the theoretical principles behind the optimal models?
- \end{itemize}
-%
-\end{frame}
-
-
-%%-------------Slide--------------------------------------------------------
-%
-%\begin{frame}{Parameters for synaptic dynamics}
-%%
-%%  There are $N$ identical synapses with $M$ internal functional states.
-%%  %
-%%  \begin{center}
-%%    \includegraphics[width=0.7\linewidth]{model.svg}
-%%  \end{center}
-%%  %
-%%  \note[item]{stoch process has steady state.}
-%%  \note[item]{Prior activity puts it in this state. row vec.}
-%%  \note[item]{plasticity events at rate r}
-%%  \note[item]{fraction pot/dep}
-%%  \note[item]{probs changed by Markov matrices, prob $i\to j$}
-%%  \note[item]{Readout: synaptic weight vec when in each state.}
-%%  \vp
-%% At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
-%% \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
-%%
-%  %
-%  \begin{equation*}
-%  \begin{aligned}
-%     \alert{f\potdep} &= \text{fraction of events that are pot/dep,} \\
-%    \text{pot. event: } \alert{M\pot_{ij}} &= \text{transition prob. } i \to j, \quad
-%    &{\scriptstyle
-%    \W\pot =  f\pot \prn{\M\pot - I},} \\
-%    \text{dep. event: } \alert{M\dep_{ij}} &= \text{transition prob. } i \to j, \quad
-%    &{\scriptstyle
-%    \W\dep =  f\dep \prn{\M\dep - I}.} \\
-%  \end{aligned}
-%  \end{equation*}
-%%
-% Constraints:
-% %
-% \begin{equation*}
-%   f\potdep, \M\potdep_{ij} \in [0,1], \qquad
-%   f\pot + f\dep = \sum_j \M\potdep_{ij} = 1.
-% \end{equation*}
-% %
-% \note[item]{difficult to to apply}
-% \note[item]{Memory at $t=0$, keep track of pot/dep}
-% \note[item]{subsequent: average over pot/dep}
-% \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
-%%
-%%
-% Memory curve given by
-% %
-% \begin{equation*}
-% \begin{aligned}
-%%    \frg &= f\pot\M\pot+f\dep\M\dep-\I, \qquad
-%%    \eq \frg =0, \\
-%   \snrb(\tau)
-%        &= \sqrt{N}\, \eq \prn{\W\pot-\W\dep} \brk{\I - r\tau\prn{\W\pot + \W\dep}}\inv \w. \\
-%        &= \sqrt{N}\sum_a \frac{\initial_a }{1+r \tau / \tau_a}. \\
-%  %
-% \end{aligned}
-% %
-% \end{equation*}
-% %
-% \note[item]{prefactors don't do anything, ignore}
-% \note[item]{prior state, encoding, forgetting, readout}
-%
-%%
-%\end{frame}
-
-% ----------------------------------------------------------------
-
-\subsection{Frontiers of memory}
-
-%%-------------Slide--------------------------------------------------------
-%
-%\begin{frame}{Upper bounds on measures of memory}
-%%
-%\parbox[t]{0.6\linewidth}{
-% Initial SNR:
-% %
-% \begin{equation*}
-%   \initial = \snr(0) = \sum_a \initial_a \leq \sqrt{N}.
-% \end{equation*}
-% %
-% \note{intuition}
-% %
-% \begin{center}
-%   \includegraphics[height=0.1\linewidth]{binary_det.svg}
-% \end{center}
-% %
-% }
-% \parbox[t]{0.39\linewidth}{
-%    \aligntop{\includegraphics[width=0.96\linewidth]{snr_props.svg}}
-% } \par
-% Area under curve:
-% %
-% \begin{equation*}
-%   \area = \int_0^\infty \!\snr(t)\, \dt = \sum_a \initial_a \tau_a \leq \sqrt{N}(M-1)/r.
-% \end{equation*}
-% %
-% %
-% \begin{center}
-%   \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
-% \end{center}
-% %
-% \citerr{Lahiri2013synapse}
-%%
-%\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Proven envelope: memory frontier}
-%
- \visible<1->{Upper bound on memory curve at \emph{any} timescale.}
-
- %\vp
- \begin{center}
-% \parbox[c]{0.67\linewidth}{
-   %\only<1>{\aligntop{\includegraphics[width=0.95\linewidth]{RunAveProvenNum2.svg}}}%
-   \only<1>{\aligntop{\includegraphics[width=0.67\linewidth]{RunAveProvenNum1.svg}}}%
-   \only<2>{\aligntop{\includegraphics[width=0.67\linewidth]{RunAveProvenNum.svg}}}%
-   \note[item]{Best we've found, by numerical opt and hand chosen models.}
-% \note[item]{Models on next slide}
-% }
- \end{center}
-% \hspace{0.01\linewidth}
- %
-% \visible<3>{
-% \parbox[c]{0.3\linewidth}{
-%   Serial topology:
-%   %
-%   \begin{center}
-%  %   \includegraphics[width=6cm]{multistate_shorten.svg}
-%     \includegraphics[width=0.99\linewidth]{multistate.svg}
-%   \end{center}
-%   %
-% }}
- \note[item]{Gap $\sim\CO(\sqrt{N})$.}
- \note[item]{Area bound active at early times $\implies$ need more constraints.}
-%
-\end{frame}
-
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Models that maximize memory for one timescale}
-%
- %
- \parbox[c]{0.67\linewidth}{
- \begin{center}
-   \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{RunAveModels1.svg}}}%
-   \only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{RunAveModels2.svg}}}%
-   \only<3>{\aligntop{\includegraphics[width=0.9\linewidth]{RunAveModels3.svg}}}%
- \end{center}
- }
-%
- \parbox[c]{0.3\linewidth}{
-   %
-   \begin{center}
-     \visible<1>{\includegraphics[width=0.99\linewidth]{multistate_uni4.svg}}
-     \visible<2>{\includegraphics[width=0.99\linewidth]{multistate_uni.svg}}
-     \visible<3>{\includegraphics[width=0.99\linewidth]{multistate_sticky.svg}}
-   \end{center}
-   %
- }
-
-%
-\end{frame}
-
-
-%%-------------Slide--------------------------------------------------------
-%
-%\begin{frame}{Models that maximise memory for one timescale}
-%%
-% %
-% \begin{center}
-%   \only<1>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
-%   %\only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv30.svg}}}%
-%   \only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv34.svg}}}%
-%   %\only<2>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv42.svg}}}%
-%   \only<3>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv47.svg}}}%
-%   %\only<6>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv51.svg}}}%
-%   %
-%   \only<4>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv27.svg}}}%
-%   %\only<8>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv24.svg}}}%
-%   %\only<9>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv21.svg}}}%
-%   \only<5>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv20.svg}}}%
-%   %\only<11>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv19.svg}}}%
-%   %\only<12>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv17.svg}}}%
-%   \only<6>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv16.svg}}}%
-%   %\only<14>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv14.svg}}}%
-%   %\only<15>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv12.svg}}}%
-%   \only<7>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv06.svg}}}%
-%   %\only<17>{\aligntop{\includegraphics[width=0.9\linewidth]{Animation/Lenv01.svg}}}%
-% \end{center}
-%%
-%%
-%\end{frame}
-%
-%
-%-------------Slide--------------------------------------------------------
-%
-%\begin{frame}{Heuristic envelope}
-%%
-% %
-% \begin{center}
-%   \includegraphics[width=0.88\linewidth]{LenvAnalytic.svg}
-% \end{center}
-%%
-%%
-%\end{frame}
-
-% ----------------------------------------------------------------
-
-\subsection{Implications of memory limits}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Synaptic diversity and timescales of memory}
-%
- \parbox[t][][t]{0.47\linewidth}{
- Different synapses have different molecular structures.
- \begin{center}
-   \aligntop{\includegraphics[width=0.8\linewidth]{Emes2012.jpeg}}
- \end{center}
- \citerr{Emes2012synapserev}
- }
- %
- \hspace{0.03\linewidth}
- %
- \visible<2->{%
- \parbox[t][][t]{0.47\linewidth}{
- Memories stored in different places for different timescales
-
- \citerr{Squire1995amnesia}
-
- \citerr{McClelland1995consolidation}
- \begin{center}
-   \aligntop{\includegraphics[width=0.9\linewidth]{sleepconsolidation.png}}
- \end{center}
- \citerr{Born2012sleep}
-
- Also: Cerebellar cortex \lto\ nuclei.
-
- \citerr{Attwell2002consolidation}
-
- \citerr{Cooke2004consolidation}
- }}
- %
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Synaptic structure and function: general principles}
-%
- Real synapses limited by molecular building blocks. \\
- Evolution had larger set of priorities.
-
- \vp What can we conclude?
-
- \begin{center}
- \begin{tabular}{ccccc}
-   % after \\: \hline or \cline{col1-col2} \cline{col3-col4} ...
-   Short timescale & $\longrightarrow$ & Moderate timescale & $\longrightarrow$ & Long timescale \\[0.5cm]
-   \alignmid{\includegraphics[height=0.064\linewidth]{multistate_uni4.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.064\linewidth]{multistate_uni.svg}} & $\longrightarrow$ & \alignmid{\includegraphics[height=0.064\linewidth]{multistate_sticky.svg}} \\[0.5cm]
-   \visible<2->{short topology} & \visible<2->{$\longrightarrow$} & \visible<2->{long topology} &  &  \\[0.5cm]
-    & & \visible<3->{deterministic synapse} & \visible<3->{$\longrightarrow$} & \visible<3->{stochastic synapse} \\
- \end{tabular}
- \end{center}
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Conclusions}
-%
-  \begin{itemize}
-    \item We have formulated a general theory of learning and memory with complex synapses.
-%    \item We can impose an order on the internal states of a synapse through the theory of first passage times.
-%    \item The area under the memory curve of any model $<$ linear chain with same equilibrium distribution.
-    \vp\item We find a memory envelope: a single curve that cannot be exceeded by the memory curve of \emph{any} synaptic model.
-%    \vp\item Synaptic complexity ($M$ internal states) raises the memory envelope linearly in $M$ for times $> \CO(M^2)$.
-    \vp\item We understood which types of synaptic structure are useful for storing memories for different timescales.
-%    \item Gap between envelope and what we can achieve at early times?
-%    \item Trade-off between SNR at different times?
-%    \item For times $< \CO(M^2)$: conjecture that the model that reaches the envelope uses deterministic transitions $\to$ diffusive forgetting.
-    \vp\item We studied more than a single model. We studied \emph{all possible models}, to extract general principles relating synaptic structure to function
-  \end{itemize}
-
-%
-\end{frame}
-
-% ----------------------------------------------------------------
 
 \section{Designing experiments}
 
@@ -1458,20 +1415,20 @@ S Lahiri and S Ganguli.
 \end{frame}
 
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Experimental problems}
+%%-------------Slide--------------------------------------------------------
 %
- \begin{itemize}
-   \item Need single synapses.
-   \item Need long sequences of plasticity events.
-   \item Need to control types of candidate plasticity events.
-   \item Need to measure synaptic efficacies.
- \end{itemize}
-
- \vp When we patch the postsynaptic neuron \lto\ Ca washout.
+%\begin{frame}{Experimental problems}
+%%
+% \begin{itemize}
+%   \item Need single synapses.
+%   \item Need long sequences of plasticity events.
+%   \item Need to control types of candidate plasticity events.
+%   \item Need to measure synaptic efficacies.
+% \end{itemize}
 %
-\end{frame}
+% \vp When we patch the postsynaptic neuron \lto\ Ca washout.
+%%
+%\end{frame}
 
 
 
@@ -1667,6 +1624,7 @@ S Lahiri and S Ganguli.
 %
 % Have we seen pattern before?
  Test if $\synid \cdot \syn(t) \gtrless \theta$?
+ \citerr{Sommer1998retrieval}
 
 % $\synid \cdot \syn(\infty) \sim$  null distribution
 % $\implies$ ROC curve:
@@ -1693,6 +1651,108 @@ S Lahiri and S Ganguli.
  \end{equation*}
  }
  Also: KL divergence, Chernoff distance, \ldots
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Parameters for synaptic dynamics}
+%
+%  There are $N$ identical synapses with $M$ internal functional states.
+%  %
+%  \begin{center}
+%    \includegraphics[width=0.7\linewidth]{model.svg}
+%  \end{center}
+%  %
+%  \note[item]{stoch process has steady state.}
+%  \note[item]{Prior activity puts it in this state. row vec.}
+%  \note[item]{plasticity events at rate r}
+%  \note[item]{fraction pot/dep}
+%  \note[item]{probs changed by Markov matrices, prob $i\to j$}
+%  \note[item]{Readout: synaptic weight vec when in each state.}
+%  \vp
+% At $t=0$, the memory is created by $\M\potdep$ with probability $f\potdep$.
+% \note[item]{for this one, we keep track of pot/dep, look for inc/dec of $\w$}
+%
+  %
+  \begin{equation*}
+  \begin{aligned}
+     \alert{f\potdep} &= \text{fraction of events that are pot/dep,} \\
+    \text{pot. event: } \alert{M\pot_{ij}} &= \text{transition prob. } i \to j, \quad
+    &{\scriptstyle
+    \W\pot =  f\pot \prn{\M\pot - I},} \\
+    \text{dep. event: } \alert{M\dep_{ij}} &= \text{transition prob. } i \to j, \quad
+    &{\scriptstyle
+    \W\dep =  f\dep \prn{\M\dep - I}.} \\
+  \end{aligned}
+  \end{equation*}
+%
+ Constraints:
+ %
+ \begin{equation*}
+   f\potdep, \M\potdep_{ij} \in [0,1], \qquad
+   f\pot + f\dep = \sum_j \M\potdep_{ij} = 1.
+ \end{equation*}
+ %
+ \note[item]{difficult to to apply}
+ \note[item]{Memory at $t=0$, keep track of pot/dep}
+ \note[item]{subsequent: average over pot/dep}
+ \note[item]{$\frg$ is forgetting matrix, $\I=$identity, don't keep track of pot/dep}
+%
+%
+ Memory curve given by
+ %
+ \begin{equation*}
+ \begin{aligned}
+%    \frg &= f\pot\M\pot+f\dep\M\dep-\I, \qquad
+%    \eq \frg =0, \\
+   \snrb(\tau)
+        &= \sqrt{N}\, \eq \prn{\W\pot-\W\dep} \brk{\I - r\tau\prn{\W\pot + \W\dep}}\inv \w. \\
+        &= \sqrt{N}\sum_a \frac{\initial_a }{1+r \tau / \tau_a}. \\
+  %
+ \end{aligned}
+ %
+ \end{equation*}
+ %
+ \note[item]{prefactors don't do anything, ignore}
+ \note[item]{prior state, encoding, forgetting, readout}
+
+%
+\end{frame}
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Upper bounds on measures of memory}
+%
+\parbox[t]{0.6\linewidth}{
+ Initial SNR:
+ %
+ \begin{equation*}
+   \initial = \snr(0) = \sum_a \initial_a \leq \sqrt{N}.
+ \end{equation*}
+ %
+ \note{intuition}
+ %
+ \begin{center}
+   \includegraphics[height=0.167\linewidth]{binary_det.svg}
+ \end{center}
+ %
+ }
+ \parbox[t]{0.39\linewidth}{
+    \aligntop{\includegraphics[width=0.96\linewidth]{snr_props.svg}}
+ } \par
+ Area under curve:
+ %
+ \begin{equation*}
+   \area = \int_0^\infty \!\snr(t)\, \dt = \sum_a \initial_a \tau_a \leq \sqrt{N}(M-1)/r.
+ \end{equation*}
+ %
+ %
+ \begin{center}
+   \includegraphics[height=0.1\linewidth]{multistate_sticky.svg}
+ \end{center}
+ %
+ \citerr{Lahiri2013synapse}
 %
 \end{frame}
 
