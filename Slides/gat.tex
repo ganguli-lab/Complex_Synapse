@@ -77,49 +77,77 @@ Stanford University, Applied Physics
 \end{frame}
 %================================================================================
 
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{My research areas}
+%
+ \parbox[t]{0.45\linewidth}{
+ \textbf{Learning and memory} \\
+ Structure of synapses \& function.\\
+ Learning v.\ remembering tradeoff. \\
+ Success \& failure in trying to enhance learning.
+ }
+ %
+ \hfill
+ %
+ \parbox[t]{0.45\linewidth}{
+ \textbf{Energy use in living systems} \\
+ Energy cost of signalling/sensing.\\
+ Tradeoffs with accuracy \& speed.\\
+ Thermodynamics $\leftrightarrow$ information geometry.
+ }
+
+\vp
+\begin{center}
+ \parbox[t]{0.45\linewidth}{
+ \textbf{High dimensional statistics}\\
+ Theory of random projections and the geometry of data.\\
+ Neural recordings as projections.
+ }
+\end{center}
+%
+\end{frame}
+
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{What is a synapse?}
 %
  \begin{center}
+ %
  \parbox[c]{0.45\linewidth}{
-  %
-%  \visible<3->{
-  \begin{center}
-    Experimentalists
-  \end{center}
-%  }
-  %
+   \begin{center}
+     Theorists
+   \end{center}
  }
+ %
  \parbox[c]{0.45\linewidth}{
-  %
-%  \visible<2->{
-  \begin{center}
-    Theorists
-  \end{center}
-%  }
-  %
+   \begin{center}
+     Experimentalists
+   \end{center}
  }
 
  \parbox[c]{0.45\linewidth}{
   %
   \visible<2->{
-  \begin{center}
-    \includegraphics[width=0.95\linewidth]{plasticity-network.jpg}
-  \end{center}
-  %
-  \citerr{Klann2002metaplasticity}
+   \begin{center}
+     \Huge $W_{ij}$
+   \end{center}
   }
+  %
  }
+ %
  \parbox[c]{0.45\linewidth}{
   %
   \visible<3->{
-  \begin{center}
-    \Huge $W_{ij}$
-  \end{center}
+   \begin{center}
+     \includegraphics[width=0.95\linewidth]{plasticity-network.jpg}
+   \end{center}
+   %
+   \citerr{Klann2002metaplasticity}
   }
-  %
  }
+ %
  \end{center}
 %
 \end{frame}
@@ -150,8 +178,8 @@ Stanford University, Applied Physics
 
 % \vp When we store new memories rapidly,
 
-% \vp New memories overwrite old
-% \impl stability-plasticity dilemma.
+ \vp New memories overwrite old
+ \impl stability-plasticity dilemma.
  %
  \note[item]{or sparse $\sim \log N / N$}
 %
@@ -261,36 +289,36 @@ NeurIPS 2013 Outstanding Paper Award.
 %\end{center}
 }
 
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Storage capacity of synaptic memory}
+%%-------------Slide--------------------------------------------------------
 %
-  Hopfield, perceptron have capacity \alert{$\propto N$}, (\# synapses).
-
-\vp%\parbox[t]{0.59\linewidth}{%
-  Assumes unbounded analog synapses
-  %Requires synapses' dynamic range also $\propto N$.
-
- \vp With discrete, finite synapses:
- $\implies$ memory capacity  \alert{$\sim\CO(\log N)$}.
- \\ \citerr{amit1992constraints,amit1994learning}
- %
- %}
- %
-% \parbox[t]{0.4\linewidth}{
-%   %\begin{flushright}
-%    \hfill\aligntop{\includegraphics[width=0.9\linewidth]{Petersen1998.jpg}}
-%   %\end{flushright}
-% }
-% \\
-%    \citerr{Petersen1998allornone,OConnor2005switch}
-
- \vp New memories overwrite old
- $\implies$ stability-plasticity dilemma.
- %
- \note[item]{or sparse $\sim \log N / N$}
+%\begin{frame}{Storage capacity of synaptic memory}
+%%
+%  Hopfield, perceptron have capacity \alert{$\propto N$}, (\# synapses).
 %
-\end{frame}
+%\vp%\parbox[t]{0.59\linewidth}{%
+%  Assumes unbounded analog synapses
+%  %Requires synapses' dynamic range also $\propto N$.
+%
+% \vp With discrete, finite synapses:
+% $\implies$ memory capacity  \alert{$\sim\CO(\log N)$}.
+% \\ \citerr{amit1992constraints,amit1994learning}
+% %
+% %}
+% %
+%% \parbox[t]{0.4\linewidth}{
+%%   %\begin{flushright}
+%%    \hfill\aligntop{\includegraphics[width=0.9\linewidth]{Petersen1998.jpg}}
+%%   %\end{flushright}
+%% }
+%% \\
+%%    \citerr{Petersen1998allornone,OConnor2005switch}
+%
+% \vp New memories overwrite old
+% $\implies$ stability-plasticity dilemma.
+% %
+% \note[item]{or sparse $\sim \log N / N$}
+%%
+%\end{frame}
 
 
 %-------------Slide--------------------------------------------------------
@@ -1179,7 +1207,7 @@ Highest rated abstract at Cosyne 2014.
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Simple synapses cannot explain the data}
+\begin{frame}{Simple synapses cannot explain the behaviour}
 %
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
@@ -1212,7 +1240,7 @@ Highest rated abstract at Cosyne 2014.
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Complex metaplastic synapses can explain the data}
+\begin{frame}{Complex metaplastic synapses can explain the behaviour}
 %
  \begin{center}
  \begin{tabular}{c@{\hspace{0.1\linewidth}}c}
@@ -1266,7 +1294,7 @@ Highest rated abstract at Cosyne 2014.
    \includegraphics[width=0.4\linewidth]{serial_s.svg}
  \end{center}
  %
- \vp The serial model successfully reproduced the data due to two features:
+ \vp The serial model is successful in reproducing the data due to two features:
  \begin{itemize}
    \item Complexity - needed for depletion to dominate enhanced plasticity,
    \note[item]{due to exponential decay}
@@ -1421,7 +1449,7 @@ Highest rated abstract at Cosyne 2014.
 %%
 % \begin{itemize}
 %   \item Need single synapses.
-%   \item Need long sequences of plasticity events.
+%   \itx\>tem Need long sequences of plasticity events.
 %   \item Need to control types of candidate plasticity events.
 %   \item Need to measure synaptic efficacies.
 % \end{itemize}
@@ -1431,6 +1459,31 @@ Highest rated abstract at Cosyne 2014.
 %\end{frame}
 
 
+
+%-------------Slide--------------------------------------------------------
+
+\begin{frame}{Future directions}
+%
+ \textbf{Learning and memory}
+ \begin{itemize}
+   \item Multiple presentations.
+   \item Correlations.
+   \item More realistic tasks.
+   \item Relation to molecular structure?
+ \end{itemize}
+
+ \vp\textbf{Energy use in living systems}
+ \begin{itemize}
+   \item Include space as well as time.
+   \item Coarse graining: molecules \lto\ cells \lto\ systems.
+ \end{itemize}
+
+ \vp\textbf{High dimensional statistics}
+ \begin{itemize}
+   \item Theory of noisy random projections.
+ \end{itemize}
+%
+\end{frame}
 
 %================================================================================
 %-------------Slide--------------------------------------------------------
