@@ -303,7 +303,7 @@ Stanford University, Applied Physics
 S Lahiri and S Ganguli.
 \\%\newblock
 \href{https://papers.nips.cc/paper/4872-a-memory-frontier-for-complex-synapses}
-{\emph{Adv.\ Neural Inf.\ Process.\ Syst.\ 26, pp.~1034--1042., (2013)}}.
+{\emph{Adv.\ Neural Inf.\ Process.\ Syst.\ 26, pp.~1034--1042, (2013)}}.
 \\%\newblock
 NeurIPS 2013 Outstanding Paper Award.
 %\end{center}
@@ -530,7 +530,7 @@ NeurIPS 2013 Outstanding Paper Award.
  \begin{center}
   \aligntop{\includegraphics[width=4cm]{cascade.svg}}
   \hspace{2cm}
-  \aligntop{\includegraphics[width=4cm]{multistate.svg}}
+  \aligntop{\includegraphics[width=4cm]{serial.svg}}
  \end{center}
  \citerr{Fusi2005cascade,Leibold2008serial,Ben-DayanRubin2007sparse}
  %
@@ -621,7 +621,7 @@ NeurIPS 2013 Outstanding Paper Award.
 
 %-------------Slide--------------------------------------------------------
 
-\begin{frame}{Models that maximize memory for one timescale}
+\begin{frame}{Models that maximise memory for one timescale}
 %
  %
  \parbox[c]{0.67\linewidth}{
@@ -1400,110 +1400,110 @@ NeurIPS 2013 Outstanding Paper Award.
 
 %% -------Section-----------------------------------------------------------
 
-\section{Designing experiments}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Experimental tests?}
+%\section{Designing experiments}
 %
- Traditional experiments:
-
- \begin{center}
-     \aligntop{\includegraphics[width=0.7\linewidth]{barrage.svg}}%
- \end{center}
-
- \vp\visible<2>{To fit a model: long sequence of small plasticity events.
-
- Observe the changes in synaptic efficacy.}
-
- \begin{center}
-     \visible<2>{\aligntop{\includegraphics[width=0.7\linewidth]{gentle.svg}}}%
- \end{center}
-
-% \visible<7->{\textbf{EM algorithms:}
-%
-%   Sequence of hidden states $\ra$ estimate transition probabilities \\
-%   Transition probabilities $\ra$ estimate sequence of hidden states
-%
-%   \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
-%
-% \vp \textbf{Spectral algorithms:}
-%
-% Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
-% \parbox[t]{0.3\linewidth}{
-%   from data, \\
-%   from model.
-% }
-%
-% \citerr{Hsu2008hmmspec}
-% }
-%
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Simulated experiment}
-%
- %
- \begin{center}
-%%   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
-%%   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
-%%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
-%%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
-%%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
-%%   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
-%%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
-%%   \only<8>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
-%%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
-%%   \only<10>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
-%   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
-%   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
-%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
-%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
-%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
-   \includegraphics[height=0.6\textheight]{Animation/FitVidFinal.svg}
- \end{center}
- %
- %\visible<2>{
- Problem: need \emph{long} sequences.
-
- Whole cell patch of postsynaptic neuron \lto\ Ca washout.
- %}
-% \textbf{EM algorithms:}
-%
-%   Sequence of hidden states $\ra$ estimate transition probabilities \\
-%   Transition probabilities $\ra$ estimate sequence of hidden states
-%
-%   \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
-%
-% \vp \textbf{Spectral algorithms:}
-%
-% Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
-% \parbox[t]{0.3\linewidth}{
-%   from data, \\
-%   from model.
-% }
-%
-% \citerr{Hsu2008hmmspec}
-
-%
-\end{frame}
-
-
 %%-------------Slide--------------------------------------------------------
 %
-%\begin{frame}{Experimental problems}
+%\begin{frame}{Experimental tests?}
 %%
-% \begin{itemize}
-%   \item Need single synapses.
-%   \itx\>tem Need long sequences of plasticity events.
-%   \item Need to control types of candidate plasticity events.
-%   \item Need to measure synaptic efficacies.
-% \end{itemize}
+% Traditional experiments:
 %
-% \vp When we patch the postsynaptic neuron \lto\ Ca washout.
+% \begin{center}
+%     \aligntop{\includegraphics[width=0.7\linewidth]{barrage.svg}}%
+% \end{center}
+%
+% \vp\visible<2>{To fit a model: long sequence of small plasticity events.
+%
+% Observe the changes in synaptic efficacy.}
+%
+% \begin{center}
+%     \visible<2>{\aligntop{\includegraphics[width=0.7\linewidth]{gentle.svg}}}%
+% \end{center}
+%
+%% \visible<7->{\textbf{EM algorithms:}
+%%
+%%   Sequence of hidden states $\ra$ estimate transition probabilities \\
+%%   Transition probabilities $\ra$ estimate sequence of hidden states
+%%
+%%   \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
+%%
+%% \vp \textbf{Spectral algorithms:}
+%%
+%% Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
+%% \parbox[t]{0.3\linewidth}{
+%%   from data, \\
+%%   from model.
+%% }
+%%
+%% \citerr{Hsu2008hmmspec}
+%% }
 %%
 %\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Simulated experiment}
+%%
+% %
+% \begin{center}
+%%%   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
+%%%   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
+%%%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid208.svg}}}%
+%%%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
+%%%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid416.svg}}}%
+%%%   \only<6>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
+%%%   \only<7>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid624.svg}}}%
+%%%   \only<8>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid728.svg}}}%
+%%%   \only<9>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid832.svg}}}%
+%%%   \only<10>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
+%%   \only<1>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid00.svg}}}%
+%%   \only<2>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid104.svg}}}%
+%%   \only<3>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid312.svg}}}%
+%%   \only<4>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid520.svg}}}%
+%%   \only<5>{\aligntop{\includegraphics[width=0.97\linewidth]{Animation/FitVid939.svg}}}%
+%   \includegraphics[height=0.6\textheight]{Animation/FitVidFinal.svg}
+% \end{center}
+% %
+% %\visible<2>{
+% Problem: need \emph{long} sequences.
+%
+% Whole cell patch of postsynaptic neuron \lto\ Ca washout.
+% %}
+%% \textbf{EM algorithms:}
+%%
+%%   Sequence of hidden states $\ra$ estimate transition probabilities \\
+%%   Transition probabilities $\ra$ estimate sequence of hidden states
+%%
+%%   \citerr{Baum1970baumwelch,rabiner1993speechrec,Dempster2007EM}
+%%
+%% \vp \textbf{Spectral algorithms:}
+%%
+%% Compute $P(w_1), P(w_1,w_2), P(w_1,w_2,w_3),\ldots$  \hp
+%% \parbox[t]{0.3\linewidth}{
+%%   from data, \\
+%%   from model.
+%% }
+%%
+%% \citerr{Hsu2008hmmspec}
+%
+%%
+%\end{frame}
+%
+%
+%%%-------------Slide--------------------------------------------------------
+%%
+%%\begin{frame}{Experimental problems}
+%%%
+%% \begin{itemize}
+%%   \item Need single synapses.
+%%   \itx\>tem Need long sequences of plasticity events.
+%%   \item Need to control types of candidate plasticity events.
+%%   \item Need to measure synaptic efficacies.
+%% \end{itemize}
+%%
+%% \vp When we patch the postsynaptic neuron \lto\ Ca washout.
+%%%
+%%\end{frame}
 
 %-------Section------------------------------------------------------------
 
@@ -1535,6 +1535,7 @@ NeurIPS 2013 Outstanding Paper Award.
 %
  \textbf{Learning and memory}
  \begin{itemize}
+   \item Experimental tests.
    \item Multiple presentations.
    \item Correlations.
    \item More realistic tasks.
@@ -1561,8 +1562,8 @@ NeurIPS 2013 Outstanding Paper Award.
 %
 \begin{tabular}{lll}
   \textbf{Surya Ganguli} & Niru Maheswaranathan & \textbf{Jennifer Raymond} \\
-  Jascha Sohl-Dickstein  & Ben Poole            & \alert{Barbara Nguyen-Vu} \\
-  Friedemann Zenke       & Kiah Hardcastle      & \alert{Grace Zhao}        \\
+  Jascha Sohl-Dickstein  & Ben Poole            & {Barbara Nguyen-Vu} \\
+  Friedemann Zenke       & Kiah Hardcastle      & {Grace Zhao}        \\
   Sam Ocko               & Lane McIntosh        & Aparna Suvrathan          \\
   Stephane Deny          & Alex Williams        & Rhea Kimpo                \\
   Jonathan Kadmon        & Christopher Stock    \\
@@ -1582,6 +1583,7 @@ NeurIPS 2013 Outstanding Paper Award.
 %
 \end{frame}
 
+\appendix
 %-------------Slide--------------------------------------------------------
 
 \begin{frame}{Summary}
@@ -1602,167 +1604,167 @@ NeurIPS 2013 Outstanding Paper Award.
 %
 \end{frame}
 
+%%%-------------Slide--------------------------------------------------------
+%%
+%%\begin{frame}{Summary}
+%%%
+%% \begin{itemize}
+%%   \item Internal dynamics of synaptic plasticity \\ \hfill
+%%   \lto\ understand learning and memory.
+%%
+%%   \vp\item Behaviour \lto\ subcellular dynamics of synapses.
+%%
+%%   \vp\item Why \& when enhanced plasticity \lto\ enhanced/impaired learning.
+%%
+%%   \vp\item Memory envelope: cannot be exceeded by \emph{any} model's memory curve.
+%%
+%%   \vp\item Which synaptic structures are useful for different memory timescales.
+%%
+%%   \vp\item Not just a single model, \emph{all possible models} \\ \hfill
+%%   \lto\ general principles relating synaptic structure to function.
+%% \end{itemize}
+%%%
+%%\end{frame}
+%
+%%-------------Bonus--------------------------------------------------------
+%\appendix
+%%-------------Bonus--------------------------------------------------------
+%
+%% -------Section-----------------------------------------------------------
+%
+%\section{Learning with enhanced plasticity}
+%
 %%-------------Slide--------------------------------------------------------
 %
-%\begin{frame}{Summary}
+%\begin{frame}{Model of circuit}
 %%
-% \begin{itemize}
-%   \item Internal dynamics of synaptic plasticity \\ \hfill
-%   \lto\ understand learning and memory.
-%
-%   \vp\item Behaviour \lto\ subcellular dynamics of synapses.
-%
-%   \vp\item Why \& when enhanced plasticity \lto\ enhanced/impaired learning.
-%
-%   \vp\item Memory envelope: cannot be exceeded by \emph{any} model's memory curve.
-%
-%   \vp\item Which synaptic structures are useful for different memory timescales.
-%
-%   \vp\item Not just a single model, \emph{all possible models} \\ \hfill
-%   \lto\ general principles relating synaptic structure to function.
-% \end{itemize}
+% %
+% \begin{center}
+%   \includegraphics[width=0.9\linewidth]{VORmodel.svg}
+% \end{center}
+% %
+% \note[item]{Contralateral baseline shift compensates for Our baseline shift}
+% \note[item]{Gain increase due to LTD at lightning}
+% \note[item]{Gain decease due to plasticity elsewhere, but also reverses LTD at lightning.}
+% \note[item]{Nonlinearity here won't affect our questions, as long as it doesn't change}
+% \note[item]{Nonlinearity before compensation could change things}
 %%
 %\end{frame}
-
-%-------------Bonus--------------------------------------------------------
-\appendix
-%-------------Bonus--------------------------------------------------------
-
-% -------Section-----------------------------------------------------------
-
-\section{Learning with enhanced plasticity}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Model of circuit}
 %
- %
- \begin{center}
-   \includegraphics[width=0.9\linewidth]{VORmodel.svg}
- \end{center}
- %
- \note[item]{Contralateral baseline shift compensates for Our baseline shift}
- \note[item]{Gain increase due to LTD at lightning}
- \note[item]{Gain decease due to plasticity elsewhere, but also reverses LTD at lightning.}
- \note[item]{Nonlinearity here won't affect our questions, as long as it doesn't change}
- \note[item]{Nonlinearity before compensation could change things}
+%%-------------Slide--------------------------------------------------------
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Baseline}
+%\begin{frame}{Baseline}
+%%
+%    \includegraphics[width=0.6\linewidth]{baseline.svg}
 %
-    \includegraphics[width=0.6\linewidth]{baseline.svg}
-
+%%
+%\end{frame}
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Evidence: level of depression}
+%%-------------Slide--------------------------------------------------------
 %
- \aligntop{\includegraphics[width=0.45\linewidth]{pSer880.svg}}
- \hp
- \parbox[t]{0.45\linewidth}{%
- Basal level of GluR2 phosphorylation at serine 880 in AMPA receptor.
-
- \vp Biochemical signature of PF-Pk LTD.
-
- \vp Shows that \# depressed synapses in flocculus is larger in KO than WT.
- \note[item]{Predicted by saturation hypothesis}
- }
+%\begin{frame}{Evidence: level of depression}
+%%
+% \aligntop{\includegraphics[width=0.45\linewidth]{pSer880.svg}}
+% \hp
+% \parbox[t]{0.45\linewidth}{%
+% Basal level of GluR2 phosphorylation at serine 880 in AMPA receptor.
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Evidence: saturation by CF stimulation}
+% \vp Biochemical signature of PF-Pk LTD.
 %
- Use Channelrhodopsin to stimulate CF \parbox[t]{0.45\linewidth}{%
- \lto increase LTD in PF-Pk synapses \\
- \lto simulate saturation in WT.
- }
- \note[item]{should result in similar behaviour to KO}
-
- \vp\begin{center}
-   \alignmid{\includegraphics[width=0.3\linewidth]{CFstim.svg}}
-   \hspace{0.05\linewidth}
-   \alignmid{\includegraphics[width=0.3\linewidth]{CFstim_results.svg}}
-   \hspace{0.05\linewidth}
-   \alignmid{\includegraphics[width=0.2\linewidth]{CFstim_pSer880.svg}}
- \end{center}
+% \vp Shows that \# depressed synapses in flocculus is larger in KO than WT.
+% \note[item]{Predicted by saturation hypothesis}
+% }
+%%
+%\end{frame}
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Other models that fail}
+%%-------------Slide--------------------------------------------------------
 %
- \begin{tabular}{ll}
-   % & for next tab, \\ for new line...
-    \aligntop{\includegraphics[width=0.4\linewidth]{multistate.svg}}\hspace{1.5cm} &
-    \aligntop{\includegraphics[width=0.28\linewidth]{multistate_learnS.eps}}
-    \note[item]{MS: linear weights, unlike serial.}
-    \note[item]{like bunch of binary synapses in series.}
-    \note[item]{solid curves: fails early on , but catches up quickly}
-    \note[item]{black curves: fails badly}
-    \note[item]{No real enhancement of saturation, no metaplasticity.}
-    \note[item]{All transitions contribute: pushing to end has little effect.}
-    \\[2cm]
-    \aligntop{\includegraphics[width=0.4\linewidth]{pooled.svg}} &
-    \aligntop{\includegraphics[width=0.28\linewidth]{pooled_scarce_learnS.eps}}
-    \note[item]{Pooled: resource depleted by pot/dep. replenished by reverse.}
-    \note[item]{solid curves succeed: enhanced saturation}
-    \note[item]{black curves fail: opposite metaplasticity, pot makes dep easier}
- \end{tabular}
-
- \citerr{amit1994learning}
+%\begin{frame}{Evidence: saturation by CF stimulation}
+%%
+% Use Channelrhodopsin to stimulate CF \parbox[t]{0.45\linewidth}{%
+% \lto increase LTD in PF-Pk synapses \\
+% \lto simulate saturation in WT.
+% }
+% \note[item]{should result in similar behaviour to KO}
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Other models that work}
+% \vp\begin{center}
+%   \alignmid{\includegraphics[width=0.3\linewidth]{CFstim.svg}}
+%   \hspace{0.05\linewidth}
+%   \alignmid{\includegraphics[width=0.3\linewidth]{CFstim_results.svg}}
+%   \hspace{0.05\linewidth}
+%   \alignmid{\includegraphics[width=0.2\linewidth]{CFstim_pSer880.svg}}
+% \end{center}
+%%
+%\end{frame}
 %
- \begin{tabular}{ll}
-   % & for next tab, \\ for new line...
-    \aligntop{\includegraphics[width=0.4\linewidth]{multistate_nonuni.svg}}\hspace{1.5cm} &
-    \aligntop{\includegraphics[width=0.28\linewidth]{nonuni_fit_learnS.eps}} \\[2cm]
-    \aligntop{\includegraphics[width=0.4\linewidth]{cascade.svg}} &
-    \aligntop{\includegraphics[width=0.28\linewidth]{cascade_fit_learnS.eps}}
- \end{tabular}
- \note[item]{Both models, trans probs decay exponentially from centre.}
- \note[item]{Nonuni: linear weights. Cascade: binary weights.}
- \note[item]{Enhanced saturation and metaplasticity}
- \note[item]{Pushing to end makes pot and dep harder}
- \note[item]{Note: hidden states not necessary}
-
- \citerr{Fusi2005cascade}
+%%-------------Slide--------------------------------------------------------
 %
-\end{frame}
-
-%-------------Slide--------------------------------------------------------
-
-\begin{frame}{Mathematical explanation}
+%\begin{frame}{Other models that fail}
+%%
+% \begin{tabular}{ll}
+%   % & for next tab, \\ for new line...
+%    \aligntop{\includegraphics[width=0.4\linewidth]{multistate.svg}}\hspace{1.5cm} &
+%    \aligntop{\includegraphics[width=0.28\linewidth]{multistate_learnS.eps}}
+%    \note[item]{MS: linear weights, unlike serial.}
+%    \note[item]{like bunch of binary synapses in series.}
+%    \note[item]{solid curves: fails early on , but catches up quickly}
+%    \note[item]{black curves: fails badly}
+%    \note[item]{No real enhancement of saturation, no metaplasticity.}
+%    \note[item]{All transitions contribute: pushing to end has little effect.}
+%    \\[2cm]
+%    \aligntop{\includegraphics[width=0.4\linewidth]{pooled.svg}} &
+%    \aligntop{\includegraphics[width=0.28\linewidth]{pooled_scarce_learnS.eps}}
+%    \note[item]{Pooled: resource depleted by pot/dep. replenished by reverse.}
+%    \note[item]{solid curves succeed: enhanced saturation}
+%    \note[item]{black curves fail: opposite metaplasticity, pot makes dep easier}
+% \end{tabular}
 %
- %
- \begin{center}
-   \includegraphics[width=0.4\linewidth]{serial_label.svg}
- \end{center}
- %
- \vp Serial synapse: $\eq_i \sim \CN \prn{\frac{q\pot}{q\dep}}^i$.
-
- \vp Learning rate $\sim \eq_{M/2}\prn{\frac{q\dep}{q\pot}} = \CN \prn{\frac{q\pot}{q\dep}}^{\frac{M}{2}-1}$.
- \note[item]{Detailed balance. Exponential decay.}
-
- \vp For $M>2$: larger $q\dep \implies$ slower learning.
- \note[item]{for large enough $M,q\pot$, overcome $\CN$}
-
- \vp For $M=2$: larger $q\dep \implies$ larger $\CN \implies$ faster learning.
- \note[item]{Other factor in $\eq$ smaller $\implies \CN$ larger.}
+% \citerr{amit1994learning}
+%%
+%\end{frame}
 %
-\end{frame}
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Other models that work}
+%%
+% \begin{tabular}{ll}
+%   % & for next tab, \\ for new line...
+%    \aligntop{\includegraphics[width=0.4\linewidth]{multistate_nonuni.svg}}\hspace{1.5cm} &
+%    \aligntop{\includegraphics[width=0.28\linewidth]{nonuni_fit_learnS.eps}} \\[2cm]
+%    \aligntop{\includegraphics[width=0.4\linewidth]{cascade.svg}} &
+%    \aligntop{\includegraphics[width=0.28\linewidth]{cascade_fit_learnS.eps}}
+% \end{tabular}
+% \note[item]{Both models, trans probs decay exponentially from centre.}
+% \note[item]{Nonuni: linear weights. Cascade: binary weights.}
+% \note[item]{Enhanced saturation and metaplasticity}
+% \note[item]{Pushing to end makes pot and dep harder}
+% \note[item]{Note: hidden states not necessary}
+%
+% \citerr{Fusi2005cascade}
+%%
+%\end{frame}
+%
+%%-------------Slide--------------------------------------------------------
+%
+%\begin{frame}{Mathematical explanation}
+%%
+% %
+% \begin{center}
+%   \includegraphics[width=0.4\linewidth]{serial_label.svg}
+% \end{center}
+% %
+% \vp Serial synapse: $\eq_i \sim \CN \prn{\frac{q\pot}{q\dep}}^i$.
+%
+% \vp Learning rate $\sim \eq_{M/2}\prn{\frac{q\dep}{q\pot}} = \CN \prn{\frac{q\pot}{q\dep}}^{\frac{M}{2}-1}$.
+% \note[item]{Detailed balance. Exponential decay.}
+%
+% \vp For $M>2$: larger $q\dep \implies$ slower learning.
+% \note[item]{for large enough $M,q\pot$, overcome $\CN$}
+%
+% \vp For $M=2$: larger $q\dep \implies$ larger $\CN \implies$ faster learning.
+% \note[item]{Other factor in $\eq$ smaller $\implies \CN$ larger.}
+%%
+%\end{frame}
 
 %-------Section------------------------------------------------------------
 
