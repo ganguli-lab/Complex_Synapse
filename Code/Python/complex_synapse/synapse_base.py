@@ -10,6 +10,7 @@ from numbers import Number
 import numpy as np
 from .builders import la
 from . import builders as bld
+from . import markov as ma
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
@@ -109,8 +110,8 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
     def normalise(self):
         """Ensure that all attributes are valid.
         """
-        bld.stochastify_c(self.plast)
-        bld.stochastify_d(self.frac)
+        ma.stochastify_c(self.plast)
+        ma.stochastify_d(self.frac)
 
     def fix(self):
         """Complete frac vector
@@ -126,17 +127,9 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
 
     def valid_values(self) -> bool:
         """Do attributes (plast, frac) have valid values?"""
-        vld = bld.isstochastic_c(self.plast, self.StochThresh)
-        vld &= (self.frac >= 0.).all()
+        vld = ma.isstochastic_c(self.plast, self.StochThresh)
         vld &= bld.isstochastic_d(self.frac, self.StochThresh)
         return vld
-
-    def dict_copy(self, order='C', **kwargs) -> Dict[str, la.lnarray]:
-        """Dictionary with copies of data attributes
-        """
-        self._copy_attr('plast', kwargs, order)
-        self._copy_attr('plast', kwargs, order)
-        return kwargs
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
@@ -160,16 +153,22 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
         """
         return self.plast.view(typ)
 
+    def dict_copy(self, keys=(), order='C', **kwds) -> Dict[str, la.lnarray]:
+        """Dictionary with copies of data attributes
+        """
+        # In subclass:
+        # keys += ('new_attr', ...)
+        # return super().dict_copy(keys=keys, order=order, **kwds)
+        keys += ('plast', 'frac')
+        for k in keys:
+            if k not in kwds.keys():
+                kwds[k] = getattr(self, k).copy(order)
+        return kwds
+
     def copy(self, *args, **kwargs) -> SynapseBase:
         """Copy of object, with copies of attributes
         """
         return type(self)(**self.dict_copy(*args, **kwargs))
-
-    def _copy_attr(self, attr, kwds, order='C'):
-        """helper for dict_copy
-        """
-        if attr not in kwds.keys():
-            kwds[attr] = getattr(self, attr).copy(order)
 
     @property
     def nplast(self) -> int:

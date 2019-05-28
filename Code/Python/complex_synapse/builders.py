@@ -32,6 +32,7 @@ build_multistate(nst, q)
 from typing import Dict
 import numpy as np
 import numpy_linalg as la
+from . import markov as _ma
 
 
 def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
@@ -69,73 +70,6 @@ def linear_weights(nst: int) -> la.lnarray:  # linear synaptic weights
     return la.linspace(-1., 1., nst)
 
 
-def stochastify_c(mat: la.lnarray):  # make cts time stochastic
-    """
-    Make a matrix the generator of a continuous time Markov process.
-    Changes diagonal to make row sums zero.
-    **Modifies** in place, **does not** return.
-
-    Parameters
-    ----------
-    mat : la.lnarray (...,n,n)
-        square matrix with non-negative off-diagonal elements.
-        **Modified** in place.
-    """
-    mat -= np.apply_along_axis(np.diagflat, -1, mat.sum(axis=-1))
-
-
-def stochastify_d(mat: la.lnarray):  # make dsc time stochastic
-    """
-    Make a matrix the generator of a discrete time Markov process.
-    Scales rows to make row sums one.
-
-    Parameters
-    ----------
-    mat : la.lnarray (...,n,n)
-        square matrix with non-negative elements.
-        **Modified** in place
-    """
-    mat /= mat.sum(axis=-1, keepdims=True)
-
-
-def isstochastic_c(mat: la.lnarray, thresh: float = 1e-5) -> bool:
-    """Are row sums zero?
-    """
-    return (np.fabs(mat.sum(axis=-1)) < thresh).all()
-
-
-def isstochastic_d(mat: la.lnarray, thresh: float = 1e-5) -> bool:
-    """Are row sums one?
-    """
-    return (np.fabs(mat.sum(axis=-1) - 1.) < thresh).all()
-
-
-@la.wrappers.wrap_one
-def rand_trans(nst: int, npl: int = 1, sparsity: float = 1.) -> la.lnarray:
-    """
-    Make a random transition matrix (continuous time).
-
-    Parameters
-    ----------
-    n : int
-        total number of states
-    npl : int
-        number of plasticity types
-    sparsity : float
-        sparsity
-
-    Returns
-    -------
-    mat : la.lnarray
-        transition matrix
-    """
-    mat = la.random.rand(npl, nst, nst)
-    ind = la.random.rand(npl, nst, nst)
-    mat[ind > sparsity] = 0.
-    stochastify_c(mat)
-    return mat
-
-
 def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     """
     Make a random transition matrix (continuous time).
@@ -144,7 +78,7 @@ def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     ----------
     n : int
         total number of states
-    sparsity : float
+    jmp : float
         sparsity
 
     Returns
@@ -152,9 +86,9 @@ def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     mat : la.lnarray
         transition matrix
     """
-    mat = la.stack((la.diag(jmp * np.ones(nst-1), 1),
-                    la.diag(jmp * np.ones(nst-1), -1)))
-    stochastify_c(mat)
+    mat = la.stack((la.diagflat(jmp * np.ones(nst-1), 1),
+                    la.diagflat(jmp * np.ones(nst-1), -1)))
+    _ma.stochastify_c(mat)
     return mat
 
 
@@ -280,7 +214,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: rand_trans(n, p, sparsity),
+    return build_generic(lambda n, p: _ma.rand_trans(n, p, sparsity),
                          nst, npl, binary)
 
 
@@ -382,31 +316,6 @@ def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
     plast[1, -1, n-1] = jmp_vec[0] * jmp
     plast[1, inds, inds+1] = jmp_vec * jmp
 
-    stochastify_c(plast)
+    _ma.stochastify_c(plast)
 #    out['plast'] = plast
     return out
-
-
-def adjoint(tensor: la.lnarray, measure: la.lnarray) -> la.lnarray:
-    """Adjoint with respect to L2 inner product with measure
-
-    Parameters
-    ----------
-    tensor : la.lnarray (...,n,n) or (...,1,n) or (...,n,1)
-        The matrix/row/column vector to be adjointed.
-    measure : la.lnarray (...,n)
-        The measure for the inner-product wrt which we adjoint
-
-    Parameters
-    ----------
-    tensor : la.lnarray (...,n,n) or (...,n,1) or (...,1,n)
-        The adjoint matrix/column/row vector.
-    """
-    adj = tensor.t
-    if adj.shape[-1] == 1:  # row -> col
-        adj /= measure.c
-    elif adj.shape[-2] == 1:  # col -> row
-        adj *= measure.r
-    else:  # mat -> mat
-        adj *= measure.r / measure.c
-    return adj

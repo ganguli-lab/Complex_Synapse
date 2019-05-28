@@ -9,7 +9,8 @@ from numbers import Number
 from typing import Tuple, Optional, Union
 import numpy as np
 from .builders import la
-from .builders import stochastify_c as _stochastify_c
+from .markov import mat_to_params as _mat2params
+from .markov import params_to_mat as _params2mat
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
 
@@ -34,10 +35,10 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         See Also
         --------
-        mat2params
+        markov.mat_to_params
         """
-        return la.hstack((mat2params(self.plast[0]),
-                          mat2params(self.plast[1])))
+        return la.hstack((_mat2params(self.plast[0]),
+                          _mat2params(self.plast[1])))
 
     def set_params(self, params: np.ndarray):
         """Transition matrices. from independent parameters
@@ -52,11 +53,11 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         See Also
         --------
-        params2mat
+        markov.params_to_mat
         """
         num = params.shape[-1] // 2
-        self.plast = la.stack((params2mat(params[:num]),
-                               params2mat(params[num:])))
+        self.plast = la.stack((_params2mat(params[:num]),
+                               _params2mat(params[num:])))
 
     def _derivs(self, rate: Optional[Number] = None,
                 inv: bool = False) -> (Tuple[la.lnarray, la.lnarray],
@@ -133,8 +134,8 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         dsdw += _diagsub(evs.inv @ fab @ evs)
 
-        grad = - np.hstack((mat2params(dsdq + self.frac[0] * dsdw),
-                            mat2params(-dsdq + self.frac[1] * dsdw)))
+        grad = - np.hstack((_mat2params(dsdq + self.frac[0] * dsdw),
+                            _mat2params(-dsdq + self.frac[1] * dsdw)))
 
         return func, grad
 
@@ -161,7 +162,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         dadw = _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
         dadwp = dadq + self.frac[0] * dadw
         dadwm = -dadq + self.frac[1] * dadw
-        grad = - np.hstack((mat2params(dadwp), mat2params(dadwm)))
+        grad = - np.hstack((_mat2params(dadwp), _mat2params(dadwm)))
 
         return func, grad
 
@@ -256,8 +257,8 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         frq = self.frac[0] / self.frac[1]
         # (n(n-1),)
-        hessp = mat2params(hwwm - hwqm[0] + hwqm[1]/frq + hwwp + hwqp.sum(0))
-        hessm = mat2params(hwwp + hwqp[0] - hwqp[1]*frq + hwwm - hwqm.sum(0))
+        hessp = _mat2params(hwwm - hwqm[0] + hwqm[1]/frq + hwwp + hwqp.sum(0))
+        hessm = _mat2params(hwwp + hwqp[0] - hwqp[1]*frq + hwwm - hwqm.sum(0))
         # (2n(n-1),)
         return - np.hstack((hessp * self.frac[0], hessm * self.frac[1]))
 
@@ -317,50 +318,6 @@ def offdiag_inds(nst: int) -> la.lnarray:
     k_1st = (nst+1) * np.arange(nst-1)  # ravel ind of 1st element in group
     k = np.arange(nst**2 - 1)  # exclude final unwanted element
     return np.delete(k, k_1st)
-
-
-def mat2params(mat: la.lnarray) -> la.lnarray:
-    """Independent parameters of transition matrix.
-
-    Parameters
-    ----------
-    mat : la.lnarray (n,n)
-        Continuous time stochastic matrix.
-
-    Returns
-    -------
-    params : la.lnarray (n(n-1),)
-        Vector of off-diagonal elements, in order:
-        mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2,n-1.
-    """
-    nst = mat.shape[0]
-    # m_00, m_01, m_02, ..., m_0n-1, m_10,
-    # mat_12, ..., mat_n-2,n
-    param = mat.flatten()
-    return param[offdiag_inds(nst)]
-
-
-@la.wrappers.wrap_one
-def params2mat(params: la.lnarray) -> la.lnarray:
-    """Transition matrix from independent parameters.
-
-    Parameters
-    ----------
-    params : la.lnarray (n(n-1),)
-        Vector of off-diagonal elements, in order:
-        mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2,n-1.
-
-    Returns
-    -------
-    mat : la.lnarray (n,n)
-        Continuous time stochastic matrix.
-    """
-    nst = ((1. + np.sqrt(1. + 4. * params.size)) / 2.).astype(int)
-    mat = np.empty(nst**2)
-    mat[offdiag_inds(nst)] = params
-    mat.resize((nst, nst))
-    _stochastify_c(mat)
-    return mat
 
 
 def tens2mat(tens: la.lnarray) -> la.lnarray:

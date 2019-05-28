@@ -82,13 +82,11 @@ class SynapseMemoryModel(SynapseBase):
     # %%* Housekeeping
     # -------------------------------------------------------------------------
 
-    def dict_copy(self, order='C', **kwargs) -> Dict[str, la.lnarray]:
+    def dict_copy(self, keys=(), order='C', **kwds) -> Dict[str, la.lnarray]:
         """Dictionary with copies of data attributes.
         """
-        out = super().dict_copy(order=order, **kwargs)
-        self._copy_attr('weight', out, order)
-        self._copy_attr('signal', out, order)
-        return out
+        keys += ('weight', 'signal')
+        return super().dict_copy(keys=keys, order=order, **kwds)
 
     def fix(self):
         """Complete frac and signal vectors.
@@ -179,7 +177,7 @@ class SynapseMemoryModel(SynapseBase):
             s_arr = 0
         else:
             # convert to lnarray, add singletons to broadcast with matrix
-            s_arr = la.asarray(rate).s * np.eye(self.nstates)
+            s_arr = la.asarray(rate).s * la.eye(self.nstates)
         return onev.c * rowv - self.markov() + s_arr
 
     def peq(self) -> la.lnarray:
@@ -330,3 +328,8 @@ class SynapseMemoryModel(SynapseBase):
         """Initial value of SNR memory curve.
         """
         return self.peq() @ self.enc() @ self.weight
+
+    def sign_fix(self):
+        """Swap plasticity matrices if snr is negative"""
+        if self.snr_init() < 0:
+            self.plast = self.plast[::-1]
