@@ -153,8 +153,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         fab *= ((peq @ self.enc()) @ evs).c * (evs.inv @ self.weight)
 
         dsdw += _diagsub(evs.inv @ fab @ evs)
-        dsdwp = dsdq + self.frac[0] * dsdw
-        dsdwm = -dsdq + self.frac[1] * dsdw
+        dsdwp = self.frac[0] * (dsdw + dsdq)
+        dsdwm = self.frac[1] * (dsdw - dsdq)
 
         grad = - np.hstack((ma.mat_to_params(dsdwp, **self.type),
                             ma.mat_to_params(dsdwm, **self.type)))
@@ -182,8 +182,8 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         dadq = _diagsub(rows[0].c * cols[0])
         dadw = _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
-        dadwp = dadq + self.frac[0] * dadw
-        dadwm = -dadq + self.frac[1] * dadw
+        dadwp = self.frac[0] * (dadw + dadq)
+        dadwm = self.frac[1] * (dadw - dadq)
         grad = - np.hstack((ma.mat_to_params(dadwp, **self.type),
                             ma.mat_to_params(dadwm, **self.type)))
 
@@ -226,10 +226,12 @@ class SynapseOptModel(_SynapseMemoryModel):
                               + _trnsp4(_outer3(rows[0], mats[1], cols[0])))
 
         # (n(n-1),n(n-1))
-        hesspp = tens2mat(hessww + hesswq.sum(0)/self.frac[0])*self.frac[0]**2
-        hesspm = tens2mat(hessww - hesswq[0]/self.frac[1]
-                          + hesswq[1]/self.frac[0]) * self.frac[0]*self.frac[1]
-        hessmm = tens2mat(hessww - hesswq.sum(0)/self.frac[1])*self.frac[1]**2
+        hesspp = ma.tens_to_mat(hessww + hesswq.sum(0),
+                                **self.type) * self.frac[0]**2
+        hesspm = ma.tens_to_mat(hessww - hesswq[0] + hesswq[1],
+                                **self.type) * self.frac[0]*self.frac[1]
+        hessmm = ma.tens_to_mat(hessww - hesswq.sum(0),
+                                **self.type) * self.frac[1]**2
         # (2n(n-1),2n(n-1))
         return - np.block([[hesspp, hesspm], [hesspm.T, hessmm]])
 
@@ -265,22 +267,21 @@ class SynapseOptModel(_SynapseMemoryModel):
             # p ZQZs eta V -> (n,n)
             h_ww = (_outerdiv3p(rows[0], mats[0], cols[1], vecm).sum(0)
                     + _outerdiv3p(rows[1], mats[1], cols[0], vecm).sum(0)
-                    + _outer3ps(rows[0], mats[2], cols[0], vecm)) * frc
+                    + _outer3ps(rows[0], mats[2], cols[0], vecm))
             # p Z eta V  -> (2,n,n)
             # p Zs eta V -> (2,n,n)
             h_wq = (_outerdiv3p(rows[0], mats[0], cols[0], vecm)
                     + np.flip(_outerdiv3p(rows[0], mats[1], cols[0], vecm), 0))
             # (n,n), (2,n,n)
-            return h_ww, h_wq
+            return frc * h_ww, frc * h_wq
 
         # (n,n), (2,n,n)
         hwwp, hwqp = _hesspr(other.plast[0], self.frac[0])
         hwwm, hwqm = _hesspr(other.plast[1], self.frac[1])
 
-        frq = self.frac[0] / self.frac[1]
-        # (n(n-1),)
-        hp = hwwm - hwqm[0] + hwqm[1]/frq + hwwp + hwqp.sum(0)
-        hm = hwwp + hwqp[0] - hwqp[1]*frq + hwwm - hwqm.sum(0)
+        # (n,n)
+        hp = hwwm - hwqm[0] + hwqm[1] + hwwp + hwqp.sum(0)
+        hm = hwwp + hwqp[0] - hwqp[1] + hwwm - hwqm.sum(0)
         # (2n(n-1),)
         return -np.hstack((self.frac[0] * ma.mat_to_params(hp, **self.type),
                            self.frac[1] * ma.mat_to_params(hm, **self.type)))
@@ -316,25 +317,6 @@ class SynapseOptModel(_SynapseMemoryModel):
 # =============================================================================
 # %%* Independent parameter helper functions
 # =============================================================================
-
-
-def tens2mat(tens: la.lnarray) -> la.lnarray:
-    """Convert 4th rank tensor to matrix for independent elements vector
-
-    Parameters
-    ----------
-    tens : la.lnarray (n,n,n,n)
-        4D tensor in state space.
-
-    Returns
-    -------
-    mat : la.lnarray (n(n-1),n(n-1))
-        matrix in independent parameter space (off-diagonal elements).
-    """
-    nst = tens.shape[0]
-    mat = tens.reshape((nst**2, nst**2))
-    k = ma.offdiag_inds(nst)
-    return mat[np.ix_(k, k)]
 
 
 def constraint_coeff(nst: int) -> la.lnarray:
