@@ -6,11 +6,10 @@ Created on Mon Sep 18 16:06:34 2017
 """
 
 from numbers import Number
-from typing import Tuple, Optional, Union
+from typing import Tuple, Optional, Union, Dict, ClassVar
 import numpy as np
 from .builders import la
-from .markov import mat_to_params as _mat2params
-from .markov import params_to_mat as _params2mat
+from . import markov as ma
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
 
@@ -21,6 +20,16 @@ class SynapseOptModel(_SynapseMemoryModel):
     Subclass of SynapseMemoryModel.
     Same constructor & attributes, only methods added.
     """
+    _saved: Tuple[Tuple[la.lnarray, ...], ...]
+    _unchanged: bool
+    type: ClassVar[Dict[str, bool]] = {'serial': False,
+                                       'ring': False,
+                                       'uniform': False}
+
+    def __init__(self, *args, **kwds):
+        super().__init__(*args, **kwds)
+        self._saved = ()
+        self._unchanged = False
 
     def get_params(self) -> la.lnarray:
         """Independent parameters of transition matrices.
@@ -37,11 +46,14 @@ class SynapseOptModel(_SynapseMemoryModel):
         --------
         markov.mat_to_params
         """
-        return la.hstack((_mat2params(self.plast[0]),
-                          _mat2params(self.plast[1])))
+        return la.hstack((ma.mat_to_params(self.plast[0], **self.type),
+                          ma.mat_to_params(self.plast[1], **self.type)))
 
-    def set_params(self, params: np.ndarray):
+    def set_params(self, params: np.ndarray, *args, **kwds):
         """Transition matrices. from independent parameters
+
+        Does not update if parameters are unchanged. Optional arguments are
+        passed on to `numpy.allclose`.
 
         Parameters
         ----------
@@ -55,9 +67,11 @@ class SynapseOptModel(_SynapseMemoryModel):
         --------
         markov.params_to_mat
         """
-        num = params.shape[-1] // 2
-        self.plast = la.stack((_params2mat(params[:num]),
-                               _params2mat(params[num:])))
+        if not np.allclose(params, self.get_params(), *args, **kwds):
+            n = params.shape[-1] // 2
+            self.plast = la.stack((ma.params_to_mat(params[:n], **self.type),
+                                   ma.params_to_mat(params[n:], **self.type)))
+            self._unchanged = False
 
     def _derivs(self, rate: Optional[Number] = None,
                 inv: bool = False) -> (Tuple[la.lnarray, la.lnarray],
@@ -82,6 +96,10 @@ class SynapseOptModel(_SynapseMemoryModel):
             if inv: (Z,Zs,ZQZs)
             if not inv: (Z^-1,Zs^-1)
         """
+        if self._unchanged:
+            return self._saved
+        self._unchanged = True
+
         fundi = self.zinv()
         fundis = self.zinv(rate)
 
@@ -92,11 +110,13 @@ class SynapseOptModel(_SynapseMemoryModel):
         theta = fundi.inv @ self.enc() @ eta
 
         if inv:
-            fund = fundi.inv()
-            funds = fundis.inv()
             zqz = fundi.inv @ self.enc() @ fundis.inv
-            return (peq, c_s), (eta, theta), (fund, funds, zqz)
-        return (peq, c_s), (eta, theta), (fundi, fundis)
+            mats = (fundi.inv(), fundis.inv(), zqz)
+        else:
+            mats = (fundi, fundis)
+
+        self._saved = (peq, c_s), (eta, theta), mats
+        return self._saved
 
     def snr_grad(self, time: Number) -> (float, la.lnarray):
         """Gradient of SNR memory curve.
@@ -133,9 +153,11 @@ class SynapseOptModel(_SynapseMemoryModel):
         fab *= ((peq @ self.enc()) @ evs).c * (evs.inv @ self.weight)
 
         dsdw += _diagsub(evs.inv @ fab @ evs)
+        dsdwp = dsdq + self.frac[0] * dsdw
+        dsdwm = -dsdq + self.frac[1] * dsdw
 
-        grad = - np.hstack((_mat2params(dsdq + self.frac[0] * dsdw),
-                            _mat2params(-dsdq + self.frac[1] * dsdw)))
+        grad = - np.hstack((ma.mat_to_params(dsdwp, **self.type),
+                            ma.mat_to_params(dsdwm, **self.type)))
 
         return func, grad
 
@@ -162,7 +184,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         dadw = _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
         dadwp = dadq + self.frac[0] * dadw
         dadwm = -dadq + self.frac[1] * dadw
-        grad = - np.hstack((_mat2params(dadwp), _mat2params(dadwm)))
+        grad = - np.hstack((ma.mat_to_params(dadwp, **self.type),
+                            ma.mat_to_params(dadwm, **self.type)))
 
         return func, grad
 
@@ -208,8 +231,7 @@ class SynapseOptModel(_SynapseMemoryModel):
                           + hesswq[1]/self.frac[0]) * self.frac[0]*self.frac[1]
         hessmm = tens2mat(hessww - hesswq.sum(0)/self.frac[1])*self.frac[1]**2
         # (2n(n-1),2n(n-1))
-        return - np.block([[hesspp, hesspm],
-                           [hesspm.T, hessmm]])
+        return - np.block([[hesspp, hesspm], [hesspm.T, hessmm]])
 
     def laplace_hessp(self, rate: Number,
                       other: _SynapseBase) -> la.lnarray:
@@ -257,10 +279,11 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         frq = self.frac[0] / self.frac[1]
         # (n(n-1),)
-        hessp = _mat2params(hwwm - hwqm[0] + hwqm[1]/frq + hwwp + hwqp.sum(0))
-        hessm = _mat2params(hwwp + hwqp[0] - hwqp[1]*frq + hwwm - hwqm.sum(0))
+        hp = hwwm - hwqm[0] + hwqm[1]/frq + hwwp + hwqp.sum(0)
+        hm = hwwp + hwqp[0] - hwqp[1]*frq + hwwm - hwqm.sum(0)
         # (2n(n-1),)
-        return - np.hstack((hessp * self.frac[0], hessm * self.frac[1]))
+        return -np.hstack((self.frac[0] * ma.mat_to_params(hp, **self.type),
+                           self.frac[1] * ma.mat_to_params(hm, **self.type)))
 
     @classmethod
     def from_params(cls, params: np.ndarray, *args, **kwdargs):
@@ -284,7 +307,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         synobj
             SynapseOpt instance
         """
-        nst = int(np.sqrt(2*params.size + 1) + 1) // 2
+        nst = ma.num_state(params.size // 2, **cls.type)
         self = cls.empty(nst, *args, npl=2, **kwdargs)
         self.set_params(params)
         return self
@@ -293,31 +316,6 @@ class SynapseOptModel(_SynapseMemoryModel):
 # =============================================================================
 # %%* Independent parameter helper functions
 # =============================================================================
-
-
-def offdiag_inds(nst: int) -> la.lnarray:
-    """Indices of independent parameters of transition matrix.
-
-    Parameters
-    ----------
-    nst : int
-        Number of states.
-
-    Returns
-    -------
-    K : la.lnarray (n(n-1),)
-        Vector of ravel indices of off-diagonal elements, in order:
-        mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2,n-1.
-    """
-    # when put into groups of size nst+1:
-    # M[0,0], M[0,1], M[0,2], ..., M[0,n-1], M[1,0],
-    # M[1,1], M[1,2], ..., M[1,n-1], M[2,0], M[2,1],
-    # ...
-    # M[n-2,n-2], M[n-2,n-1], M[n-1,0], ..., M[n-1,n-2],
-    # unwanted elements are 1st in each group
-    k_1st = (nst+1) * np.arange(nst-1)  # ravel ind of 1st element in group
-    k = np.arange(nst**2 - 1)  # exclude final unwanted element
-    return np.delete(k, k_1st)
 
 
 def tens2mat(tens: la.lnarray) -> la.lnarray:
@@ -335,8 +333,42 @@ def tens2mat(tens: la.lnarray) -> la.lnarray:
     """
     nst = tens.shape[0]
     mat = tens.reshape((nst**2, nst**2))
-    k = offdiag_inds(nst)
+    k = ma.offdiag_inds(nst)
     return mat[np.ix_(k, k)]
+
+
+def constraint_coeff(nst: int) -> la.lnarray:
+    """Coefficient matrix for upper bound on off-diagonal row sums.
+
+    Parameters
+    ----------
+    nst : int
+        Number of states.
+
+    Returns
+    -------
+    coeffs : la.lnarray (2*nst, 2*nst(nst-1))
+        matrix of coefficients s.t ``coeffs @ params <= 1``.
+    """
+    rows, cols = np.ix_(la.arange(2*nst), la.arange(nst-1))
+    cols = cols + rows * (nst-1)
+    coeffs = la.zeros((2*nst, 2*nst*(nst-1)))
+    coeffs[rows, cols] = 1
+    return coeffs
+
+
+def make_loss_function(model: SynapseOptModel, method: str, *args, **kwds):
+    """Make a loss function from model, method and value
+    """
+    if isinstance(method, str):
+        method = getattr(model, method)
+
+    def loss_function(params):
+        """Loss function
+        """
+        model.set_params(params)
+        return method(*args, **kwds)
+    return loss_function
 
 
 # =============================================================================
