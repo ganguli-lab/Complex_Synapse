@@ -133,16 +133,15 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
-        rpr = " Wpm = {}\n fpm = {}"
-        rpr = rpr.format(str(self.plast).replace("\n", "\n" + " " * 7),
-                         self.frac)
+        rpr = type(self).__name__ + "(\n"
+        rpr += "    plast = "
+        rpr += repr(self.plast).replace("\n", "\n" + " " * 12) + ",\n"
+        rpr += f"    frac = {self.frac!r},\n)"
         return rpr
 
     def __str__(self) -> str:
         """Short representation of object"""
-        rpr = "{} with {} states, fpm = {}"
-        rpr = rpr.format(type(self).__name__, self.nstates, self.frac)
-        return rpr
+        return f"{type(self).__name_} with M={self.nstates}, fpm={self.frac}"
 
     # -------------------------------------------------------------------------
     # %%* Utility methods

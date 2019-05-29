@@ -108,13 +108,15 @@ class SynapseMemoryModel(SynapseBase):
     def __repr__(self) -> str:
         """Accurate representation of object"""
         rpr = super().__repr__()
-        rpr += "\n   w = {}".format(self.weight)
+        insert = f"    weight = {self.weight!r},\n"
+        insert += f"    signal = {self.signal!r},\n"
+        rpr = (rpr[:-1] + insert + rpr[-1])
         return rpr
 
     def __str__(self) -> str:
         """Short representation of object"""
         rpr = super().__str__()
-        rpr += ", w = {}".format(self.weight)
+        rpr += f", w = {self.weight}"
         return rpr
 
     # -------------------------------------------------------------------------
