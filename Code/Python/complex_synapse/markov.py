@@ -702,4 +702,6 @@ def tens_to_mat(tens, serial=False, ring=False, uniform=False, grad=True,
         p = len(k) // 2
         mat = la.block([[mat[:p, :p].sum(), mat[:p, p:].sum()],
                         [mat[p:, :p].sum(), mat[p:, p:].sum()]])
+        if not grad:
+            mat /= p
     return mat

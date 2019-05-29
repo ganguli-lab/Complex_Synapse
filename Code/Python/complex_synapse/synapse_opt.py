@@ -74,9 +74,7 @@ class SynapseOptModel(_SynapseMemoryModel):
             self._unchanged = False
 
     def _derivs(self, rate: Optional[Number] = None,
-                inv: bool = False) -> (Tuple[la.lnarray, la.lnarray],
-                                       Tuple[la.lnarray, la.lnarray],
-                                       Tuple[la.lnarray, ...]):
+                inv: bool = False) -> Tuple[Tuple[la.lnarray, ...], ...]:
         """Gradients of Laplace transform of SNR memory curve.
 
         Parameters
@@ -96,7 +94,7 @@ class SynapseOptModel(_SynapseMemoryModel):
             if inv: (Z,Zs,ZQZs)
             if not inv: (Z^-1,Zs^-1)
         """
-        if self._unchanged:
+        if self._unchanged and (len(self._saved[2]) == 2 + inv):
             return self._saved
         self._unchanged = True
 
@@ -315,7 +313,7 @@ class SynapseOptModel(_SynapseMemoryModel):
 
 
 # =============================================================================
-# %%* Independent parameter helper functions
+# %%* Optimisation helper functions
 # =============================================================================
 
 
