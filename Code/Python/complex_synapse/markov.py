@@ -7,31 +7,6 @@ import numpy_linalg as la
 from sl_py_tools.numpy_tricks import allfinite, tri_low_rank
 
 
-def offdiag_inds(nst):
-    """Ravel indices of independent parameters of transition matrix.
-
-    Parameters
-    ----------
-    nst : int
-        Number of states.
-
-    Returns
-    -------
-    K : la.lnarray (n(n-1),)
-        Vector of ravel indices of off-diagonal elements, in order:
-        mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2,n-1.
-    """
-    # when put into groups of size nst+1:
-    # M[0,0], M[0,1], M[0,2], ..., M[0,n-1], M[1,0],
-    # M[1,1], M[1,2], ..., M[1,n-1], M[2,0], M[2,1],
-    # ...
-    # M[n-2,n-2], M[n-2,n-1], M[n-1,0], ..., M[n-1,n-2],
-    # unwanted elements are 1st in each group
-    k_1st = (nst+1) * la.arange(nst)  # ravel ind of 1st element in group
-    k = la.arange(nst**2)
-    return la.delete(k, k_1st)
-
-
 def stochastify_c(mat: la.lnarray):  # make cts time stochastic
     """
     Make a matrix the generator of a continuous time Markov process.
@@ -64,8 +39,9 @@ def stochastify_d(mat: la.lnarray):  # make dsc time stochastic
 def isstochastic_c(mat: la.lnarray, thresh: float = 1e-5) -> bool:
     """Are row sums zero?
     """
-    valid = (mat.flattish(-2, -1)[..., offdiag_inds(mat.shape[-1])] >= 0).all()
-    return valid and (np.fabs(mat.sum(axis=-1)) < thresh).all()
+    nonneg = mat.flattish(-2) >= 0
+    nonneg[..., ::mat.shape[-1]+1] = True
+    return nonneg.all() and (np.fabs(mat.sum(axis=-1)) < thresh).all()
 
 
 def isstochastic_d(mat: la.lnarray, thresh: float = 1e-5) -> bool:

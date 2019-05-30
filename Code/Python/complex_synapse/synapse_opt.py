@@ -13,6 +13,8 @@ from . import markov_param as ma
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
 
+eig = la.wrappers.wrap_several(np.linalg.eig)
+
 
 class SynapseOptModel(_SynapseMemoryModel):
     """Class for complex synapses, suitable for optimisation
@@ -117,7 +119,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         return self._saved
 
     def snr_grad(self, time: Number) -> (float, la.lnarray):
-        """Gradient of SNR memory curve.
+        """Gradient of instantaneous SNR memory curve.
 
         Parameters
         ----------
@@ -132,18 +134,18 @@ class SynapseOptModel(_SynapseMemoryModel):
             Gradient of ``SNR`` at ``time`` with respect to parameters.
         """
         peq = self.peq()
+        peq_enc = peq @ self.enc()
 
-        eig = la.wrappers.wrap_several(np.linalg.eig)
-        qas, evs = eig(self.markov)
-        fab, expwftw = _calc_fab(qas, time, evs, self.weight, self.DegThresh)
-        fab *= ((peq @ self.enc()) @ evs).c * (evs.inv @ self.weight)
+        evd = eig(self.markov)
+        fab, expqtw = _calc_fab(time, *evd, self.weight, peq_enc,
+                                self.DegThresh)
 
-        func = - peq @ self.enc() @ expwftw
+        func = - peq_enc @ expqtw
 
-        dsdq = - _diagsub(peq.c * expwftw)
-        dsdw = - _diagsub(peq.c * (self.zinv().inv @ (self.enc() @ expwftw)))
+        dsdq = - _diagsub(peq.c * expqtw)
+        dsdw = - _diagsub(peq.c * (self.zinv().inv @ (self.enc() @ expqtw)))
+        dsdw -= _diagsub(fab)
 
-        dsdw -= _diagsub(evs.inv @ fab @ evs)
         dsdwp = self.frac[0] * (dsdw + dsdq)
         dsdwm = self.frac[1] * (dsdw - dsdq)
 
@@ -351,7 +353,7 @@ def make_loss_function(model: SynapseOptModel, method: str, *args, **kwds):
 # =============================================================================
 
 
-def _calc_fab(qas, time, evs, weight, thresh):
+def _calc_fab(time, qas, evs, weight, peq_enc, thresh):
     """Calculate eigenvalue differences
     """
     expqt = np.exp(qas * time)
@@ -360,8 +362,10 @@ def _calc_fab(qas, time, evs, weight, thresh):
     fab[degenerate] = 1.
     fab = (expqt.c - expqt.r) / fab
     fab[degenerate] = expqt[degenerate.nonzero()[0]] * time
+    fab *= evs.inv @ weight
+    fab *= (peq_enc @ evs).c
     expwftw = (evs * expqt) @ (evs.inv @ weight)
-    return fab, expwftw
+    return (evs.inv @ fab @ evs), expwftw
 
 
 def _diagsub(mat: la.lnarray) -> la.lnarray:

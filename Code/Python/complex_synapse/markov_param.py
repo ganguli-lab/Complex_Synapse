@@ -216,27 +216,6 @@ def gen_params_to_mat(params):
     return mat
 
 
-def gen_mat_to_params(mat):
-    """Independent parameters of transition matrix.
-
-    Parameters
-    ----------
-    mat : np.ndarray (n,n)
-        Continuous time stochastic matrix.
-
-    Returns
-    -------
-    params : la.lnarray (n(n-1),)
-        Vector of off-diagonal elements, in order:
-        mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2,n-1.
-    """
-    nst = mat.shape[0]
-    # m_00, m_01, m_02, ..., m_0n-1, m_10,
-    # mat_12, ..., mat_n-2,n
-    param = mat.flatten()
-    return param[offdiag_inds(nst)]
-
-
 def serial_params_to_mat(params):
     """Serial transition matrix from independent parameters.
 
@@ -256,26 +235,6 @@ def serial_params_to_mat(params):
     mat = la.diagflat(params[:njmp], 1) + la.diagflat(params[njmp:], -1)
     stochastify_c(mat)
     return mat
-
-
-def serial_mat_to_params(mat):
-    """Independent parameters of serial transition matrix.
-
-    Parameters
-    ----------
-    mat : np.ndarray (n,n)
-        Continuous time stochastic matrix.
-
-    Returns
-    -------
-    params : la.lnarray (2(n-1),)
-        Vector of independent elements, in order:
-        mat_01, mat_12, ..., mat_n-2,n-1,
-        mat_10, mat_21, ..., mat_n-2,n-1.
-    """
-    nst = mat.shape[0]
-    param = mat.flatten()
-    return param[serial_inds(nst)]
 
 
 def uni_serial_params_to_mat(params, num_st):
@@ -298,36 +257,6 @@ def uni_serial_params_to_mat(params, num_st):
     serial_params = la.hstack((np.full(num_st-1, params[0]),
                                np.full(num_st-1, params[1])))
     return serial_params_to_mat(serial_params)
-
-
-def uni_serial_mat_to_params(mat, grad=True):
-    """Independent parameters of uniform serial transition matrix.
-
-    Parameters
-    ----------
-    mat : np.ndarray (n,n)
-        Continuous time stochastic matrix.
-    grad : bool, optional, default: True
-        Is the output for a gradient (True) or a transition matrix (False).
-        If True, return sum of (anti)clockwise transitions.
-        If False, return the mean.
-
-    Returns
-    -------
-    params : la.lnarray (2,)
-        Vector of independent elements, in order (grad=False):
-            mat_01 = mat_12 = ... = mat_n-2,n-1,
-            mat_10 = mat_21 = ... = mat_n-1,n-2.
-        Or, in order (grad=True):
-            mat_01 + mat_12 + ... + mat_n-2,n-1,
-            mat_10 + mat_21 + ... + mat_n-1,n-2.
-    """
-    njmp = mat.shape[0] - 1
-    serl_params = serial_mat_to_params(mat)
-    params = la.hstack([serl_params[:njmp].sum(), serl_params[njmp:].sum()])
-    if not grad:
-        params /= njmp
-    return params
 
 
 def ring_params_to_mat(params):
@@ -353,26 +282,6 @@ def ring_params_to_mat(params):
     return mat
 
 
-def ring_mat_to_params(mat):
-    """Independent parameters of ring transition matrix.
-
-    Parameters
-    ----------
-    mat : np.ndarray (n,n)
-        Continuous time stochastic matrix.
-
-    Returns
-    -------
-    params : la.lnarray (2n,)
-        Vector of independent elements, in order:
-        mat_01, mat_12, ..., mat_n-2,n-1, mat_n-1,0,
-        mat_0,n-1, mat_10, mat_21, ..., mat_n-1,n-2.
-    """
-    nst = mat.shape[0]
-    param = mat.flatten()
-    return param[ring_inds(nst)]
-
-
 def uni_ring_params_to_mat(params, num_st):
     """Ring transition matrix from independent parameters.
 
@@ -393,36 +302,6 @@ def uni_ring_params_to_mat(params, num_st):
     ring_params = la.hstack((np.full(num_st, params[0]),
                              np.full(num_st, params[1])))
     return ring_params_to_mat(ring_params)
-
-
-def uni_ring_mat_to_params(mat, grad=True):
-    """Independent parameters of ring transition matrix.
-
-    Parameters
-    ----------
-    mat : np.ndarray (n,n)
-        Continuous time stochastic matrix.
-    grad : bool, optional, default: True
-        Is the output for a gradient (True) or a transition matrix (False).
-        If True, return sum of (anti)clockwise transitions.
-        If False, return the mean.
-
-    Returns
-    -------
-    params : la.lnarray (2,)
-        Vector of independent elements, in order (grad=False):
-            mat_01 = mat_12 = ... = mat_n-2,n-1 = mat_n-10,
-            mat_0n-1 = mat10 = mat_21 = ... = mat_n-1,n-2.
-        Or, in order (grad=True):
-            mat_01 + mat_12 + ... + mat_n-2,n-1 + mat_n-10,
-            mat_0n-1 + mat10 + mat_21 + ... + mat_n-1,n-2.
-    """
-    nst = mat.shape[0]
-    ring_params = ring_mat_to_params(mat)
-    params = la.array([ring_params[:nst].sum(), ring_params[nst:].sum()])
-    if not grad:
-        params /= nst
-    return params
 
 
 def params_to_mat(params, serial=False, ring=False, uniform=False, nst=2):
@@ -458,6 +337,127 @@ def params_to_mat(params, serial=False, ring=False, uniform=False, nst=2):
             return uni_ring_params_to_mat(params, nst)
         return ring_params_to_mat(params)
     return gen_params_to_mat(params)
+
+
+def gen_mat_to_params(mat):
+    """Independent parameters of transition matrix.
+
+    Parameters
+    ----------
+    mat : np.ndarray (n,n)
+        Continuous time stochastic matrix.
+
+    Returns
+    -------
+    params : la.lnarray (n(n-1),)
+        Vector of off-diagonal elements, in order:
+        mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2,n-1.
+    """
+    nst = mat.shape[0]
+    # m_00, m_01, m_02, ..., m_0n-1, m_10,
+    # mat_12, ..., mat_n-2,n
+    param = mat.flatten()
+    return param[offdiag_inds(nst)]
+
+
+def serial_mat_to_params(mat):
+    """Independent parameters of serial transition matrix.
+
+    Parameters
+    ----------
+    mat : np.ndarray (n,n)
+        Continuous time stochastic matrix.
+
+    Returns
+    -------
+    params : la.lnarray (2(n-1),)
+        Vector of independent elements, in order:
+        mat_01, mat_12, ..., mat_n-2,n-1,
+        mat_10, mat_21, ..., mat_n-2,n-1.
+    """
+    nst = mat.shape[0]
+    param = mat.flatten()
+    return param[serial_inds(nst)]
+
+
+def uni_serial_mat_to_params(mat, grad=True):
+    """Independent parameters of uniform serial transition matrix.
+
+    Parameters
+    ----------
+    mat : np.ndarray (n,n)
+        Continuous time stochastic matrix.
+    grad : bool, optional, default: True
+        Is the output for a gradient (True) or a transition matrix (False).
+        If True, return sum of (anti)clockwise transitions.
+        If False, return the mean.
+
+    Returns
+    -------
+    params : la.lnarray (2,)
+        Vector of independent elements, in order (grad=False):
+            mat_01 = mat_12 = ... = mat_n-2,n-1,
+            mat_10 = mat_21 = ... = mat_n-1,n-2.
+        Or, in order (grad=True):
+            mat_01 + mat_12 + ... + mat_n-2,n-1,
+            mat_10 + mat_21 + ... + mat_n-1,n-2.
+    """
+    njmp = mat.shape[0] - 1
+    serl_params = serial_mat_to_params(mat)
+    params = la.hstack([serl_params[:njmp].sum(), serl_params[njmp:].sum()])
+    if not grad:
+        params /= njmp
+    return params
+
+
+def ring_mat_to_params(mat):
+    """Independent parameters of ring transition matrix.
+
+    Parameters
+    ----------
+    mat : np.ndarray (n,n)
+        Continuous time stochastic matrix.
+
+    Returns
+    -------
+    params : la.lnarray (2n,)
+        Vector of independent elements, in order:
+        mat_01, mat_12, ..., mat_n-2,n-1, mat_n-1,0,
+        mat_0,n-1, mat_10, mat_21, ..., mat_n-1,n-2.
+    """
+    nst = mat.shape[0]
+    param = mat.flatten()
+    return param[ring_inds(nst)]
+
+
+def uni_ring_mat_to_params(mat, grad=True):
+    """Independent parameters of ring transition matrix.
+
+    Parameters
+    ----------
+    mat : np.ndarray (n,n)
+        Continuous time stochastic matrix.
+    grad : bool, optional, default: True
+        Is the output for a gradient (True) or a transition matrix (False).
+        If True, return sum of (anti)clockwise transitions.
+        If False, return the mean.
+
+    Returns
+    -------
+    params : la.lnarray (2,)
+        Vector of independent elements, in order (grad=False):
+            mat_01 = mat_12 = ... = mat_n-2,n-1 = mat_n-10,
+            mat_0n-1 = mat10 = mat_21 = ... = mat_n-1,n-2.
+        Or, in order (grad=True):
+            mat_01 + mat_12 + ... + mat_n-2,n-1 + mat_n-10,
+            mat_0n-1 + mat10 + mat_21 + ... + mat_n-1,n-2.
+    """
+    nst = mat.shape[0]
+    ring_params = ring_mat_to_params(mat)
+    params = la.array([ring_params[:nst].sum(), ring_params[nst:].sum()])
+    if not grad:
+        params /= nst
+    return params
 
 
 def mat_to_params(mat, serial=False, ring=False, uniform=False, grad=True):
