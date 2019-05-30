@@ -41,16 +41,16 @@ class SynapseMemoryModel(SynapseBase):
 
     # Common constatnts / parameters
 
-    # smallest reciprocal condition number for inverting zinv
-    RCondThresh: ClassVar[float] = 1e-5
+    # # smallest reciprocal condition number for inverting zinv
+    # RCondThresh: ClassVar[float] = 1e-5
     # degeneracy threshold, for evals or eta^+
     DegThresh: ClassVar[float] = 1e-3
-    # smallest singular value for Split models
-    SingValThresh: ClassVar[float] = 1e-10
-    # threshold for lumpability test
-    LumpThresh: ClassVar[float] = 1e-3
-    # threshold for orphaned states
-    OrphanThresh: ClassVar[float] = 1e-3
+    # # smallest singular value for Split models
+    # SingValThresh: ClassVar[float] = 1e-10
+    # # threshold for lumpability test
+    # LumpThresh: ClassVar[float] = 1e-3
+    # # threshold for orphaned states
+    # OrphanThresh: ClassVar[float] = 1e-3
 
     def __init__(self, plast: la.lnarray,
                  frac: ArrayLike = 0.5,
@@ -280,7 +280,7 @@ class SynapseMemoryModel(SynapseBase):
         """
         eig = la.wrappers.wrap_several(np.linalg.eig)
         qas, evs = eig(-self.markov())
-        mask = np.ones_like(qas, dtype=bool).put(qas.real.argmin(), False)
+        mask = la.ones_like(qas, dtype=bool).put(qas.real.argmin(), False)
         taua = 1. / qas[mask]
         inita = self.peq() @ self.enc() @ evs[:, mask]
         inita *= (evs.inv @ self.weight)[mask]

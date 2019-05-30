@@ -9,7 +9,7 @@ from numbers import Number
 from typing import Tuple, Optional, Union, Dict, ClassVar
 import numpy as np
 from .builders import la
-from . import markov as ma
+from . import markov_param as ma
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
 
@@ -68,9 +68,9 @@ class SynapseOptModel(_SynapseMemoryModel):
         markov.params_to_mat
         """
         if not np.allclose(params, self.get_params(), *args, **kwds):
-            n = params.shape[-1] // 2
-            self.plast = la.stack((ma.params_to_mat(params[:n], **self.type),
-                                   ma.params_to_mat(params[n:], **self.type)))
+            plast = np.split(params.shape, 2)
+            self.plast = la.stack((ma.params_to_mat(plast[0], **self.type),
+                                   ma.params_to_mat(plast[1], **self.type)))
             self._unchanged = False
 
     def _derivs(self, rate: Optional[Number] = None,
@@ -135,27 +135,20 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         eig = la.wrappers.wrap_several(np.linalg.eig)
         qas, evs = eig(self.markov)
-        expqt = np.exp(qas * time)
-        expwftw = (evs * expqt) @ (evs.inv @ self.weight)
+        fab, expwftw = _calc_fab(qas, time, evs, self.weight, self.DegThresh)
+        fab *= ((peq @ self.enc()) @ evs).c * (evs.inv @ self.weight)
 
         func = - peq @ self.enc() @ expwftw
 
-        dsdq = _diagsub(peq.c * expwftw)
-        dsdw = _diagsub(peq.c * (self.zinv().inv @ (self.enc() @ expwftw)))
+        dsdq = - _diagsub(peq.c * expwftw)
+        dsdw = - _diagsub(peq.c * (self.zinv().inv @ (self.enc() @ expwftw)))
 
-        fab = qas.c - qas.r
-        degenerate = np.fabs(fab) < self.DegThresh
-        fab[degenerate] = 1.
-        fab = (expqt.c - expqt.r) / fab
-        fab[degenerate] = expqt[degenerate.nonzero()[0]] * time
-        fab *= ((peq @ self.enc()) @ evs).c * (evs.inv @ self.weight)
-
-        dsdw += _diagsub(evs.inv @ fab @ evs)
+        dsdw -= _diagsub(evs.inv @ fab @ evs)
         dsdwp = self.frac[0] * (dsdw + dsdq)
         dsdwm = self.frac[1] * (dsdw - dsdq)
 
-        grad = - np.hstack((ma.mat_to_params(dsdwp, **self.type),
-                            ma.mat_to_params(dsdwm, **self.type)))
+        grad = np.hstack((ma.mat_to_params(dsdwp, **self.type),
+                          ma.mat_to_params(dsdwm, **self.type)))
 
         return func, grad
 
@@ -178,12 +171,12 @@ class SynapseOptModel(_SynapseMemoryModel):
         rows, cols = self._derivs(rate)[:2]
         func = - rows[1] @ self.weight
 
-        dadq = _diagsub(rows[0].c * cols[0])
-        dadw = _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
+        dadq = - _diagsub(rows[0].c * cols[0])
+        dadw = - _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
         dadwp = self.frac[0] * (dadw + dadq)
         dadwm = self.frac[1] * (dadw - dadq)
-        grad = - np.hstack((ma.mat_to_params(dadwp, **self.type),
-                            ma.mat_to_params(dadwm, **self.type)))
+        grad = np.hstack((ma.mat_to_params(dadwp, **self.type),
+                          ma.mat_to_params(dadwm, **self.type)))
 
         return func, grad
 
@@ -271,18 +264,18 @@ class SynapseOptModel(_SynapseMemoryModel):
             h_wq = (_outerdiv3p(rows[0], mats[0], cols[0], vecm)
                     + np.flip(_outerdiv3p(rows[0], mats[1], cols[0], vecm), 0))
             # (n,n), (2,n,n)
-            return frc * h_ww, frc * h_wq
+            return -frc * h_ww, -frc * h_wq
 
         # (n,n), (2,n,n)
         hwwp, hwqp = _hesspr(other.plast[0], self.frac[0])
         hwwm, hwqm = _hesspr(other.plast[1], self.frac[1])
 
         # (n,n)
-        hp = hwwm - hwqm[0] + hwqm[1] + hwwp + hwqp.sum(0)
-        hm = hwwp + hwqp[0] - hwqp[1] + hwwm - hwqm.sum(0)
+        hessp = hwwm - hwqm[0] + hwqm[1] + hwwp + hwqp.sum(0)
+        hessm = hwwp + hwqp[0] - hwqp[1] + hwwm - hwqm.sum(0)
         # (2n(n-1),)
-        return -np.hstack((self.frac[0] * ma.mat_to_params(hp, **self.type),
-                           self.frac[1] * ma.mat_to_params(hm, **self.type)))
+        return np.hstack((self.frac[0] * ma.mat_to_params(hessp, **self.type),
+                          self.frac[1] * ma.mat_to_params(hessm, **self.type)))
 
     @classmethod
     def from_params(cls, params: np.ndarray, *args, **kwdargs):
@@ -306,7 +299,9 @@ class SynapseOptModel(_SynapseMemoryModel):
         synobj
             SynapseOpt instance
         """
-        nst = ma.num_state(params.size // 2, **cls.type)
+        mat_type = cls.type.copy()
+        del mat_type['uniform']
+        nst = ma.num_state(params.size // 2, **mat_type)
         self = cls.empty(nst, *args, npl=2, **kwdargs)
         self.set_params(params)
         return self
@@ -330,10 +325,10 @@ def constraint_coeff(nst: int) -> la.lnarray:
     coeffs : la.lnarray (2*nst, 2*nst(nst-1))
         matrix of coefficients s.t ``coeffs @ params <= 1``.
     """
-    rows, cols = np.ix_(la.arange(2*nst), la.arange(nst-1))
-    cols = cols + rows * (nst-1)
+    rows, cols = la.arange(2*nst), la.arange(nst-1)
+    cols = cols + rows.c * (nst-1)
     coeffs = la.zeros((2*nst, 2*nst*(nst-1)))
-    coeffs[rows, cols] = 1
+    coeffs[rows.c, cols] = 1
     return coeffs
 
 
@@ -354,6 +349,19 @@ def make_loss_function(model: SynapseOptModel, method: str, *args, **kwds):
 # =============================================================================
 # %%* Private helper functions
 # =============================================================================
+
+
+def _calc_fab(qas, time, evs, weight, thresh):
+    """Calculate eigenvalue differences
+    """
+    expqt = np.exp(qas * time)
+    fab = qas.c - qas.r
+    degenerate = np.fabs(fab) < thresh
+    fab[degenerate] = 1.
+    fab = (expqt.c - expqt.r) / fab
+    fab[degenerate] = expqt[degenerate.nonzero()[0]] * time
+    expwftw = (evs * expqt) @ (evs.inv @ weight)
+    return fab, expwftw
 
 
 def _diagsub(mat: la.lnarray) -> la.lnarray:

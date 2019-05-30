@@ -8,14 +8,13 @@ from __future__ import annotations
 from typing import ClassVar, Union, Sequence, Dict
 from numbers import Number
 import numpy as np
-from .builders import la
+import numpy_linalg as la
+import numpy_linalg.convert_loop as cvl
 from . import builders as bld
 from . import markov as ma
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
-# helpers for array_ufunc
-cvl = la.convert_loop
 
 
 class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
@@ -128,7 +127,7 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
     def valid_values(self) -> bool:
         """Do attributes (plast, frac) have valid values?"""
         vld = ma.isstochastic_c(self.plast, self.StochThresh)
-        vld &= bld.isstochastic_d(self.frac, self.StochThresh)
+        vld &= ma.isstochastic_d(self.frac, self.StochThresh)
         return vld
 
     def __repr__(self) -> str:
