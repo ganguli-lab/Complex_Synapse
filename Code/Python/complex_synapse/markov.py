@@ -130,7 +130,23 @@ def rand_trans(nst: int, npl: int = 1, sparsity: float = 1.) -> la.lnarray:
     return mat
 
 
-def sim_markov(rates, peq, num_jmp=None, max_time=None):
+def mean_dwell(rates, peq=None):
+    """Mean time spent in any state.
+
+    Parameters
+    ----------
+    rates : la.lnarray (n,n)
+        Continuous time stochastic matrix.
+    peq : la.lnarray (n,), optional
+        Steady-state distribution, default: calculate frm `rates`.
+    """
+    if peq is None:
+        peq = calc_peq(rates)
+    dwell = -1. / np.diagonal(rates)
+    return 1. / (peq / dwell).sum()
+
+
+def sim_markov(rates, peq=None, num_jmp=None, max_time=None):
     """Simulate Markov process trajectory.
 
     Parameters
@@ -138,7 +154,7 @@ def sim_markov(rates, peq, num_jmp=None, max_time=None):
     rates : la.lnarray (n,n)
         Continuous time stochastic matrix.
     peq : la.lnarray (n,)
-        Initial-state distribution.
+        Initial-state distribution, default: use steady-state.
     num_jmp : int, optional, default: None
         Stop after this many jumps.
     max_time : float, optional, default: None
@@ -150,6 +166,8 @@ def sim_markov(rates, peq, num_jmp=None, max_time=None):
         Vector of states visited.
     dwells : la.lnarray (w,)
     """
+    if peq is None:
+        peq = calc_peq(rates)
     num_states = len(peq)
     state_inds = la.arange(num_states)
     dwell = -1. / np.diagonal(rates)
@@ -160,7 +178,7 @@ def sim_markov(rates, peq, num_jmp=None, max_time=None):
         if max_time is None:
             raise ValueError("Must specify either num_jmp or max_time")
         num_jmp = np.inf
-        est_num = int(5 * max_time * (peq / dwell).sum())
+        est_num = int(5 * max_time / mean_dwell(rates, peq))
     if max_time is None:
         max_time = np.inf
         est_num = num_jmp
