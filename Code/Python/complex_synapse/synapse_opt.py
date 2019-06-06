@@ -8,8 +8,7 @@ Created on Mon Sep 18 16:06:34 2017
 from numbers import Number
 from typing import Tuple, Optional, Union, Dict, ClassVar
 import numpy as np
-from .builders import la
-from . import markov_param as ma
+from .builders import la, mp
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
 
@@ -48,8 +47,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         --------
         markov.mat_to_params
         """
-        return la.hstack((ma.mat_to_params(self.plast[0], **self.type),
-                          ma.mat_to_params(self.plast[1], **self.type)))
+        return la.hstack((mp.mat_to_params(self.plast[0], **self.type),
+                          mp.mat_to_params(self.plast[1], **self.type)))
 
     def set_params(self, params: np.ndarray, *args, **kwds):
         """Transition matrices. from independent parameters
@@ -71,8 +70,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         """
         if not np.allclose(params, self.get_params(), *args, **kwds):
             plast = np.split(params.shape, 2)
-            self.plast = la.stack((ma.params_to_mat(plast[0], **self.type),
-                                   ma.params_to_mat(plast[1], **self.type)))
+            self.plast = la.stack((mp.params_to_mat(plast[0], **self.type),
+                                   mp.params_to_mat(plast[1], **self.type)))
             self._unchanged = False
 
     def _derivs(self, rate: Optional[Number] = None,
@@ -149,8 +148,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         dsdwp = self.frac[0] * (dsdw + dsdq)
         dsdwm = self.frac[1] * (dsdw - dsdq)
 
-        grad = np.hstack((ma.mat_to_params(dsdwp, **self.type),
-                          ma.mat_to_params(dsdwm, **self.type)))
+        grad = np.hstack((mp.mat_to_params(dsdwp, **self.type),
+                          mp.mat_to_params(dsdwm, **self.type)))
 
         return func, grad
 
@@ -177,8 +176,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         dadw = - _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
         dadwp = self.frac[0] * (dadw + dadq)
         dadwm = self.frac[1] * (dadw - dadq)
-        grad = np.hstack((ma.mat_to_params(dadwp, **self.type),
-                          ma.mat_to_params(dadwm, **self.type)))
+        grad = np.hstack((mp.mat_to_params(dadwp, **self.type),
+                          mp.mat_to_params(dadwm, **self.type)))
 
         return func, grad
 
@@ -219,11 +218,11 @@ class SynapseOptModel(_SynapseMemoryModel):
                               + _trnsp4(_outer3(rows[0], mats[1], cols[0])))
 
         # (n(n-1),n(n-1))
-        hesspp = ma.tens_to_mat(hessww + hesswq.sum(0),
+        hesspp = mp.tens_to_mat(hessww + hesswq.sum(0),
                                 **self.type) * self.frac[0]**2
-        hesspm = ma.tens_to_mat(hessww - hesswq[0] + hesswq[1],
+        hesspm = mp.tens_to_mat(hessww - hesswq[0] + hesswq[1],
                                 **self.type) * self.frac[0]*self.frac[1]
-        hessmm = ma.tens_to_mat(hessww - hesswq.sum(0),
+        hessmm = mp.tens_to_mat(hessww - hesswq.sum(0),
                                 **self.type) * self.frac[1]**2
         # (2n(n-1),2n(n-1))
         return - np.block([[hesspp, hesspm], [hesspm.T, hessmm]])
@@ -276,8 +275,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         hessp = hwwm - hwqm[0] + hwqm[1] + hwwp + hwqp.sum(0)
         hessm = hwwp + hwqp[0] - hwqp[1] + hwwm - hwqm.sum(0)
         # (2n(n-1),)
-        return np.hstack((self.frac[0] * ma.mat_to_params(hessp, **self.type),
-                          self.frac[1] * ma.mat_to_params(hessm, **self.type)))
+        return np.hstack((self.frac[0] * mp.mat_to_params(hessp, **self.type),
+                          self.frac[1] * mp.mat_to_params(hessm, **self.type)))
 
     @classmethod
     def from_params(cls, params: np.ndarray, *args, **kwdargs):
@@ -303,7 +302,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         """
         mat_type = cls.type.copy()
         del mat_type['uniform']
-        nst = ma.num_state(params.size // 2, **mat_type)
+        nst = mp.num_state(params.size // 2, **mat_type)
         self = cls.empty(nst, *args, npl=2, **kwdargs)
         self.set_params(params)
         return self

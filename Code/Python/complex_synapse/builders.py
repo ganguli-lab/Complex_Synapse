@@ -32,7 +32,8 @@ build_multistate(nst, q)
 from typing import Dict
 import numpy as np
 import numpy_linalg as la
-from . import markov as _ma
+from sl_py_tools.numpy_tricks import markov as ma
+from sl_py_tools.numpy_tricks import markov_param as mp
 
 
 def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
@@ -86,9 +87,8 @@ def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     mat : la.lnarray
         transition matrix
     """
-    mat = la.stack((la.diagflat(jmp * np.ones(nst-1), 1),
-                    la.diagflat(jmp * np.ones(nst-1), -1)))
-    _ma.stochastify_c(mat)
+    mat = la.stack((mp.uni_serial_params_to_mat([jmp, 0], nst),
+                    mp.uni_serial_params_to_mat([0, jmp], nst)))
     return mat
 
 
@@ -214,7 +214,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: _ma.rand_trans(n, p, sparsity),
+    return build_generic(lambda n, p: ma.rand_trans(n, p, sparsity),
                          nst, npl, binary)
 
 
@@ -242,9 +242,7 @@ def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    out = build_empty(nst, 2, True)
-    out['plast'] = serial_trans(nst, jmp)
-    return out
+    return build_generic(lambda n, p: serial_trans(n, jmp), nst, 2, True)
 
 
 def build_multistate(nst: int, jmp: float) -> Dict[str, la.lnarray]:
@@ -272,9 +270,7 @@ def build_multistate(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    out = build_empty(nst, 2, False)
-    out['plast'] = serial_trans(nst, jmp)
-    return out
+    return build_generic(lambda n, p: serial_trans(n, jmp), nst, 2, False)
 
 
 def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
@@ -316,6 +312,6 @@ def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
     plast[1, -1, n-1] = jmp_vec[0] * jmp
     plast[1, inds, inds+1] = jmp_vec * jmp
 
-    _ma.stochastify_c(plast)
+    ma.stochastify_c(plast)
 #    out['plast'] = plast
     return out

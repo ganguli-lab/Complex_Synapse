@@ -8,10 +8,9 @@ from __future__ import annotations
 from typing import ClassVar, Union, Sequence, Dict
 from numbers import Number
 import numpy as np
-import numpy_linalg as la
-import numpy_linalg.convert_loop as cvl
 from . import builders as bld
-from . import markov as ma
+from .builders import la, ma
+cvl = la.convert_loop
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
@@ -110,6 +109,9 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
         """Ensure that all attributes are valid.
         """
         ma.stochastify_c(self.plast)
+        scale = -np.diagonal(self.plast).min()
+        if scale > 1:
+            self.plast /= scale
         ma.stochastify_d(self.frac)
 
     def fix(self):
