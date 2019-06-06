@@ -8,7 +8,7 @@ Created on Fri Jun 23 18:22:05 2017
 
 from typing import ClassVar, Optional, Dict
 import numpy as np
-from .synapse_base import SynapseBase, ArrayLike, la
+from .synapse_base import SynapseBase, ArrayLike, la, ma
 
 
 class SynapseMemoryModel(SynapseBase):
@@ -41,10 +41,12 @@ class SynapseMemoryModel(SynapseBase):
 
     # Common constatnts / parameters
 
-    # # smallest reciprocal condition number for inverting zinv
-    # RCondThresh: ClassVar[float] = 1e-5
     # degeneracy threshold, for evals or eta^+
     DegThresh: ClassVar[float] = 1e-3
+    # largest row sum for valid plast & frac
+    StochThresh: ClassVar[float] = 1e-5
+    # # smallest reciprocal condition number for inverting zinv
+    # RCondThresh: ClassVar[float] = 1e-5
     # # smallest singular value for Split models
     # SingValThresh: ClassVar[float] = 1e-10
     # # threshold for lumpability test
@@ -70,13 +72,12 @@ class SynapseMemoryModel(SynapseBase):
             desired signal contribution from each plasticity type.
         """
         # store inputs
-        super().__init__(plast, frac)
         if weight is None:
             self.weight = la.linspace(-1., 1., self.nstates)
         else:
             self.weight = la.asarray(weight)
         self.signal = la.asarray(signal).ravel()
-        self.fix()
+        super().__init__(plast, frac)
 
     # -------------------------------------------------------------------------
     # %%* Housekeeping
@@ -92,18 +93,8 @@ class SynapseMemoryModel(SynapseBase):
         """Complete frac and signal vectors.
         """
         super().fix()
-        try:
-            if np.isnan(self.signal).all():
-                self.signal = np.linspace(1, -1, self.nplast)
-        except AttributeError:
-            pass  # probably called in super constructor
-
-    def valid_shapes(self) -> bool:
-        """Do attributes (Wp, Wm, w) have correct shapes?"""
-        vld = super().valid_shapes()
-        vld &= len(self.weight) == self.plast.shape[-1]
-        vld &= len(self.frac) == len(self.signal)
-        return vld
+        if np.isnan(self.signal).all():
+            self.signal = np.linspace(1, -1, self.nplast)
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
@@ -335,3 +326,34 @@ class SynapseMemoryModel(SynapseBase):
         """Swap plasticity matrices if snr is negative"""
         if self.snr_init() < 0:
             self.plast = self.plast[::-1]
+
+
+# =============================================================================
+# %%* Helper functions
+# =============================================================================
+
+
+def normalise(model):
+    """Ensure that all attributes are valid.
+    """
+    ma.stochastify_c(model.plast)
+    scale = -np.diagonal(model.plast).min()
+    if scale > 1:
+        model /= scale
+    ma.stochastify_d(model.frac)
+
+
+def valid_shapes(model) -> bool:
+    """Do attributes (plast, weight, frac) have correct shapes?"""
+    vld = model.plast.shape[-2] == model.plast.shape[-1]
+    vld &= len(model.plast) == len(model.frac)
+    vld &= len(model.weight) == model.plast.shape[-1]
+    vld &= len(model.frac) == len(model.signal)
+    return vld
+
+
+def valid_values(model) -> bool:
+    """Do attributes (plast, frac) have valid values?"""
+    vld = ma.isstochastic_c(model.plast, model.StochThresh)
+    vld &= ma.isstochastic_d(model.frac, model.StochThresh)
+    return vld

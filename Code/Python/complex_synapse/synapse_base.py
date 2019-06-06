@@ -9,7 +9,7 @@ from typing import ClassVar, Union, Sequence, Dict
 from numbers import Number
 import numpy as np
 from . import builders as bld
-from .builders import la, ma
+from .builders import la
 cvl = la.convert_loop
 
 # types that can multiply with/add to a matrix
@@ -22,9 +22,10 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
     Contains methods that modify instance variables, those that do not
     perform calculations and overloads of arithmetic operators, str and repr.
     Subclasses should override: `__init__`, `dict_copy`, `fix`, `valid_shapes`,
-    `valid_values}`, `normalise` if necessary, including calls to super().
-    Beware of `fix`: it is called in super().__init__, so any reference to
-    subclass attributes should be enclosed by `try ... except AttributeError`.
+    `valid_values`, `normalise` if necessary, including calls to super().
+    Beware of `fix`: it is called in `super().__init__`, so any reference to
+    subclass attributes should be enclosed by `try ... except AttributeError`
+    or they must be set before calling `super().__init__`.
 
     Parameters (and attributes)
     ---------------------------
@@ -50,11 +51,6 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
     plast: la.lnarray
     # fraction of events that are potentiating./depressing
     frac: la.lnarray
-
-    # Common constatnts / parameters
-
-    # largest row sum for valid plast & frac
-    StochThresh: ClassVar[float] = 1e-5
 
     def __init__(self, plast: la.lnarray,
                  frac: ArrayLike = 0.5):
@@ -105,32 +101,11 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
     # %%* Housekeeping
     # -------------------------------------------------------------------------
 
-    def normalise(self):
-        """Ensure that all attributes are valid.
-        """
-        ma.stochastify_c(self.plast)
-        scale = -np.diagonal(self.plast).min()
-        if scale > 1:
-            self.plast /= scale
-        ma.stochastify_d(self.frac)
-
     def fix(self):
         """Complete frac vector
         """
         if len(self.frac) == len(self.plast) - 1:
             self.frac = la.concatenate((self.frac, [1. - self.frac.sum()]))
-
-    def valid_shapes(self) -> bool:
-        """Do attributes (plast, weight, frac) have correct shapes?"""
-        vld = self.plast.shape[-2] == self.plast.shape[-1]
-        vld &= len(self.plast) == len(self.frac)
-        return vld
-
-    def valid_values(self) -> bool:
-        """Do attributes (plast, frac) have valid values?"""
-        vld = ma.isstochastic_c(self.plast, self.StochThresh)
-        vld &= ma.isstochastic_d(self.frac, self.StochThresh)
-        return vld
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
