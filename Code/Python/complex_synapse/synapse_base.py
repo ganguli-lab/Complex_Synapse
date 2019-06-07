@@ -8,8 +8,8 @@ from __future__ import annotations
 from typing import ClassVar, Union, Sequence, Dict
 from numbers import Number
 import numpy as np
-from . import builders as bld
 from .builders import la
+from . import builders as bld
 cvl = la.convert_loop
 
 # types that can multiply with/add to a matrix

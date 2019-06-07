@@ -73,14 +73,14 @@ def linear_weights(nst: int) -> la.lnarray:  # linear synaptic weights
 
 def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     """
-    Make a random transition matrix (continuous time).
+    Make a serial transition matrix (continuous time).
 
     Parameters
     ----------
     n : int
         total number of states
     jmp : float
-        sparsity
+        jump rate
 
     Returns
     -------
@@ -90,6 +90,29 @@ def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     mat = la.stack((mp.uni_serial_params_to_mat([jmp, 0], nst),
                     mp.uni_serial_params_to_mat([0, jmp], nst)))
     return mat
+
+
+def rand_trans(nst, drns=(0, 0), **kwds):
+    """
+    Make a random transition matrix (continuous time).
+
+    Parameters
+    ----------
+    nst : int
+        total number of states.
+    drns : Sequence[int]
+        direction for each plasticity type.
+
+    Returns
+    -------
+    mat : la.lnarray
+        transition matrix
+    """
+    mats = []
+    npr = mp.num_param(drn=drns[0], **kwds)
+    for i in drns:
+        mats.append(mp.params_to_mat(la.random.rand(npr), drn=i, **kwds))
+    return la.stack(mats)
 
 
 def build_generic(func, nst: int, npl: int = 2,

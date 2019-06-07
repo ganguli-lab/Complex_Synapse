@@ -4,10 +4,11 @@ Created on Mon Sep 18 16:06:34 2017
 
 @author: Subhy
 """
-
+from __future__ import annotations
 from numbers import Number
 from typing import Tuple, Optional, Union, Dict, ClassVar
 import numpy as np
+import scipy.optimize as sco
 from .builders import la, mp
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
@@ -26,6 +27,7 @@ class SynapseOptModel(_SynapseMemoryModel):
     type: ClassVar[Dict[str, bool]] = {'serial': False,
                                        'ring': False,
                                        'uniform': False}
+    directions = (0, 0)
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **kwds)
@@ -47,13 +49,14 @@ class SynapseOptModel(_SynapseMemoryModel):
         --------
         markov.mat_to_params
         """
-        return la.hstack((mp.mat_to_params(self.plast[0], **self.type),
-                          mp.mat_to_params(self.plast[1], **self.type)))
+        params = [mp.mat_to_params(self.plast[i], drn=d, **self.type)
+                  for i, d in enumerate(self.directions)]
+        return la.hstack(params)
 
     def set_params(self, params: np.ndarray, *args, **kwds):
         """Transition matrices. from independent parameters
 
-        Does not update if parameters are unchanged. Optional arguments are
+        Does not update if parameters are unchanged Optional arguments are
         passed on to `numpy.allclose`.
 
         Parameters
@@ -68,11 +71,15 @@ class SynapseOptModel(_SynapseMemoryModel):
         --------
         markov.params_to_mat
         """
-        if not np.allclose(params, self.get_params(), *args, **kwds):
-            plast = np.split(params.shape, 2)
-            self.plast = la.stack((mp.params_to_mat(plast[0], **self.type),
-                                   mp.params_to_mat(plast[1], **self.type)))
-            self._unchanged = False
+        if  np.allclose(params, self.get_params(), *args, **kwds):
+            return
+        plast = np.split(params, len(self.directions))
+        for i, d in enumerate(self.directions):
+            mp.mat_update_params(self.plast[i], plast[i], drn=d, **self.type)
+        # mats = [mp.params_to_mat(plast[i], drn=d, **self.type)
+        #           for i, d in enumerate(self.directions)]
+        # self.plast = la.stack(mats)
+        self._unchanged = False
 
     def _derivs(self, rate: Optional[Number] = None,
                 inv: bool = False) -> Tuple[Tuple[la.lnarray, ...], ...]:
@@ -153,7 +160,7 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         return func, grad
 
-    def laplace_grad(self, rate: Optional[Number]) -> (float, la.lnarray):
+    def laplace_grad(self, rate: Number, inv: bool = False) -> Tuple[float, la.lnarray]:
         """Gradient of Laplace transform of SNR memory curve.
 
         Parameters
@@ -169,7 +176,7 @@ class SynapseOptModel(_SynapseMemoryModel):
             Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
         # (p,c), (eta,theta)
-        rows, cols = self._derivs(rate)[:2]
+        rows, cols = self._derivs(rate, inv)[:2]
         func = - rows[1] @ self.weight
 
         dadq = - _diagsub(rows[0].c * cols[0])
@@ -245,7 +252,7 @@ class SynapseOptModel(_SynapseMemoryModel):
             ``snr_laplace`` at ``s`` with respect to parameters.
         """
         # (p,c), (eta,theta), (Zi,Zis)
-        rows, cols, mats = self._derivs(rate)
+        rows, cols, mats = self._derivs(rate, False)
         # ZQZs
         mats += (mats[0].inv @ self.enc() @ mats[1].inv,)
 
@@ -279,7 +286,7 @@ class SynapseOptModel(_SynapseMemoryModel):
                           self.frac[1] * mp.mat_to_params(hessm, **self.type)))
 
     @classmethod
-    def from_params(cls, params: np.ndarray, *args, **kwdargs):
+    def from_params(cls, params: np.ndarray, *args, **kwds) -> SynapseOptModel:
         """Buils SynapseOpt object from independent parameters
 
         Parameters
@@ -303,8 +310,45 @@ class SynapseOptModel(_SynapseMemoryModel):
         mat_type = cls.type.copy()
         del mat_type['uniform']
         nst = mp.num_state(params.size // 2, **mat_type)
-        self = cls.empty(nst, *args, npl=2, **kwdargs)
+        self = cls.empty(nst, *args, npl=2, **kwds)
         self.set_params(params)
+        return self
+
+    @classmethod
+    def rand(cls, nst, *args, **kwds) -> SynapseOptModel:
+        """Random model
+
+        Synapse model with random transition matrices
+
+        Parameters
+        ----------
+            All passed to `cls.build`, `builders.build_rand`
+            or `builders.rand_trans`:
+        nst: int
+            total number of states
+        npl: int
+            total number of plasticity types
+        frac : float
+            fraction of events that are potentiating, default=0.5.
+        binary : bool
+            is the weight vector binary? Otherwise it's linear. Default: False
+        sp : float
+            sparsity, default: 1.
+        ...
+            extra arguments passed to `cls.build`, `builders.build_rand`
+            or `Builder.rand_trans`.
+
+        Returns
+        -------
+        synobj
+            SynapseOpt instance
+        """
+        mat_type = cls.type.copy()
+        del mat_type['uniform']
+        npl = kwds.pop('npl', len(cls.directions))
+        npr = npl * mp.num_param(nst, **cls.type)
+        self = cls.zero(nst, *args, npl=npl, **kwds)
+        self.set_params(la.random.rand(npr))
         return self
 
 
@@ -345,6 +389,37 @@ def make_loss_function(model: SynapseOptModel, method: str, *args, **kwds):
         model.set_params(params)
         return method(*args, **kwds)
     return loss_function
+
+
+def make_laplace_problem(rate: Number, nst: int, *args, **kwds):
+    """Make a loss function from model, method and value
+    """
+    modelopts = kwds.pop('modelopts', {})
+    frac = kwds.pop('frac', 0.5)
+    binary = kwds.pop('binary', True)
+    model = SynapseOptModel.rand(nst, frac=frac, npl=2, binary=binary, **modelopts)
+    fun = make_loss_function(model, model.laplace_grad, rate)
+    x0 = model.get_params()
+    hess = make_loss_function(model, model.laplace_hess, rate)
+
+    con_coeff = constraint_coeff(nst)
+    keep_feasible = kwds.pop('keep_feasible', False)
+    bounds = sco.Bounds(0, 1, keep_feasible)
+    method = kwds.get('method', 'SLSQP')
+    if method not in {'SLSQP', 'trust-constr'}:
+        raise ValueError('method must be one of SLSQP, trust-constr')
+    if method == 'trust-constr':
+        constraint = sco.LinearConstraint(con_coeff, 0, 1, keep_feasible)
+    else:
+        hess = None
+        constraint = {'type': 'ineq', 'args': (),
+                      'fun': lambda x: 1 - con_coeff @ x,
+                      'jac': lambda x: -con_coeff}
+
+    problem = {'fun': fun, 'x0': x0, 'jac': True, 'hess': hess,
+               'bounds': bounds, 'constraints': constraint}
+    problem.update(kwds)
+    return problem
 
 
 # =============================================================================
@@ -420,4 +495,4 @@ def _dbl_diagsub(tens: la.lnarray) -> la.lnarray:
     Returns: tens: lnarray (2,n,n,n,n)
     """
     tens_trn = _diagsub(_trnsp4(_diagsub(tens)))
-    return la.stack(_trnsp4(tens_trn), tens_trn)
+    return la.stack((_trnsp4(tens_trn), tens_trn))
