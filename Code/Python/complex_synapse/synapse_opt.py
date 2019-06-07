@@ -155,8 +155,9 @@ class SynapseOptModel(_SynapseMemoryModel):
         dsdwp = self.frac[0] * (dsdw + dsdq)
         dsdwm = self.frac[1] * (dsdw - dsdq)
 
-        grad = np.hstack((mp.mat_to_params(dsdwp, **self.type),
-                          mp.mat_to_params(dsdwm, **self.type)))
+        grad = [mp.mat_to_params(m, drn=d, **self.type)
+                for m, d in zip([dsdwp, dsdwm], self.directions)]
+        grad = np.hstack(grad)
 
         return func, grad
 
@@ -183,8 +184,9 @@ class SynapseOptModel(_SynapseMemoryModel):
         dadw = - _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
         dadwp = self.frac[0] * (dadw + dadq)
         dadwm = self.frac[1] * (dadw - dadq)
-        grad = np.hstack((mp.mat_to_params(dadwp, **self.type),
-                          mp.mat_to_params(dadwm, **self.type)))
+        grad = [mp.mat_to_params(m, drn=d, **self.type)
+                for m, d in zip([dadwp, dadwm], self.directions)]
+        grad = np.hstack(grad)
 
         return func, grad
 
@@ -226,10 +228,13 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         # (n(n-1),n(n-1))
         hesspp = mp.tens_to_mat(hessww + hesswq.sum(0),
+                                drn=(self.directions[0],) * 2,
                                 **self.type) * self.frac[0]**2
         hesspm = mp.tens_to_mat(hessww - hesswq[0] + hesswq[1],
+                                drn=self.directions,
                                 **self.type) * self.frac[0]*self.frac[1]
         hessmm = mp.tens_to_mat(hessww - hesswq.sum(0),
+                                drn=(self.directions[1],) * 2,
                                 **self.type) * self.frac[1]**2
         # (2n(n-1),2n(n-1))
         return - np.block([[hesspp, hesspm], [hesspm.T, hessmm]])
@@ -282,8 +287,9 @@ class SynapseOptModel(_SynapseMemoryModel):
         hessp = hwwm - hwqm[0] + hwqm[1] + hwwp + hwqp.sum(0)
         hessm = hwwp + hwqp[0] - hwqp[1] + hwwm - hwqm.sum(0)
         # (2n(n-1),)
-        return np.hstack((self.frac[0] * mp.mat_to_params(hessp, **self.type),
-                          self.frac[1] * mp.mat_to_params(hessm, **self.type)))
+        hsv = [mp.mat_to_params(f * m, drn=d, **self.type)
+               for f, m, d in zip(self.frac, [hessp, hessm], self.directions)]
+        return np.hstack(hsv)
 
     @classmethod
     def from_params(cls, params: np.ndarray, *args, **kwds) -> SynapseOptModel:
@@ -346,7 +352,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         mat_type = cls.type.copy()
         del mat_type['uniform']
         npl = kwds.pop('npl', len(cls.directions))
-        npr = npl * mp.num_param(nst, **cls.type)
+        npr = npl * mp.num_param(nst, drn=cls.directions[0], **cls.type)
         self = cls.zero(nst, *args, npl=npl, **kwds)
         self.set_params(la.random.rand(npr))
         return self
@@ -418,6 +424,8 @@ def make_laplace_problem(rate: Number, nst: int, *args, **kwds):
 
     problem = {'fun': fun, 'x0': x0, 'jac': True, 'hess': hess,
                'bounds': bounds, 'constraints': constraint}
+    if model.type['serial'] or model.type['ring']:
+        del problem['constraints']
     problem.update(kwds)
     return problem
 
