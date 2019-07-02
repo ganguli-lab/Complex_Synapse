@@ -5,7 +5,7 @@ Created on Mon Sep 18 15:49:42 2017
 @author: Subhy
 """
 from __future__ import annotations
-from typing import ClassVar, Union, Sequence, Dict
+from typing import Union, Sequence, Dict
 from numbers import Number
 import numpy as np
 from .builders import la
@@ -16,7 +16,7 @@ cvl = la.convert_loop
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
 
 
-class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
+class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     """Base class for complex synapses.
 
     Contains methods that modify instance variables, those that do not
@@ -73,29 +73,15 @@ class SynapseBase(la.gufuncs.LNArrayOperatorsMixin):
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         """Handling ufunce with SynapseBases
         """
-        args = cvl.conv_loop_in_attr('plast', SynapseBase, inputs)[0]
+        args, _ = cvl.conv_loop_in_attr('plast', SynapseBase, inputs)
 
-        conv = [False] * ufunc.nout
-        conv[0] = True
-        outputs = kwargs.pop('out', None)
-        if outputs:
-            out_args, conv = cvl.conv_loop_in_attr('plast', SynapseBase,
-                                                   outputs)
-            kwargs['out'] = tuple(out_args)
-        else:
-            outputs = (None,) * ufunc.nout
+        conv = [True] + [False] * (ufunc.nout-1)
+        outputs, conv = cvl.conv_loop_in_attr(
+                                    '_to_invert', SynapseBase, kwargs, conv)
 
         results = self.plast.__array_ufunc__(ufunc, method, *args, **kwargs)
 
-        if results is NotImplemented:
-            return NotImplemented
-
-        if ufunc.nout == 1:
-            results = (results,)
-
-        results = cvl.conv_loop_out_attr(self, 'plast', results, outputs, conv)
-
-        return results[0] if len(results) == 1 else results
+        return cvl.conv_loop_out_attr(self, 'plast', results, outputs, conv)
 
     # -------------------------------------------------------------------------
     # %%* Housekeeping
