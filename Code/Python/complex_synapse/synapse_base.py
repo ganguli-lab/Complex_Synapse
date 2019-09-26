@@ -77,7 +77,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
         conv = [True] + [False] * (ufunc.nout-1)
         outputs, conv = cvl.conv_loop_in_attr(
-                                    '_to_invert', SynapseBase, kwargs, conv)
+            '_to_invert', SynapseBase, kwargs, conv)
 
         results = self.plast.__array_ufunc__(ufunc, method, *args, **kwargs)
 
@@ -103,7 +103,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
     def __str__(self) -> str:
         """Short representation of object"""
-        return f"{type(self).__name_} with M={self.nstates}, fpm={self.frac}"
+        return f"{type(self).__name__} with M={self.nstates}, fpm={self.frac}"
 
     # -------------------------------------------------------------------------
     # %%* Utility methods
@@ -224,7 +224,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         return cls.build(bld.build_empty, *args, **kwargs)
 
     @classmethod
-    def rand(cls, *args, **kwargs) -> SynapseBase:
+    def rand(cls, nst, *args, **kwargs) -> SynapseBase:
         """Random model
 
         Synapse model with random transition matrices
@@ -252,4 +252,4 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         synobj
             SynapseBase instance
         """
-        return cls.build(bld.build_rand, *args, **kwargs)
+        return cls.build(bld.build_rand, nst, *args, **kwargs)

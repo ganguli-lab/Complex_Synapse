@@ -8,7 +8,6 @@ from __future__ import annotations
 from numbers import Number
 from typing import Tuple, Optional, Union, Dict, ClassVar
 import numpy as np
-import scipy.optimize as sco
 from .builders import la, mp
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
@@ -27,11 +26,11 @@ class SynapseOptModel(_SynapseMemoryModel):
     type: ClassVar[Dict[str, bool]] = {'serial': False,
                                        'ring': False,
                                        'uniform': False}
-    directions = (0, 0)
+    directions: ClassVar[Tuple[int, ...]] = (0, 0)
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **kwds)
-        self._saved = ()
+        self._saved = (0, (), (), ())
         self._unchanged = False
 
     def get_params(self) -> la.lnarray:
@@ -71,11 +70,11 @@ class SynapseOptModel(_SynapseMemoryModel):
         --------
         markov.params_to_mat
         """
-        if  np.allclose(params, self.get_params(), *args, **kwds):
+        if np.allclose(params, self.get_params(), *args, **kwds):
             return
         plast = np.split(params, len(self.directions))
-        for i, d in enumerate(self.directions):
-            mp.mat_update_params(self.plast[i], plast[i], drn=d, **self.type)
+        for i, drn in enumerate(self.directions):
+            mp.mat_update_params(self.plast[i], plast[i], drn=drn, **self.type)
         # mats = [mp.params_to_mat(plast[i], drn=d, **self.type)
         #           for i, d in enumerate(self.directions)]
         # self.plast = la.stack(mats)
@@ -100,10 +99,12 @@ class SynapseOptModel(_SynapseMemoryModel):
             (eta,theta),
         mats : tuple(la.lnarray)
             if inv: (Z,Zs,ZQZs)
-            if not inv: (Z^-1,Zs^-1)
+            if not inv: (Z^{-1},Zs^{-1})
         """
-        if self._unchanged and (len(self._saved[2]) == 2 + inv):
-            return self._saved
+        if all((self._unchanged,
+                len(self._saved[3]) == 2 + inv,
+                np.isclose(rate, self._saved[0]))):
+            return self._saved[1:]
         self._unchanged = True
 
         fundi = self.zinv()
@@ -121,8 +122,22 @@ class SynapseOptModel(_SynapseMemoryModel):
         else:
             mats = (fundi, fundis)
 
-        self._saved = (peq, c_s), (eta, theta), mats
-        return self._saved
+        self._saved = rate, (peq, c_s), (eta, theta), mats
+        return self._saved[1:]
+
+    def _calc_fab(self, time, qas, evs, peq_enc):
+        """Calculate eigenvalue differences
+        """
+        expqt = np.exp(qas * time)
+        fab = qas.c - qas.r
+        degenerate = np.fabs(fab) < self.DegThresh
+        fab[degenerate] = 1.
+        fab = (expqt.c - expqt.r) / fab
+        fab[degenerate] = expqt[degenerate.nonzero()[0]] * time
+        fab *= evs.inv @ self.weight
+        fab *= (peq_enc @ evs).c
+        expwftw = (evs * expqt) @ (evs.inv @ self.weight)
+        return (evs.inv @ fab @ evs), expwftw
 
     def snr_grad(self, time: Number) -> (float, la.lnarray):
         """Gradient of instantaneous SNR memory curve.
@@ -143,8 +158,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         peq_enc = peq @ self.enc()
 
         evd = eig(self.markov)
-        fab, expqtw = _calc_fab(time, *evd, self.weight, peq_enc,
-                                self.DegThresh)
+        fab, expqtw = self._calc_fab(time, *evd, peq_enc)
 
         func = - peq_enc @ expqtw
 
@@ -161,7 +175,8 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         return func, grad
 
-    def laplace_grad(self, rate: Number, inv: bool = False) -> Tuple[float, la.lnarray]:
+    def laplace_grad(self, rate: Number,
+                     inv: bool = False) -> (float, la.lnarray):
         """Gradient of Laplace transform of SNR memory curve.
 
         Parameters
@@ -179,6 +194,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         # (p,c), (eta,theta)
         rows, cols = self._derivs(rate, inv)[:2]
         func = - rows[1] @ self.weight
+        # afunc = -rows[0] @ self.enc() @ cols[0]
 
         dadq = - _diagsub(rows[0].c * cols[0])
         dadw = - _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
@@ -315,8 +331,10 @@ class SynapseOptModel(_SynapseMemoryModel):
         """
         mat_type = cls.type.copy()
         del mat_type['uniform']
-        nst = mp.num_state(params.size // 2, **mat_type)
-        self = cls.empty(nst, *args, npl=2, **kwds)
+        mat_type['drn'] = cls.directions[0]
+        npl = kwds.pop('npl', len(cls.directions))
+        nst = mp.num_state(params.size // npl, **mat_type)
+        self = cls.zero(nst, *args, npl=npl, **kwds)
         self.set_params(params)
         return self
 
@@ -359,95 +377,8 @@ class SynapseOptModel(_SynapseMemoryModel):
 
 
 # =============================================================================
-# %%* Optimisation helper functions
-# =============================================================================
-
-
-def constraint_coeff(nst: int) -> la.lnarray:
-    """Coefficient matrix for upper bound on off-diagonal row sums.
-
-    Parameters
-    ----------
-    nst : int
-        Number of states.
-
-    Returns
-    -------
-    coeffs : la.lnarray (2*nst, 2*nst(nst-1))
-        matrix of coefficients s.t ``coeffs @ params <= 1``.
-    """
-    rows, cols = la.arange(2*nst), la.arange(nst-1)
-    cols = cols + rows.c * (nst-1)
-    coeffs = la.zeros((2*nst, 2*nst*(nst-1)))
-    coeffs[rows.c, cols] = 1
-    return coeffs
-
-
-def make_loss_function(model: SynapseOptModel, method: str, *args, **kwds):
-    """Make a loss function from model, method and value
-    """
-    if isinstance(method, str):
-        method = getattr(model, method)
-
-    def loss_function(params):
-        """Loss function
-        """
-        model.set_params(params)
-        return method(*args, **kwds)
-    return loss_function
-
-
-def make_laplace_problem(rate: Number, nst: int, *args, **kwds):
-    """Make a loss function from model, method and value
-    """
-    modelopts = kwds.pop('modelopts', {})
-    frac = kwds.pop('frac', 0.5)
-    binary = kwds.pop('binary', True)
-    model = SynapseOptModel.rand(nst, frac=frac, npl=2, binary=binary, **modelopts)
-    fun = make_loss_function(model, model.laplace_grad, rate)
-    x0 = model.get_params()
-    hess = make_loss_function(model, model.laplace_hess, rate)
-
-    con_coeff = constraint_coeff(nst)
-    keep_feasible = kwds.pop('keep_feasible', False)
-    bounds = sco.Bounds(0, 1, keep_feasible)
-    method = kwds.get('method', 'SLSQP')
-    if method not in {'SLSQP', 'trust-constr'}:
-        raise ValueError('method must be one of SLSQP, trust-constr')
-    if method == 'trust-constr':
-        constraint = sco.LinearConstraint(con_coeff, 0, 1, keep_feasible)
-    else:
-        hess = None
-        constraint = {'type': 'ineq', 'args': (),
-                      'fun': lambda x: 1 - con_coeff @ x,
-                      'jac': lambda x: -con_coeff}
-
-    problem = {'fun': fun, 'x0': x0, 'jac': True, 'hess': hess,
-               'bounds': bounds, 'constraints': constraint}
-    if model.type['serial'] or model.type['ring']:
-        del problem['constraints']
-    problem.update(kwds)
-    return problem
-
-
-# =============================================================================
 # %%* Private helper functions
 # =============================================================================
-
-
-def _calc_fab(time, qas, evs, weight, peq_enc, thresh):
-    """Calculate eigenvalue differences
-    """
-    expqt = np.exp(qas * time)
-    fab = qas.c - qas.r
-    degenerate = np.fabs(fab) < thresh
-    fab[degenerate] = 1.
-    fab = (expqt.c - expqt.r) / fab
-    fab[degenerate] = expqt[degenerate.nonzero()[0]] * time
-    fab *= evs.inv @ weight
-    fab *= (peq_enc @ evs).c
-    expwftw = (evs * expqt) @ (evs.inv @ weight)
-    return (evs.inv @ fab @ evs), expwftw
 
 
 def _diagsub(mat: la.lnarray) -> la.lnarray:
