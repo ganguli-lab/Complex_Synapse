@@ -36,6 +36,13 @@ from sl_py_tools.numpy_tricks import markov as ma
 from sl_py_tools.numpy_tricks import markov_param as mp
 
 
+def scalarise(arg: np.ndarray):
+    """Replace array with scalr if ndim==0."""
+    if arg.ndim == 0:
+        return arg[()]
+    return arg
+
+
 def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
     """
     Make binary (+/-1) weight vector

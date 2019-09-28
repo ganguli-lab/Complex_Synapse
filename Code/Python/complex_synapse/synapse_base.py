@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Union, Sequence, Dict
 from numbers import Number
 import numpy as np
-from .builders import la
+import numpy_linalg as la
 from . import builders as bld
 cvl = la.convert_loop
 
@@ -77,7 +77,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
         conv = [True] + [False] * (ufunc.nout-1)
         outputs, conv = cvl.conv_loop_in_attr(
-            '_to_invert', SynapseBase, kwargs, conv)
+            'plast', SynapseBase, kwargs, conv)
 
         results = self.plast.__array_ufunc__(ufunc, method, *args, **kwargs)
 

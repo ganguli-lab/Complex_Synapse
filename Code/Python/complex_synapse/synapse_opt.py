@@ -8,7 +8,9 @@ from __future__ import annotations
 from numbers import Number
 from typing import Tuple, Optional, Union, Dict, ClassVar
 import numpy as np
-from .builders import la, mp
+import numpy_linalg as la
+from sl_py_tools.numpy_tricks import markov_param as mp
+from .builders import scalarise
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
 
@@ -173,7 +175,7 @@ class SynapseOptModel(_SynapseMemoryModel):
                 for m, d in zip([dsdwp, dsdwm], self.directions)]
         grad = np.hstack(grad)
 
-        return func, grad
+        return scalarise(func), grad
 
     def laplace_grad(self, rate: Number,
                      inv: bool = False) -> (float, la.lnarray):
@@ -204,7 +206,7 @@ class SynapseOptModel(_SynapseMemoryModel):
                 for m, d in zip([dadwp, dadwm], self.directions)]
         grad = np.hstack(grad)
 
-        return func, grad
+        return scalarise(func), grad
 
     def area_grad(self) -> (float, la.lnarray):
         """Gradient of Area under SNR memory curve.

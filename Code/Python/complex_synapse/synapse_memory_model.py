@@ -8,8 +8,10 @@ Created on Fri Jun 23 18:22:05 2017
 
 from typing import ClassVar, Optional, Dict
 import numpy as np
-from .builders import la, ma
+import numpy_linalg as la
+from sl_py_tools.numpy_tricks import markov as ma
 from .synapse_base import SynapseBase, ArrayLike
+from .builders import scalarise
 
 
 class SynapseMemoryModel(SynapseBase):
@@ -289,7 +291,7 @@ class SynapseMemoryModel(SynapseBase):
         # convert to lnarray if needed, add singleton to broadcast with vector
         t_arr = la.array(time).c
         taua, inita = self.spectrum()
-        return np.sum(inita * np.exp(- t_arr / taua), axis=-1)
+        return scalarise(np.sum(inita * np.exp(- t_arr / taua), axis=-1))
 
     def snr_laplace(self, rate: Optional[ArrayLike] = None) -> la.lnarray:
         """Laplace transform of SNR memory curve.
@@ -299,7 +301,7 @@ class SynapseMemoryModel(SynapseBase):
         rate : float, array, optional
             Parameter of Laplace transform, ``s``. Default: 0.
         """
-        return np.sum(self.peq() @ (self.enc() * self.deta(rate)), axis=-1)
+        return scalarise((self.peq() @ (self.enc() * self.deta(rate))).sum(-1))
 
     def snr_exp_ave(self, tau: ArrayLike) -> la.lnarray:
         """Exponential running average of SNR memory curve.
@@ -311,7 +313,7 @@ class SynapseMemoryModel(SynapseBase):
         tau : float, array
             Mean recall time.
         """
-        return self.snr_laplace(1. / tau) / tau
+        return scalarise(self.snr_laplace(1. / tau) / tau)
 
     def snr_area(self) -> float:
         """Area under SNR memory curve.
@@ -321,7 +323,7 @@ class SynapseMemoryModel(SynapseBase):
     def snr_init(self) -> float:
         """Initial value of SNR memory curve.
         """
-        return self.peq() @ self.enc() @ self.weight
+        return scalarise(self.peq() @ self.enc() @ self.weight)
 
     def sign_fix(self):
         """Swap plasticity matrices if snr is negative"""

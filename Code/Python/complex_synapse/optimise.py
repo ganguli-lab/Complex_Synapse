@@ -5,7 +5,9 @@ from numbers import Number
 import numpy as np
 import scipy.optimize as sco
 from sl_py_tools.iter_tricks import dcount, denumerate, delay_warnings
-from .builders import la, mp
+from sl_py_tools.numpy_tricks import markov_param as mp
+from sl_py_tools.arg_tricks import default
+import numpy_linalg as la
 from .synapse_opt import SynapseOptModel
 
 # =============================================================================
@@ -49,13 +51,43 @@ def make_loss_function(model: SynapseOptModel, method: str, *args, **kwds):
     return loss_function
 
 
+def get_param_opts(opts: dict = None, **kwds) -> dict:
+    """Make options dict for SynapseOptModel.
+    """
+    opts = default(opts, {})
+    opts.update(kwds)
+    # set opts
+    SynapseOptModel.type['serial'] = opts.pop('serial', False)
+    SynapseOptModel.type['ring'] = opts.pop('ring', False)
+    SynapseOptModel.type['uniform'] = opts.pop('uniform', False)
+    if any(SynapseOptModel.type.values()):
+        SynapseOptModel.directions = (1, -1)
+    else:
+        SynapseOptModel.directions = (0, 0)
+    SynapseOptModel.directions = opts.pop('drn', SynapseOptModel.directions)
+    # get opts
+    paramopts = SynapseOptModel.type.copy()
+    paramopts['drn'] = SynapseOptModel.directions
+    return paramopts
+
+
+def get_model_opts(opts: dict = None, **kwds) -> dict:
+    """Make options dict for SynapseOptModel.
+    """
+    opts = default(opts, {})
+    opts.update(kwds)
+    modelopts = opts.pop('modelopts', {})
+    modelopts.setdefault('frac', opts.pop('frac', 0.5))
+    modelopts.setdefault('binary', opts.pop('binary', True))
+    modelopts.setdefault('npl', 2)
+    return modelopts
+
+
 def make_laplace_problem(rate: Number, nst: int, **kwds) -> (dict, dict):
     """Make an optimize problem.
     """
-    modelopts = kwds.pop('modelopts', {})
-    modelopts.setdefault('frac', kwds.pop('frac', 0.5))
-    modelopts.setdefault('binary', kwds.pop('binary', True))
-    modelopts.setdefault('npl', 2)
+    modelopts = get_model_opts(kwds)
+    get_param_opts(kwds)
     keep_feasible = kwds.pop('keep_feasible', False)
     method = kwds.get('method', 'SLSQP')
 
@@ -81,7 +113,7 @@ def make_laplace_problem(rate: Number, nst: int, **kwds) -> (dict, dict):
     if model.type['serial'] or model.type['ring']:
         del problem['constraints']
     problem.update(kwds)
-    return problem, modelopts
+    return problem
 
 
 def update_laplace_problem(problem: dict):
@@ -94,33 +126,30 @@ def optim_laplace(rate: Number, nst: int, **kwds) -> (SynapseOptModel,
                                                       sco.OptimizeResult):
     """Optimised model at one value of rate
     """
-    res: sco.OptimizeResult
-    SynapseOptModel.type['serial'] = kwds.pop('serial', False)
-    if SynapseOptModel.type['serial']:
-        SynapseOptModel.directions = (1, -1)
-    else:
-        SynapseOptModel.directions = (0, 0)
     repeats = kwds.pop('repeats', 0)
-    prob, mopts = make_laplace_problem(rate, nst, **kwds)
+    prob = make_laplace_problem(rate, nst, **kwds)
     res = sco.minimize(**prob)
     for i in dcount('repeats', repeats, disp_step=1):
         update_laplace_problem(prob)
         new_res = sco.minimize(**prob)
         if new_res.fun < res.fun:
             res = new_res
-    return SynapseOptModel.from_params(res.x, **mopts), res
+    return res
 
 
 def optim_laplace_range(rates: np.ndarray, nst: int, **kwds) -> (la.lnarray,
                                                                  la.lnarray):
     """Optimised model at many values of rate
     """
+    popts = get_param_opts(kwds)
+    drn = popts['drn']
+    popts['drn'] = drn[0]
     snr = la.empty_like(rates)
-    serl = kwds.get('serial', False)
-    models = la.empty((len(rates), 2*mp.num_param(nst, serial=serl, drn=serl)))
+    models = la.empty((len(rates), 2 * mp.num_param(nst, **popts)))
+    popts['drn'] = drn
     with delay_warnings():
         for i, rate in denumerate('rate', rates):
-            res = optim_laplace(rate, nst, **kwds)[1]
+            res = optim_laplace(rate, nst, **kwds, **popts)
             snr[i] = - res.fun
-            models[i] - res.x
+            models[i] = res.x
     return snr, models
