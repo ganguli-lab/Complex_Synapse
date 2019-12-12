@@ -48,8 +48,8 @@ class SynapseMemoryModel(SynapseBase):
     DegThresh: ClassVar[float] = 1e-3
     # largest row sum for valid plast & frac
     StochThresh: ClassVar[float] = 1e-5
-    # # smallest reciprocal condition number for inverting zinv
-    # RCondThresh: ClassVar[float] = 1e-5
+    # smallest reciprocal condition number for inverting zinv
+    RCondThresh: ClassVar[float] = 1e-5
     # # smallest singular value for Split models
     # SingValThresh: ClassVar[float] = 1e-10
     # # threshold for lumpability test
@@ -176,6 +176,51 @@ class SynapseMemoryModel(SynapseBase):
             s_arr = la.asarray(rate).s * la.eye(self.nstates)
         return onev.c * rowv - self.markov() + s_arr
 
+    def rcond(self, rate: Optional[ArrayLike] = None,
+              rowv: Optional[la.lnarray] = None,
+              p=None) -> la.lnarray:
+        r"""Inverse condition number of generalised fundamental matrix.
+
+        Parameters
+        ----------
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
+        rowv : la.lnarray, optional
+            Arbitrary row vector, ``xi``. Default: vector of ones.
+        p : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
+            Order of the norm.
+
+        Returns
+        -------
+        rc : la.lnarray
+            inverse condition number of ``Z``.
+
+        Notes
+        -----
+        ``rc`` is the reciprocal of the condition number, :math:`c(Z)`
+
+        .. math:: c(Z) = \Vert Z \Vert \cdot \Vert Z^{-1} \Vert,
+
+        where :math:`Z` is defined as
+
+        .. math:: Z = (e \xi - W^f)^{-1},
+
+        where :math:`e` is a vector of ones and :math:`\xi` is any row vector
+        with :math:`\xi.e \neq 0`.
+        When we include :math:`s`
+
+        .. math:: Z(s) = (s I + e \xi - W^f)^{-1} \simeq \int e^{t(W^f-sI)} dt,
+
+        i.e. :math:`Z^{-1}` with :math:`s` added to the diagonal.
+        Effectively the matrix inverse of the genarator's Laplace transform.
+
+        See Also
+        --------
+        zinv : fundamental matrix
+        """
+        zinv = self.zinv(rate, rowv)
+        return 1 / np.linalg.cond(zinv, p)
+
     def peq(self) -> la.lnarray:
         """Steady state distribution.
 
@@ -222,6 +267,47 @@ class SynapseMemoryModel(SynapseBase):
         zinv : generalised fundamental matrix
         """
         return self.zinv(rate, self.peq())
+
+    def rcond_s(self, rate: Optional[ArrayLike] = None, p=None) -> la.lnarray:
+        r"""Inverse condition number of generalised fundamental matrix.
+
+        Parameters
+        ----------
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
+        p : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
+            Order of the norm.
+
+        Returns
+        -------
+        rc : la.lnarray
+            inverse condition number of ``Z``.
+
+        Notes
+        -----
+        ``rc`` is the reciprocal of the condition number, :math:`c(Z)`
+
+        .. math:: c(Z) = \Vert Z \Vert \cdot \Vert Z^{-1} \Vert,
+
+        where :math:`Z` is defined as
+
+        .. math:: Z = (e \pi - W^f)^{-1},
+
+        i.e. ``zinv`` with special choice of :math:`\xi = \pi`,
+        the steady state distribution.
+        When we include :math:`s`
+
+        .. math:: Z(s) = (s I + e \pi - W^f)^{-1} \simeq \int e^{t(W^f-sI)} dt,
+
+        i.e. :math:`Z^{-1}` with :math:`s` added to the diagonal.
+        Effectively the matrix inverse of the genarator's Laplace transform.
+
+        See Also
+        --------
+        zinv_s : special fundamental matrix
+        """
+        zinv = self.zinv_s(rate)
+        return 1. / np.linalg.cond(zinv, p)
 
     def mean_weight(self) -> float:
         """Mean synaptic weight in steady state distribution.

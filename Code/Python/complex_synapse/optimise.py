@@ -129,7 +129,7 @@ def optim_laplace(rate: Number, nst: int, **kwds) -> (SynapseOptModel,
     repeats = kwds.pop('repeats', 0)
     prob = make_laplace_problem(rate, nst, **kwds)
     res = sco.minimize(**prob)
-    for i in dcount('repeats', repeats, disp_step=1):
+    for _ in dcount('repeats', repeats, disp_step=1):
         update_laplace_problem(prob)
         new_res = sco.minimize(**prob)
         if new_res.fun < res.fun:

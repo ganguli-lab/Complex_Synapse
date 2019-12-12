@@ -97,3 +97,4 @@ target/
 .spyproject/
 .ipynb_checkpoints/
 
+*.code-workspace

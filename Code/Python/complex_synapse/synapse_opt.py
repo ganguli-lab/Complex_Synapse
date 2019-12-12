@@ -111,7 +111,7 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         fundi = self.zinv()
         fundis = self.zinv(rate)
-
+ 
         peq = self.peq()
         c_s = peq @ self.enc() @ fundis.inv
 
@@ -194,8 +194,12 @@ class SynapseOptModel(_SynapseMemoryModel):
             Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
         # (p,c), (eta,theta)
-        rows, cols = self._derivs(rate, inv)[:2]
-        func = - rows[1] @ self.weight
+        rows, cols, mats = self._derivs(rate, inv)
+        rcond = 1. / np.linalg.cond(mats[:2]).max()       
+        if rcond < self.RCondThresh:
+            func = np.inf
+        else:
+            func = - rows[1] @ self.weight
         # afunc = -rows[0] @ self.enc() @ cols[0]
 
         dadq = - _diagsub(rows[0].c * cols[0])
