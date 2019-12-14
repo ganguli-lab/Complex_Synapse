@@ -4,7 +4,7 @@
 from numbers import Number
 import numpy as np
 import scipy.optimize as sco
-from sl_py_tools.iter_tricks import dcount, denumerate, delay_warnings
+from sl_py_tools.iter_tricks import dcount, denumerate, delay_warnings, dzip
 from sl_py_tools.numpy_tricks import markov_param as mp
 from sl_py_tools.arg_tricks import default
 import numpy_linalg as la
@@ -57,6 +57,7 @@ def get_param_opts(opts: dict = None, **kwds) -> dict:
     opts = default(opts, {})
     opts.update(kwds)
     # set opts
+    SynapseOptModel.RCondThresh = opts.pop('RCondThresh', 1e-4)
     SynapseOptModel.type['serial'] = opts.pop('serial', False)
     SynapseOptModel.type['ring'] = opts.pop('ring', False)
     SynapseOptModel.type['uniform'] = opts.pop('uniform', False)
@@ -153,3 +154,53 @@ def optim_laplace_range(rates: np.ndarray, nst: int, **kwds) -> (la.lnarray,
             snr[i] = - res.fun
             models[i] = res.x
     return snr, models
+
+
+def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray, 
+                          models: np.ndarray, snr: np.ndarray, **kwds):
+    """Optimised model at many values of rate
+    """
+    popts = get_param_opts(kwds)
+    drn = popts['drn']
+    popts['drn'] = drn[0]
+    uniform = popts.pop('uniform', False)
+    nst = mp.num_state(models.shape[1] // 2, **popts)
+    popts['drn'] = drn
+    popts['uniform'] = uniform
+    with delay_warnings():
+         for ind, rate in dzip('rate', inds, rates[inds]):
+            res = optim_laplace(rate, nst, **kwds, **popts)
+            snr[ind] = - res.fun
+            models[ind] = res.x
+    return snr, models
+
+
+def check_rcond_range(rates: np.ndarray, models: np.ndarray, **kwds) -> la.lnarray:
+    """Inverse condition numbers of optiomised models
+
+    Parameters
+    ----------
+    rates : np.ndarray (S,)
+        inverse time (Laplace parameter)
+    models : np.ndarray (S, P)
+        optimised models
+    
+    Returns
+    -------
+    rcnd : np.ndarray (S,)
+        inverse condition number, worst of :math:`Z(0), Z(s)`
+    """
+    rcnd = la.empty_like(rates)
+    popts = get_param_opts(kwds)
+    mopts = get_model_opts(kwds)
+    drn = popts['drn']
+    popts['drn'] = drn[0]
+    popts.pop('uniform', False)
+    nst = mp.num_state(models.shape[1] // 2, **popts)
+    # popts['drn'] = drn
+    synmodel = SynapseOptModel.rand(nst, **mopts)
+    with delay_warnings():
+        for i, rate, params in denumerate('rate', rates, models):
+            synmodel.set_params(params)
+            rcnd[i] = min(synmodel.rcond(), synmodel.rcond(rate))
+    return rcnd

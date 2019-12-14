@@ -98,3 +98,5 @@ target/
 .ipynb_checkpoints/
 
 *.code-workspace
+*.npz
+*/.vscode

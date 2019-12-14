@@ -197,7 +197,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         rows, cols, mats = self._derivs(rate, inv)
         rcond = 1. / np.linalg.cond(mats[:2]).max()       
         if rcond < self.RCondThresh:
-            func = np.inf
+            func = np.array(np.inf)
         else:
             func = - rows[1] @ self.weight
         # afunc = -rows[0] @ self.enc() @ cols[0]
@@ -441,3 +441,6 @@ def _dbl_diagsub(tens: la.lnarray) -> la.lnarray:
     """
     tens_trn = _diagsub(_trnsp4(_diagsub(tens)))
     return la.stack((_trnsp4(tens_trn), tens_trn))
+
+if __name__ == "__main__":
+    pass
