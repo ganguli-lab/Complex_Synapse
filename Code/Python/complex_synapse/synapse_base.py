@@ -10,7 +10,7 @@ from numbers import Number
 import numpy as np
 import numpy_linalg as la
 from . import builders as bld
-cvl = la.convert_loop
+cvl = la.convert
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
@@ -71,17 +71,16 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         self.fix()
 
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
-        """Handling ufunce with SynapseBases
+        """Handling ufuncs with SynapseBases
         """
-        args, _ = cvl.conv_loop_in_attr('plast', SynapseBase, inputs)
+        args, _ = cvl.conv_in_attr('plast', SynapseBase, inputs)
 
         conv = [True] + [False] * (ufunc.nout-1)
-        outputs, conv = cvl.conv_loop_in_attr(
-            'plast', SynapseBase, kwargs, conv)
+        outputs, conv = cvl.conv_in_attr('plast', SynapseBase, kwargs, conv)
 
         results = self.plast.__array_ufunc__(ufunc, method, *args, **kwargs)
 
-        return cvl.conv_loop_out_attr(self, 'plast', results, outputs, conv)
+        return cvl.conv_out_attr(self, 'plast', results, outputs, conv)
 
     # -------------------------------------------------------------------------
     # %%* Housekeeping

@@ -13,6 +13,8 @@ from sl_py_tools.numpy_tricks import markov as ma
 from .synapse_base import SynapseBase, ArrayLike
 from .builders import scalarise
 
+wrap = la.wrappers.Wrappers(la.lnarray)
+
 
 class SynapseMemoryModel(SynapseBase):
     """Class for memory curves of complex synapse models.
@@ -358,7 +360,7 @@ class SynapseMemoryModel(SynapseBase):
         inita : la.lnarray
             Initial SNR from eigenmodes.
         """
-        eig = la.wrappers.wrap_several(np.linalg.eig)
+        eig = wrap.several(np.linalg.eig)
         qas, evs = eig(-self.markov())
         mask = la.ones_like(qas, dtype=bool).put(qas.real.argmin(), False)
         taua = 1. / qas[mask]

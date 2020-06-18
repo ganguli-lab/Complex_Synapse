@@ -463,7 +463,6 @@ Then $\mathbf{a}\fund(s)$ is independent of $\pib$:
 \end{equation}
 %
 
-
 Then we also define
 %
 \begin{equation}\label{eq:lfptb}
@@ -550,12 +549,12 @@ In analogy with the case $s=0$, we define
 \begin{equation}\label{eq:lareacoeffs}
   \begin{aligned}
     c_k(s) &= \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)}, \\
-    a_j(s) &= \sum_{jk} \eq_j \enc_{jk} (\etw_{j}(s) - \etw_{k}(s)), \\
-    \thb_i(s) &= \sum_j \fptb_{ij}(0)\ a_j(s), \\
+    a_j(s) &= \sum_{k} \enc_{jk} (\etw_{j}(s) - \etw_{k}(s)), \\
+    \thb_i(s) &= \sum_j \fptb_{ij}(0)\, \eq_j a_j(s), \\
   \end{aligned}
     \implies
     \hat{A}(s) = \sum_k c_k(s) \eq_k \w_k
-      = \sum_i a_i(s).
+      = \sum_i  \eq_i a_i(s).
 \end{equation}
 %
 
@@ -578,15 +577,17 @@ Given a four-index array $H_{ijkl}$, we define $H\trans_{ijkl} = H_{klij}$.
 Then we denote
 %
 \begin{equation}\label{eq:hessparts}
-\begin{aligned}
-  R_{ijkl} &=
+\begin{alignedat}{3}
+    R_{ijkl} &= \
     &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\thb_k(s) - \thb_l(s)} \\
-    &&&+ \eq_i \brc{\mathbf{X}_{ik}(s) - \mathbf{X}_{jk}(s)} \brc{\etw_k(s) - \etw_l(s)} \\
-    &&&+ \eq_i c_i(s) \brc{\fund_{ik}(s) - \fund_{jk}(s)} \brc{\etw_k(s) - \etw_l(s)},  \\
+    &&&+ \eq_i \brc{\mathbf{X}_{ik}(s) - \mathbf{X}_{jk}(s)} 
+          \brc{\etw_k(s) - \etw_l(s)} \\
+    &&&+ \eq_i c_i(s) \brc{\fund_{ik}(s) - \fund_{jk}(s)} 
+          \brc{\etw_k(s) - \etw_l(s)},  \\
   S_{ijkl} &=
     &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\etw_k(s) - \etw_l(s)} \\
     &&&+ \eq_k \brc{\fund_{ki}(s) - \fund_{li}(s)} \brc{\etw_i(s) - \etw_j(s)}.
-\end{aligned}
+\end{alignedat}
 \end{equation}
 %
 Then we can write the Hessian as
@@ -972,9 +973,11 @@ However, one can find a heuristic approximation to the envelope by maximising \w
 We find that
 %
 \begin{multline}\label{eq:unienv}
+  \alpha = \exp\prn{\pm\frac{2y_*}{M_*}},
+  \quad
   s = 2\sinh^2\frac{y_*}{M_*},
   \qquad
-  \hat{A}_*(s) = \prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \frac{\log\alpha(s)}{s},
+  \hat{A}_*(s) = \prn{\frac{ 2\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \frac{\abs{\log\alpha(s)}}{s},
   \\ \text{where}\quad
   y_* = \tanh \frac{y_*}{2} \cosh y_* \approx 1.50553.
   \qquad
@@ -995,10 +998,10 @@ When $M \gg 2$, the validity region is approximately
   \frac{4.53327}{M^2} \lesssim s \lesssim 1.36423.
 \end{equation}
 %
-When $s \sim \CO(M^{-2}) \ll 1$, we have $\alpha \approx 1+\sqrt{2s}$ and the heuristic envelope is approximately
+When $s \sim \CO(M^{-2}) \ll 1$, we have $\alpha \approx 1 \pm \sqrt{2s}$ and the heuristic envelope is approximately
 %
 \begin{equation}\label{eq:unienvapprox}
-  \hat{A}_*(s) \approx \frac{ 1.08406 }{ \sqrt{s} }.
+  \hat{A}_*(s) \approx \frac{ 0.54203 }{ \sqrt{s} }.
 \end{equation}
 %
 
@@ -1103,16 +1106,15 @@ and the Laplace transform is
 Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_shorten}.
 We proceed in the same manner as in \autoref{sec:serial_uniform}, with the following differences.
 
-The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
-The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
+The following elements of $\enc$ and $\eq$ differ from \eqref{eq:unienc}:
 %
 \begin{equation}\label{eq:shortenenc}
   \begin{aligned}
-  \enc_{M-1M} = -\enc_{21} &= \frac{\varepsilon}{2},
+  \enc_{M-1M} = -\enc_{21} &= \frac{(1-\varepsilon)}{2},
   &\qquad
-  \eq_1 = \eq_M &= \frac{\varepsilon}{M-2(1-\varepsilon)},
+  \eq_1 = \eq_M &= \frac{(1-\varepsilon)}{M-2\varepsilon},
   \\ &&
-  \eq_i &=  \frac{1}{M-2(1-\varepsilon)}
+  \eq_i &=  \frac{1}{M-2\varepsilon}
   \quad\text{for}\quad 1<i<M.
   \end{aligned}
 \end{equation}
@@ -1120,8 +1122,8 @@ The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
 This means that the Laplace transform is given by
 %
 \begin{equation}\label{eq:shortenareaeta}
-  \hat{A}(s) = \frac{\varepsilon(\etw_1(s)-\etw_M(s)) + (1-\varepsilon)(\etw_2(s)-\etw_{M-2}(s))}{M-2(1-\varepsilon)}
-       = \frac{2\varepsilon\, \etw_1(s) + 2(1-\varepsilon)\etw_2(s)}{M-2(1-\varepsilon)}.
+  \hat{A}(s) = \frac{(1-\varepsilon)(\etw_1(s)-\etw_M(s)) + \varepsilon(\etw_2(s)-\etw_{M-1}(s))}{M-2\varepsilon}
+       = \frac{2(1-\varepsilon) \etw_1(s) + 2\varepsilon\,\etw_2(s)}{M-2\varepsilon}.
 \end{equation}
 %
 
@@ -1130,7 +1132,7 @@ The $\etw_i(s)$ take the same general form \eqref{eq:detagensol} except for $i=1
 \begin{equation}\label{eq:detabndshorten}
 \begin{aligned}
   \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_3 + \varepsilon\,\delta\eta_1}{2} - \prn{s+\frac{1+\varepsilon}{2}}\delta\eta_2 &= 0, \\
+  \frac{\delta\eta_3 + (1-\varepsilon)\delta\eta_1}{2} - \prn{s+\frac{2-\varepsilon}{2}}\delta\eta_2 &= 0, \\
   \frac{\delta\eta_{\frac{M}{2}-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{\frac{M}{2}} &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
@@ -1143,44 +1145,113 @@ These are solved by
   \delta\eta_i &= B\alpha^{i-2} + C\alpha^{2-i} \qquad
         \text{for} \quad 2 \leq i \leq \frac{M}{2}, \\
   \delta\eta_1 &= \frac{2\alpha^{\frac{M}{2}}}
-         {[\varepsilon(\alpha^{M}+1) + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
-  B &= - \frac{2\alpha^{\frac{M}{2}}(\alpha^2-\alpha+1 + \varepsilon(\alpha-1))}
-         {(1+\alpha)[\varepsilon(\alpha^{M}+1) + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
-  C &= - \frac{2\alpha^{\frac{M-2}{2}}(\alpha^2-\alpha+1 - \varepsilon\alpha(\alpha-1))}
-         {(1+\alpha)[\varepsilon(\alpha^{M}+1) + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
+         {[(1-\varepsilon)(\alpha^{M}+1) + \varepsilon(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
+  B &= - \frac{2\alpha^{\frac{M}{2}}(\alpha^2-\alpha+1 + (1-\varepsilon)(\alpha-1))}
+         {(1+\alpha)[(1-\varepsilon)(\alpha^{M}+1) + \varepsilon(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
+  C &= - \frac{2\alpha^{\frac{M-2}{2}}(\alpha^2-\alpha+1 - (1-\varepsilon)\alpha(\alpha-1))}
+         {(1+\alpha)[(1-\varepsilon)(\alpha^{M}+1) + \varepsilon(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
 \end{aligned}
 \end{equation}
 %
 Which gives the following Laplace transform
 %
 \begin{equation}\label{eq:shortenlaplace}
-  \hat{A}(s) = \frac{2 [\varepsilon(\alpha^{\frac{M}{2}}-1)^2
-          + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{\frac{M-2}{2}}-1)^2] }
+  \hat{A}(s) = \frac{2 [(1-\varepsilon)(\alpha^{\frac{M}{2}}-1)^2
+          + \varepsilon(\alpha^2-\alpha+1)(\alpha^{\frac{M-2}{2}}-1)^2] }
           { [M-2(1-\varepsilon)]
-            [\varepsilon(\alpha^{M}+1) + (1-\varepsilon)(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s }.
+            [(1-\varepsilon)(\alpha^{M}+1) + \varepsilon(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s }.
 \end{equation}
 %
-This interpolates between \eqref{eq:unilaplace} at $\varepsilon=1$ and the same expression for $M-2$ at $\varepsilon=0$.
+This interpolates between \eqref{eq:unilaplace} at $\varepsilon=0$ and the same expression for $M-2$ at $\varepsilon=1$.
+This is easier to see if we define
+%
+\begin{equation}\label{eq:shortdefs}
+\begin{aligned}
+  F_M(\alpha) &= (\alpha^{\frac{M}{2}} - 1)^2, &
+  \Delta F_M(\alpha) &= F_M(\alpha) - \zeta F_{M-2}(\alpha), &
+  f_m(\alpha) = \frac{F_M(\alpha)}{\Delta F_M(\alpha)}, \\
+  G_M(\alpha) &= \alpha^{M} + 1, &
+  \Delta G_M(\alpha) &= G_M(\alpha) - \zeta G_{M-2}(\alpha), &
+  g_m(\alpha) = \frac{G_M(\alpha)}{\Delta G_M(\alpha)}, \\
+  \text{where}\quad \zeta &= \alpha^2 - \alpha + 1, &
+  m &= \frac{M}{2}. \\
+\end{aligned}
+\end{equation}
+%
+Then the uniform model \eqref{eq:unilaplace} has \( \hat{A}(s) = \frac{F_m(\alpha)}{s m G_m(\alpha)} \).
+Then \cref{eq:shortenlaplace} can be be written as
+%
+\begin{equation}\label{eq:shortsimple}
+  \hat{A}(s) =
+    \frac{(1-\varepsilon)F_m(\alpha) + \varepsilon \zeta F_{m-1}(\alpha)}
+         {s (m - \varepsilon) ((1-\varepsilon)G_m(\alpha) + \varepsilon \zeta G_{m-1}(\alpha))}
+    % = \frac{F_m - \varepsilon \Delta F_{m}}
+    %      {s (m - \varepsilon) (G_m - \varepsilon \Delta G_{m})}
+    = \brk{\frac{\Delta F_{m}}{s \Delta G_{m}}}
+    \frac{f_m - \varepsilon}{(m - \varepsilon) (g_m - \varepsilon)}.
+\end{equation}
+%
+
+\begin{figure}[ht]
+\begin{center}
+\begin{myenuma}
+  \item\label{fig:short_opt}\aligntop{%
+    \includegraphics[width=0.45\linewidth]{shorten_opt.pdf}}
+  \item\label{fig:short_ratio}\aligntop{%
+    \includegraphics[width=0.45\linewidth]{shorten_ratio.pdf}}
+\end{myenuma}
+\caption{Signal-to-noise ratio for optimal shortened models, \cref{eq:shortenenc} optimised over \(\varepsilon\).
+(\ref{fig:short_opt}): Solid grey line is \cref{eq:unienv}, the uniform model with \(M\) treated as a continuous parameter and optimised.
+Dotted grey line is the approximate expression from \cref{eq:unienvapprox}.
+The other curves are from \cref{eq:shortopt}, optimised shortened models for various values of \(M\).
+(\ref{fig:short_ratio}): The ratios of the quantities plotted in (\ref{fig:short_opt}) to \cref{eq:unienv}.
+The dotted orange line is the extension of the \(M=4\) line with \(\varepsilon\) held at 0, as discussed below \cref{eq:shortenvalid}.
+\label{fig:shorten}}
+\end{center}
+\end{figure}
 
 We can maximise this \wrt $\varepsilon$.
-This results in a complicated quadratic equation for $\varepsilon$ with an even worse solution that we will not reproduce here.
+%
+\begin{equation}\label{eq:shortopt}
+  (\varepsilon - f_m)^2 = (m - f_m)(g_m - f_m),
+  \qquad
+  \hat{A}(s) = \brk{\frac{\Delta F_{m}}{s \Delta G_{m}}}
+    \frac{1}{\brk{\sqrt{\abs{m - f_m}} - \sqrt{\abs{g_m - f_m}}}^2}.
+\end{equation}
+%
 We can find the boundary of the region of applicability by asking at what value of $s$ is the optimal value of $\varepsilon=0$ or $1$?
 %
 \begin{equation}\label{eq:shortenvalid}
 \begin{aligned}
-  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=1} \propto &\,
-    M(\alpha^2-\alpha+1)(\alpha-1)\alpha^{\frac{M-2}{2}}(\alpha^M-1) - (\alpha^{\frac{M}{2}}-1)^2(\alpha^{M}+1)
-      = 0,\\
   \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=0} \propto &\,
-    (M-2)(\alpha-1)\alpha^{\frac{M-2}{2}}(\alpha^M-1) - (\alpha^2-\alpha+1)(\alpha^{\frac{M-2}{2}}-1)^2(\alpha^{M-2}+1)
+    M(\alpha^2-\alpha+1)(\alpha-1)\alpha^{\frac{M-2}{2}}(\alpha^{M-1}-1) - (\alpha^{\frac{M}{2}}-1)^2(\alpha^{M}+1)
       = 0,\\
+  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=1} \propto &\,
+    (M-2)(\alpha-1)\alpha^{\frac{M-2}{2}}(\alpha^{M-1}-1) - (\alpha^2-\alpha+1)(\alpha^{\frac{M-2}{2}}-1)^2(\alpha^{M-2}+1)
+      = 0,\\
+    \text{where}\quad
     s = &\, \frac{(\alpha-1)^2}{2\alpha},
 \end{aligned}
 \end{equation}
 %
-with the $\varepsilon=1$ case providing the lower boundary and $\varepsilon=0$ providing the upper boundary.
+with the $\varepsilon=0$ case providing the lower boundary and $\varepsilon=1$ providing the upper boundary.
+For lower \(s\), \(\varepsilon = 0\) is the optimum. 
+For higher \(s\), \(\varepsilon = 1\) is the optimum, which is eqivalent to \(\varepsilon = 0\) with \(M-2\) states.
+This is depicted by the dotted orange line in \cref{fig:shorten}\ref{fig:short_ratio}.
+
+\(M=2\) is a special case:
+%
+\begin{equation*}
+  \hat{A}(s) = \frac{(\alpha-1)^2}
+                    {[2(\alpha^2-\alpha+1) - (1-\varepsilon) (\alpha-1)^2]s},
+\end{equation*}
+%
+so \(\varepsilon=0\) is always the maximum.
+
 If these were really the models that maximised $A(s)$, the region of validity for $M$ would not overlap with that for $M-2$.
-In this case, however, there is an overlap.
+In this case, however, there is an overlap as seen in \cref{fig:shorten}\ref{fig:short_ratio}.
+The \(M=2\) region of validity overlaps everything else.
+The other overlaps are less extreme, but they do exist.
 This is related to the fact that \autoref{fig:envvid} and the video shows that the optimal models do not shorten by one state at a time, but several outgoing transition probabilities are reduced at once.
 
 
@@ -1222,7 +1293,7 @@ For $M \gg 1$, and $r\tau$ much greater than the lower bound of each region, we 
 \begin{aligned}
   & \frac{\sqrt{N}}{1+r\tau}, &
   & r\tau \leq 0.73 , \\
-  & \frac{ 1.1\sqrt{N}}{ \sqrt{r\tau} } , &
+  & \frac{ 0.54\sqrt{N}}{ \sqrt{r\tau} } , &
   0.73 \leq & r\tau \leq 0.22 M^2 , \\
   & \frac{ \sqrt{N} (M-1) }{ r\tau }, &\quad
   0.22 M^2 \leq &r\tau .

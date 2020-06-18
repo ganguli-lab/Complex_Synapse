@@ -14,7 +14,8 @@ from .builders import scalarise
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
 
-eig = la.wrappers.wrap_several(np.linalg.eig)
+wrap = la.wrappers.Wrappers(la.lnarray)
+eig = wrap.several(np.linalg.eig)
 
 
 class SynapseOptModel(_SynapseMemoryModel):
@@ -111,7 +112,7 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         fundi = self.zinv()
         fundis = self.zinv(rate)
- 
+
         peq = self.peq()
         c_s = peq @ self.enc() @ fundis.inv
 
@@ -195,7 +196,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         """
         # (p,c), (eta,theta)
         rows, cols, mats = self._derivs(rate, inv)
-        rcond = 1. / np.linalg.cond(mats[:2]).max()       
+        rcond = 1. / np.linalg.cond(mats[:2]).max()
         if rcond < self.RCondThresh:
             func = np.array(np.inf)
         else:
@@ -441,6 +442,7 @@ def _dbl_diagsub(tens: la.lnarray) -> la.lnarray:
     """
     tens_trn = _diagsub(_trnsp4(_diagsub(tens)))
     return la.stack((_trnsp4(tens_trn), tens_trn))
+
 
 if __name__ == "__main__":
     pass
