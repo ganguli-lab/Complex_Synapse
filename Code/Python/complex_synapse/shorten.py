@@ -129,7 +129,7 @@ def limits(num: int, debug: bool = False) -> float:
     Note: higher t -> lower s -> higher M
     """
     if num == 2:
-        return (0.99, 0.01)
+        return (0.01, np.exp(-Y_STAR))
     x_0, x_1 = alpha_star(num - 2)[0], alpha_star(num)[0]
     lo_sol = sco.root_scalar(lower, args=(num,), x0=x_0, x1=x_1)
     if debug:

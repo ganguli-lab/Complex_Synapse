@@ -844,7 +844,7 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
   \centering
   % Requires \usepackage{graphicx}
   \begin{myenuma}
-    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_n.svg}}\hspace{0.02\linewidth}\label{fig:serial_uniform}
+    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_uni.svg}}\hspace{0.02\linewidth}\label{fig:serial_uniform}
     \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_sticky.svg}}\hspace{0.02\linewidth}\label{fig:serial_sticky}
     \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_shorten.svg}}\label{fig:serial_shorten}
   \end{myenuma}
@@ -868,6 +868,7 @@ Once the length has been reduced to $M=2$, the model is not shortened any furthe
 These models' Laplace transforms can be computed analytically, as we will see below, leading to a heuristic envelope.
 All of these calculations will be performed at $f\potdep=\frac{1}{2}$, so the denominator will play no role.
 We will work in units such that $r=1$ temporarily, only restoring $r$ at the end.
+We study models with \(m\) strong and \(m\) weak states for a total of  \(M = 2 m\).
 
 
 \subsection{Uniform serial model}\label{sec:serial_uniform}
@@ -878,15 +879,15 @@ Looking at \eqref{eq:larea}, the only thing we need is differences in $\etw_i(s)
 In fact, given that the only nonzero elements of $\enc$ are
 %
 \begin{equation}\label{eq:unienc}
-  \enc_{ii+1}=\frac{1}{2} \quad\text{for}\quad i<M,
+  \enc_{ii+1}=\frac{1}{2} \quad\text{for}\quad i<2m,
   \qquad
   \enc_{ii-1}=-\frac{1}{2} \quad\text{for}\quad i>1,
 \end{equation}
 %
-and $\eq_i = \frac{1}{M}$, we have
+and $\eq_i = \frac{1}{2m}$, we have
 %
 \begin{equation}\label{eq:uniareaeta}
-  \hat{A}(s) = \frac{\etw_1(s) - \etw_M(s)}{M}.
+  \hat{A}(s) = \frac{\etw_1(s) - \etw_{2m}(s)}{2m}.
 \end{equation}
 %
 
@@ -924,21 +925,21 @@ with the following exceptions
 \begin{equation}\label{eq:detabnduni}
 \begin{aligned}
   \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{\frac{M}{2}+1}+\delta\eta_{\frac{M}{2}-1}}{2} - (s+1)\delta\eta_{\frac{M}{2}} &= \frac{1}{s},\\
-  \frac{\delta\eta_{\frac{M}{2}+2}+\delta\eta_{\frac{M}{2}}}{2} - (s+1)\delta\eta_{\frac{M}{2}+1} &= -\frac{1}{s},\\
-  \frac{\delta\eta_{M-1}}{2} - \prn{s+\frac{1}{2}}\delta\eta_M &= 0.
+  \frac{\delta\eta_{m+1}+\delta\eta_{m-1}}{2} - (s+1)\delta\eta_{m} &= \frac{1}{s},\\
+  \frac{\delta\eta_{m+2}+\delta\eta_{m}}{2} - (s+1)\delta\eta_{m+1} &= -\frac{1}{s},\\
+  \frac{\delta\eta_{2m-1}}{2} - \prn{s+\frac{1}{2}}\delta\eta_{2m} &= 0.
 \end{aligned}
 \end{equation}
 %
-These equations are invariant under $\delta\eta_{M+1-i} \to -\delta\eta_i$, so these two must be equal.
+These equations are invariant under $\delta\eta_{2m+1-i} \to -\delta\eta_i$, so these two must be equal.
 Then we have
 %
 \begin{equation}\label{eq:detahalf}
 \begin{aligned}
   \frac{\delta\eta_{i+1}+\delta\eta_{i-1}}{2} - (s+1)\delta\eta_i &= 0,
-  \quad\text{for}\quad 1<i<\frac{M}{2}\\
+  \quad\text{for}\quad 1<i<m, \\
   \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{\frac{M}{2}-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{\frac{M}{2}} &= \frac{1}{s}.
+  \frac{\delta\eta_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{m} &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
 %
@@ -946,25 +947,26 @@ Then we have
 The first of these equations is solved by
 %
 \begin{equation}\label{eq:detagensol}
-  \delta\eta_i = B\alpha^{i-1} + C\alpha^{1-i},
+  \delta\eta_i = B\e^{\beta(i-1)} + C\e^{\beta(1-i)},
   \qquad\text{where}\qquad
-  \alpha^2 - 2(s+1)\alpha + 1 = 0,
+  s = S(\beta) \equiv 2 \sinh^2 \prn{\frac{\beta}{2}},
 \end{equation}
 %
 with $B$ and $C$ determined by the boundary conditions provided by the last two equations of \eqref{eq:detahalf}:
 %
 \begin{equation}\label{eq:unicoeffs}
-  B = -\frac{2\alpha}{(1+\alpha)(\alpha^{\frac{M}{2}}+\alpha^{-\frac{M}{2}})s},
+  B = -\frac{1}{s(\e^{-\beta} + 1) \cosh \prn{m \beta}},
   \qquad
-  C = -\frac{2}{(1+\alpha)(\alpha^{\frac{M}{2}}+\alpha^{-\frac{M}{2}})s}.
+  C = -\frac{1}{s(\e^{\beta} + 1) \cosh \prn{m \beta}}.
 \end{equation}
 %
 This can be used to compute the Laplace transform
 %
 \begin{equation}\label{eq:unilaplace}
-  A(s) = \frac{2\etw_1(s)}{M}
-   = \frac{2}{M}\prn{\frac{1}{s}+B+C}
-   = \frac{2(\alpha^{\frac{M}{2}}-1)^2}{Ms(\alpha^M+1)}.
+  A(s) = \frac{2\etw_1(s)}{2m}
+   = \frac{1}{m}\prn{\frac{1}{s}+B+C}
+   = \frac{2\sinh^2\prn{\frac{m \beta}{2}}}{m s \cosh\prn{m \beta}}
+   = \frac{2 S\prn{m \beta}}{M s \prn{S\prn{m \beta} + 1}}.
 \end{equation}
 %
 
@@ -973,11 +975,11 @@ However, one can find a heuristic approximation to the envelope by maximising \w
 We find that
 %
 \begin{multline}\label{eq:unienv}
-  \alpha = \exp\prn{\pm\frac{2y_*}{M_*}},
+  M_* = \pm\frac{2y_*}{\beta},
   \quad
   s = 2\sinh^2\frac{y_*}{M_*},
   \qquad
-  \hat{A}_*(s) = \prn{\frac{ 2\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \frac{\abs{\log\alpha(s)}}{s},
+  \hat{A}_*(s) = \prn{\frac{ 2\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \frac{\abs{\beta}}{s},
   \\ \text{where}\quad
   y_* = \tanh \frac{y_*}{2} \cosh y_* \approx 1.50553.
   \qquad
@@ -998,7 +1000,7 @@ When $M \gg 2$, the validity region is approximately
   \frac{4.53327}{M^2} \lesssim s \lesssim 1.36423.
 \end{equation}
 %
-When $s \sim \CO(M^{-2}) \ll 1$, we have $\alpha \approx 1 \pm \sqrt{2s}$ and the heuristic envelope is approximately
+When $s \sim \CO(M^{-2}) \ll 1$, we have \(\beta \approx \pm \sqrt{2s}\) and the heuristic envelope is approximately
 %
 \begin{equation}\label{eq:unienvapprox}
   \hat{A}_*(s) \approx \frac{ 0.54203 }{ \sqrt{s} }.
@@ -1025,20 +1027,21 @@ The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
 %
 \begin{equation}\label{eq:stickyenc}
   \begin{aligned}
-  \enc_{12} = -\enc_{MM-1} &= \frac{\varepsilon}{2},
-  &\qquad
-  \eq_1 = \eq_M &= \frac{1}{2+(M-2)\varepsilon},
+  \enc_{1,2} = -\enc_{2m,2m-1} &= \frac{1-\varepsilon}{2},
+  &\quad
+  \eq_1 = \eq_{2m} &= \frac{1}{2(m-(m-1)\varepsilon)},
   \\ &&
-  \eq_i &=  \frac{\varepsilon}{2+(M-2)\varepsilon}
-  \quad\text{for}\quad 1<i<M.
+  \eq_i &=  \frac{1-\varepsilon}{2(m-(m-1)\varepsilon)}
+  \quad\text{for}\quad 1<i<2m.
   \end{aligned}
 \end{equation}
 %
 This means that the Laplace transform is given by
 %
 \begin{equation}\label{eq:stickyareaeta}
-  \hat{A}(s) = \frac{\varepsilon(\etw_1(s)-\etw_M(s))}{2+(M-2)\varepsilon}
-       = \frac{2\varepsilon\, \etw_1(s)}{2+(M-2)\varepsilon}.
+  \hat{A}(s) = \frac{(1-\varepsilon)(\etw_1(s)-\etw_M(s))}
+                    {2(m-(m-1)\varepsilon)}
+       = \frac{2(1-\varepsilon)\, \etw_1(s)}{2(m-(m-1)\varepsilon)}.
 \end{equation}
 %
 
@@ -1046,8 +1049,8 @@ The $\etw_i(s)$ take the same general form \eqref{eq:detagensol}, but with diffe
 %
 \begin{equation}\label{eq:detabndsticky}
 \begin{aligned}
-  \frac{\varepsilon\delta\eta_2}{2} - \prn{s+\frac{\varepsilon}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{\frac{M}{2}-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{\frac{M}{2}} &= \frac{1}{s}.
+  \frac{\varepsilon\delta\eta_2}{2} - \prn{s+\frac{1-\varepsilon}{2}}\delta\eta_1 &= 0, \\
+  \frac{\delta\eta_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{m} &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
 %
@@ -1055,29 +1058,31 @@ These are solved by
 %
 \begin{equation}\label{eq:stickycoeffs}
 \begin{aligned}
-  B &= -\frac{ 2 \alpha^{\frac{M}{2}} (\alpha-(1-\varepsilon)) }{ (1+\alpha) [(1+\alpha^{M}) - (1-\varepsilon) \alpha (1+\alpha^{M-2}) ]s}, \\
-  C &= -\frac{ 2 \alpha^{\frac{M}{2}} (1-(1-\varepsilon)\alpha) }{ (1+\alpha) [(1+\alpha^{M}) - (1-\varepsilon) \alpha (1+\alpha^{M-2}) ]s},
+  B &= -\frac{\e^{\beta} - \varepsilon}
+      {s [\e^{\beta} + 1] [\cosh(m\beta) - \varepsilon \cosh((m-1)\beta)]}, \\
+  C &= -\frac{1 - \varepsilon\e^{\beta}}
+      {s [\e^{\beta} + 1] [\cosh(m\beta) - \varepsilon \cosh((m-1)\beta)]},
 \end{aligned}
 \end{equation}
 %
 which leads to the Laplace transform
 %
 \begin{equation}\label{eq:stickylaplace}
-  \hat{A}(s) = \frac{2\varepsilon}{[2+(M-2)\varepsilon]s} \,
-      \frac{ (\alpha^{\frac{M}{2}}-1)^2 - (1-\varepsilon)\alpha(\alpha^{\frac{M-2}{2}}-1)^2 }{ (\alpha^M + 1) - (1-\varepsilon)\alpha(\alpha^{M-2}+1) }.
+  \hat{A}(s) = \frac{(1-\varepsilon)}{[m-(m-1)\varepsilon]s} \,
+      \brk{\frac{S(m\beta) - \varepsilon S((m-1)\beta)}
+      {S(m\beta) - \varepsilon S((m-1)\beta) + 1 - \varepsilon}}.
 \end{equation}
 %
 
 We can maximise this \wrt $\varepsilon$.
 This results in a complicated quadratic equation for $\varepsilon$ with an even worse solution that we will not reproduce here.
-We can find the boundary of the region of applicability by seeing at what value of $s$ is the optimal value of $\varepsilon=1$:
+We can find the boundary of the region of applicability by seeing at what value of $s$ is the optimal value of $\varepsilon=0$:
 %
 \begin{equation}\label{eq:stickyvalid}
 \begin{aligned}
-  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=1} \propto &\,
-    M\alpha[(\alpha^{\frac{M-2}{2}}-1)^2(\alpha^M+1) - (\alpha^{\frac{M}{2}}-1)^2(\alpha^{M-2}+1)]
-     \\ &+ 2(\alpha^{\frac{M}{2}}-1)^2(\alpha^M+1) = 0,\\
-    s = &\, \frac{(\alpha-1)^2}{2\alpha}.
+  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=0} &\propto
+    m \prn{S(m\beta) - S((m-1)\beta)} + (m-1) S(m\beta) \prn{S(m\beta) + 1} = 0,\\
+   &\text{where} \quad s =  S(\beta) = 2 \sinh^2(\beta/2).
 \end{aligned}
 \end{equation}
 %
@@ -1088,7 +1093,7 @@ The width of this gap is insignificant for larger $M$.
 For small $s \ll M^{-2}$, it is given by
 %
 \begin{equation}\label{eq:stickyeps}
-  \varepsilon = \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},
+  \varepsilon = 1 - \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},
 \end{equation}
 %
 and the Laplace transform is
@@ -1110,20 +1115,23 @@ The following elements of $\enc$ and $\eq$ differ from \eqref{eq:unienc}:
 %
 \begin{equation}\label{eq:shortenenc}
   \begin{aligned}
-  \enc_{M-1M} = -\enc_{21} &= \frac{(1-\varepsilon)}{2},
+  \enc_{2m-1,2m} = -\enc_{2,1} &= \frac{(1-\varepsilon)}{2},
   &\qquad
-  \eq_1 = \eq_M &= \frac{(1-\varepsilon)}{M-2\varepsilon},
+  \eq_1 = \eq_M &= \frac{(1-\varepsilon)}{2(m-\varepsilon)},
   \\ &&
-  \eq_i &=  \frac{1}{M-2\varepsilon}
-  \quad\text{for}\quad 1<i<M.
+  \eq_i &=  \frac{1}{2(m-\varepsilon)}
+  \quad\text{for}\quad 1<i<M2m.
   \end{aligned}
 \end{equation}
 %
 This means that the Laplace transform is given by
 %
 \begin{equation}\label{eq:shortenareaeta}
-  \hat{A}(s) = \frac{(1-\varepsilon)(\etw_1(s)-\etw_M(s)) + \varepsilon(\etw_2(s)-\etw_{M-1}(s))}{M-2\varepsilon}
-       = \frac{2(1-\varepsilon) \etw_1(s) + 2\varepsilon\,\etw_2(s)}{M-2\varepsilon}.
+  \hat{A}(s) = \frac{(1-\varepsilon)(\etw_1(s)-\etw_{2m}(s)) 
+                      + \varepsilon(\etw_2(s)-\etw_{2m-1}(s))}
+                    {2(m-\varepsilon)}
+       = \frac{2(1-\varepsilon) \etw_1(s) + 2\varepsilon\,\etw_2(s)}
+              {2(m-\varepsilon)}.
 \end{equation}
 %
 
@@ -1133,7 +1141,7 @@ The $\etw_i(s)$ take the same general form \eqref{eq:detagensol} except for $i=1
 \begin{aligned}
   \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
   \frac{\delta\eta_3 + (1-\varepsilon)\delta\eta_1}{2} - \prn{s+\frac{2-\varepsilon}{2}}\delta\eta_2 &= 0, \\
-  \frac{\delta\eta_{\frac{M}{2}-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{\frac{M}{2}} &= \frac{1}{s}.
+  \frac{\delta\eta_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{m} &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
 %
@@ -1142,52 +1150,45 @@ These are solved by
 %
 \begin{equation}\label{eq:shortensol}
 \begin{aligned}
-  \delta\eta_i &= B\alpha^{i-2} + C\alpha^{2-i} \qquad
-        \text{for} \quad 2 \leq i \leq \frac{M}{2}, \\
-  \delta\eta_1 &= \frac{2\alpha^{\frac{M}{2}}}
-         {[(1-\varepsilon)(\alpha^{M}+1) + \varepsilon(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
-  B &= - \frac{2\alpha^{\frac{M}{2}}(\alpha^2-\alpha+1 + (1-\varepsilon)(\alpha-1))}
-         {(1+\alpha)[(1-\varepsilon)(\alpha^{M}+1) + \varepsilon(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
-  C &= - \frac{2\alpha^{\frac{M-2}{2}}(\alpha^2-\alpha+1 - (1-\varepsilon)\alpha(\alpha-1))}
-         {(1+\alpha)[(1-\varepsilon)(\alpha^{M}+1) + \varepsilon(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s}, \\
+  \delta\eta_i &= B\e^{(i-2)\beta} + C\e^{(2-i)\beta} \qquad
+        \text{for} \quad 2 \leq i \leq m, \\
+  \delta\eta_1 &= \frac{1}
+         {[(1-\varepsilon)\cosh(m\beta) + \varepsilon(2s+1)\cosh((m-1)\beta)]s}, \\
+  B &= - \frac{(2s+1) \e^{\beta/2} + (1-\varepsilon) \tanh(\beta/2)}
+         {s [(1-\varepsilon)\cosh(m\beta) + \varepsilon(2s+1)\cosh((m-1)\beta)]}, \\
+  C &= - \frac{((2s+1) \e^{-\beta/2} - (1-\varepsilon) \tanh(\beta/2)}
+         {s [(1-\varepsilon)\cosh(m\beta) + \varepsilon(2s+1)\cosh((m-1)\beta)]}, \\
 \end{aligned}
 \end{equation}
 %
 Which gives the following Laplace transform
 %
 \begin{equation}\label{eq:shortenlaplace}
-  \hat{A}(s) = \frac{2 [(1-\varepsilon)(\alpha^{\frac{M}{2}}-1)^2
-          + \varepsilon(\alpha^2-\alpha+1)(\alpha^{\frac{M-2}{2}}-1)^2] }
-          { [M-2(1-\varepsilon)]
-            [(1-\varepsilon)(\alpha^{M}+1) + \varepsilon(\alpha^2-\alpha+1)(\alpha^{M-2}+1)]s }.
+  \hat{A}(s) = \frac{(1-\varepsilon) S(m\beta) + \varepsilon(2s+1) S((m-1)\beta)}
+          { s [m-\varepsilon]
+            [(1-\varepsilon)[S(m\beta) + 1] + \varepsilon(2s+1)[S((m-1)\beta) + 1]] }.
 \end{equation}
 %
-This interpolates between \eqref{eq:unilaplace} at $\varepsilon=0$ and the same expression for $M-2$ at $\varepsilon=1$.
-This is easier to see if we define
+This interpolates between \eqref{eq:unilaplace} at $\varepsilon=0$ and the same expression for $m-1$ at $\varepsilon=1$.
+
+
+To find the optimal \(\varepsilon\) at any given \(s\), it helps if we define
 %
 \begin{equation}\label{eq:shortdefs}
 \begin{aligned}
-  F_M(\alpha) &= (\alpha^{\frac{M}{2}} - 1)^2, &
-  \Delta F_M(\alpha) &= F_M(\alpha) - \zeta F_{M-2}(\alpha), &
-  f_m(\alpha) = \frac{F_M(\alpha)}{\Delta F_M(\alpha)}, \\
-  G_M(\alpha) &= \alpha^{M} + 1, &
-  \Delta G_M(\alpha) &= G_M(\alpha) - \zeta G_{M-2}(\alpha), &
-  g_m(\alpha) = \frac{G_M(\alpha)}{\Delta G_M(\alpha)}, \\
-  \text{where}\quad \zeta &= \alpha^2 - \alpha + 1, &
-  m &= \frac{M}{2}. \\
+  \Delta f_m(\beta) &= S(m\beta) - \zeta S((m-1)\beta), &
+  f_m(\beta) &= \frac{S(m\beta)}{\Delta f_m(\beta)}, \\
+  \Delta g_m(\beta) &= \Delta f_m(\beta) + 1 - \zeta , &
+  g_m(\beta) &= \frac{S(m\beta) + 1}{\Delta g_m(\beta)}, \\
+  \text{where}\quad \zeta &= 2s + 1. \\
 \end{aligned}
 \end{equation}
 %
-Then the uniform model \eqref{eq:unilaplace} has \( \hat{A}(s) = \frac{F_m(\alpha)}{s m G_m(\alpha)} \).
 Then \cref{eq:shortenlaplace} can be be written as
 %
 \begin{equation}\label{eq:shortsimple}
   \hat{A}(s) =
-    \frac{(1-\varepsilon)F_m(\alpha) + \varepsilon \zeta F_{m-1}(\alpha)}
-         {s (m - \varepsilon) ((1-\varepsilon)G_m(\alpha) + \varepsilon \zeta G_{m-1}(\alpha))}
-    % = \frac{F_m - \varepsilon \Delta F_{m}}
-    %      {s (m - \varepsilon) (G_m - \varepsilon \Delta G_{m})}
-    = \brk{\frac{\Delta F_{m}}{s \Delta G_{m}}}
+    = \brk{\frac{\Delta f_{m}}{s \Delta g_{m}}}
     \frac{f_m - \varepsilon}{(m - \varepsilon) (g_m - \varepsilon)}.
 \end{equation}
 %
@@ -1205,7 +1206,8 @@ Then \cref{eq:shortenlaplace} can be be written as
 Dotted grey line is the approximate expression from \cref{eq:unienvapprox}.
 The other curves are from \cref{eq:shortopt}, optimised shortened models for various values of \(M\).
 (\ref{fig:short_ratio}): The ratios of the quantities plotted in (\ref{fig:short_opt}) to \cref{eq:unienv}.
-The dotted orange line is the extension of the \(M=4\) line with \(\varepsilon\) held at 0, as discussed below \cref{eq:shortenvalid}.
+The dotted blue and orange lines are the extensions of the \(M=2,4\) lines with \(\varepsilon\) held at 0, as discussed below \cref{eq:shortenvalid}.
+Noting the scale of the y-axis, we see that \cref{eq:unienv,eq:unienvapprox} do provide good approximations, especially for larger \(M\).
 \label{fig:shorten}}
 \end{center}
 \end{figure}
@@ -1215,7 +1217,7 @@ We can maximise this \wrt $\varepsilon$.
 \begin{equation}\label{eq:shortopt}
   (\varepsilon - f_m)^2 = (m - f_m)(g_m - f_m),
   \qquad
-  \hat{A}(s) = \brk{\frac{\Delta F_{m}}{s \Delta G_{m}}}
+  \hat{A}(s) = \brk{\frac{\Delta f_{m}}{s \Delta g_{m}}}
     \frac{1}{\brk{\sqrt{\abs{m - f_m}} - \sqrt{\abs{g_m - f_m}}}^2}.
 \end{equation}
 %
@@ -1224,20 +1226,22 @@ We can find the boundary of the region of applicability by asking at what value 
 \begin{equation}\label{eq:shortenvalid}
 \begin{aligned}
   \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=0} \propto &\,
-    M(\alpha^2-\alpha+1)(\alpha-1)\alpha^{\frac{M-2}{2}}(\alpha^{M-1}-1) - (\alpha^{\frac{M}{2}}-1)^2(\alpha^{M}+1)
+    m(2s+1) \sqrt{2s} \sinh\brk{{\prn{m-\tfrac{1}{2}}\beta}} 
+    - S(m\beta) [S(m\beta) + 1]
       = 0,\\
   \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=1} \propto &\,
-    (M-2)(\alpha-1)\alpha^{\frac{M-2}{2}}(\alpha^{M-1}-1) - (\alpha^2-\alpha+1)(\alpha^{\frac{M-2}{2}}-1)^2(\alpha^{M-2}+1)
+    (m-1) \sqrt{2s} \sinh\brk{{\prn{m-\tfrac{1}{2}}\beta}} 
+    - (2s+1) S((m-1)\beta) [S((m-1)\beta) + 1]
       = 0,\\
-    \text{where}\quad
-    s = &\, \frac{(\alpha-1)^2}{2\alpha},
+    &\text{where}\quad
+    s = S(\beta) = 2 \sinh^2(\beta/2),
 \end{aligned}
 \end{equation}
 %
 with the $\varepsilon=0$ case providing the lower boundary and $\varepsilon=1$ providing the upper boundary.
 For lower \(s\), \(\varepsilon = 0\) is the optimum. 
 For higher \(s\), \(\varepsilon = 1\) is the optimum, which is eqivalent to \(\varepsilon = 0\) with \(M-2\) states.
-This is depicted by the dotted orange line in \cref{fig:shorten}\ref{fig:short_ratio}.
+This is depicted by the dotted lines in \cref{fig:shorten}\ref{fig:short_ratio}.
 
 \(M=2\) is a special case:
 %
@@ -1249,9 +1253,7 @@ This is depicted by the dotted orange line in \cref{fig:shorten}\ref{fig:short_r
 so \(\varepsilon=0\) is always the maximum.
 
 If these were really the models that maximised $A(s)$, the region of validity for $M$ would not overlap with that for $M-2$.
-In this case, however, there is an overlap as seen in \cref{fig:shorten}\ref{fig:short_ratio}.
-The \(M=2\) region of validity overlaps everything else.
-The other overlaps are less extreme, but they do exist.
+In fact there are overlaps, as seen in \cref{fig:shorten}\ref{fig:short_ratio} for \(M=6\) and higher.
 This is related to the fact that \autoref{fig:envvid} and the video shows that the optimal models do not shorten by one state at a time, but several outgoing transition probabilities are reduced at once.
 
 
@@ -1276,16 +1278,18 @@ Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylapl
   \snrb(\tau) = \left\{
 \begin{aligned}
   & \frac{\sqrt{N}}{1+r\tau}, &
-  & r\tau \leq \frac{1}{2\sinh^2\frac{y_*}{2}} , \\
-  & \sqrt{N}\prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \log\alpha, &
-  \frac{1}{2\sinh^2 \frac{y_*}{2}} \leq & r\tau \leq \frac{1}{2\sinh^2 \frac{y_*}{M}} , \\
-  & \max_\varepsilon \brc{\frac{2\sqrt{N}\varepsilon}{2+(M-2)\varepsilon} \,
-      \frac{ (\alpha^{\frac{M}{2}}-1)^2 - (1-\varepsilon)\alpha(\alpha^{\frac{M-2}{2}}-1)^2 }{ (\alpha^M + 1) - (1-\varepsilon)\alpha(\alpha^{M-2}+1) }}, &
-  \frac{1}{2\sinh^2 \frac{y_*}{M}} \leq & r\tau .
+  & r\tau \leq \tfrac{1}{2\sinh^2\frac{y_*}{2}} , \\
+  & \sqrt{N}\prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } }\sinh\inv \!\!\sqrt{1/2r\tau}, &
+  \tfrac{1}{2\sinh^2 \frac{y_*}{2}} \leq & r\tau \leq \tfrac{1}{2\sinh^2 \frac{y_*}{M}} , \\
+  & \max_{\varepsilon \in [0,1]} \brc{
+      \frac{2\sqrt{N}(1-\varepsilon) \Delta_{M,\varepsilon} \brk{S\prn{\tfrac{M\beta}{2}}}}
+      {\Delta_{M,\varepsilon}[M]\, \Delta_{M,\varepsilon}\! \brk{S\prn{\tfrac{M\beta}{2}} + 1} } }, &
+  \tfrac{1}{2\sinh^2 \frac{y_*}{M}} \leq & r\tau ,
 \end{aligned}
 \right.
 \end{equation}
 %
+where  we use the notation \( \Delta_{M,\varepsilon}[T(M, \beta)] = T(M, \beta) - \varepsilon T(M-2, \beta) \).
 For $M \gg 1$, and $r\tau$ much greater than the lower bound of each region, we can approximate this as
 %
 \begin{equation}\label{eq:henvapproc}

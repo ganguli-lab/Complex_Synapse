@@ -14,7 +14,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="serial_sticky.svg">
+   sodipodi:docname="serial_uni.svg">
   <sodipodi:namedview
      id="base"
      pagecolor="#ffffff"
@@ -787,31 +787,9 @@
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cc" />
     </g>
-    <text
-       sodipodi:linespacing="125%"
-       id="text3095"
-       y="405.52795"
-       x="139.27399"
-       style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       xml:space="preserve"><tspan
-         y="405.52795"
-         x="139.27399"
-         id="tspan3097"
-         sodipodi:role="line">1-ε</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:20px;line-height:125%;font-family:Sans;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"
-       x="340.07315"
-       y="488.9606"
-       id="text3120"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3122"
-         x="340.07315"
-         y="488.9606">1-ε</tspan></text>
     <g
        id="g4588"
-       transform="matrix(0,-4.9999961,-27.722037,0,3677.1418,613.93478)">
+       transform="matrix(0,-4.9999956,-31.846675,0,4169.8282,613.93476)">
       <g
          word-spacing="normal"
          letter-spacing="normal"
@@ -832,18 +810,18 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:27.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="264.75027"
+       x="250.71162"
        y="405.52795"
        id="text4710"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4712"
-         x="264.75027"
+         x="250.71162"
          y="405.52795"
          style="font-size:20px">1</tspan></text>
     <g
        id="g4588-5"
-       transform="matrix(0,4.9999961,-27.722037,0,3646.8967,266.21788)">
+       transform="matrix(0,4.9999956,-31.750753,0,4158.0439,266.2179)">
       <g
          word-spacing="normal"
          letter-spacing="normal"
@@ -864,13 +842,13 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:27.5px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       x="234.50522"
+       x="250.71162"
        y="489.21451"
        id="text4710-9"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan4712-1"
-         x="234.50522"
+         x="250.71162"
          y="489.21451"
          style="font-size:20px">1</tspan></text>
   </g>
