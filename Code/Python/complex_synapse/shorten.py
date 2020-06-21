@@ -29,7 +29,9 @@ def s_to_alpha(sval: float) -> (float, float):
     return sval - disc, sval + disc
 
 
-# -------------------------------------
+# =============================================================================
+
+
 def uniform(alpha: float, num: int) -> float:
     """Laplace-SNR for uniform serial model"""
     afm = alpha**(num / 2)
@@ -54,17 +56,30 @@ def uni_star(alpha: float) -> float:
     return A_STAR * np.abs(np.log(alpha)) / alpha_to_s(alpha)
 
 
-# -------------------------------------
-def short(eps: float, alpha: float, num: int) -> float:
-    """Laplace-SNR for shortened serial model"""
+# =============================================================================
+
+
+def components(alpha: float, num: int) -> Tuple[float, ...]:
+    """Components of numerator and denominator
+
+    numerator = numer - eps * dnumer
+    denominator = denom - eps * ddenom
+    """
     afm = alpha**(num / 2)
     afmm = alpha**((num-2) / 2)
-    sval = alpha_to_s(alpha)
     fac = alpha**2 - alpha + 1
     numer = (afm - 1)**2
     denom = (afm**2 + 1)
     dnumer = numer - fac * (afmm - 1)**2
     ddenom = denom - fac * (afmm**2 + 1)
+    return numer, denom, dnumer, ddenom
+
+
+# -------------------------------------
+def short(eps: float, alpha: float, num: int) -> float:
+    """Laplace-SNR for shortened serial model"""
+    sval = alpha_to_s(alpha)
+    numer, denom, dnumer, ddenom = components(alpha, num)
     fnumer = numer - eps * dnumer
     fdenom = denom - eps * ddenom
     return 2 * fnumer / ((num - 2*eps) * sval * fdenom)
@@ -76,21 +91,27 @@ def neg_short(eps: float, alpha: float, num: int) -> float:
 
 
 # -------------------------------------
-def eps_star(alpha: float, num: int) -> float:
-    """Laplace-SNR for shortened serial model"""
+def eps_stars(alpha: float, num: int) -> float:
+    """Optimal epsilon for shortened serial model"""
     if num == 2:
         return 0, 0
-    afm = alpha**(num / 2)
-    afmm = alpha**((num-2) / 2)
-    fac = alpha**2 - alpha + 1
-    numer = (afm - 1)**2
-    denom = (afm**2 + 1)
-    dnumer = numer - fac * (afmm - 1)**2
-    ddenom = denom - fac * (afmm**2 + 1)
+    numer, denom, dnumer, ddenom = components(alpha, num)
     fnumer = numer / dnumer
     fdenom = denom / ddenom
     disc = np.sqrt((num/2 - fnumer) * (fdenom - fnumer))
-    return np.minimum(np.maximum(fnumer - disc, 0), 1)
+    return fnumer - disc, numer + disc
+
+
+def eps_star(alpha: float, num: int) -> float:
+    """Optimal epsilon for shortened serial model"""
+    epss = eps_stars(alpha, num)[0]
+    return np.minimum(np.maximum(epss, 0), 1)
+
+
+def eps_star_star(alpha: float, num: int) -> float:
+    """Optimal epsilon for shortened serial model"""
+    epss = eps_stars(alpha, num)[1]
+    return np.minimum(np.maximum(epss, 0), 1)
 
 
 # -------------------------------------
@@ -98,14 +119,10 @@ def lower(alpha: float, num: int) -> float:
     """derivative of short wrt eps at eps==1
     Note: lower t -> higher s -> (lower, higher) alpha[:],
     """
-    afm = alpha**(num / 2)
-    afmm = alpha**((num-2) / 2)
-    fac = alpha**2 - alpha + 1
-    numer = (afmm - 1)**2
-    denom = (afmm**2 + 1)
-    dnumer = (afm - 1)**2  # - fac * numer cancels
-    ddenom = (afm**2 + 1)  # - fac * denom cancels
-    return (num - 2)*(denom*dnumer - numer*ddenom) - 2*fac*numer*denom
+    numer, denom, dnumer, ddenom = components(alpha, num)
+    numer -= dnumer
+    denom -= ddenom
+    return (num - 2) * (denom * dnumer - numer * ddenom) - 2 * numer * denom
 
 
 # -------------------------------------
@@ -113,14 +130,8 @@ def upper(alpha: float, num: int) -> float:
     """derivative of short wrt eps at eps==0
     Note: higher t -> lower s -> (higher, lower) alpha[:],
     """
-    afm = alpha**(num / 2)
-    afmm = alpha**((num-2) / 2)
-    fac = alpha**2 - alpha + 1
-    numer = (afm - 1)**2
-    denom = (afm**2 + 1)
-    dnumer = - (afmm - 1)**2  # + numer cancels
-    ddenom = - (afmm**2 + 1)  # + denom cancels
-    return num*fac*(denom*dnumer - numer*ddenom) - 2*numer*denom
+    numer, denom, dnumer, ddenom = components(alpha, num)
+    return num * (denom * dnumer - numer * ddenom) - 2 * numer * denom
 
 
 # -------------------------------------
@@ -129,7 +140,7 @@ def limits(num: int, debug: bool = False) -> float:
     Note: higher t -> lower s -> higher M
     """
     if num == 2:
-        return (0.01, np.exp(-Y_STAR))
+        return 0.01, np.exp(-Y_STAR)
     x_0, x_1 = alpha_star(num - 2)[0], alpha_star(num)[0]
     lo_sol = sco.root_scalar(lower, args=(num,), x0=x_0, x1=x_1)
     if debug:
@@ -173,3 +184,9 @@ def env_ravel(svals: np.ndarray, env: np.ndarray) -> Arrays:
     new_s, new_env = svals.ravel(), env.ravel()
     inds = np.argsort(new_s)
     return new_s[inds], new_env[inds]
+
+
+# -------------------------------------
+def env_approx(svals: np.ndarray) -> np.ndarray:
+    """approximate envelope"""
+    return A_STAR * np.sqrt(2 / svals)

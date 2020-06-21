@@ -18,6 +18,7 @@
 %Preamble:
 \usepackage{a4wide}
 \input{sl_preamble.tex}
+\usepackage{mathtools}
 %
 % >> Only for drafts! <<
 \usepackage[notref,notcite]{showkeys}
@@ -1080,8 +1081,8 @@ We can find the boundary of the region of applicability by seeing at what value 
 %
 \begin{equation}\label{eq:stickyvalid}
 \begin{aligned}
-  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=0} &\propto
-    m \prn{S(m\beta) - S((m-1)\beta)} + (m-1) S(m\beta) \prn{S(m\beta) + 1} = 0,\\
+  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\mathrlap{\varepsilon=0}} &\propto
+    m \brk{S(m\beta) - S((m-1)\beta)} - S(m\beta) \brk{S(m\beta) + 1} = 0,\\
    &\text{where} \quad s =  S(\beta) = 2 \sinh^2(\beta/2).
 \end{aligned}
 \end{equation}
@@ -1225,13 +1226,11 @@ We can find the boundary of the region of applicability by asking at what value 
 %
 \begin{equation}\label{eq:shortenvalid}
 \begin{aligned}
-  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=0} \propto &\,
-    m(2s+1) \sqrt{2s} \sinh\brk{{\prn{m-\tfrac{1}{2}}\beta}} 
-    - S(m\beta) [S(m\beta) + 1]
+  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\mathrlap{\varepsilon=0}} \propto &\,
+    m(2s+1) \brk{S(m\beta) - S((m-1)\beta)} - S(m\beta) [S(m\beta) + 1]
       = 0,\\
-  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\varepsilon=1} \propto &\,
-    (m-1) \sqrt{2s} \sinh\brk{{\prn{m-\tfrac{1}{2}}\beta}} 
-    - (2s+1) S((m-1)\beta) [S((m-1)\beta) + 1]
+  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\mathrlap{\varepsilon=1}} \propto &\,
+    (m-1)\brk{S(m\beta) - S((m-1)\beta)} - (2s+1) S((m-1)\beta) [S((m-1)\beta) + 1]
       = 0,\\
     &\text{where}\quad
     s = S(\beta) = 2 \sinh^2(\beta/2),
