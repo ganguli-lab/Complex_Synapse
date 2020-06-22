@@ -994,7 +994,6 @@ This is only valid for
   2\sinh^2 \frac{y_*}{M} \leq s \leq 2\sinh^2 \frac{y_*}{2}.
 \end{equation}
 %
-
 When $M \gg 2$, the validity region is approximately
 %
 \begin{equation}\label{eq:univalidapprox}
@@ -1007,6 +1006,7 @@ When $s \sim \CO(M^{-2}) \ll 1$, we have \(\beta \approx \pm \sqrt{2s}\) and the
   \hat{A}_*(s) \approx \frac{ 0.54203 }{ \sqrt{s} }.
 \end{equation}
 %
+We will lok at a more accurate interpolation between different \(M\) in the \hyperref[sec:serial_shorten]{next section}.
 
 For $s\gtrsim 1.36423$, we set $M=2$ to find
 %
@@ -1016,93 +1016,6 @@ For $s\gtrsim 1.36423$, we set $M=2$ to find
 %
 This does not match up with \eqref{eq:unienvapprox} at the boundary of the two regions, as this is outside the regime of validity of that approximation.
 However, it does match up with the full formula, \eqref{eq:unienv} at the boundary.
-
-
-
-\subsection{Sticky serial model}\label{sec:serial_sticky}
-
-Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_sticky}.
-We proceed in the same manner as in \autoref{sec:serial_uniform}, with the following differences.
-
-The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
-%
-\begin{equation}\label{eq:stickyenc}
-  \begin{aligned}
-  \enc_{1,2} = -\enc_{2m,2m-1} &= \frac{1-\varepsilon}{2},
-  &\quad
-  \eq_1 = \eq_{2m} &= \frac{1}{2(m-(m-1)\varepsilon)},
-  \\ &&
-  \eq_i &=  \frac{1-\varepsilon}{2(m-(m-1)\varepsilon)}
-  \quad\text{for}\quad 1<i<2m.
-  \end{aligned}
-\end{equation}
-%
-This means that the Laplace transform is given by
-%
-\begin{equation}\label{eq:stickyareaeta}
-  \hat{A}(s) = \frac{(1-\varepsilon)(\etw_1(s)-\etw_M(s))}
-                    {2(m-(m-1)\varepsilon)}
-       = \frac{2(1-\varepsilon)\, \etw_1(s)}{2(m-(m-1)\varepsilon)}.
-\end{equation}
-%
-
-The $\etw_i(s)$ take the same general form \eqref{eq:detagensol}, but with different coefficients due to the different boundary conditions
-%
-\begin{equation}\label{eq:detabndsticky}
-\begin{aligned}
-  \frac{\varepsilon\delta\eta_2}{2} - \prn{s+\frac{1-\varepsilon}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{m} &= \frac{1}{s}.
-\end{aligned}
-\end{equation}
-%
-These are solved by
-%
-\begin{equation}\label{eq:stickycoeffs}
-\begin{aligned}
-  B &= -\frac{\e^{\beta} - \varepsilon}
-      {s [\e^{\beta} + 1] [\cosh(m\beta) - \varepsilon \cosh((m-1)\beta)]}, \\
-  C &= -\frac{1 - \varepsilon\e^{\beta}}
-      {s [\e^{\beta} + 1] [\cosh(m\beta) - \varepsilon \cosh((m-1)\beta)]},
-\end{aligned}
-\end{equation}
-%
-which leads to the Laplace transform
-%
-\begin{equation}\label{eq:stickylaplace}
-  \hat{A}(s) = \frac{(1-\varepsilon)}{[m-(m-1)\varepsilon]s} \,
-      \brk{\frac{S(m\beta) - \varepsilon S((m-1)\beta)}
-      {S(m\beta) - \varepsilon S((m-1)\beta) + 1 - \varepsilon}}.
-\end{equation}
-%
-
-We can maximise this \wrt $\varepsilon$.
-This results in a complicated quadratic equation for $\varepsilon$ with an even worse solution that we will not reproduce here.
-We can find the boundary of the region of applicability by seeing at what value of $s$ is the optimal value of $\varepsilon=0$:
-%
-\begin{equation}\label{eq:stickyvalid}
-\begin{aligned}
-  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\mathrlap{\varepsilon=0}} &\propto
-    m \brk{S(m\beta) - S((m-1)\beta)} - S(m\beta) \brk{S(m\beta) + 1} = 0,\\
-   &\text{where} \quad s =  S(\beta) = 2 \sinh^2(\beta/2).
-\end{aligned}
-\end{equation}
-%
-The ``sticky'' models are optimal at values of $s$ smaller than this.
-This is not quite the same as the lower boundary of the region \eqref{eq:univalid}, so there is a gap between them where the uniform model with $M$ states is optimal.
-The width of this gap is insignificant for larger $M$.
-
-For small $s \ll M^{-2}$, it is given by
-%
-\begin{equation}\label{eq:stickyeps}
-  \varepsilon = 1 - \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},
-\end{equation}
-%
-and the Laplace transform is
-%
-\begin{equation}\label{eq:stickyenv}
-  \hat{A}(s) = (M-1) \prn{ 1 - \sqrt{M(M-2)s} + \CO(M^2s)}.
-\end{equation}
-%
 
 
 
@@ -1175,24 +1088,21 @@ This interpolates between \eqref{eq:unilaplace} at $\varepsilon=0$ and the same 
 
 To find the optimal \(\varepsilon\) at any given \(s\), it helps if we define
 %
-\begin{equation}\label{eq:shortdefs}
+\begin{equation*}
 \begin{aligned}
   \Delta f_m(\beta) &= S(m\beta) - \zeta S((m-1)\beta), &
   f_m(\beta) &= \frac{S(m\beta)}{\Delta f_m(\beta)}, \\
   \Delta g_m(\beta) &= \Delta f_m(\beta) + 1 - \zeta , &
   g_m(\beta) &= \frac{S(m\beta) + 1}{\Delta g_m(\beta)}, \\
-  \text{where}\quad \zeta &= 2s + 1. \\
+  \text{where}\quad \zeta &= 2s + 1, 
+  \qquad\qquad \implies & 
+  \hat{A}(s) &= \frac{\Delta f_{m} (f_m - \varepsilon)}
+           {s \Delta g_{m} (m - \varepsilon) (g_m - \varepsilon)}.
+  \\
 \end{aligned}
-\end{equation}
+\end{equation*}
 %
-Then \cref{eq:shortenlaplace} can be be written as
-%
-\begin{equation}\label{eq:shortsimple}
-  \hat{A}(s) =
-    = \brk{\frac{\Delta f_{m}}{s \Delta g_{m}}}
-    \frac{f_m - \varepsilon}{(m - \varepsilon) (g_m - \varepsilon)}.
-\end{equation}
-%
+The results are plotted in \cref{fig:shorten}.
 
 \begin{figure}[ht]
 \begin{center}
@@ -1218,8 +1128,8 @@ We can maximise this \wrt $\varepsilon$.
 \begin{equation}\label{eq:shortopt}
   (\varepsilon - f_m)^2 = (m - f_m)(g_m - f_m),
   \qquad
-  \hat{A}(s) = \brk{\frac{\Delta f_{m}}{s \Delta g_{m}}}
-    \frac{1}{\brk{\sqrt{\abs{m - f_m}} - \sqrt{\abs{g_m - f_m}}}^2}.
+  \hat{A}(s) = \frac{\Delta f_{m}}
+      {s \Delta g_{m} \brk{\sqrt{\abs{m - f_m}} - \sqrt{\abs{g_m - f_m}}}^2}.
 \end{equation}
 %
 We can find the boundary of the region of applicability by asking at what value of $s$ is the optimal value of $\varepsilon=0$ or $1$?
@@ -1257,6 +1167,128 @@ This is related to the fact that \autoref{fig:envvid} and the video shows that t
 
 
 
+\subsection{Sticky serial model}\label{sec:serial_sticky}
+
+Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_sticky}.
+We proceed in the same manner as in \autoref{sec:serial_uniform}, with the following differences.
+
+The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
+%
+\begin{equation}\label{eq:stickyenc}
+  \begin{aligned}
+  \enc_{1,2} = -\enc_{2m,2m-1} &= \frac{1-\varepsilon}{2},
+  &\quad
+  \eq_1 = \eq_{2m} &= \frac{1}{2(m-(m-1)\varepsilon)},
+  \\ &&
+  \eq_i &=  \frac{1-\varepsilon}{2(m-(m-1)\varepsilon)}
+  \quad\text{for}\quad 1<i<2m.
+  \end{aligned}
+\end{equation}
+%
+This means that the Laplace transform is given by
+%
+\begin{equation}\label{eq:stickyareaeta}
+  \hat{A}(s) = \frac{(1-\varepsilon)(\etw_1(s)-\etw_M(s))}
+                    {2(m-(m-1)\varepsilon)}
+       = \frac{2(1-\varepsilon)\, \etw_1(s)}{2(m-(m-1)\varepsilon)}.
+\end{equation}
+%
+
+The $\etw_i(s)$ take the same general form \eqref{eq:detagensol}, but with different coefficients due to the different boundary conditions
+%
+\begin{equation}\label{eq:detabndsticky}
+\begin{aligned}
+  \frac{\varepsilon\delta\eta_2}{2} - \prn{s+\frac{1-\varepsilon}{2}}\delta\eta_1 &= 0, \\
+  \frac{\delta\eta_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{m} &= \frac{1}{s}.
+\end{aligned}
+\end{equation}
+%
+These are solved by
+%
+\begin{equation}\label{eq:stickycoeffs}
+\begin{aligned}
+  B &= -\frac{\e^{\beta} - \varepsilon}
+      {s [\e^{\beta} + 1] [\cosh(m\beta) - \varepsilon \cosh((m-1)\beta)]}, \\
+  C &= -\frac{1 - \varepsilon\e^{\beta}}
+      {s [\e^{\beta} + 1] [\cosh(m\beta) - \varepsilon \cosh((m-1)\beta)]},
+\end{aligned}
+\end{equation}
+%
+which leads to the Laplace transform
+%
+\begin{equation}\label{eq:stickylaplace}
+  \hat{A}(s) = \frac{(1-\varepsilon)}{[m-(m-1)\varepsilon]s} \,
+      \brk{\frac{S(m\beta) - \varepsilon S((m-1)\beta)}
+      {S(m\beta) - \varepsilon S((m-1)\beta) + 1 - \varepsilon}}.
+\end{equation}
+%
+
+\begin{figure}[ht]
+\begin{center}
+  \includegraphics[width=0.4\linewidth]{sticky_opt.pdf}
+\caption{Signal-to-noise ratio for optimal sticky models, \cref{eq:stickyenc} optimised over \(\varepsilon\) for \(M=10\), in blue.
+  The orange line is the SNR for the optimised shortened models, \cref{eq:shortenenc} with \(M=10\).
+  The grey line is our theoretical envelope from \cref{eq:env}.
+  \label{fig:sticky}}
+\end{center}
+\end{figure}
+
+We can maximise this \wrt $\varepsilon$.
+This results in a complicated quadratic equation for $\varepsilon$ with an even worse solution that we will not reproduce here.
+We define
+%
+\begin{equation*}
+\begin{aligned}
+  \Delta m &= (m-1), &
+  \mu &= \frac{m}{\Delta m}, \\
+  \Delta f_m(\beta) &= S((m-1)\beta), &
+  f_m(\beta) &= \frac{S(m\beta)}{\Delta f_m(\beta)}, \\
+  \Delta g_m(\beta) &= \Delta f_m(\beta) + 1 , &
+  g_m(\beta) &= \frac{S(m\beta) + 1}{\Delta g_m(\beta)}, \\
+\end{aligned}
+ \; \implies \quad
+ \hat{A}(s) = \frac{\Delta f_m (1 - \varepsilon) (f_m - \varepsilon)}
+                    {s \Delta m \Delta g_m (\mu - \varepsilon) (g_m - \varepsilon)}.
+\end{equation*}
+%
+The minimum is at the solution of
+%
+\begin{equation*}
+  \brk{(1 + f_m -  g_m - \mu)\varepsilon - f_m + \mu g_m}^2 
+    = (\mu - 1) (g_m - 1) (\mu - f_m) (g_m - f_m).
+\end{equation*}
+%
+The result is plotted in \cref{fig:sticky}.
+
+We can find the boundary of the region of applicability by seeing at what value of $s$ is the optimal value of $\varepsilon=0$:
+%
+\begin{equation}\label{eq:stickyvalid}
+\begin{aligned}
+  \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\mathrlap{\varepsilon=0}} &\propto
+    m \brk{S(m\beta) - S((m-1)\beta)} - S(m\beta) \brk{S(m\beta) + 1} = 0,\\
+   &\text{where} \quad s =  S(\beta) = 2 \sinh^2(\beta/2).
+\end{aligned}
+\end{equation}
+%
+The ``sticky'' models are optimal at values of $s$ smaller than this.
+This is not quite the same as the lower boundary of the region \cref{eq:shortenvalid}, or its approximate version \cref{eq:univalid}, so there is a gap between them where the uniform model with $M$ states is optimal.
+The width of this gap is insignificant for larger $M$, as seen in \cref{fig:sticky}.
+
+For small $s \ll M^{-2}$, it is given by
+%
+\begin{equation}\label{eq:stickyeps}
+  \varepsilon = 1 - \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},
+\end{equation}
+%
+and the Laplace transform is
+%
+\begin{equation}\label{eq:stickyenv}
+  \hat{A}(s) = (M-1) \prn{ 1 - \sqrt{M(M-2)s} + \CO(M^2s)}.
+\end{equation}
+%
+
+
+
 \subsection{Heuristic envelope}\label{sec:heuristicenv}
 
 
@@ -1268,27 +1300,26 @@ We will phrase it in terms of $\snrb(\tau)$, reintroducing $r$:
 \begin{equation}\label{eq:envunits}
   \snrb(\tau) = \frac{ \sqrt{N} \hat{A}\prn{\frac{1}{r\tau}} }{ r\tau },
   \qquad
-  \alpha(\tau) = \frac{ 1 + r\tau +\sqrt{1+2r\tau} }{ r\tau }.
+  \beta(\tau) = \sinh\inv \!\!\sqrt{1/2r\tau}.
 \end{equation}
 %
-Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylaplace}, we find
+Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylaplace}, using the notation \( \Delta_{M,\varepsilon}[T(M, \beta)] = T(M, \beta) - \varepsilon T(M-2, \beta) \)., we find
 %
 \begin{equation}\label{eq:henv}
   \snrb(\tau) = \left\{
 \begin{aligned}
   & \frac{\sqrt{N}}{1+r\tau}, &
   & r\tau \leq \tfrac{1}{2\sinh^2\frac{y_*}{2}} , \\
-  & \sqrt{N}\prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } }\sinh\inv \!\!\sqrt{1/2r\tau}, &
+  & \sqrt{N}\prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \beta(\tau), &
   \tfrac{1}{2\sinh^2 \frac{y_*}{2}} \leq & r\tau \leq \tfrac{1}{2\sinh^2 \frac{y_*}{M}} , \\
   & \max_{\varepsilon \in [0,1]} \brc{
-      \frac{2\sqrt{N}(1-\varepsilon) \Delta_{M,\varepsilon} \brk{S\prn{\tfrac{M\beta}{2}}}}
+      \frac{2\sqrt{N}(1-\varepsilon)\, \Delta_{M,\varepsilon}\! \brk{S\prn{\tfrac{M\beta}{2}}}}
       {\Delta_{M,\varepsilon}[M]\, \Delta_{M,\varepsilon}\! \brk{S\prn{\tfrac{M\beta}{2}} + 1} } }, &
-  \tfrac{1}{2\sinh^2 \frac{y_*}{M}} \leq & r\tau ,
+  \tfrac{1}{2\sinh^2 \frac{y_*}{M}} \leq & r\tau .
 \end{aligned}
 \right.
 \end{equation}
 %
-where  we use the notation \( \Delta_{M,\varepsilon}[T(M, \beta)] = T(M, \beta) - \varepsilon T(M-2, \beta) \).
 For $M \gg 1$, and $r\tau$ much greater than the lower bound of each region, we can approximate this as
 %
 \begin{equation}\label{eq:henvapproc}

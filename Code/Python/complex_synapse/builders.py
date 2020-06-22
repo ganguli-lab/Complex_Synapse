@@ -36,6 +36,9 @@ from sl_py_tools.numpy_tricks import markov as ma
 from sl_py_tools.numpy_tricks import markov_param as mp
 
 
+RNG = la.random.default_rng()
+
+
 def scalarise(arg: np.ndarray):
     """Replace array with scalr if ndim==0."""
     if arg.ndim == 0:
@@ -118,7 +121,7 @@ def rand_trans(nst, drns=(0, 0), **kwds):
     mats = []
     npr = mp.num_param(drn=drns[0], **kwds)
     for i in drns:
-        mats.append(mp.params_to_mat(la.random.rand(npr), drn=i, **kwds))
+        mats.append(mp.params_to_mat(RNG.random(npr), drn=i, **kwds))
     return la.stack(mats)
 
 

@@ -9,9 +9,10 @@ from sl_py_tools.numpy_tricks import markov_param as mp
 from sl_py_tools.arg_tricks import default
 import numpy_linalg as la
 from .synapse_opt import SynapseOptModel
+from . import builders as bld
 
 # =============================================================================
-# %%* Optimisation helper functions
+# Optimisation helper functions
 # =============================================================================
 
 
@@ -43,16 +44,16 @@ def make_loss_function(model: SynapseOptModel, method: str, *args, **kwds):
     if isinstance(method, str):
         method = getattr(model, method)
 
-    def loss_function(params):
+    def loss_function(*params):
         """Loss function
         """
-        model.set_params(params)
-        return method(*args, **kwds)
+        model.set_params(params[0])
+        return method(*args, *params[1:], **kwds)
     return loss_function
 
 
 def get_param_opts(opts: dict = None, **kwds) -> dict:
-    """Make options dict for SynapseOptModel.
+    """Make options dict for Markov processes.
     """
     opts = default(opts, {})
     opts.update(kwds)
@@ -120,7 +121,7 @@ def make_laplace_problem(rate: Number, nst: int, **kwds) -> (dict, dict):
 def update_laplace_problem(problem: dict):
     """Update an optimize problem with new x_init.
     """
-    problem['x0'] = la.random.rand(problem['x0'].size)
+    problem['x0'] = bld.RNG.random(problem['x0'].size)
 
 
 def optim_laplace(rate: Number, nst: int, **kwds) -> (SynapseOptModel,
@@ -156,7 +157,7 @@ def optim_laplace_range(rates: np.ndarray, nst: int, **kwds) -> (la.lnarray,
     return snr, models
 
 
-def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray, 
+def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
                           models: np.ndarray, snr: np.ndarray, **kwds):
     """Optimised model at many values of rate
     """
@@ -168,14 +169,15 @@ def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
     popts['drn'] = drn
     popts['uniform'] = uniform
     with delay_warnings():
-         for ind, rate in dzip('rate', inds, rates[inds]):
+        for ind, rate in dzip('rate', inds, rates[inds]):
             res = optim_laplace(rate, nst, **kwds, **popts)
             snr[ind] = - res.fun
             models[ind] = res.x
     return snr, models
 
 
-def check_rcond_range(rates: np.ndarray, models: np.ndarray, **kwds) -> la.lnarray:
+def check_rcond_range(rates: np.ndarray, models: np.ndarray,
+                      **kwds) -> la.lnarray:
     """Inverse condition numbers of optiomised models
 
     Parameters
@@ -184,7 +186,7 @@ def check_rcond_range(rates: np.ndarray, models: np.ndarray, **kwds) -> la.lnarr
         inverse time (Laplace parameter)
     models : np.ndarray (S, P)
         optimised models
-    
+
     Returns
     -------
     rcnd : np.ndarray (S,)

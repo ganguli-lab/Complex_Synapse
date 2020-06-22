@@ -10,7 +10,7 @@ from typing import Tuple, Optional, Union, Dict, ClassVar
 import numpy as np
 import numpy_linalg as la
 from sl_py_tools.numpy_tricks import markov_param as mp
-from .builders import scalarise
+from . import builders as bld
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
 
@@ -35,6 +35,12 @@ class SynapseOptModel(_SynapseMemoryModel):
         super().__init__(*args, **kwds)
         self._saved = (0, (), (), ())
         self._unchanged = False
+
+    @property
+    def nparam(self) -> int:
+        """number of plasticity types."""
+        npr = mp.num_param(self.nstates, drn=self.directions[0], **self.type)
+        return self.nplast * npr
 
     def get_params(self) -> la.lnarray:
         """Independent parameters of transition matrices.
@@ -104,16 +110,29 @@ class SynapseOptModel(_SynapseMemoryModel):
             if inv: (Z,Zs,ZQZs)
             if not inv: (Z^{-1},Zs^{-1})
         """
-        if all((self._unchanged,
-                len(self._saved[3]) == 2 + inv,
-                np.isclose(rate, self._saved[0]))):
+        if (all((self._unchanged, rate is None, self._saved[0] is None)) or
+            rate is not None and self._saved[0] is not None and
+            all((self._unchanged,
+                 len(self._saved[3]) == 2 + inv,
+                 np.isclose(rate, self._saved[0])))):
             return self._saved[1:]
         self._unchanged = True
 
         fundi = self.zinv()
-        fundis = self.zinv(rate)
-
         peq = self.peq()
+
+        if rate is None:
+            c_s = peq @ self.enc() @ fundi.inv
+            eta = fundi.inv @ self.weight
+            theta = fundi.inv @ self.enc() @ eta
+            if inv:
+                mats = (fundi.inv(),)
+            else:
+                mats = (fundi,)
+            self._saved = rate, (peq, c_s), (eta, theta), mats
+            return self._saved[1:]
+
+        fundis = self.zinv(rate)
         c_s = peq @ self.enc() @ fundis.inv
 
         eta = fundis.inv @ self.weight
@@ -176,7 +195,7 @@ class SynapseOptModel(_SynapseMemoryModel):
                 for m, d in zip([dsdwp, dsdwm], self.directions)]
         grad = np.hstack(grad)
 
-        return scalarise(func), grad
+        return bld.scalarise(func), grad
 
     def laplace_grad(self, rate: Number,
                      inv: bool = False) -> (float, la.lnarray):
@@ -186,6 +205,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         ----------
         rate : float, optional
             Parameter of Laplace transform, ``s``.
+        inv : bool, default: False
+            Should we compute matrix inverses?
 
         Returns
         -------
@@ -211,7 +232,7 @@ class SynapseOptModel(_SynapseMemoryModel):
                 for m, d in zip([dadwp, dadwm], self.directions)]
         grad = np.hstack(grad)
 
-        return scalarise(func), grad
+        return bld.scalarise(func), grad
 
     def area_grad(self) -> (float, la.lnarray):
         """Gradient of Area under SNR memory curve.
@@ -314,6 +335,113 @@ class SynapseOptModel(_SynapseMemoryModel):
                for f, m, d in zip(self.frac, [hessp, hessm], self.directions)]
         return np.hstack(hsv)
 
+    def peq_min_fun(self, rate: Number) -> (la.laarray, la.lnarray):
+        """Gradient of lower bound of shifted Laplace problem.
+
+        Parameters
+        ----------
+        rate : float, optional
+            Parameter of Laplace transform, ``s``.
+        inv : bool, default: False
+            Should we compute matrix inverses?
+
+        Returns
+        -------
+        func : float
+            Value of ``W - s * e @ peq``.
+        grad : la.lnarray (2n(n-1),)
+            Gradient of ``func`` with respect to parameters.
+        """
+        # (p,c), (eta,theta), (Z,Zs,ZQZs)
+        rows, cols, mats = self._derivs(rate, False)
+        rcond = 1. / np.linalg.cond(mats[:2]).max()
+        if rcond < self.RCondThresh:
+            return - la.ones((self.nparam,)), la.ones((self.nparam,) * 2)
+        func = self.plast - rate * rows[0]
+        func = la.r_[(mp.mat_to_params(m, drn=d, **self.type)
+                      for m, d in zip(func, self.directions))]
+        return func
+
+    def peq_min_grad(self, rate: Number) -> (la.laarray, la.lnarray):
+        """Gradient of lower bound of shifted Laplace problem.
+
+        Parameters
+        ----------
+        rate : float, optional
+            Parameter of Laplace transform, ``s``.
+        inv : bool, default: False
+            Should we compute matrix inverses?
+
+        Returns
+        -------
+        func : float
+            Value of ``W - s * e @ peq``.
+        grad : la.lnarray (2n(n-1),)
+            Gradient of ``func`` with respect to parameters.
+        """
+        # (p,c), (eta,theta), (Z,Zs,ZQZs)
+        rows, cols, mats = self._derivs(rate, False)
+        peq, fund = rows[0], mats[0].inv()
+        # (n,n,n)
+        grad = - rate * np.moveaxis(_diagsub(peq.s * fund), -1, -3)
+        # (n,n,n,n)
+        grad = np.broadcast_to(grad, (self.nstates,) * 4)
+        # (n(n-1),n(n-1))
+        gradpp = mp.tens_to_mat(grad, drn=(self.directions[0],) * 2, grad=True,
+                                **self.type) * self.frac[0]
+        gradpm = mp.tens_to_mat(grad, drn=self.directions, grad=True,
+                                **self.type) * self.frac[1]
+        gradmp = mp.tens_to_mat(grad, drn=self.directions[::-1], grad=True,
+                                **self.type) * self.frac[0]
+        gradmm = mp.tens_to_mat(grad, drn=(self.directions[1],) * 2, grad=True,
+                                **self.type) * self.frac[1]
+        # (2n(n-1),2n(n-1))
+        grad = np.block([[gradpp, gradpm], [gradmp, gradmm]])
+        grad += la.identity(len(grad))
+        return grad
+
+    def peq_min_hess(self, rate: Number, lag: np.ndarray) -> la.lnarray:
+        """Hessian of lower bound of shifted Laplace problem.
+
+        Parameters
+        ----------
+        rate : float, optional
+            Parameter of Laplace transform, ``s``.
+        lag : ndarray
+            Lagrange multipliers
+
+        Returns
+        -------
+        func : float
+            Value of ``W - s * e @ peq``.
+        grad : la.lnarray (2n(n-1),)
+            Gradient of ``func`` with respect to parameters.
+        """
+        # (p,c), (eta,theta), (Z,Zs,ZQZs)
+        rows, cols, mats = self._derivs(rate, False)
+        peq, fund = rows[0], mats[0].inv()
+        # (n,n,n,n,1,n)
+        hess = (((-rate * peq).s * fund).s * fund).r
+        # (n,n,n,n,n,n) -> (n,n,n,n,n**2)
+        hess = la.flattish(np.broadcast_to(hess, (self.nstates,) * 6), -2)
+        # (n,n,n,n,n(n-1))
+        hessp = hess[..., mp.param_inds(self.nstates, drn=self.directions[0],
+                                        grad=True, **self.type)]
+        hessm = hess[..., mp.param_inds(self.nstates, drn=self.directions[1],
+                                        grad=True, **self.type)]
+        # (n,n,n,n,2n(n-1)) @ (2n(n-1),) -> (n,n,n,n)
+        hess = np.r_[hessp, hessm] @ lag
+        hess = _dbl_diagsub(hess).sum(0)
+        # (n(n-1),n(n-1))
+        hesspp = mp.tens_to_mat(hess, drn=(self.directions[0],) * 2,
+                                **self.type) * self.frac[0]**2
+        hesspm = mp.tens_to_mat(hess, drn=self.directions,
+                                **self.type) * self.frac[0]*self.frac[1]
+        hessmm = mp.tens_to_mat(hess, drn=(self.directions[1],) * 2,
+                                **self.type) * self.frac[1]**2
+        # (2n(n-1),2n(n-1))
+        return np.block([[hesspp, hesspm], [hesspm.T, hessmm]])
+
     @classmethod
     def from_params(cls, params: np.ndarray, *args, **kwds) -> SynapseOptModel:
         """Buils SynapseOpt object from independent parameters
@@ -379,12 +507,12 @@ class SynapseOptModel(_SynapseMemoryModel):
         npl = kwds.pop('npl', len(cls.directions))
         npr = npl * mp.num_param(nst, drn=cls.directions[0], **cls.type)
         self = cls.zero(nst, *args, npl=npl, **kwds)
-        self.set_params(la.random.rand(npr))
+        self.set_params(bld.RNG.random(npr))
         return self
 
 
 # =============================================================================
-# %%* Private helper functions
+# Private helper functions
 # =============================================================================
 
 
