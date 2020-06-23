@@ -2,6 +2,7 @@
 """Optimising synapse modelopts
 """
 from numbers import Number
+from functools import wraps
 import numpy as np
 import scipy.optimize as sco
 from sl_py_tools.iter_tricks import dcount, denumerate, delay_warnings, dzip
@@ -44,11 +45,13 @@ def make_loss_function(model: SynapseOptModel, method: str, *args, **kwds):
     if isinstance(method, str):
         method = getattr(model, method)
 
+    @wraps(method)
     def loss_function(*params):
         """Loss function
         """
         model.set_params(params[0])
         return method(*args, *params[1:], **kwds)
+    loss_function.model = model
     return loss_function
 
 

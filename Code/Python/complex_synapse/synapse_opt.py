@@ -118,20 +118,36 @@ class SynapseOptModel(_SynapseMemoryModel):
             return self._saved[1:]
         self._unchanged = True
 
+        # if not np.isfinite(self.plast).all():
+        #     print('plast')
+
         fundi = self.zinv()
+        # if not np.isfinite(fundi).all():
+        #     print('fundi')
         peq = self.peq()
+        # if not np.isfinite(peq).all():
+        #     print('peq')
 
         if rate is None:
             c_s = peq @ self.enc() @ fundi.inv
+            # if not np.isfinite(c_s).all():
+            #     print('c_0')
             eta = fundi.inv @ self.weight
+            # if not np.isfinite(eta).all():
+            #     print('eta')
             theta = fundi.inv @ self.enc() @ eta
+            # if not np.isfinite(theta).all():
+            #     print('theta')
             if inv:
                 mats = (fundi.inv(),)
+                # if not np.isfinite(mats[0]).all():
+                #     print('fund')
             else:
                 mats = (fundi,)
             self._saved = rate, (peq, c_s), (eta, theta), mats
             return self._saved[1:]
 
+        # print('rate not none')
         fundis = self.zinv(rate)
         c_s = peq @ self.enc() @ fundis.inv
 
@@ -215,11 +231,15 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
+        if ((not np.isfinite(self.plast).all() or
+             self.rcond() < self.RCondThresh or
+             self.rcond(rate) < self.RCondThresh)):
+            return np.array(1.e10), bld.RNG.random(self.nparam)
         # (p,c), (eta,theta)
         rows, cols, mats = self._derivs(rate, inv)
         rcond = 1. / np.linalg.cond(mats[:2]).max()
-        if rcond < self.RCondThresh:
-            func = np.array(np.inf)
+        if rcond < self.RCondThresh or not np.isfinite(self.plast).all():
+            func = np.array(1.e10)
         else:
             func = - rows[1] @ self.weight
         # afunc = -rows[0] @ self.enc() @ cols[0]
@@ -335,7 +355,7 @@ class SynapseOptModel(_SynapseMemoryModel):
                for f, m, d in zip(self.frac, [hessp, hessm], self.directions)]
         return np.hstack(hsv)
 
-    def peq_min_fun(self, rate: Number) -> (la.laarray, la.lnarray):
+    def peq_min_fun(self, rate: Number) -> la.lnarray:
         """Gradient of lower bound of shifted Laplace problem.
 
         Parameters
@@ -352,17 +372,18 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of ``func`` with respect to parameters.
         """
+        if not np.isfinite(self.plast).all():
+            return -np.ones(self.nparam)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
-        rows, cols, mats = self._derivs(rate, False)
-        rcond = 1. / np.linalg.cond(mats[:2]).max()
-        if rcond < self.RCondThresh:
-            return - la.ones((self.nparam,)), la.ones((self.nparam,) * 2)
+        rows, cols, mats = self._derivs(None, True)
         func = self.plast - rate * rows[0]
-        func = la.r_[(mp.mat_to_params(m, drn=d, **self.type)
-                      for m, d in zip(func, self.directions))]
+        func = la.r_[tuple(mp.mat_to_params(m, drn=d, **self.type)
+                           for m, d in zip(func, self.directions))]
+        if not isinstance(func, np.ndarray) or func.ndim > 1:
+            print(type(func), func.shape)
         return func
 
-    def peq_min_grad(self, rate: Number) -> (la.laarray, la.lnarray):
+    def peq_min_grad(self, rate: Number) -> la.lnarray:
         """Gradient of lower bound of shifted Laplace problem.
 
         Parameters
@@ -379,9 +400,11 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of ``func`` with respect to parameters.
         """
+        if not np.isfinite(self.plast).all():
+            return -bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
-        rows, cols, mats = self._derivs(rate, False)
-        peq, fund = rows[0], mats[0].inv()
+        rows, cols, mats = self._derivs(None, True)
+        peq, fund = rows[0], mats[0]
         # (n,n,n)
         grad = - rate * np.moveaxis(_diagsub(peq.s * fund), -1, -3)
         # (n,n,n,n)
@@ -417,9 +440,11 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of ``func`` with respect to parameters.
         """
+        if np.isnan(self.plast).any():
+            return -bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
-        rows, cols, mats = self._derivs(rate, False)
-        peq, fund = rows[0], mats[0].inv()
+        rows, cols, mats = self._derivs(None, True)
+        peq, fund = rows[0], mats[0]
         # (n,n,n,n,1,n)
         hess = (((-rate * peq).s * fund).s * fund).r
         # (n,n,n,n,n,n) -> (n,n,n,n,n**2)

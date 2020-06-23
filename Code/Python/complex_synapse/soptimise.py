@@ -22,11 +22,13 @@ def make_laplace_problem(rate: Number, nst: int, **kwds) -> (dict, dict):
     opt.get_param_opts(kwds)
     keep_feasible = kwds.pop('keep_feasible', False)
     method = kwds.get('method', 'SLSQP')
+    if SynapseOptModel.type['serial'] or SynapseOptModel.type['ring']:
+        raise ValueError('Shifted problem cannot have special topology')
 
     model = SynapseOptModel.rand(nst, **modelopts)
-    fun = opt.make_loss_function(model, model.laplace_grad, None)
+    fun = opt.make_loss_function(model, model.laplace_grad, None, True)
     x_init = model.get_params()
-    hess = opt.make_loss_function(model, model.laplace_hess, None)
+    hess = opt.make_loss_function(model, model.laplace_hess, None, True)
 
     con_coeff = opt.constraint_coeff(nst, modelopts['npl'])
     bounds = sco.Bounds(0, 1 + rate, keep_feasible)
@@ -55,8 +57,7 @@ def make_laplace_problem(rate: Number, nst: int, **kwds) -> (dict, dict):
     return problem
 
 
-def optim_laplace(rate: Number, nst: int, **kwds) -> (SynapseOptModel,
-                                                      sco.OptimizeResult):
+def optim_laplace(rate: Number, nst: int, **kwds) -> sco.OptimizeResult:
     """Optimised model at one value of rate
     """
     repeats = kwds.pop('repeats', 0)
