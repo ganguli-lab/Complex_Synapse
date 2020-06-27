@@ -30,7 +30,6 @@ def make_laplace_problem(rate: Number, nst: int, **kwds) -> (dict, dict):
     x_init = model.get_params()
     hess = opt.make_loss_function(model, model.laplace_hess, None, True)
 
-    con_coeff = opt.constraint_coeff(nst, modelopts['npl'])
     bounds = sco.Bounds(0, 1 + rate, keep_feasible)
     ofun = opt.make_loss_function(model, model.peq_min_fun, rate)
     ojac = opt.make_loss_function(model, model.peq_min_grad, rate)
@@ -38,21 +37,14 @@ def make_laplace_problem(rate: Number, nst: int, **kwds) -> (dict, dict):
         raise ValueError('method must be one of SLSQP, trust-constr')
     if method == 'trust-constr':
         ohess = opt.make_loss_function(model, model.peq_min_hess, rate)
-        dconstraint = sco.LinearConstraint(con_coeff, rate, 1 + rate,
-                                           keep_feasible)
-        oconstraint = sco.NonlinearConstraint(ofun, 0, 1, ojac, ohess,
-                                              keep_feasible)
+        constraint = sco.NonlinearConstraint(ofun, 0, 1, ojac, ohess,
+                                             keep_feasible)
     else:
         hess = None
-        dconstraint = {'type': 'ineq', 'args': (),
-                       'fun': lambda x: 1 + rate - con_coeff @ x,
-                       'jac': lambda x: -con_coeff}
-        oconstraint = {'type': 'ineq', 'args': (), 'fun': ofun, 'jac': ojac}
+        constraint = {'type': 'ineq', 'args': (), 'fun': ofun, 'jac': ojac}
 
     problem = {'fun': fun, 'x0': x_init, 'jac': True, 'hess': hess,
-               'bounds': bounds, 'constraints': [dconstraint, oconstraint]}
-    if model.type['serial'] or model.type['ring']:
-        del problem['constraints']
+               'bounds': bounds, 'constraints': constraint}
     problem.update(kwds)
     return problem
 

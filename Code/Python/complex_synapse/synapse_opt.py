@@ -367,21 +367,18 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         Returns
         -------
-        func : float
+        func : la.lnarray (2n**2,)
             Value of ``W - s * e @ peq``.
-        grad : la.lnarray (2n(n-1),)
-            Gradient of ``func`` with respect to parameters.
         """
         if not np.isfinite(self.plast).all():
             return -np.ones(self.nparam)
+        rate = rate / (2 * self.frac.s)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         rows, cols, mats = self._derivs(None, True)
-        func = self.plast - rate * rows[0]
-        func = la.r_[tuple(mp.mat_to_params(m, drn=d, **self.type)
-                           for m, d in zip(func, self.directions))]
-        if not isinstance(func, np.ndarray) or func.ndim > 1:
-            print(type(func), func.shape)
-        return func
+        func = self.plast - rate * rows[0] + (1 + rate) * np.eye(self.nstates)
+        # func = la.r_[tuple(mp.mat_to_params(m, drn=d, **self.type)
+        #                    for m, d in zip(func, self.directions))]
+        return func.flattish(-3)
 
     def peq_min_grad(self, rate: Number) -> la.lnarray:
         """Gradient of lower bound of shifted Laplace problem.
@@ -395,33 +392,30 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         Returns
         -------
-        func : float
-            Value of ``W - s * e @ peq``.
-        grad : la.lnarray (2n(n-1),)
+        grad : la.lnarray (2n**2,2n(n-1),)
             Gradient of ``func`` with respect to parameters.
         """
         if not np.isfinite(self.plast).all():
-            return -bld.RNG.random((self.nparam,) * 2)
+            return -bld.RNG.random((self.nplast*self.nstates**2, self.nparam,))
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         rows, cols, mats = self._derivs(None, True)
         peq, fund = rows[0], mats[0]
-        # (n,n,n)
-        grad = - rate * np.moveaxis(_diagsub(peq.s * fund), -1, -3)
-        # (n,n,n,n)
-        grad = np.broadcast_to(grad, (self.nstates,) * 4)
-        # (n(n-1),n(n-1))
-        gradpp = mp.tens_to_mat(grad, drn=(self.directions[0],) * 2, grad=True,
-                                **self.type) * self.frac[0]
-        gradpm = mp.tens_to_mat(grad, drn=self.directions, grad=True,
-                                **self.type) * self.frac[1]
-        gradmp = mp.tens_to_mat(grad, drn=self.directions[::-1], grad=True,
-                                **self.type) * self.frac[0]
-        gradmm = mp.tens_to_mat(grad, drn=(self.directions[1],) * 2, grad=True,
-                                **self.type) * self.frac[1]
-        # (2n(n-1),2n(n-1))
-        grad = np.block([[gradpp, gradpm], [gradmp, gradmm]])
-        grad += la.identity(len(grad))
-        return grad
+        # (n,1,n,n)
+        grad = np.moveaxis(_diagsub(- rate/2 * peq[None, :].s * fund), -1, -4)
+        # (2,1,n,2,n,n)
+        grad = grad * (self.frac / self.frac.c).expand_dims((1, 2, 4, 5))
+        # (2,n,n,2,n,n)
+        shape = ((self.nplast,) + (self.nstates,) * 2) * 2
+        gradd = _diagsub(la.eye(self.nplast * self.nstates**2).reshape(shape))
+        # (2n**2,2,n,n)
+        grad = (gradd + grad).flattish(0, -3)
+        # (2n**2,n(n-1)), (2n**2,n(n-1))
+        opts = {'grad': True, 'axes': (-2, -1)}
+        opts.update(self.type)
+        gradp = mp.mat_to_params(grad[:, 0], drn=self.directions[0], **opts)
+        gradm = mp.mat_to_params(grad[:, 1], drn=self.directions[1], **opts)
+        # (2n**2,2n(n-1))
+        return np.c_[gradp, gradm]
 
     def peq_min_hess(self, rate: Number, lag: np.ndarray) -> la.lnarray:
         """Hessian of lower bound of shifted Laplace problem.
@@ -435,27 +429,22 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         Returns
         -------
-        func : float
-            Value of ``W - s * e @ peq``.
-        grad : la.lnarray (2n(n-1),)
-            Gradient of ``func`` with respect to parameters.
+        hess : la.lnarray (2n(n-1),2n(n-1))
+            Hessian of ``func @ lag`` with respect to parameters.
         """
         if np.isnan(self.plast).any():
             return -bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         rows, cols, mats = self._derivs(None, True)
         peq, fund = rows[0], mats[0]
-        # (n,n,n,n,1,n)
-        hess = (((-rate * peq).s * fund).s * fund).r
-        # (n,n,n,n,n,n) -> (n,n,n,n,n**2)
-        hess = la.flattish(np.broadcast_to(hess, (self.nstates,) * 6), -2)
-        # (n,n,n,n,n(n-1))
-        hessp = hess[..., mp.param_inds(self.nstates, drn=self.directions[0],
-                                        grad=True, **self.type)]
-        hessm = hess[..., mp.param_inds(self.nstates, drn=self.directions[1],
-                                        grad=True, **self.type)]
-        # (n,n,n,n,2n(n-1)) @ (2n(n-1),) -> (n,n,n,n)
-        hess = np.r_[hessp, hessm] @ lag
+        # (n,n,n,n,1,1,n), constraint axes last three
+        hess = (((-rate * peq).s * fund).s * fund).expand_dims((-3, -2))
+        # (n,n,n,n,2,1,n)
+        hess = hess / (2 * self.frac.s)
+        # (n,n,n,n,2,n,n)
+        hess = np.broadcast_to(hess, hess.shape[:-2] + (self.nstates,) * 2)
+        # (n,n,n,n,2n**2) @ (2n**2,) -> (n,n,n,n)
+        hess = hess.flattish(-3) @ lag
         hess = _dbl_diagsub(hess).sum(0)
         # (n(n-1),n(n-1))
         hesspp = mp.tens_to_mat(hess, drn=(self.directions[0],) * 2,
@@ -543,7 +532,7 @@ class SynapseOptModel(_SynapseMemoryModel):
 
 def _diagsub(mat: la.lnarray) -> la.lnarray:
     """Subtract diagonal elements from each element of corresponding row
-    Returns: mat2: lnarray (n,n)
+    Returns: mat2: lnarray (...,n,n)
     """
     return mat - mat.diagonal(0, -2, -1).c
 
