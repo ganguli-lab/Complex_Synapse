@@ -6,14 +6,18 @@ Created on Fri Jun 23 18:22:05 2017
 """
 
 
-from typing import ClassVar, Optional, Dict
+from typing import ClassVar, Dict, Optional, Union
+
 import numpy as np
+
 import numpy_linalg as la
 from sl_py_tools.numpy_tricks import markov as ma
-from .synapse_base import SynapseBase, ArrayLike
+
 from .builders import scalarise
+from .synapse_base import ArrayLike, SynapseBase
 
 wrap = la.wrappers.Wrappers(la.lnarray)
+Order = Union[int, float, str, None]
 
 
 class SynapseMemoryModel(SynapseBase):
@@ -180,7 +184,8 @@ class SynapseMemoryModel(SynapseBase):
 
     def rcond(self, rate: Optional[ArrayLike] = None,
               rowv: Optional[la.lnarray] = None,
-              p=None) -> la.lnarray:
+              p: Order = None,
+              rate_max: bool = False) -> la.lnarray:
         r"""Inverse condition number of generalised fundamental matrix.
 
         Parameters
@@ -190,7 +195,9 @@ class SynapseMemoryModel(SynapseBase):
         rowv : la.lnarray, optional
             Arbitrary row vector, ``xi``. Default: vector of ones.
         p : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
-            Order of the norm.
+            Order of the norm. By default `None`.
+        rate_max : bool, optional
+            Compute `min(rcond(rate), rcond(None))`. By default, `False`.
 
         Returns
         -------
@@ -221,7 +228,11 @@ class SynapseMemoryModel(SynapseBase):
         zinv : fundamental matrix
         """
         zinv = self.zinv(rate, rowv)
-        return 1 / np.linalg.cond(zinv, p)
+        rcond = 1 / np.linalg.cond(zinv, p)
+        if rate_max and rate is not None:
+            zinv = self.zinv(None, rowv)
+            rcond = min(rcond, 1 / np.linalg.cond(zinv, p))
+        return rcond
 
     def peq(self) -> la.lnarray:
         """Steady state distribution.
@@ -270,7 +281,9 @@ class SynapseMemoryModel(SynapseBase):
         """
         return self.zinv(rate, self.peq())
 
-    def rcond_s(self, rate: Optional[ArrayLike] = None, p=None) -> la.lnarray:
+    def rcond_s(self, rate: Optional[ArrayLike] = None,
+                p: Order = None,
+                rate_max: bool = False) -> la.lnarray:
         r"""Inverse condition number of generalised fundamental matrix.
 
         Parameters
@@ -278,7 +291,9 @@ class SynapseMemoryModel(SynapseBase):
         rate : float, array, optional
             Parameter of Laplace transform, ``s``. Default: 0.
         p : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
-            Order of the norm.
+            Order of the norm. By default `None`
+        rate_max : bool, optional
+            Compute `min(rcond(rate), rcond(None))`. By default, `False`
 
         Returns
         -------
@@ -309,7 +324,11 @@ class SynapseMemoryModel(SynapseBase):
         zinv_s : special fundamental matrix
         """
         zinv = self.zinv_s(rate)
-        return 1. / np.linalg.cond(zinv, p)
+        rcond = 1 / np.linalg.cond(zinv, p)
+        if rate_max and rate is not None:
+            zinv = self.zinv_s(None)
+            rcond = min(rcond, 1 / np.linalg.cond(zinv, p))
+        return rcond
 
     def mean_weight(self) -> float:
         """Mean synaptic weight in steady state distribution.
@@ -424,7 +443,7 @@ class SynapseMemoryModel(SynapseBase):
 # =============================================================================
 
 
-def normalise(model):
+def normalise(model: SynapseMemoryModel):
     """Ensure that all attributes are valid.
     """
     ma.stochastify_c(model.plast)
@@ -434,7 +453,7 @@ def normalise(model):
     ma.stochastify_d(model.frac)
 
 
-def valid_shapes(model) -> bool:
+def valid_shapes(model: SynapseMemoryModel) -> bool:
     """Do attributes (plast, weight, frac) have correct shapes?"""
     vld = model.plast.shape[-2] == model.plast.shape[-1]
     vld &= len(model.plast) == len(model.frac)
@@ -443,8 +462,16 @@ def valid_shapes(model) -> bool:
     return vld
 
 
-def valid_values(model) -> bool:
+def valid_values(model: SynapseMemoryModel) -> bool:
     """Do attributes (plast, frac) have valid values?"""
     vld = ma.isstochastic_c(model.plast, model.StochThresh)
     vld &= ma.isstochastic_d(model.frac, model.StochThresh)
+    return vld
+
+
+def well_behaved(model: SynapseMemoryModel,
+                 rate: Optional[float] = None) -> bool:
+    """Do attributes plast have finite values, and is Zinv well conditioned?"""
+    vld = np.isfinite(model.plast)
+    vld &= model.rcond(rate, rate_max=True) > model.RCondThresh
     return vld

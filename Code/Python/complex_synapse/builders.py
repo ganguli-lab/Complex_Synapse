@@ -30,11 +30,12 @@ build_multistate(nst, q)
 """
 
 from typing import Dict
+
 import numpy as np
+
 import numpy_linalg as la
 from sl_py_tools.numpy_tricks import markov as ma
 from sl_py_tools.numpy_tricks import markov_param as mp
-
 
 RNG = la.random.default_rng()
 
@@ -61,7 +62,7 @@ def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
         vector of synaptic weights
     """
     weight = la.ones(nst // 2)
-    return la.hstack((-weight, weight))
+    return np.hstack((-weight, weight))
 
 
 def linear_weights(nst: int) -> la.lnarray:  # linear synaptic weights
@@ -97,12 +98,12 @@ def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     mat : la.lnarray
         transition matrix
     """
-    mat = la.stack((mp.uni_serial_params_to_mat([jmp, 0], nst),
-                    mp.uni_serial_params_to_mat([0, jmp], nst)))
+    mat = np.stack((mp.uni_serial_params_to_mat([jmp], nst, drn=1),
+                    mp.uni_serial_params_to_mat([jmp], nst, drn=-1)))
     return mat
 
 
-def rand_trans(nst, drns=(0, 0), **kwds):
+def rand_trans(nst: int, drns=(0, 0), **kwds):
     """
     Make a random transition matrix (continuous time).
 
@@ -119,10 +120,10 @@ def rand_trans(nst, drns=(0, 0), **kwds):
         transition matrix
     """
     mats = []
-    npr = mp.num_param(drn=drns[0], **kwds)
+    npr = mp.num_param(nst, drn=drns[0], **kwds)
     for i in drns:
         mats.append(mp.params_to_mat(RNG.random(npr), drn=i, **kwds))
-    return la.stack(mats)
+    return np.stack(mats)
 
 
 def build_generic(func, nst: int, npl: int = 2,

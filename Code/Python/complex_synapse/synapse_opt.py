@@ -5,14 +5,19 @@ Created on Mon Sep 18 16:06:34 2017
 @author: Subhy
 """
 from __future__ import annotations
+
 from numbers import Number
-from typing import Tuple, Optional, Union, Dict, ClassVar
+from typing import ClassVar, Dict, Optional, Tuple, Union
+
 import numpy as np
+
 import numpy_linalg as la
 from sl_py_tools.numpy_tricks import markov_param as mp
+
 from . import builders as bld
-from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_base import SynapseBase as _SynapseBase
+from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
+from .synapse_memory_model import well_behaved
 
 wrap = la.wrappers.Wrappers(la.lnarray)
 eig = wrap.several(np.linalg.eig)
@@ -33,7 +38,7 @@ class SynapseOptModel(_SynapseMemoryModel):
 
     def __init__(self, *args, **kwds):
         super().__init__(*args, **kwds)
-        self._saved = (0, (), (), ())
+        self._saved = ((), (), (), ())
         self._unchanged = False
 
     @property
@@ -84,9 +89,6 @@ class SynapseOptModel(_SynapseMemoryModel):
         plast = np.split(params, len(self.directions))
         for i, drn in enumerate(self.directions):
             mp.mat_update_params(self.plast[i], plast[i], drn=drn, **self.type)
-        # mats = [mp.params_to_mat(plast[i], drn=d, **self.type)
-        #           for i, d in enumerate(self.directions)]
-        # self.plast = la.stack(mats)
         self._unchanged = False
 
     def _derivs(self, rate: Optional[Number] = None,
@@ -110,44 +112,24 @@ class SynapseOptModel(_SynapseMemoryModel):
             if inv: (Z,Zs,ZQZs)
             if not inv: (Z^{-1},Zs^{-1})
         """
-        if (all((self._unchanged, rate is None, self._saved[0] is None)) or
-            rate is not None and self._saved[0] is not None and
-            all((self._unchanged,
-                 len(self._saved[3]) == 2 + inv,
-                 np.isclose(rate, self._saved[0])))):
+        if self._unchanged and (rate, inv) == self._saved[0]:
             return self._saved[1:]
         self._unchanged = True
 
-        # if not np.isfinite(self.plast).all():
-        #     print('plast')
-
         fundi = self.zinv()
-        # if not np.isfinite(fundi).all():
-        #     print('fundi')
         peq = self.peq()
-        # if not np.isfinite(peq).all():
-        #     print('peq')
 
         if rate is None:
             c_s = peq @ self.enc() @ fundi.inv
-            # if not np.isfinite(c_s).all():
-            #     print('c_0')
             eta = fundi.inv @ self.weight
-            # if not np.isfinite(eta).all():
-            #     print('eta')
             theta = fundi.inv @ self.enc() @ eta
-            # if not np.isfinite(theta).all():
-            #     print('theta')
             if inv:
                 mats = (fundi.inv(),)
-                # if not np.isfinite(mats[0]).all():
-                #     print('fund')
             else:
                 mats = (fundi,)
-            self._saved = rate, (peq, c_s), (eta, theta), mats
+            self._saved = (rate, inv), (peq, c_s), (eta, theta), mats
             return self._saved[1:]
 
-        # print('rate not none')
         fundis = self.zinv(rate)
         c_s = peq @ self.enc() @ fundis.inv
 
@@ -160,7 +142,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         else:
             mats = (fundi, fundis)
 
-        self._saved = rate, (peq, c_s), (eta, theta), mats
+        self._saved = (rate, inv), (peq, c_s), (eta, theta), mats
         return self._saved[1:]
 
     def _calc_fab(self, time, qas, evs, peq_enc):
@@ -213,6 +195,31 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         return bld.scalarise(func), grad
 
+    def laplace_fun(self, rate: Number, inv: bool = False) -> float:
+        """Gradient of Laplace transform of SNR memory curve.
+
+        Parameters
+        ----------
+        rate : float, optional
+            Parameter of Laplace transform, ``s``.
+        inv : bool, default: False
+            Should we compute matrix inverses?
+
+        Returns
+        -------
+        func : float
+            Value of ``snr_laplace`` at ``s``.
+        """
+        if not well_behaved(self, rate):
+            return np.array(1.e10), bld.RNG.random(self.nparam)
+        # (p,c), (eta,theta)
+        rows, cols, mats = self._derivs(rate, inv)
+
+        func = - rows[1] @ self.weight
+        # afunc = -rows[0] @ self.enc() @ cols[0]
+
+        return bld.scalarise(func)
+
     def laplace_grad(self, rate: Number,
                      inv: bool = False) -> (float, la.lnarray):
         """Gradient of Laplace transform of SNR memory curve.
@@ -231,17 +238,12 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
-        if ((not np.isfinite(self.plast).all() or
-             self.rcond() < self.RCondThresh or
-             self.rcond(rate) < self.RCondThresh)):
+        if not well_behaved(self, rate):
             return np.array(1.e10), bld.RNG.random(self.nparam)
         # (p,c), (eta,theta)
         rows, cols, mats = self._derivs(rate, inv)
-        rcond = 1. / np.linalg.cond(mats[:2]).max()
-        if rcond < self.RCondThresh or not np.isfinite(self.plast).all():
-            func = np.array(1.e10)
-        else:
-            func = - rows[1] @ self.weight
+
+        func = - rows[1] @ self.weight
         # afunc = -rows[0] @ self.enc() @ cols[0]
 
         dadq = - _diagsub(rows[0].c * cols[0])
@@ -376,8 +378,6 @@ class SynapseOptModel(_SynapseMemoryModel):
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         rows, cols, mats = self._derivs(None, True)
         func = self.plast - rate * rows[0] + (1 + rate) * np.eye(self.nstates)
-        # func = la.r_[tuple(mp.mat_to_params(m, drn=d, **self.type)
-        #                    for m, d in zip(func, self.directions))]
         return func.flattish(-3)
 
     def peq_min_grad(self, rate: Number) -> la.lnarray:
@@ -471,24 +471,26 @@ class SynapseOptModel(_SynapseMemoryModel):
         binary : bool
             is the weight vector binary? Otherwise it's linear. Default: False
         ...
-            extra arguments passed to `cls.build` or `builders.build_empty`.
+            extra arguments passed to `cls.zero`.
 
         Returns
         -------
         synobj
             SynapseOpt instance
         """
-        mat_type = cls.type.copy()
-        del mat_type['uniform']
-        mat_type['drn'] = cls.directions[0]
         npl = kwds.pop('npl', len(cls.directions))
-        nst = mp.num_state(params.size // npl, **mat_type)
+        nst = kwds.pop('nst', None)
+        if nst is None:
+            mat_type = cls.type.copy()
+            del mat_type['uniform']
+            mat_type['drn'] = cls.directions[0]
+            nst = mp.num_state(params.size // npl, **mat_type)
         self = cls.zero(nst, *args, npl=npl, **kwds)
         self.set_params(params)
         return self
 
     @classmethod
-    def rand(cls, nst, *args, **kwds) -> SynapseOptModel:
+    def rand(cls, nst: Optional[int], *args, **kwds) -> SynapseOptModel:
         """Random model
 
         Synapse model with random transition matrices
@@ -497,9 +499,11 @@ class SynapseOptModel(_SynapseMemoryModel):
         ----------
             All passed to `cls.build`, `builders.build_rand`
             or `builders.rand_trans`:
-        nst: int
-            total number of states
-        npl: int
+        nst : int or None
+            total number of states. Use `npar` if `None`.
+        npar : int or None
+            total number of parameters. Use `nst` if `None` (default).
+        npl : int
             total number of plasticity types
         frac : float
             fraction of events that are potentiating, default=0.5.
@@ -508,21 +512,20 @@ class SynapseOptModel(_SynapseMemoryModel):
         sp : float
             sparsity, default: 1.
         ...
-            extra arguments passed to `cls.build`, `builders.build_rand`
-            or `Builder.rand_trans`.
+            extra arguments passed to `cls.from_params`.
+
+        One of 'nst/npar' must be provided
 
         Returns
         -------
         synobj
             SynapseOpt instance
         """
-        mat_type = cls.type.copy()
-        del mat_type['uniform']
-        npl = kwds.pop('npl', len(cls.directions))
-        npr = npl * mp.num_param(nst, drn=cls.directions[0], **cls.type)
-        self = cls.zero(nst, *args, npl=npl, **kwds)
-        self.set_params(bld.RNG.random(npr))
-        return self
+        npar = kwds.pop('npar', None)
+        if npar is None:
+            npl = kwds.get('npl', len(cls.directions))
+            npar = npl * mp.num_param(nst, drn=cls.directions[0], **cls.type)
+        return cls.from_params(bld.RNG.random(npar), *args, nst=nst, **kwds)
 
 
 # =============================================================================
