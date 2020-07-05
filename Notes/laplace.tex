@@ -142,7 +142,7 @@ The actual set of synaptic weights we see, $\syn(t)$, will be a vector of random
 As $t\to\infty$, the synaptic weights will become independent of the patter stored at $t=0$.
 Thus, the vector of random variables $\syn(\infty)$ also describes the synaptic weights under the null hypothesis -- if that given pattern had never been stored.
 
-We can test if the pattern had been previously stored by computing $\synid\cdt\syn$ and comparing it to some threshold.
+We can test if the pattern had been previously stored by computing $\synid\cdt\syn$ and comparing it to some threshold~\cite{Sommer1998retrieval}.
 For large $N$, this quantity will have a Gausssian distribution.
 There will be a ROC curve as a function of this threshold:
 %
@@ -198,8 +198,8 @@ It will be convenient to call these two values $\pm1$.
 As discussed in \autoref{sec:recog}, the signal-to-noise ratio is given by
 %
 \begin{equation}\label{eq:SNRdef}
-  \snr(t) = \frac{\av{\syn_\text{ideal}\cdt\syn(t)} - \av{\syn_\text{ideal}\cdt\syn(\infty)}}
-     {\sqrt{\var(\syn_\text{ideal}\cdt\syn(\infty))}},
+  \snr(t) = \frac{\av{\synid\cdt\syn(t)} - \av{\synid\cdt\syn(\infty)}}
+     {\sqrt{\var(\synid\cdt\syn(\infty))}},
 \end{equation}
 %
 Where the averages and variances are over the probability distribution of the synaptic states given the sequence of plasticity events, the probability distribution of the sequence of plasticity events themselves and the probability distribution of the pattern we are testing, $\synid$.
@@ -240,19 +240,19 @@ First, let's look at the variances, remembering that the states and plasticity e
 \end{equation}
 %
 where we used $\syn^\alpha=\pm1$.
-We can compute $\var(\syn_\text{ideal}\cdt\syn(\infty))$ by taking $t\to\infty$.
+We can compute $\var(\synid\cdt\syn(\infty))$ by taking $t\to\infty$.
 
 For the numerator, we can write
 %
 \begin{equation}\label{eq:overlapex}
-  \av{\syn_\text{ideal}\cdt\syn(t)} = \sum_\alpha\av{\syn^\alpha_\text{ideal}\syn^\alpha(t)}
-   = N \av{\syn^1_\text{ideal}\syn^1(t)},
+  \av{\synid\cdt\syn(t)} = \sum_\alpha\av{\synid^\alpha\syn^\alpha(t)}
+   = N \av{\synid^1\syn^1(t)},
 \end{equation}
 %
 If the elements of $\synid$ take values $\pm1$ with probability $f\potdep$,
 %
 \begin{equation}\label{eq:overlapone}
-  \av{\syn^1_\text{ideal}\syn^1(t)} = f\pot \av{\syn^1(t)}_{\text{pot},t=0} - f\dep \av{\syn^1(t)}_{\text{dep},t=0}
+  \av{\synid^1\syn^1(t)} = f\pot \av{\syn^1(t)}_{\text{pot},t=0} - f\dep \av{\syn^1(t)}_{\text{dep},t=0}
 \end{equation}
 %
 To compute this quantity, we will need to discuss how we model individual synapses.
@@ -267,24 +267,38 @@ The synaptic weight depends deterministically on the state, given by the $M$-ele
 We denote the probability distribution across these states by the row vector $\pr(t)$.
 We denote a column vector of ones by $\onev$, so the normalisation condition is $\pr(t)\onev=1$.
 
-When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices $\M\potdep$ whose $i,j$ elements are the transition probabilities from state $i$ to state $j$.
-The matrices $\M\potdep$ are transition matrices of discrete time Markov processes.
+When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices $\M^\mu$ whose $i,j$ elements are the transition probabilities from state $i$ to state $j$, 
+and \(\mu\) labels the diffrerent types of plasticity event.
+Potentiating events have \(\mu=\)pot, depressing events have \(\mu=\)dep.
+We also use the notation
+%
+\begin{equation*}
+  (-1)^\mu = 
+    \begin{cases}
+       1, & \mu = \text{pot}, \\
+      -1, & \mu = \text{dep}.
+    \end{cases}
+\end{equation*}
+%
+The matrices $\M^\mu$ are transition matrices of discrete time Markov processes.
 Their elements must satisfy the following constraints
 %
 \begin{equation}\label{eq:constr}
-\begin{aligned}
-  \M\potdep_{ij} &\geq 0, &\qquad
-  \sum_j \M\potdep_{ij} &= 1.
-\end{aligned}
+  \M^\mu_{ij} \geq 0 
+    \quad \forall \; \mu, i, j, \qquad
+  \sum_j \M^\mu_{ij} = 1
+    \quad \forall \; \mu, i.
 \end{equation}
 %
-The upper bounds $\M\potdep_{ij} \leq 1$ follow automatically from these.
+The upper bounds $\M^\mu_{ij} \leq 1$ follow automatically from these.
 
 If we treat the off diagonal elements as the independent degrees of freedom, with the off diagonal elements determined by the row sum constraints (second column of \eqref{eq:constr}), the constraints are
 %
 \begin{equation}\label{eq:constri}
-  \M\potdep_{i \neq j} \geq 0, \qquad
-  \sum_{j\neq i} \M\potdep_{ij} \leq 1.
+  \M^\mu_{i j} \geq 0
+    \quad \forall \; \mu, i, j : i \neq j, \qquad
+  \sum_{j : j\neq i} \M^\mu_{ij} \leq 1
+    \quad \forall \; \mu, i.
 \end{equation}
 %
 The second of these will be referred to as the ``diagonal'' constraint.
@@ -295,7 +309,7 @@ Given a sequence of plasticity events at times $t_1,t_2,t_3,\ldots$, the probabi
   \pr(t_n) = \pr(t_0)  \M\pot \M\dep \M\dep \M\pot \M\dep \M\pot \M\pot \M\dep \ldots \M\pot .
 \end{equation}
 %
-If the probability of a given plasticity event being potentiating/depressing is $f\potdep$, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
+If the probability of a given plasticity event being potentiating/depressing is $f^\mu$, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
 
 In computing the expectation in \eqref{eq:overlapone} the plasticity event that occurs at $t=0$ is fixed, but all of the previous and subsequent events are marginalised over.
 If we marginalise over the types (potentiating/depressing) of these other events (conditioned on the number of events) we find
@@ -332,7 +346,8 @@ where $\eq$ is the steady state distribution of the continuous time transition m
 \begin{equation}\label{eq:eq}
   \eq\frg = 0,
   \qquad\text{where}\quad
-  \frg = f\pot\M\pot + f\dep\M\dep - \I.
+  \frg = \sum_\alpha f^\mu \M^\mu - \I
+    = f\pot\M\pot + f\dep\M\dep - \I.
 \end{equation}
 %
 
@@ -342,8 +357,8 @@ This results in
 %
 \begin{equation}\label{eq:overlapwt}
 \begin{aligned}
-  \av{\syn^1_\text{ideal}\syn^1(t)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \e^{rt\frg} \w, \\
-  \av{\syn^1_\text{ideal}\syn^1(\infty)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \onev\eq \w \\
+  \av{\synid^1 \syn^1(t)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \e^{rt\frg} \w, \\
+  \av{\synid^1 \syn^1(\infty)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \onev\eq \w \\
          &= \eq (f\pot\onev-f\dep\onev)\, \eq \w \\
          &=  (f\pot-f\dep)\, \eq \w \\
          &=  (f\pot-f\dep)\, \eq \e^{rt\frg} \w .
@@ -354,10 +369,11 @@ Combining these allows us to write the numerator of \eqref{eq:SNRdef} as
 %
 \begin{equation}\label{eq:signal}
 \begin{aligned}
-  \av{\syn_\text{ideal}\cdt\syn(t)} - \av{\syn_\text{ideal}\cdt\syn(\infty)}
-    &= N \eq \enc \, \e^{(r\frg+\hom)t} \w , \\
+  \av{\synid \cdt \syn(t)} - \av{\synid \cdt \syn(\infty)}
+    &= N \eq \enc \, \e^{rt \frg} \w , \\
     \text{where} \qquad
-  \enc &= f\pot(\M\pot-\I)-f\dep(\M\dep-\I)
+  \enc &= \sum_\mu (-1)^\mu f^\mu (\M^\mu - \I)
+    = f\pot(\M\pot-\I)-f\dep(\M\dep-\I)
 \end{aligned}
 \end{equation}
 %
@@ -368,25 +384,6 @@ Combining with \eqref{eq:noise} gives
                  {\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
 \end{equation}
 %
-%We can absorb $\hom$ into $\M\potdep$ by defining
-%%
-%\begin{equation}\label{eq:absorbhom}
-%\begin{aligned}
-%  \Mh\potdep &= \M\potdep + \frac{\hom}{2rf\potdep},
-%  &\qquad
-%  \frgh &= f\pot\Mh\pot + f\dep\Mh\dep - \I,
-%  \\&&
-%  \ench &= f\pot(\Mh\pot-\I)-f\dep(\Mh\dep-\I).
-%\end{aligned}
-%\end{equation}
-%%
-%Then the SNR curve is
-%%
-%\begin{equation}\label{eq:SNRcurvehom}
-%  \SNR(t) = \frac{\sqrt{N}  \eq \enc \,\e^{rt\frg}\w}
-%                 {\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
-%\end{equation}
-%%
 The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with $f\pot=f\dep$ or $\eq_+=\eq_-$.
 We can perform the maximisation in two steps.
 First maximise the numerator at fixed $\eq\w$.
@@ -395,14 +392,13 @@ This will allow us to ignore the denominator until the very end.
 
 
 
-We can then treat the off-diagonal elements of $\M\potdep$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
+We can then treat the off-diagonal elements of $\M^\nu$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
 The diagonal elements are determined by setting the row sums to 1.
 We then have
 %
 \begin{equation}\label{eq:derivpd}
-  \pdiff{\M\pot_{ij}}{\M\pot_{mn}} = \pdiff{\M\dep_{ij}}{\M\dep_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
-  \qquad
-  \pdiff{\M\pot_{ij}}{\M\dep_{mn}} = \pdiff{\M\dep_{ij}}{\M\pot_{mn}} = 0.
+  \pdiff{\M^\mu_{ij}}{\M^\nu_{mn}} 
+      = \delta_{\mu\nu}\, \delta_{im}(\delta_{jn}-\delta_{jm}),
 \end{equation}
 %
 It will also be convenient to define the differential operators
@@ -427,7 +423,7 @@ If we wish to use the off-diagonal elements of $\frg$ and $\enc$ as the degrees 
 \begin{equation}\label{eq:constrfe}
 \begin{aligned}
   \frg_{i \neq j}   &\geq \abs{ \enc_{i \neq j} }, &\qquad
-  \sum_{j\neq i}\frg_{ij} \pm \abs{ \enc_{ij} } &\leq f\potdep, \\
+  \sum_{j\neq i}\frg_{ij} + (-1)^\mu \enc_{ij}  &\leq f^\mu, \\
   \sum_j \frg_{ij} &=0, &
   \sum_j \enc_{ij} &=0.
 \end{aligned}
@@ -564,12 +560,11 @@ In analogy with the case $s=0$, we define
 Using the same approach as the area bound in \cite{Lahiri2013synapse} we find that the derivatives are
 %
 \begin{equation}\label{eq:lAdiff}
-  \pdiff{\hat{A}(s)}{\M\potdep_{mn}}
-     = f\potdep \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
-     +\prn{rc_m(s) \pm 1} \brk{\etw_m(s) - \etw_n(s)} },
+  \pdiff{\hat{A}(s)}{\M^\mu_{mn}}
+     = f^\mu \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
+     +\prn{rc_m(s) + (-1)^\mu} \brk{\etw_m(s) - \etw_n(s)} }.
 \end{equation}
 %
-with the upper/lower sign in $\pm$ corresponding to derivatives \wrt $\M\potdep$.
 The term with $\Theta(s)$ comes from differentiating $\eq$, the term with $c(s)$ comes from differentiating $\etw(s)$ and the term with $\pm1$ comes from differentiating $\enc$ in \eqref{eq:larea}.
 
 To write down the Hessian, we will first define some notation.
@@ -594,16 +589,8 @@ Then we denote
 Then we can write the Hessian as
 %
 \begin{equation}\label{eq:hessian}
-\begin{aligned}
-  \pdiff{^2\hat{A}(s)}{\M\pot_{ij} \partial\M\pot_{kl}} &=
-     (f\pot)^2   [R + R\trans + S + S\trans]_{ijkl}, \\
-  \pdiff{^2\hat{A}(s)}{\M\pot_{ij} \partial\M\dep_{kl}} &=
-     f\pot f\dep [R + R\trans - S + S\trans]_{ijkl}, \\
-  \pdiff{^2\hat{A}(s)}{\M\dep_{ij} \partial\M\pot_{kl}} &=
-     f\pot f\dep [R + R\trans + S - S\trans]_{ijkl}, \\
-  \pdiff{^2\hat{A}(s)}{\M\dep_{ij} \partial\M\dep_{kl}} &=
-     (f\dep)^2   [R + R\trans - S - S\trans]_{ijkl}, \\
-\end{aligned}
+  \pdiff{^2\hat{A}(s)}{\M^\mu_{ij} \partial\M^\nu_{kl}} =
+     f^\mu f^\nu [R + R\trans + (-1)^\nu S + (-1)^\mu S\trans]_{ijkl}.
 \end{equation}
 %
 This is useful in numerical maximisation.
@@ -734,7 +721,8 @@ This envelope is shown in \autoref{fig:envproven}.
   \centering
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.8\linewidth]{LenvProven.eps}
-  \caption[Proven envelope]{The memory curve envelope that we can prove, \eqref{eq:env}.
+  \caption[Proven envelope for the signal-to-noise ratio]
+  {The memory curve envelope that we can prove, \eqref{eq:env}.
   The number of synapses $N=10^4$ and the number of states $M=12$.
   The dashed lines indicate the initial SNR bound, \eqref{eq:initbnd}, and the area bound, \eqref{eq:areabnd}, from \cite{Lahiri2013synapse}.}\label{fig:envproven}
 \end{figure}
@@ -752,7 +740,7 @@ Consider the Lagrangian
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\etw_i(s) - \etw_j(s))
-        +\sum_{i j} \prn{ f\pot\mu\pot_{ij} \M\pot_{ij} + f\dep\mu\dep_{ij} \M\dep_{ij} }\\
+        +\sum_{\nu i j} \prn{ f^\nu \mu^\nu_{ij} \M\pot_{ij} }
         &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i\w_i },
 \end{aligned}
 \end{equation}
@@ -762,10 +750,10 @@ After maximising
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTfinite}
-  \pdiff{\CL}{\M\potdep_{ij}} = 0, \quad
-  \mu\potdep_{ij} \geq 0, \quad
-  \pdiff{\CL}{\mu\potdep_{ij}} \geq 0, \quad
-  \mu\potdep_{ij}\pdiff{\CL}{\mu\potdep_{ij}} = 0, \quad
+  \pdiff{\CL}{\M^\nu_{ij}} = 0, \quad
+  \mu^\nu_{ij} \geq 0, \quad
+  \pdiff{\CL}{\mu^\nu_{ij}} \geq 0, \quad
+  \mu^\nu_{ij}\pdiff{\CL}{\mu^\nu_{ij}} = 0, \quad
   \pdiff{\CL}{\lambda} = 0.
 \end{equation}
 %
@@ -773,10 +761,10 @@ The derivatives, for $m \neq n$ are
 %
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
-  \frac{1}{f\potdep} \pdiff{\CL}{\Mh\potdep_{mn}} =& \,
+  \frac{1}{f^\nu} \pdiff{\CL}{\Mh^\nu_{mn}} = & \,
       \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
-     +\prn{rc_m(s) \pm 1} \brk{\etw_m(s) - \etw_n(s)} } \\
-     &+ \mu\potdep_{mn} -  \mu\potdep_{mm}
+     +\prn{rc_m(s) + (-1)^\nu} \brk{\etw_m(s) - \etw_n(s)} } \\
+     &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
      + \lambda \eq_m \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) \eq_i\w_i.
 \end{aligned}
 \end{equation}
@@ -793,7 +781,7 @@ Define the scale transformation:
 The Laplace transform has the following scaling property
 %
 \begin{equation}\label{eqlaplacescale}
-  A(\lambda s;\lambda * \M\potdep) = A(s;\M\potdep).
+  A(\lambda s;\lambda * \M^\nu) = A(s;\M^\nu).
 \end{equation}
 %
 At $s=0$, it is scale invariant.
@@ -805,14 +793,16 @@ However, we do have numerical evidence that the model that maximises the Laplace
 In \autoref{fig:envnum} we see the result of numerical maximisation of \eqref{eq:finitelagrangian}.
 We see that restricting to the serial topology does not make the performance any worse.
 In fact, it slightly improves the performance, but this can be ascribed to the numerical optimisation problem being easier.
-Assuming that the optimiser did find the global maximum, this provides evidence for our conjecture  that the model that maximises the Laplace transform must have the serial topology.
+Assuming that the optimiser did find the global maximum, this provides evidence for our conjecture that the model that maximises the Laplace transform must have the serial topology.
 
 
 \begin{figure}[tb]
   \centering
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.8\linewidth]{LenvNum.eps}\\
-  \caption[Numerical envelope]{Numerical envelope for the memory curve, \eqref{eq:snrb}, when $f\potdep=\frac{1}{2}$, the number of synapses $N=10^4$ and the number of states $M=12$.
+  \includegraphics[width=0.8\linewidth]{LenvNum.svg}\\
+  \caption[Numerical envelope for the signal-to-noise ratio]
+  {Numerical envelope for the signal-to-noise ratio, \eqref{eq:snrb}. 
+  \Cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} are solved numericallly with $f\potdep=\frac{1}{2}$, the number of synapses $N=10^4$ and the number of states $M=12$.
   The dashed red line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
   The solid red line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
   The solid grren line indicates the proven envelope, \eqref{eq:env}.}\label{fig:envnum}
@@ -950,13 +940,14 @@ The first of these equations is solved by
 \begin{equation}\label{eq:detagensol}
   \delta\eta_i = B\e^{\beta(i-1)} + C\e^{\beta(1-i)},
   \qquad\text{where}\qquad
-  s = S(\beta) \equiv 2 \sinh^2 \prn{\frac{\beta}{2}},
+  s = S(\beta) \equiv 2 \sinh^2 \prn{\frac{\beta}{2}}
+    = \cosh (m\beta) - 1,
 \end{equation}
 %
 with $B$ and $C$ determined by the boundary conditions provided by the last two equations of \eqref{eq:detahalf}:
 %
 \begin{equation}\label{eq:unicoeffs}
-  B = -\frac{1}{s(\e^{-\beta} + 1) \cosh \prn{m \beta}},
+  B = -\frac{1}{s(1 + \e^{-\beta}) \cosh \prn{m \beta}},
   \qquad
   C = -\frac{1}{s(\e^{\beta} + 1) \cosh \prn{m \beta}}.
 \end{equation}
@@ -964,7 +955,7 @@ with $B$ and $C$ determined by the boundary conditions provided by the last two 
 This can be used to compute the Laplace transform
 %
 \begin{equation}\label{eq:unilaplace}
-  A(s) = \frac{2\etw_1(s)}{2m}
+  A(s) = \frac{\etw_1(s)}{m}
    = \frac{1}{m}\prn{\frac{1}{s}+B+C}
    = \frac{2\sinh^2\prn{\frac{m \beta}{2}}}{m s \cosh\prn{m \beta}}
    = \frac{2 S\prn{m \beta}}{M s \prn{S\prn{m \beta} + 1}}.
@@ -1112,7 +1103,8 @@ The results are plotted in \cref{fig:shorten}.
   \item\label{fig:short_ratio}\aligntop{%
     \includegraphics[width=0.45\linewidth]{shorten_ratio.pdf}}
 \end{myenuma}
-\caption{Signal-to-noise ratio for optimal shortened models, \cref{eq:shortenenc} optimised over \(\varepsilon\).
+\caption[Signal-to-noise ratio for optimal shortened models]
+{Signal-to-noise ratio for optimal shortened models, \cref{eq:shortenenc} optimised over \(\varepsilon\).
 (\ref{fig:short_opt}): Solid grey line is \cref{eq:unienv}, the uniform model with \(M\) treated as a continuous parameter and optimised.
 Dotted grey line is the approximate expression from \cref{eq:unienvapprox}.
 The other curves are from \cref{eq:shortopt}, optimised shortened models for various values of \(M\).
@@ -1226,7 +1218,8 @@ which leads to the Laplace transform
 \begin{figure}[ht]
 \begin{center}
   \includegraphics[width=0.4\linewidth]{sticky_opt.pdf}
-\caption{Signal-to-noise ratio for optimal sticky models, \cref{eq:stickyenc} optimised over \(\varepsilon\) for \(M=10\), in blue.
+\caption[Signal-to-noise ratio for optimal sticky models]
+{Signal-to-noise ratio for optimal sticky models, \cref{eq:stickyenc} optimised over \(\varepsilon\) for \(M=10\), in blue.
   The orange line is the SNR for the optimised shortened models, \cref{eq:shortenenc} with \(M=10\).
   The grey line is our theoretical envelope from \cref{eq:env}.
   \label{fig:sticky}}
@@ -1260,7 +1253,7 @@ The minimum is at the solution of
 %
 The result is plotted in \cref{fig:sticky}.
 
-We can find the boundary of the region of applicability by seeing at what value of $s$ is the optimal value of $\varepsilon=0$:
+We can find the boundary of the region of applicability by asking: at what value of $s$ is the optimal value of $\varepsilon=0$?
 %
 \begin{equation}\label{eq:stickyvalid}
 \begin{aligned}
@@ -1322,7 +1315,7 @@ Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylapl
 %
 For $M \gg 1$, and $r\tau$ much greater than the lower bound of each region, we can approximate this as
 %
-\begin{equation}\label{eq:henvapproc}
+\begin{equation}\label{eq:henvapprox}
   \snrb(\tau) \approx \left\{
 \begin{aligned}
   & \frac{\sqrt{N}}{1+r\tau}, &
@@ -1343,8 +1336,9 @@ This is plotted in \autoref{fig:heuristicenv}.
   \centering
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.8\linewidth]{LenvHeuristic.svg}\\
-  \caption[Heuristic envelope]{Heuristic envelope.
-  Analytic expressions are only valid to the right of each region.}\label{fig:heuristicenv}
+  \caption[Heuristic envelope for the signal-to-noise ratio]
+  {Heuristic envelope  for the signal-to-noise ratio, \cref{eq:henv}.
+  Analytic expressions from \cref{eq:henvapprox} are only valid to the right of each region.}\label{fig:heuristicenv}
 \end{figure}
 
 
