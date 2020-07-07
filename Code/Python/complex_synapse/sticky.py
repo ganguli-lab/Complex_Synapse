@@ -1,6 +1,3 @@
-# To add a new cell, type '# %%'
-# To add a new markdown cell, type '# %% [markdown]'
-# -------------------------------------
 """Properties of optimal shortened models
 """
 from typing import Tuple

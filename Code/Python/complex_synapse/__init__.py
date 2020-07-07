@@ -8,6 +8,4 @@ from . import builders
 from .synapse_memory_model import SynapseMemoryModel
 from .synapse_opt import SynapseOptModel
 from . import optimise
-from .optimise import make_loss_function, make_laplace_problem
-assert any((builders, SynapseMemoryModel, SynapseOptModel))
-assert any((make_loss_function, make_laplace_problem, optimise))
+assert any((True, builders, SynapseMemoryModel, SynapseOptModel, optimise))

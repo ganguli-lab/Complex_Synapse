@@ -83,7 +83,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         return cvl.conv_out_attr(self, 'plast', results, outputs, conv)
 
     # -------------------------------------------------------------------------
-    # %%* Housekeeping
+    # Housekeeping
     # -------------------------------------------------------------------------
 
     def fix(self):
@@ -105,7 +105,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         return f"{type(self).__name__} with M={self.nstates}, fpm={self.frac}"
 
     # -------------------------------------------------------------------------
-    # %%* Utility methods
+    # Utility methods
     # -------------------------------------------------------------------------
 
     def view(self, typ):
@@ -141,7 +141,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         return self.plast.shape[-1]
 
     # -------------------------------------------------------------------------
-    # %%* Factory methods
+    # Factory methods
     # -------------------------------------------------------------------------
 
     @classmethod

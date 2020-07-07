@@ -4,8 +4,6 @@ Created on Fri Jun 23 18:22:05 2017
 
 @author: Subhy
 """
-
-
 from typing import ClassVar, Dict, Optional, Union
 
 import numpy as np
@@ -16,7 +14,6 @@ from sl_py_tools.numpy_tricks import markov as ma
 from .builders import scalarise
 from .synapse_base import ArrayLike, SynapseBase
 
-wrap = la.wrappers.Wrappers(la.lnarray)
 Order = Union[int, float, str, None]
 
 
@@ -89,7 +86,7 @@ class SynapseMemoryModel(SynapseBase):
         super().__init__(plast, frac)
 
     # -------------------------------------------------------------------------
-    # %%* Housekeeping
+    # Housekeeping
     # -------------------------------------------------------------------------
 
     def dict_copy(self, keys=(), order='C', **kwds) -> Dict[str, la.lnarray]:
@@ -120,7 +117,7 @@ class SynapseMemoryModel(SynapseBase):
         return rpr
 
     # -------------------------------------------------------------------------
-    # %%* Markov quantities
+    # Markov quantities
     # -------------------------------------------------------------------------
 
     def markov(self) -> la.lnarray:
@@ -366,7 +363,7 @@ class SynapseMemoryModel(SynapseBase):
         return eta - eta.t
 
     # -------------------------------------------------------------------------
-    # %%* Memory curves
+    # Memory curves
     # -------------------------------------------------------------------------
 
     def spectrum(self) -> (la.lnarray, la.lnarray):
@@ -379,8 +376,7 @@ class SynapseMemoryModel(SynapseBase):
         inita : la.lnarray
             Initial SNR from eigenmodes.
         """
-        eig = wrap.several(np.linalg.eig)
-        qas, evs = eig(-self.markov())
+        qas, evs = np.linalg.eig(-self.markov())
         mask = la.ones_like(qas, dtype=bool).put(qas.real.argmin(), False)
         taua = 1. / qas[mask]
         inita = self.peq() @ self.enc() @ evs[:, mask]
@@ -432,15 +428,16 @@ class SynapseMemoryModel(SynapseBase):
         """
         return scalarise(self.peq() @ self.enc() @ self.weight)
 
-    def sign_fix(self):
-        """Swap plasticity matrices if snr is negative"""
-        if self.snr_init() < 0:
-            self.plast = self.plast[::-1]
-
 
 # =============================================================================
-# %%* Helper functions
+# Helper functions
 # =============================================================================
+
+
+def sign_fix(model: SynapseMemoryModel):
+    """Swap plasticity matrices if snr is negative"""
+    if model.snr_init() < 0:
+        model.plast = model.plast[::-1]
 
 
 def normalise(model: SynapseMemoryModel):

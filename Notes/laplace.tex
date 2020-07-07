@@ -54,6 +54,7 @@
 \newcommand{\Pb}{\mathbf{P}}
 \newcommand{\D}{\mathbf{D}}
 \newcommand{\pib}{\boldsymbol{\pi}}
+\newcommand{\arow}{\boldsymbol{\xi}}
 \newcommand{\Lb}{\boldsymbol{\Lambda}}
 \newcommand{\etw}{\boldsymbol{\eta}^w}
 \newcommand{\thb}{\boldsymbol{\theta}}
@@ -265,51 +266,52 @@ To compute this quantity, we will need to discuss how we model individual synaps
 We model a synapse as having $M$ internal states.
 The synaptic weight depends deterministically on the state, given by the $M$-element column vector $\w$.
 We denote the probability distribution across these states by the row vector $\pr(t)$.
-We denote a column vector of ones by $\onev$, so the normalisation condition is $\pr(t)\onev=1$.
+We denote a column vector of ones by $\onev$, so the normalisation condition is $\pr(t) \, \onev=1$.
 
-When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices $\M^\mu$ whose $i,j$ elements are the transition probabilities from state $i$ to state $j$, 
-and \(\mu\) labels the diffrerent types of plasticity event.
-Potentiating events have \(\mu=\)pot, depressing events have \(\mu=\)dep.
+When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices $\M^xn  $ whose $i,j$ elements are the transition probabilities from state $i$ to state $j$, 
+and \(\nu \) labels the diffrerent types of plasticity event.
+Potentiating events have \(\nu=\)pot, depressing events have \(\nu=\)dep.
 We also use the notation
 %
 \begin{equation*}
-  (-1)^\mu = 
+  (-1)^\nu = 
     \begin{cases}
-       1, & \mu = \text{pot}, \\
-      -1, & \mu = \text{dep}.
+       1, & \nu = \text{pot}, \\
+      -1, & \nu = \text{dep}.
     \end{cases}
 \end{equation*}
 %
-The matrices $\M^\mu$ are transition matrices of discrete time Markov processes.
+The matrices $\M^\nu$ are transition matrices of discrete time Markov processes.
 Their elements must satisfy the following constraints
 %
 \begin{equation}\label{eq:constr}
-  \M^\mu_{ij} \geq 0 
-    \quad \forall \; \mu, i, j, \qquad
-  \sum_j \M^\mu_{ij} = 1
-    \quad \forall \; \mu, i.
+  \M^\nu_{ij} \geq 0 
+    \quad \forall \; \nu, i, j, \qquad
+  \sum_j \M^\nu_{ij} = 1
+    \quad \forall \; \nu, i.
 \end{equation}
 %
-The upper bounds $\M^\mu_{ij} \leq 1$ follow automatically from these.
+The upper bounds $\M^\nu_{ij} \leq 1$ follow automatically from these.
 
 If we treat the off diagonal elements as the independent degrees of freedom, with the off diagonal elements determined by the row sum constraints (second column of \eqref{eq:constr}), the constraints are
 %
 \begin{equation}\label{eq:constri}
-  \M^\mu_{i j} \geq 0
-    \quad \forall \; \mu, i, j : i \neq j, \qquad
-  \sum_{j : j\neq i} \M^\mu_{ij} \leq 1
-    \quad \forall \; \mu, i.
+  \M^\nu_{i j} \geq 0
+    \quad \forall \; \nu, i, j : i \neq j, \qquad
+  \sum_{j : j\neq i} \M^\nu_{ij} \leq 1
+    \quad \forall \; \nu, i.
 \end{equation}
 %
 The second of these will be referred to as the ``diagonal'' constraint.
 
-Given a sequence of plasticity events at times $t_1,t_2,t_3,\ldots$, the probability distribution across the internal states at time $t_n$ is
+Given a sequence of plasticity events at times $t_1,t_2,t_3,\ldots$, the probability distribution across the internal states at time $t_n$, 
+mariginalising over states at earlier times, is
 %
 \begin{equation}\label{eq:plastseq}
   \pr(t_n) = \pr(t_0)  \M\pot \M\dep \M\dep \M\pot \M\dep \M\pot \M\pot \M\dep \ldots \M\pot .
 \end{equation}
 %
-If the probability of a given plasticity event being potentiating/depressing is $f^\mu$, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
+If the probability of a given plasticity event being potentiating/depressing is $f\potdep$, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
 
 In computing the expectation in \eqref{eq:overlapone} the plasticity event that occurs at $t=0$ is fixed, but all of the previous and subsequent events are marginalised over.
 If we marginalise over the types (potentiating/depressing) of these other events (conditioned on the number of events) we find
@@ -346,7 +348,7 @@ where $\eq$ is the steady state distribution of the continuous time transition m
 \begin{equation}\label{eq:eq}
   \eq\frg = 0,
   \qquad\text{where}\quad
-  \frg = \sum_\alpha f^\mu \M^\mu - \I
+  \frg = \sum_\nu f^\nu \M^\nu - \I
     = f\pot\M\pot + f\dep\M\dep - \I.
 \end{equation}
 %
@@ -372,7 +374,7 @@ Combining these allows us to write the numerator of \eqref{eq:SNRdef} as
   \av{\synid \cdt \syn(t)} - \av{\synid \cdt \syn(\infty)}
     &= N \eq \enc \, \e^{rt \frg} \w , \\
     \text{where} \qquad
-  \enc &= \sum_\mu (-1)^\mu f^\mu (\M^\mu - \I)
+  \enc &= \sum_\nu (-1)^\nu f^\nu (\M^\nu - \I)
     = f\pot(\M\pot-\I)-f\dep(\M\dep-\I)
 \end{aligned}
 \end{equation}
@@ -389,7 +391,6 @@ We can perform the maximisation in two steps.
 First maximise the numerator at fixed $\eq\w$.
 Then maximise the ratio \wrt $\eq\w$.
 This will allow us to ignore the denominator until the very end.
-
 
 
 We can then treat the off-diagonal elements of $\M^\nu$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
@@ -440,10 +441,10 @@ If we wish to use the off-diagonal elements of $\frg$ and $\enc$ as the degrees 
 In analogy to the generalised fundamental matrix of a Markov chain \cite{Kemeny1981fund}, define
 %
 \begin{equation}\label{eq:lfund}
-  \fund(s) = (s\I +\onev\pib -\MM)\inv,
+  \fund(s) = (s \I + \onev \arow -\MM)\inv,
 \end{equation}
 %
-where $\pib$ is an arbitrary row vector satisfying $\pib\onev = \frac{1}{\tau_0} \neq 0$.
+where $\arow$ is an arbitrary row vector satisfying $\arow \onev = \frac{1}{\tau_0} \neq 0$.
 This reduces to the fundamental matrix at $s=0$.
 We can see that $\onev$ is an eigenvector:
 %
@@ -452,10 +453,10 @@ We can see that $\onev$ is an eigenvector:
 \end{equation}
 %
 Suppose we have some row vector $\mathbf{a}$ such that $\mathbf{a}\onev=0$.
-Then $\mathbf{a}\fund(s)$ is independent of $\pib$:
+Then $\mathbf{a}\fund(s)$ is independent of $\arow$:
 %
 \begin{equation}\label{eq:alfund}
-  \pdiff{(\mathbf{a}\fund(s))_i}{\pib_k} = -(\mathbf{a}\fund(s)\onev) \fund_{ki}(s)
+  \pdiff{(\mathbf{a}\fund(s))_i}{\arow_k} = -(\mathbf{a}\fund(s)\onev) \fund_{ki}(s)
       = -\frac{\tau_0}{1+s\tau_0} (\mathbf{a}\onev) \fund_{ki}(s) = 0.
 \end{equation}
 %
@@ -463,7 +464,7 @@ Then $\mathbf{a}\fund(s)$ is independent of $\pib$:
 Then we also define
 %
 \begin{equation}\label{eq:lfptb}
-  \fptb(s) = (\onem\fund\dg(s)-\fund(s))\D,
+  \fptb(s) = (\onem \fund\dg(s)-\fund(s))\D,
   \qquad
   \fptb_{ij}(s) = \frac{\fund_{jj}(s)-\fund_{ij}(s)}{\eq_j}.
 \end{equation}
@@ -477,10 +478,11 @@ Using the exact same proof as in the case $s=0$, we see that the quantity
 \end{equation}
 %
 is independent of the starting state $i$, but now $\eta(s) = \tr\fund(s) - \frac{\tau}{1+s\tau}$.
-We can the define
+We can then define
 %
 \begin{equation}\label{eq:lpmixtime}
-  \eta^{\pm}_i(s) = \sum_j \fptb_{ij}(s)\eq_j \prn{\frac{1\pm\w_j}{2}} =  \sum_{j\in\pm} \fptb_{ij}(s)\eq_j.
+  \eta^{\pm}_i(s) = \sum_j \fptb_{ij}(s) \eq_j \prn{\frac{1 \pm \w_j}{2}} 
+      =  \sum_{j\in \pm} \fptb_{ij}(s) \eq_j.
 \end{equation}
 %
 We can arrange the states in order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
@@ -488,11 +490,13 @@ It will be more convenient to use the quantities
 %
 \begin{equation}\label{eq:lwpmixtime}
   \etw_i(s) = \sum_j \fptb_{ij}(s)\eq_j \w_j
-    = \eta^+_i(s) - \eta^-_i(s) =2\eta^+_i(s) - \eta(s) =\eta(s) - 2\eta^-_i(s) .
+    = \eta^+_i(s) - \eta^-_i(s) 
+    = 2\eta^+_i(s) - \eta(s) 
+    = \eta(s) - 2\eta^-_i(s) .
 \end{equation}
 %
 Arranging the states in order of decreasing $\etw_i(s)$ is the same as the order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
-These quantities can still be used when $\w$ takes more than two values.
+The $\etw_i(s)$ can still be used when $\w$ takes more than two values.
 
 
 
@@ -518,12 +522,13 @@ As $(s-\MM)$ is invertible for $\Re s>0$, because the real part of all eigenvalu
 %
 For $s=0$, we can avoid problems by replacing $\mathbf{G}(s) \to \fund(s)$.
 
-Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurveExact} (ignoring the denominator)
+Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurveExact}
 %
 \begin{equation}\label{eq:lsnr}
 \begin{aligned}
-  A(s) &= \intd[_0^{\infty}]{t} \e^{-st}\SNR(t) \\
-   &= \intd[_0^{\infty}]{t} \frac{ \sqrt{N} \eq \enc \e^{(r\frg-s)t} \w }{ \sqrt{1-(f\pot-f\dep)^2(\eq\w)^2} } \\
+  A(s) = \intd[_0^{\infty}]{t} \e^{-st}\SNR(t) 
+   &= \intd[_0^{\infty}]{t} \frac{ \sqrt{N} \eq \enc \e^{(r\frg-s)t} \w }
+                                { \sqrt{1-(f\pot-f\dep)^2(\eq\w)^2} } \\
    &= \frac{\sqrt{N} \eq \enc \prn{s - r\frg}\inv \w }{\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
 \end{aligned}
 \end{equation}

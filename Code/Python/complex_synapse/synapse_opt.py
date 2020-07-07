@@ -18,9 +18,7 @@ from . import builders as bld
 from .synapse_base import SynapseBase as _SynapseBase
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_memory_model import well_behaved
-
-wrap = la.wrappers.Wrappers(la.lnarray)
-eig = wrap.several(np.linalg.eig)
+# =============================================================================
 
 
 class SynapseOptModel(_SynapseMemoryModel):
@@ -91,6 +89,56 @@ class SynapseOptModel(_SynapseMemoryModel):
             mp.mat_update_params(self.plast[i], plast[i], drn=drn, **self.type)
         self._unchanged = False
 
+    def _calc_fab(self, time, qas, evs, peq_enc):
+        """Calculate eigenvalue differences
+        """
+        expqt = np.exp(qas * time)
+        fab = qas.c - qas.r
+        degenerate = np.fabs(fab) < self.DegThresh
+        fab[degenerate] = 1.
+        fab = (expqt.c - expqt.r) / fab
+        fab[degenerate] = expqt[degenerate.nonzero()[0]] * time
+        fab *= evs.inv @ self.weight
+        fab *= (peq_enc @ evs).c
+        expwftw = (evs * expqt) @ (evs.inv @ self.weight)
+        return (evs.inv @ fab @ evs), expwftw
+
+    def snr_grad(self, time: Number) -> (float, la.lnarray):
+        """Gradient of instantaneous SNR memory curve.
+
+        Parameters
+        ----------
+        time : float
+            Recall time.
+
+        Returns
+        -------
+        func : float
+            Value of ``SNR`` at ``time``.
+        grad : la.lnarray (2n(n-1),)
+            Gradient of ``SNR`` at ``time`` with respect to parameters.
+        """
+        peq = self.peq()
+        peq_enc = peq @ self.enc()
+
+        evd = np.linalg.eig(self.markov())
+        fab, expqtw = self._calc_fab(time, *evd, peq_enc)
+
+        func = - peq_enc @ expqtw
+
+        dsdq = - _diagsub(peq.c * expqtw)
+        dsdw = - _diagsub(peq.c * (self.zinv().inv @ (self.enc() @ expqtw)))
+        dsdw -= _diagsub(fab)
+
+        dsdwp = self.frac[0] * (dsdw + dsdq)
+        dsdwm = self.frac[1] * (dsdw - dsdq)
+
+        grad = [mp.mat_to_params(m, drn=d, **self.type)
+                for m, d in zip([dsdwp, dsdwm], self.directions)]
+        grad = np.hstack(grad)
+
+        return bld.scalarise(func), grad
+
     def _derivs(self, rate: Optional[Number] = None,
                 inv: bool = False) -> Tuple[Tuple[la.lnarray, ...], ...]:
         """Gradients of Laplace transform of SNR memory curve.
@@ -145,56 +193,6 @@ class SynapseOptModel(_SynapseMemoryModel):
         self._saved = (rate, inv), (peq, c_s), (eta, theta), mats
         return self._saved[1:]
 
-    def _calc_fab(self, time, qas, evs, peq_enc):
-        """Calculate eigenvalue differences
-        """
-        expqt = np.exp(qas * time)
-        fab = qas.c - qas.r
-        degenerate = np.fabs(fab) < self.DegThresh
-        fab[degenerate] = 1.
-        fab = (expqt.c - expqt.r) / fab
-        fab[degenerate] = expqt[degenerate.nonzero()[0]] * time
-        fab *= evs.inv @ self.weight
-        fab *= (peq_enc @ evs).c
-        expwftw = (evs * expqt) @ (evs.inv @ self.weight)
-        return (evs.inv @ fab @ evs), expwftw
-
-    def snr_grad(self, time: Number) -> (float, la.lnarray):
-        """Gradient of instantaneous SNR memory curve.
-
-        Parameters
-        ----------
-        time : float
-            Recall time.
-
-        Returns
-        -------
-        func : float
-            Value of ``SNR`` at ``time``.
-        grad : la.lnarray (2n(n-1),)
-            Gradient of ``SNR`` at ``time`` with respect to parameters.
-        """
-        peq = self.peq()
-        peq_enc = peq @ self.enc()
-
-        evd = eig(self.markov)
-        fab, expqtw = self._calc_fab(time, *evd, peq_enc)
-
-        func = - peq_enc @ expqtw
-
-        dsdq = - _diagsub(peq.c * expqtw)
-        dsdw = - _diagsub(peq.c * (self.zinv().inv @ (self.enc() @ expqtw)))
-        dsdw -= _diagsub(fab)
-
-        dsdwp = self.frac[0] * (dsdw + dsdq)
-        dsdwm = self.frac[1] * (dsdw - dsdq)
-
-        grad = [mp.mat_to_params(m, drn=d, **self.type)
-                for m, d in zip([dsdwp, dsdwm], self.directions)]
-        grad = np.hstack(grad)
-
-        return bld.scalarise(func), grad
-
     def laplace_fun(self, rate: Number, inv: bool = False) -> float:
         """Gradient of Laplace transform of SNR memory curve.
 
@@ -213,15 +211,14 @@ class SynapseOptModel(_SynapseMemoryModel):
         if not well_behaved(self, rate):
             return np.array(1.e10), bld.RNG.random(self.nparam)
         # (p,c), (eta,theta)
-        rows, cols, mats = self._derivs(rate, inv)
+        rows = self._derivs(rate, inv)[0]
 
         func = - rows[1] @ self.weight
         # afunc = -rows[0] @ self.enc() @ cols[0]
 
         return bld.scalarise(func)
 
-    def laplace_grad(self, rate: Number,
-                     inv: bool = False) -> (float, la.lnarray):
+    def laplace_grad(self, rate: Number, inv: bool = False) -> la.lnarray:
         """Gradient of Laplace transform of SNR memory curve.
 
         Parameters
@@ -233,40 +230,24 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         Returns
         -------
-        func : float
-            Value of ``snr_laplace`` at ``s``.
         grad : la.lnarray (2n(n-1),)
             Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
         if not well_behaved(self, rate):
             return np.array(1.e10), bld.RNG.random(self.nparam)
         # (p,c), (eta,theta)
-        rows, cols, mats = self._derivs(rate, inv)
-
-        func = - rows[1] @ self.weight
-        # afunc = -rows[0] @ self.enc() @ cols[0]
+        rows, cols, _ = self._derivs(rate, inv)
 
         dadq = - _diagsub(rows[0].c * cols[0])
         dadw = - _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
-        dadwp = self.frac[0] * (dadw + dadq)
-        dadwm = self.frac[1] * (dadw - dadq)
+        # dadwp = self.frac[0] * (dadw + dadq)
+        # dadwm = self.frac[1] * (dadw - dadq)
+        # grad = [mp.mat_to_params(m, drn=d, **self.type)
+        #         for m, d in zip([dadwp, dadwm], self.directions)]
+        grad = self.frac.s * (dadw + self.signal.s * dadq)
         grad = [mp.mat_to_params(m, drn=d, **self.type)
-                for m, d in zip([dadwp, dadwm], self.directions)]
-        grad = np.hstack(grad)
-
-        return bld.scalarise(func), grad
-
-    def area_grad(self) -> (float, la.lnarray):
-        """Gradient of Area under SNR memory curve.
-
-        Returns
-        -------
-        func : float
-            Value of ``snr_area``.
-        grad : la.lnarray (2n(n-1),)
-            Gradient of ``snr_area`` with respect to parameters.
-        """
-        return self.laplace_grad(None)
+                for m, d in zip(grad, self.directions)]
+        return np.hstack(grad)
 
     def laplace_hess(self, rate: Number) -> la.lnarray:
         """Hessian of Laplace transform of SNR memory curve.
@@ -357,6 +338,36 @@ class SynapseOptModel(_SynapseMemoryModel):
                for f, m, d in zip(self.frac, [hessp, hessm], self.directions)]
         return np.hstack(hsv)
 
+    def area_fun(self, inv: bool = False) -> float:
+        """Area under SNR memory curve.
+
+        Returns
+        -------
+        func : float
+            Value of ``snr_area``.
+        """
+        return self.laplace_fun(None, inv)
+
+    def area_grad(self, inv: bool = False) -> la.lnarray:
+        """Gradient of Area under SNR memory curve.
+
+        Returns
+        -------
+        grad : la.lnarray (2n(n-1),)
+            Gradient of ``snr_area`` with respect to parameters.
+        """
+        return self.laplace_fun(None, inv), self.laplace_grad(None, inv)
+
+    def area_hess(self, inv: bool = False) -> la.lnarray:
+        """Hessian of Area under SNR memory curve.
+
+        Returns
+        -------
+        hess : la.lnarray (2n(n-1),2n(n-1))
+            Hessian of ``snr_area`` with respect to parameters.
+        """
+        return self.laplace_hess(None, inv)
+
     def peq_min_fun(self, rate: Number) -> la.lnarray:
         """Gradient of lower bound of shifted Laplace problem.
 
@@ -424,13 +435,13 @@ class SynapseOptModel(_SynapseMemoryModel):
         ----------
         rate : float, optional
             Parameter of Laplace transform, ``s``.
-        lag : ndarray
+        lag : ndarray (2n**2,)
             Lagrange multipliers
 
         Returns
         -------
         hess : la.lnarray (2n(n-1),2n(n-1))
-            Hessian of ``func @ lag`` with respect to parameters.
+            Hessian of ``peq_min_fun(rate) @ lag`` with respect to parameters.
         """
         if np.isnan(self.plast).any():
             return -bld.RNG.random((self.nparam,) * 2)
@@ -485,9 +496,9 @@ class SynapseOptModel(_SynapseMemoryModel):
             del mat_type['uniform']
             mat_type['drn'] = cls.directions[0]
             nst = mp.num_state(params.size // npl, **mat_type)
-        self = cls.zero(nst, *args, npl=npl, **kwds)
-        self.set_params(params)
-        return self
+        obj = cls.zero(nst, *args, npl=npl, **kwds)
+        obj.set_params(params)
+        return obj
 
     @classmethod
     def rand(cls, nst: Optional[int], *args, **kwds) -> SynapseOptModel:

@@ -68,18 +68,10 @@ def make_loss_function(model: SynapseOptModel, method: str,
     return loss_function
 
 
-def get_param_opts(opts: dict = None, **kwds) -> (int, int):
-    """Make options dict for Markov processes.
-
-    Returns
-    -------
-    nst : int or None
-        total number of states. Use `npar` if `None`.
-    npar : int or None
-        total number of parameters. Use `nst` if `None` (default).
+def set_param_opts(opts: Optional[dict] = None):
+    """Set options dict for SynapseOptModel Markov processes.
     """
     opts = default(opts, {})
-    opts.update(kwds)
     # set opts
     SynapseOptModel.RCondThresh = opts.pop('RCondThresh', 1e-4)
     SynapseOptModel.type['serial'] = opts.pop('serial', False)
@@ -90,24 +82,17 @@ def get_param_opts(opts: dict = None, **kwds) -> (int, int):
     else:
         SynapseOptModel.directions = (0, 0)
     SynapseOptModel.directions = opts.pop('drn', SynapseOptModel.directions)
-    # get opts
-    nst, npar = None, None
-    paramopts = SynapseOptModel.type.copy()
-    paramopts['drn'] = SynapseOptModel.directions[0]
-    if 'nst' in opts:
-        nst = opts.pop('nst')
-        npar = opts.pop('npar', 2 * mp.num_param(nst, **paramopts))
-    if 'npar' in opts and not paramopts['uniform']:
-        npar = opts.pop('npar')
-        nst = opts.pop('nst', mp.num_state(npar // 2, **paramopts))
-    return nst, npar
 
 
-def get_model_opts(opts: dict = None, **kwds) -> dict:
-    """Make options dict for SynapseOptModel.
+def get_model_opts(opts: Optional[dict] = None) -> dict:
+    """Make options dict for SynapseOptModel instances.
+
+    Returns
+    -------
+    modelopts : dict
+        Options for `Synapse*Model` instances.
     """
     opts = default(opts, {})
-    opts.update(kwds)
     modelopts = opts.pop('modelopts', {})
     modelopts.setdefault('frac', opts.pop('frac', 0.5))
     modelopts.setdefault('binary', opts.pop('binary', True))
@@ -115,23 +100,35 @@ def get_model_opts(opts: dict = None, **kwds) -> dict:
     return modelopts
 
 
-def make_model(opts: dict = None, **kwds) -> SynapseOptModel:
+def make_model(opts: Optional[dict] = None, **kwds) -> SynapseOptModel:
     """Make options dict for Markov processes.
+
+    `kwds` are added to `opts`, then all model related options are popped.
 
     Returns
     -------
     model : SynapseOptModel
         An instance to use in loss functions etc
     """
+    opts = default(opts, {})
     opts.update(kwds)
     model = opts.pop('model', None)
     if model is not None:
         return SynapseOptModel
     modelopts = get_model_opts(opts)
-    nst, npar = get_param_opts(opts)
+    set_param_opts(opts)
     params = opts.pop('params', None)
     if params is not None:
         return SynapseOptModel.from_params(params, **modelopts)
+    paramopts = SynapseOptModel.type.copy()
+    paramopts['drn'] = SynapseOptModel.directions[0]
+    nst, npar = opts.pop('nst', None), opts.pop('npar', None)
+    if nst is not None:
+        npar = default(npar, 2 * mp.num_param(nst, **paramopts))
+    if npar is not None and not paramopts['uniform']:
+        nst = default(nst, mp.num_state(npar // 2, **paramopts))
+    if None in {nst, npar}:
+        raise TypeError("Must specify one of [model, params, nst, npar]")
     return SynapseOptModel.rand(nst=nst, npar=npar, **modelopts)
 
 
@@ -174,7 +171,7 @@ def make_normal_problem(model: SynapseOptModel, rate: Number, method: str,
 
     if method == 'trust-constr':
         hess = make_loss_function(model, model.laplace_hess, rate)
-        constraint = sco.LinearConstraint(con_coeff, 0, 1, keep_feasible)
+        constraint = sco.LinearConstraint(con_coeff, -np.inf, 1, keep_feasible)
     else:
         constraint = {'type': 'ineq', 'args': (),
                       'fun': lambda x: 1 - con_coeff @ x,
@@ -195,8 +192,8 @@ def make_shifted_problem(model: SynapseOptModel, rate: Number, method: str,
     if SynapseOptModel.type['serial'] or SynapseOptModel.type['ring']:
         raise ValueError('Shifted problem cannot have special topology')
 
-    fun = make_loss_function(model, model.laplace_fun, None, True)
-    jac = make_loss_function(model, model.laplace_grad, None, True)
+    fun = make_loss_function(model, model.area_fun, True)
+    jac = make_loss_function(model, model.area_grad, True)
     hess = None
 
     bounds = sco.Bounds(0, 1 + rate, keep_feasible)
@@ -204,9 +201,9 @@ def make_shifted_problem(model: SynapseOptModel, rate: Number, method: str,
     ojac = make_loss_function(model, model.peq_min_grad, rate)
 
     if method == 'trust-constr':
-        hess = make_loss_function(model, model.laplace_hess, None, True)
+        hess = make_loss_function(model, model.area_hess, True)
         ohess = make_loss_function(model, model.peq_min_hess, rate)
-        constraint = sco.NonlinearConstraint(ofun, 0, 1, ojac, ohess,
+        constraint = sco.NonlinearConstraint(ofun, 0, np.inf, ojac, ohess,
                                              keep_feasible)
     else:
         constraint = {'type': 'ineq', 'args': (), 'fun': ofun, 'jac': ojac}
