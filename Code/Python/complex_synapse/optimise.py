@@ -73,7 +73,7 @@ def set_param_opts(opts: Optional[dict] = None):
     """
     opts = default(opts, {})
     # set opts
-    SynapseOptModel.RCondThresh = opts.pop('RCondThresh', 1e-4)
+    SynapseOptModel.CondThresh = opts.pop('CondThresh', 1e4)
     SynapseOptModel.type['serial'] = opts.pop('serial', False)
     SynapseOptModel.type['ring'] = opts.pop('ring', False)
     SynapseOptModel.type['uniform'] = opts.pop('uniform', False)
@@ -96,7 +96,7 @@ def get_model_opts(opts: Optional[dict] = None) -> dict:
     modelopts = opts.pop('modelopts', {})
     modelopts.setdefault('frac', opts.pop('frac', 0.5))
     modelopts.setdefault('binary', opts.pop('binary', True))
-    modelopts.setdefault('npl', 2)
+    modelopts.setdefault('npl', len(SynapseOptModel.directions))
     return modelopts
 
 
@@ -113,20 +113,21 @@ def make_model(opts: Optional[dict] = None, **kwds) -> SynapseOptModel:
     opts = default(opts, {})
     opts.update(kwds)
     model = opts.pop('model', None)
-    if model is not None:
-        return SynapseOptModel
-    modelopts = get_model_opts(opts)
-    set_param_opts(opts)
     params = opts.pop('params', None)
+    nst, npar = opts.pop('nst', None), opts.pop('npar', None)
+    if model is not None:
+        return model
+    set_param_opts(opts)
+    modelopts = get_model_opts(opts)
     if params is not None:
         return SynapseOptModel.from_params(params, **modelopts)
     paramopts = SynapseOptModel.type.copy()
     paramopts['drn'] = SynapseOptModel.directions[0]
-    nst, npar = opts.pop('nst', None), opts.pop('npar', None)
+    npl = modelopts.get('npl', 2)
     if nst is not None:
-        npar = default(npar, 2 * mp.num_param(nst, **paramopts))
+        npar = default(npar, npl * mp.num_param(nst, **paramopts))
     if npar is not None and not paramopts['uniform']:
-        nst = default(nst, mp.num_state(npar // 2, **paramopts))
+        nst = default(nst, mp.num_state(npar // npl, **paramopts))
     if None in {nst, npar}:
         raise TypeError("Must specify one of [model, params, nst, npar]")
     return SynapseOptModel.rand(nst=nst, npar=npar, **modelopts)
@@ -187,7 +188,34 @@ def make_normal_problem(model: SynapseOptModel, rate: Number, method: str,
 
 def make_shifted_problem(model: SynapseOptModel, rate: Number, method: str,
                          keep_feasible: bool) -> Problem:
-    """Make an optimize problem with rate shifted to constraints.
+    """Make an optimize problem with rate shifted to constraints equally.
+    """
+    if SynapseOptModel.type['serial'] or SynapseOptModel.type['ring']:
+        raise ValueError('Shifted problem cannot have special topology')
+
+    nst = model.nstates
+    inv = method == 'trust-constr'
+    fun = make_loss_function(model, model.area_fun, inv)
+    jac = make_loss_function(model, model.area_grad, inv)
+    hess = make_loss_function(model, model.area_hess, True) if inv else None
+
+    coeff = constraint_coeff(model)
+    bounds = sco.Bounds(rate / nst, np.inf, keep_feasible)
+    upper = 1 + rate * (nst - 1) / nst
+
+    if method == 'trust-constr':
+        constraint = sco.LinearConstraint(coeff, -np.inf, upper, keep_feasible)
+    else:
+        constraint = {'type': 'ineq', 'args': (),
+                      'fun': lambda x: upper - coeff @ x,
+                      'jac': lambda x: -coeff}
+
+    return fun, jac, hess, bounds, constraint
+
+
+def make_shift_peq_problem(model: SynapseOptModel, rate: Number, method: str,
+                           keep_feasible: bool) -> Problem:
+    """Make an optimize problem with rate shifted to constraints propto peq.
     """
     if SynapseOptModel.type['serial'] or SynapseOptModel.type['ring']:
         raise ValueError('Shifted problem cannot have special topology')
@@ -196,7 +224,7 @@ def make_shifted_problem(model: SynapseOptModel, rate: Number, method: str,
     jac = make_loss_function(model, model.area_grad, True)
     hess = None
 
-    bounds = sco.Bounds(0, 1 + rate, keep_feasible)
+    bounds = sco.Bounds(0, np.inf, keep_feasible)
     ofun = make_loss_function(model, model.peq_min_fun, rate)
     ojac = make_loss_function(model, model.peq_min_grad, rate)
 
@@ -303,8 +331,8 @@ def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
     return snr, models
 
 
-def check_rcond_range(rates: np.ndarray, models: np.ndarray,
-                      **kwds) -> la.lnarray:
+def check_cond_range(rates: np.ndarray, models: np.ndarray,
+                     **kwds) -> la.lnarray:
     """Inverse condition numbers of optiomised models
 
     Parameters
@@ -319,13 +347,13 @@ def check_rcond_range(rates: np.ndarray, models: np.ndarray,
     rcnd : np.ndarray (S,)
         inverse condition number, worst of :math:`Z(0), Z(s)`
     """
-    rcnd = la.empty_like(rates)
-    synmodel = make_model(kwds, params=models[0])
+    cnd = la.empty_like(rates)
+    model = make_model(kwds, params=models[0])
     with delay_warnings():
         for i, rate, params in denumerate('rate', rates, models):
-            synmodel.set_params(params)
-            rcnd[i] = synmodel.rcond(rate, rate_max=True)
-    return rcnd
+            model.set_params(params)
+            cnd[i] = model.cond(rate, rate_max=True)
+    return cnd
 
 
 # =============================================================================

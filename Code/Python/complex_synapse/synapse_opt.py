@@ -60,8 +60,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         --------
         markov.mat_to_params
         """
-        params = [mp.mat_to_params(self.plast[i], drn=d, **self.type)
-                  for i, d in enumerate(self.directions)]
+        params = [mp.mat_to_params(mat, drn=drn, **self.type)
+                  for mat, drn in zip(self.plast, self.directions)]
         return la.hstack(params)
 
     def set_params(self, params: np.ndarray, *args, **kwds):
@@ -209,7 +209,7 @@ class SynapseOptModel(_SynapseMemoryModel):
             Value of ``snr_laplace`` at ``s``.
         """
         if not well_behaved(self, rate):
-            return np.array(1.e10), bld.RNG.random(self.nparam)
+            return np.array(1.e10)
         # (p,c), (eta,theta)
         rows = self._derivs(rate, inv)[0]
 
@@ -234,7 +234,7 @@ class SynapseOptModel(_SynapseMemoryModel):
             Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
         if not well_behaved(self, rate):
-            return np.array(1.e10), bld.RNG.random(self.nparam)
+            return bld.RNG.random(self.nparam)
         # (p,c), (eta,theta)
         rows, cols, _ = self._derivs(rate, inv)
 
@@ -356,7 +356,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of ``snr_area`` with respect to parameters.
         """
-        return self.laplace_fun(None, inv), self.laplace_grad(None, inv)
+        return self.laplace_grad(None, inv)
 
     def area_hess(self, inv: bool = False) -> la.lnarray:
         """Hessian of Area under SNR memory curve.

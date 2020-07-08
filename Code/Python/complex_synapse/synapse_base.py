@@ -21,11 +21,8 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
     Contains methods that modify instance variables, those that do not
     perform calculations and overloads of arithmetic operators, str and repr.
-    Subclasses should override: `__init__`, `dict_copy`, `fix`, `valid_shapes`,
-    `valid_values`, `normalise` if necessary, including calls to super().
-    Beware of `fix`: it is called in `super().__init__`, so any reference to
-    subclass attributes should be enclosed by `try ... except AttributeError`
-    or they must be set before calling `super().__init__`.
+    Subclasses should override: `__init__`, `dict_copy` if necessary,
+    including calls to super().
 
     Parameters (and attributes)
     ---------------------------
@@ -68,7 +65,8 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         # store inputs
         self.plast = la.asarray(plast)
         self.frac = la.asarray(frac).ravel()
-        self.fix()
+        if len(self.frac) == len(self.plast) - 1:
+            self.frac = la.concatenate((self.frac, [1. - self.frac.sum()]))
 
     def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
         """Handling ufuncs with SynapseBases
@@ -85,12 +83,6 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     # -------------------------------------------------------------------------
     # Housekeeping
     # -------------------------------------------------------------------------
-
-    def fix(self):
-        """Complete frac vector
-        """
-        if len(self.frac) == len(self.plast) - 1:
-            self.frac = la.concatenate((self.frac, [1. - self.frac.sum()]))
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
