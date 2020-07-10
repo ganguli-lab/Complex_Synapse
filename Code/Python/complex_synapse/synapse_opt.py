@@ -130,17 +130,15 @@ class SynapseOptModel(_SynapseMemoryModel):
         dsdw = - _diagsub(peq.c * (self.zinv().inv @ (self.enc() @ expqtw)))
         dsdw -= _diagsub(fab)
 
-        dsdwp = self.frac[0] * (dsdw + dsdq)
-        dsdwm = self.frac[1] * (dsdw - dsdq)
-
+        grad = self.frac.s * (dsdw + self.signal.s * dsdq)
         grad = [mp.mat_to_params(m, drn=d, **self.type)
-                for m, d in zip([dsdwp, dsdwm], self.directions)]
+                for m, d in zip(grad, self.directions)]
         grad = np.hstack(grad)
 
         return bld.scalarise(func), grad
 
-    def _derivs(self, rate: Optional[Number] = None,
-                inv: bool = False) -> Tuple[Tuple[la.lnarray, ...], ...]:
+    def _derivs(self, rate: Optional[Number] = None, inv: bool = False,
+                svd: bool = False) -> Tuple[Tuple[la.lnarray, ...], ...]:
         """Gradients of Laplace transform of SNR memory curve.
 
         Parameters
@@ -149,51 +147,72 @@ class SynapseOptModel(_SynapseMemoryModel):
             Parameter of Laplace transform, :math:`s`.
         inv : bool, default: False
             Should we compute matrix inverses?
+        svd : bool, default: False
+            Should we compute SVD (1st & last only)
 
         Returns
         -------
         rows : tuple(la.lnarray)
-            (p,c),
+            (p,c) + (U.h if svd)
         cols : tuple(la.lnarray)
-            (eta,theta),
+            (eta,theta) + (V if svd)
         mats : tuple(la.lnarray)
-            if inv: (Z,Zs,ZQZs)
-            if not inv: (Z^{-1},Zs^{-1})
+            if not inv: (Z^{-1},Zs^{-1}) + (S if svd)
+            if inv: (Z,Zs,ZQZs) + (if inv)
         """
         if self._unchanged and (rate, inv) == self._saved[0]:
             return self._saved[1:]
         self._unchanged = True
 
+        args = (rate, inv, svd)
         fundi = self.zinv()
         peq = self.peq()
+
+        if svd:
+            extract = np.s_[::self.nstates-1]
+            swap = la.array([[0, 1], [-1, 0]])
+            fund_u, fund_s, fund_v = np.linalg.svd(fundi)
+            # svs = diag(smin, -smax) / smin**2
+            svs = (np.diagflat(swap @ fund_s[extract] / fund_s[-1]**2),)
+            srow = (fund_u.h[extract],)
+            scol = (fund_v.h[:, extract],)
+        else:
+            svs, scol, srow = (), (), ()
 
         if rate is None:
             c_s = peq @ self.enc() @ fundi.inv
             eta = fundi.inv @ self.weight
             theta = fundi.inv @ self.enc() @ eta
+            mats = (fundi, fundi) + svs
             if inv:
-                mats = (fundi.inv(),)
-            else:
-                mats = (fundi,)
-            self._saved = (rate, inv), (peq, c_s), (eta, theta), mats
+                zqz = fundi.inv @ self.enc() @ fundi.inv
+                mats = (fundi.inv(),) * 2 + (zqz,) + mats
+            self._saved = args, (peq, c_s) + srow, (eta, theta) + scol, mats
             return self._saved[1:]
 
         fundis = self.zinv(rate)
         c_s = peq @ self.enc() @ fundis.inv
 
+        if svd:
+            fund_u, fund_s, fund_v = np.linalg.svd(fundis)
+            # svs = diag(smin, -smax) / smin**2
+            svs += (np.diagflat(swap @ fund_s[extract] / fund_s[-1]**2),)
+            srow += (fund_u.h[extract],)
+            scol += (fund_v.h[:, extract],)
+            svs, srow, scol = [(np.stack(arr),) for arr in (svs, srow, scol)]
+
         eta = fundis.inv @ self.weight
         theta = fundi.inv @ self.enc() @ eta
 
+        mats = (fundi, fundis) + svs
         if inv:
             zqz = fundi.inv @ self.enc() @ fundis.inv
-            mats = (fundi.inv(), fundis.inv(), zqz)
-        else:
-            mats = (fundi, fundis)
+            mats = (fundi.inv(), fundis.inv(), zqz) + mats
 
-        self._saved = (rate, inv), (peq, c_s), (eta, theta), mats
+        self._saved = args, (peq, c_s) + srow, (eta, theta) + scol, mats
         return self._saved[1:]
 
-    def laplace_fun(self, rate: Number, inv: bool = False) -> float:
+    def laplace_fun(self, rate: Number, **kwds) -> float:
         """Gradient of Laplace transform of SNR memory curve.
 
         Parameters
@@ -211,14 +230,14 @@ class SynapseOptModel(_SynapseMemoryModel):
         if not well_behaved(self, rate):
             return np.array(1.e10)
         # (p,c), (eta,theta)
-        rows = self._derivs(rate, inv)[0]
+        rows = self._derivs(rate, **kwds)[0]
 
         func = - rows[1] @ self.weight
         # afunc = -rows[0] @ self.enc() @ cols[0]
 
         return bld.scalarise(func)
 
-    def laplace_grad(self, rate: Number, inv: bool = False) -> la.lnarray:
+    def laplace_grad(self, rate: Number, **kwds) -> la.lnarray:
         """Gradient of Laplace transform of SNR memory curve.
 
         Parameters
@@ -236,7 +255,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         if not well_behaved(self, rate):
             return bld.RNG.random(self.nparam)
         # (p,c), (eta,theta)
-        rows, cols, _ = self._derivs(rate, inv)
+        rows, cols, _ = self._derivs(rate, **kwds)
 
         dadq = - _diagsub(rows[0].c * cols[0])
         dadw = - _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
@@ -249,7 +268,7 @@ class SynapseOptModel(_SynapseMemoryModel):
                 for m, d in zip(grad, self.directions)]
         return np.hstack(grad)
 
-    def laplace_hess(self, rate: Number) -> la.lnarray:
+    def laplace_hess(self, rate: Number, **kwds) -> la.lnarray:
         """Hessian of Laplace transform of SNR memory curve.
 
         Parameters
@@ -263,7 +282,8 @@ class SynapseOptModel(_SynapseMemoryModel):
             Hessian of ``snr_laplace`` at ``s`` with respect to parameters.
         """
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
-        rows, cols, mats = self._derivs(rate, True)
+        kwds['inv'] = True
+        rows, cols, mats = self._derivs(rate, **kwds)
 
         # (n,n,n,n)
         hessww = _dbl_diagsub(_outer3(rows[0], mats[0], cols[1])
@@ -286,8 +306,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         # (2n(n-1),2n(n-1))
         return - np.block([[hesspp, hesspm], [hesspm.T, hessmm]])
 
-    def laplace_hessp(self, rate: Number,
-                      other: _SynapseBase) -> la.lnarray:
+    def laplace_hessp(self, rate: Number, other: _SynapseBase,
+                      **kwds) -> la.lnarray:
         """Matrix product of snr_laplace's hessian and change in parameters.
 
         Parameters
@@ -304,9 +324,13 @@ class SynapseOptModel(_SynapseMemoryModel):
             ``snr_laplace`` at ``s`` with respect to parameters.
         """
         # (p,c), (eta,theta), (Zi,Zis)
-        rows, cols, mats = self._derivs(rate, False)
-        # ZQZs
-        mats += (mats[0].inv @ self.enc() @ mats[1].inv,)
+        kwds.setdefault('inv', False)
+        rows, cols, mats = self._derivs(rate, **kwds)
+        if kwds['inv']:
+            mats = mats[3:5] + mats[2:3]
+        else:
+            # ZQZs
+            mats = mats[:2] + (mats[0].inv @ self.enc() @ mats[1].inv,)
 
         def _hesspr(vecm, frc):
             """Hess vec products
@@ -318,7 +342,7 @@ class SynapseOptModel(_SynapseMemoryModel):
             # p ZQZs eta V -> (n,n)
             h_ww = (_outerdiv3p(rows[0], mats[0], cols[1], vecm).sum(0)
                     + _outerdiv3p(rows[1], mats[1], cols[0], vecm).sum(0)
-                    + _outer3ps(rows[0], mats[2], cols[0], vecm))
+                    + _outer3p(rows[0], mats[2], cols[0], vecm).sum(0))
             # p Z eta V  -> (2,n,n)
             # p Zs eta V -> (2,n,n)
             h_wq = (_outerdiv3p(rows[0], mats[0], cols[0], vecm)
@@ -338,7 +362,7 @@ class SynapseOptModel(_SynapseMemoryModel):
                for f, m, d in zip(self.frac, [hessp, hessm], self.directions)]
         return np.hstack(hsv)
 
-    def area_fun(self, inv: bool = False) -> float:
+    def area_fun(self, **kwds) -> float:
         """Area under SNR memory curve.
 
         Returns
@@ -346,9 +370,9 @@ class SynapseOptModel(_SynapseMemoryModel):
         func : float
             Value of ``snr_area``.
         """
-        return self.laplace_fun(None, inv)
+        return self.laplace_fun(None, **kwds)
 
-    def area_grad(self, inv: bool = False) -> la.lnarray:
+    def area_grad(self, **kwds) -> la.lnarray:
         """Gradient of Area under SNR memory curve.
 
         Returns
@@ -356,9 +380,9 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of ``snr_area`` with respect to parameters.
         """
-        return self.laplace_grad(None, inv)
+        return self.laplace_grad(None, **kwds)
 
-    def area_hess(self, inv: bool = False) -> la.lnarray:
+    def area_hess(self, **kwds) -> la.lnarray:
         """Hessian of Area under SNR memory curve.
 
         Returns
@@ -366,9 +390,9 @@ class SynapseOptModel(_SynapseMemoryModel):
         hess : la.lnarray (2n(n-1),2n(n-1))
             Hessian of ``snr_area`` with respect to parameters.
         """
-        return self.laplace_hess(None, inv)
+        return self.laplace_hess(None, **kwds)
 
-    def peq_min_fun(self, rate: Number) -> la.lnarray:
+    def peq_min_fun(self, rate: Number, **kwds) -> la.lnarray:
         """Gradient of lower bound of shifted Laplace problem.
 
         Parameters
@@ -387,11 +411,12 @@ class SynapseOptModel(_SynapseMemoryModel):
             return -np.ones(self.nparam)
         rate = rate / (2 * self.frac.s)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
-        rows, cols, mats = self._derivs(None, True)
+        kwds['inv'] = True
+        rows, cols, mats = self._derivs(None, **kwds)
         func = self.plast - rate * rows[0] + (1 + rate) * np.eye(self.nstates)
         return func.flattish(-3)
 
-    def peq_min_grad(self, rate: Number) -> la.lnarray:
+    def peq_min_grad(self, rate: Number, **kwds) -> la.lnarray:
         """Gradient of lower bound of shifted Laplace problem.
 
         Parameters
@@ -409,7 +434,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         if not np.isfinite(self.plast).all():
             return -bld.RNG.random((self.nplast*self.nstates**2, self.nparam,))
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
-        rows, cols, mats = self._derivs(None, True)
+        kwds['inv'] = True
+        rows, cols, mats = self._derivs(None, **kwds)
         peq, fund = rows[0], mats[0]
         # (n,1,n,n)
         grad = np.moveaxis(_diagsub(- rate/2 * peq[None, :].s * fund), -1, -4)
@@ -428,7 +454,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         # (2n**2,2n(n-1))
         return np.c_[gradp, gradm]
 
-    def peq_min_hess(self, rate: Number, lag: np.ndarray) -> la.lnarray:
+    def peq_min_hess(self, rate: Number, lag: np.ndarray,
+                     **kwds) -> la.lnarray:
         """Hessian of lower bound of shifted Laplace problem.
 
         Parameters
@@ -446,7 +473,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         if np.isnan(self.plast).any():
             return -bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
-        rows, cols, mats = self._derivs(None, True)
+        kwds['inv'] = True
+        rows, cols, mats = self._derivs(None, **kwds)
         peq, fund = rows[0], mats[0]
         # (n,n,n,n,1,1,n), constraint axes last three
         hess = (((-rate * peq).s * fund).s * fund).expand_dims((-3, -2))
@@ -466,6 +494,30 @@ class SynapseOptModel(_SynapseMemoryModel):
                                 **self.type) * self.frac[1]**2
         # (2n(n-1),2n(n-1))
         return np.block([[hesspp, hesspm], [hesspm.T, hessmm]])
+
+    def cond_fun(self, rate: Number, **kwds) -> float:
+        """Gap between condition number and threshold"""
+        if kwds.pop('svd', False):
+            # (p,c,U.h), (eta,theta,V), (Z,Zs,ZQZs,S)
+            svs = self._derivs(rate, svd=True, **kwds)[-1][-1]
+            # svs = diag(smin, -smax) / smin**2
+            return 1 + svs[..., 1, 1] / svs[..., 0, 0] / self.CondThresh
+        if rate is None:
+            return 1 - self.cond(None) / self.CondThresh
+        conds = la.array([self.cond(val) for val in (None, rate)])
+        return 1 - conds / self.CondThresh
+
+    def cond_grad(self, rate: Number, **kwds) -> float:
+        """Gap between condition number and threshold"""
+        kwds['svd'] = True
+        # (p,c,U.h), (eta,theta,V), (Z,Zs,ZQZs,S)
+        row, col, svs = [drv[-1] for drv in self._derivs(rate, **kwds)]
+        # svs = diag(smin, -smax) / smin**2
+        grad = row.t @ svs @ col.t
+        grad = _diagsub(grad).expand_dims(-3) * self.frac.s
+        grad = [mp.mat_to_params(grad[..., i, :, :], drn=d, **self.type)
+                for i, d in enumerate(self.directions)]
+        return np.hstack(grad) / self.CondThresh
 
     @classmethod
     def from_params(cls, params: np.ndarray, *args, **kwds) -> SynapseOptModel:
@@ -563,17 +615,8 @@ def _outer3p(vec1: la.lnarray, mat1: Union[la.lnarray, la.invarray],
     """Outer product of vector, matrix and vector, multiplying matrix
     Returns: mat1: lnarray (n,n), mat2: lnarray (n,n)
     """
-    return (_diagsub(vec1.c * (mat1 @ (mat2 @ vec2))),
-            _diagsub(((vec1 @ mat2) @ mat1).c * vec2))
-
-
-def _outer3ps(vec1: la.lnarray, mat1: la.lnarray, vec2: la.lnarray,
-              mat2: la.lnarray) -> la.lnarray:
-    """Outer product of vector, matrix and vector, multiplying matrix
-    Returns: mat3: lnarray (n,n)
-    """
-    mats = _outer3p(vec1, mat1, vec2, mat2)
-    return mats[0] + mats[1]
+    return _diagsub(np.stack((vec1.c * (mat1 @ (mat2 @ vec2)),
+                              ((vec1 @ mat2) @ mat1).c * vec2)))
 
 
 def _outerdiv3p(vec1: la.lnarray, mat1: la.lnarray, vec2: la.lnarray,
@@ -581,7 +624,7 @@ def _outerdiv3p(vec1: la.lnarray, mat1: la.lnarray, vec2: la.lnarray,
     """Outer product of vector, inverse matrix and vector, multiplying matrix
     Returns: mats: lnarray (2,n,n)
     """
-    return la.stack(_outer3p(vec1, mat1.inv, vec2, mat2))
+    return _outer3p(vec1, mat1.inv, vec2, mat2)
 
 
 def _trnsp4(tens: la.lnarray) -> la.lnarray:
@@ -597,7 +640,7 @@ def _dbl_diagsub(tens: la.lnarray) -> la.lnarray:
     Returns: tens: lnarray (2,n,n,n,n)
     """
     tens_trn = _diagsub(_trnsp4(_diagsub(tens)))
-    return la.stack((_trnsp4(tens_trn), tens_trn))
+    return np.stack((_trnsp4(tens_trn), tens_trn))
 
 
 if __name__ == "__main__":

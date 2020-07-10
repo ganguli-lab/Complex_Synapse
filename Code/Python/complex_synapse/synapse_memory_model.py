@@ -175,7 +175,7 @@ class SynapseMemoryModel(SynapseBase):
             s_arr = la.asarray(rate).s * la.eye(self.nstates)
         return onev.c * rowv - self.markov() + s_arr
 
-    def cond(self, rate: Optional[ArrayLike] = None,
+    def cond(self, rate: Optional[ArrayLike] = None, *,
              rowv: Optional[la.lnarray] = None,
              order: Order = None,
              rate_max: bool = False) -> la.lnarray:
@@ -347,18 +347,13 @@ class SynapseMemoryModel(SynapseBase):
     def shifted(self, rate: ArrayLike, rowv: Optional[ArrayLike] = None):
         """Move rate parametr of Laplace transform to plast
         """
-        if rowv is None:
-            rowv = np.ones_like(self.weight) / self.nstates
-        elif np.isnan(rowv).all():
-            rowv = self.peq()
-        if rate is None:
-            s_arr = 0
-        else:
-            # convert to lnarray, add singletons to broadcast with matrix
-            s_arr = la.asarray(rate).expand_dims((-3, -2, -1))
+        rowv = self.peq() if rowv is None else rowv
+        # convert to lnarray, add singletons to broadcast with plast
+        sss = la.asarray(rate).expand_dims((-3, -2, -1))
+        # sss = la.asarray(rate).expand_dims((-3, -2, -1)) / (2 * self.frac.s)
         try:
             old_plast = self.plast.copy()
-            self.plast = old_plast + s_arr * (rowv - la.eye(self.nstates))
+            self.plast = old_plast + sss * (rowv - la.eye(self.nstates))
             yield
         finally:
             self.plast = old_plast
