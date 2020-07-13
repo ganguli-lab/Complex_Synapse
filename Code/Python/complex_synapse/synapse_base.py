@@ -223,7 +223,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         Parameters
         ----------
             All passed to `cls.build`, `builders.build_rand`
-            or `builders.rand_trans`:
+            or `sl_py_tools.numpy_tricks.markov_param`:
         nst: int
             total number of states
         npl: int
@@ -236,7 +236,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
             sparsity, default: 1.
         ...
             extra arguments passed to `cls.build`, `builders.build_rand`
-            or `Builder.rand_trans`.
+            or `sl_py_tools.numpy_tricks.markov_param`.
 
         Returns
         -------

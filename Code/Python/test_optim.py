@@ -9,4 +9,4 @@ s = la.geomspace(1e-4, 10, 5)
 with time_with():
     envelope, models = cs.optimise.optim_laplace_range(
         s, 10, repeats=10, cond=False, CondThresh=1e3,
-        maker=cs.optimise.normal_problem)
+        maker=cs.optimise.normal_problem, method='trust-constr')

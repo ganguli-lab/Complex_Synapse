@@ -12,7 +12,7 @@ import numpy as np
 import numpy_linalg as la
 from sl_py_tools.numpy_tricks import markov as ma
 
-from .builders import scalarise, linear_weights
+from .builders import scalarise, linear_weights, insert_axes
 from .synapse_base import ArrayLike, SynapseBase
 
 Order = Union[int, float, str, None]
@@ -349,7 +349,7 @@ class SynapseMemoryModel(SynapseBase):
         """
         rowv = self.peq() if rowv is None else rowv
         # convert to lnarray, add singletons to broadcast with plast
-        sss = la.asarray(rate).expand_dims((-3, -2, -1))
+        sss = insert_axes(la.asarray(rate), 3)
         # sss = la.asarray(rate).expand_dims((-3, -2, -1)) / (2 * self.frac.s)
         try:
             old_plast = self.plast.copy()
@@ -367,7 +367,7 @@ class SynapseMemoryModel(SynapseBase):
 def sign_fix(model: SynapseMemoryModel):
     """Swap plasticity matrices if snr is negative"""
     if model.snr_init() < 0:
-        model.plast = model.plast[::-1]
+        model.signal *= -1
 
 
 def normalise(model: SynapseMemoryModel):

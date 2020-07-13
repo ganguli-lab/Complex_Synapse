@@ -308,8 +308,9 @@ def verify_solution(prob: dict, result: sco.OptimizeResult) -> bool:
     maxcv = 0
     solution = result.x
     bounds = prob['bounds']
-    if (solution < bounds.lb).any() or (solution > bounds.ub).any():
-        return False
+    if bounds is not None:
+        if (solution < bounds.lb).any() or (solution > bounds.ub).any():
+            return False
     for cons in listify(prob.get('constraints', [])):
         vals, kind = cons['fun'](solution), cons['type'] == 'eq'
         fail = (not np.allclose(vals, 0)) if kind else (vals < -itol).any()

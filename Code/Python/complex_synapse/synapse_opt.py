@@ -15,6 +15,7 @@ import numpy_linalg as la
 from sl_py_tools.numpy_tricks import markov_param as mp
 
 from . import builders as bld
+from .builders import insert_axes
 from .synapse_base import SynapseBase as _SynapseBase
 from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
 from .synapse_memory_model import well_behaved
@@ -42,7 +43,7 @@ class SynapseOptModel(_SynapseMemoryModel):
     @property
     def nparam(self) -> int:
         """number of plasticity types."""
-        npr = mp.num_param(self.nstates, drn=self.directions[0], **self.type)
+        npr = mp.num_param(self.nstates, **self.directed(0))
         return self.nplast * npr
 
     def get_params(self) -> la.lnarray:
@@ -60,9 +61,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         --------
         markov.mat_to_params
         """
-        params = [mp.mat_to_params(mat, drn=drn, **self.type)
-                  for mat, drn in zip(self.plast, self.directions)]
-        return la.hstack(params)
+        params = mp.mat_to_params(self.plast, **self.directed(daxis=-3))
+        return params.flattish(-2)
 
     def set_params(self, params: np.ndarray, *args, **kwds):
         """Transition matrices. from independent parameters
@@ -84,9 +84,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         """
         if np.allclose(params, self.get_params(), *args, **kwds):
             return
-        plast = np.split(params, len(self.directions))
-        for i, drn in enumerate(self.directions):
-            mp.mat_update_params(self.plast[i], plast[i], drn=drn, **self.type)
+        params = la.asarray(params).foldaxis(-1, (self.nplast, -1))
+        mp.mat_update_params(self.plast, params, **self.directed(pdaxis=-2))
         self._unchanged = False
 
     def _calc_fab(self, time, qas, evs, peq_enc):
@@ -126,14 +125,17 @@ class SynapseOptModel(_SynapseMemoryModel):
 
         func = - peq_enc @ expqtw
 
+        # (n,n)
         dsdq = - _diagsub(peq.c * expqtw)
         dsdw = - _diagsub(peq.c * (self.zinv().inv @ (self.enc() @ expqtw)))
         dsdw -= _diagsub(fab)
 
+        # (2,n,n)
         grad = self.frac.s * (dsdw + self.signal.s * dsdq)
-        grad = [mp.mat_to_params(m, drn=d, **self.type)
-                for m, d in zip(grad, self.directions)]
-        grad = np.hstack(grad)
+        # (2,n(n-1))
+        grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
+        # (2n(n-1),)
+        grad = grad.flattish(-2)
 
         return bld.scalarise(func), grad
 
@@ -257,16 +259,15 @@ class SynapseOptModel(_SynapseMemoryModel):
         # (p,c), (eta,theta)
         rows, cols, _ = self._derivs(rate, **kwds)
 
+        # (n,n)
         dadq = - _diagsub(rows[0].c * cols[0])
         dadw = - _diagsub(rows[0].c * cols[1] + rows[1].c * cols[0])
-        # dadwp = self.frac[0] * (dadw + dadq)
-        # dadwm = self.frac[1] * (dadw - dadq)
-        # grad = [mp.mat_to_params(m, drn=d, **self.type)
-        #         for m, d in zip([dadwp, dadwm], self.directions)]
+        # (2,n,n)
         grad = self.frac.s * (dadw + self.signal.s * dadq)
-        grad = [mp.mat_to_params(m, drn=d, **self.type)
-                for m, d in zip(grad, self.directions)]
-        return np.hstack(grad)
+        # (2,n(n-1))
+        grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
+        # (2n(n-1),)
+        return grad.flattish(-2)
 
     def laplace_hess(self, rate: Number, **kwds) -> la.lnarray:
         """Hessian of Laplace transform of SNR memory curve.
@@ -285,26 +286,26 @@ class SynapseOptModel(_SynapseMemoryModel):
         kwds['inv'] = True
         rows, cols, mats = self._derivs(rate, **kwds)
 
-        # (n,n,n,n)
-        hessww = _dbl_diagsub(_outer3(rows[0], mats[0], cols[1])
-                              + _outer3(rows[0], mats[2], cols[0])
-                              + _outer3(rows[1], mats[1], cols[0])).sum(0)
-        # (2,n,n,n,n)
-        hesswq = _dbl_diagsub(_outer3(rows[0], mats[0], cols[0])
-                              + _trnsp4(_outer3(rows[0], mats[1], cols[0])))
-
-        # (n(n-1),n(n-1))
-        hesspp = mp.tens_to_mat(hessww + hesswq.sum(0),
-                                drn=(self.directions[0],) * 2,
-                                **self.type) * self.frac[0]**2
-        hesspm = mp.tens_to_mat(hessww - hesswq[0] + hesswq[1],
-                                drn=self.directions,
-                                **self.type) * self.frac[0]*self.frac[1]
-        hessmm = mp.tens_to_mat(hessww - hesswq.sum(0),
-                                drn=(self.directions[1],) * 2,
-                                **self.type) * self.frac[1]**2
-        # (2n(n-1),2n(n-1))
-        return - np.block([[hesspp, hesspm], [hesspm.T, hessmm]])
+        # (...,n,n,n,n)
+        hessww = (_outer3(rows[0], mats[0], cols[1])
+                  + _outer3(rows[0], mats[2], cols[0])
+                  + _outer3(rows[1], mats[1], cols[0])).sum(0)
+        # (2,...,n,n,n,n) - axis 0: h_wq, h_qw
+        hesswq = (_outer3(rows[0], mats[0], cols[0])
+                  + _trnsp4(_outer3(rows[0], mats[1], cols[0])))
+        # (...,1,n,n,1,n,n), (2,...,1,n,n,1,n,n)
+        nax = (-6, -3)
+        hessww, hesswq = hessww.expand_dims(nax), hesswq.expand_dims(nax)
+        # (2,1,1,2,1,1)
+        fmfn = insert_axes(self.frac, 5) * self.frac.s
+        snu = self.signal.s
+        smu = insert_axes(snu, 3)
+        # (...,2,n,n,2,n,n)
+        hess = fmfn * (hessww + snu * hesswq[0] + smu * hesswq[1])
+        # (...,2,n(n-1),2,n(n-1))
+        hess = mp.mat_to_params(hess, **self.directed(), daxis=(-6, -3),
+                                axes=((-5, -4), (-2, -1)))
+        return -hess.flattish(-4, -2).flattish(-2)
 
     def laplace_hessp(self, rate: Number, other: _SynapseBase,
                       **kwds) -> la.lnarray:
@@ -332,35 +333,30 @@ class SynapseOptModel(_SynapseMemoryModel):
             # ZQZs
             mats = mats[:2] + (mats[0].inv @ self.enc() @ mats[1].inv,)
 
-        def _hesspr(vecm, frc):
-            """Hess vec products
-            Parameters: vecm: lnarray (n,n)
-            Returns: mat3: lnarray (n,n), mats4: lnarray (2,n,n)
-            """
-            # p Z theta V  -> (2,n,n) -> (n,n)
-            # c Zs eta V   -> (2,n,n) -> (n,n)
-            # p ZQZs eta V -> (n,n)
-            h_ww = (_outerdiv3p(rows[0], mats[0], cols[1], vecm).sum(0)
-                    + _outerdiv3p(rows[1], mats[1], cols[0], vecm).sum(0)
-                    + _outer3p(rows[0], mats[2], cols[0], vecm).sum(0))
-            # p Z eta V  -> (2,n,n)
-            # p Zs eta V -> (2,n,n)
-            h_wq = (_outerdiv3p(rows[0], mats[0], cols[0], vecm)
-                    + np.flip(_outerdiv3p(rows[0], mats[1], cols[0], vecm), 0))
-            # (n,n), (2,n,n)
-            return -frc * h_ww, -frc * h_wq
-
-        # (n,n), (2,n,n)
-        hwwp, hwqp = _hesspr(other.plast[0], self.frac[0])
-        hwwm, hwqm = _hesspr(other.plast[1], self.frac[1])
-
+        # (2,n,n)
+        vecm = self.frac.s * other.plast
+        # p Z theta V  -> (2,2,n,n) -> (n,n)
+        # c Zs eta V   -> (2,2,n,n) -> (n,n)
+        # p ZQZs eta V -> (2,2,n,n) -> (n,n)
+        h_ww = (_outer3p(rows[0], mats[0].inv, cols[1], vecm)
+                + _outer3p(rows[1], mats[1].inv, cols[0], vecm)
+                + _outer3p(rows[0], mats[2], cols[0], vecm)).sum((0, -3))
+        # p Z eta V  -> (2,2,n,n) - h_wq, h_qw
+        # p Zs eta V -> (2,2,n,n) - h_wq, h_qw
+        h_wqqw = (_outer3p(rows[0], mats[0].inv, cols[0], vecm)
+                  + _outer3p(rows[0], mats[1].inv, cols[0], vecm)[::-1])
+        # ^axis -3: hess @ other.wp, hess @ other.wm
+        # ^axis 0: hess_wq @ other.w_, hess_qw @ other.w_
         # (n,n)
-        hessp = hwwm - hwqm[0] + hwqm[1] + hwwp + hwqp.sum(0)
-        hessm = hwwp + hwqp[0] - hwqp[1] + hwwm - hwqm.sum(0)
+        h_wq = (self.signal.s * h_wqqw[0]).sum(-3)
+        h_qw = h_wqqw[1].sum(-3)
+
+        # (2,n,n)
+        hsv = self.frac.s * (h_ww + h_wq + self.signal.s * h_qw)
+        # (2,n(n-1))
+        hsv = mp.mat_to_params(hsv, **self.directed(daxis=-3))
         # (2n(n-1),)
-        hsv = [mp.mat_to_params(f * m, drn=d, **self.type)
-               for f, m, d in zip(self.frac, [hessp, hessm], self.directions)]
-        return np.hstack(hsv)
+        return hsv.flattish(-2)
 
     def area_fun(self, **kwds) -> float:
         """Area under SNR memory curve.
@@ -407,8 +403,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         func : la.lnarray (2n**2,)
             Value of ``W - s * e @ peq``.
         """
-        if not np.isfinite(self.plast).all():
-            return -np.ones(self.nparam)
+        if not well_behaved(self, rate):
+            return -np.ones(self.nplast*self.nstates**2)
         rate = rate / (2 * self.frac.s)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
@@ -431,7 +427,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n**2,2n(n-1),)
             Gradient of ``func`` with respect to parameters.
         """
-        if not np.isfinite(self.plast).all():
+        if not well_behaved(self, rate):
             return -bld.RNG.random((self.nplast*self.nstates**2, self.nparam,))
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
@@ -446,13 +442,11 @@ class SynapseOptModel(_SynapseMemoryModel):
         gradd = _diagsub(la.eye(self.nplast * self.nstates**2).reshape(shape))
         # (2n**2,2,n,n)
         grad = (gradd + grad).flattish(0, -3)
-        # (2n**2,n(n-1)), (2n**2,n(n-1))
-        opts = {'grad': True, 'axes': (-2, -1)}
-        opts.update(self.type)
-        gradp = mp.mat_to_params(grad[:, 0], drn=self.directions[0], **opts)
-        gradm = mp.mat_to_params(grad[:, 1], drn=self.directions[1], **opts)
+        # (2n**2,2,n(n-1))
+        grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
         # (2n**2,2n(n-1))
-        return np.c_[gradp, gradm]
+        return grad.flattish(-2)
+        # # (2n**2,n(n-1)), (2n**2,n(n-1))
 
     def peq_min_hess(self, rate: Number, lag: np.ndarray,
                      **kwds) -> la.lnarray:
@@ -470,8 +464,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         hess : la.lnarray (2n(n-1),2n(n-1))
             Hessian of ``peq_min_fun(rate) @ lag`` with respect to parameters.
         """
-        if np.isnan(self.plast).any():
-            return -bld.RNG.random((self.nparam,) * 2)
+        if not well_behaved(self, rate):
+            return bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
         rows, cols, mats = self._derivs(None, **kwds)
@@ -485,18 +479,19 @@ class SynapseOptModel(_SynapseMemoryModel):
         # (n,n,n,n,2n**2) @ (2n**2,) -> (n,n,n,n)
         hess = hess.flattish(-3) @ lag
         hess = _dbl_diagsub(hess).sum(0)
-        # (n(n-1),n(n-1))
-        hesspp = mp.tens_to_mat(hess, drn=(self.directions[0],) * 2,
-                                **self.type) * self.frac[0]**2
-        hesspm = mp.tens_to_mat(hess, drn=self.directions,
-                                **self.type) * self.frac[0]*self.frac[1]
-        hessmm = mp.tens_to_mat(hess, drn=(self.directions[1],) * 2,
-                                **self.type) * self.frac[1]**2
+        # (2,n,n,2,n,n)
+        hess = hess.expand_dims(-3) * insert_axes(self.frac, 5) * self.frac.s
+        # (2,n(n-1),2,n(n-1))
+        hess = mp.mat_to_params(hess, **self.directed(
+            axes=((-5, -4), (-2, -1)), daxis=(-6, -3)))
         # (2n(n-1),2n(n-1))
-        return np.block([[hesspp, hesspm], [hesspm.T, hessmm]])
+        return hess.flattish(-4, -2).flattish(-2)
 
     def cond_fun(self, rate: Number, **kwds) -> float:
         """Gap between condition number and threshold"""
+        if not well_behaved(self, rate):
+            nout = 1 if rate is None else 2
+            return -np.ones(nout)
         if kwds.pop('svd', False):
             # (p,c,U.h), (eta,theta,V), (Z,Zs,ZQZs,S)
             svs = self._derivs(rate, svd=True, **kwds)[-1][-1]
@@ -509,19 +504,46 @@ class SynapseOptModel(_SynapseMemoryModel):
 
     def cond_grad(self, rate: Number, **kwds) -> float:
         """Gap between condition number and threshold"""
+        if not well_behaved(self, rate):
+            nout = 1 if rate is None else 2
+            return bld.RNG.random((nout, self.nparam))
         kwds['svd'] = True
         # (p,c,U.h), (eta,theta,V), (Z,Zs,ZQZs,S)
         row, col, svs = [drv[-1] for drv in self._derivs(rate, **kwds)]
         # svs = diag(smin, -smax) / smin**2
         grad = row.t @ svs @ col.t
+        # (...,2,n,n)
         grad = _diagsub(grad).expand_dims(-3) * self.frac.s
-        grad = [mp.mat_to_params(grad[..., i, :, :], drn=d, **self.type)
-                for i, d in enumerate(self.directions)]
-        return np.hstack(grad) / self.CondThresh
+        # (2,n(n-1))
+        grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
+        # (2n(n-1),)
+        return grad.flattish(-2) / self.CondThresh
+        # grad = [mp.mat_to_params(grad[..., i, :, :], drn=d, **self.type)
+        #         for i, d in enumerate(self.directions)]
+        # return np.hstack(grad) / self.CondThresh
+
+    @classmethod
+    def directed(cls, which: Union[int, slice] = np.s_[:], **kwds) -> dict:
+        """Markov parameter options
+
+        Parameters
+        ----------
+        which : int, slice, optional
+            Which element of `cls.directions` to use, by default
+        extra arguments are default values or unknown keys in `opts`
+
+        Returns
+        -------
+        opts
+            Dictionary with `cls.type`, `drn = cls.directions[which]`.
+        """
+        kwds['drn'] = cls.directions[which]
+        kwds.update(cls.type)
+        return kwds
 
     @classmethod
     def from_params(cls, params: np.ndarray, *args, **kwds) -> SynapseOptModel:
-        """Buils SynapseOpt object from independent parameters
+        """Builds SynapseOpt object from independent parameters
 
         Parameters
         ----------
@@ -544,10 +566,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         npl = kwds.pop('npl', len(cls.directions))
         nst = kwds.pop('nst', None)
         if nst is None:
-            mat_type = cls.type.copy()
-            del mat_type['uniform']
-            mat_type['drn'] = cls.directions[0]
-            nst = mp.num_state(params.size // npl, **mat_type)
+            nst = mp.num_state(params.size // npl, **cls.directed(0))
         obj = cls.zero(nst, *args, npl=npl, **kwds)
         obj.set_params(params)
         return obj
@@ -561,7 +580,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         Parameters
         ----------
             All passed to `cls.build`, `builders.build_rand`
-            or `builders.rand_trans`:
+            or `sl_py_tools.numpy_tricks.markov_param`:
         nst : int or None
             total number of states. Use `npar` if `None`.
         npar : int or None
@@ -587,7 +606,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         npar = kwds.pop('npar', None)
         if npar is None:
             npl = kwds.get('npl', len(cls.directions))
-            npar = npl * mp.num_param(nst, drn=cls.directions[0], **cls.type)
+            npar = npl * mp.num_param(nst, **cls.directed(0))
         return cls.from_params(bld.RNG.random(npar), *args, nst=nst, **kwds)
 
 
@@ -605,39 +624,33 @@ def _diagsub(mat: la.lnarray) -> la.lnarray:
 
 def _outer3(vec1: la.lnarray, mat: la.lnarray, vec2: la.lnarray) -> la.lnarray:
     """Outer product of vector, matrix and vector.
-    Returns: tens: lnarray (n,n,n,n)
+    Returns: tens: lnarray (2,...,n,n,n,n) - 2nd array is transpose of 1st
     """
-    return vec1[..., None, None, None] * mat[..., None] * vec2
+    return _dbl_diagsub(insert_axes(vec1, 3) * mat.expand_dims((-4, -1))
+                        * insert_axes(vec2, 3, -2))
 
 
 def _outer3p(vec1: la.lnarray, mat1: Union[la.lnarray, la.invarray],
              vec2: la.lnarray, mat2: la.lnarray) -> la.lnarray:
     """Outer product of vector, matrix and vector, multiplying matrix
-    Returns: mat1: lnarray (n,n), mat2: lnarray (n,n)
+    Returns: mats: lnarray (2,...,n,n) - tensor @ mat2, tensor.t* @ mat2
+    where tensor = _outer3(vec1,mat1,vec2) and tensor.t* = _trnsp4(tensor)
     """
-    return _diagsub(np.stack((vec1.c * (mat1 @ (mat2 @ vec2)),
-                              ((vec1 @ mat2) @ mat1).c * vec2)))
-
-
-def _outerdiv3p(vec1: la.lnarray, mat1: la.lnarray, vec2: la.lnarray,
-                mat2: la.lnarray) -> la.lnarray:
-    """Outer product of vector, inverse matrix and vector, multiplying matrix
-    Returns: mats: lnarray (2,n,n)
-    """
-    return _outer3p(vec1, mat1.inv, vec2, mat2)
+    return _diagsub(np.stack((vec1.c * (mat1 @ (mat2 @ vec2.c)).uc.r,
+                              ((vec1.r @ mat2) @ mat1).ur.c * vec2.r)))
 
 
 def _trnsp4(tens: la.lnarray) -> la.lnarray:
     """Swap 1st two and last two indices of 4th rank tensor
-    Returns: tens: lnarray (n,n,n,n)
+    Returns: tens: lnarray (...,n,n,n,n)
     """
-    return tens.transpose(2, 3, 0, 1)
+    return tens.moveaxis((-4, -3), (-2, -1))
 
 
 def _dbl_diagsub(tens: la.lnarray) -> la.lnarray:
     """Subtract diagonal elements from each element of corresponding row
     for 1st two and last two indices.
-    Returns: tens: lnarray (2,n,n,n,n)
+    Returns: tens: lnarray (2,...,n,n,n,n) - 2nd array is transpose of 1st
     """
     tens_trn = _diagsub(_trnsp4(_diagsub(tens)))
     return np.stack((_trnsp4(tens_trn), tens_trn))

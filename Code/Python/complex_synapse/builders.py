@@ -29,7 +29,7 @@ build_multistate(nst, q)
 @author: Subhy
 """
 
-from typing import Dict
+from typing import Dict, Union
 
 import numpy as np
 
@@ -39,9 +39,23 @@ from sl_py_tools.numpy_tricks import markov_param as mp
 
 RNG = la.random.default_rng()
 
+# =============================================================================
 
-def scalarise(arg: np.ndarray):
-    """Replace array with scalr if ndim==0."""
+
+def insert_axes(arr: np.ndarray, how_many: int, where: int = -1) -> np.ndarray:
+    """Add multiple sigleton axes at once.
+
+    New dimensions added to `arr` at:
+    * `where, where+1, ... where+how_many-1` if `where` is non-negative.
+    * `where, where-1, ... where-how_many+1` if `where` is negative.
+    """
+    sgn = -1 if where < 0 else 1
+    axes = tuple(range(where, where + sgn * how_many, sgn))
+    return np.expand_dims(arr, axes)
+
+
+def scalarise(arg: np.ndarray) -> Union[np.ndarray, np.generic]:
+    """Replace array with scalar if ndim==0."""
     if arg.ndim == 0:
         return arg[()]
     return arg
@@ -98,12 +112,12 @@ def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     mat : la.lnarray
         transition matrix
     """
-    mat = np.stack((mp.uni_serial_params_to_mat([jmp], nst, drn=1),
-                    mp.uni_serial_params_to_mat([jmp], nst, drn=-1)))
-    return mat
+    # broadcast drn with axis 0. drn != 0, so shape[-1] == 1.
+    return mp.uni_serial_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
 
 
-def rand_trans(nst: int, drns=(0, 0), **kwds):
+def rand_trans(nst: int, npl: int = 2, *, drns=(0, 0), sparsity: float = 1.,
+               **kwds) -> la.lnarray:
     """
     Make a random transition matrix (continuous time).
 
@@ -111,19 +125,26 @@ def rand_trans(nst: int, drns=(0, 0), **kwds):
     ----------
     nst : int
         total number of states.
+    npl : int
+        number of plasticity types.
     drns : Sequence[int]
         direction for each plasticity type.
+    sparsity : float, optional
+        sparsity, by default 1
 
     Returns
     -------
     mat : la.lnarray
         transition matrix
     """
-    mats = []
+    if npl != len(drns):
+        drns = drns[:npl] + drns[-1:] * (npl - len(drns))
     npr = mp.num_param(nst, drn=drns[0], **kwds)
-    for i in drns:
-        mats.append(mp.params_to_mat(RNG.random(npr), drn=i, **kwds))
-    return np.stack(mats)
+    params = RNG.random((npl, npr))
+    if sparsity < 1.:
+        inds = RNG.random((npl, npr))
+        params[inds > sparsity] = 0.
+    return mp.params_to_mat(params, drn=drns, nst=nst, **kwds)
 
 
 def build_generic(func, nst: int, npl: int = 2,
@@ -221,7 +242,7 @@ def build_empty(nst: int, npl: int = 2,
 
 
 def build_rand(nst: int, npl: int = 2, binary: bool = False,
-               sparsity: float = 1.) -> Dict[str, la.lnarray]:
+               **kwds) -> Dict[str, la.lnarray]:
     """Make a random model.
 
     Make a random model, i.e. transition rates are random numbers.
@@ -248,7 +269,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: ma.rand_trans(n, p, sparsity),
+    return build_generic(lambda n, p: rand_trans(n, p, **kwds),
                          nst, npl, binary)
 
 
@@ -337,14 +358,14 @@ def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
     jmp /= (1-jmp)
 
     inds = np.arange(1, n)
-    plast[0, inds, n] = jmp_vec
     plast[0, 0, n] = jmp_vec[0] * jmp
-    plast[0, inds, inds-1] = jmp_vec * jmp
+    plast[0, inds, n] = jmp_vec
+    plast[1, inds, inds-1] = jmp_vec * jmp
 
     inds = nst - 1 - inds
     plast[1, inds, n-1] = jmp_vec
     plast[1, -1, n-1] = jmp_vec[0] * jmp
-    plast[1, inds, inds+1] = jmp_vec * jmp
+    plast[0, inds, inds+1] = jmp_vec * jmp
 
     ma.stochastify_c(plast)
 #    out['plast'] = plast
