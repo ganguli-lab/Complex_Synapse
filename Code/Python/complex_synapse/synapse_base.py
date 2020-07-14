@@ -178,7 +178,8 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         binary : bool
             is the weight vector binary? Otherwise it's linear. Default: False
         ...
-            extra arguments passed to `cls.build` or `builders.build_zero`.
+            extra arguments passed to `cls.build`, `builders.build_zero`.
+            or `sl_py_tools.numpy_tricks.markov...`.
 
         Returns
         -------
@@ -205,7 +206,8 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         binary : bool
             is the weight vector binary? Otherwise it's linear. Default: False
         ...
-            extra arguments passed to `cls.build` or `builders.build_empty`.
+            extra arguments passed to `cls.build`, `builders.build_empty`
+            or `sl_py_tools.numpy_tricks.markov...`.
 
         Returns
         -------
@@ -236,7 +238,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
             sparsity, default: 1.
         ...
             extra arguments passed to `cls.build`, `builders.build_rand`
-            or `sl_py_tools.numpy_tricks.markov_param`.
+            or `sl_py_tools.numpy_tricks.markov...`.
 
         Returns
         -------

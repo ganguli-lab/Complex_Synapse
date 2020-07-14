@@ -15,8 +15,6 @@ stochastifyC(W)
     turn into continuous time transition matrix.
 stochastifyD(mat)
     turn into discrete time transition matrix.
-rand_trans(nst, sp)
-    random transition matrix.
 build_zero(nst)
     empty model (use with SynapseMemoryModel.Build).
 build_rand(nst, sp)
@@ -114,37 +112,6 @@ def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     """
     # broadcast drn with axis 0. drn != 0, so shape[-1] == 1.
     return mp.uni_serial_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
-
-
-def rand_trans(nst: int, npl: int = 2, *, drns=(0, 0), sparsity: float = 1.,
-               **kwds) -> la.lnarray:
-    """
-    Make a random transition matrix (continuous time).
-
-    Parameters
-    ----------
-    nst : int
-        total number of states.
-    npl : int
-        number of plasticity types.
-    drns : Sequence[int]
-        direction for each plasticity type.
-    sparsity : float, optional
-        sparsity, by default 1
-
-    Returns
-    -------
-    mat : la.lnarray
-        transition matrix
-    """
-    if npl != len(drns):
-        drns = drns[:npl] + drns[-1:] * (npl - len(drns))
-    npr = mp.num_param(nst, drn=drns[0], **kwds)
-    params = RNG.random((npl, npr))
-    if sparsity < 1.:
-        inds = RNG.random((npl, npr))
-        params[inds > sparsity] = 0.
-    return mp.params_to_mat(params, drn=drns, nst=nst, **kwds)
 
 
 def build_generic(func, nst: int, npl: int = 2,
@@ -255,8 +222,8 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
     binary : bool
         is the weight vector binary? Otherwise it's linear. Default: False
     optional arguments
-        passed to rand_trans
-    sp : float
+        passed to `sl_py_tools.numpy_tricks.markov.rand_trans`.
+    sparsity : float
         sparsity, default: 1.
 
     Returns
@@ -269,7 +236,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: rand_trans(n, p, **kwds),
+    return build_generic(lambda n, p: ma.rand_trans(n, p, **kwds),
                          nst, npl, binary)
 
 

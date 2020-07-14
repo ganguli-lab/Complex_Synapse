@@ -591,8 +591,6 @@ class SynapseOptModel(_SynapseMemoryModel):
             fraction of events that are potentiating, default=0.5.
         binary : bool
             is the weight vector binary? Otherwise it's linear. Default: False
-        sp : float
-            sparsity, default: 1.
         ...
             extra arguments passed to `cls.from_params`.
 
