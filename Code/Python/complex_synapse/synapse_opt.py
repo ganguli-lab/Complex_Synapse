@@ -43,8 +43,7 @@ class SynapseOptModel(_SynapseMemoryModel):
     @property
     def nparam(self) -> int:
         """number of plasticity types."""
-        npr = mp.num_param(self.nstates, **self.directed(0))
-        return self.nplast * npr
+        return self.nplast * mp.num_param(self.nstates, **self.directed(0))
 
     def get_params(self) -> la.lnarray:
         """Independent parameters of transition matrices.

@@ -43,7 +43,9 @@
 %prob distribution
 \newcommand{\pr}{\mathbf{p}}
 %equilibrium distribution
-\newcommand{\eq}{\pr^\infty}
+\newcommand{\eq}{\pib}
+%equilibrium metric
+\newcommand{\Eq}{\boldsymbol{\Pi}}
 %first passage times
 \newcommand{\fpt}{\mathbf{T}}
 %off-diag first passage times
@@ -58,6 +60,8 @@
 \newcommand{\Lb}{\boldsymbol{\Lambda}}
 \newcommand{\etw}{\boldsymbol{\eta}^w}
 \newcommand{\thb}{\boldsymbol{\theta}}
+\newcommand{\omb}{\boldsymbol{\omega}}
+\newcommand{\alb}{\boldsymbol{\alpha}}
 %synapse models
 \newcommand{\w}{\mathbf{w}}
 \newcommand{\W}{\mathbf{W}}
@@ -91,6 +95,8 @@
 \newcommand{\CB}{\mathcal{B}}
 %avoid double superscripts
 \renewcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}}
+% shifted process
+\newcommand{\shift}[1]{\widehat{#1}}
 
 % ----------------------------------------------------------------
 \input{sl_theorems_preamble.tex}
@@ -469,15 +475,30 @@ Then we also define
   \fptb_{ij}(s) = \frac{\fund_{jj}(s)-\fund_{ij}(s)}{\eq_j}.
 \end{equation}
 %
-This reduces to the first passage time matrix at $s=0$, but at other $s$ there is (probably) no relation.
+This reduces to the mean first-passage time matrix at $s=0$. 
 
-Using the exact same proof as in the case $s=0$, we see that the quantity
+At other values of \(s\) can they be interpreted as the mean first-passage times of a different process?
+In order to have \cref{eq:lfund} as its fundamental matrix, the extra bit must draw probability from each state at a rate \(s\).
+In other words, it should have the form \(s(\onev \boldsymbol{\zeta} - \I)\) for some \(\boldsymbol{\zeta} \) 
+(which can be absorbed into \(\arow\) in \cref{eq:lfund}).
+This other process must have the same steady-state distribution, so that its mean first-passage times are given by \cref{eq:lfptb}, so the probability drawn from each state must be redistributed proportional to \(\eq\).
+This other stochastic process is
+%
+\begin{equation}\label{eq:lshift}
+  \shift{\MM}(s) = \MM + s (\onev \eq - \I).
+\end{equation}
+%
+This is a valid continuous-time Markov process.
+Its fundamental matrix is given by \cref{eq:lfund} with \( \arow_0 = \arow + s \eq \).
+
+This means that the \( \fptb(s) \) have all the same properties as in the case $s=0$.
+I particular, we see that the quantity
 %
 \begin{equation}\label{eq:lkemeny}
   \eta(s) = \sum_j \fptb_{ij}(s)\eq_j
 \end{equation}
 %
-is independent of the starting state $i$, but now $\eta(s) = \tr\fund(s) - \frac{\tau}{1+s\tau}$.
+is independent of the starting state $i$, but now $\eta(s) = \tr\fund(s) - \frac{\tau_0}{1 + s \tau_0}$.
 We can then define
 %
 \begin{equation}\label{eq:lpmixtime}
@@ -529,7 +550,7 @@ Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurveExact}
   A(s) = \intd[_0^{\infty}]{t} \e^{-st}\SNR(t) 
    &= \intd[_0^{\infty}]{t} \frac{ \sqrt{N} \eq \enc \e^{(r\frg-s)t} \w }
                                 { \sqrt{1-(f\pot-f\dep)^2(\eq\w)^2} } \\
-   &= \frac{\sqrt{N} \eq \enc \prn{s - r\frg}\inv \w }{\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
+   &= \frac{\sqrt{N} \eq \enc \prn{s \I - r\frg}\inv \w }{\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
 \end{aligned}
 \end{equation}
 %
@@ -546,17 +567,45 @@ Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s)
 %
 Note that $A(0)=A$, the area, and $\lim_{s\to\infty} \brc{sA(s)} = \SNR(0)$, the initial SNR.
 
+We can also express this in terms of the shifted process in \cref{eq:larea}.
+We can choose how to distribute the shift across \(\M\pot\) and \(\M\dep\).
+Two choices from a continuum%
+\footnote{We could choose \( \shift{\M}^\nu(s) = \M^\nu + \frac{s g^\nu}{r f^\nu} (\onev \eq - \I) \), for any \(g^\nu \) with \( \sum_\nu g^\nu = 1 \).
+The two possibilities in \cref{eq:lshiftpd} come from \(g^\nu = \frac{1}{2}\) and \(g^\nu = f^\nu\) respectively.}
+are:
+%
+\begin{equation}\label{eq:lshiftpd}
+  \shift{\M}^\nu(s) = \M^\nu + \frac{s}{2 r f^\nu} (\onev \eq - \I)
+  \qquad \text{or} \qquad
+  \shift{\M}^\nu(s) = \M^\nu + \frac{s}{r} (\onev \eq - \I).
+\end{equation}
+%
+The first choice leaves \( \shift{\enc} = \enc \), so it only affects the \(\etw\) piece of \cref{eq:larea}.
+The second choice does not leave \(\enc\) invariant (in fact \( \shift{\enc}(s) = \enc + (f\pot - d\dep) (\onev \eq - \I) \)), but because \( \eq (\onev \eq - \I) = 0 \) the shift does not make any contribution to \cref{eq:larea}.
+Either way:
+%
+\begin{equation}\label{eq:lareashift}
+  \hat{A}\prn{s; \M^\nu} = \hat{A}\prn{0; \shift{\M}^\nu(s)}.
+\end{equation}
+%
+In other words, the laplace transform of the SNR is the area under the SNR for the shifted process.
+
+Note that while \cref{eq:lshift} produces a valid continuous-time Markov process, \cref{eq:lshiftpd} does not always produce valid discrete-time Markov processes, as the diagonal elements can become negative.
+However, \(r (\shift{\M}^\nu - \I)\) is a valid continuous-time Markov process.
+
 In analogy with the case $s=0$, we define
 %
 \begin{equation}\label{eq:lareacoeffs}
   \begin{aligned}
-    c_k(s) &= \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)}, \\
-    a_j(s) &= \sum_{k} \enc_{jk} (\etw_{j}(s) - \etw_{k}(s)), \\
-    \thb_i(s) &= \sum_j \fptb_{ij}(0)\, \eq_j a_j(s), \\
+    \mathbf{c}_k(s) &= \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)}, \\
+    \mathbf{a}_j(s) &= \sum_{k} \enc_{jk} (\etw_{j}(s) - \etw_{k}(s)), \\
+    \thb_i(s) &= \sum_j \fptb_{ij}(0)\, \eq_j \mathbf{a}_j(s), \\
   \end{aligned}
     \implies
-    \hat{A}(s) = \sum_k c_k(s) \eq_k \w_k
-      = \sum_i  \eq_i a_i(s).
+    \hat{A}(s) 
+      = \sum_k \eq_k \mathbf{c}_k(s) \w_k
+      % = \mathbf{c}^\dag(s) \w
+      = \eq \mathbf{a}(s).
 \end{equation}
 %
 
@@ -567,7 +616,7 @@ Using the same approach as the area bound in \cite{Lahiri2013synapse} we find th
 \begin{equation}\label{eq:lAdiff}
   \pdiff{\hat{A}(s)}{\M^\mu_{mn}}
      = f^\mu \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
-     +\prn{rc_m(s) + (-1)^\mu} \brk{\etw_m(s) - \etw_n(s)} }.
+     +\prn{r \mathbf{c}_m(s) + (-1)^\mu} \brk{\etw_m(s) - \etw_n(s)} }.
 \end{equation}
 %
 The term with $\Theta(s)$ comes from differentiating $\eq$, the term with $c(s)$ comes from differentiating $\etw(s)$ and the term with $\pm1$ comes from differentiating $\enc$ in \eqref{eq:larea}.
@@ -579,23 +628,28 @@ Then we denote
 %
 \begin{equation}\label{eq:hessparts}
 \begin{alignedat}{3}
-    R_{ijkl} &= \
+    R_{ijkl} = \smash{\pdiff{^2 \hat{A}}{\frg_{ij} \circ \partial \frg_{kl}}} 
+    &= \
     &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\thb_k(s) - \thb_l(s)} \\
     &&&+ \eq_i \brc{\mathbf{X}_{ik}(s) - \mathbf{X}_{jk}(s)} 
           \brc{\etw_k(s) - \etw_l(s)} \\
-    &&&+ \eq_i c_i(s) \brc{\fund_{ik}(s) - \fund_{jk}(s)} 
+    &&&+ \eq_i \mathbf{c}_i(s) \brc{\fund_{ik}(s) - \fund_{jk}(s)} 
           \brc{\etw_k(s) - \etw_l(s)},  \\
-  S_{ijkl} &=
+  S_{ijkl} = \smash{\pdiff{^2 \hat{A}}{\frg_{ij} \partial \enc_{kl}} }
+  &= \
     &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\etw_k(s) - \etw_l(s)} \\
-    &&&+ \eq_k \brc{\fund_{ki}(s) - \fund_{li}(s)} \brc{\etw_i(s) - \etw_j(s)}.
+    &&&+ \eq_k \brc{\fund_{ki}(s) - \fund_{li}(s)} \brc{\etw_i(s) - \etw_j(s)},
 \end{alignedat}
 \end{equation}
 %
+where \(R\) contains only those terms where \( \frg_{ij} \) precedes \( \frg_{kl} \) in the matrix products from the expression for \( \hat{A} \) in \cref{eq:larea}.
+The other terms sum to \(R\trans\).
+
 Then we can write the Hessian as
 %
 \begin{equation}\label{eq:hessian}
   \pdiff{^2\hat{A}(s)}{\M^\mu_{ij} \partial\M^\nu_{kl}} =
-     f^\mu f^\nu [R + R\trans + (-1)^\nu S + (-1)^\mu S\trans]_{ijkl}.
+     f^\mu f^\nu [R + R\trans + (-1)^\mu S\trans + (-1)^\nu S]_{ijkl}.
 \end{equation}
 %
 This is useful in numerical maximisation.
@@ -745,13 +799,12 @@ Consider the Lagrangian
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\etw_i(s) - \etw_j(s))
-        +\sum_{\nu i j} \prn{ f^\nu \mu^\nu_{ij} \M\pot_{ij} }
+        +\sum_{\nu i j} \prn{ f^\nu \mu^\nu_{ij} \M^\nu_{ij} }
         &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i\w_i },
 \end{aligned}
 \end{equation}
 %
 where $\Delta\pr$ is the constant value we are holding $\eq\w$ at.
-After maximising
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTfinite}
@@ -762,37 +815,90 @@ The Karush-Kuhn-Tucker necessary conditions for a maximum are
   \pdiff{\CL}{\lambda} = 0.
 \end{equation}
 %
+We have scaled the KKT multipliers by \(f^\nu\) for later convenience.
+
 The derivatives, for $m \neq n$ are
 %
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
   \frac{1}{f^\nu} \pdiff{\CL}{\Mh^\nu_{mn}} = & \,
-      \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
-     +\prn{rc_m(s) + (-1)^\nu} \brk{\etw_m(s) - \etw_n(s)} } \\
+    \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
+     + \prn{r \mathbf{c}_m(s) + (-1)^\nu} \brk{\etw_m(s) - \etw_n(s)} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
-     + \lambda \eq_m \sum_i (\fptb_{mi}(0)-\fptb_{ni}(0)) \eq_i\w_i.
+     + r \lambda \eq_m (\etw_{m}(0)-\etw_{n}(0)) 
+    = 0.
 \end{aligned}
 \end{equation}
 %
-These have the same form as for $s=0$, which allowed us to argue that the model with maximal area must have the serial topology, \cite{Leibold2008serial,Ben-DayanRubin2007sparse}.
+We can solve for the KKT multipliers by noting that
+%
+\begin{equation*}
+  \mu^\nu_{ij} \M^\nu_{ij} = 0,
+  \qquad \text{and} \qquad
+  \sum_{j: j \neq i} \mu^\nu_{ii} \M^\nu_{ij} 
+      = \mu^\nu_{ii} (1 - \M^\nu_{ii}) = \mu^\nu_{ii}.
+\end{equation*}
+%
+Then, with some new vectors defined:
+%
+\begin{equation}\label{eq:kktsol}
+\begin{aligned}
+  \mu^\nu_{mm} &= - \eq_m \prn{ r \alb^\nu_m(s) 
+    + r \lambda \omb^\nu_i(0) 
+    + \prn{r \mathbf{c}_m(s) + (-1)^\nu} \omb^\nu_m(s)
+    }, \\
+  \mu^\nu_{mn} &= \eq_m \big( 
+      r \brk{ \thb_n(s) - \thb_m(s) - \alb^\nu_m(s) }
+    + r \lambda \brk{ \etw_n(0) - \etw_m(0) - \omb^\nu_m(0) } 
+  \\ &\phantom{= - \eq_m \big( }
+    + \brk{rc_m(s) + (-1)^\nu} 
+        \brk{ \etw_n(s) - \etw_m(s) - \omb^\nu_m(s) }
+     \big), \\
+  &\text{where} \quad 
+  \boldsymbol{\alpha}^\nu(s) = (\M^\nu - \I) \thb(s), \qquad
+  \boldsymbol{\omega}^\nu(s) = (\M^\nu - \I) \etw(s).
+\end{aligned}
+\end{equation}
+%
+
+The expressions in \cref{eq:finitederivs} have the same form as for $s=0$, which allowed us to argue that the model with maximal area must have the serial topology, \cite{Lahiri2013synapse}.
 
 The one missing ingredient is the scale invariance.
 Define the scale transformation:
 %
 \begin{equation}\label{eq:scale}
-  \lambda * \M = (1-\lambda)\I + \lambda \M.
+  \lambda * \M^\nu \equiv (1-\lambda)\I + \lambda \M^\nu.
 \end{equation}
 %
 The Laplace transform has the following scaling property
 %
-\begin{equation}\label{eqlaplacescale}
-  A(\lambda s;\lambda * \M^\nu) = A(s;\M^\nu).
+\begin{equation}\label{eq:laplacescale}
+  \hat{A} \prn{\lambda s;\lambda * \M^\nu} = \hat{A} \prn{s; \M^\nu}.
 \end{equation}
 %
 At $s=0$, it is scale invariant.
 This means that we can take a pair of matrices that violates the ``diagonal'' constraints (second inequality of \eqref{eq:constri}) and use the scale transform \eqref{eq:scale} to construct a pair of matrices that satisfy the ``diagonal'' constraints and have the same area.
 This allowed us to ignore the diagonal constraints.
 We can't do that for $s>0$.
+
+The corresponding symmetry here is scaling the shifted process from \cref{eq:lshiftpd}, which amounts to
+%
+\begin{equation}\label{eq:shiftscale}
+  \lambda {\circledast}_{s} \M \equiv (1 - \lambda) \I + \lambda \M^\nu
+                + \frac{(\lambda - 1) s}{r} (\onev \eq - \I).
+\end{equation}
+%
+Then we have
+%
+\begin{equation}\label{eq:lshiftscale}
+  \hat{A} \prn{s; \M^\nu} 
+    = \hat{A} \prn{0, \shift{\M}^\nu(s)}
+    = \hat{A} \prn{0, \lambda * \shift{\M}^\nu(s)}
+    = \hat{A} \prn{s, \lambda {\circledast}_{s} \M^\nu}.
+\end{equation}
+%
+The problem here is that the lower bound, \(\M^\nu_{ij} \geq 0\), is not invariant under this transformation, unlike the \(s = 0\) case.
+Using this transformation to fix the upper bound can break the lower bound.
 
 However, we do have numerical evidence that the model that maximises the Laplace transform does have the serial topology.
 In \autoref{fig:envnum} we see the result of numerical maximisation of \eqref{eq:finitelagrangian}.
@@ -812,6 +918,92 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
   The solid red line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
   The solid grren line indicates the proven envelope, \eqref{eq:env}.}\label{fig:envnum}
 \end{figure}
+
+
+%-------Section------------------------------------------------------------------
+
+\subsection{Shifted problem}\label{sec:lshift}
+
+The relation of the Laplace transform to the shifted process from \cref{eq:lshiftpd,eq:lareashift} suggests an alternative approach: 
+treat the off-diagonal components of \(\shift{\M}^\nu \) as the degrees of freedom and maximise the area instead.
+The constraints on \(\shift{\M}^\nu_{ij}\) are different from \cref{eq:constri}:
+%
+\begin{equation}\label{eq:lshiftconstr}
+  \shift{\M}^\nu_{ij} \geq \frac{s \eq_j}{r},
+    \quad \forall \; \nu, i, j : i \neq j, \qquad
+  \sum_{j: j \neq i} \shift{\M}^\nu_{ij} \leq 1 + \frac{s}{r} (1 - \eq_i).
+    \quad \forall \; \nu, i.
+\end{equation}
+%
+The diagonal elements are still given by \( \shift{\M}^\nu_{ii} = 1 - \sum_{j: j \neq i} \shift{\M}^\nu_{ij} \), but now they are allowed to be negative.
+
+The Lagrangian we should consider is
+%
+\begin{equation}\label{eq:lshiftlagrangian}
+\begin{aligned}
+  \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\etw_i - \etw_j)
+        +\sum_{\nu i j}  f^\nu \mu^\nu_{ij}\prn{\M^\nu_{ij} -  \frac{s}{r} (\eq_j - \delta_{ij}) }
+        &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i\w_i },
+\end{aligned}
+\end{equation}
+%
+where all of the first-passage times are evaluated at \(s = 0\).
+
+The derivatives, for $m \neq n$ are
+%
+\begin{equation}\label{eq:lshiftderivs}
+\begin{aligned}
+  \frac{1}{f^\nu} \pdiff{\CL}{\Mh^\nu_{mn}} = & \,
+    \eq_m \prn{ r \brk{\thb_m - \thb_n}
+     + \prn{r \mathbf{c}_m + (-1)^\nu + r \lambda} \brk{\etw_m - \etw_n} } \\
+     &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
+     - \sum_{ij} \mu^\nu_{ij} s f^\nu \eq_m (\fptb_{mj} - \fptb_{nj}) \eq_j
+    = 0.
+\end{aligned}
+\end{equation}
+%
+We can absorb the new terms by defining
+%
+\begin{equation*}
+\begin{aligned}
+  \shift{\thb}^\nu(s) = \thb(0) - \frac{s f^\nu}{r} \fptb \Eq (\boldsymbol{\mu}^\nu)\trans \onev,
+  \qquad
+  \shift{\alb}^\nu(s) &= (\M^\nu + (s - 1) \I - s \onev \eq) \shift{\thb}^\nu(s),
+  \\
+  \shift{\omb}^\nu(s) &= (\M^\nu + (s - 1) \I - s \onev \eq) \etw(0).
+\end{aligned}
+\end{equation*}
+%
+We note that
+%
+\begin{equation*}
+  \mu^\nu_{ij} (\M^\nu_{ij} - s \eq_j) = 0,
+  \qquad \text{and} \qquad
+  \sum_{j: j \neq i} \mu^\nu_{ii} (\M^\nu_{ij} - s \eq_j)
+      = \mu^\nu_{ii} (1 - \M^\nu_{ii} - s (1 - \eq_i)) = \mu^\nu_{ii},
+\end{equation*}
+%
+then we can ``solve'' for the KKT multipliers:
+%
+\begin{equation}\label{eq:lshiftsol}
+\begin{aligned}
+  \mu^\nu_{mm} &= - \eq_m \prn{ r \shift{\alb}^\nu_m(s) 
+    + \brk{ r \mathbf{c}_m + (-1)^\nu + r \lambda } \shift{\omb}^\nu_m(s)
+    }, \\
+  \mu^\nu_{mn} &= \eq_m \prn{ 
+      r \brk{ \shift{\thb}_n(s) - \shift{\thb}_m(s) - \shift{\alb}^\nu_m(s) }
+  % \\ & \phantom{= - \eq_m \big( } 
+    + \brk{ r \mathbf{c}_m + (-1)^\nu + r \lambda } 
+        \brk{ \etw_n + \etw_m - \shift{\omb}^\nu_m(s) }
+     }, \\
+\end{aligned}
+\end{equation}
+%
+although there are KKT multipliers hiding in \(\shift{\thb}^\nu(s)\) and \(\shift{\alb}^\nu(s)\).
+
+While this problem involves the scale invariant quantity \(\hat{A}(0)\), neither the upper nor lower bounds in \cref{eq:lshiftconstr} are invariant.
+We then run into the same problems in proving our serial-topology hypothesis.
+
 
 \begin{figure}[tbp]
   \centering
