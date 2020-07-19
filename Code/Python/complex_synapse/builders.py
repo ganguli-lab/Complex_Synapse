@@ -33,7 +33,7 @@ import numpy as np
 
 import numpy_linalg as la
 from sl_py_tools.numpy_tricks import markov as ma
-from sl_py_tools.numpy_tricks import markov_param as mp
+from sl_py_tools.numpy_tricks.markov import params as mp
 
 RNG = la.random.default_rng()
 
@@ -94,7 +94,7 @@ def linear_weights(nst: int) -> la.lnarray:  # linear synaptic weights
     return la.linspace(-1., 1., nst)
 
 
-def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
+def serial_trans(nst: int, npl: int = 2, jmp: float = 1.) -> la.lnarray:
     """
     Make a serial transition matrix (continuous time).
 
@@ -110,8 +110,38 @@ def serial_trans(nst: int, jmp: float = 1.) -> la.lnarray:
     mat : la.lnarray
         transition matrix
     """
+    if npl > 2:
+        raise ValueError("serial mdel has 2 plasticity types")
+    if npl == 1:
+        # drn scalar, so no broadcast axis. drn = 0, so shape[-1] == 2.
+        return mp.uni_serial_params_to_mat([jmp, jmp], nst, drn=0)
     # broadcast drn with axis 0. drn != 0, so shape[-1] == 1.
     return mp.uni_serial_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
+
+
+def cascade_trans(nst: int, npl: int = 2, jmp: float = 0.5) -> la.lnarray:
+    """
+    Make a cascade transition matrix (continuous time).
+
+    Parameters
+    ----------
+    n : int
+        total number of states
+    jmp : float
+        jump rate parameter of cascade model
+
+    Returns
+    -------
+    mat : la.lnarray
+        transition matrix
+    """
+    if npl > 2:
+        raise ValueError("cascade mdel has 2 plasticity types")
+    if npl == 1:
+        # drn is scalar, so no broadcast axis. drn = 0, so shape[-1] == 2.
+        return mp.std_cascade_params_to_mat([jmp, jmp], nst, drn=0)
+    # broadcast drn with axis 0. drn != 0, so shape[-1] == 1.
+    return mp.std_cascade_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
 
 
 def build_generic(func, nst: int, npl: int = 2,
@@ -264,7 +294,7 @@ def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: serial_trans(n, jmp), nst, 2, True)
+    return build_generic(lambda n, p: serial_trans(n, p, jmp), nst, 2, True)
 
 
 def build_multistate(nst: int, jmp: float) -> Dict[str, la.lnarray]:
@@ -318,22 +348,4 @@ def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    out = build_zero(nst, 2, True)
-    plast = out['plast']
-    n = nst // 2
-    jmp_vec = np.logspace(n-2, 0, num=n-1, base=jmp)
-    jmp /= (1-jmp)
-
-    inds = np.arange(1, n)
-    plast[0, 0, n] = jmp_vec[0] * jmp
-    plast[0, inds, n] = jmp_vec
-    plast[1, inds, inds-1] = jmp_vec * jmp
-
-    inds = nst - 1 - inds
-    plast[1, inds, n-1] = jmp_vec
-    plast[1, -1, n-1] = jmp_vec[0] * jmp
-    plast[0, inds, inds+1] = jmp_vec * jmp
-
-    ma.stochastify_c(plast)
-#    out['plast'] = plast
-    return out
+    return build_generic(lambda n, p: cascade_trans(n, p, jmp), nst, 2, True)

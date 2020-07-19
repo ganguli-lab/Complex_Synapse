@@ -5,11 +5,16 @@ Created on Mon Sep 18 15:49:42 2017
 @author: Subhy
 """
 from __future__ import annotations
-from typing import Union, Sequence, Dict
+
 from numbers import Number
+from typing import Dict, Sequence, Union
+
 import numpy as np
+
 import numpy_linalg as la
+
 from . import builders as bld
+
 cvl = la.convert
 
 # types that can multiply with/add to a matrix

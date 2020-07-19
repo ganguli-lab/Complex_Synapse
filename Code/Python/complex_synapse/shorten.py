@@ -1,6 +1,7 @@
 """Properties of optimal shortened models
 """
 from typing import Tuple
+
 import numpy as np
 import scipy.optimize as sco
 

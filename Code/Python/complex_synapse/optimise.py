@@ -13,7 +13,7 @@ from sl_py_tools.arg_tricks import default
 from sl_py_tools.containers import listify, map_join
 from sl_py_tools.iter_tricks import (dcount, delay_warnings, denumerate, dzip,
                                      zenumerate)
-from sl_py_tools.numpy_tricks import markov_param as mp
+from sl_py_tools.numpy_tricks.markov import params as mp
 
 from . import builders as bld
 from .synapse_opt import SynapseOptModel

@@ -12,7 +12,7 @@ from typing import ClassVar, Dict, Optional, Tuple, Union
 import numpy as np
 
 import numpy_linalg as la
-from sl_py_tools.numpy_tricks import markov_param as mp
+from sl_py_tools.numpy_tricks.markov import params as mp
 
 from . import builders as bld
 from .builders import insert_axes
