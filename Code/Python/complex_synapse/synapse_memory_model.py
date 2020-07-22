@@ -397,8 +397,9 @@ def valid_values(model: SynapseMemoryModel) -> bool:
 
 
 def well_behaved(model: SynapseMemoryModel,
-                 rate: Optional[float] = None) -> bool:
+                 rate: Optional[float] = None, cond: bool = False) -> bool:
     """Do attributes plast have finite values, and is Zinv well conditioned?"""
     vld = np.isfinite(model.plast).all()
-    vld &= model.cond(rate, rate_max=True) < model.CondThresh
+    if cond:
+        vld &= model.cond(rate, rate_max=True) < model.CondThresh
     return vld

@@ -228,7 +228,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         func : float
             Value of ``snr_laplace`` at ``s``.
         """
-        if not well_behaved(self, rate):
+        if not well_behaved(self, rate, kwds.pop('cond', True)):
             return np.array(1.e10)
         # (p,c), (eta,theta)
         rows = self._derivs(rate, **kwds)[0]
@@ -253,7 +253,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
-        if not well_behaved(self, rate):
+        if not well_behaved(self, rate, kwds.pop('cond', True)):
             return bld.RNG.random(self.nparam)
         # (p,c), (eta,theta)
         rows, cols, _ = self._derivs(rate, **kwds)
@@ -281,6 +281,8 @@ class SynapseOptModel(_SynapseMemoryModel):
         hess : la.lnarray (2n(n-1),2n(n-1))
             Hessian of ``snr_laplace`` at ``s`` with respect to parameters.
         """
+        if not well_behaved(self, rate, kwds.pop('cond', True)):
+            return bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
         rows, cols, mats = self._derivs(rate, **kwds)
@@ -323,6 +325,8 @@ class SynapseOptModel(_SynapseMemoryModel):
             Change in parameters matrix-multiplied by hessian of
             ``snr_laplace`` at ``s`` with respect to parameters.
         """
+        if not well_behaved(self, rate, kwds.pop('cond', True)):
+            return bld.RNG.random(self.nparam)
         # (p,c), (eta,theta), (Zi,Zis)
         kwds.setdefault('inv', False)
         rows, cols, mats = self._derivs(rate, **kwds)
@@ -402,7 +406,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         func : la.lnarray (2n**2,)
             Value of ``W - s * e @ peq``.
         """
-        if not well_behaved(self, rate):
+        if not well_behaved(self, rate, kwds.pop('cond', True)):
             return -np.ones(self.nplast*self.nstates**2)
         rate = rate / (2 * self.frac.s)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
@@ -426,7 +430,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         grad : la.lnarray (2n**2,2n(n-1),)
             Gradient of ``func`` with respect to parameters.
         """
-        if not well_behaved(self, rate):
+        if not well_behaved(self, rate, kwds.pop('cond', True)):
             return -bld.RNG.random((self.nplast*self.nstates**2, self.nparam,))
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
@@ -463,7 +467,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         hess : la.lnarray (2n(n-1),2n(n-1))
             Hessian of ``peq_min_fun(rate) @ lag`` with respect to parameters.
         """
-        if not well_behaved(self, rate):
+        if not well_behaved(self, rate, kwds.pop('cond', True)):
             return bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
@@ -488,7 +492,7 @@ class SynapseOptModel(_SynapseMemoryModel):
 
     def cond_fun(self, rate: Number, **kwds) -> float:
         """Gap between condition number and threshold"""
-        if not well_behaved(self, rate):
+        if not well_behaved(self, rate,False):
             nout = 1 if rate is None else 2
             return -np.ones(nout)
         if kwds.pop('svd', False):
@@ -503,7 +507,7 @@ class SynapseOptModel(_SynapseMemoryModel):
 
     def cond_grad(self, rate: Number, **kwds) -> float:
         """Gap between condition number and threshold"""
-        if not well_behaved(self, rate):
+        if not well_behaved(self, rate, False):
             nout = 1 if rate is None else 2
             return bld.RNG.random((nout, self.nparam))
         kwds['svd'] = True

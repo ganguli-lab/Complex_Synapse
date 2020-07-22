@@ -16,8 +16,8 @@ def beta_to_s(beta: float) -> float:
     return np.cosh(beta) - 1
 
 
-def s_to_beta(sval: float) -> (float, float):
-    """Convert s to beta. two possibilities: negatives"""
+def s_to_beta(sval: float) -> float:
+    """Convert s to beta. positive one of two possibilities"""
     return np.arccosh(sval + 1)
 
 
@@ -45,7 +45,7 @@ def components(beta: float, num: int) -> Tuple[float, ...]:
 
 # -------------------------------------
 def sticky(eps: float, beta: float, num: int) -> float:
-    """Laplace-SNR for shortened serial model"""
+    """Laplace-SNR for sticky serial model"""
     sval = beta_to_s(beta)
     numer, denom, dnumer, ddenom = components(beta, num)
     fnumer = numer - eps * dnumer
@@ -55,13 +55,13 @@ def sticky(eps: float, beta: float, num: int) -> float:
 
 
 def neg_sticky(eps: float, alpha: float, num: int) -> float:
-    """negative Laplace-SNR for shortened serial model"""
+    """negative Laplace-SNR for sticky serial model"""
     return - sticky(eps, np.log(alpha), num)
 
 
 # -------------------------------------
 def eps_stars(beta: float, num: int) -> float:
-    """Optimal epsilon for sticky serial model"""
+    """Optimal epsilon for sticky serial model, raw"""
     if num == 2:
         return 0, 0
     numer, denom, dnumer, ddenom = components(beta, num)
@@ -79,13 +79,13 @@ def eps_stars(beta: float, num: int) -> float:
 
 
 def eps_star(beta: float, num: int) -> float:
-    """Optimal epsilon for sticky serial model"""
+    """Optimal epsilon for sticky serial model, clipped"""
     epss = eps_stars(beta, num)[0]
     return np.minimum(np.maximum(epss, 0), 1)
 
 
 def eps_star_star(beta: float, num: int) -> float:
-    """Optimal epsilon for sticky serial model"""
+    """Optimal epsilon for sticky serial model, clipped, other soln"""
     epss = eps_stars(beta, num)[1]
     return np.minimum(np.maximum(epss, 0), 1)
 
@@ -127,6 +127,15 @@ def envelope(num: int, count: int, **kwds) -> Arrays:
     epss = kwds.pop('eps', eps_star(betas, num))
     avals = sticky(epss, betas, num)
     return svals, avals, env
+
+
+# -------------------------------------
+def sticky_star(svals: np.ndarray, num: int) -> np.ndarray:
+    """actual envelope"""
+    betas = s_to_beta(svals)
+    epss = eps_star(betas, num)
+    avals = sticky(epss, betas, num)
+    return avals
 
 
 # -------------------------------------

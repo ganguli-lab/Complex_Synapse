@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Optimising synapse modelopts
 """
+from __future__ import annotations
+
 from functools import wraps
 from numbers import Number
 from typing import Callable, List, Optional, Tuple, TypeVar, Union
@@ -18,12 +20,6 @@ from sl_py_tools.numpy_tricks.markov import params as mp
 from . import builders as bld
 from .synapse_opt import SynapseOptModel
 
-Data = TypeVar('Data', Number, np.ndarray)
-Func = Callable[[np.ndarray], Data]
-Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint]
-Problem = Tuple[Func[Number], Func[np.ndarray], Func[np.ndarray],
-                sco.Bounds, List[Constraint]]
-Maker = Callable[[SynapseOptModel, Number, bool, bool], Problem]
 # =============================================================================
 # Problem creation helper functions
 # =============================================================================
@@ -210,6 +206,8 @@ def normal_problem(model: SynapseOptModel, rate: Number, inv: bool = False,
                    keep_feasible: bool = False, **kwds) -> Problem:
     """Make an optimize problem.
     """
+    svd = kwds.pop('svd', False)
+    kwds['cond'] = not svd
     fun = make_fn(model, model.laplace_fun, rate, inv=inv, **kwds)
     jac = make_fn(model, model.laplace_grad, rate, inv=inv, **kwds)
     hess = make_fn(model, model.laplace_hess, rate, **kwds) if inv else None
@@ -217,7 +215,7 @@ def normal_problem(model: SynapseOptModel, rate: Number, inv: bool = False,
     con_coeff = constraint_coeff(model)
     bounds = sco.Bounds(0, 1, keep_feasible)
     diag = [sco.LinearConstraint(con_coeff, -np.inf, 1, keep_feasible)]
-    if kwds.get('svd', False):
+    if svd:
         diag.append(cond_limit(model, rate, keep_feasible, inv=inv))
 
     return fun, jac, hess, bounds, diag
@@ -235,6 +233,8 @@ def shifted_problem(model: SynapseOptModel, rate: Number, inv: bool = False,
     if any(SynapseOptModel.type.values()):
         raise ValueError('Shifted problem cannot have special topology')
 
+    svd = kwds.pop('svd', False)
+    kwds['cond'] = not svd
     fun = make_fn(model, model.area_fun, inv=True, **kwds)
     jac = make_fn(model, model.area_grad, inv=True, **kwds)
     hess = make_fn(model, model.area_hess, **kwds) if inv else None
@@ -244,7 +244,7 @@ def shifted_problem(model: SynapseOptModel, rate: Number, inv: bool = False,
     cjac = make_fn(model, model.peq_min_grad, rate, **kwds)
     chess = make_fn(model, model.peq_min_hess, rate, **kwds) if inv else None
     lims = sco.NonlinearConstraint(cfun, 0, np.inf, cjac, chess, keep_feasible)
-    if kwds.get('svd', False):
+    if svd:
         lims = [lims, cond_limit(model, None, keep_feasible, inv=True)]
 
     return fun, jac, hess, bounds, listify(lims)
@@ -377,8 +377,9 @@ def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
     with delay_warnings():
         for ind, rate in dzip('rate', inds, rates[inds]):
             res = optim_laplace(rate, model=model, **kwds)
-            snr[ind] = - res.fun
-            models[ind] = res.x
+            if - res.fun > snr[ind]:
+                snr[ind] = - res.fun
+                models[ind] = res.x
     return snr, models
 
 
@@ -414,3 +415,14 @@ def check_cond_range(rates: np.ndarray, models: np.ndarray,
 def proven_envelope_laplace(rate: Data, nst: int) -> Data:
     """Theoretical envelope for Laplace transform"""
     return (nst - 1) / (rate * (nst - 1) + 1)
+
+
+# =============================================================================
+# Type hints
+# =============================================================================
+Data = TypeVar('Data', Number, np.ndarray)
+Func = Callable[[np.ndarray], Data]
+Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint]
+Problem = Tuple[Func[Number], Func[np.ndarray], Func[np.ndarray],
+                sco.Bounds, List[Constraint]]
+Maker = Callable[[SynapseOptModel, Number, bool, bool], Problem]

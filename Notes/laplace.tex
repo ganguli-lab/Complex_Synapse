@@ -779,7 +779,7 @@ This envelope is shown in \autoref{fig:envproven}.
 \begin{figure}[tb]
   \centering
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.8\linewidth]{LenvProven.eps}
+  \includegraphics[width=0.8\linewidth]{LenvProven.pdf}
   \caption[Proven envelope for the signal-to-noise ratio]
   {The memory curve envelope that we can prove, \eqref{eq:env}.
   The number of synapses $N=10^4$ and the number of states $M=12$.
@@ -794,13 +794,15 @@ This envelope is shown in \autoref{fig:envproven}.
 Now we'll maximise $\snrb(\tau)$ for some fixed $\tau$, subject to the constraints \eqref{eq:constr}.
 First, we will maximise the numerator of \eqref{eq:lsnr} holding $\eq\w$ fixed.
 We can maximise the ration \wrt $\eq\w$ later.
+From this point on, we work in units where \(r = 1\).
+
 Consider the Lagrangian
 %
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\etw_i(s) - \etw_j(s))
         +\sum_{\nu i j} \prn{ f^\nu \mu^\nu_{ij} \M^\nu_{ij} }
-        &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i\w_i },
+        &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i \w_i },
 \end{aligned}
 \end{equation}
 %
@@ -822,10 +824,10 @@ The derivatives, for $m \neq n$ are
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
   \frac{1}{f^\nu} \pdiff{\CL}{\Mh^\nu_{mn}} = & \,
-    \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
-     + \prn{r \mathbf{c}_m(s) + (-1)^\nu} \brk{\etw_m(s) - \etw_n(s)} } \\
+    \eq_m \prn{ \brk{\thb_m(s) - \thb_n(s)}
+     + \prn{\mathbf{c}_m(s) + (-1)^\nu} \brk{\etw_m(s) - \etw_n(s)} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
-     + r \lambda \eq_m (\etw_{m}(0)-\etw_{n}(0)) 
+     + \lambda \eq_m (\etw_{m}(0)-\etw_{n}(0)) 
     = 0.
 \end{aligned}
 \end{equation}
@@ -843,15 +845,15 @@ Then, with some new vectors defined:
 %
 \begin{equation}\label{eq:kktsol}
 \begin{aligned}
-  \mu^\nu_{mm} &= - \eq_m \prn{ r \alb^\nu_m(s) 
-    + r \lambda \omb^\nu_i(0) 
-    + \prn{r \mathbf{c}_m(s) + (-1)^\nu} \omb^\nu_m(s)
+  \mu^\nu_{mm} &= - \eq_m \prn{ \alb^\nu_m(s) 
+    + \lambda \omb^\nu_i(0) 
+    + \prn{\mathbf{c}_m(s) + (-1)^\nu} \omb^\nu_m(s)
     }, \\
   \mu^\nu_{mn} &= \eq_m \big( 
-      r \brk{ \thb_n(s) - \thb_m(s) - \alb^\nu_m(s) }
-    + r \lambda \brk{ \etw_n(0) - \etw_m(0) - \omb^\nu_m(0) } 
-  \\ &\phantom{= - \eq_m \big( }
-    + \brk{rc_m(s) + (-1)^\nu} 
+      \brk{ \thb_n(s) - \thb_m(s) - \alb^\nu_m(s) }
+    + \lambda \brk{ \etw_n(0) - \etw_m(0) - \omb^\nu_m(0) } 
+  \\ &\phantom{= \eq_m \big( }
+    + \brk{\mathbf{c}_m(s) + (-1)^\nu} 
         \brk{ \etw_n(s) - \etw_m(s) - \omb^\nu_m(s) }
      \big), \\
   &\text{where} \quad 
@@ -884,8 +886,9 @@ We can't do that for $s>0$.
 The corresponding symmetry here is scaling the shifted process from \cref{eq:lshiftpd}, which amounts to
 %
 \begin{equation}\label{eq:shiftscale}
-  \lambda {\circledast}_{s} \M \equiv (1 - \lambda) \I + \lambda \M^\nu
-                + \frac{(\lambda - 1) s}{r} (\onev \eq - \I).
+  \lambda {\circledast}_{s} \M^\nu 
+      \equiv (1 - \lambda) \brk{(1 + s)\I - s \onev \eq} 
+      + \lambda \M^\nu.
 \end{equation}
 %
 Then we have
@@ -901,7 +904,7 @@ The problem here is that the lower bound, \(\M^\nu_{ij} \geq 0\), is not invaria
 Using this transformation to fix the upper bound can break the lower bound.
 
 However, we do have numerical evidence that the model that maximises the Laplace transform does have the serial topology.
-In \autoref{fig:envnum} we see the result of numerical maximisation of \eqref{eq:finitelagrangian}.
+In \cref{fig:envnum} we see the result of numerical maximisation of \cref{eq:finitelagrangian}.
 We see that restricting to the serial topology does not make the performance any worse.
 In fact, it slightly improves the performance, but this can be ascribed to the numerical optimisation problem being easier.
 Assuming that the optimiser did find the global maximum, this provides evidence for our conjecture that the model that maximises the Laplace transform must have the serial topology.
@@ -910,13 +913,13 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
 \begin{figure}[tb]
   \centering
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.8\linewidth]{LenvNum.svg}\\
+  \includegraphics[width=0.8\linewidth]{LenvNum.pdf}\\
   \caption[Numerical envelope for the signal-to-noise ratio]
   {Numerical envelope for the signal-to-noise ratio, \eqref{eq:snrb}. 
-  \Cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} are solved numericallly with $f\potdep=\frac{1}{2}$, the number of synapses $N=10^4$ and the number of states $M=12$.
-  The dashed red line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
-  The solid red line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
-  The solid grren line indicates the proven envelope, \eqref{eq:env}.}\label{fig:envnum}
+  \Cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} are solved numericallly with $f\potdep=\frac{1}{2}$, the number of synapses $N=1$ and the number of states $M=10$.
+  The orange line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
+  The green line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
+  The blue line indicates the proven envelope, \eqref{eq:env}.}\label{fig:envnum}
 \end{figure}
 
 
@@ -929,9 +932,9 @@ treat the off-diagonal components of \(\shift{\M}^\nu \) as the degrees of freed
 The constraints on \(\shift{\M}^\nu_{ij}\) are different from \cref{eq:constri}:
 %
 \begin{equation}\label{eq:lshiftconstr}
-  \shift{\M}^\nu_{ij} \geq \frac{s \eq_j}{r},
+  \shift{\M}^\nu_{ij} \geq s \eq_j,
     \quad \forall \; \nu, i, j : i \neq j, \qquad
-  \sum_{j: j \neq i} \shift{\M}^\nu_{ij} \leq 1 + \frac{s}{r} (1 - \eq_i).
+  \sum_{j: j \neq i} \shift{\M}^\nu_{ij} \leq 1 + s (1 - \eq_i).
     \quad \forall \; \nu, i.
 \end{equation}
 %
@@ -942,20 +945,23 @@ The Lagrangian we should consider is
 \begin{equation}\label{eq:lshiftlagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\etw_i - \etw_j)
-        +\sum_{\nu i j}  f^\nu \mu^\nu_{ij}\prn{\M^\nu_{ij} -  \frac{s}{r} (\eq_j - \delta_{ij}) }
-        &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i\w_i },
+        +\sum_{\nu i j}  f^\nu \mu^\nu_{ij}\prn{\M^\nu_{ij} -  s (\eq_j - \delta_{ij}) }
+        &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i \w_i },
 \end{aligned}
 \end{equation}
 %
 where all of the first-passage times are evaluated at \(s = 0\).
+
+In \cref{fig:shifted} we show the result of solving this problem with numerical optimisation.
+We see essentially the same results as the original problem, \cref{eq:finitelagrangian,fig:envnum}, as expected.
 
 The derivatives, for $m \neq n$ are
 %
 \begin{equation}\label{eq:lshiftderivs}
 \begin{aligned}
   \frac{1}{f^\nu} \pdiff{\CL}{\Mh^\nu_{mn}} = & \,
-    \eq_m \prn{ r \brk{\thb_m - \thb_n}
-     + \prn{r \mathbf{c}_m + (-1)^\nu + r \lambda} \brk{\etw_m - \etw_n} } \\
+    \eq_m \prn{ \brk{\thb_m - \thb_n}
+     + \prn{\mathbf{c}_m + (-1)^\nu + \lambda} \brk{\etw_m - \etw_n} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
      - \sum_{ij} \mu^\nu_{ij} s f^\nu \eq_m (\fptb_{mj} - \fptb_{nj}) \eq_j
     = 0.
@@ -966,7 +972,7 @@ We can absorb the new terms by defining
 %
 \begin{equation*}
 \begin{aligned}
-  \shift{\thb}^\nu(s) = \thb(0) - \frac{s f^\nu}{r} \fptb \Eq (\boldsymbol{\mu}^\nu)\trans \onev,
+  \shift{\thb}^\nu(s) = \thb(0) - s f^\nu \fptb(0) \Eq (\boldsymbol{\mu}^\nu)\trans \onev,
   \qquad
   \shift{\alb}^\nu(s) &= (\M^\nu + (s - 1) \I - s \onev \eq) \shift{\thb}^\nu(s),
   \\
@@ -987,13 +993,13 @@ then we can ``solve'' for the KKT multipliers:
 %
 \begin{equation}\label{eq:lshiftsol}
 \begin{aligned}
-  \mu^\nu_{mm} &= - \eq_m \prn{ r \shift{\alb}^\nu_m(s) 
-    + \brk{ r \mathbf{c}_m + (-1)^\nu + r \lambda } \shift{\omb}^\nu_m(s)
+  \mu^\nu_{mm} &= - \eq_m \prn{ \shift{\alb}^\nu_m(s) 
+    + \brk{ \mathbf{c}_m + (-1)^\nu + \lambda } \shift{\omb}^\nu_m(s)
     }, \\
   \mu^\nu_{mn} &= \eq_m \prn{ 
-      r \brk{ \shift{\thb}_n(s) - \shift{\thb}_m(s) - \shift{\alb}^\nu_m(s) }
+      \brk{ \shift{\thb}^\nu_n(s) - \shift{\thb}^\nu_m(s) - \shift{\alb}^\nu_m(s) }
   % \\ & \phantom{= - \eq_m \big( } 
-    + \brk{ r \mathbf{c}_m + (-1)^\nu + r \lambda } 
+    + \brk{ \mathbf{c}_m + (-1)^\nu + \lambda } 
         \brk{ \etw_n + \etw_m - \shift{\omb}^\nu_m(s) }
      }, \\
 \end{aligned}
@@ -1004,6 +1010,23 @@ although there are KKT multipliers hiding in \(\shift{\thb}^\nu(s)\) and \(\shif
 While this problem involves the scale invariant quantity \(\hat{A}(0)\), neither the upper nor lower bounds in \cref{eq:lshiftconstr} are invariant.
 We then run into the same problems in proving our serial-topology hypothesis.
 
+\begin{figure}[ht]
+\begin{center}
+\begin{myenuma}
+  \item \aligntop{\includegraphics[width=0.4\linewidth]{LenvShift.pdf}}
+  \label{fig:envshift}
+  \item \aligntop{\includegraphics[width=0.4\linewidth]{shift_cond.pdf}}
+  \label{fig:shiftcond}
+\end{myenuma}
+\caption[Shifted problem vs.\ original]{Shifted problem vs.\ original.
+(\ref*{fig:envshift}) Comparison of numerical optimisation of the shifted problem in \cref{eq:lshiftlagrangian,fig:envnum} with the original problemin \cref{eq:finitelagrangian}.
+We see that the two approaches produce very similar numerical envelopes.
+The shifted problem involves non-linear constraints and is thus harder to solve.
+(\ref{fig:shiftcond}) Plot of the discrepancy in (\ref*{fig:envshift}) against the condition number of the fundamental matrix, \(\fund \).
+We see that most of the large discrepancies occur where the problem is numerically ill-conditioned.
+\label{fig:shifted}}
+\end{center}
+\end{figure}
 
 \begin{figure}[tbp]
   \centering
@@ -1532,7 +1555,7 @@ This is plotted in \autoref{fig:heuristicenv}.
 \begin{figure}[tb]
   \centering
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.8\linewidth]{LenvHeuristic.svg}\\
+  \includegraphics[width=0.8\linewidth]{LenvHeuristic.pdf}\\
   \caption[Heuristic envelope for the signal-to-noise ratio]
   {Heuristic envelope  for the signal-to-noise ratio, \cref{eq:henv}.
   Analytic expressions from \cref{eq:henvapprox} are only valid to the right of each region.}\label{fig:heuristicenv}
