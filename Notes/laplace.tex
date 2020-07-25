@@ -58,6 +58,7 @@
 \newcommand{\pib}{\boldsymbol{\pi}}
 \newcommand{\arow}{\boldsymbol{\xi}}
 \newcommand{\Lb}{\boldsymbol{\Lambda}}
+\newcommand{\lb}{\boldsymbol{\lambda}}
 \newcommand{\etw}{\boldsymbol{\eta}^w}
 \newcommand{\thb}{\boldsymbol{\theta}}
 \newcommand{\omb}{\boldsymbol{\omega}}
@@ -864,44 +865,7 @@ Then, with some new vectors defined:
 %
 
 The expressions in \cref{eq:finitederivs} have the same form as for $s=0$, which allowed us to argue that the model with maximal area must have the serial topology, \cite{Lahiri2013synapse}.
-
 The one missing ingredient is the scale invariance.
-Define the scale transformation:
-%
-\begin{equation}\label{eq:scale}
-  \lambda * \M^\nu \equiv (1-\lambda)\I + \lambda \M^\nu.
-\end{equation}
-%
-The Laplace transform has the following scaling property
-%
-\begin{equation}\label{eq:laplacescale}
-  \hat{A} \prn{\lambda s;\lambda * \M^\nu} = \hat{A} \prn{s; \M^\nu}.
-\end{equation}
-%
-At $s=0$, it is scale invariant.
-This means that we can take a pair of matrices that violates the ``diagonal'' constraints (second inequality of \eqref{eq:constri}) and use the scale transform \eqref{eq:scale} to construct a pair of matrices that satisfy the ``diagonal'' constraints and have the same area.
-This allowed us to ignore the diagonal constraints.
-We can't do that for $s>0$.
-
-The corresponding symmetry here is scaling the shifted process from \cref{eq:lshiftpd}, which amounts to
-%
-\begin{equation}\label{eq:shiftscale}
-  \lambda {\circledast}_{s} \M^\nu 
-      \equiv (1 - \lambda) \brk{(1 + s)\I - s \onev \eq} 
-      + \lambda \M^\nu.
-\end{equation}
-%
-Then we have
-%
-\begin{equation}\label{eq:lshiftscale}
-  \hat{A} \prn{s; \M^\nu} 
-    = \hat{A} \prn{0, \shift{\M}^\nu(s)}
-    = \hat{A} \prn{0, \lambda * \shift{\M}^\nu(s)}
-    = \hat{A} \prn{s, \lambda {\circledast}_{s} \M^\nu}.
-\end{equation}
-%
-The problem here is that the lower bound, \(\M^\nu_{ij} \geq 0\), is not invariant under this transformation, unlike the \(s = 0\) case.
-Using this transformation to fix the upper bound can break the lower bound.
 
 However, we do have numerical evidence that the model that maximises the Laplace transform does have the serial topology.
 In \cref{fig:envnum} we see the result of numerical maximisation of \cref{eq:finitelagrangian}.
@@ -925,6 +889,83 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
 
 %-------Section------------------------------------------------------------------
 
+\subsection{Scale invariance}\label{sec:scale}
+
+Define the scale transformation:
+%
+\begin{equation}\label{eq:scale}
+  \zeta * \M \equiv \zeta \M + (1-\zeta)\I .
+\end{equation}
+%
+The Laplace transform has the following scaling property
+%
+\begin{equation}\label{eq:laplacescale}
+  \hat{A} \prn{\zeta s;\zeta * \M^\nu} = \hat{A} \prn{s; \M^\nu}.
+\end{equation}
+%
+At $s = 0$, it is scale invariant.
+This means that we can take a pair of matrices that violates the ``diagonal'' constraints (second inequality of \eqref{eq:constri}) and use the scale transform \eqref{eq:scale} to construct a pair of matrices that satisfy the ``diagonal'' constraints and have the same area.
+This allowed us to ignore the diagonal constraints.
+We can't do that for $s > 0$.
+
+The corresponding symmetry here is scaling the shifted process from \cref{eq:lshiftpd}, which amounts to
+%
+\begin{equation}\label{eq:shiftscale}
+  \zeta {\circledast}_{s} \M 
+      \equiv \zeta \M
+      + (1 - \zeta) \brk{(1 + s)\I - s \onev \eq} .
+\end{equation}
+%
+Then we have
+%
+\begin{equation}\label{eq:lshiftscale}
+  \hat{A} \prn{s; \M^\nu} 
+    = \hat{A} \prn{0, \shift{\M}^\nu(s)}
+    = \hat{A} \prn{0, \zeta * \shift{\M}^\nu(s)}
+    = \hat{A} \prn{s, \zeta \circledast_s \M^\nu}.
+\end{equation}
+%
+The problem here is that the lower bound, \(\M^\nu_{ij} \geq 0\), 
+is not invariant under this transformation, unlike the \(s = 0\) case.
+Using this transformation to fix the upper bound can break the lower bound.
+
+We might ask what conditions are required so that a model is fixable?
+This means that the \(\zeta \circledast_s \) orbit of the model contains some valid models.
+The conditions are
+%
+\begin{equation*}
+\begin{alignedat}{5}
+  [\zeta \circledast \M^\nu]_{ij}  
+    &= \zeta \M^\nu_{ij} - (1-\zeta) s \eq_j 
+    &&\geq 0 &
+  \quad &\implies \quad &
+  \zeta &\geq \frac{s \eq_j}{\M^\nu_{ij} + s \eq_j} &
+    &\forall \nu, i, j : i \neq j , \\
+  \sum_{j : i \neq j} [\zeta \circledast \M^\nu]_{ij} 
+    &= \zeta \lb^\nu_i - (1-\zeta) s (1-\eq_i) 
+    &&\leq 1 &
+  &\implies &
+  \zeta &\leq \frac{1 + s (1-\eq_i)}{\lb^\nu_i + s (1-\eq_i)} &
+    \quad &\forall \nu, i ,
+\end{alignedat}
+\end{equation*}
+%
+where \(\lb^\nu_i \equiv \sum_{j : i \neq j} \M^\nu_{ij}\) is the inverse mean  lifetime of state \(i\).
+The model is fixable if it is possible to find a \(\zeta\) that satisfies all of the above conditions:
+%
+\begin{equation}\label{eq:fixable}
+  \frac{s \eq_j}{\M^\nu_{ij} + s \eq_j} \leq \frac{1 + s (1-\eq_k)}{\lb^\mu_k + s (1-\eq_k)}
+  \quad \implies \quad
+  \frac{\lb^\mu_k - 1}{1 + s (1-\eq_k)} \leq \frac{\M^\nu_{ij}}{s \eq_j} 
+  \quad \forall \mu, \nu, i, j, k : i \neq j.
+\end{equation}
+%
+Note that when \(\M^\nu_{ij} = 0\) for some \(i,j \), this condition reduces to \(\lb^\mu_k \leq 1\), the original diagonal constraint.
+Thus, relaxing the constraints from ``the model is valid'' to ``the model is fixable'' doesn't help us prove anything about the topology.
+
+
+%-------Section------------------------------------------------------------------
+
 \subsection{Shifted problem}\label{sec:lshift}
 
 The relation of the Laplace transform to the shifted process from \cref{eq:lshiftpd,eq:lareashift} suggests an alternative approach: 
@@ -938,7 +979,7 @@ The constraints on \(\shift{\M}^\nu_{ij}\) are different from \cref{eq:constri}:
     \quad \forall \; \nu, i.
 \end{equation}
 %
-The diagonal elements are still given by \( \shift{\M}^\nu_{ii} = 1 - \sum_{j: j \neq i} \shift{\M}^\nu_{ij} \), but now they are allowed to be negative.
+The diagonal elements are still given by \( \shift{\M}^\nu_{ii} = 1 - \sum_{j: j \neq i} \shift{\M}^\nu_{ij} \), but now they are allowed to be negative so long as \(\M^\nu_{ii} \geq - s (1 - \eq_i)\).
 
 The Lagrangian we should consider is
 %
@@ -1000,7 +1041,7 @@ then we can ``solve'' for the KKT multipliers:
       \brk{ \shift{\thb}^\nu_n(s) - \shift{\thb}^\nu_m(s) - \shift{\alb}^\nu_m(s) }
   % \\ & \phantom{= - \eq_m \big( } 
     + \brk{ \mathbf{c}_m + (-1)^\nu + \lambda } 
-        \brk{ \etw_n + \etw_m - \shift{\omb}^\nu_m(s) }
+        \brk{ \etw_n - \etw_m - \shift{\omb}^\nu_m(s) }
      }, \\
 \end{aligned}
 \end{equation}
@@ -1161,7 +1202,7 @@ The first of these equations is solved by
   \delta\eta_i = B\e^{\beta(i-1)} + C\e^{\beta(1-i)},
   \qquad\text{where}\qquad
   s = S(\beta) \equiv 2 \sinh^2 \prn{\frac{\beta}{2}}
-    = \cosh (m\beta) - 1,
+    = \cosh (\beta) - 1,
 \end{equation}
 %
 with $B$ and $C$ determined by the boundary conditions provided by the last two equations of \eqref{eq:detahalf}:
@@ -1296,6 +1337,14 @@ Which gives the following Laplace transform
 %
 This interpolates between \eqref{eq:unilaplace} at $\varepsilon=0$ and the same expression for $m-1$ at $\varepsilon=1$.
 
+This expression breaks down for \(M = 2\), as there are no \( 2 \leq i \leq m \) when \(m = 1\).
+In that case, 
+%
+\begin{equation}\label{eq:binaryshorten}
+  \hat{A}(s) = \frac{1-\varepsilon}{1-\varepsilon + s}.
+\end{equation}
+%
+We can see that the optimal \(\varepsilon = 0\), reducing \cref{eq:binaryshorten} to \cref{eq:binaryenv}.
 
 To find the optimal \(\varepsilon\) at any given \(s\), it helps if we define
 %

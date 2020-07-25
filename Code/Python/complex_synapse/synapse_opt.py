@@ -101,7 +101,7 @@ class SynapseOptModel(_SynapseMemoryModel):
         expwftw = (evs * expqt) @ (evs.inv @ self.weight)
         return (evs.inv @ fab @ evs), expwftw
 
-    def snr_grad(self, time: Number) -> (float, la.lnarray):
+    def snr_grad(self, time: Number) -> Tuple[float, la.lnarray]:
         """Gradient of instantaneous SNR memory curve.
 
         Parameters
@@ -178,6 +178,7 @@ class SynapseOptModel(_SynapseMemoryModel):
             srow = (fund_u.h[extract],)
             scol = (fund_v.h[:, extract],)
         else:
+            swap, extract = la.array(1), slice(None)
             svs, scol, srow = (), (), ()
 
         if rate is None:
@@ -490,9 +491,22 @@ class SynapseOptModel(_SynapseMemoryModel):
         # (2n(n-1),2n(n-1))
         return hess.flattish(-4, -2).flattish(-2)
 
-    def cond_fun(self, rate: Number, **kwds) -> float:
-        """Gap between condition number and threshold"""
-        if not well_behaved(self, rate,False):
+    def cond_fun(self, rate: Number, **kwds) -> la.lnarray:
+        """Gap between condition number and threshold
+
+        Parameters
+        ----------
+        rate : float, optional
+            Parameter of Laplace transform, ``s``.
+        svd : bool, default: False
+            Should we compute matrix SVD?
+
+        Returns
+        -------
+        func : la.lnarray (2,) or (1,)
+            Value of ``[CondThresh - cond(Z)] / CondThresh``.
+        """
+        if not well_behaved(self, rate, False):
             nout = 1 if rate is None else 2
             return -np.ones(nout)
         if kwds.pop('svd', False):
@@ -500,13 +514,24 @@ class SynapseOptModel(_SynapseMemoryModel):
             svs = self._derivs(rate, svd=True, **kwds)[-1][-1]
             # svs = diag(smin, -smax) / smin**2
             return 1 + svs[..., 1, 1] / svs[..., 0, 0] / self.CondThresh
-        if rate is None:
-            return 1 - self.cond(None) / self.CondThresh
-        conds = la.array([self.cond(val) for val in (None, rate)])
+        conds = la.array([self.cond(val) for val in {None, rate}])
         return 1 - conds / self.CondThresh
 
     def cond_grad(self, rate: Number, **kwds) -> float:
-        """Gap between condition number and threshold"""
+        """Gradient of gap between condition number and threshold
+
+        Parameters
+        ----------
+        rate : float, optional
+            Parameter of Laplace transform, ``s``.
+        svd : bool, default: False
+            Should we compute matrix SVD?
+
+        Returns
+        -------
+        func : la.lnarray (2,2n(n-1)) or (1,2n(n-1))
+            Gradient of ``[CondThresh - cond(Z)] / CondThresh``.
+        """
         if not well_behaved(self, rate, False):
             nout = 1 if rate is None else 2
             return bld.RNG.random((nout, self.nparam))

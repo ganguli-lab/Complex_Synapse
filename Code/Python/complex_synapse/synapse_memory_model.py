@@ -5,7 +5,7 @@ Created on Fri Jun 23 18:22:05 2017
 @author: Subhy
 """
 from contextlib import contextmanager
-from typing import ClassVar, Dict, Optional, Union
+from typing import ClassVar, Dict, Optional, Tuple, Union
 
 import numpy as np
 
@@ -280,7 +280,7 @@ class SynapseMemoryModel(SynapseBase):
     # Memory curves
     # -------------------------------------------------------------------------
 
-    def spectrum(self) -> (la.lnarray, la.lnarray):
+    def spectrum(self) -> Tuple[la.lnarray, la.lnarray]:
         """Timescales and coefficients of eigenmodes.
 
         Returns

@@ -5,18 +5,16 @@ from typing import Tuple
 import numpy as np
 import scipy.optimize as sco
 
-from .shorten import Y_STAR
+from .shorten import Y_STAR, Values
+# =============================================================================
 
-Arrays = Tuple[np.ndarray, ...]
 
-
-# -------------------------------------
-def beta_to_s(beta: float) -> float:
+def beta_to_s(beta: Values) -> Values:
     """Convert alpha to s"""
     return np.cosh(beta) - 1
 
 
-def s_to_beta(sval: float) -> float:
+def s_to_beta(sval: Values) -> Values:
     """Convert s to beta. positive one of two possibilities"""
     return np.arccosh(sval + 1)
 
@@ -30,7 +28,7 @@ def beta_star(num: int) -> float:
 # =============================================================================
 
 
-def components(beta: float, num: int) -> Tuple[float, ...]:
+def _components(beta: Values, num: int) -> Tuple[Values, ...]:
     """Components of numerator and denominator
 
     numerator = numer - eps * dnumer
@@ -44,27 +42,22 @@ def components(beta: float, num: int) -> Tuple[float, ...]:
 
 
 # -------------------------------------
-def sticky(eps: float, beta: float, num: int) -> float:
+def sticky(eps: Values, beta: Values, num: int) -> Values:
     """Laplace-SNR for sticky serial model"""
     sval = beta_to_s(beta)
-    numer, denom, dnumer, ddenom = components(beta, num)
+    numer, denom, dnumer, ddenom = _components(beta, num)
     fnumer = numer - eps * dnumer
     fdenom = denom - eps * ddenom
     fmu = num - eps * (num - 2)
     return 2 * (1 - eps) * fnumer / (fmu * sval * fdenom)
 
 
-def neg_sticky(eps: float, alpha: float, num: int) -> float:
-    """negative Laplace-SNR for sticky serial model"""
-    return - sticky(eps, np.log(alpha), num)
-
-
 # -------------------------------------
-def eps_stars(beta: float, num: int) -> float:
+def eps_stars(beta: Values, num: int) -> Tuple[Values, Values]:
     """Optimal epsilon for sticky serial model, raw"""
     if num == 2:
         return 0, 0
-    numer, denom, dnumer, ddenom = components(beta, num)
+    numer, denom, dnumer, ddenom = _components(beta, num)
     fnumer = numer / dnumer
     fdenom = denom / ddenom
     fmu = num / (num - 2)
@@ -78,29 +71,51 @@ def eps_stars(beta: float, num: int) -> float:
     return (linr - disc) / quad, (linr + disc) / quad
 
 
-def eps_star(beta: float, num: int) -> float:
+def eps_star(beta: Values, num: int) -> Values:
     """Optimal epsilon for sticky serial model, clipped"""
     epss = eps_stars(beta, num)[0]
     return np.minimum(np.maximum(epss, 0), 1)
 
 
-def eps_star_star(beta: float, num: int) -> float:
+def eps_star_star(beta: Values, num: int) -> Values:
     """Optimal epsilon for sticky serial model, clipped, other soln"""
     epss = eps_stars(beta, num)[1]
     return np.minimum(np.maximum(epss, 0), 1)
 
 
 # -------------------------------------
+def sticky_star(betas: Values, num: int) -> Values:
+    """actual heuristic envelope"""
+    epss = eps_star(betas, num)
+    return sticky(epss, betas, num)
+
+
+def sticky_star_s(svals: Values, num: int) -> Values:
+    """actual heuristic envelope"""
+    betas = s_to_beta(svals)
+    epss = eps_star(betas, num)
+    return sticky(epss, betas, num)
+
+
+# -------------------------------------
+def env_approx(svals: Values, num: int) -> Values:
+    """approximate heuristic envelope"""
+    return (num - 1) * (1 - np.sqrt(num * (num - 2) * svals))
+
+
+# =============================================================================
+
+
 def lower(beta: float, num: int) -> float:
     """derivative of sticky wrt eps at eps==0
     """
-    numer, denom, dnumer, ddenom = components(beta, num)
+    numer, denom, dnumer, ddenom = _components(beta, num)
     # d/d(eps) (1-eps)(n - eps dn)/(m - (m-2) eps)(d - eps dd)
     return num * (denom*dnumer - numer*ddenom) + 2 * numer * denom
 
 
 # -------------------------------------
-def limits(num: int, debug: bool = False) -> float:
+def limits(num: int, debug: bool = False) -> Tuple[float, float]:
     """range of beta where sticky model can be optimised
     Note: higher t -> lower s -> higher M
     """
@@ -114,7 +129,7 @@ def limits(num: int, debug: bool = False) -> float:
 
 
 # -------------------------------------
-def envelope(num: int, count: int, **kwds) -> Arrays:
+def envelope(num: int, count: int, **kwds) -> Tuple[np.ndarray, ...]:
     """Optimised sticky model"""
     lims = kwds.pop('lims', limits(num))
     fudge = kwds.pop('fudge', 0.0)
@@ -127,18 +142,3 @@ def envelope(num: int, count: int, **kwds) -> Arrays:
     epss = kwds.pop('eps', eps_star(betas, num))
     avals = sticky(epss, betas, num)
     return svals, avals, env
-
-
-# -------------------------------------
-def sticky_star(svals: np.ndarray, num: int) -> np.ndarray:
-    """actual envelope"""
-    betas = s_to_beta(svals)
-    epss = eps_star(betas, num)
-    avals = sticky(epss, betas, num)
-    return avals
-
-
-# -------------------------------------
-def env_approx(svals: np.ndarray, num: int) -> np.ndarray:
-    """approximate envelope"""
-    return (num - 1) * (1 - np.sqrt(num * (num - 2) * svals))

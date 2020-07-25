@@ -18,6 +18,8 @@ from sl_py_tools.iter_tricks import (dcount, delay_warnings, denumerate, dzip,
 from sl_py_tools.numpy_tricks.markov import params as mp
 
 from . import builders as bld
+from . import shorten as sh
+from . import sticky as st
 from .synapse_opt import SynapseOptModel
 
 # =============================================================================
@@ -261,7 +263,8 @@ def update_laplace_problem(problem: dict):
     problem['x0'] = bld.RNG.random(problem['x0'].size)
 
 
-def check_trust_constr(sol: np.ndarray, con: Constraint) -> (bool, np.ndarray):
+def check_trust_constr(sol: np.ndarray, con: Constraint
+                       ) -> Tuple[bool, np.ndarray]:
     """Verify that solution satisfies a constraint for method trust-constr"""
     if isinstance(con, sco.LinearConstraint):
         vals = con.A @ sol
@@ -327,6 +330,7 @@ def verify_solution(prob: dict, result: sco.OptimizeResult) -> bool:
 def first_good(prob: dict) -> sco.OptimizeResult:
     """First solution that satisfies constraints"""
     max_tries = prob.pop('max_tries', 100)
+    res = sco.OptimizeResult()
     for _ in dcount('tries', max_tries):
         res = sco.minimize(**prob)
         if verify_solution(prob, res):
@@ -354,7 +358,7 @@ def optim_laplace(rate: Number, nst: Optional[int] = None, *,
 
 
 def optim_laplace_range(rates: np.ndarray, nst: int,
-                        **kwds) -> (la.lnarray, la.lnarray):
+                        **kwds) -> Tuple[la.lnarray, la.lnarray]:
     """Optimised model at many values of rate
     """
     model = make_model(kwds, nst=nst)
@@ -370,8 +374,8 @@ def optim_laplace_range(rates: np.ndarray, nst: int,
 
 def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
                           snr: np.ndarray, models: np.ndarray,
-                          **kwds) -> (la.lnarray, la.lnarray):
-    """Optimised model at many values of rate
+                          **kwds) -> Tuple[la.lnarray, la.lnarray]:
+    """Reoptimised model at many values of rate
     """
     model = make_model(kwds, params=models[inds[0]])
     with delay_warnings():
@@ -385,7 +389,7 @@ def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
 
 def check_cond_range(rates: np.ndarray, models: np.ndarray,
                      **kwds) -> la.lnarray:
-    """Inverse condition numbers of optiomised models
+    """Condition numbers of optimised models
 
     Parameters
     ----------
@@ -396,8 +400,8 @@ def check_cond_range(rates: np.ndarray, models: np.ndarray,
 
     Returns
     -------
-    rcnd : np.ndarray (S,)
-        inverse condition number, worst of :math:`Z(0), Z(s)`
+    cond : np.ndarray (S,)
+        condition number, worst of :math:`Z(0), Z(s)`
     """
     cnd = la.empty_like(rates)
     model = make_model(kwds, params=models[0])
@@ -413,8 +417,46 @@ def check_cond_range(rates: np.ndarray, models: np.ndarray,
 
 
 def proven_envelope_laplace(rate: Data, nst: int) -> Data:
-    """Theoretical envelope for Laplace transform"""
+    """Theoretical envelope for Laplace transform
+
+    Parameters
+    ----------
+    rates : Number or ndarray
+        Rate parameter of Laplace transform
+    nst : int
+        Number of states
+
+    Returns
+    -------
+    envelope : Data
+        Putative maximum A(s) for all models.
+    """
     return (nst - 1) / (rate * (nst - 1) + 1)
+
+
+def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
+    """Heuristic envelope for Laplace transform
+
+    Parameters
+    ----------
+    rate : Number or ndarray
+        Rate parameter of Laplace transform
+    nst : int
+        Number of states
+
+    Returns
+    -------
+    envelope : Data
+        Putative maximum A(s) for all models.
+    """
+    rate = la.array(rate)
+    s_two = rate >= sh.s_star(2)
+    s_sticky = rate < sh.s_star(nst)
+    s_short = np.logical_not(np.logical_or(s_two, s_sticky))
+    env_two = sh.short_star_s(rate[s_two], 2)
+    env_short = sh.uni_star_s(rate[s_short])
+    env_sticky = st.sticky_star_s(rate[s_sticky], nst)
+    return np.concatenate((env_sticky, env_short, env_two))
 
 
 # =============================================================================
