@@ -43,7 +43,7 @@ class SynapseOptModel(SynapseMemoryModel):
     @property
     def nparam(self) -> int:
         """number of plasticity types."""
-        return self.nplast * mp.num_param(self.nstates, **self.directed(0))
+        return self.nplast * mp.num_param(self.nstate, **self.directed(0))
 
     def get_params(self) -> la.lnarray:
         """Independent parameters of transition matrices.
@@ -170,7 +170,7 @@ class SynapseOptModel(SynapseMemoryModel):
         peq = self.peq()
 
         if svd:
-            extract = np.s_[::self.nstates-1]
+            extract = np.s_[::self.nstate-1]
             swap = la.array([[0, 1], [-1, 0]])
             fund_u, fund_s, fund_v = np.linalg.svd(fundi)
             # svs = diag(smin, -smax) / smin**2
@@ -408,12 +408,12 @@ class SynapseOptModel(SynapseMemoryModel):
             Value of ``W - s * e @ peq``.
         """
         if not well_behaved(self, rate, kwds.pop('cond', True)):
-            return -np.ones(self.nplast*self.nstates**2)
+            return -np.ones(self.nplast*self.nstate**2)
         rate = rate / (2 * self.frac.s)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
         rows, cols, mats = self._derivs(None, **kwds)
-        func = self.plast - rate * rows[0] + (1 + rate) * np.eye(self.nstates)
+        func = self.plast - rate * rows[0] + (1 + rate) * np.eye(self.nstate)
         return func.flattish(-3)
 
     def peq_min_grad(self, rate: Number, **kwds) -> la.lnarray:
@@ -432,7 +432,7 @@ class SynapseOptModel(SynapseMemoryModel):
             Gradient of ``func`` with respect to parameters.
         """
         if not well_behaved(self, rate, kwds.pop('cond', True)):
-            return -bld.RNG.random((self.nplast*self.nstates**2, self.nparam,))
+            return -bld.RNG.random((self.nplast*self.nstate**2, self.nparam,))
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
         rows, cols, mats = self._derivs(None, **kwds)
@@ -442,8 +442,8 @@ class SynapseOptModel(SynapseMemoryModel):
         # (2,1,n,2,n,n)
         grad = grad * (self.frac / self.frac.c).expand_dims((1, 2, 4, 5))
         # (2,n,n,2,n,n)
-        shape = ((self.nplast,) + (self.nstates,) * 2) * 2
-        gradd = _diagsub(la.eye(self.nplast * self.nstates**2).reshape(shape))
+        shape = ((self.nplast,) + (self.nstate,) * 2) * 2
+        gradd = _diagsub(la.eye(self.nplast * self.nstate**2).reshape(shape))
         # (2n**2,2,n,n)
         grad = (gradd + grad).flattish(0, -3)
         # (2n**2,2,n(n-1))
@@ -479,7 +479,7 @@ class SynapseOptModel(SynapseMemoryModel):
         # (n,n,n,n,2,1,n)
         hess = hess / (2 * self.frac.s)
         # (n,n,n,n,2,n,n)
-        hess = np.broadcast_to(hess, hess.shape[:-2] + (self.nstates,) * 2)
+        hess = np.broadcast_to(hess, hess.shape[:-2] + (self.nstate,) * 2)
         # (n,n,n,n,2n**2) @ (2n**2,) -> (n,n,n,n)
         hess = hess.flattish(-3) @ lag
         hess = _dbl_diagsub(hess).sum(0)

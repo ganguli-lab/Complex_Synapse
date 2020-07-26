@@ -35,7 +35,7 @@ class SynapseMemoryModel(SynapseBase):
 
     Properties
     ----------
-    nstates
+    nstate
         number of states.
     nplast
         number of plasticity types.
@@ -81,7 +81,7 @@ class SynapseMemoryModel(SynapseBase):
         """
         super().__init__(plast, frac)
         # store inputs
-        self.weight = default(weight, la.asarray, linear_weights(self.nstates))
+        self.weight = default(weight, la.asarray, linear_weights(self.nstate))
         self.signal = default(signal, la.asarray, la.linspace(1, -1,
                                                               self.nplast))
     # -------------------------------------------------------------------------
@@ -167,7 +167,7 @@ class SynapseMemoryModel(SynapseBase):
             s_arr = 0
         else:
             # convert to lnarray, add singletons to broadcast with matrix
-            s_arr = la.asarray(rate).s * la.eye(self.nstates)
+            s_arr = la.asarray(rate).s * la.eye(self.nstate)
         return onev.c * rowv - self.markov() + s_arr
 
     def cond(self, rate: Optional[ArrayLike] = None, *,
@@ -348,7 +348,7 @@ class SynapseMemoryModel(SynapseBase):
         # sss = la.asarray(rate).expand_dims((-3, -2, -1)) / (2 * self.frac.s)
         try:
             old_plast = self.plast.copy()
-            self.plast = old_plast + sss * (rowv - la.eye(self.nstates))
+            self.plast = old_plast + sss * (rowv - la.eye(self.nstate))
             yield
         finally:
             self.plast = old_plast

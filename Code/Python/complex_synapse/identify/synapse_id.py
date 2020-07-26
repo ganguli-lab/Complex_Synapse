@@ -25,12 +25,12 @@ class SynapseIdModel(SynapseBase):
                  readout: Optional[ArrayLike] = None,
                  ) -> None:
         super().__init__(plast, frac)
-        nst = self.nstates
-        dty = self.plast.dtype
-        self.initial = default(initial, la.asarray, la.full(nst, 1 / nst, dty))
+        nst = self.nstate
+        dtype = self.plast.dtype
+        self.initial = default(initial, la.asarray, la.full(nst, 1/nst, dtype))
         self.readout = default(readout, la.asarray, la.arange(nst))
         if ma.isstochastic_c(self.plast):
-            self.plast += la.identity(nst, dty)
+            self.plast += la.identity(nst, dtype)
 
     def dict_copy(self, keys=(), order='C', **kwds) -> Dict[str, la.lnarray]:
         """Dictionary with copies of data attributes.

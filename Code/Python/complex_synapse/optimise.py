@@ -42,7 +42,7 @@ def constraint_coeff(model: SynapseOptModel) -> la.lnarray:
     coeffs : la.lnarray (2*nst, 2*nst(nst-1))
         matrix of coefficients s.t ``coeffs @ params <= 1``.
     """
-    npl, nst = model.nplast, model.nstates
+    npl, nst = model.nplast, model.nstate
     rows, cols = la.arange(npl*nst), la.arange(nst-1)
     cols = cols + rows.c * (nst-1)
     coeffs = la.zeros((npl*nst, npl*nst*(nst-1)))
