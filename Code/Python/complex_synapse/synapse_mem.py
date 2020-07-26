@@ -11,6 +11,7 @@ import numpy as np
 
 import numpy_linalg as la
 from sl_py_tools.numpy_tricks import markov as ma
+from sl_py_tools.arg_tricks import default_non_eval as default
 
 from .builders import scalarise, linear_weights, insert_axes
 from .synapse_base import ArrayLike, SynapseBase
@@ -80,15 +81,9 @@ class SynapseMemoryModel(SynapseBase):
         """
         super().__init__(plast, frac)
         # store inputs
-        if weight is None:
-            self.weight = linear_weights(self.nstates)
-        else:
-            self.weight = la.asarray(weight)
-        if signal is None:
-            self.signal = np.linspace(1, -1, self.nplast)
-        else:
-            self.signal = la.asarray(signal).ravel()
-
+        self.weight = default(weight, la.asarray, linear_weights(self.nstates))
+        self.signal = default(signal, la.asarray, la.linspace(1, -1,
+                                                              self.nplast))
     # -------------------------------------------------------------------------
     # Housekeeping
     # -------------------------------------------------------------------------

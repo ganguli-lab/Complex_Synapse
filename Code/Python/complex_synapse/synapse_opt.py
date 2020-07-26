@@ -17,12 +17,12 @@ from sl_py_tools.numpy_tricks.markov import params as mp
 from . import builders as bld
 from .builders import insert_axes
 from .synapse_base import SynapseBase as _SynapseBase
-from .synapse_memory_model import SynapseMemoryModel as _SynapseMemoryModel
-from .synapse_memory_model import well_behaved
+from .synapse_mem import SynapseMemoryModel
+from .synapse_mem import well_behaved
 # =============================================================================
 
 
-class SynapseOptModel(_SynapseMemoryModel):
+class SynapseOptModel(SynapseMemoryModel):
     """Class for complex synapses, suitable for optimisation
 
     Subclass of SynapseMemoryModel.

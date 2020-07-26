@@ -99,7 +99,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
     def __str__(self) -> str:
         """Short representation of object"""
-        return f"{type(self).__name__} with M={self.nstates}, fpm={self.frac}"
+        return f"{type(self).__name__} with M={self.nstates}, f={self.frac}"
 
     # -------------------------------------------------------------------------
     # Utility methods
@@ -129,12 +129,12 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
     @property
     def nplast(self) -> int:
-        """number of plasticity types."""
+        """number of plasticity types, P."""
         return self.frac.size
 
     @property
     def nstates(self) -> int:
-        """Number of states."""
+        """Number of states, M."""
         return self.plast.shape[-1]
 
     # -------------------------------------------------------------------------
