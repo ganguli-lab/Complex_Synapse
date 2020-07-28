@@ -316,7 +316,7 @@ def verify_solution(prob: dict, result: sco.OptimizeResult) -> bool:
             return False
     for cons in listify(prob.get('constraints', [])):
         vals, kind = cons['fun'](solution), cons['type'] == 'eq'
-        fail = (not np.allclose(vals, 0)) if kind else (vals < -itol).any()
+        fail = (not np.allclose(0, vals)) if kind else (vals < -itol).any()
         if fail:
             return False
     return True

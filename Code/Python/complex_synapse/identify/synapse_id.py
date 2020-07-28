@@ -104,4 +104,117 @@ class SynapseIdModel(SynapseBase):
         """
         return self.readout.max() + 1
 
-# TODO: readout_proj, simulate, sort, plot
+    def readout_indicator(self) -> la.lnarray:
+        """1 in sets with each readout value, 0 elsewhere (R,M)
+        """
+        indicators = la.zeros((self.nreadout, self.nstate))
+        for i in range(self.nreadout):
+            indicators[i, self.readout == i] = 1
+        return indicators
+
+    def readout_proj(self) -> la.lnarray:
+        """Projection onto sets with each readout value, (R,M,M)
+        """
+        return self.readout_indicator().c * la.identity(self.nstate)
+
+    def reorder(self, inds: ArrayLike) -> None:
+        """Put the states in a new order, in-place.
+
+        Parameters
+        ----------
+        inds : ArrayLike, (M,)
+            `inds[i] = j` means state `j` moves to position `i`.
+        """
+        self.plast = self.plast[(...,) + np.ix_(inds, inds)]
+        self.initial = self.initial[..., inds]
+        self.readout = self.readout[..., inds]
+
+    def sort(self, group: bool = True) -> None:
+        """Sort the states by decreasing eta^w
+
+        Parameters
+        ----------
+        group : bool, optional
+            Sort by `-eta` within groups of common readout? By default `True`
+        """
+        markov = (self.frac.s * self.plast).sum(-3)
+        eta = - (np.ones_like(markov) - markov).inv @ self.readout
+        inds = np.lexsort((-eta, self.readout)) if group else np.argsort(-eta)
+        self.reorder(inds)
+
+    def simulate(self, ntime: Optional[int] = None,
+                 nexpt: Union[None, int, Sequence[int]] = None,
+                 plast_seq: Optional[np.ndarray] = None,
+                 rng: np.random.Generator = RNG,
+                 ) -> SimPlasticitySequence:
+        """Simulate markov process
+
+        Parameters
+        ----------
+        ntime : Optional[int], optional
+            Numper of time-steps, T, by default None
+        nexpt : Union[None, int, Sequence[int]], optional
+            Number of experiments, E, by default None
+        plast_seq : Optional[np.ndarray], optional
+            Sequence of plasticity types, by default None
+
+        Returns
+        -------
+        simulation : SimPlasticitySequence, (E,T)
+            The result of the simulation
+        """
+        # only simulate a single model
+        assert self.plast.ndim == 3
+        if plast_seq is None:
+            nexpt = default(nexpt, tuplify, ())
+            ntime = default(ntime, int, 1)
+            plast_seq = rng.choice(la.arange(self.nplast),
+                                   size=nexpt + (ntime,), p=self.frac)
+        else:
+            plast_seq = la.asarray(plast_seq)
+            nexpt = plast_seq.shape[:-1]
+            ntime = plast_seq.shape[-1]
+
+        state_ind = la.arange(self.nstate)
+        jump = self.plast.flattish(0, -1)
+        state_ch = la.array([rng.choice(state_ind, size=plast_seq.shape, p=p)
+                             for p in jump]).foldaxis(0, self.plast.shape[:-1])
+        states = np.empty_like(plast_seq)
+        states[..., 0] = rng.choice(state_ind, size=nexpt, p=self.initial)
+        for i in range(ntime - 1):
+            states[..., i+1] = state_ch[plast_seq[..., i], states[..., i],
+                                        ..., i]
+        readouts = self.readout[states]
+        return SimPlasticitySequence(plast_seq, readouts, states)
+
+    def _elements(self) -> la.lnarray:
+        """All elements of self.plast and elf.initial, concatenated (PM**2+M,)
+        """
+        return np.concatenate(np.broadcast_arrays(
+            self.plast.flattish(-3), self.initial, subok=True), -1)
+
+    def norm(self, **kwargs) -> la.lnarray:
+        """Norm of vector of parameters.
+
+        Parameters
+        ----------
+        All passed to `np.linalg.norm`.
+
+        Returns
+        -------
+        norm : la.lnarray, ()
+            Norm of parameters.
+        """
+        return np.linalg.norm(self._elements(), axis=-1, **kwargs)
+
+    def kl_div(self, other: SynapseIdModel) -> la.lnarray:
+        """Kullback-Leibler divergence between plast & initial of self & other
+        """
+        mine = self._elements()
+        per_param = mine * np.log((self / other)._elements())
+        mine, per_param = np.broadcast_arrays(mine, per_param, subok=True)
+        per_param[np.isclose(0, mine)] = 0.
+        return per_param.sum(-1)
+
+
+# TODO: plot, likelihood

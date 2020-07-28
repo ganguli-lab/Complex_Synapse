@@ -62,9 +62,9 @@ def eps_stars(beta: Values, num: int) -> Tuple[Values, Values]:
     fdenom = denom / ddenom
     fmu = num / (num - 2)
     if np.isscalar(fnumer):
-        fnumer = fmu**2 if np.isclose(beta, 0) else fnumer
+        fnumer = fmu**2 if np.isclose(0, beta) else fnumer
     else:
-        fnumer[np.isclose(np.array(beta), 0)] = fmu**2
+        fnumer[np.isclose(0, np.array(beta))] = fmu**2
     disc = np.sqrt((fmu - 1)*(fdenom - 1)*(fmu - fnumer)*(fdenom - fnumer))
     quad = 1 + fnumer - fdenom - fmu
     linr = (fnumer - fdenom * fmu)

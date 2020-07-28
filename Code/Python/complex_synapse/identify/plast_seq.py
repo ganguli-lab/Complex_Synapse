@@ -103,6 +103,12 @@ class PlasticitySequence:
         """
         return 1 if self.readouts.ndim < 2 else self.plast_type.shape[-2]
 
+    def frac(self) -> la.lnarray:
+        """fraction of each plasticity type, (P,), float[0:1]
+        """
+        return np.histogram(self.plast_type, self.nplast, (0, self.nplast),
+                            density=True)[0].view(la.lnarray)
+
     def readout_dwells(self) -> List[la.lnarray]:
         """Sets of dwell times for each readout value
 
