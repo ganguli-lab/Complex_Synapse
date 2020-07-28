@@ -1,18 +1,44 @@
 """Model that is being fit to data
 """
 from __future__ import annotations
-from typing import Dict, List, Tuple, Union, Optional
+
+from typing import Optional, Sequence, Union
+
 import numpy as np
+
 import numpy_linalg as la
 from numpy_linalg import convert as cvl
-from ..synapse_base import SynapseBase
-from ..synapse_mem import ArrayLike
-from sl_py_tools.numpy_tricks import markov as ma
 from sl_py_tools.arg_tricks import default_non_eval as default
+from sl_py_tools.containers import tuplify
+from sl_py_tools.numpy_tricks.markov import isstochastic_c
+
+from ..builders import RNG
+from ..synapse_base import ArrayLike, SynapseBase
+from .plast_seq import SimPlasticitySequence
 
 
 class SynapseIdModel(SynapseBase):
-    """Model that is being fi to data
+    """Model that is being fit to data
+
+    Parameters (and attributes)
+    ---------------------------
+    plast : array_like, (P,M,M), float[0:1]
+        potentiation/depression transition probability matrix.
+    frac : array_like, (P,), float[0:1]
+        fraction of events that are potentiating/depressing.
+    readout : array_like, (M,), int[0:R].
+        id of readout when in that state.
+    initial : array_like, (M,) float[0:1]
+        distribution of initial state
+
+    Properties
+    ----------
+    nstate : int
+        number of states, M.
+    nplast : int
+        number of plasticity types, P.
+    nreadout : int
+        Number of readout values, R
     """
     # id of readout when in that state, (M,), int[0:R]
     readout: la.lnarray
@@ -29,14 +55,8 @@ class SynapseIdModel(SynapseBase):
         dtype = self.plast.dtype
         self.initial = default(initial, la.asarray, la.full(nst, 1/nst, dtype))
         self.readout = default(readout, la.asarray, la.arange(nst))
-        if ma.isstochastic_c(self.plast):
+        if isstochastic_c(self.plast):
             self.plast += la.identity(nst, dtype)
-
-    def dict_copy(self, keys=(), order='C', **kwds) -> Dict[str, la.lnarray]:
-        """Dictionary with copies of data attributes.
-        """
-        keys += ('initial', 'readout')
-        return super().dict_copy(keys=keys, order=order, **kwds)
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
@@ -46,7 +66,7 @@ class SynapseIdModel(SynapseBase):
         rpr = (rpr[:-1] + insert + rpr[-1])
         return rpr
 
-    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+    def __array_ufunc__(self, ufunc: np.ufunc, method: str, *inputs, **kwargs):
         """Handling ufuncs with SynapseIdModels
         """
         base_result = super().__array_ufunc__(ufunc, method, *inputs, **kwargs)
@@ -58,9 +78,29 @@ class SynapseIdModel(SynapseBase):
         results = self.initial.__array_ufunc__(ufunc, method, *args, **kwargs)
         return cvl.conv_out_attr(base_result, 'initial', results, outs, conv)
 
+    def moveaxis(self, source: Union[int, Sequence[int]],
+                 destination: Union[int, Sequence[int]]) -> SynapseIdModel:
+        """Change order of axes in self.plast and self.ini6tial.
+
+        Parameters
+        ----------
+        source : Union[int, Tuple[int, ...]]
+            Position of axis/axes to move
+        destination : Union[int, Tuple[int, ...]]
+            New position of axis/axes
+
+        Returns
+        -------
+        newobj : SynapseIdModel
+            Model with axes moved. Its attributes are views of the originals
+        """
+        newobj = self.view()
+        newobj.plast = np.moveaxis(self.plast, source, destination)
+        newobj.initial = np.moveaxis(self.initial, source, destination)
+
     @property
     def nreadout(self) -> int:
-        """Minimum number of readout values, R
+        """Number of readout values, R
         """
         return self.readout.max() + 1
 

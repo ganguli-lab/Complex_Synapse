@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
-
-This is a temporary script file.
+Code for studying complex synapses
 """
-from . import builders, optimise, sticky, shorten
+from . import builders, optimise, sticky, shorten, identify
 from .synapse_mem import SynapseMemoryModel
 from .synapse_opt import SynapseOptModel
-assert any((True, builders, SynapseMemoryModel, SynapseOptModel, optimise))
+assert any((True, builders, SynapseMemoryModel, SynapseOptModel, optimise,
+            sticky, shorten, identify))

@@ -7,7 +7,7 @@ Created on Mon Sep 18 15:49:42 2017
 from __future__ import annotations
 
 from numbers import Number
-from typing import Dict, Sequence, Union
+from typing import Any, Dict, Sequence, Union
 
 import numpy as np
 
@@ -19,6 +19,7 @@ cvl = la.convert
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
+# =============================================================================
 
 
 class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
@@ -31,21 +32,17 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
     Parameters (and attributes)
     ---------------------------
-    plast : la.lnarray
+    plast : array_like, (P,M,M), float[0:1]
         potentiation/depression transition rate matrix.
-    frac : array_like
+    frac : array_like, (P,), float[0:1]
         fraction of events that are potentiating/depressing.
-    weight : array_like
-        synaptic weight of each state.
-    signal : array_like
-        desired signal contribution from each plasticity type.
 
     Properties
     ----------
     nstate
-        number of states.
+        number of states, M.
     nplast
-        number of plasticity types.
+        number of plasticity types, P.
     """
     # Attributes
 
@@ -54,7 +51,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     # fraction of events that are potentiating./depressing
     frac: la.lnarray
 
-    def __init__(self, plast: la.lnarray,
+    def __init__(self, plast: ArrayLike,
                  frac: ArrayLike = 0.5):
         """Class for complex synapse models.
 
@@ -73,7 +70,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         if len(self.frac) == len(self.plast) - 1:
             self.frac = la.concatenate((self.frac, [1. - self.frac.sum()]))
 
-    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+    def __array_ufunc__(self, ufunc: np.ufunc, method: str, *inputs, **kwargs):
         """Handling ufuncs with SynapseBases
         """
         args, _ = cvl.conv_in_attr('plast', SynapseBase, inputs)
@@ -105,27 +102,25 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     # Utility methods
     # -------------------------------------------------------------------------
 
-    def view(self, typ):
-        """View of plasticity matrices as typ
-        """
-        return self.plast.view(typ)
+    def view(self, **kwds) -> SynapseBase:
+        """Copy of object, with views of array attributes
 
-    def dict_copy(self, keys=(), order='C', **kwds) -> Dict[str, la.lnarray]:
-        """Dictionary with copies of data attributes
+        Requires `__init__` parameter names to be the same as attribute names.
         """
-        # In subclass:
-        # keys += ('new_attr', ...)
-        # return super().dict_copy(keys=keys, order=order, **kwds)
-        keys += ('plast', 'frac')
-        for k in keys:
-            if k not in kwds.keys():
-                kwds[k] = getattr(self, k).copy(order)
-        return kwds
+        attrs = array_attrs(self)
+        attrs.update(kwds)
+        return type(self)(**attrs)
 
-    def copy(self, *args, **kwargs) -> SynapseBase:
-        """Copy of object, with copies of attributes
+    def copy(self, order='C', **kwargs) -> SynapseBase:
+        """Copy of object, with copies of array attributes
+
+        Requires `__init__` parameter names to be the same as attribute names.
         """
-        return type(self)(**self.dict_copy(*args, **kwargs))
+        attrs = array_attrs(self)
+        for k in attrs:
+            if k not in kwargs.keys():
+                kwargs[k] = attrs[k].copy(order)
+        return type(self)(**kwargs)
 
     @property
     def nplast(self) -> int:
@@ -251,3 +246,37 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
             SynapseBase instance
         """
         return cls.build(bld.build_rand, nst, *args, **kwargs)
+
+
+def instance_attrs(obj: Any) -> Dict[str, Any]:
+    """Dict of instance attributes that are not class attributes
+
+    Parameters
+    ----------
+    obj : Any
+        The instance whose attributes we want
+
+    Returns
+    -------
+    attrs : Dict[str, Any]
+        Instance attributes
+    """
+    names = set(dir(obj)) - set(dir(type(obj)))
+    return {name: getattr(obj, name) for name in names}
+
+
+def array_attrs(obj: Any) -> Dict[str, np.ndarray]:
+    """Dict of instance array attributes
+
+    Parameters
+    ----------
+    obj : Any
+        The instance whose attributes we want
+
+    Returns
+    -------
+    attrs : Dict[str, Any]
+        Instance attributes
+    """
+    attrs = instance_attrs(obj)
+    return {k: v for k, v in attrs.items() if isinstance(v, np.ndarray)}

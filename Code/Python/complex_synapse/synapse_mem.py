@@ -5,15 +5,15 @@ Created on Fri Jun 23 18:22:05 2017
 @author: Subhy
 """
 from contextlib import contextmanager
-from typing import ClassVar, Dict, Optional, Tuple, Union
+from typing import ClassVar, Optional, Tuple, Union
 
 import numpy as np
 
 import numpy_linalg as la
-from sl_py_tools.numpy_tricks import markov as ma
 from sl_py_tools.arg_tricks import default_non_eval as default
+from sl_py_tools.numpy_tricks import markov as ma
 
-from .builders import scalarise, linear_weights, insert_axes
+from .builders import insert_axes, linear_weights, scalarise
 from .synapse_base import ArrayLike, SynapseBase
 
 Order = Union[int, float, str, None]
@@ -24,21 +24,21 @@ class SynapseMemoryModel(SynapseBase):
 
     Parameters (and attributes)
     ---------------------------
-    plast : la.lnarray
+    plast : array_like, (P,M,M), float[0:1]
         potentiation/depression transition rate matrix.
-    frac : array_like
+    frac : array_like, (P,), float[0:1]
         fraction of events that are potentiating/depressing.
-    weight : array_like
+    weight : array_like, (M,), float[-1:1]
         synaptic weight of each state.
-    signal : array_like
+    signal : array_like, (P,), float[-1:1]
         desired signal contribution from each plasticity type.
 
     Properties
     ----------
     nstate
-        number of states.
+        number of states, M.
     nplast
-        number of plasticity types.
+        number of plasticity types, P.
     """
     # Attributes
 
@@ -87,12 +87,6 @@ class SynapseMemoryModel(SynapseBase):
     # -------------------------------------------------------------------------
     # Housekeeping
     # -------------------------------------------------------------------------
-
-    def dict_copy(self, keys=(), order='C', **kwds) -> Dict[str, la.lnarray]:
-        """Dictionary with copies of data attributes.
-        """
-        keys += ('weight', 'signal')
-        return super().dict_copy(keys=keys, order=order, **kwds)
 
     def __repr__(self) -> str:
         """Accurate representation of object"""

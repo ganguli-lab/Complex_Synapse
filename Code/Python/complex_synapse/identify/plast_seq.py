@@ -1,26 +1,83 @@
 """Storing the results of experiments
 """
 from __future__ import annotations
+
 from typing import List, Tuple, Union
+
 import numpy as np
+
 import numpy_linalg as la
+
+from ..synapse_base import array_attrs, ArrayLike
 
 
 class PlasticitySequence:
     """The results of an experiment
+
+    Parameters (and attributes)
+    ---------------------------
+    plast_type : ArrayLike, (E,T), int[0:P]
+        id of plasticity type after each time-step
+    readouts : ArrayLike, (E,T), int[0:R]
+        id of readout from synapse at each time-step
+
+    Properties
+    ----------
+    nstate : int
+        number of states, M.
+    nplast : int
+        number of plasticity types, P.
+    nreadout : int
+        Number of readout values, R
+    ntime : int
+        Number of time-steps, T
+    nexpt : int
+        Number of experiment sequences stored, E
     """
-    # id of plasticity type after each time-step, (E,P), int[0:P]
+    # id of plasticity type after each time-step, (E,T), int[0:P]
     plast_type: la.lnarray
-    # id of readout from synapse at each time-step, (E,P), int[0:R]
+    # id of readout from synapse at each time-step, (E,T), int[0:R]
     readouts: la.lnarray
 
-    def __init__(self, plast_type: np.ndarray, readouts: np.ndarray) -> None:
+    def __init__(self, plast_type: ArrayLike, readouts: ArrayLike) -> None:
+        """The results of an experiment
+
+        Parameters
+        ----------
+        plast_type : np.ndarray, (E,T), int[0:P]
+            id of plasticity type after each time-step
+        readouts : np.ndarray, (E,T), int[0:R]
+            id of readout from synapse at each time-step
+        """
         self.plast_type = la.asanyarray(plast_type)
         self.readouts = la.asanyarray(readouts)
 
     def __getitem__(self, ind: Tuple[Union[int, slice], ...]
                     ) -> PlasticitySequence:
-        return type(self)(self.plast_type[ind], self.readouts[ind])
+        newobj = self.view()
+        newobj.plast_type = self.plast_type[ind]
+        newobj.readouts = self.readouts[ind]
+        return newobj
+
+    def view(self, **kwds) -> PlasticitySequence:
+        """Copy of object, with views of array attributes
+
+        Requires `__init__` parameter names to be the same as attribute names.
+        """
+        attrs = array_attrs(self)
+        attrs.update(kwds)
+        return type(self)(**attrs)
+
+    def copy(self, order='C', **kwargs) -> PlasticitySequence:
+        """Copy of object, with copies of array attributes
+
+        Requires `__init__` parameter names to be the same as attribute names.
+        """
+        attrs = array_attrs(self)
+        for k in attrs:
+            if k not in kwargs.keys():
+                kwargs[k] = attrs[k].copy(order)
+        return type(self)(**kwargs)
 
     @property
     def nplast(self) -> int:
@@ -59,19 +116,53 @@ class PlasticitySequence:
 
 class SimPlasticitySequence(PlasticitySequence):
     """The results of a simulation
+
+    Parameters (and attributes)
+    ---------------------------
+    plast_type : ArrayLike, (E,T), int[0:P]
+        id of plasticity type after each time-step
+    readouts : ArrayLike, (E,T), int[0:R]
+        id of readout from synapse at each time-step
+    states : ArrayLike, (E,T), int[0:M]
+        which state it is in at each time-step
+
+    Properties
+    ----------
+    nstate : int
+        number of states, M.
+    nplast : int
+        number of plasticity types, P.
+    nreadout : int
+        Number of readout values, R
+    ntime : int
+        Number of time-steps, T
+    nexpt : int
+        Number of simulated sequences stored, E
     """
     # which state it is in at each time-step, (E,T), int[0:M]
     states: la.lnarray
 
-    def __init__(self, states: np.ndarray, plast_type: np.ndarray,
-                 readouts: np.ndarray) -> None:
+    def __init__(self, plast_type: ArrayLike, readouts: ArrayLike,
+                 states: ArrayLike) -> None:
+        """The results of an simulation
+
+        Parameters
+        ----------
+        plast_type : ArrayLike, (E,T), int[0:P]
+            id of plasticity type after each time-step
+        readouts : ArrayLike, (E,T), int[0:R]
+            id of readout from synapse at each time-step
+        states : ArrayLike, (E,T), int[0:M]
+            which state it is in at each time-step
+        """
         super().__init__(plast_type=plast_type, readouts=readouts)
         self.states = la.asanyarray(states)
 
     def __getitem__(self, ind: Tuple[Union[int, slice], ...]
                     ) -> SimPlasticitySequence:
-        return type(self)(self.states[ind], self.plast_type[ind],
-                          self.readouts[ind])
+        newobj = super().__getitem__(ind)
+        newobj.states = self.states[ind]
+        return newobj
 
     @property
     def nstate(self) -> int:
