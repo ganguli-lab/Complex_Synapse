@@ -2,9 +2,10 @@
 """
 from __future__ import annotations
 
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Sequence
 
 import numpy as np
+import matplotlib as mpl
 
 import numpy_linalg as la
 
@@ -68,7 +69,7 @@ class PlasticitySequence:
         attrs.update(kwds)
         return type(self)(**attrs)
 
-    def copy(self, order='C', **kwargs) -> PlasticitySequence:
+    def copy(self, order: str = 'C', **kwargs) -> PlasticitySequence:
         """Copy of object, with copies of array attributes
 
         Requires `__init__` parameter names to be the same as attribute names.
@@ -118,6 +119,14 @@ class PlasticitySequence:
             `dwells[i]` is an array of dwell times in readout group `i`.
         """
         return _dwells(self.readouts, self.nreadout)
+
+    def plot(self, axs: Sequence[Union[Image, Axes]], **kwds) -> List[Image]:
+        """Plot heatmaps for plast and initial"""
+        kwds['norm'] = mpl.colors.Normalize(0., 1. * self.nplast)
+        imh = [set_plot(axs[0], self.plast_type, **kwds)]
+        kwds['norm'] = mpl.colors.Normalize(0., 1. * self.nreadout)
+        imh.append(set_plot(axs[1], self.readouts, **kwds))
+        return imh
 
 
 class SimPlasticitySequence(PlasticitySequence):
@@ -186,6 +195,14 @@ class SimPlasticitySequence(PlasticitySequence):
         """
         return _dwells(self.states, self.nstate)
 
+    def plot(self, axs: Sequence[Union[Image, Line, Axes]], **kwds
+             ) -> List[Union[Image, Line]]:
+        """Plot heatmaps for plast and initial"""
+        imh = super().plot(axs, **kwds)
+        kwds['norm'] = mpl.colors.Normalize(0., 1. * self.nstate)
+        imh.append(set_plot(axs[2], self.states, **kwds))
+        return imh
+
 
 def _dwells(values: np.ndarray, num: int) -> List[la.lnarray]:
     """Set of dwell times
@@ -213,4 +230,24 @@ def _dwells(values: np.ndarray, num: int) -> List[la.lnarray]:
         dwells.append(stays[before == i])
     return dwells
 
-# TODO: plot
+
+def set_plot(handle: Union[Axes, Image, Line], data: np.ndarray, **kwds
+             ) -> Union[Image, Line]:
+    """Make a plot"""
+    line = kwds.pop('line', False)
+    if isinstance(handle, Axes):
+        if line:
+            kwds.setdefault('where', 'mid')
+            return handle.step(np.arange(data.size), data, **kwds)[0]
+        return handle.matshow(data, **kwds)
+    if isinstance(handle, Line):
+        handle.set_ydata(data)
+    else:
+        handle.set_data(data)
+    return handle
+
+
+# =============================================================================
+Axes = mpl.axes.Axes
+Image = mpl.image.AxesImage
+Line = mpl.lines.Line2D

@@ -20,6 +20,7 @@
 %Preamble:
 \usepackage{a4wide}
 \input{sl_preamble.tex}
+\usepackage{mathtools}
 %
 % >> Only for drafts! <<
 \usepackage[notref,notcite]{showkeys}
@@ -77,8 +78,8 @@ Its observed value at time $t$ during a sequence is $\w(t)$.
 An entire sequence of observations is denoted by $\w[0,T]$.
 
 The different types of plasticity (\eg potentiation and depression) are indicated by superscripts $\mu,\nu$.
-The type of plasticity used between times $(t-1,t)$ is $\mu(t)$.
-An entire sequence of plasticity types is denoted by $\mu[1,T]$.
+The type of plasticity used between times $(t,t+1)$ is $\mu(t)$.
+An entire sequence of plasticity types is denoted by $\mu[0,T-1]$.
 
 When we are combining data from several sequences of plasticity events, the individual sequences will be denoted by superscripts $a,b$.
 The set of all sequences will be denoted by the superscript $A$.
@@ -93,14 +94,21 @@ The set of parameters defining a model (\ie $\brc{\M^\mu_{ij}}$ and $\pib_i$) ar
 When we don't have any prior information about the model $\M$, we fit the model by maximising the likelihood function:
 %
 \begin{equation}\label{eq:like}
-  \pr\cond{\w^A[0,T]}{\M} = \prod_a \pr\cond{\w^a[0,T]}{\M}.
+\begin{aligned}
+  \pr^A_{[0,T]}\cond{\w}{\mu,\M}
+    &\equiv \pr\cond{\w^A[0,T]}{\mu^A[0,T-1],\M}  \\
+    &= \prod_a \pr\cond{\w^a[0,T]}{\mu^a[0,T-1],\M}
+      \equiv \prod_a \pr^a_{[0,T]}\cond{\w}{\mu,\M}.
+\end{aligned}
 \end{equation}
 %
 To do this, we define an axillary function \cite{Baum1970baumwelch,Dempster2007EM}:
 %
 \begin{equation}\label{eq:emq}
-  Q(\M,\M') = \sum_{i^A[0,T]} \pr\cond{i^A[0,T],\w^A[0,T]}{\M} \log\!\! \brk{
-      \frac{ \pr\cond{i^A[0,T],\w^A[0,T]}{\M'} }{ \pr\cond{i^A[0,T],\w^A[0,T]}{\M} } }.
+  Q(\M,\M') = \sum_{{i^A[0,T]}} 
+      \pr^A_{[0,T]}\cond{i,\w}{\mu,\M} \log\!\! \brk{
+      \frac{ \pr^A_{[0,T]}\cond{i,\w}{\mu,\M'} }
+           { \pr^A_{[0,T]}\cond{i,\w}{\mu,\M} } }.
 \end{equation}
 %
 It can be shown that, if $\M'$ is chosen to maximise this quantity (which is easier than maximising the likelihood), the it will have a higher likelihood than $\M'$.
@@ -111,13 +119,19 @@ If this is repeated several times with random initialisation, we can hope to fin
 When we have several sequences, we can write
 %
 \begin{equation}\label{eq:emqseveral}
-\begin{gathered}
-  Q(\M,\M') = \sum_{i^A[0,T]}  \prod_b \pr\cond{i^b[0,T],\w^b[0,T]}{\M} \sum_a  \log\!\!  \brk{
-      \frac{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M'} }{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M} } } \\
-   = \sum_a \prod_{b \neq a} \pr\cond{\w^b[0,T]}{\M}\! \sum_{i^a[0,T]}\!\! \pr\cond{i^a[0,T],\w^a[0,T]}{\M} \log\!\!  \brk{
-      \frac{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M'} }{ \pr\cond{i^a[0,T],\w^a[0,T]}{\M} } } \\
-   = \pr\cond{\w^A[0,T]}{\M} \sum_a \frac{Q^a(\M,\M')}{\pr\cond{\w^a[0,T]}{\M}}.
-\end{gathered}
+\begin{aligned}
+  Q(\M,\M') &= \sum_{i^A[0,T]} \prod_b 
+    \pr^b_{[0,T]}\cond{i,\w}{\mu,\M} \sum_a  \log\!\!  \brk{
+      \frac{ \pr^a_{[0,T]}\cond{i,\w}{\mu,\M'} }
+           { \pr^a_{[0,T]}\cond{i,\w}{\mu,\M} } } \\
+   &= \sum_a \prod_{b \neq a} 
+   \pr^b_{[0,T]}\cond{\w}{\mu,\M}\! 
+   \sum_{i^a[0,T]}\!\! \pr^a_{[0,T]}\cond{i,\w}{\mu,\M} \log\!\!  \brk{
+      \frac{ \pr^a_{[0,T]}\cond{i,\w}{\mu,\M'} }
+           { \pr^a_{[0,T]}\cond{i,\w}{\mu,\M} } } \\
+   &= \pr^A_{[0,T]}\cond{\w}{\mu,\M} \sum_a 
+      \frac{Q^a(\M,\M')}{\pr^a_{[0,T]}\cond{\w}{\mu,\M}}.
+\end{aligned}
 \end{equation}
 %
 
@@ -128,8 +142,8 @@ Then the joint likelihood of a trajectory and sequence observed synaptic weights
 %
 \begin{equation}\label{eq:trajlike}
 \begin{aligned}
-  \pr\cond{t[0,T], \w[0,T]}{\M} &= \pib_{i(0)} \, \Pib_{i(0)}(0) 
-        \prod_{t=1}^{T} \M^{\mu(t)}_{i(t-1)i(t)} \, \Pib_{i(t)}(t),\\
+  \pr\cond{i[0,T], \w[0,T]}{\mu[0,T-1],\M} &= \pib_{i(0)} \, \Pib_{i(0)}(0) 
+        \prod_{t=0}^{T-1} \M^{\mu(t)}_{i(t)i(t+1)} \, \Pib_{i(t+1)}(t+1),\\
   \text{where}\quad
   \Pib_i(t) &= \delta_{\w_{i}\w(t)}
 \end{aligned}
@@ -155,12 +169,14 @@ where the numerator $N^\mu_{ij}$ and the forward/backward variables $\alpha$ and
 %
 \begin{equation}\label{eq:alphabeta}
 \begin{aligned}
-  N^\nu_{jk} &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, \pr\cond{i[t-1,t]=(jk),\w[0,T]}{\M} \\
-     &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, \alpha_j(t-1) \, \beta_k(t) \, \M^{\nu}_{jk} \, \Pib_k(t) ,\\
-  \alpha_j(t) &= \pr\cond{i(t)=j,\w[0,t]}{\M} \\
-     &= \sum_{i[0,t]} \pib_{i(0)}(0) \, \Pib_{i(0)}(0) \prod_{s=1}^{t} \M^{\mu(s)}_{i(s-1)i(s)} \, \Pib_{i(s)}(s) \,\delta_{i(t)j}, \\
-  \beta_j(t) &= \pr\cond{i(t)=j,\w[t+1,T]}{\M} \\
-     &= \sum_{i[t,T]} \delta_{i(t)j} \prod_{s=t+1}^{T} \M^{\mu(s)}_{i(s-1)i(s)} \, \Pib_{i(s)}(s).
+  N^\nu_{jk} &= \sum_{t=0}^{T-1} \delta_{\mu(t)\nu} \, 
+        \pr\cond{i[t,t+1]=(j,k),\w[0,T]}{\mu[0,T-1],\M} \\
+     &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, 
+        \alpha_j(t) \, \beta_k(t+1) \, \M^{\nu}_{jk} \, \Pib_k(t+1) ,\\
+  \alpha_j(t) &= \pr\cond{i(t)=j,\w[0,t]}{\mu[0,t-1],\M} \\
+     &= \sum_{i[0,t]} \pib_{i(0)}(0) \, \Pib_{i(0)}(0) \prod_{s=0}^{t-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib_{i(s+1)}(s+1) \,\delta_{i(t)j}, \\
+  \beta_j(t) &= \pr\cond{\w[t+1,T]}{i(t)=j,\mu[t,T-1],\M} \\
+     &= \sum_{i[t,T]} \delta_{i(t)j} \prod_{s=t}^{T-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib_{i(s+1)}(s+1).
 \end{aligned}
 \end{equation}
 %
@@ -187,20 +203,19 @@ These quantities have the interpretations:
 %
 \begin{equation}\label{eq:normintepr}
 \begin{aligned}
-  \tilde{\alpha}_j(t) &= \pr\cond{i(t)=j}{\w[0,t],\M}, \\
-  \eta(t) &= \pr\cond{\w(t)}{\w[0,t-1],\M}, \\
-  \prod_{s=0}^t \eta(t) &= \pr\cond{\w[0,t]}{\M}.
+  \tilde{\alpha}_j(t) &= \pr\cond{i(t)=j}{\w[0,t],\mu[0,t-1],\M}, \\
+  \eta(t)\inv &= \pr\cond{\w(t)}{\w[0,t-1],\mu[0,t-1],\M}, \\
+  \brk{\prod_{s=0}^t \eta(s)}\inv &= \pr\cond{\w[0,t]}{\mu[0,t-1],\M}, \\
+  \brk{\prod_{s=t_0}^{t_1} \eta(s)}\inv &= 
+          \pr\cond{\w[t_0,t_1]}{\w[0,t_0-1],\mu[0,t_1-1],\M}.
 \end{aligned}
 \end{equation}
 %
-Note that the new backward variables $\tilde{\beta}$ are not normalised and have no particularly interesting interpretation.
-However:
+Note that the new backward variables $\tilde{\beta}$ are not normalised and have no particularly interesting interpretation, beyond the following:
 %
 \begin{equation}\label{eq:normstateprob}
 \begin{aligned}
-  \widetilde{N}^\nu_{jk} &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, \pr\cond{i[t-1,t]=(jk)}{\w[0,T],\M} \\
-     &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, \tilde{\alpha}_i(t-1) \, \tilde{\beta}_j(t) \, \eta(t) \, \M^{\nu}_{i(t-1)i(t)} \, \Pib_k(t) ,\\
-  \tilde{\alpha}_j(t) \, \tilde{\beta}_j(t) &= \pr\cond{i(t)=j}{\w[0,T],\M}.
+  \tilde{\alpha}_j(t) \, \tilde{\beta}_j(t) &= \pr\cond{i(t)=j}{\w[0,T],\mu[0,T-1],\M}.
 \end{aligned}
 \end{equation}
 %
@@ -208,12 +223,19 @@ Then we can write
 %
 \begin{equation}\label{eq:singlediffsnorm}
 \begin{aligned}
-  \pdiff{\CL}{\M'^\mu_{ij}} &= \pr\cond{\w[0,T]}{\M} \, \frac{ \widetilde{N}^\mu_{ij} }{ \M'^\mu_{ij} } - \lambda^\mu_{i}, \\
-  \pdiff{\CL}{\pib'_{i}} &= \pr\cond{\w[0,T]}{\M} \, \frac{ \tilde{\alpha}_i(0) \, \tilde{\beta}_i(0) }{ \pib'_{i} } - \lambda,
+  \widetilde{N}^\nu_{jk} &= \sum_{t=0}^{T-1} \delta_{\mu(t)\nu} \, 
+      \pr\cond{i[t,t+1]=(jk)}{\w[0,T],\mu[0,T-1],\M} \\
+     &= \sum_{t=0}^{T-1} \delta_{\mu(t)\nu} \, 
+      \tilde{\alpha}_j(t) \, \tilde{\beta}_k(t+1) \, \eta(t+1) \, 
+      \M^{\nu}_{jk} \, \Pib_k(t+1) ,\\
+  \pdiff{\CL}{\M'^\mu_{ij}} &= \pr_{[0,T]}\cond{\w}{\mu,\M} \, 
+      \frac{ \widetilde{N}^\mu_{ij} }{ \M'^\mu_{ij} } - \lambda^\mu_{i}, \\
+  \pdiff{\CL}{\pib'_{i}} &= \pr_{[0,T]}\cond{\w}{\mu,\M} \, 
+      \frac{ \tilde{\alpha}_i(0) \, \tilde{\beta}_i(0) }{ \pib'_{i} } - \lambda,
 \end{aligned}
 \end{equation}
 %
-The factors of $\pr\cond{\w[0,T]}{\M}$ can be absorbed by a redefinition of the Lagrange multipliers.
+The factors of $\pr_{[0,T]}\cond{\w}{\mu,\M}$ can be absorbed by a redefinition of the Lagrange multipliers.
 
 Demanding a maximum and setting the derivatives to zero leaves us with the update rule \cite{Baum1970baumwelch}:
 %
@@ -234,17 +256,17 @@ This results in
 %
 \begin{equation}\label{eq:multidiffs}
 \begin{aligned}
-  \pdiff{\CL}{\M'^\mu_{ij}} &= \pr\cond{\w^A[0,T]}{\M} \,\sum_a \frac{1}{\pr\cond{\w^a[0,T]}{\M}} \,
+  \pdiff{\CL}{\M'^\mu_{ij}} &= \pr^A_{[0,T]}\cond{\w}{\mu,\M} \,\sum_a \frac{1}{\pr^a_{[0,T]}\cond{\w}{\mu,\M}} \,
     \frac{ N^{a\mu}_{ij} }{ \M'^\mu_{ij} } - \lambda^\mu_{i}, \\
-    &= \pr\cond{\w^A[0,T]}{\M} \, \frac{ \sum_a \widetilde{N}^{a\mu}_{ij} }{ \M'^\mu_{ij} } - \lambda^\mu_{i}, \\
-  \pdiff{\CL}{\pib'_{i}} &= \pr\cond{\w^A[0,T]}{\M} \,\sum_a \frac{1}{\pr\cond{\w^a[0,T]}{\M}} \,
+    &= \pr^A_{[0,T]}\cond{\w}{\mu,\M} \, \frac{ \sum_a \widetilde{N}^{a\mu}_{ij} }{ \M'^\mu_{ij} } - \lambda^\mu_{i}, \\
+  \pdiff{\CL}{\pib'_{i}} &= \pr^A_{[0,T]}\cond{\w}{\mu,\M} \,\sum_a \frac{1}{\pr^a_{[0,T]}\cond{\w}{\mu,\M}} \,
     \frac{ \alpha^a_i(0) \, \beta^a_i(0) }{ \pib'_{i} } - \lambda,\\
-    &= \pr\cond{\w^A[0,T]}{\M} \,
+    &= \pr^A_{[0,T]}\cond{\w}{\mu,\M} \,
     \frac{ \sum_a \tilde{\alpha}^a_i(0) \, \tilde{\beta}^a_i(0) }{ \pib'_{i} } - \lambda.
 \end{aligned}
 \end{equation}
 %
-Once again, we can absorb the factors of $\pr\cond{\w[0,T]}{\M}$ by a redefinition of the Lagrange multipliers.
+Once again, we can absorb the factors of $\pr^A_{[0,T]}\cond{\w}{\mu,\M}$ by a redefinition of the Lagrange multipliers.
 
 Defining $\widetilde{N}^{A\mu}_{ij} = \sum_a \widetilde{N}^{a\mu}_{ij}$ and setting the derivatives to zero leaves us with the update rule \cite{rabiner1993speechrec}:
 %
@@ -263,12 +285,12 @@ This can be iterated until a maximum is found.
 When we have a prior distribution for the model, $\pr(\M)$, instead of maximising the likelihood \eqref{eq:like}, we can maximise the posterior:
 %
 \begin{equation}\label{eq:posterior}
-  \pr\cond{\M}{\w[0,T]} = \frac{ \pr(\w[0,T],\M) }{ \pr(\w[0,T) } = \frac{ \pr\cond{\w[0,T]}{\M} \pr(\M) }{ \pr(\w[0,T) }.
+  \pr\cond{\M}{\w[0,T]} = \frac{ \pr(\w[0,T],\M) }{ \pr(\w[0,T]) } = \frac{ \pr\cond{\w[0,T]}{\M} \pr(\M) }{ \pr(\w[0,T]) }.
 \end{equation}
 %
 As the denominator is independent of the model, this is equivalent to maximising the numerator, \ie the joint distribution.
 
-Using the same trick as before \eqref{eq:emq}, we can define an auxilliary function
+Using the same trick that was used for \eqref{eq:emq}, we can define an auxilliary function
 %
 \begin{equation}\label{eq:emqprior}
 \begin{aligned}
@@ -318,7 +340,7 @@ Then the condition for a maximum \eqref{eq:priordiffs} reads
 Demanding normalisation gives
 %
 \begin{multline}\label{eq:L1norm}
-  \sum_{j \neq i}\frac{\widetilde{N}^{A\mu}_{ij}}{\lambda^\mu_{i}+\beta} +\frac{\widetilde{N}^{A\mu}_{ii}}{\lambda^\mu_{i}} =0, \\
+  \sum_{j \neq i}\frac{\widetilde{N}^{A\mu}_{ij}}{\lambda^\mu_{i}+\beta} +\frac{\widetilde{N}^{A\mu}_{ii}}{\lambda^\mu_{i}} = 1, \\
   \implies \quad
   \lambda^\mu_{i} = \half \brk{ \prn{\sum_j \widetilde{N}^{A\mu}_{ij} -\beta} + 
      \sqrt{\prn{\sum_j \widetilde{N}^{A\mu}_{ij} -\beta}^2 +4\beta\widetilde{N}^{A\mu}_{ii}}}

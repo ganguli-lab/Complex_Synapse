@@ -1,20 +1,22 @@
 """Model that is being fit to data
 """
 from __future__ import annotations
+from complex_synapse.synapse_mem import normalise
 
-from typing import Optional, Sequence, Union
+from typing import List, Optional, Sequence, Union
 
 import numpy as np
+import matplotlib as mpl
 
 import numpy_linalg as la
 from numpy_linalg import convert as cvl
 from sl_py_tools.arg_tricks import default_non_eval as default
 from sl_py_tools.containers import tuplify
-from sl_py_tools.numpy_tricks.markov import isstochastic_c
+from sl_py_tools.numpy_tricks.markov import isstochastic_c, stochastify_d
 
 from ..builders import RNG
 from ..synapse_base import ArrayLike, SynapseBase
-from .plast_seq import SimPlasticitySequence
+from .plast_seq import SimPlasticitySequence, Axes, Image, set_plot
 
 
 class SynapseIdModel(SynapseBase):
@@ -78,6 +80,12 @@ class SynapseIdModel(SynapseBase):
         results = self.initial.__array_ufunc__(ufunc, method, *args, **kwargs)
         return cvl.conv_out_attr(base_result, 'initial', results, outs, conv)
 
+    @property
+    def nreadout(self) -> int:
+        """Number of readout values, R
+        """
+        return self.readout.max() + 1
+
     def moveaxis(self, source: Union[int, Sequence[int]],
                  destination: Union[int, Sequence[int]]) -> SynapseIdModel:
         """Change order of axes in self.plast and self.ini6tial.
@@ -98,27 +106,13 @@ class SynapseIdModel(SynapseBase):
         newobj.plast = np.moveaxis(self.plast, source, destination)
         newobj.initial = np.moveaxis(self.initial, source, destination)
 
-    @property
-    def nreadout(self) -> int:
-        """Number of readout values, R
-        """
-        return self.readout.max() + 1
-
-    def readout_indicator(self) -> la.lnarray:
-        """1 in sets with each readout value, 0 elsewhere (R,M)
-        """
-        indicators = la.zeros((self.nreadout, self.nstate))
-        for i in range(self.nreadout):
-            indicators[i, self.readout == i] = 1
-        return indicators
-
-    def readout_proj(self) -> la.lnarray:
-        """Projection onto sets with each readout value, (R,M,M)
-        """
-        return self.readout_indicator().c * la.identity(self.nstate)
+    def normalise(self) -> None:
+        """normalise plast and initial, in place"""
+        stochastify_d(self.plast)
+        stochastify_d(self.initial)
 
     def reorder(self, inds: ArrayLike) -> None:
-        """Put the states in a new order, in-place.
+        """Put the states into a new order, in-place.
 
         Parameters
         ----------
@@ -141,6 +135,49 @@ class SynapseIdModel(SynapseBase):
         eta = - (np.ones_like(markov) - markov).inv @ self.readout
         inds = np.lexsort((-eta, self.readout)) if group else np.argsort(-eta)
         self.reorder(inds)
+
+    def readout_indicator(self) -> la.lnarray:
+        """1 in sets with each readout value, 0 elsewhere. (R,M)
+        """
+        indicators = la.zeros((self.nreadout, self.nstate))
+        for i in range(self.nreadout):
+            indicators[i, self.readout == i] = 1
+        return indicators
+
+    def updaters(self) -> la.lnarray:
+        """Projected plasticity matrices, (R,P,M,M)
+        """
+        out = self.plast.expand_dims(-4)
+        return out * self.readout_indicator().expand_dims((-3, -2))
+
+    def _elements(self) -> la.lnarray:
+        """All elements of self.plast and elf.initial, concatenated (PM**2+M,)
+        """
+        return np.concatenate(np.broadcast_arrays(
+            self.plast.flattish(-3), self.initial, subok=True), -1)
+
+    def norm(self, **kwargs) -> la.lnarray:
+        """Norm of vector of parameters.
+
+        Parameters
+        ----------
+        All passed to `np.linalg.norm`.
+
+        Returns
+        -------
+        norm : la.lnarray, ()
+            Norm of parameters.
+        """
+        return np.linalg.norm(self._elements(), axis=-1, **kwargs)
+
+    def kl_div(self, other: SynapseIdModel) -> la.lnarray:
+        """Kullback-Leibler divergence between plast & initial of self & other
+        """
+        mine = self._elements()
+        per_param = mine * np.log((self / other)._elements())
+        mine, per_param = np.broadcast_arrays(mine, per_param, subok=True)
+        per_param[np.isclose(0, mine)] = 0.
+        return per_param.sum(-1)
 
     def simulate(self, ntime: Optional[int] = None,
                  nexpt: Union[None, int, Sequence[int]] = None,
@@ -187,34 +224,11 @@ class SynapseIdModel(SynapseBase):
         readouts = self.readout[states]
         return SimPlasticitySequence(plast_seq, readouts, states)
 
-    def _elements(self) -> la.lnarray:
-        """All elements of self.plast and elf.initial, concatenated (PM**2+M,)
-        """
-        return np.concatenate(np.broadcast_arrays(
-            self.plast.flattish(-3), self.initial, subok=True), -1)
-
-    def norm(self, **kwargs) -> la.lnarray:
-        """Norm of vector of parameters.
-
-        Parameters
-        ----------
-        All passed to `np.linalg.norm`.
-
-        Returns
-        -------
-        norm : la.lnarray, ()
-            Norm of parameters.
-        """
-        return np.linalg.norm(self._elements(), axis=-1, **kwargs)
-
-    def kl_div(self, other: SynapseIdModel) -> la.lnarray:
-        """Kullback-Leibler divergence between plast & initial of self & other
-        """
-        mine = self._elements()
-        per_param = mine * np.log((self / other)._elements())
-        mine, per_param = np.broadcast_arrays(mine, per_param, subok=True)
-        per_param[np.isclose(0, mine)] = 0.
-        return per_param.sum(-1)
-
-
-# TODO: plot, likelihood
+    def plot(self, axs: Sequence[Union[Axes, Image]], **kwds) -> List[Image]:
+        """Plot heatmaps for plast and initial"""
+        kwds['norm'] = mpl.colors.Normalize(0., 1.)
+        imh = []
+        for axh, mat in zip(axs, self.plast):
+            imh.append(set_plot(axh, mat, **kwds))
+        imh.append(set_plot(axs[-1], self.initial, **kwds))
+        return imh

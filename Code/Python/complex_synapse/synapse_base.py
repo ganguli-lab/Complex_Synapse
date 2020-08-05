@@ -111,7 +111,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         attrs.update(kwds)
         return type(self)(**attrs)
 
-    def copy(self, order='C', **kwargs) -> SynapseBase:
+    def copy(self, order: str = 'C', **kwargs) -> SynapseBase:
         """Copy of object, with copies of array attributes
 
         Requires `__init__` parameter names to be the same as attribute names.
