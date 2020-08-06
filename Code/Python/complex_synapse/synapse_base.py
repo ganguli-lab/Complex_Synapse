@@ -7,7 +7,7 @@ Created on Mon Sep 18 15:49:42 2017
 from __future__ import annotations
 
 from numbers import Number
-from typing import Any, Dict, Sequence, Union
+from typing import Any, Dict, Sequence, Union, Callable
 
 import numpy as np
 
@@ -137,8 +137,9 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     # -------------------------------------------------------------------------
 
     @classmethod
-    def build(cls, builder, nst: int, frac: ArrayLike = 0.5,
-              extra_args=(), **kwargs) -> 'SynapseBase':
+    def build(cls, builder: Callable[..., Dict[str, la.lnarray]],
+              nst: int, frac: ArrayLike = 0.5,
+              extra_args=(), **kwargs) -> SynapseBase:
         """Build model from function.
 
         Parameters

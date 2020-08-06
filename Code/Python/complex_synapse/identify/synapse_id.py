@@ -3,7 +3,7 @@
 from __future__ import annotations
 from complex_synapse.synapse_mem import normalise
 
-from typing import List, Optional, Sequence, Union
+from typing import List, Optional, Sequence, Tuple, Union, Callable, Dict
 
 import numpy as np
 import matplotlib as mpl
@@ -12,7 +12,7 @@ import numpy_linalg as la
 from numpy_linalg import convert as cvl
 from sl_py_tools.arg_tricks import default_non_eval as default
 from sl_py_tools.containers import tuplify
-from sl_py_tools.numpy_tricks.markov import isstochastic_c, stochastify_d
+import sl_py_tools.numpy_tricks.markov as ma
 
 from ..builders import RNG
 from ..synapse_base import ArrayLike, SynapseBase
@@ -57,8 +57,8 @@ class SynapseIdModel(SynapseBase):
         dtype = self.plast.dtype
         self.initial = default(initial, la.asarray, la.full(nst, 1/nst, dtype))
         self.readout = default(readout, la.asarray, la.arange(nst))
-        if isstochastic_c(self.plast):
-            self.plast += la.identity(nst, dtype)
+        if ma.isstochastic_c(self.plast):
+            self.plast += la.identity(nst, dtype) * max(- self.plast.min(), 1.)
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
@@ -88,7 +88,7 @@ class SynapseIdModel(SynapseBase):
 
     def moveaxis(self, source: Union[int, Sequence[int]],
                  destination: Union[int, Sequence[int]]) -> SynapseIdModel:
-        """Change order of axes in self.plast and self.ini6tial.
+        """Change order of axes in self.plast and self.initial.
 
         Parameters
         ----------
@@ -108,8 +108,16 @@ class SynapseIdModel(SynapseBase):
 
     def normalise(self) -> None:
         """normalise plast and initial, in place"""
-        stochastify_d(self.plast)
-        stochastify_d(self.initial)
+        ma.stochastify_d(self.plast)
+        ma.stochastify_d(self.initial)
+
+    def set_init(self, init: Optional[ArrayLike] = None) -> None:
+        """Set initial to steady-state, in place"""
+        if init is None:
+            markov = (self.frac.s * self.plast).sum(-3)
+            self.initial = ma.calc_peq_d(markov)
+        else:
+            self.initial = la.asarray(init)
 
     def reorder(self, inds: ArrayLike) -> None:
         """Put the states into a new order, in-place.
@@ -132,7 +140,8 @@ class SynapseIdModel(SynapseBase):
             Sort by `-eta` within groups of common readout? By default `True`
         """
         markov = (self.frac.s * self.plast).sum(-3)
-        eta = - (np.ones_like(markov) - markov).inv @ self.readout
+        fundi = np.ones_like(markov) + la.identity(self.nstate) - markov
+        eta = - fundi.inv @ self.readout
         inds = np.lexsort((-eta, self.readout)) if group else np.argsort(-eta)
         self.reorder(inds)
 
@@ -144,17 +153,18 @@ class SynapseIdModel(SynapseBase):
             indicators[i, self.readout == i] = 1
         return indicators
 
-    def updaters(self) -> la.lnarray:
-        """Projected plasticity matrices, (R,P,M,M)
+    def updaters(self) -> Tuple[la.lnarray, la.lnarray]:
+        """Projected plasticity matrices, (R,P,M,M), (R,M)
         """
-        out = self.plast.expand_dims(-4)
-        return out * self.readout_indicator().expand_dims((-3, -2))
+        indic = self.readout_indicator()
+        updaters = self.plast.expand_dims(-4) * indic.expand_dims((-3, -2))
+        initial = self.initial * indic
+        return updaters, initial
 
     def _elements(self) -> la.lnarray:
-        """All elements of self.plast and elf.initial, concatenated (PM**2+M,)
+        """All elements of self.plast and self.initial, concatenated (PM**2+M,)
         """
-        return np.concatenate(np.broadcast_arrays(
-            self.plast.flattish(-3), self.initial, subok=True), -1)
+        return np.concatenate((self.plast.flattish(-3), self.initial), -1)
 
     def norm(self, **kwargs) -> la.lnarray:
         """Norm of vector of parameters.
@@ -192,12 +202,12 @@ class SynapseIdModel(SynapseBase):
             Numper of time-steps, T, by default None
         nexpt : Union[None, int, Sequence[int]], optional
             Number of experiments, E, by default None
-        plast_seq : Optional[np.ndarray], optional
+        plast_seq : Optional[np.ndarray], optional, (T,E)
             Sequence of plasticity types, by default None
 
         Returns
         -------
-        simulation : SimPlasticitySequence, (E,T)
+        simulation : SimPlasticitySequence, (T,E)
             The result of the simulation
         """
         # only simulate a single model
@@ -205,30 +215,88 @@ class SynapseIdModel(SynapseBase):
         if plast_seq is None:
             nexpt = default(nexpt, tuplify, ())
             ntime = default(ntime, int, 1)
-            plast_seq = rng.choice(la.arange(self.nplast),
-                                   size=nexpt + (ntime,), p=self.frac)
+            # (T,E)
+            plast_seq = rng.choice(la.arange(self.nplast), p=self.frac,
+                                   size=(ntime,) + nexpt)
         else:
             plast_seq = la.asarray(plast_seq)
-            nexpt = plast_seq.shape[:-1]
-            ntime = plast_seq.shape[-1]
+            nexpt = plast_seq.shape[1:]
+            ntime = plast_seq.shape[0]
 
         state_ind = la.arange(self.nstate)
+        expt_ind = tuple(la.arange(expt) for expt in nexpt)
+        # (PM,M)
         jump = self.plast.flattish(0, -1)
+        # (P,M,T,E)
         state_ch = la.array([rng.choice(state_ind, size=plast_seq.shape, p=p)
                              for p in jump]).foldaxis(0, self.plast.shape[:-1])
+        # (T,E)
         states = np.empty_like(plast_seq)
-        states[..., 0] = rng.choice(state_ind, size=nexpt, p=self.initial)
+        # (E,)
+        states[0] = rng.choice(state_ind, size=nexpt, p=self.initial)
         for i in range(ntime - 1):
-            states[..., i+1] = state_ch[plast_seq[..., i], states[..., i],
-                                        ..., i]
+            # (E,)
+            states[i+1] = state_ch[(plast_seq[i], states[i], i) + expt_ind]
+        # (T,E)
         readouts = self.readout[states]
-        return SimPlasticitySequence(plast_seq, readouts, states)
+        return SimPlasticitySequence(plast_seq, readouts, states, t_axis=0)
 
     def plot(self, axs: Sequence[Union[Axes, Image]], **kwds) -> List[Image]:
-        """Plot heatmaps for plast and initial"""
+        """Plot heatmaps for initial and plast
+
+        Parameters
+        ----------
+        axs : Sequence[Union[Image, Axes]], (P+1,)
+            Axes to plot on, or Images to update with new data
+
+        Returns
+        -------
+        imh: List[Image], (P+1,)
+            Image objects for the plots
+        """
         kwds['norm'] = mpl.colors.Normalize(0., 1.)
-        imh = []
-        for axh, mat in zip(axs, self.plast):
+        imh = [set_plot(axs[0], self.initial, **kwds)]
+        for axh, mat in zip(axs[1:], self.plast):
             imh.append(set_plot(axh, mat, **kwds))
-        imh.append(set_plot(axs[-1], self.initial, **kwds))
         return imh
+
+    @classmethod
+    def build(cls, builder: Callable[..., Dict[str, la.lnarray]],
+              nst: int, frac: ArrayLike = 0.5,
+              extra_args=(), **kwargs) -> SynapseBase:
+        """Build model from function.
+
+        Parameters
+        ----------
+        builder : function
+            function object with parameters (n,...) that returns dictionary
+            {plast, weight, etc}, ignoring any extra elements.
+        nst: int
+            total number of states, passed to `builder`.
+        frac : float
+            fraction of events that are potentiating, default=0.5.
+        extra_args, **kwargs
+            *extra_args, **kwargs: passed to `builder`.
+
+        Returns
+        -------
+        synobj
+            SynapseBase instance
+        """
+        keys = builder(nst, *extra_args, **kwargs)
+        keys['frac'] = frac
+        keys.pop('signal')
+        keys.setdefault('readout', _weight_readout(keys.pop('weight')))
+        obj = cls(**keys)
+        obj.normalise()
+        obj.set_init()
+        return obj
+
+
+# =============================================================================
+
+
+def _weight_readout(weight: ArrayLike) -> la.lnarray:
+    """Convert weight vector to readout vector"""
+    return None if weight is None else np.unique(weight, return_inverse=True
+                                                 )[1].astype(int)
