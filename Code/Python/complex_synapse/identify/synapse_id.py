@@ -14,7 +14,7 @@ from sl_py_tools.arg_tricks import default_non_eval as default
 from sl_py_tools.containers import tuplify
 import sl_py_tools.numpy_tricks.markov as ma
 
-from ..builders import RNG
+from ..builders import RNG, build_generic
 from ..synapse_base import ArrayLike, SynapseBase
 from .plast_seq import SimPlasticitySequence, Axes, Image, set_plot
 
@@ -154,7 +154,7 @@ class SynapseIdModel(SynapseBase):
         return indicators
 
     def updaters(self) -> Tuple[la.lnarray, la.lnarray]:
-        """Projected plasticity matrices, (R,P,M,M), (R,M)
+        """Projected plasticity matrices & initial, (R,P,M,M), (R,M)
         """
         indic = self.readout_indicator()
         updaters = self.plast.expand_dims(-4) * indic.expand_dims((-3, -2))
@@ -164,7 +164,13 @@ class SynapseIdModel(SynapseBase):
     def _elements(self) -> la.lnarray:
         """All elements of self.plast and self.initial, concatenated (PM**2+M,)
         """
-        return np.concatenate((self.plast.flattish(-3), self.initial), -1)
+        if self.plast.ndim < 4 and self.initial.ndim < 2:
+            return np.concatenate((self.plast.flattish(-3), self.initial))
+        plast, initial = self.plast.flattish(-3), self.initial
+        bcast = np.broadcast(plast[..., 0], initial[..., 0]).shape
+        plast = np.broadcast_to(plast, bcast + plast.shape[-1:], True)
+        initial = np.broadcast_to(initial, bcast + initial.shape[-1:], True)
+        return np.concatenate((plast, initial), -1)
 
     def norm(self, **kwargs) -> la.lnarray:
         """Norm of vector of parameters.
@@ -263,7 +269,7 @@ class SynapseIdModel(SynapseBase):
     @classmethod
     def build(cls, builder: Callable[..., Dict[str, la.lnarray]],
               nst: int, frac: ArrayLike = 0.5,
-              extra_args=(), **kwargs) -> SynapseBase:
+              extra_args=(), **kwargs) -> SynapseIdModel:
         """Build model from function.
 
         Parameters
@@ -292,11 +298,74 @@ class SynapseIdModel(SynapseBase):
         obj.set_init()
         return obj
 
+    @classmethod
+    def rand(cls, nst, *args, **kwargs) -> SynapseIdModel:
+        """Random model
+
+        Synapse model with random transition matrices
+
+        Parameters
+        ----------
+            All passed to `cls.build`, `builders.build_rand`
+            or `sl_py_tools.numpy_tricks.markov_param`:
+        nst: int
+            total number of states
+        npl: int
+            total number of plasticity types
+        frac : float
+            fraction of events that are potentiating, default=0.5.
+        binary : bool
+            is the weight vector binary? Otherwise it's linear. Default: False
+        sp : float
+            sparsity, default: 1.
+        ...
+            extra arguments passed to `cls.build`, `builders.build_rand`
+            or `sl_py_tools.numpy_tricks.markov...`.
+
+        Returns
+        -------
+        synobj
+            SynapseIdModel instance
+        """
+        return cls.build(build_rand, nst, *args, **kwargs)
+
 
 # =============================================================================
 
 
 def _weight_readout(weight: ArrayLike) -> la.lnarray:
     """Convert weight vector to readout vector"""
-    return None if weight is None else np.unique(weight, return_inverse=True
-                                                 )[1].astype(int)
+    if weight is None:
+        return None
+    return np.unique(weight, return_inverse=True)[1].astype(int)
+
+
+def build_rand(nst: int, npl: int = 2, binary: bool = False,
+               **kwds) -> Dict[str, la.lnarray]:
+    """Make a random model.
+
+    Make a random model, i.e. transition rates are random numbers.
+    For use with `SynapseMemoryModel.Build`.
+
+    Parameters
+    ----------
+    n : int
+        total number of states
+    binary : bool
+        is the weight vector binary? Otherwise it's linear. Default: False
+    sparsity : float
+        sparsity, default: 1.
+    optional arguments
+        passed to `sl_py_tools.numpy_tricks.markov.rand_trans`.
+
+    Returns
+    -------
+    dictionary:
+        plast : la.lnarray
+            potentiation/depression transition matrices
+        weight : la.lnarray
+            synaptic weights (linear/binary)
+        signal : la.lnarray
+            desired signal contribution from each plasticity type
+    """
+    return build_generic(ma.rand_trans_d, nst, npl, binary, **kwds)

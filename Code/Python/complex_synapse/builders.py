@@ -144,24 +144,25 @@ def cascade_trans(nst: int, npl: int = 2, jmp: float = 0.5) -> la.lnarray:
     return mp.std_cascade_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
 
 
-def build_generic(func, nst: int, npl: int = 2,
-                  binary: bool = False) -> Dict[str, la.lnarray]:
+def build_generic(func, nst: int, npl: int = 2, binary: bool = False,
+                  **kwds) -> Dict[str, la.lnarray]:
     """Make a model from a matrix creating function.
 
     Factory for model builderss.
-    For use with `SynapseMemoryModel.Build`.
+    For use with `SynapseMemoryModel.build`.
 
     Parameters
     ----------
-    Func : function
-        function with signature `func(nst: int, npl: int) -> la.lnarray` and
-        func(nst).shape = (npl, nst, nst)
+    func : function
+        function with signature `func(nst: int, npl: int, **kwds) -> lnarray`
+        and `func(nst, npl, **kwds).shape = (npl, nst, nst)`
     nst : int
         total number of states
     npl : optional, int = 2
         number of plasticity matrices
     binary : optional, bool = True
         is the weight vector binary? Otherwise it's linear. Default: False
+    Other keywords passed to `func`.
 
     Returns
     -------
@@ -173,7 +174,7 @@ def build_generic(func, nst: int, npl: int = 2,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    plast = la.asarray(func(nst, npl))
+    plast = la.asarray(func(nst, npl, **kwds))
     if binary:
         weight = binary_weights(nst)
     else:
@@ -182,8 +183,47 @@ def build_generic(func, nst: int, npl: int = 2,
     return {'plast': plast, 'weight': weight, 'signal': signal}
 
 
-def build_zero(nst: int, npl: int = 2,
-               binary: bool = False) -> Dict[str, la.lnarray]:
+def build_standard(func, nst: int, npl: int = 2, binary: bool = False,
+                   **kwds) -> Dict[str, la.lnarray]:
+    """Make a model from a standard array creating function.
+
+    Factory for model builderss.
+    For use with `SynapseMemoryModel.build`.
+
+    Parameters
+    ----------
+    func : function
+        function with signature `func(shape: Tuple[int], **kwds) -> lnarray`
+        and `func(shape, **kwds).shape = shape
+    nst : int
+        total number of states
+    npl : optional, int = 2
+        number of plasticity matrices
+    binary : optional, bool = True
+        is the weight vector binary? Otherwise it's linear. Default: False
+    Other keywords passed to `func`.
+
+    Returns
+    -------
+    dictionary:
+        plast : la.lnarray
+            potentiation/depression transition matrices
+        weight : la.lnarray
+            synaptic weights (linear/binary)
+        signal : la.lnarray
+            desired signal contribution from each plasticity type
+    """
+    plast = la.asarray(func((npl, nst, nst), **kwds))
+    if binary:
+        weight = binary_weights(nst)
+    else:
+        weight = linear_weights(nst)
+    signal = la.linspace(1, -1, npl)
+    return {'plast': plast, 'weight': weight, 'signal': signal}
+
+
+def build_zero(nst: int, npl: int = 2, binary: bool = False
+               ) -> Dict[str, la.lnarray]:
     """Make an empty model.
 
     Make an empty model, i.e. all transition rates are zero.
@@ -206,12 +246,11 @@ def build_zero(nst: int, npl: int = 2,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: la.zeros((p, n, n)),
-                         nst, npl, binary)
+    return build_standard(la.zeros, nst, npl, binary)
 
 
-def build_empty(nst: int, npl: int = 2,
-                binary: bool = False) -> Dict[str, la.lnarray]:
+def build_empty(nst: int, npl: int = 2, binary: bool = False
+                ) -> Dict[str, la.lnarray]:
     """Make an empty model.
 
     Make an empty model, i.e. all transition rates uninitialised.
@@ -234,8 +273,7 @@ def build_empty(nst: int, npl: int = 2,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: la.empty((p, n, n)),
-                         nst, npl, binary)
+    return build_standard(la.empty, nst, npl, binary)
 
 
 def build_rand(nst: int, npl: int = 2, binary: bool = False,
@@ -266,8 +304,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: ma.rand_trans(n, p, **kwds),
-                         nst, npl, binary)
+    return build_generic(ma.rand_trans, nst, npl, binary, **kwds)
 
 
 def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
@@ -294,7 +331,7 @@ def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: serial_trans(n, p, jmp), nst, 2, True)
+    return build_generic(serial_trans, nst, 2, True, jmp=jmp)
 
 
 def build_multistate(nst: int, jmp: float) -> Dict[str, la.lnarray]:
@@ -322,7 +359,7 @@ def build_multistate(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: serial_trans(n, jmp), nst, 2, False)
+    return build_generic(serial_trans, nst, 2, False, jmp=jmp)
 
 
 def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
@@ -348,4 +385,4 @@ def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(lambda n, p: cascade_trans(n, p, jmp), nst, 2, True)
+    return build_generic(cascade_trans, nst, 2, True, jmp=jmp)

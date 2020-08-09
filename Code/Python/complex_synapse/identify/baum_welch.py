@@ -11,7 +11,6 @@ import numpy_linalg as la
 
 from sl_py_tools.iter_tricks import zenumerate, rzenumerate
 
-from ..synapse_base import ArrayLike
 from .synapse_id import SynapseIdModel
 from .plast_seq import PlasticitySequence
 # =============================================================================
@@ -57,7 +56,8 @@ def calc_alpha_beta(updaters: la.lnarray, initial: la.lnarray
 
 
 def update_model(model: SynapseIdModel, plast_seq: PlasticitySequence,
-                 normalise: bool = True, steady: bool = True) -> Tuple[la.lnarray, la.lnarray]:
+                 normalise: bool = True, steady: bool = True
+                 ) -> Tuple[la.lnarray, la.lnarray]:
     """One Baum-Welch update of the model
 
     Parameters
@@ -66,13 +66,20 @@ def update_model(model: SynapseIdModel, plast_seq: PlasticitySequence,
         The model to update, modified in-place
     plast_seq : PlasticitySequence
         The data to use for the update
+    normalise : bool, optional
+        Should we normalise the result? By default `True`.
+    steady : bool, optional
+        Can we assume that `initial` is the steady-state?
+        If `True`, we can use all times to estimate `initial`.
+        If `False`, we can only use `t=0`. By default `True`.
 
     Returns
     -------
     state_probs : la.lnarray, (T,E,M)
         Current estimate of marginal occupation
-    nlog_like : la.lnarray, (E,)
-        Negative log likelihood of data given old model
+    nlog_like : la.lnarray, (E,) or ()
+        Negative log likelihood of data given old model.
+        If `normalise`: sum over experiments.
     """
     plast_seq = plast_seq.moveaxis(plast_seq.t_axis, 0)
     # (R,P,M,M),(R,M)
@@ -83,18 +90,18 @@ def update_model(model: SynapseIdModel, plast_seq: PlasticitySequence,
     initial = initial[plast_seq.readouts[0]]
     # (T,E,M),(T,E,M),(T,E),
     alpha, beta, eta = calc_alpha_beta(update, initial)
+
     # (T,E,M)
     state_prob = alpha * beta
     # (E,)
     nlog_like = np.log(eta).sum(0)
-
+    # (M,)
+    model.initial = state_prob.sum((0, 1)) if steady else state_prob[0].sum(0)
     # (T,E,M,M)
     update *= alpha.c[:-1] * beta.r[1:] * eta.s[1:]
     # (P,M,M)
     model.plast = la.array([update[plast_seq.plast_type[:-1] == i].sum(0)
                             for i in range(model.nplast)])
-    # (M,)
-    model.initial = state_prob.sum((0, 1)) if steady else state_prob[0].sum(0)
     if normalise:
         model.normalise()
         model.sort(group=True)
