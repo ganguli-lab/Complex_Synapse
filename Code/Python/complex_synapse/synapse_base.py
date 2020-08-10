@@ -7,7 +7,7 @@ Created on Mon Sep 18 15:49:42 2017
 from __future__ import annotations
 
 from numbers import Number
-from typing import Any, Dict, Sequence, Union, Callable
+from typing import Any, Dict, Sequence, Tuple, Union, Callable
 
 import numpy as np
 
@@ -131,6 +131,11 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     def nstate(self) -> int:
         """Number of states, M."""
         return self.plast.shape[-1]
+
+    @property
+    def nmodel(self) -> Tuple[int, ...]:
+        """Number of models broadcasted."""
+        return self.plast.shape[:-3]
 
     # -------------------------------------------------------------------------
     # Factory methods

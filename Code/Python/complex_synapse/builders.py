@@ -27,7 +27,8 @@ build_multistate(nst, q)
 @author: Subhy
 """
 
-from typing import Dict, Union
+from functools import wraps
+from typing import Dict, Tuple, Union, Callable
 
 import numpy as np
 
@@ -36,7 +37,9 @@ from sl_py_tools.numpy_tricks import markov as ma
 from sl_py_tools.numpy_tricks.markov import params as mp
 
 RNG = la.random.default_rng()
-
+MatFunc = Callable[[int, int], la.lnarray]
+ArrFunc = Callable[[Tuple[int, ...]], la.lnarray]
+SynKWs = Dict[str, la.lnarray]
 # =============================================================================
 
 
@@ -57,6 +60,11 @@ def scalarise(arg: np.ndarray) -> Union[np.ndarray, np.generic]:
     if arg.ndim == 0:
         return arg[()]
     return arg
+
+
+# =============================================================================
+# Weights
+# =============================================================================
 
 
 def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
@@ -92,6 +100,11 @@ def linear_weights(nst: int) -> la.lnarray:  # linear synaptic weights
         vector of synaptic weights
     """
     return la.linspace(-1., 1., nst)
+
+
+# =============================================================================
+# Transition matrices
+# =============================================================================
 
 
 def serial_trans(nst: int, npl: int = 2, jmp: float = 1.) -> la.lnarray:
@@ -144,8 +157,13 @@ def cascade_trans(nst: int, npl: int = 2, jmp: float = 0.5) -> la.lnarray:
     return mp.std_cascade_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
 
 
-def build_generic(func, nst: int, npl: int = 2, binary: bool = False,
-                  **kwds) -> Dict[str, la.lnarray]:
+# =============================================================================
+# Builders
+# =============================================================================
+
+
+def build_generic(func: MatFunc, nst: int, npl: int = 2, binary: bool = False,
+                  **kwds) -> SynKWs:
     """Make a model from a matrix creating function.
 
     Factory for model builderss.
@@ -166,7 +184,7 @@ def build_generic(func, nst: int, npl: int = 2, binary: bool = False,
 
     Returns
     -------
-    dictionary:
+    dictionary : Dict[str, la.lnarray]
         plast : la.lnarray
             potentiation/depression transition matrices
         weight : la.lnarray
@@ -175,16 +193,13 @@ def build_generic(func, nst: int, npl: int = 2, binary: bool = False,
             desired signal contribution from each plasticity type
     """
     plast = la.asarray(func(nst, npl, **kwds))
-    if binary:
-        weight = binary_weights(nst)
-    else:
-        weight = linear_weights(nst)
+    weight = binary_weights(nst) if binary else linear_weights(nst)
     signal = la.linspace(1, -1, npl)
     return {'plast': plast, 'weight': weight, 'signal': signal}
 
 
-def build_standard(func, nst: int, npl: int = 2, binary: bool = False,
-                   **kwds) -> Dict[str, la.lnarray]:
+def build_standard(func: ArrFunc, nst: int, npl: int = 2, binary: bool = False,
+                   **kwds) -> SynKWs:
     """Make a model from a standard array creating function.
 
     Factory for model builderss.
@@ -205,7 +220,7 @@ def build_standard(func, nst: int, npl: int = 2, binary: bool = False,
 
     Returns
     -------
-    dictionary:
+    dictionary : Dict[str, la.lnarray]
         plast : la.lnarray
             potentiation/depression transition matrices
         weight : la.lnarray
@@ -213,20 +228,16 @@ def build_standard(func, nst: int, npl: int = 2, binary: bool = False,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    plast = la.asarray(func((npl, nst, nst), **kwds))
-    if binary:
-        weight = binary_weights(nst)
-    else:
-        weight = linear_weights(nst)
-    signal = la.linspace(1, -1, npl)
-    return {'plast': plast, 'weight': weight, 'signal': signal}
+    @wraps(func)
+    def wrapped(nsts: int, npls: int, **kwargs) -> la.lnarray:
+        return func((npls, nsts, nsts), **kwargs)
+    return build_generic(wrapped, nst, npl, binary)
 
 
-def build_zero(nst: int, npl: int = 2, binary: bool = False
-               ) -> Dict[str, la.lnarray]:
+def build_zero(nst: int, npl: int = 2, binary: bool = False) -> SynKWs:
     """Make an empty model.
 
-    Make an empty model, i.e. all transition rates are zero.
+    Make a zero model, i.e. all transition rates are zero.
     For use with `SynapseMemoryModel.Build`.
 
     Parameters
@@ -238,7 +249,7 @@ def build_zero(nst: int, npl: int = 2, binary: bool = False
 
     Returns
     -------
-    dictionary:
+    dictionary : Dict[str, la.lnarray]
         plast : la.lnarray
             potentiation/depression transition matrices
         weight : la.lnarray
@@ -249,8 +260,7 @@ def build_zero(nst: int, npl: int = 2, binary: bool = False
     return build_standard(la.zeros, nst, npl, binary)
 
 
-def build_empty(nst: int, npl: int = 2, binary: bool = False
-                ) -> Dict[str, la.lnarray]:
+def build_empty(nst: int, npl: int = 2, binary: bool = False) -> SynKWs:
     """Make an empty model.
 
     Make an empty model, i.e. all transition rates uninitialised.
@@ -265,7 +275,7 @@ def build_empty(nst: int, npl: int = 2, binary: bool = False
 
     Returns
     -------
-    dictionary:
+    dictionary : Dict[str, la.lnarray]
         plast : la.lnarray
             potentiation/depression transition matrices
         weight : la.lnarray
@@ -276,8 +286,7 @@ def build_empty(nst: int, npl: int = 2, binary: bool = False
     return build_standard(la.empty, nst, npl, binary)
 
 
-def build_rand(nst: int, npl: int = 2, binary: bool = False,
-               **kwds) -> Dict[str, la.lnarray]:
+def build_rand(nst: int, npl: int = 2, binary: bool = False, **kwds) -> SynKWs:
     """Make a random model.
 
     Make a random model, i.e. transition rates are random numbers.
@@ -293,10 +302,11 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
         passed to `sl_py_tools.numpy_tricks.markov.rand_trans`.
     sparsity : float
         sparsity, default: 1.
+    Other keywords passed to `sl_py_tools.numpy_tricks.markov.rand_trans`.
 
     Returns
     -------
-    dictionary:
+    dictionary : Dict[str, la.lnarray]
         plast : la.lnarray
             potentiation/depression transition matrices
         weight : la.lnarray
@@ -307,7 +317,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
     return build_generic(ma.rand_trans, nst, npl, binary, **kwds)
 
 
-def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
+def build_serial(nst: int, jmp: float) -> SynKWs:
     """Make a serial model.
 
     Make a serial model, i.e. uniform nearest neighbour transition rates,
@@ -323,7 +333,7 @@ def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
 
     Returns
     -------
-    dictionary:
+    dictionary : Dict[str, la.lnarray]
         plast : la.lnarray
             potentiation/depression transition matrices
         weight : la.lnarray
@@ -331,10 +341,10 @@ def build_serial(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(serial_trans, nst, 2, True, jmp=jmp)
+    return build_generic(serial_trans, nst, npl=2, binary=True, jmp=jmp)
 
 
-def build_multistate(nst: int, jmp: float) -> Dict[str, la.lnarray]:
+def build_multistate(nst: int, jmp: float) -> SynKWs:
     """Make a multistate model.
 
     Make a multistate model, i.e. uniform nearest neighbour transition rates,
@@ -351,7 +361,7 @@ def build_multistate(nst: int, jmp: float) -> Dict[str, la.lnarray]:
 
     Returns
     -------
-    dictionary:
+    dictionary : Dict[str, la.lnarray]
         plast : la.lnarray
             potentiation/depression transition matrices
         weight : la.lnarray
@@ -359,10 +369,10 @@ def build_multistate(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(serial_trans, nst, 2, False, jmp=jmp)
+    return build_generic(serial_trans, nst, npl=2, binary=False, jmp=jmp)
 
 
-def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
+def build_cascade(nst: int, jmp: float) -> SynKWs:
     """Make a cascade model.
 
     Make a cascade model with geometric transition rates and binary weights.
@@ -377,7 +387,7 @@ def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
 
     Returns
     -------
-    dictionary:
+    dictionary : Dict[str, la.lnarray]
         plast : la.lnarray
             potentiation/depression transition matrices
         weight : la.lnarray
@@ -385,4 +395,4 @@ def build_cascade(nst: int, jmp: float) -> Dict[str, la.lnarray]:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(cascade_trans, nst, 2, True, jmp=jmp)
+    return build_generic(cascade_trans, nst, npl=2, binary=True, jmp=jmp)

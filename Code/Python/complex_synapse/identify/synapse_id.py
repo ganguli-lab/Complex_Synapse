@@ -86,6 +86,12 @@ class SynapseIdModel(SynapseBase):
         """
         return self.readout.max() + 1
 
+    @property
+    def nmodel(self) -> Tuple[int, ...]:
+        """Number of models broadcasted."""
+        return la.gufuncs.array_return_shape('(p,m,m),(m)->()',
+                                             self.plast, self.initial)
+
     def moveaxis(self, source: Union[int, Sequence[int]],
                  destination: Union[int, Sequence[int]]) -> SynapseIdModel:
         """Change order of axes in self.plast and self.initial.
@@ -164,13 +170,11 @@ class SynapseIdModel(SynapseBase):
     def _elements(self) -> la.lnarray:
         """All elements of self.plast and self.initial, concatenated (PM**2+M,)
         """
-        if self.plast.ndim < 4 and self.initial.ndim < 2:
-            return np.concatenate((self.plast.flattish(-3), self.initial))
-        plast, initial = self.plast.flattish(-3), self.initial
-        bcast = np.broadcast(plast[..., 0], initial[..., 0]).shape
-        plast = np.broadcast_to(plast, bcast + plast.shape[-1:], True)
-        initial = np.broadcast_to(initial, bcast + initial.shape[-1:], True)
-        return np.concatenate((plast, initial), -1)
+        if not self.nmodel:
+            return np.concatenate((self.plast.ravel(), self.initial))
+        vectors = (self.plast.flattish(-3), self.initial)
+        bcast_vectors = la.gufuncs.broadcast_matrices('(a),(b)', *vectors)
+        return np.concatenate(bcast_vectors, -1)
 
     def norm(self, **kwargs) -> la.lnarray:
         """Norm of vector of parameters.
@@ -202,6 +206,8 @@ class SynapseIdModel(SynapseBase):
                  ) -> SimPlasticitySequence:
         """Simulate markov process
 
+        If `plast_seq` is omitted, both `ntime` and `nexpt` are required.
+
         Parameters
         ----------
         ntime : Optional[int], optional
@@ -217,32 +223,34 @@ class SynapseIdModel(SynapseBase):
             The result of the simulation
         """
         # only simulate a single model
-        assert self.plast.ndim == 3
+        assert not self.nmodel
         if plast_seq is None:
             nexpt = default(nexpt, tuplify, ())
             ntime = default(ntime, int, 1)
-            # (T,E)
+            # (T-1,E)
             plast_seq = rng.choice(la.arange(self.nplast), p=self.frac,
-                                   size=(ntime,) + nexpt)
+                                   size=(ntime - 1,) + nexpt)
         else:
+            # (T-1,E)
             plast_seq = la.asarray(plast_seq)
             nexpt = plast_seq.shape[1:]
-            ntime = plast_seq.shape[0]
+            ntime = plast_seq.shape[0] + 1
 
         state_ind = la.arange(self.nstate)
-        expt_ind = tuple(la.arange(expt) for expt in nexpt)
+        expt_ind = np.ix_(*(la.arange(expt) for expt in nexpt))
+        expt_ind = (expt_ind,) if len(nexpt) == 1 else expt_ind
         # (PM,M)
         jump = self.plast.flattish(0, -1)
-        # (P,M,T,E)
+        # (P,M,T-1,E)
         state_ch = la.array([rng.choice(state_ind, size=plast_seq.shape, p=p)
                              for p in jump]).foldaxis(0, self.plast.shape[:-1])
         # (T,E)
-        states = np.empty_like(plast_seq)
+        states = la.empty((ntime,) + nexpt, int)
         # (E,)
         states[0] = rng.choice(state_ind, size=nexpt, p=self.initial)
-        for i in range(ntime - 1):
+        for i, plt in enumerate(plast_seq):
             # (E,)
-            states[i+1] = state_ch[(plast_seq[i], states[i], i) + expt_ind]
+            states[i+1] = state_ch[(plt, states[i], i) + expt_ind]
         # (T,E)
         readouts = self.readout[states]
         return SimPlasticitySequence(plast_seq, readouts, states, t_axis=0)
@@ -360,7 +368,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
 
     Returns
     -------
-    dictionary:
+    dictionary : Dict[str, la.lnarray]
         plast : la.lnarray
             potentiation/depression transition matrices
         weight : la.lnarray

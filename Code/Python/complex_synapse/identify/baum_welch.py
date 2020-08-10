@@ -40,14 +40,16 @@ def calc_alpha_beta(updaters: la.lnarray, initial: la.lnarray
     # (T,E,1,M),(T,E,M,1),(T,E,1,1),
     alpha, beta, eta = la.empty(siz).r, la.empty(siz).c, la.empty(siz[:-1]).s
 
+    def norm(ind: int):
+        eta[ind] = 1. / alpha[ind].sum(-1, keepdims=True)
+        alpha[ind] *= eta[ind]
+
     # (E,1,M),(E,1,1)
     alpha[0] = initial.r
-    eta[0] = 1. / alpha[0].sum(-1, keepdims=True)
-    alpha[0] *= eta[0]
+    norm(0)
     for i, updater in zenumerate(updaters):
         alpha[i+1] = alpha[i] @ updater
-        eta[i+1] = 1. / alpha[i+1].sum(-1, keepdims=True)
-        alpha[i+1] *= eta[i+1]
+        norm(i+1)
     # (E,M,1)
     beta[-1] = 1.
     for i, updater in rzenumerate(updaters):
@@ -55,16 +57,126 @@ def calc_alpha_beta(updaters: la.lnarray, initial: la.lnarray
     return alpha.ur, beta.uc, eta.us
 
 
-def update_model(model: SynapseIdModel, plast_seq: PlasticitySequence,
-                 normalise: bool = True, steady: bool = True
-                 ) -> Tuple[la.lnarray, la.lnarray]:
-    """One Baum-Welch update of the model
+def get_updaters(model: SynapseIdModel, expt: PlasticitySequence,
+                 ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+    """Get updater matrices for each time-step
 
     Parameters
     ----------
     model : SynapseIdModel
         The model to update, modified in-place
-    plast_seq : PlasticitySequence
+    expt : PlasticitySequence
+        The data to use for the update
+
+    Returns
+    -------
+    updaters : la.lnarray, (T-1,E,M,M)
+        Plasticity matrices multiplied by readout indicators of 'to' state
+    initial : la.lnarray, (E,M)
+        Initial state distribution multiplied by readout indicators of state
+    plast_type : la.lnarray, (T-1,E), int[0:P]
+        id of plasticity type after each time-step
+    """
+    expt = expt.moveaxis(expt.t_axis, 0)
+    # (R,P,M,M),(R,M)
+    updaters, initial = model.updaters()
+    # (T-1,E,M,M) - makes a copy :(
+    updaters = updaters[expt.readouts[1:], expt.plast_type]
+    # (E,M)
+    initial = initial[expt.readouts[0]]
+    # (T-1,E,M,M),(E,M),(T-1,E),
+    return updaters, initial, expt.plast_type
+
+
+def likelihood(model: SynapseIdModel, expt: PlasticitySequence) -> float:
+    """Likelihood of observed readouts given model
+
+    Parameters
+    ----------
+    model : SynapseIdModel
+        The current model estimate
+    expt : PlasticitySequence
+        The data to use for the update
+
+    Returns
+    -------
+    nlog_like : float
+        `-log(P(readouts|model))`
+    """
+    # (T,E,M,M),(E,M) - makes a copy :(
+    update, initial = get_updaters(model, expt)[:2]
+    # _,_,(T,E)->()
+    return np.log(calc_alpha_beta(update, initial)[2]).sum()
+
+
+def state_est(model: SynapseIdModel, expt: PlasticitySequence) -> la.lnarray:
+    """Marginal probability of state occupation at each time
+
+    Parameters
+    ----------
+    model : SynapseIdModel
+        The current model estimate
+    expt : PlasticitySequence
+        The data to use for the update
+
+    Returns
+    -------
+    state_probs : la.lnarray, (T,E,M)
+        Current estimate of marginal occupation
+    """
+    # (T,E,M,M),(E,M) - makes a copy :(
+    update, initial = get_updaters(model, expt)[:2]
+    # (T,E,M),(T,E,M),_,
+    alpha, beta = calc_alpha_beta(update, initial)[:2]
+    # (T,E,M)
+    return alpha * beta
+
+
+def model_est(model: SynapseIdModel, expt: PlasticitySequence,
+              steady: bool = True) -> la.lnarray:
+    """New, unnormalised estimate of the model
+
+    Parameters
+    ----------
+    model : SynapseIdModel
+        The current model estimate
+    expt : PlasticitySequence
+        The data to use for the update
+
+    Returns
+    -------
+    plast : array_like, (P,M,M), float[0:1]
+        new estimate of transition probability matrix (unnormalised).
+    initial : array_like, (M,) float[0:1]
+        new estimate of distribution of initial state (unnormalised).
+    """
+    # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
+    update, initial, plast_type = get_updaters(model, expt)
+    # (T,E,M),(T,E,M),(T,E),
+    alpha, beta, eta = calc_alpha_beta(update, initial)
+
+    # (T,E,M)
+    state_prob = alpha * beta
+    # (M,)
+    initial = state_prob.sum((0, 1)) if steady else state_prob[0].sum(0)
+    # (T-1,E,M,M)
+    update *= alpha.c[:-1] * beta.r[1:] * eta.s[1:]
+    # (P,M,M)
+    plast = la.array([update[plast_type == i].sum(0)
+                      for i in range(model.nplast)])
+    return plast, initial
+
+
+def update_model(model: SynapseIdModel, expt: PlasticitySequence,
+                 normalise: bool = True, steady: bool = True
+                 ) -> Tuple[la.lnarray, la.lnarray]:
+    """One Baum-Welch/Rabiner-Juang update of the model
+
+    Parameters
+    ----------
+    model : SynapseIdModel
+        The model to update, modified in-place
+    expt : PlasticitySequence
         The data to use for the update
     normalise : bool, optional
         Should we normalise the result? By default `True`.
@@ -81,13 +193,8 @@ def update_model(model: SynapseIdModel, plast_seq: PlasticitySequence,
         Negative log likelihood of data given old model.
         If `normalise`: sum over experiments.
     """
-    plast_seq = plast_seq.moveaxis(plast_seq.t_axis, 0)
-    # (R,P,M,M),(R,M)
-    update, initial = model.updaters()
-    # (T,E,M,M) - makes a copy :(
-    update = update[plast_seq.readouts[1:], plast_seq.plast_type[:-1]]
-    # (E,M)
-    initial = initial[plast_seq.readouts[0]]
+    # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
+    update, initial, plast_type = get_updaters(model, expt)
     # (T,E,M),(T,E,M),(T,E),
     alpha, beta, eta = calc_alpha_beta(update, initial)
 
@@ -97,10 +204,10 @@ def update_model(model: SynapseIdModel, plast_seq: PlasticitySequence,
     nlog_like = np.log(eta).sum(0)
     # (M,)
     model.initial = state_prob.sum((0, 1)) if steady else state_prob[0].sum(0)
-    # (T,E,M,M)
+    # (T-1,E,M,M)
     update *= alpha.c[:-1] * beta.r[1:] * eta.s[1:]
     # (P,M,M)
-    model.plast = la.array([update[plast_seq.plast_type[:-1] == i].sum(0)
+    model.plast = la.array([update[plast_type == i].sum(0)
                             for i in range(model.nplast)])
     if normalise:
         model.normalise()
@@ -108,29 +215,3 @@ def update_model(model: SynapseIdModel, plast_seq: PlasticitySequence,
         nlog_like = nlog_like.sum()
 
     return state_prob, nlog_like
-
-
-def likelihood(model: SynapseIdModel, plast_seq: PlasticitySequence) -> float:
-    """Likelihood ov observed readouts given model
-
-    Parameters
-    ----------
-    model : SynapseIdModel
-        The model to update, modified in-place
-    plast_seq : PlasticitySequence
-        The data to use for the update
-
-    Returns
-    -------
-    nlog_like : float
-        `-log(P(readouts|model))`
-    """
-    plast_seq = plast_seq.moveaxis(plast_seq.t_axis, 0)
-    # (R,P,M,M),(R,M)
-    update, initial = model.updaters()
-    # (T,E,M,M) - makes a copy :(
-    update = update[plast_seq.readouts[1:], plast_seq.plast_type[:-1]]
-    # (E,M)
-    initial = initial[plast_seq.readouts[0]]
-    # (T,E,M),(T,E,M),(T,E),
-    return np.log(calc_alpha_beta(update, initial)[2]).sum()

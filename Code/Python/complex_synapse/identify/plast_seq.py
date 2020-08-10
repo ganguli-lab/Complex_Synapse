@@ -21,7 +21,7 @@ class PlasticitySequence:
 
     Parameters (and attributes)
     ---------------------------
-    plast_type : ArrayLike, (T,E), int[0:P]
+    plast_type : ArrayLike, (T-1,E), int[0:P]
         id of plasticity type after each time-step
     readouts : ArrayLike, (T,E), int[0:R]
         id of readout from synapse at each time-step
@@ -39,7 +39,7 @@ class PlasticitySequence:
     nexpt : int
         Number of experiment sequences stored, E
     """
-    # id of plasticity type after each time-step, (T,E), int[0:P]
+    # id of plasticity type after each time-step, (T-1,E), int[0:P]
     plast_type: la.lnarray
     # id of readout from synapse at each time-step, (T,E), int[0:R]
     readouts: la.lnarray
@@ -59,14 +59,15 @@ class PlasticitySequence:
         """
         self.plast_type = la.asanyarray(plast_type)
         self.readouts = la.asanyarray(readouts)
-        self.t_axis = t_axis
+        self.t_axis = t_axis % self.readouts.ndim
+        if self.plast_type.shape[self.t_axis] >= self.ntime:
+            p_ind = np.s_[:,]*self.t_axis + np.s_[:self.ntime-1,]
+            self.plast_type = self.plast_type[p_ind]
 
     def __getitem__(self, ind: Tuple[Union[int, slice], ...]
                     ) -> PlasticitySequence:
-        newobj = self.view()
-        newobj.plast_type = self.plast_type[ind]
-        newobj.readouts = self.readouts[ind]
-        return newobj
+        return self.view(plast_type=self.plast_type[ind],
+                         readouts=self.readouts[ind])
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
@@ -121,9 +122,11 @@ class PlasticitySequence:
         newobj = self.view()
         newobj.readouts = np.moveaxis(self.readouts, source, destination)
         newobj.plast_type = np.moveaxis(self.plast_type, source, destination)
-        source, destination = tuplify(source), tuplify(destination)
+        ndim = self.readouts.ndim
+        source = tuple(x % ndim for x in tuplify(source))
         if self.t_axis in source:
-            newobj.t_axis = destination[source.index(self.t_axis)]
+            destination = tuplify(destination)
+            newobj.t_axis = destination[source.index(self.t_axis)] % ndim
         return newobj
 
     @property
@@ -142,19 +145,20 @@ class PlasticitySequence:
     def ntime(self) -> int:
         """Number of time-steps, T
         """
-        return self.plast_type.shape[0]
+        return self.readouts.shape[self.t_axis]
 
     @property
     def nexpt(self) -> Tuple[int, ...]:
         """Number of experiment sequences stored, (E,)
         """
-        return self.plast_type.shape[1:]
+        shape = self.readouts.shape
+        return shape[:self.t_axis] + shape[self.t_axis+1:]
 
     @property
     def shape(self) -> Tuple[int, ...]:
         """Number of time-steps, experiment sequences stored, (T,E)
         """
-        return self.plast_type.shape
+        return self.readouts.shape
 
     def frac(self) -> la.lnarray:
         """fraction of each plasticity type, (P,), float[0:1]
@@ -172,13 +176,13 @@ class PlasticitySequence:
         """
         return _dwells(self.readouts, self.nreadout)
 
-    def plot(self, axs: Sequence[Union[Image, Axes]], **kwds) -> List[Image]:
+    def plot(self, hnds: Sequence[Union[Image, Axes]], **kwds) -> List[Image]:
         """Plot heatmaps for plast_type and readouts
 
         Parameters
         ----------
-        axs : Sequence[Union[Image, Axes]], (2,)
-            Axes to plot on, or Images to update with new data
+        hnds : Sequence[Union[Image, Axes]], (2,)
+            Axes to plot on, or Image objects to update with new data
 
         Returns
         -------
@@ -186,9 +190,9 @@ class PlasticitySequence:
             Image objects for the plots
         """
         kwds['norm'] = mpl.colors.Normalize(0., 1. * self.nplast)
-        imh = [set_plot(axs[0], self.plast_type, **kwds)]
+        imh = [set_plot(hnds[0], _pad(self.plast_type, self.t_axis), **kwds)]
         kwds['norm'] = mpl.colors.Normalize(0., 1. * self.nreadout)
-        imh.append(set_plot(axs[1], self.readouts, **kwds))
+        imh.append(set_plot(hnds[1], self.readouts, **kwds))
         return imh
 
 
@@ -287,13 +291,13 @@ class SimPlasticitySequence(PlasticitySequence):
         """
         return _dwells(self.states, self.nstate)
 
-    def plot(self, axs: Sequence[Union[Image, Line, Axes]], **kwds
+    def plot(self, hnds: Sequence[Union[Image, Line, Axes]], **kwds
              ) -> List[Union[Image, Line]]:
         """Plot heatmaps for plast_type, readouts and Line for states
 
         Parameters
         ----------
-        axs : Sequence[Union[Image, Axes]], (3,)
+        hnds : Sequence[Union[Image, Axes]], (3,)
             Axes to plot on, or Image/Lines to update with new data
 
         Returns
@@ -301,9 +305,9 @@ class SimPlasticitySequence(PlasticitySequence):
         imh: List[Image], (3,)
             Image/Line objects for the plots
         """
-        imh = super().plot(axs, **kwds)
+        imh = super().plot(hnds[:-1], **kwds)
         kwds['line'] = True
-        imh.append(set_plot(axs[2], self.states, **kwds))
+        imh.append(set_plot(hnds[-1], self.states, **kwds))
         return imh
 
 
@@ -361,3 +365,11 @@ def set_plot(handle: Union[Axes, Image, Line], data: np.ndarray, **kwds
     else:
         handle.set_data(data)
     return handle
+
+
+def _pad(array: np.ndarray, axis: int, end: bool = True) -> np.ndarray:
+    """Pad with invalid along one axis"""
+    width = np.zeros((array.ndim, 2), int)
+    width[axis, int(end)] = 1
+    padded = np.pad(array, width, constant_values=-1)
+    return np.ma.masked_equal(padded, -1, copy=False)
