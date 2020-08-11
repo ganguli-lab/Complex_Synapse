@@ -7,12 +7,13 @@ from typing import ClassVar, Tuple, Union
 import numpy as np
 
 import numpy_linalg as la
+from sl_py_tools.iter_tricks import rzenumerate, zenumerate
 
-from sl_py_tools.iter_tricks import zenumerate, rzenumerate
-
+from .fit_synapse import GroundedFitter, SynapseFitter
+from .plast_seq import (Axes, Image, Line, PlasticitySequence,
+                        SimPlasticitySequence, set_plot)
 from .synapse_id import SynapseIdModel
-from .plast_seq import PlasticitySequence, set_plot, Axes, Image, Line
-from .fit_synapse import SynapseFitter
+
 # =============================================================================
 
 
@@ -237,6 +238,7 @@ class BaumWelchFitter(SynapseFitter):
     --------
     SynapseFitter
     """
+    # Baum-Welch forward/backward variables
     # (T,E,M)
     alpha: la.lnarray
     # (T,E,M)
@@ -249,6 +251,23 @@ class BaumWelchFitter(SynapseFitter):
     steady: ClassVar[bool] = True
     # Should we normalise the result? By default `True`.
     normalise: ClassVar[bool] = True
+
+    def __init__(self, data: PlasticitySequence, model: SynapseIdModel, **kwds
+                 ) -> None:
+        super().__init__(data, model, **kwds)
+        # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
+        update, initial, _ = get_updaters(self.model, self.data)
+        # (T,E,M),(T,E,M),(T,E),
+        self.alpha, self.beta, self.eta = calc_alpha_beta(update, initial)
+        self.stats['nlog_like'] = np.log(self.eta).sum()
+
+    def update_stats(self) -> None:
+        """Calculate stats for termination and display.
+        """
+        super().update_stats()
+        nlog_like = np.log(self.eta).sum()
+        self.stats['dnlog_like'] = self.stats['nlog_like'] - nlog_like
+        self.stats['nlog_like'] = nlog_like
 
     def update_model(self) -> None:
         """Perform a single update of the model"""
@@ -271,14 +290,6 @@ class BaumWelchFitter(SynapseFitter):
             self.model.normalise()
             self.model.sort(group=True)
 
-    def update_stats(self) -> None:
-        """Calculate stats for termination.
-        """
-        super().update_stats()
-        nlog_like = np.log(self.eta).sum()
-        self.stats['dnlog_like'] = self.stats['nlog_like'] - nlog_like
-        self.stats['nlog_like'] = nlog_like
-
     def plot_states(self, handle: Union[Axes, Image, Line],
                     ind: Tuple[Union[int, slice], ...],
                     **kwds) -> Union[Image, Line]:
@@ -298,3 +309,63 @@ class BaumWelchFitter(SynapseFitter):
         """
         state_prob = self.alpha[ind] * self.beta[ind]
         return set_plot(handle, state_prob, **kwds)
+
+
+# =============================================================================
+# Fitter with ground truth
+# =============================================================================
+
+
+class GroundedBWFitter(GroundedFitter, BaumWelchFitter):
+    """Class that performs BW/RJ EM updates with known ground-truth.
+
+    Parameters
+    ----------
+    data: SimPlasticitySequence
+        The simulated data used to fit the synapse model.
+    model: SynapseIdModel
+        The initial guess/current estimate of the synapse model.
+    truth : SynapseIdModel
+        The model used to generate `data`.
+    Other keywords added to `self.stats` (see `SynapseFitter`).
+
+    Statistics
+    ----------
+    true_nlog_like : float
+        Negative log-likelihood of `data` given `truth`.
+    true_dmodel : float
+        Distance between `truth` and `model`.
+    All of the above are stored in `self.stats`.
+    See `SynapseFitter` for other statistics.
+
+    Options
+    -------
+    steady : ClassVar[bool] = True
+        Can we assume that `initial` is the steady-state?
+        If `True`, we can use all times to estimate `initial`.
+        If `False`, we can only use `t=0`. By default `True`.
+    normalise: ClassVar[bool] = True
+        Should we normalise the result? By default `True`.
+    See `SynapseFitter` for other options.
+
+    See Also
+    --------
+    SynapseFitter, GroundedFitter, BaumWelchFitter.
+    """
+
+    def __init__(self, data: SimPlasticitySequence, model: SynapseIdModel,
+                 truth: SynapseIdModel, **kwds) -> None:
+        super().__init__(data, model, truth=truth, **kwds)
+        if 'truth' in self.stats:
+            self.truth = self.stats.pop('truth')
+        self.stats['true_nlog_like'] = likelihood(self.truth, self.data)
+        self.stats['y_scale'] = self.stats['true_nlog_like']
+
+    def update_stats(self) -> None:
+        """Calculate stats for termination and display.
+        """
+        super().update_stats()
+
+    def update_model(self) -> None:
+        """Perform a single update of the model"""
+        super().update_model()

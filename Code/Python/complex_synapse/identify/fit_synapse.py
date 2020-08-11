@@ -9,9 +9,12 @@ from typing import Callable, ClassVar, Dict, Optional, Tuple, Union
 import numpy as np
 
 from sl_py_tools.arg_tricks import default, default_eval
+from sl_py_tools.iter_tricks import dcount, undcount
 
+from .plast_seq import (Axes, Image, Line, PlasticitySequence,
+                        SimPlasticitySequence)
 from .synapse_id import SynapseIdModel, valid_values
-from .plast_seq import PlasticitySequence, Axes, Image, Line
+
 # =============================================================================
 MESSAGES = {
     -1: "Error, invalid model generated.",
@@ -22,10 +25,14 @@ MESSAGES = {
 
 def print_callback(obj: SynapseFitter, pos: int) -> None:
     """Callback that prints fitter state as appropriate"""
-    if pos == 2 and obj.opt['verbose'] >= 0:
-        print(obj, MESSAGES[obj.stats['result']], sep='\n')
+    if pos == 0 and obj.opt['verbose'] >= 0:
+        gap = ('',) if obj.opt['verbose'] >= 2 else ()
+        print('Before:', obj, *gap, sep='\n')
     elif pos == 1 and obj.opt['verbose'] >= 2:
-        print(obj)
+        if obj.stats['nit'] % obj.opt['disp_step'] == 0:
+            print('*', obj)
+    elif pos == 2 and obj.opt['verbose'] >= 0:
+        print('', 'After:', obj, MESSAGES[obj.stats['result']], sep='\n')
 
 
 # =============================================================================
@@ -105,17 +112,27 @@ class SynapseFitter(abc.ABC):
     # options:
     opt: ClassVar[Dict[str, Number]] = {'atolx': 1e-5, 'atoly': 1e-5,
                                         'rtol': 1e-5, 'max_it': 1000,
-                                        'verbose': -2}
+                                        'verbose': -2, 'disp_step': 50}
 
     def __init__(self, data: PlasticitySequence, model: SynapseIdModel, **kwds
                  ) -> None:
         self.data = data
         self.model = model
         self.prev_model = None
-        self.stats = {'nit': 0, 'nlog_like': np.inf, 'dnlog_like': np.inf,
-                      'dmodel': np.inf, 'x_thresh': 0., 'y_thresh': 0.,
+        self.stats = {'nit': 0, 'nlog_like': np.inf, 'dmodel': np.inf,
+                      'dnlog_like': np.inf, 'x_thresh': 0., 'y_thresh': 0.,
                       'x_scale': None, 'y_scale': None}
         self.stats.update(kwds)
+
+    def __str__(self) -> str:
+        """Printing stats"""
+        disp = f"nit = {self.stats['nit']}, "
+        disp += f"-log P(data|fit) = {self.stats['nlog_like']:.3f}, "
+        if self.opt['verbose'] % 2 and np.isfinite(self.stats['dnlog_like']):
+            disp += f"\nlog[P(data|fit) / P(data|prev)] = "
+            disp += f"{self.stats['dnlog_like']:.3f}, "
+            disp += f"||fit-prev|| = {self.stats['dmodel']:.3f}, "
+        return disp
 
     def calc_thresh(self) -> None:
         """Calculate thresholds for stopping"""
@@ -131,7 +148,7 @@ class SynapseFitter(abc.ABC):
 
     @abc.abstractmethod
     def update_stats(self) -> None:
-        """Calculate stats for termination.
+        """Calculate stats for termination and display.
 
         Subclass must update `stats[nlog_like]` and `stats[dnlog_like]`.
         """
@@ -144,16 +161,6 @@ class SynapseFitter(abc.ABC):
     def valid(self) -> bool:
         """Check that current model estimate is valid"""
         return not self.model.nmodel and valid_values(self.model)
-
-    def __str__(self) -> str:
-        """Printing stats"""
-        disp = f"nit = {self.stats['nit']}, "
-        disp += f"-log P(data|fit) = {self.stats['nlog_like']:.3f},"
-        if self.opt['verbose'] % 2:
-            disp += f"\nlog[P(data|fit) / P(data|prev)] = "
-            disp += f"{self.stats['dnlog_like']:.3f}, "
-            disp += f"||fit-prev|| = {self.stats['dmodel']:.3f},"
-        return disp
 
     def run(self, callback: Callback = print_callback) -> int:
         """Run the synapse fitter until termination conditions are met
@@ -175,9 +182,11 @@ class SynapseFitter(abc.ABC):
                 0: Failure, maximum iterations reached.
                 1: Success, change in log-likelihood and model below threshold.
         """
-        self.stats['result'] = 0
+        count = undcount if self.opt['verbose'] >= 2 else dcount
         callback(self, 0)
-        for i in range(self.opt['max_it']):
+        self.stats['result'] = 0
+        for i in count('iteration', self.opt['max_it'],
+                       disp_step=self.opt['disp_step']):
             self.stats['nit'] = i
             self.prev_model = self.model.copy()
             self.update_model()
@@ -213,6 +222,82 @@ class SynapseFitter(abc.ABC):
         """
         return NotImplemented
 
+# =============================================================================
+# Fitter with ground truth
+# =============================================================================
+
+
+class GroundedFitter(SynapseFitter):
+    """SynapseFitter where groud-truth is known
+
+    Parameters
+    ----------
+    data: SimPlasticitySequence
+        The simulated data used to fit the synapse model.
+    model: SynapseIdModel
+        The initial guess/current estimate of the synapse model.
+    truth : SynapseIdModel
+        The model used to generate `data`.
+    Other keywords added to `self.stats` (see `SynapseFitter`).
+
+    Statistics
+    ----------
+    true_nlog_like : float
+        Negative log-likelihood of `data` given `truth`.
+    true_dmodel : float
+        Distance between `truth` and `model`.
+    All of the above are stored in `self.stats`.
+    See `SynapseFitter` for other statistics.
+    """
+    data: SimPlasticitySequence
+    truth: SynapseIdModel
+
+    def __init__(self, data: SimPlasticitySequence, model: SynapseIdModel,
+                 truth: SynapseIdModel, **kwds) -> None:
+        """SynapseFitter where groud-truth is known
+
+        Parameters
+        ----------
+        data : SimPlasticitySequence
+            The data used to fit the synapse model.
+        model : SynapseIdModel
+            The initial guess/current estimate of the synapse model
+        truth : SynapseIdModel
+            The model used to generate `data`.
+
+        Subclass must set `self.stats['true_nlog_like']`.
+        """
+        super().__init__(data, model, **kwds)
+        self.truth = truth
+        self.stats.update(true_dmodel=(self.truth - self.model).norm(),
+                          true_nlog_like=0., x_scale=self.truth.norm())
+
+    def __str__(self) -> str:
+        """Printing stats"""
+        disp = super().__str__()
+        if self.prev_model is None:
+            add = f"-log P(data|truth) = {self.stats['true_nlog_like']:.3f}, "
+            lin = disp.find(',') + 2
+            disp = disp[:lin] + add + disp[lin:]
+        if self.opt['verbose'] % 2:
+            dtrue_like = self.stats['nlog_like'] - self.stats['true_nlog_like']
+            disp += f"\nlog[P(data|true) / P(data|fit)] = {dtrue_like:.3f}, "
+            disp += f"||true-fit|| = {self.stats['true_dmodel']:.3f},"
+        return disp
+
+    @abc.abstractmethod
+    def update_stats(self) -> None:
+        """Calculate stats for termination.
+
+        Subclass must update `stats[nlog_like]` and `stats[dnlog_like]`.
+        """
+        super().update_stats()
+        self.stats['true_dmodel'] = (self.truth - self.model).norm()
+
+    @abc.abstractmethod
+    def update_model(self) -> None:
+        """Perform a single update of the model"""
+        super().update_model()
 
 # =============================================================================
 Callback = Callable[[SynapseFitter, int], None]
