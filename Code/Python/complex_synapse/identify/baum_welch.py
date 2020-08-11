@@ -2,17 +2,17 @@
 """
 from __future__ import annotations
 
-from typing import List, Tuple, Union, Sequence
+from typing import ClassVar, Tuple, Union
 
 import numpy as np
-import matplotlib as mpl
 
 import numpy_linalg as la
 
 from sl_py_tools.iter_tricks import zenumerate, rzenumerate
 
 from .synapse_id import SynapseIdModel
-from .plast_seq import PlasticitySequence
+from .plast_seq import PlasticitySequence, set_plot, Axes, Image, Line
+from .fit_synapse import SynapseFitter
 # =============================================================================
 
 
@@ -195,7 +195,7 @@ def update_model(model: SynapseIdModel, expt: PlasticitySequence,
     """
     # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
     update, initial, plast_type = get_updaters(model, expt)
-    # (T,E,M),(T,E,M),(T,E),
+    # (T,E,M),(T,E,M),(T,E)
     alpha, beta, eta = calc_alpha_beta(update, initial)
 
     # (T,E,M)
@@ -215,3 +215,86 @@ def update_model(model: SynapseIdModel, expt: PlasticitySequence,
         nlog_like = nlog_like.sum()
 
     return state_prob, nlog_like
+
+
+# =============================================================================
+
+
+class BaumWelchFitter(SynapseFitter):
+    """Class that performs Baum-Welch/Rabiner-Juang EM updates.
+
+    Options
+    -------
+    steady : ClassVar[bool] = True
+        Can we assume that `initial` is the steady-state?
+        If `True`, we can use all times to estimate `initial`.
+        If `False`, we can only use `t=0`. By default `True`.
+    normalise: ClassVar[bool] = True
+        Should we normalise the result? By default `True`.
+    See `SynapseFitter` for other options and parameters.
+
+    See Also
+    --------
+    SynapseFitter
+    """
+    # (T,E,M)
+    alpha: la.lnarray
+    # (T,E,M)
+    beta: la.lnarray
+    # (T,E)
+    eta: la.lnarray
+    # Can we assume that `initial` is the steady-state?
+    # If `True`, we can use all times to estimate `initial`.
+    # If `False`, we can only use `t=0`. By default `True`.
+    steady: ClassVar[bool] = True
+    # Should we normalise the result? By default `True`.
+    normalise: ClassVar[bool] = True
+
+    def update_model(self) -> None:
+        """Perform a single update of the model"""
+        # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
+        update, initial, plast_type = get_updaters(self.model, self.data)
+        # (T,E,M),(T,E,M),(T,E),
+        self.alpha, self.beta, self.eta = calc_alpha_beta(update, initial)
+
+        # (M,)
+        if self.steady:
+            self.model.initial = (self.alpha * self.beta).sum((0, 1))
+        else:
+            self.model.initial = (self.alpha[0] * self.beta[0]).sum(0)
+        # (T-1,E,M,M)
+        update *= self.alpha.c[:-1] * self.beta.r[1:] * self.eta.s[1:]
+        # (P,M,M)
+        self.model.plast = la.array([update[plast_type == i].sum(0)
+                                     for i in range(self.model.nplast)])
+        if self.normalise:
+            self.model.normalise()
+            self.model.sort(group=True)
+
+    def update_stats(self) -> None:
+        """Calculate stats for termination.
+        """
+        super().update_stats()
+        nlog_like = np.log(self.eta).sum()
+        self.stats['dnlog_like'] = self.stats['nlog_like'] - nlog_like
+        self.stats['nlog_like'] = nlog_like
+
+    def plot_states(self, handle: Union[Axes, Image, Line],
+                    ind: Tuple[Union[int, slice], ...],
+                    **kwds) -> Union[Image, Line]:
+        """Plot current estimate of state occupation
+
+        Parameters
+        ----------
+        handle : Union[Axes, Image, Line]
+            Axes to plot on, or Image/Lines to update with new data
+        ind : Tuple[Union[int, slice], ...]
+            Time, experiment indices/slices to plot
+
+        Returns
+        -------
+        imh : Union[Image, Line]
+            Image/Line objects for the plots
+        """
+        state_prob = self.alpha[ind] * self.beta[ind]
+        return set_plot(handle, state_prob, **kwds)

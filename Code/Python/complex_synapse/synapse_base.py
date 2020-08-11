@@ -7,7 +7,7 @@ Created on Mon Sep 18 15:49:42 2017
 from __future__ import annotations
 
 from numbers import Number
-from typing import Any, Dict, Sequence, Tuple, Union, Callable
+from typing import Any, Dict, Sequence, Tuple, Union, Callable, ClassVar
 
 import numpy as np
 
@@ -50,6 +50,10 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     plast: la.lnarray
     # fraction of events that are potentiating./depressing
     frac: la.lnarray
+    # largest row sum for valid plast & frac
+    StochThresh: ClassVar[float] = 1e-5
+    # largest condition number for inverting zinv
+    CondThresh: ClassVar[float] = 1e-5
 
     def __init__(self, plast: ArrayLike,
                  frac: ArrayLike = 0.5):
@@ -125,7 +129,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     @property
     def nplast(self) -> int:
         """number of plasticity types, P."""
-        return self.frac.size
+        return self.plast.shape[-3]
 
     @property
     def nstate(self) -> int:

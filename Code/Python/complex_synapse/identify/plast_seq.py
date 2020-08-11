@@ -52,7 +52,7 @@ class PlasticitySequence:
 
         Parameters
         ----------
-        plast_type : np.ndarray, (T,E), int[0:P]
+        plast_type : np.ndarray, (T-1,E), int[0:P]
             id of plasticity type after each time-step
         readouts : np.ndarray, (T,E), int[0:R]
             id of readout from synapse at each time-step
@@ -174,7 +174,7 @@ class PlasticitySequence:
         dwells : List[la.lnarray] (R,)(?,)
             `dwells[i]` is an array of dwell times in readout group `i`.
         """
-        return _dwells(self.readouts, self.nreadout)
+        return _dwells(self.readouts.moveaxis(self.t_axis, -1), self.nreadout)
 
     def plot(self, hnds: Sequence[Union[Image, Axes]], **kwds) -> List[Image]:
         """Plot heatmaps for plast_type and readouts
@@ -201,7 +201,7 @@ class SimPlasticitySequence(PlasticitySequence):
 
     Parameters (and attributes)
     ---------------------------
-    plast_type : ArrayLike, (T,E), int[0:P]
+    plast_type : ArrayLike, (T-1,E), int[0:P]
         id of plasticity type after each time-step
     readouts : ArrayLike, (T,E), int[0:R]
         id of readout from synapse at each time-step
@@ -230,7 +230,7 @@ class SimPlasticitySequence(PlasticitySequence):
 
         Parameters
         ----------
-        plast_type : ArrayLike, (T,E), int[0:P]
+        plast_type : ArrayLike, (T-1,E), int[0:P]
             id of plasticity type after each time-step
         readouts : ArrayLike, (T,E), int[0:R]
             id of readout from synapse at each time-step
@@ -289,7 +289,7 @@ class SimPlasticitySequence(PlasticitySequence):
         dwells : List[la.lnarray] (M,)(?,)
             `dwells[i]` is an array of dwell times in state `i`.
         """
-        return _dwells(self.states, self.nstate)
+        return _dwells(self.states.moveaxis(self.t_axis, -1), self.nstate)
 
     def plot(self, hnds: Sequence[Union[Image, Line, Axes]], **kwds
              ) -> List[Union[Image, Line]]:
@@ -316,7 +316,7 @@ def _dwells(values: np.ndarray, num: int) -> List[la.lnarray]:
 
     Parameters
     ----------
-    values : np.ndarray (T,E)
+    values : np.ndarray (E,T)
         value at each time-step
     num : int
         number of values
@@ -324,9 +324,9 @@ def _dwells(values: np.ndarray, num: int) -> List[la.lnarray]:
     Returns
     -------
     dwells : List[la.lnarray] (num,)(?,)
-        `dwells[i` is an array of dwell times in value `i`.
+        `dwells[i]` is an array of dwell times in value `i`.
     """
-    changes = np.diff(values.T).nonzero()
+    changes = np.diff(values).nonzero()
     before = values[changes]
     stays = np.diff(changes[-1], prepend=0).view(la.lnarray)
     if values.ndim > 1:
@@ -367,7 +367,7 @@ def set_plot(handle: Union[Axes, Image, Line], data: np.ndarray, **kwds
     return handle
 
 
-def _pad(array: np.ndarray, axis: int, end: bool = True) -> np.ndarray:
+def _pad(array: np.ndarray, axis: int, end: bool = True) -> np.ma.masked_array:
     """Pad with invalid along one axis"""
     width = np.zeros((array.ndim, 2), int)
     width[axis, int(end)] = 1

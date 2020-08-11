@@ -51,10 +51,10 @@ class SynapseMemoryModel(SynapseBase):
 
     # degeneracy threshold, for evals or eta^+
     DegThresh: ClassVar[float] = 1e-3
-    # largest row sum for valid plast & frac
-    StochThresh: ClassVar[float] = 1e-5
-    # largest condition number for inverting zinv
-    CondThresh: ClassVar[float] = 1e-5
+    # # largest row sum for valid plast & frac
+    # StochThresh: ClassVar[float] = 1e-5
+    # # largest condition number for inverting zinv
+    # CondThresh: ClassVar[float] = 1e-5
     # # smallest singular value for Split models
     # SingValThresh: ClassVar[float] = 1e-10
     # # threshold for lumpability test
@@ -371,10 +371,10 @@ def normalise(model: SynapseMemoryModel):
 
 def valid_shapes(model: SynapseMemoryModel) -> bool:
     """Do attributes (plast, weight, frac) have correct shapes?"""
-    vld = model.plast.shape[-2] == model.plast.shape[-1]
-    vld &= len(model.plast) == len(model.frac)
-    vld &= len(model.weight) == model.plast.shape[-1]
-    vld &= len(model.frac) == len(model.signal)
+    vld = model.plast.shape[-2] == model.nstate
+    vld &= model.frac.shape[-1] == model.nplast
+    vld &= model.weight.shape[-1] == model.nstate
+    vld &= model.signal.shape[-1] == model.nplast
     return vld
 
 

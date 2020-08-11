@@ -377,3 +377,30 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
             desired signal contribution from each plasticity type
     """
     return build_generic(ma.rand_trans_d, nst, npl, binary, **kwds)
+
+
+def valid_shapes(model: SynapseIdModel) -> bool:
+    """Do attributes (plast, weight, frac) have correct shapes?"""
+    vld = model.plast.shape[-2] == model.nstate
+    vld &= model.initial.shape[-1] == model.nstate
+    vld &= model.frac.shape[-1] == model.nplast
+    vld &= model.readout.shape[-1] == model.nstate
+    return vld
+
+
+def valid_values(model: SynapseIdModel) -> bool:
+    """Do attributes (plast, frac) have valid values?"""
+    vld = np.isfinite(model.plast).all() and np.isfinite(model.initial).all()
+    vld &= ma.isstochastic_d(model.plast, model.StochThresh)
+    vld &= ma.isstochastic_d(model.frac, model.StochThresh)
+    return vld
+
+
+def well_behaved(model: SynapseIdModel, cond: bool = False) -> bool:
+    """Do attributes plast have finite values, and is Zinv well conditioned?"""
+    vld = np.isfinite(model.plast).all() and np.isfinite(model.initial).all()
+    if cond:
+        markov = (model.frac.s * model.plast).sum(-3)
+        fundi = np.ones_like(markov) + la.identity(model.nstate) - markov
+        vld &= np.linalg.cond(fundi) < model.CondThresh
+    return vld
