@@ -41,6 +41,8 @@ class SynapseIdModel(SynapseBase):
         number of plasticity types, P.
     nreadout : int
         Number of readout values, R
+    nmodel : Tuple[int]
+        Number and shape of models being broadcast.
     """
     # id of readout when in that state, (M,), int[0:R]
     readout: la.lnarray
@@ -88,7 +90,7 @@ class SynapseIdModel(SynapseBase):
 
     @property
     def nmodel(self) -> Tuple[int, ...]:
-        """Number of models broadcasted."""
+        """Number and shape of models being broadcast."""
         return la.gufuncs.array_return_shape('(p,m,m),(m)->()',
                                              self.plast, self.initial)
 

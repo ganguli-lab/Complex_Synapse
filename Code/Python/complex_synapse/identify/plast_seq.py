@@ -72,10 +72,11 @@ class PlasticitySequence:
     def __repr__(self) -> str:
         """Accurate representation of object"""
         rpr = type(self).__name__ + "(\n"
-        rpr += "    plast_type = "
-        rpr += repr(self.plast_type).replace("\n", "\n" + " " * 17) + ",\n"
-        rpr += "    readouts = "
-        rpr += repr(self.readouts).replace("\n", "\n" + " " * 15) + ",\n"
+        with np.printoptions(threshold=20):
+            rpr += "    plast_type = "
+            rpr += repr(self.plast_type).replace("\n", "\n" + " " * 17) + ",\n"
+            rpr += "    readouts = "
+            rpr += repr(self.readouts).replace("\n", "\n" + " " * 15) + ",\n"
         rpr += ")"
         return rpr
 
@@ -249,8 +250,9 @@ class SimPlasticitySequence(PlasticitySequence):
     def __repr__(self) -> str:
         """Accurate representation of object"""
         rpr = super().__repr__()
-        insert = "    states = "
-        insert += repr(self.states).replace("\n", "\n" + " " * 13) + ",\n"
+        with np.printoptions(threshold=90):
+            insert = "    states = "
+            insert += repr(self.states).replace("\n", "\n" + " " * 13) + ",\n"
         rpr = rpr[:-1] + insert + rpr[-1]
         return rpr
 

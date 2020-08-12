@@ -36,6 +36,8 @@ def print_callback(obj: SynapseFitter, pos: int) -> None:
 
 
 # =============================================================================
+# Base class for synapse model fitters
+# =============================================================================
 
 
 class SynapseFitter(abc.ABC):
@@ -43,20 +45,20 @@ class SynapseFitter(abc.ABC):
 
     Parameters
     ----------
-    data: PlasticitySequence
+    data : PlasticitySequence
         The data used to fit the synapse model.
-    model: SynapseIdModel
+    model : SynapseIdModel
         The initial guess/current estimate of the synapse model.
     Other keywords added to `self.stats` below.
 
     Other Attributes
     ----------------
-    prev_model: Optional[SynapseIdModel]
+    prev_model : Optional[SynapseIdModel]
         During itteration or after error: Previous model estimate.
         Otherwise: `None`.
-    stats: Dict[str, Number]
+    stats : Dict[str, Number]
         Statistics of current state. See below.
-    opt: ClassVar[Dict[str, Number]]
+    opt : ClassVar[Dict[str, Number]]
         Options for iteration and termination. See below.
 
     Statistics
@@ -86,15 +88,15 @@ class SynapseFitter(abc.ABC):
 
     Options
     -------
-    atolx: ClassVar[float] = 1e-5
+    atolx : ClassVar[float] = 1e-5
         Absolute tolerance for `dmodel`.
-    atoly: ClassVar[float] = 1e-5
+    atoly : ClassVar[float] = 1e-5
         Absolute tolerance for `dnlog_like`.
-    rtol: ClassVar[float] = 1e-5
+    rtol : ClassVar[float] = 1e-5
         Relative tolerance. Multiplies `x_scale` and `y_scale` if given.
-    max_it: ClassVar[int] = 1e3
+    max_it : ClassVar[int] = 1e3
         Maximum number of iterations
-    verbose: ClassVar[int] = -2
+    verbose : ClassVar[int] = -2
         When statistics are printed, and how verbose:
             -2: print called
             -1: print called, detailed
@@ -102,6 +104,8 @@ class SynapseFitter(abc.ABC):
             1: end of iteration, detailed
             2: each iteration
             3: each iteration, detailed
+    disp_step : ClassVar[int] = -2
+        Display progress update every `disp_step` iterations.
     All of the above are stored in `SynapseFitter.opt`.
     """
     data: PlasticitySequence
@@ -116,6 +120,17 @@ class SynapseFitter(abc.ABC):
 
     def __init__(self, data: PlasticitySequence, model: SynapseIdModel, **kwds
                  ) -> None:
+        """Base class for synapse fitters.
+
+        Parameters
+        ----------
+        data : SimPlasticitySequence
+            The data used to fit the synapse model.
+        model : SynapseIdModel
+            The initial guess/current estimate of the synapse model
+
+        Subclass should set `self.stats['nlog_like']`.
+        """
         self.data = data
         self.model = model
         self.prev_model = None
@@ -130,9 +145,21 @@ class SynapseFitter(abc.ABC):
         disp += f"-log P(data|fit) = {self.stats['nlog_like']:.3f}, "
         if self.opt['verbose'] % 2 and np.isfinite(self.stats['dnlog_like']):
             disp += f"\nlog[P(data|fit) / P(data|prev)] = "
-            disp += f"{self.stats['dnlog_like']:.3f}, "
-            disp += f"||fit-prev|| = {self.stats['dmodel']:.3f}, "
+            disp += f"{self.stats['dnlog_like']:.3g}, "
+            disp += f"||fit-prev|| = {self.stats['dmodel']:.3g}, "
         return disp
+
+    def __repr__(self) -> str:
+        """Accurate representation of object"""
+        rpr = type(self).__name__ + "(\n"
+        rpr += "    data = "
+        rpr += repr(self.data).replace("\n", "\n" + " " * 11) + ",\n"
+        rpr += "    model = "
+        rpr += repr(self.model).replace("\n", "\n" + " " * 12) + ",\n"
+        rpr += "    stats = "
+        rpr += repr(self.stats).replace(", ", ",\n" + " " * 13) + ",\n"
+        rpr += ")"
+        return rpr
 
     def calc_thresh(self) -> None:
         """Calculate thresholds for stopping"""
@@ -228,13 +255,13 @@ class SynapseFitter(abc.ABC):
 
 
 class GroundedFitter(SynapseFitter):
-    """SynapseFitter where groud-truth is known
+    """SynapseFitter where groud-truth is known.
 
     Parameters
     ----------
-    data: SimPlasticitySequence
+    data : SimPlasticitySequence
         The simulated data used to fit the synapse model.
-    model: SynapseIdModel
+    model : SynapseIdModel
         The initial guess/current estimate of the synapse model.
     truth : SynapseIdModel
         The model used to generate `data`.
@@ -254,7 +281,7 @@ class GroundedFitter(SynapseFitter):
 
     def __init__(self, data: SimPlasticitySequence, model: SynapseIdModel,
                  truth: SynapseIdModel, **kwds) -> None:
-        """SynapseFitter where groud-truth is known
+        """SynapseFitter where groud-truth is known.
 
         Parameters
         ----------
@@ -265,7 +292,7 @@ class GroundedFitter(SynapseFitter):
         truth : SynapseIdModel
             The model used to generate `data`.
 
-        Subclass must set `self.stats['true_nlog_like']`.
+        Subclass should set `self.stats` items `['true_nlog_like', 'y_scale']`.
         """
         super().__init__(data, model, **kwds)
         self.truth = truth
@@ -281,9 +308,18 @@ class GroundedFitter(SynapseFitter):
             disp = disp[:lin] + add + disp[lin:]
         if self.opt['verbose'] % 2:
             dtrue_like = self.stats['nlog_like'] - self.stats['true_nlog_like']
-            disp += f"\nlog[P(data|true) / P(data|fit)] = {dtrue_like:.3f}, "
-            disp += f"||true-fit|| = {self.stats['true_dmodel']:.3f},"
+            disp += f"\nlog[P(data|true) / P(data|fit)] = {dtrue_like:.3g}, "
+            disp += f"||true-fit|| = {self.stats['true_dmodel']:.3g},"
         return disp
+
+    def __repr__(self) -> str:
+        """Accurate representation of object"""
+        rpr = super().__repr__()
+        insert = "    truth = "
+        insert += repr(self.data).replace("\n", "\n" + " " * 12) + ",\n"
+        ind = rpr.find("    stats = ")
+        rpr = rpr[:ind] + insert + rpr[ind:]
+        return rpr
 
     @abc.abstractmethod
     def update_stats(self) -> None:

@@ -35,10 +35,12 @@ class SynapseMemoryModel(SynapseBase):
 
     Properties
     ----------
-    nstate
+    nstate : int
         number of states, M.
-    nplast
+    nplast : int
         number of plasticity types, P.
+    nmodel : Tuple[int]
+        Number and shape of models being broadcast.
     """
     # Attributes
 

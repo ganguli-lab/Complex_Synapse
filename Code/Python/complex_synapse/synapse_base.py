@@ -43,6 +43,8 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         number of states, M.
     nplast
         number of plasticity types, P.
+    nmodel : Tuple[int]
+        Number and shape of models being broadcast.
     """
     # Attributes
 
@@ -138,7 +140,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
     @property
     def nmodel(self) -> Tuple[int, ...]:
-        """Number of models broadcasted."""
+        """Number and shape of models being broadcast."""
         return self.plast.shape[:-3]
 
     # -------------------------------------------------------------------------
