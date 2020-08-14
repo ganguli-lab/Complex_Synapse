@@ -9,6 +9,7 @@ import matplotlib as mpl
 from matplotlib.axes import Axes
 from matplotlib.lines import Line2D as Line
 from matplotlib.image import AxesImage as Image
+import matplotlib.colors as mco
 
 import numpy_linalg as la
 from sl_py_tools.containers import tuplify
@@ -190,10 +191,13 @@ class PlasticitySequence:
         imh: List[Image], (2,)
             Image objects for the plots
         """
-        kwds['norm'] = mpl.colors.Normalize(0., 1. * self.nplast)
-        imh = [set_plot(hnds[0], _pad(self.plast_type, self.t_axis), **kwds)]
-        kwds['norm'] = mpl.colors.Normalize(0., 1. * self.nreadout)
-        imh.append(set_plot(hnds[1], self.readouts, **kwds))
+        if self.nexpt:
+            raise ValueError("Can only plot 1 scalar experiment at a time. " +
+                             f"We have nexpt={self.nexpt}")
+        kwds['norm'] = _int_bdry_norm(self.nplast)
+        imh = [set_plot(hnds[0], _pad(self.plast_type.r, 1), **kwds)]
+        kwds['norm'] = _int_bdry_norm(self.nreadout)
+        imh.append(set_plot(hnds[1], self.readouts.r, **kwds))
         return imh
 
 
@@ -375,3 +379,8 @@ def _pad(array: np.ndarray, axis: int, end: bool = True) -> np.ma.masked_array:
     width[axis, int(end)] = 1
     padded = np.pad(array, width, constant_values=-1)
     return np.ma.masked_equal(padded, -1, copy=False)
+
+
+def _int_bdry_norm(ncol: int) -> mco.BoundaryNorm:
+    """BoundaryNorm map for integer values"""
+    mco.BoundaryNorm(np.arange(ncol + 1.) - 0.5, ncol)

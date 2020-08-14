@@ -230,9 +230,9 @@ class SynapseFitter(abc.ABC):
         callback(self, 2)
         return self.stats['result']
 
-    def plot_states(self, handle: Union[Axes, Image, Line],
-                    ind: Tuple[Union[int, slice], ...],
-                    **kwds) -> Union[Image, Line]:
+    def plot_occ(self, handle: Union[Axes, Image, Line],
+                 ind: Tuple[Union[int, slice], ...],
+                 **kwds) -> Union[Image, Line]:
         """Plot current estimate of state occupation
 
         Parameters

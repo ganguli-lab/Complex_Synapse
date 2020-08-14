@@ -254,6 +254,14 @@ class BaumWelchFitter(SynapseFitter):
         The initial guess/current estimate of the synapse model.
     Other keywords added to `self.stats` (see `SynapseFitter`).
 
+    Attributes
+    ----------
+    alpha, beta, eta : la.lnarray
+        Normalised Baum-Welch forward/backward variables and the normalisers.
+    bw_opt : ClassVar[Dict[str, bool]]
+        Optins for BW update
+    See `SynapseFitter` for other attributes.
+
     Options
     -------
     steady : ClassVar[bool] = True
@@ -316,9 +324,9 @@ class BaumWelchFitter(SynapseFitter):
         if self.bw_opt['normed']:
             self.model.sort(group=True)
 
-    def plot_states(self, handle: Union[Axes, Image, Line],
-                    ind: Tuple[Union[int, slice], ...],
-                    **kwds) -> Union[Image, Line]:
+    def plot_occ(self, handle: Union[Axes, Image, Line],
+                 ind: Tuple[Union[int, slice], ...],
+                 **kwds) -> Union[Image, Line]:
         """Plot current estimate of state occupation
 
         Parameters
@@ -333,8 +341,9 @@ class BaumWelchFitter(SynapseFitter):
         imh : Union[Image, Line]
             Image/Line objects for the plots
         """
+        # (T.M)
         state_prob = self.alpha[ind] * self.beta[ind]
-        return set_plot(handle, state_prob, **kwds)
+        return set_plot(handle, state_prob.T, **kwds)
 
 
 # =============================================================================
@@ -354,6 +363,14 @@ class GroundedBWFitter(GroundedFitter, BaumWelchFitter):
     truth : SynapseIdModel
         The model used to generate `data`.
     Other keywords added to `self.stats` (see `SynapseFitter`).
+
+    Attributes
+    ----------
+    alpha, beta, eta : la.lnarray
+        Normalised Baum-Welch forward/backward variables and the normalisers.
+    bw_opt : ClassVar[Dict[str, bool]]
+        Options for BW update
+    See `SynapseFitter` for other attributes.
 
     Statistics
     ----------

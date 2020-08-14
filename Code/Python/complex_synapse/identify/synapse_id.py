@@ -270,8 +270,8 @@ class SynapseIdModel(SynapseBase):
         imh: List[Image], (P+1,)
             Image objects for the plots
         """
-        kwds['norm'] = mpl.colors.Normalize(0., 1.)
-        imh = [set_plot(axs[0], self.initial, **kwds)]
+        kwds.setdefault('norm', mpl.colors.Normalize(0., 1.))
+        imh = [set_plot(axs[0], self.initial.c, **kwds)]
         for axh, mat in zip(axs[1:], self.plast):
             imh.append(set_plot(axh, mat, **kwds))
         return imh
