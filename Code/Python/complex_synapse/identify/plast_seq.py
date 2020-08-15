@@ -194,11 +194,13 @@ class PlasticitySequence:
         if self.nexpt:
             raise ValueError("Can only plot 1 scalar experiment at a time. " +
                              f"We have nexpt={self.nexpt}")
-        kwds['norm'] = _int_bdry_norm(self.nplast)
-        imh = [set_plot(hnds[0], _pad(self.plast_type.r, 1), **kwds)]
-        kwds['norm'] = _int_bdry_norm(self.nreadout)
-        imh.append(set_plot(hnds[1], self.readouts.r, **kwds))
-        return imh
+        kwds.setdefault('cmap', 'tab20b')
+        kwds['norm'] = _int_bdry_norm(self.nplast, kwds['cmap'])
+        plast_type = _pad(self.nplast - 1 - self.plast_type.r, 1)
+        pth = set_plot(hnds[0], plast_type, **kwds)
+        kwds['norm'] = _int_bdry_norm(self.nreadout, kwds['cmap'])
+        roh = set_plot(hnds[1], self.readouts.r, **kwds)
+        return [pth, roh]
 
 
 class SimPlasticitySequence(PlasticitySequence):
@@ -313,6 +315,7 @@ class SimPlasticitySequence(PlasticitySequence):
         """
         imh = super().plot(hnds[:-1], **kwds)
         kwds['line'] = True
+        kwds.pop('cmap', None)
         imh.append(set_plot(hnds[-1], self.states, **kwds))
         return imh
 
@@ -381,6 +384,7 @@ def _pad(array: np.ndarray, axis: int, end: bool = True) -> np.ma.masked_array:
     return np.ma.masked_equal(padded, -1, copy=False)
 
 
-def _int_bdry_norm(ncol: int) -> mco.BoundaryNorm:
+def _int_bdry_norm(nval: int, cmap: str) -> mco.BoundaryNorm:
     """BoundaryNorm map for integer values"""
-    mco.BoundaryNorm(np.arange(ncol + 1.) - 0.5, ncol)
+    cmap = mpl.cm.get_cmap(cmap)
+    return mco.BoundaryNorm(np.arange(nval + 1.) - 0.5, cmap.N)
