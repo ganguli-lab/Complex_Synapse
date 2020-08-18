@@ -195,10 +195,12 @@ class PlasticitySequence:
             raise ValueError("Can only plot 1 scalar experiment at a time. " +
                              f"We have nexpt={self.nexpt}")
         kwds.setdefault('cmap', 'tab20b')
-        kwds['norm'] = _int_bdry_norm(self.nplast, kwds['cmap'])
-        plast_type = _pad(self.nplast - 1 - self.plast_type.r, 1)
+        nplast = kwds.pop('nplast', self.nplast)
+        nreadout = kwds.pop('nreadout', self.nreadout)
+        kwds['norm'] = _int_bdry_norm(nplast, kwds['cmap'])
+        plast_type = _pad(nplast - 1 - self.plast_type.r, 1)
         pth = set_plot(hnds[0], plast_type, **kwds)
-        kwds['norm'] = _int_bdry_norm(self.nreadout, kwds['cmap'])
+        kwds['norm'] = _int_bdry_norm(nreadout, kwds['cmap'])
         roh = set_plot(hnds[1], self.readouts.r, **kwds)
         return [pth, roh]
 
@@ -313,7 +315,9 @@ class SimPlasticitySequence(PlasticitySequence):
         imh: List[Image], (3,)
             Image/Line objects for the plots
         """
-        imh = super().plot(hnds[:-1], **kwds)
+        nplast = kwds.pop('nplast', self.nplast)
+        nreadout = kwds.pop('nreadout', self.nreadout)
+        imh = super().plot(hnds[:-1], nplast=nplast, nreadout=nreadout, **kwds)
         kwds['line'] = True
         kwds.pop('cmap', None)
         imh.append(set_plot(hnds[-1], self.states, **kwds))

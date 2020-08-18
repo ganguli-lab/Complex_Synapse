@@ -153,8 +153,10 @@ class SynapseIdModel(SynapseBase):
         inds = np.lexsort((-eta, self.readout)) if group else np.argsort(-eta)
         self.reorder(inds)
 
-    def readout_indicator(self) -> la.lnarray:
-        """1 in sets with each readout value, 0 elsewhere. (R,M)
+    def readout_prob(self) -> la.lnarray:
+        """Readout probabilities (R,M)
+
+        rp[r,i] = Prob(readout=r|state=i).
         """
         indicators = la.zeros((self.nreadout, self.nstate))
         for i in range(self.nreadout):
@@ -163,8 +165,11 @@ class SynapseIdModel(SynapseBase):
 
     def updaters(self) -> Tuple[la.lnarray, la.lnarray]:
         """Projected plasticity matrices & initial, (R,P,M,M), (R,M)
+
+        update[r,p,i,j] = Prob(i(t+1)=j, w(t+1)=r|i(t)=i, mu(t)=p),
+        init[r,i] = Prob(w(0)=r, i(0)=i)
         """
-        indic = self.readout_indicator()
+        indic = self.readout_prob()
         updaters = self.plast.expand_dims(-4) * indic.expand_dims((-3, -2))
         initial = self.initial * indic
         return updaters, initial

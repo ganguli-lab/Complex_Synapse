@@ -1,7 +1,6 @@
 """Baum-Welch update
 """
 from __future__ import annotations
-from complex_synapse.builders import scalarise
 
 from typing import ClassVar, Dict, Optional, Tuple, Union
 
@@ -11,6 +10,7 @@ import numpy_linalg as la
 from sl_py_tools.arg_tricks import default_eval
 from sl_py_tools.iter_tricks import rzenumerate, zenumerate
 
+from ..builders import scalarise
 from .fit_synapse import GroundedFitter, SynapseFitter
 from .plast_seq import (Axes, Image, Line, PlasticitySequence,
                         SimPlasticitySequence, set_plot)
@@ -215,10 +215,10 @@ def calc_model(updaters: la.lnarray, plast_type: la.lnarray,
         plast = np.empty(nexpt + updaters.shape[-3:])
         # (E,M)
         initial = np.empty(nexpt + updaters.shape[-1:])
-        for ii in np.ndindex(*nexpt):
-            jj = np.s_[:,] + ii
-            plast[ii], initial[ii] = calc_model(
-                updaters[jj], plast_type[jj], alpha[jj], beta[jj], eta[jj],
+        for i in np.ndindex(*nexpt):
+            j = np.s_[:,] + i
+            plast[i], initial[i] = calc_model(
+                updaters[j], plast_type[j], alpha[j], beta[j], eta[j],
                 steady=steady, combine=False, normed=normed, nplast=nplast)
 
     # (T-1,E,M,M)
@@ -299,7 +299,7 @@ class BaumWelchFitter(SynapseFitter):
         update, initial, _ = get_updaters(self.model, self.data)
         # (T,E,M),(T,E,M),(T,E),
         self.alpha, self.beta, self.eta = calc_alpha_beta(update, initial)
-        self.stats['nlog_like'] = np.log(self.eta).sum()
+        self.stats['nlog_like'] = scalarise(np.log(self.eta).sum())
 
     def update_stats(self) -> None:
         """Calculate stats for termination and display.
@@ -374,10 +374,12 @@ class GroundedBWFitter(GroundedFitter, BaumWelchFitter):
 
     Statistics
     ----------
-    true_nlog_like : float
+    true_like : float
         Negative log-likelihood of `data` given `truth`.
     true_dmodel : float
         Distance between `truth` and `model`.
+    true_dlike : float
+        `nlog_like - true_like`.
     All of the above are stored in `self.stats`.
     See `SynapseFitter` for other statistics.
 
@@ -404,14 +406,37 @@ class GroundedBWFitter(GroundedFitter, BaumWelchFitter):
         super().__init__(data, model, truth=truth, **kwds)
         if 'truth' in self.stats:
             self.truth = self.stats.pop('truth')
-        self.stats['true_nlog_like'] = likelihood(self.truth, self.data)
-        self.stats['y_scale'] = self.stats['true_nlog_like']
+        self.stats['true_like'] = likelihood(self.truth, self.data)
+        self.stats['y_scale'] = self.stats['true_like']
+        self.stats['true_dlike'] = (self.stats['nlog_like']
+                                    - self.stats['true_like'])
 
     def update_stats(self) -> None:
         """Calculate stats for termination and display.
         """
         super().update_stats()
+        self.stats['true_dlike'] = (self.stats['nlog_like']
+                                    - self.stats['true_like'])
 
-    def update_model(self) -> None:
-        """Perform a single update of the model"""
-        super().update_model()
+    # def update_model(self) -> None:
+    #     """Perform a single update of the model"""
+    #     super().update_model()
+
+    # def plot_occ(self, handle: Union[Axes, Image, Line],
+    #              ind: Tuple[Union[int, slice], ...],
+    #              **kwds) -> Union[Image, Line]:
+    #     """Plot current estimate of state occupation
+
+    #     Parameters
+    #     ----------
+    #     handle : Union[Axes, Image, Line]
+    #         Axes to plot on, or Image/Lines to update with new data
+    #     ind : Tuple[Union[int, slice], ...]
+    #         Time, experiment indices/slices to plot
+
+    #     Returns
+    #     -------
+    #     imh : Union[Image, Line]
+    #         Image/Line objects for the plots
+    #     """
+    #     return super().plot_occ(handle, ind, **kwds)
