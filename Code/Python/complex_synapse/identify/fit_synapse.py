@@ -33,27 +33,29 @@ def _frmt_vars(format_spec: str) -> Dict[str, str]:
     """Variables for __format__ method"""
     if format_spec == "tex":
         return {"t": "t &= {nit:d}",
-                "fit": "-\\log " + _like_str() + " &= {nlog_like:.0f}",
-                "df": "\\Delta\\log " + _like_str() + " &= {dnlog_like:.2g}",
-                "dx": "\\lVert\\Delta\\mathbf{{M}}\\rVert &= {dmodel:.2g}",
                 "tr": "-\\log " + _like_str("^*") + " &= {true_like:.0f}",
+                "fit": "-\\log " + _like_str() + " &= {nlog_like:.0f}",
+                "trx": ("\\lVert\\mathbf{{M}}^*-\\mathbf{{M}}\\rVert &= "
+                        + "{true_dmodel:.2f}"),
                 "dtr": ("\\log\\frac{{" + _like_str('^*') + "}}{{"
                         + _like_str() + "}} &= {true_dlike:.0f}"),
-                "trx": ("\\lVert\\mathbf{{M}}^*-\\mathbf{{M}}\\rVert &= "
-                        + "{true_dmodel:.2f}")}
+                "df": "\\Delta\\log " + _like_str() + " &= {dnlog_like:.2g}",
+                "dx": "\\lVert\\Delta\\mathbf{{M}}\\rVert &= {dmodel:.2g}",
+                }
     return {"t": "nit = {nit}",
+            "tr": "-log P(data|true) = {true_like:.3f}",
             "fit": "-log P(data|fit) = {nlog_like:.3f}",
+            "trx": "\n||true-fit|| = {true_dmodel:.3g}",
+            "dtr": "log[P(data|true) / P(data|fit)] = {true_dlike:.3g}",
             "df": "\nlog[P(data|fit) / P(data|prev)] = {dnlog_like:.3g}",
             "dx": "||fit-prev|| = {dmodel:.3g}",
-            "tr": "-log P(data|true) = {true_like:.3f}",
-            "dtr": "\nlog[P(data|true) / P(data|fit)] = {true_dlike:.3g}",
-            "trx": "||true-fit|| = {true_dmodel:.3g}"}
+            }
 
 
 def _frmt_out(disp: List[str], stats: Dict[str, Number], frm_spec: str) -> str:
     """Variables for __format__ method"""
     if frm_spec == "tex":
-        pre, delim, post = "\\begin{align*} ", " ,\\\\ ", " \\end{align*}"
+        pre, delim, post = "\\begin{align*} ", " ,\\\\ ", ". \\end{align*}"
     else:
         pre, delim, post = "", ", ", ""
     return pre + delim.join(disp).format(**stats) + post
@@ -393,14 +395,14 @@ class GroundedFitter(SynapseFitter):
     def __format__(self, format_spec: str) -> str:
         """Printing stats"""
         templates = _frmt_vars(format_spec)
-        disp = [templates[k] for k in ['t', 'tr', 'fit', 'dtr', 'trx']]
+        disp = [templates[k] for k in ['t', 'tr', 'fit', 'trx']]
         if self.prev_model is not None and not format_spec:
             del disp[1]
-            del disp[-2:]
         if self.opt.verbose % 2 and np.isfinite(self.stats['dnlog_like']):
-            disp += [templates['df'], templates['dx']]
+            disp += [templates[k] for k in ['dtr', 'df', 'dx']]
         elif self.opt.verbose % 2 and format_spec:
-            disp += [templates['df'].replace('{dnlog_like:.2g}', '-'),
+            disp += [templates['dtr'],
+                     templates['df'].replace('{dnlog_like:.2g}', '-'),
                      templates['dx'].replace('{dmodel:.2g}', '-')]
         return _frmt_out(disp, self.stats, format_spec)
 

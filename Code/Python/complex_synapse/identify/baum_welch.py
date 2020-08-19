@@ -341,9 +341,11 @@ class BaumWelchFitter(SynapseFitter):
         imh : Union[Image, Line]
             Image/Line objects for the plots
         """
+        trn = kwds.pop('trn', False)
         # (T.M)
         state_prob = self.alpha[ind] * self.beta[ind]
-        return set_plot(handle, state_prob.T, **kwds)
+        state_prob = state_prob if trn else state_prob.T
+        return set_plot(handle, state_prob, **kwds)
 
 
 # =============================================================================

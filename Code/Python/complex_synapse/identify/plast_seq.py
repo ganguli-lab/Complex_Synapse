@@ -13,6 +13,7 @@ import matplotlib.colors as mco
 
 import numpy_linalg as la
 from sl_py_tools.containers import tuplify
+import sl_py_tools.matplotlib_tricks as mpt
 
 from ..synapse_base import array_attrs, ArrayLike
 
@@ -319,6 +320,7 @@ class SimPlasticitySequence(PlasticitySequence):
         nreadout = kwds.pop('nreadout', self.nreadout)
         imh = super().plot(hnds[:-1], nplast=nplast, nreadout=nreadout, **kwds)
         kwds['line'] = True
+        kwds['label'] = 'True path'
         kwds.pop('cmap', None)
         imh.append(set_plot(hnds[-1], self.states, **kwds))
         return imh
@@ -367,16 +369,18 @@ def set_plot(handle: Union[Axes, Image, Line], data: np.ndarray, **kwds
     imh: Union[Image, Line]
         Image/Line objects for the plots
     """
+    trn = kwds.pop('trn', False)
     line = kwds.pop('line', False)
+    if line:
+        data = mpt.stepify_data(np.arange(-0.5, data.size), data)
+        data = data[::-1] if trn else data
+    else:
+        data = data.T if trn else data
     if isinstance(handle, Axes):
         if line:
-            kwds.setdefault('where', 'mid')
-            return handle.step(np.arange(data.size), data, **kwds)[0]
+            return handle.plot(*data, **kwds)[0]
         return handle.matshow(data, **kwds)
-    if isinstance(handle, Line):
-        handle.set_ydata(data)
-    else:
-        handle.set_data(data)
+    handle.set_data(data)
     return handle
 
 

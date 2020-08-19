@@ -61,7 +61,7 @@ class SynapseOptModel(SynapseMemoryModel):
         markov.mat_to_params
         """
         params = mp.mat_to_params(self.plast, **self.directed(daxis=-3))
-        return params.flattish(-2)
+        return params.ravelaxes(-2)
 
     def set_params(self, params: np.ndarray, *args, **kwds):
         """Transition matrices. from independent parameters
@@ -83,7 +83,7 @@ class SynapseOptModel(SynapseMemoryModel):
         """
         if np.allclose(params, self.get_params(), *args, **kwds):
             return
-        params = la.asarray(params).foldaxis(-1, (self.nplast, -1))
+        params = la.asarray(params).unravelaxis(-1, (self.nplast, -1))
         mp.mat_update_params(self.plast, params, **self.directed(pdaxis=-2))
         self._unchanged = False
 
@@ -134,7 +134,7 @@ class SynapseOptModel(SynapseMemoryModel):
         # (2,n(n-1))
         grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
         # (2n(n-1),)
-        grad = grad.flattish(-2)
+        grad = grad.ravelaxes(-2)
 
         return bld.scalarise(func), grad
 
@@ -267,7 +267,7 @@ class SynapseOptModel(SynapseMemoryModel):
         # (2,n(n-1))
         grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
         # (2n(n-1),)
-        return grad.flattish(-2)
+        return grad.ravelaxes(-2)
 
     def laplace_hess(self, rate: Number, **kwds) -> la.lnarray:
         """Hessian of Laplace transform of SNR memory curve.
@@ -307,7 +307,7 @@ class SynapseOptModel(SynapseMemoryModel):
         # (...,2,n(n-1),2,n(n-1))
         hess = mp.mat_to_params(hess, **self.directed(), daxis=(-6, -3),
                                 axes=((-5, -4), (-2, -1)))
-        return -hess.flattish(-4, -2).flattish(-2)
+        return -hess.ravelaxes(-4, -2).ravelaxes(-2)
 
     def laplace_hessp(self, rate: Number, other: _SynapseBase,
                       **kwds) -> la.lnarray:
@@ -360,7 +360,7 @@ class SynapseOptModel(SynapseMemoryModel):
         # (2,n(n-1))
         hsv = mp.mat_to_params(hsv, **self.directed(daxis=-3))
         # (2n(n-1),)
-        return hsv.flattish(-2)
+        return hsv.ravelaxes(-2)
 
     def area_fun(self, **kwds) -> float:
         """Area under SNR memory curve.
@@ -414,7 +414,7 @@ class SynapseOptModel(SynapseMemoryModel):
         kwds['inv'] = True
         rows, cols, mats = self._derivs(None, **kwds)
         func = self.plast - rate * rows[0] + (1 + rate) * np.eye(self.nstate)
-        return func.flattish(-3)
+        return func.ravelaxes(-3)
 
     def peq_min_grad(self, rate: Number, **kwds) -> la.lnarray:
         """Gradient of lower bound of shifted Laplace problem.
@@ -445,11 +445,11 @@ class SynapseOptModel(SynapseMemoryModel):
         shape = ((self.nplast,) + (self.nstate,) * 2) * 2
         gradd = _diagsub(la.eye(self.nplast * self.nstate**2).reshape(shape))
         # (2n**2,2,n,n)
-        grad = (gradd + grad).flattish(0, -3)
+        grad = (gradd + grad).ravelaxes(0, -3)
         # (2n**2,2,n(n-1))
         grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
         # (2n**2,2n(n-1))
-        return grad.flattish(-2)
+        return grad.ravelaxes(-2)
         # # (2n**2,n(n-1)), (2n**2,n(n-1))
 
     def peq_min_hess(self, rate: Number, lag: np.ndarray,
@@ -481,7 +481,7 @@ class SynapseOptModel(SynapseMemoryModel):
         # (n,n,n,n,2,n,n)
         hess = np.broadcast_to(hess, hess.shape[:-2] + (self.nstate,) * 2)
         # (n,n,n,n,2n**2) @ (2n**2,) -> (n,n,n,n)
-        hess = hess.flattish(-3) @ lag
+        hess = hess.ravelaxes(-3) @ lag
         hess = _dbl_diagsub(hess).sum(0)
         # (2,n,n,2,n,n)
         hess = hess.expand_dims(-3) * insert_axes(self.frac, 5) * self.frac.s
@@ -489,7 +489,7 @@ class SynapseOptModel(SynapseMemoryModel):
         hess = mp.mat_to_params(hess, **self.directed(
             axes=((-5, -4), (-2, -1)), daxis=(-6, -3)))
         # (2n(n-1),2n(n-1))
-        return hess.flattish(-4, -2).flattish(-2)
+        return hess.ravelaxes(-4, -2).ravelaxes(-2)
 
     def cond_fun(self, rate: Number, **kwds) -> la.lnarray:
         """Gap between condition number and threshold
@@ -545,7 +545,7 @@ class SynapseOptModel(SynapseMemoryModel):
         # (2,n(n-1))
         grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
         # (2n(n-1),)
-        return grad.flattish(-2) / self.CondThresh
+        return grad.ravelaxes(-2) / self.CondThresh
         # grad = [mp.mat_to_params(grad[..., i, :, :], drn=d, **self.type)
         #         for i, d in enumerate(self.directions)]
         # return np.hstack(grad) / self.CondThresh

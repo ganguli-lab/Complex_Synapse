@@ -1,7 +1,6 @@
 """Model that is being fit to data
 """
 from __future__ import annotations
-from complex_synapse.synapse_mem import normalise
 
 from typing import List, Optional, Sequence, Tuple, Union, Callable, Dict
 
@@ -174,12 +173,18 @@ class SynapseIdModel(SynapseBase):
         initial = self.initial * indic
         return updaters, initial
 
-    def _elements(self) -> la.lnarray:
-        """All elements of self.plast and self.initial, concatenated (PM**2+M,)
+    def elements(self) -> la.lnarray:
+        """All elements of self.plast and self.initial, concatenated.
+
+        Returns
+        -------
+        elems : la.lnarray (PM**2+M,)
+            When `self.nmodel = ()`, concatenation of ravelled `self.plast` and
+            `self.initial`. Otherwise, broadcasts over `nmodel` axes.
         """
         if not self.nmodel:
             return np.concatenate((self.plast.ravel(), self.initial))
-        vectors = (self.plast.flattish(-3), self.initial)
+        vectors = (self.plast.ravelaxes(-3), self.initial)
         bcast_vectors = la.gufuncs.broadcast_matrices('(a),(b)', *vectors)
         return np.concatenate(bcast_vectors, -1)
 
@@ -195,13 +200,13 @@ class SynapseIdModel(SynapseBase):
         norm : la.lnarray, ()
             Norm of parameters.
         """
-        return np.linalg.norm(self._elements(), axis=-1, **kwargs)
+        return np.linalg.norm(self.elements(), axis=-1, **kwargs)
 
     def kl_div(self, other: SynapseIdModel) -> la.lnarray:
         """Kullback-Leibler divergence between plast & initial of self & other
         """
-        mine = self._elements()
-        per_param = mine * np.log((self / other)._elements())
+        mine, theirs = self.elements(), other.elements()
+        per_param = mine * np.log(mine / theirs)
         mine, per_param = np.broadcast_arrays(mine, per_param, subok=True)
         per_param[np.isclose(0, mine)] = 0.
         return per_param.sum(-1)
@@ -247,10 +252,11 @@ class SynapseIdModel(SynapseBase):
         expt_ind = np.ix_(*(la.arange(expt) for expt in nexpt))
         expt_ind = (expt_ind,) if len(nexpt) == 1 else expt_ind
         # (PM,M)
-        jump = self.plast.flattish(0, -1)
+        jump = self.plast.ravelaxes(0, -1)
         # (P,M,T-1,E)
         state_ch = la.array([rng.choice(state_ind, size=plast_seq.shape, p=p)
-                             for p in jump]).foldaxis(0, self.plast.shape[:-1])
+                             for p in jump]).unravelaxis(0,
+                                                         self.plast.shape[:-1])
         # (T,E)
         states = la.empty((ntime,) + nexpt, int)
         # (E,)
@@ -275,8 +281,13 @@ class SynapseIdModel(SynapseBase):
         imh: List[Image], (P+1,)
             Image objects for the plots
         """
+        if self.nmodel:
+            raise ValueError("Can only plot 1 scalar model at a time. " +
+                             f"We have nmodel={self.nmodel}")
+        trn = kwds.pop('trn', False)
         kwds.setdefault('norm', mpl.colors.Normalize(0., 1.))
-        imh = [set_plot(axs[0], self.initial.c, **kwds)]
+        initial = self.initial.r if trn else self.initial.c
+        imh = [set_plot(axs[0], initial, **kwds)]
         for axh, mat in zip(axs[1:], self.plast):
             imh.append(set_plot(axh, mat, **kwds))
         return imh
