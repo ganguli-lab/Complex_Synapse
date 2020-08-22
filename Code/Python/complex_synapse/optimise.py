@@ -11,11 +11,10 @@ import numpy as np
 import scipy.optimize as sco
 
 import numpy_linalg as la
-from sl_py_tools.arg_tricks import default
-from sl_py_tools.containers import listify, map_join
-from sl_py_tools.iter_tricks import (dcount, delay_warnings, denumerate, dzip,
-                                     zenumerate)
-from sl_py_tools.numpy_tricks.markov import params as mp
+import sl_py_tools.arg_tricks as ag
+import sl_py_tools.containers as cn
+import sl_py_tools.iter_tricks as it
+import sl_py_tools.numpy_tricks.markov.params as mp
 
 from . import builders as bld
 from . import shorten as sh
@@ -112,7 +111,7 @@ def conv_constraint(constraint: Constraint) -> List[dict]:
 def set_param_opts(opts: Optional[dict] = None):
     """Set options dict for SynapseOptModel Markov processes.
     """
-    opts = default(opts, {})
+    opts = ag.default(opts, {})
     # set opts
     SynapseOptModel.CondThresh = opts.pop('CondThresh', 1e4)
     SynapseOptModel.type['serial'] = opts.pop('serial', False)
@@ -133,7 +132,7 @@ def get_model_opts(opts: Optional[dict] = None) -> dict:
     modelopts : dict
         Options for `Synapse*Model` instances.
     """
-    opts = default(opts, {})
+    opts = ag.default(opts, {})
     modelopts = opts.pop('modelopts', {})
     modelopts.setdefault('frac', opts.pop('frac', 0.5))
     modelopts.setdefault('binary', opts.pop('binary', True))
@@ -151,7 +150,7 @@ def make_model(opts: Optional[dict] = None, **kwds) -> SynapseOptModel:
     model : SynapseOptModel
         An instance to use in loss functions etc
     """
-    opts = default(opts, {})
+    opts = ag.default(opts, {})
     opts.update(kwds)
     model = opts.pop('model', None)
     params = opts.pop('params', None)
@@ -166,9 +165,9 @@ def make_model(opts: Optional[dict] = None, **kwds) -> SynapseOptModel:
     paramopts['drn'] = SynapseOptModel.directions[0]
     npl = modelopts.get('npl', 2)
     if nst is not None:
-        npar = default(npar, npl * mp.num_param(nst, **paramopts))
+        npar = ag.default(npar, npl * mp.num_param(nst, **paramopts))
     if npar is not None and not paramopts['uniform']:
-        nst = default(nst, mp.num_state(npar // npl, **paramopts))
+        nst = ag.default(nst, mp.num_state(npar // npl, **paramopts))
     if None in {nst, npar}:
         raise TypeError("Must specify one of [model, params, nst, npar]")
     return SynapseOptModel.rand(nst=nst, npar=npar, **modelopts)
@@ -194,7 +193,7 @@ def make_problem(maker: Maker, rate: Number, **kwds) -> dict:
     x_init = model.get_params()
     fun, jac, hess, bounds, constraints = maker(model, rate, **opts)
     if not opts['inv']:
-        constraints = map_join(conv_constraint, constraints)
+        constraints = cn.map_join(conv_constraint, constraints)
 
     problem = {'fun': fun, 'x0': x_init, 'jac': jac, 'hess': hess,
                'bounds': bounds, 'constraints': constraints}
@@ -249,7 +248,7 @@ def shifted_problem(model: SynapseOptModel, rate: Number, inv: bool = False,
     if svd:
         lims = [lims, cond_limit(model, None, keep_feasible, inv=True)]
 
-    return fun, jac, hess, bounds, listify(lims)
+    return fun, jac, hess, bounds, cn.listify(lims)
 
 
 # =============================================================================
@@ -293,7 +292,7 @@ def constr_violation(prob: dict, result: sco.OptimizeResult) -> bool:
     if bounds is not None:
         maxcv = max(maxcv, (solution - bounds.ub).max())
         maxcv = max(maxcv, (bounds.lb - solution).max())
-    for cons in listify(prob.get('constraints', [])):
+    for cons in cn.listify(prob.get('constraints', [])):
         kind, vals = cons['type'] == 'eq', cons['fun'](solution)
         maxcv = max(maxcv, np.fabs(vals).max() if kind else - vals.min())
     return maxcv
@@ -314,7 +313,7 @@ def verify_solution(prob: dict, result: sco.OptimizeResult) -> bool:
     if bounds is not None:
         if (solution < bounds.lb).any() or (solution > bounds.ub).any():
             return False
-    for cons in listify(prob.get('constraints', [])):
+    for cons in cn.listify(prob.get('constraints', [])):
         vals, kind = cons['fun'](solution), cons['type'] == 'eq'
         fail = (not np.allclose(0, vals)) if kind else (vals < -itol).any()
         if fail:
@@ -331,7 +330,7 @@ def first_good(prob: dict) -> sco.OptimizeResult:
     """First solution that satisfies constraints"""
     max_tries = prob.pop('max_tries', 100)
     res = sco.OptimizeResult()
-    for _ in dcount('tries', max_tries):
+    for _ in it.dcount('tries', max_tries):
         res = sco.minimize(**prob)
         if verify_solution(prob, res):
             break
@@ -347,7 +346,7 @@ def optim_laplace(rate: Number, nst: Optional[int] = None, *,
     repeats = kwds.pop('repeats', 0)
     prob = make_problem(maker, rate, nst=nst, model=model, **kwds)
     res = first_good(prob)
-    for _ in dcount('repeats', repeats, disp_step=1):
+    for _ in it.dcount('repeats', repeats, disp_step=1):
         update_laplace_problem(prob)
         new_res = sco.minimize(**prob)
         if verify_solution(prob, new_res) and new_res.fun < res.fun:
@@ -364,8 +363,8 @@ def optim_laplace_range(rates: np.ndarray, nst: int,
     model = make_model(kwds, nst=nst)
     snr = la.empty_like(rates)
     models = la.empty((len(rates), model.nparam))
-    with delay_warnings():
-        for i, rate in denumerate('rate', rates):
+    with it.delay_warnings():
+        for i, rate in it.denumerate('rate', rates):
             res = optim_laplace(rate, model=model, **kwds)
             snr[i] = - res.fun
             models[i] = res.x
@@ -378,8 +377,8 @@ def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
     """Reoptimised model at many values of rate
     """
     model = make_model(kwds, params=models[inds[0]])
-    with delay_warnings():
-        for ind, rate in dzip('rate', inds, rates[inds]):
+    with it.delay_warnings():
+        for ind, rate in it.dzip('rate', inds, rates[inds]):
             res = optim_laplace(rate, model=model, **kwds)
             if - res.fun > snr[ind]:
                 snr[ind] = - res.fun
@@ -405,7 +404,7 @@ def check_cond_range(rates: np.ndarray, models: np.ndarray,
     """
     cnd = la.empty_like(rates)
     model = make_model(kwds, params=models[0])
-    for i, rate, params in zenumerate(rates, models):
+    for i, rate, params in it.zenumerate(rates, models):
         model.set_params(params)
         cnd[i] = model.cond(rate, rate_max=True)
     return cnd

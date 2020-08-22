@@ -2,23 +2,25 @@
 """
 from __future__ import annotations
 
-from typing import List, Optional, Sequence, Tuple, Union, Callable, Dict
+from typing import Callable, Dict, List, Optional, Sequence, Tuple, Union
 
-import numpy as np
 import matplotlib as mpl
+import numpy as np
 
 import numpy_linalg as la
-from numpy_linalg import convert as cvl
-from sl_py_tools.arg_tricks import default_non_eval as default
-from sl_py_tools.containers import tuplify
+import numpy_linalg.convert as cvl
+import sl_py_tools.arg_tricks as ag
+import sl_py_tools.containers as cn
 import sl_py_tools.numpy_tricks.markov as ma
 
-from ..builders import RNG, build_generic
-from ..synapse_base import ArrayLike, SynapseBase
-from .plast_seq import SimPlasticitySequence, Axes, Image, set_plot
+from .. import builders as _bld
+from .. import synapse_base as _sb
+from . import plast_seq as _ps
+
+# =============================================================================
 
 
-class SynapseIdModel(SynapseBase):
+class SynapseIdModel(_sb.SynapseBase):
     """Model that is being fit to data
 
     Parameters (and attributes)
@@ -49,24 +51,23 @@ class SynapseIdModel(SynapseBase):
     initial: la.lnarray
 
     def __init__(self, plast: la.lnarray,
-                 frac: ArrayLike = 0.5,
-                 initial: Optional[ArrayLike] = None,
-                 readout: Optional[ArrayLike] = None,
+                 frac: _sb.ArrayLike = 0.5,
+                 initial: Optional[_sb.ArrayLike] = None,
+                 readout: Optional[_sb.ArrayLike] = None,
                  ) -> None:
         super().__init__(plast, frac)
         nst = self.nstate
-        dtype = self.plast.dtype
-        self.initial = default(initial, la.asarray, la.full(nst, 1/nst, dtype))
-        self.readout = default(readout, la.asarray, la.arange(nst))
+        self.initial = ag.default_non_eval(initial, la.asarray, la.ones(nst)/nst)
+        self.readout = ag.default_non_eval(readout, la.asarray, la.arange(nst))
         if ma.isstochastic_c(self.plast):
-            self.plast += la.identity(nst, dtype) * max(- self.plast.min(), 1.)
+            self.plast += la.identity(nst) * max(- self.plast.min(), 1.)
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
         rpr = super().__repr__()
         insert = f"    initial = {self.initial!r},\n"
         insert += f"    readout = {self.readout!r},\n"
-        rpr = (rpr[:-1] + insert + rpr[-1])
+        rpr = rpr[:-1] + insert + rpr[-1]
         return rpr
 
     def __array_ufunc__(self, ufunc: np.ufunc, method: str, *inputs, **kwargs):
@@ -118,7 +119,7 @@ class SynapseIdModel(SynapseBase):
         ma.stochastify_d(self.plast)
         ma.stochastify_d(self.initial)
 
-    def set_init(self, init: Optional[ArrayLike] = None) -> None:
+    def set_init(self, init: Optional[_sb.ArrayLike] = None) -> None:
         """Set initial to steady-state, in place"""
         if init is None:
             markov = (self.frac.s * self.plast).sum(-3)
@@ -126,7 +127,7 @@ class SynapseIdModel(SynapseBase):
         else:
             self.initial = la.asarray(init)
 
-    def reorder(self, inds: ArrayLike) -> None:
+    def reorder(self, inds: _sb.ArrayLike) -> None:
         """Put the states into a new order, in-place.
 
         Parameters
@@ -214,8 +215,8 @@ class SynapseIdModel(SynapseBase):
     def simulate(self, ntime: Optional[int] = None,
                  nexpt: Union[None, int, Sequence[int]] = None,
                  plast_seq: Optional[np.ndarray] = None,
-                 rng: np.random.Generator = RNG,
-                 ) -> SimPlasticitySequence:
+                 rng: np.random.Generator = _bld.RNG,
+                 ) -> _ps.SimPlasticitySequence:
         """Simulate markov process
 
         If `plast_seq` is omitted, both `ntime` and `nexpt` are required.
@@ -228,6 +229,8 @@ class SynapseIdModel(SynapseBase):
             Number of experiments, E, by default None
         plast_seq : Optional[np.ndarray], optional, (T,E)
             Sequence of plasticity types, by default None
+        rng : np.random.Generator, optional
+            random number generator, by default: builders.RNG
 
         Returns
         -------
@@ -237,8 +240,8 @@ class SynapseIdModel(SynapseBase):
         # only simulate a single model
         assert not self.nmodel
         if plast_seq is None:
-            nexpt = default(nexpt, tuplify, ())
-            ntime = default(ntime, int, 1)
+            nexpt = ag.default_non_eval(nexpt, cn.tuplify, ())
+            ntime = ag.default_non_eval(ntime, int, 1)
             # (T-1,E)
             plast_seq = rng.choice(la.arange(self.nplast), p=self.frac,
                                    size=(ntime - 1,) + nexpt)
@@ -266,14 +269,14 @@ class SynapseIdModel(SynapseBase):
             states[i+1] = state_ch[(plt, states[i], i) + expt_ind]
         # (T,E)
         readouts = self.readout[states]
-        return SimPlasticitySequence(plast_seq, readouts, states, t_axis=0)
+        return _ps.SimPlasticitySequence(plast_seq, readouts, states, t_axis=0)
 
-    def plot(self, axs: Sequence[Union[Axes, Image]], **kwds) -> List[Image]:
+    def plot(self, axs: Sequence[_ps.ImHandle], **kwds) -> List[_ps.Image]:
         """Plot heatmaps for initial and plast
 
         Parameters
         ----------
-        axs : Sequence[Union[Image, Axes]], (P+1,)
+        axs : Sequence[Image or Axes], (P+1,)
             Axes to plot on, or Images to update with new data
 
         Returns
@@ -287,14 +290,14 @@ class SynapseIdModel(SynapseBase):
         trn = kwds.pop('trn', False)
         kwds.setdefault('norm', mpl.colors.Normalize(0., 1.))
         initial = self.initial.r if trn else self.initial.c
-        imh = [set_plot(axs[0], initial, **kwds)]
+        imh = [_ps.set_plot(axs[0], initial, **kwds)]
         for axh, mat in zip(axs[1:], self.plast):
-            imh.append(set_plot(axh, mat, **kwds))
+            imh.append(_ps.set_plot(axh, mat, **kwds))
         return imh
 
     @classmethod
     def build(cls, builder: Callable[..., Dict[str, la.lnarray]],
-              nst: int, frac: ArrayLike = 0.5,
+              nst: int, frac: _sb.ArrayLike = 0.5,
               extra_args=(), **kwargs) -> SynapseIdModel:
         """Build model from function.
 
@@ -307,7 +310,7 @@ class SynapseIdModel(SynapseBase):
             total number of states, passed to `builder`.
         frac : float
             fraction of events that are potentiating, default=0.5.
-        extra_args, **kwargs
+        *extra_args, **kwargs
             *extra_args, **kwargs: passed to `builder`.
 
         Returns
@@ -344,6 +347,8 @@ class SynapseIdModel(SynapseBase):
             is the weight vector binary? Otherwise it's linear. Default: False
         sp : float
             sparsity, default: 1.
+        rng : np.random.Generator, optional
+            random number generator, by default: builders.RNG
         ...
             extra arguments passed to `cls.build`, `builders.build_rand`
             or `sl_py_tools.numpy_tricks.markov...`.
@@ -359,7 +364,7 @@ class SynapseIdModel(SynapseBase):
 # =============================================================================
 
 
-def _weight_readout(weight: ArrayLike) -> la.lnarray:
+def _weight_readout(weight: _sb.ArrayLike) -> la.lnarray:
     """Convert weight vector to readout vector"""
     if weight is None:
         return None
@@ -367,6 +372,7 @@ def _weight_readout(weight: ArrayLike) -> la.lnarray:
 
 
 def build_rand(nst: int, npl: int = 2, binary: bool = False,
+               rng: np.random.Generator = _bld.RNG,
                **kwds) -> Dict[str, la.lnarray]:
     """Make a random model.
 
@@ -381,6 +387,8 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
         is the weight vector binary? Otherwise it's linear. Default: False
     sparsity : float
         sparsity, default: 1.
+    rng : np.random.Generator, optional
+        random number generator, by default: builders.RNG
     optional arguments
         passed to `sl_py_tools.numpy_tricks.markov.rand_trans`.
 
@@ -394,7 +402,8 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
-    return build_generic(ma.rand_trans_d, nst, npl, binary, **kwds)
+    kwds.setdefault('rng', rng)
+    return _bld.build_generic(ma.rand_trans_d, nst, npl, binary, **kwds)
 
 
 def valid_shapes(model: SynapseIdModel) -> bool:

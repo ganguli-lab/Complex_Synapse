@@ -10,16 +10,17 @@ from typing import ClassVar, Optional, Tuple, Union
 import numpy as np
 
 import numpy_linalg as la
-from sl_py_tools.arg_tricks import default_non_eval as default
-from sl_py_tools.numpy_tricks import markov as ma
+import sl_py_tools.arg_tricks as ag
+import sl_py_tools.numpy_tricks.markov as ma
 
-from .builders import insert_axes, linear_weights, scalarise
-from .synapse_base import ArrayLike, SynapseBase
+from . import builders as bld
+from . import synapse_base as _sb
 
 Order = Union[int, float, str, None]
+# =============================================================================
 
 
-class SynapseMemoryModel(SynapseBase):
+class SynapseMemoryModel(_sb.SynapseBase):
     """Class for memory curves of complex synapse models.
 
     Parameters (and attributes)
@@ -65,9 +66,9 @@ class SynapseMemoryModel(SynapseBase):
     # OrphanThresh: ClassVar[float] = 1e-3
 
     def __init__(self, plast: la.lnarray,
-                 frac: ArrayLike = 0.5,
-                 weight: Optional[ArrayLike] = None,
-                 signal: Optional[ArrayLike] = None):
+                 frac: _sb.ArrayLike = 0.5,
+                 weight: Optional[_sb.ArrayLike] = None,
+                 signal: Optional[_sb.ArrayLike] = None):
         """Class for complex synapse models.
 
         Parameters (and attributes)
@@ -83,9 +84,10 @@ class SynapseMemoryModel(SynapseBase):
         """
         super().__init__(plast, frac)
         # store inputs
-        self.weight = default(weight, la.asarray, linear_weights(self.nstate))
-        self.signal = default(signal, la.asarray, la.linspace(1, -1,
-                                                              self.nplast))
+        self.weight = ag.default_non_eval(weight, la.asarray,
+                                          bld.linear_weights(self.nstate))
+        self.signal = ag.default_non_eval(signal, la.asarray,
+                                          la.linspace(1, -1, self.nplast))
     # -------------------------------------------------------------------------
     # Housekeeping
     # -------------------------------------------------------------------------
@@ -122,8 +124,8 @@ class SynapseMemoryModel(SynapseBase):
         """
         return (self.signal.s * self.frac.s * self.plast).sum(-3)
 
-    def zinv(self, rate: Optional[ArrayLike] = None,
-             rowv: Optional[la.lnarray] = None) -> la.lnarray:
+    def zinv(self, rate: Optional[_sb.ArrayLike] = None,
+             rowv: Optional[_sb.ArrayLike] = None) -> la.lnarray:
         r"""Inverse of generalised fundamental matrix.
 
         Parameters
@@ -154,11 +156,13 @@ class SynapseMemoryModel(SynapseBase):
         i.e. :math:`Z^{-1}` with :math:`s` added to the diagonal.
         Effectively the matrix inverse of the genarator's Laplace transform.
         """
-        onev = np.ones_like(self.weight)
+        onev = la.ones_like(self.weight)
         if rowv is None:
             rowv = onev
         elif np.isnan(rowv).all():
             rowv = self.peq()
+        else:
+            rowv = la.asarray(rowv)
         if rate is None:
             s_arr = 0
         else:
@@ -166,8 +170,8 @@ class SynapseMemoryModel(SynapseBase):
             s_arr = la.asarray(rate).s * la.eye(self.nstate)
         return onev.c * rowv - self.markov() + s_arr
 
-    def cond(self, rate: Optional[ArrayLike] = None, *,
-             rowv: Optional[la.lnarray] = None,
+    def cond(self, rate: Optional[_sb.ArrayLike] = None, *,
+             rowv: Optional[_sb.ArrayLike] = None,
              order: Order = None,
              rate_max: bool = False) -> la.lnarray:
         r"""Condition number of generalised fundamental matrix.
@@ -242,7 +246,7 @@ class SynapseMemoryModel(SynapseBase):
         """
         return self.peq() @ self.weight
 
-    def deta(self, rate: Optional[ArrayLike] = None) -> la.lnarray:
+    def deta(self, rate: Optional[_sb.ArrayLike] = None) -> la.lnarray:
         """Weighted Laplacian mean first passage time
 
         A measure of how far a state is from the potentiated states, related to
@@ -288,7 +292,7 @@ class SynapseMemoryModel(SynapseBase):
         inita *= (evs.inv @ self.weight)[mask]
         return taua, inita
 
-    def snr(self, time: ArrayLike) -> la.lnarray:
+    def snr(self, time: _sb.ArrayLike) -> la.lnarray:
         """Memory SNR as a function of recall time (memory curve).
 
         Parameters
@@ -299,9 +303,9 @@ class SynapseMemoryModel(SynapseBase):
         # convert to lnarray if needed, add singleton to broadcast with vector
         t_arr = la.array(time).c
         taua, inita = self.spectrum()
-        return scalarise(np.sum(inita * np.exp(- t_arr / taua), axis=-1))
+        return _sb.scalarise(np.sum(inita * np.exp(- t_arr / taua), axis=-1))
 
-    def snr_laplace(self, rate: Optional[ArrayLike] = None) -> la.lnarray:
+    def snr_laplace(self, rate: Optional[_sb.ArrayLike] = None) -> la.lnarray:
         """Laplace transform of SNR memory curve.
 
         Parameters
@@ -310,9 +314,9 @@ class SynapseMemoryModel(SynapseBase):
             Parameter of Laplace transform, ``s``. Default: 0.
         """
         a_drv = (self.enc() * self.deta(rate)).sum(-1)
-        return scalarise((self.peq() * a_drv).sum(-1))
+        return _sb.scalarise((self.peq() * a_drv).sum(-1))
 
-    def snr_exp_ave(self, tau: ArrayLike) -> la.lnarray:
+    def snr_exp_ave(self, tau: _sb.ArrayLike) -> la.lnarray:
         """Exponential running average of SNR memory curve.
 
         Mean SNR under exponential distribution of recall times.
@@ -322,7 +326,7 @@ class SynapseMemoryModel(SynapseBase):
         tau : float, array
             Mean recall time.
         """
-        return scalarise(self.snr_laplace(1. / tau) / tau)
+        return _sb.scalarise(self.snr_laplace(1. / tau) / tau)
 
     def snr_area(self) -> float:
         """Area under SNR memory curve.
@@ -332,15 +336,16 @@ class SynapseMemoryModel(SynapseBase):
     def snr_init(self) -> float:
         """Initial value of SNR memory curve.
         """
-        return scalarise(self.peq() @ self.enc() @ self.weight)
+        return _sb.scalarise(self.peq() @ self.enc() @ self.weight)
 
     @contextmanager
-    def shifted(self, rate: ArrayLike, rowv: Optional[ArrayLike] = None):
+    def shifted(self, rate: _sb.ArrayLike, rowv: Optional[_sb.ArrayLike] = None
+                ) -> None:
         """Move rate parametr of Laplace transform to plast
         """
         rowv = self.peq() if rowv is None else rowv
         # convert to lnarray, add singletons to broadcast with plast
-        sss = insert_axes(la.asarray(rate), 3)
+        sss = _sb.insert_axes(la.asarray(rate), 3)
         # sss = la.asarray(rate).expand_dims((-3, -2, -1)) / (2 * self.frac.s)
         try:
             old_plast = self.plast.copy()

@@ -28,40 +28,18 @@ build_multistate(nst, q)
 """
 
 from functools import wraps
-from typing import Dict, Tuple, Union, Callable
+from typing import Dict, Tuple, Callable
 
 import numpy as np
 
 import numpy_linalg as la
-from sl_py_tools.numpy_tricks import markov as ma
-from sl_py_tools.numpy_tricks.markov import params as mp
+import sl_py_tools.numpy_tricks.markov as ma
+import sl_py_tools.numpy_tricks.markov.params as mp
 
 RNG = la.random.default_rng()
 MatFunc = Callable[[int, int], la.lnarray]
 ArrFunc = Callable[[Tuple[int, ...]], la.lnarray]
 SynKWs = Dict[str, la.lnarray]
-# =============================================================================
-
-
-def insert_axes(arr: np.ndarray, how_many: int, where: int = -1) -> np.ndarray:
-    """Add multiple sigleton axes at once.
-
-    New dimensions added to `arr` at:
-    * `where, where+1, ... where+how_many-1` if `where` is non-negative.
-    * `where, where-1, ... where-how_many+1` if `where` is negative.
-    """
-    sgn = -1 if where < 0 else 1
-    axes = tuple(range(where, where + sgn * how_many, sgn))
-    return np.expand_dims(arr, axes)
-
-
-def scalarise(arg: np.ndarray) -> Union[np.ndarray, np.generic]:
-    """Replace array with scalar if ndim==0."""
-    if arg.ndim == 0:
-        return arg[()]
-    return arg
-
-
 # =============================================================================
 # Weights
 # =============================================================================
@@ -231,7 +209,7 @@ def build_standard(func: ArrFunc, nst: int, npl: int = 2, binary: bool = False,
     @wraps(func)
     def wrapped(nsts: int, npls: int, **kwargs) -> la.lnarray:
         return func((npls, nsts, nsts), **kwargs)
-    return build_generic(wrapped, nst, npl, binary)
+    return build_generic(wrapped, nst, npl, binary, **kwds)
 
 
 def build_zero(nst: int, npl: int = 2, binary: bool = False) -> SynKWs:
@@ -302,6 +280,8 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False, **kwds) -> SynKWs:
         passed to `sl_py_tools.numpy_tricks.markov.rand_trans`.
     sparsity : float
         sparsity, default: 1.
+    rng : np.random.Generator, optional
+        random number generator, by default: builders.RNG
     Other keywords passed to `sl_py_tools.numpy_tricks.markov.rand_trans`.
 
     Returns
@@ -314,6 +294,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False, **kwds) -> SynKWs:
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
+    kwds.setdefault('rng', RNG)
     return build_generic(ma.rand_trans, nst, npl, binary, **kwds)
 
 

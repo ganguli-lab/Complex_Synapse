@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Sep 18 15:49:42 2017
-
-@author: Subhy
+# Created on Mon Sep 18 15:49:42 2017
+# @author: Subhy
+"""Base class for complex synapse models, andd utility functions
 """
 from __future__ import annotations
 
@@ -12,10 +11,9 @@ from typing import Any, Dict, Sequence, Tuple, Union, Callable, ClassVar
 import numpy as np
 
 import numpy_linalg as la
+import numpy_linalg.convert as cvl
 
 from . import builders as bld
-
-cvl = la.convert
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
@@ -258,6 +256,28 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
             SynapseBase instance
         """
         return cls.build(bld.build_rand, nst, *args, **kwargs)
+
+
+# =============================================================================
+
+
+def insert_axes(arr: np.ndarray, how_many: int, where: int = -1) -> np.ndarray:
+    """Add multiple sigleton axes at once.
+
+    New dimensions added to `arr` at:
+    * `where, where+1, ... where+how_many-1` if `where` is non-negative.
+    * `where, where-1, ... where-how_many+1` if `where` is negative.
+    """
+    sgn = -1 if where < 0 else 1
+    axes = tuple(range(where, where + sgn * how_many, sgn))
+    return np.expand_dims(arr, axes)
+
+
+def scalarise(arg: np.ndarray) -> Union[np.ndarray, np.generic]:
+    """Replace array with scalar if ndim==0."""
+    if arg.ndim == 0:
+        return arg[()]
+    return arg
 
 
 def instance_attrs(obj: Any) -> Dict[str, Any]:

@@ -12,17 +12,15 @@ from typing import ClassVar, Dict, Optional, Tuple, Union
 import numpy as np
 
 import numpy_linalg as la
-from sl_py_tools.numpy_tricks.markov import params as mp
+import sl_py_tools.numpy_tricks.markov.params as mp
 
 from . import builders as bld
-from .builders import insert_axes
-from .synapse_base import SynapseBase as _SynapseBase
-from .synapse_mem import SynapseMemoryModel
-from .synapse_mem import well_behaved
+from . import synapse_mem as _sm
+from . import synapse_base as _sb
 # =============================================================================
 
 
-class SynapseOptModel(SynapseMemoryModel):
+class SynapseOptModel(_sm.SynapseMemoryModel):
     """Class for complex synapses, suitable for optimisation
 
     Subclass of SynapseMemoryModel.
@@ -87,7 +85,8 @@ class SynapseOptModel(SynapseMemoryModel):
         mp.mat_update_params(self.plast, params, **self.directed(pdaxis=-2))
         self._unchanged = False
 
-    def _calc_fab(self, time, qas, evs, peq_enc):
+    def _calc_fab(self, time: Number, qas: la.lnarray, evs: la.lnarray,
+                  peq_enc: la.lnarray) -> Tuple[la.lnarray, la.lnarray]:
         """Calculate eigenvalue differences
         """
         expqt = np.exp(qas * time)
@@ -136,7 +135,7 @@ class SynapseOptModel(SynapseMemoryModel):
         # (2n(n-1),)
         grad = grad.ravelaxes(-2)
 
-        return bld.scalarise(func), grad
+        return _sb.scalarise(func), grad
 
     def _derivs(self, rate: Optional[Number] = None, inv: bool = False,
                 svd: bool = False) -> Tuple[Tuple[la.lnarray, ...], ...]:
@@ -161,57 +160,67 @@ class SynapseOptModel(SynapseMemoryModel):
             if not inv: (Z^{-1},Zs^{-1}) + (S if svd)
             if inv: (Z,Zs,ZQZs) + (if inv)
         """
-        if self._unchanged and (rate, inv) == self._saved[0]:
+        args = (rate, inv, svd)
+        if self._unchanged and args == self._saved[0]:
             return self._saved[1:]
         self._unchanged = True
 
-        args = (rate, inv, svd)
         fundi = self.zinv()
         peq = self.peq()
 
-        if svd:
-            extract = np.s_[::self.nstate-1]
-            swap = la.array([[0, 1], [-1, 0]])
-            fund_u, fund_s, fund_v = np.linalg.svd(fundi)
-            # svs = diag(smin, -smax) / smin**2
-            svs = (np.diagflat(swap @ fund_s[extract] / fund_s[-1]**2),)
-            srow = (fund_u.h[extract],)
-            scol = (fund_v.h[:, extract],)
-        else:
-            swap, extract = la.array(1), slice(None)
-            svs, scol, srow = (), (), ()
+        # (svs, srow, scol)
+        svdata = _fund_svd(fundi if svd else None)
+        # if svd:
+        #     extract = np.s_[::self.nstate-1]
+        #     swap = la.array([[0, 1], [-1, 0]])
+        #     fund_u, fund_s, fund_v = np.linalg.svd(fundi)
+        #     # svs = diag(smin, -smax) / smin**2
+        #     svs = (np.diagflat(swap @ fund_s[extract] / fund_s[-1]**2),)
+        #     srow = (fund_u.h[extract],)
+        #     scol = (fund_v.h[:, extract],)
+        # else:
+        #     swap, extract = la.array(1), slice(None)
+        #     svs, scol, srow = (), (), ()
 
         if rate is None:
-            c_s = peq @ self.enc() @ fundi.inv
+            # (peq, c_s, u.h)
+            rows = (peq, peq @ self.enc() @ fundi.inv) + svdata[1]
+            # (eta, theta, v)
             eta = fundi.inv @ self.weight
-            theta = fundi.inv @ self.enc() @ eta
-            mats = (fundi, fundi) + svs
+            cols = (eta, fundi.inv @ self.enc() @ eta) + svdata[2]
+            # (Z(0).inv, Z(s).inv, s)
+            mats = (fundi, fundi) + svdata[0]
             if inv:
+                # (Z(0), Z(s), Z(0)KZ(s), Z(0).inv, Z(s).inv, s)
                 zqz = fundi.inv @ self.enc() @ fundi.inv
                 mats = (fundi.inv(),) * 2 + (zqz,) + mats
-            self._saved = args, (peq, c_s) + srow, (eta, theta) + scol, mats
+            self._saved = args, rows, cols, mats
             return self._saved[1:]
 
         fundis = self.zinv(rate)
-        c_s = peq @ self.enc() @ fundis.inv
 
         if svd:
-            fund_u, fund_s, fund_v = np.linalg.svd(fundis)
-            # svs = diag(smin, -smax) / smin**2
-            svs += (np.diagflat(swap @ fund_s[extract] / fund_s[-1]**2),)
-            srow += (fund_u.h[extract],)
-            scol += (fund_v.h[:, extract],)
-            svs, srow, scol = [(np.stack(arr),) for arr in (svs, srow, scol)]
+            svdata = _fund_svd(fundi, svdata)
+            # fund_u, fund_s, fund_v = np.linalg.svd(fundis)
+            # # svs = diag(smin, -smax) / smin**2
+            # svs += (np.diagflat(swap @ fund_s[extract] / fund_s[-1]**2),)
+            # srow += (fund_u.h[extract],)
+            # scol += (fund_v.h[:, extract],)
+            svdata = [(np.stack(arr),) for arr in svdata]
 
+        # (peq, c_s, u.h)
+        rows = (peq, peq @ self.enc() @ fundis.inv) + svdata[1]
+        # (eta, theta, v)
         eta = fundis.inv @ self.weight
-        theta = fundi.inv @ self.enc() @ eta
-
-        mats = (fundi, fundis) + svs
+        cols = (eta, fundi.inv @ self.enc() @ eta) + svdata[2]
+        # (Z(0).inv, Z(s).inv, s)
+        mats = (fundi, fundis) + svdata[0]
         if inv:
+            # (Z(0), Z(s), Z(0)KZ(s), Z(0).inv, Z(s).inv, s)
             zqz = fundi.inv @ self.enc() @ fundis.inv
             mats = (fundi.inv(), fundis.inv(), zqz) + mats
 
-        self._saved = args, (peq, c_s) + srow, (eta, theta) + scol, mats
+        self._saved = args, rows, cols, mats
         return self._saved[1:]
 
     def laplace_fun(self, rate: Number, **kwds) -> float:
@@ -229,7 +238,7 @@ class SynapseOptModel(SynapseMemoryModel):
         func : float
             Value of ``snr_laplace`` at ``s``.
         """
-        if not well_behaved(self, rate, kwds.pop('cond', True)):
+        if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return np.array(1.e10)
         # (p,c), (eta,theta)
         rows = self._derivs(rate, **kwds)[0]
@@ -237,7 +246,7 @@ class SynapseOptModel(SynapseMemoryModel):
         func = - rows[1] @ self.weight
         # afunc = -rows[0] @ self.enc() @ cols[0]
 
-        return bld.scalarise(func)
+        return _sb.scalarise(func)
 
     def laplace_grad(self, rate: Number, **kwds) -> la.lnarray:
         """Gradient of Laplace transform of SNR memory curve.
@@ -254,7 +263,7 @@ class SynapseOptModel(SynapseMemoryModel):
         grad : la.lnarray (2n(n-1),)
             Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
-        if not well_behaved(self, rate, kwds.pop('cond', True)):
+        if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return bld.RNG.random(self.nparam)
         # (p,c), (eta,theta)
         rows, cols, _ = self._derivs(rate, **kwds)
@@ -282,7 +291,7 @@ class SynapseOptModel(SynapseMemoryModel):
         hess : la.lnarray (2n(n-1),2n(n-1))
             Hessian of ``snr_laplace`` at ``s`` with respect to parameters.
         """
-        if not well_behaved(self, rate, kwds.pop('cond', True)):
+        if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
@@ -299,9 +308,9 @@ class SynapseOptModel(SynapseMemoryModel):
         nax = (-6, -3)
         hessww, hesswq = hessww.expand_dims(nax), hesswq.expand_dims(nax)
         # (2,1,1,2,1,1)
-        fmfn = insert_axes(self.frac, 5) * self.frac.s
+        fmfn = _sb.insert_axes(self.frac, 5) * self.frac.s
         snu = self.signal.s
-        smu = insert_axes(snu, 3)
+        smu = _sb.insert_axes(snu, 3)
         # (...,2,n,n,2,n,n)
         hess = fmfn * (hessww + snu * hesswq[0] + smu * hesswq[1])
         # (...,2,n(n-1),2,n(n-1))
@@ -309,7 +318,7 @@ class SynapseOptModel(SynapseMemoryModel):
                                 axes=((-5, -4), (-2, -1)))
         return -hess.ravelaxes(-4, -2).ravelaxes(-2)
 
-    def laplace_hessp(self, rate: Number, other: _SynapseBase,
+    def laplace_hessp(self, rate: Number, other: _sb.SynapseBase,
                       **kwds) -> la.lnarray:
         """Matrix product of snr_laplace's hessian and change in parameters.
 
@@ -326,7 +335,7 @@ class SynapseOptModel(SynapseMemoryModel):
             Change in parameters matrix-multiplied by hessian of
             ``snr_laplace`` at ``s`` with respect to parameters.
         """
-        if not well_behaved(self, rate, kwds.pop('cond', True)):
+        if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return bld.RNG.random(self.nparam)
         # (p,c), (eta,theta), (Zi,Zis)
         kwds.setdefault('inv', False)
@@ -407,12 +416,12 @@ class SynapseOptModel(SynapseMemoryModel):
         func : la.lnarray (2n**2,)
             Value of ``W - s * e @ peq``.
         """
-        if not well_behaved(self, rate, kwds.pop('cond', True)):
+        if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return -np.ones(self.nplast*self.nstate**2)
         rate = rate / (2 * self.frac.s)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
-        rows, cols, mats = self._derivs(None, **kwds)
+        rows, _, _ = self._derivs(None, **kwds)
         func = self.plast - rate * rows[0] + (1 + rate) * np.eye(self.nstate)
         return func.ravelaxes(-3)
 
@@ -431,11 +440,11 @@ class SynapseOptModel(SynapseMemoryModel):
         grad : la.lnarray (2n**2,2n(n-1),)
             Gradient of ``func`` with respect to parameters.
         """
-        if not well_behaved(self, rate, kwds.pop('cond', True)):
+        if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return -bld.RNG.random((self.nplast*self.nstate**2, self.nparam,))
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
-        rows, cols, mats = self._derivs(None, **kwds)
+        rows, _, mats = self._derivs(None, **kwds)
         peq, fund = rows[0], mats[0]
         # (n,1,n,n)
         grad = np.moveaxis(_diagsub(- rate/2 * peq[None, :].s * fund), -1, -4)
@@ -468,11 +477,11 @@ class SynapseOptModel(SynapseMemoryModel):
         hess : la.lnarray (2n(n-1),2n(n-1))
             Hessian of ``peq_min_fun(rate) @ lag`` with respect to parameters.
         """
-        if not well_behaved(self, rate, kwds.pop('cond', True)):
+        if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
-        rows, cols, mats = self._derivs(None, **kwds)
+        rows, _, mats = self._derivs(None, **kwds)
         peq, fund = rows[0], mats[0]
         # (n,n,n,n,1,1,n), constraint axes last three
         hess = (((-rate * peq).s * fund).s * fund).expand_dims((-3, -2))
@@ -484,7 +493,8 @@ class SynapseOptModel(SynapseMemoryModel):
         hess = hess.ravelaxes(-3) @ lag
         hess = _dbl_diagsub(hess).sum(0)
         # (2,n,n,2,n,n)
-        hess = hess.expand_dims(-3) * insert_axes(self.frac, 5) * self.frac.s
+        fmfn = _sb.insert_axes(self.frac, 5) * self.frac.s
+        hess = hess.expand_dims(-3) * fmfn
         # (2,n(n-1),2,n(n-1))
         hess = mp.mat_to_params(hess, **self.directed(
             axes=((-5, -4), (-2, -1)), daxis=(-6, -3)))
@@ -506,7 +516,7 @@ class SynapseOptModel(SynapseMemoryModel):
         func : la.lnarray (2,) or (1,)
             Value of ``[CondThresh - cond(Z)] / CondThresh``.
         """
-        if not well_behaved(self, rate, False):
+        if not _sm.well_behaved(self, rate, False):
             nout = 1 if rate is None else 2
             return -np.ones(nout)
         if kwds.pop('svd', False):
@@ -532,7 +542,7 @@ class SynapseOptModel(SynapseMemoryModel):
         func : la.lnarray (2,2n(n-1)) or (1,2n(n-1))
             Gradient of ``[CondThresh - cond(Z)] / CondThresh``.
         """
-        if not well_behaved(self, rate, False):
+        if not _sm.well_behaved(self, rate, False):
             nout = 1 if rate is None else 2
             return bld.RNG.random((nout, self.nparam))
         kwds['svd'] = True
@@ -652,8 +662,8 @@ def _outer3(vec1: la.lnarray, mat: la.lnarray, vec2: la.lnarray) -> la.lnarray:
     """Outer product of vector, matrix and vector.
     Returns: tens: lnarray (2,...,n,n,n,n) - 2nd array is transpose of 1st
     """
-    return _dbl_diagsub(insert_axes(vec1, 3) * mat.expand_dims((-4, -1))
-                        * insert_axes(vec2, 3, -2))
+    return _dbl_diagsub(_sb.insert_axes(vec1, 3) * mat.expand_dims((-4, -1))
+                        * _sb.insert_axes(vec2, 3, -2))
 
 
 def _outer3p(vec1: la.lnarray, mat1: Union[la.lnarray, la.invarray],
@@ -680,6 +690,24 @@ def _dbl_diagsub(tens: la.lnarray) -> la.lnarray:
     """
     tens_trn = _diagsub(_trnsp4(_diagsub(tens)))
     return np.stack((_trnsp4(tens_trn), tens_trn))
+
+
+def _fund_svd(fundi: Optional[la.lnarray],
+              prev: Tuple[Tuple[la.lnarray, ...], ...] = ((), (), ())
+              ) -> Tuple[Tuple[la.lnarray, ...], ...]:
+    """leading, trailing singular values, vectors: (svs, srow, scol)"""
+    if fundi is None:
+        return prev
+    svs, srow, scol = prev
+    extract = np.s_[::fundi.shape[-1]-1]
+    swap = la.array([[0, 1], [-1, 0]])
+
+    fund_u, fund_s, fund_v = np.linalg.svd(fundi)
+    # svs = diag(smin, -smax) / smin**2
+    svs += (np.diagflat(swap @ fund_s[extract] / fund_s[-1]**2),)
+    srow += (fund_u.h[extract],)
+    scol += (fund_v.h[:, extract],)
+    return svs, srow, scol
 
 
 if __name__ == "__main__":

@@ -6,16 +6,15 @@ from typing import List, Tuple, Union, Sequence
 
 import numpy as np
 import matplotlib as mpl
-from matplotlib.axes import Axes
-from matplotlib.lines import Line2D as Line
-from matplotlib.image import AxesImage as Image
 import matplotlib.colors as mco
 
 import numpy_linalg as la
-from sl_py_tools.containers import tuplify
+import sl_py_tools.containers as cn
 import sl_py_tools.matplotlib_tricks as mpt
 
-from ..synapse_base import array_attrs, ArrayLike
+from .. import synapse_base as _sb
+
+# =============================================================================
 
 
 class PlasticitySequence:
@@ -48,7 +47,7 @@ class PlasticitySequence:
     # Which axis is the time-axis
     t_axis: int
 
-    def __init__(self, plast_type: ArrayLike, readouts: ArrayLike,
+    def __init__(self, plast_type: _sb.ArrayLike, readouts: _sb.ArrayLike,
                  t_axis: int = 0) -> None:
         """The results of an experiment
 
@@ -66,8 +65,7 @@ class PlasticitySequence:
             p_ind = np.s_[:,]*self.t_axis + np.s_[:self.ntime-1,]
             self.plast_type = self.plast_type[p_ind]
 
-    def __getitem__(self, ind: Tuple[Union[int, slice], ...]
-                    ) -> PlasticitySequence:
+    def __getitem__(self, ind: Inds) -> PlasticitySequence:
         return self.view(plast_type=self.plast_type[ind],
                          readouts=self.readouts[ind])
 
@@ -91,7 +89,7 @@ class PlasticitySequence:
 
         Requires `__init__` parameter names to be the same as attribute names.
         """
-        attrs = array_attrs(self)
+        attrs = _sb.array_attrs(self)
         attrs.update(kwds)
         return type(self)(**attrs)
 
@@ -100,7 +98,7 @@ class PlasticitySequence:
 
         Requires `__init__` parameter names to be the same as attribute names.
         """
-        attrs = array_attrs(self)
+        attrs = _sb.array_attrs(self)
         for k in attrs:
             if k not in kwargs.keys():
                 kwargs[k] = attrs[k].copy(order)
@@ -126,9 +124,9 @@ class PlasticitySequence:
         newobj.readouts = np.moveaxis(self.readouts, source, destination)
         newobj.plast_type = np.moveaxis(self.plast_type, source, destination)
         ndim = self.readouts.ndim
-        source = tuple(x % ndim for x in tuplify(source))
+        source = tuple(x % ndim for x in cn.tuplify(source))
         if self.t_axis in source:
-            destination = tuplify(destination)
+            destination = cn.tuplify(destination)
             newobj.t_axis = destination[source.index(self.t_axis)] % ndim
         return newobj
 
@@ -179,7 +177,7 @@ class PlasticitySequence:
         """
         return _dwells(self.readouts.moveaxis(self.t_axis, -1), self.nreadout)
 
-    def plot(self, hnds: Sequence[Union[Image, Axes]], **kwds) -> List[Image]:
+    def plot(self, hnds: Sequence[ImHandle], **kwds) -> List[Image]:
         """Plot heatmaps for plast_type and readouts
 
         Parameters
@@ -234,8 +232,8 @@ class SimPlasticitySequence(PlasticitySequence):
     # which state it is in at each time-step, (T,E), int[0:M]
     states: la.lnarray
 
-    def __init__(self, plast_type: ArrayLike, readouts: ArrayLike,
-                 states: ArrayLike, t_axis: int = 0) -> None:
+    def __init__(self, plast_type: _sb.ArrayLike, readouts: _sb.ArrayLike,
+                 states: _sb.ArrayLike, t_axis: int = 0) -> None:
         """The results of an simulation
 
         Parameters
@@ -250,8 +248,7 @@ class SimPlasticitySequence(PlasticitySequence):
         super().__init__(plast_type, readouts, t_axis=t_axis)
         self.states = la.asanyarray(states)
 
-    def __getitem__(self, ind: Tuple[Union[int, slice], ...]
-                    ) -> SimPlasticitySequence:
+    def __getitem__(self, ind: Inds) -> SimPlasticitySequence:
         newobj = super().__getitem__(ind)
         newobj.states = self.states[ind]
         return newobj
@@ -302,8 +299,7 @@ class SimPlasticitySequence(PlasticitySequence):
         """
         return _dwells(self.states.moveaxis(self.t_axis, -1), self.nstate)
 
-    def plot(self, hnds: Sequence[Union[Image, Line, Axes]], **kwds
-             ) -> List[Union[Image, Line]]:
+    def plot(self, hnds: Sequence[Handle], **kwds) -> List[Plot]:
         """Plot heatmaps for plast_type, readouts and Line for states
 
         Parameters
@@ -318,12 +314,18 @@ class SimPlasticitySequence(PlasticitySequence):
         """
         nplast = kwds.pop('nplast', self.nplast)
         nreadout = kwds.pop('nreadout', self.nreadout)
+        label = kwds.pop('label', 'True path')
         imh = super().plot(hnds[:-1], nplast=nplast, nreadout=nreadout, **kwds)
         kwds['line'] = True
-        kwds['label'] = 'True path'
+        kwds['label'] = label
         kwds.pop('cmap', None)
         imh.append(set_plot(hnds[-1], self.states, **kwds))
         return imh
+
+
+# =============================================================================
+# Helpers
+# =============================================================================
 
 
 def _dwells(values: np.ndarray, num: int) -> List[la.lnarray]:
@@ -353,8 +355,21 @@ def _dwells(values: np.ndarray, num: int) -> List[la.lnarray]:
     return dwells
 
 
-def set_plot(handle: Union[Axes, Image, Line], data: np.ndarray, **kwds
-             ) -> Union[Image, Line]:
+def _pad(array: np.ndarray, axis: int, end: bool = True) -> np.ma.masked_array:
+    """Pad with invalid along one axis"""
+    width = np.zeros((array.ndim, 2), int)
+    width[axis, int(end)] = 1
+    padded = np.pad(array, width, constant_values=-1)
+    return np.ma.masked_equal(padded, -1, copy=False)
+
+
+def _int_bdry_norm(nval: int, cmap: str) -> mco.BoundaryNorm:
+    """BoundaryNorm map for integer values"""
+    cmap = mpl.cm.get_cmap(cmap)
+    return mco.BoundaryNorm(np.arange(nval + 1.) - 0.5, cmap.N)
+
+
+def set_plot(handle: Handle, data: np.ndarray, **kwds) -> Plot:
     """Make/update heatmaps or Lines
 
     Parameters
@@ -376,7 +391,7 @@ def set_plot(handle: Union[Axes, Image, Line], data: np.ndarray, **kwds
         data = data[::-1] if trn else data
     else:
         data = data.T if trn else data
-    if isinstance(handle, Axes):
+    if isinstance(handle, mpl.axes.Axes):
         if line:
             return handle.plot(*data, **kwds)[0]
         return handle.matshow(data, **kwds)
@@ -384,15 +399,11 @@ def set_plot(handle: Union[Axes, Image, Line], data: np.ndarray, **kwds
     return handle
 
 
-def _pad(array: np.ndarray, axis: int, end: bool = True) -> np.ma.masked_array:
-    """Pad with invalid along one axis"""
-    width = np.zeros((array.ndim, 2), int)
-    width[axis, int(end)] = 1
-    padded = np.pad(array, width, constant_values=-1)
-    return np.ma.masked_equal(padded, -1, copy=False)
-
-
-def _int_bdry_norm(nval: int, cmap: str) -> mco.BoundaryNorm:
-    """BoundaryNorm map for integer values"""
-    cmap = mpl.cm.get_cmap(cmap)
-    return mco.BoundaryNorm(np.arange(nval + 1.) - 0.5, cmap.N)
+# =============================================================================
+# Hinting Aliases
+# =============================================================================
+Inds = Tuple[Union[int, slice], ...]
+Image = mpl.image.AxesImage
+Handle = Union[mpl.axes.Axes, mpl.lines.Line2D, Image]
+Plot = Union[mpl.lines.Line2D, Image]
+ImHandle = Union[mpl.axes.Axes, Image]

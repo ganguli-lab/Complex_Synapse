@@ -2,51 +2,52 @@
 """
 from __future__ import annotations
 
-from typing import ClassVar, Dict, Optional, Tuple, Union
+from typing import ClassVar, Dict, Optional, Tuple
 
 import numpy as np
 
 import numpy_linalg as la
-from sl_py_tools.arg_tricks import default_eval
-from sl_py_tools.iter_tricks import rzenumerate, zenumerate
+import sl_py_tools.arg_tricks as ag
+import sl_py_tools.iter_tricks as it
 
-from ..builders import scalarise
-from .fit_synapse import GroundedFitter, SynapseFitter
-from .plast_seq import (Axes, Image, Line, PlasticitySequence,
-                        SimPlasticitySequence, set_plot)
-from .synapse_id import SynapseIdModel
+from .. import synapse_base as _sb
+from . import plast_seq as ps
+from . import synapse_id as si
+from . import fit_synapse as _fs
+
 # =============================================================================
 
 
-def likelihood(model: SynapseIdModel, expt: PlasticitySequence) -> float:
-    """Likelihood of observed readouts given model
+def likelihood(model: si.SynapseIdModel, data: ps.PlasticitySequence) -> float:
+    """Negative log-likelihood of observed readouts given model
 
     Parameters
     ----------
     model : SynapseIdModel
         The current model estimate
-    expt : PlasticitySequence
+    data : PlasticitySequence
         The data to use for the update
 
     Returns
     -------
-    nlog_like : float
+    nlike : float
         `-log(P(readouts|model))`
     """
     # (T,E,M,M),(E,M) - makes a copy :(
-    update, initial = get_updaters(model, expt)[:2]
+    update, initial = _get_updaters(model, data)[:2]
     # _,_,(T,E)->()
-    return scalarise(np.log(calc_alpha_beta(update, initial)[2]).sum())
+    return _sb.scalarise(np.log(_calc_alpha_beta(update, initial)[2]).sum())
 
 
-def state_est(model: SynapseIdModel, expt: PlasticitySequence) -> la.lnarray:
+def state_est(model: si.SynapseIdModel, data: ps.PlasticitySequence
+              ) -> la.lnarray:
     """Marginal probability of state occupation at each time
 
     Parameters
     ----------
     model : SynapseIdModel
         The current model estimate
-    expt : PlasticitySequence
+    data : PlasticitySequence
         The data to use for the update
 
     Returns
@@ -55,23 +56,29 @@ def state_est(model: SynapseIdModel, expt: PlasticitySequence) -> la.lnarray:
         Current estimate of marginal occupation
     """
     # (T,E,M,M),(E,M) - makes a copy :(
-    update, initial = get_updaters(model, expt)[:2]
+    update, initial = _get_updaters(model, data)[:2]
     # (T,E,M),(T,E,M),_,
-    alpha, beta = calc_alpha_beta(update, initial)[:2]
+    alpha, beta = _calc_alpha_beta(update, initial)[:2]
     # (T,E,M)
     return alpha * beta
 
 
-def model_est(model: SynapseIdModel, expt: PlasticitySequence,
-              steady: bool = True) -> la.lnarray:
+def model_est(model: si.SynapseIdModel, data: ps.PlasticitySequence,
+              steady: bool = True, combine: bool = True) -> la.lnarray:
     """New, unnormalised estimate of the model
 
     Parameters
     ----------
     model : SynapseIdModel
         The current model estimate
-    expt : PlasticitySequence
+    data : PlasticitySequence
         The data to use for the update
+    steady : bool, optional
+        Can we assume that `initial` is the steady-state?
+        If `True`, we can use all times to estimate `initial`.
+        If `False`, we can only use `t=0`. By default `True`.
+    combine: bool
+        Should we sum over experiments? By default `True`.
 
     Returns
     -------
@@ -81,13 +88,13 @@ def model_est(model: SynapseIdModel, expt: PlasticitySequence,
         new estimate of distribution of initial state (unnormalised).
     """
     # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
-    update, initial, plast_type = get_updaters(model, expt)
+    update, initial, plast_type = _get_updaters(model, data)
     # (T,E,M),(T,E,M),(T,E),
-    alpha, beta, eta = calc_alpha_beta(update, initial)
+    alpha, beta, eta = _calc_alpha_beta(update, initial)
 
     # (P,M,M),(M,)
-    return calc_model(update, plast_type, alpha, beta, eta,
-                      steady=steady, nplast=model.nplast)
+    return _calc_model(update, plast_type, alpha, beta, eta,
+                       steady=steady, combine=combine, nplast=model.nplast)
 
 
 # =============================================================================
@@ -95,15 +102,15 @@ def model_est(model: SynapseIdModel, expt: PlasticitySequence,
 # =============================================================================
 
 
-def get_updaters(model: SynapseIdModel, expt: PlasticitySequence,
-                 ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+def _get_updaters(model: si.SynapseIdModel, data: ps.PlasticitySequence,
+                  ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
     """Get updater matrices for each time-step
 
     Parameters
     ----------
     model : SynapseIdModel
         The model to update, modified in-place
-    expt : PlasticitySequence
+    data : PlasticitySequence
         The data to use for the update
 
     Returns
@@ -115,19 +122,19 @@ def get_updaters(model: SynapseIdModel, expt: PlasticitySequence,
     plast_type : la.lnarray, (T-1,E), int[0:P]
         id of plasticity type after each time-step
     """
-    expt = expt.moveaxis(expt.t_axis, 0)
+    data = data.moveaxis(data.t_axis, 0)
     # (R,P,M,M),(R,M)
     updaters, initial = model.updaters()
     # (T-1,E,M,M) - makes a copy :(
-    updaters = updaters[expt.readouts[1:], expt.plast_type]
+    updaters = updaters[data.readouts[1:], data.plast_type]
     # (E,M)
-    initial = initial[expt.readouts[0]]
+    initial = initial[data.readouts[0]]
     # (T-1,E,M,M),(E,M),(T-1,E),
-    return updaters, initial, expt.plast_type
+    return updaters, initial, data.plast_type
 
 
-def calc_alpha_beta(updaters: la.lnarray, initial: la.lnarray
-                    ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+def _calc_alpha_beta(updaters: la.lnarray, initial: la.lnarray
+                     ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
     """Calculate BW forward/backward variables, (T,E,M),(T,E,M),(T,E),
 
     Parameters
@@ -157,21 +164,20 @@ def calc_alpha_beta(updaters: la.lnarray, initial: la.lnarray
     # (E,1,M),(E,1,1)
     alpha[0] = initial.r
     norm(0)
-    for i, updater in zenumerate(updaters):
+    for i, updater in it.zenumerate(updaters):
         alpha[i+1] = alpha[i] @ updater
         norm(i+1)
     # (E,M,1)
     beta[-1] = 1.
-    for i, updater in rzenumerate(updaters):
+    for i, updater in it.rzenumerate(updaters):
         beta[i] = updater @ beta[i+1] * eta[i+1]
     return alpha.ur, beta.uc, eta.us
 
 
-def calc_model(updaters: la.lnarray, plast_type: la.lnarray,
-               alpha: la.lnarray, beta: la.lnarray, eta: la.lnarray, *,
-               steady: bool = True, combine: bool = True, normed: bool = True,
-               nplast: Optional[int] = None
-               ) -> Tuple[la.lnarray, la.lnarray]:
+def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
+                alpha: la.lnarray, beta: la.lnarray, eta: la.lnarray, *,
+                steady: bool = True, combine: bool = True, normed: bool = True,
+                nplast: Optional[int] = None) -> Tuple[la.lnarray, la.lnarray]:
     """One Baum-Welch/Rabiner-Juang update of the model
 
     Parameters
@@ -208,7 +214,7 @@ def calc_model(updaters: la.lnarray, plast_type: la.lnarray,
     initial : array_like, (M,) float[0:1]
         new estimate of distribution of initial state.
     """
-    nplast = default_eval(nplast, plast_type.max)
+    nplast = ag.default_eval(nplast, plast_type.max)
     nexpt = plast_type.shape[1:]
     if not combine:
         # (E,P,M,M)
@@ -217,7 +223,7 @@ def calc_model(updaters: la.lnarray, plast_type: la.lnarray,
         initial = np.empty(nexpt + updaters.shape[-1:])
         for i in np.ndindex(*nexpt):
             j = np.s_[:,] + i
-            plast[i], initial[i] = calc_model(
+            plast[i], initial[i] = _calc_model(
                 updaters[j], plast_type[j], alpha[j], beta[j], eta[j],
                 steady=steady, combine=False, normed=normed, nplast=nplast)
 
@@ -243,16 +249,16 @@ def calc_model(updaters: la.lnarray, plast_type: la.lnarray,
 # =============================================================================
 
 
-class BaumWelchFitter(SynapseFitter):
+class BaumWelchFitter(_fs.SynapseFitter):
     """Class that performs Baum-Welch/Rabiner-Juang EM updates.
 
     Parameters
     ----------
     data : SimPlasticitySequence
         The simulated data used to fit the synapse model.
-    model : SynapseIdModel
+    est : SynapseIdModel
         The initial guess/current estimate of the synapse model.
-    Other keywords added to `self.stats` (see `SynapseFitter`).
+    Other keywords added to `self.opt` (see `SynapseFitter`).
 
     Attributes
     ----------
@@ -292,41 +298,39 @@ class BaumWelchFitter(SynapseFitter):
                                          'normed': True}
 
 
-    def __init__(self, data: PlasticitySequence, model: SynapseIdModel, **kwds
-                 ) -> None:
-        super().__init__(data, model, **kwds)
+    def __init__(self, data: ps.PlasticitySequence, est: si.SynapseIdModel,
+                 **kwds) -> None:
+        super().__init__(data, est, **kwds)
         # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
-        update, initial, _ = get_updaters(self.model, self.data)
+        update, initial, _ = _get_updaters(self.est, self.data)
         # (T,E,M),(T,E,M),(T,E),
-        self.alpha, self.beta, self.eta = calc_alpha_beta(update, initial)
-        self.stats['nlog_like'] = scalarise(np.log(self.eta).sum())
+        self.alpha, self.beta, self.eta = _calc_alpha_beta(update, initial)
+        self.info['nlike'] = _sb.scalarise(np.log(self.eta).sum())
 
-    def update_stats(self) -> None:
+    def update_info(self) -> None:
         """Calculate stats for termination and display.
         """
-        super().update_stats()
-        nlog_like = scalarise(np.log(self.eta).sum())
-        self.stats['dnlog_like'] = self.stats['nlog_like'] - nlog_like
-        self.stats['nlog_like'] = nlog_like
+        super().update_info()
+        nlike = _sb.scalarise(np.log(self.eta).sum())
+        self.info['dlike'] = self.info['nlike'] - nlike
+        self.info['nlike'] = nlike
 
-    def update_model(self) -> None:
+    def update_fit(self) -> None:
         """Perform a single update of the model"""
         # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
-        update, initial, plast_type = get_updaters(self.model, self.data)
+        update, initial, plast_type = _get_updaters(self.est, self.data)
         # (T,E,M),(T,E,M),(T,E),
-        self.alpha, self.beta, self.eta = calc_alpha_beta(update, initial)
+        self.alpha, self.beta, self.eta = _calc_alpha_beta(update, initial)
 
         # (P,M,M),(M,)
-        self.model.plast, self.model.initial = calc_model(
+        self.est.plast, self.est.initial = _calc_model(
             update, plast_type, self.alpha, self.beta, self.eta,
-            nplast=self.model.nplast, **self.bw_opt)
+            nplast=self.est.nplast, **self.bw_opt)
 
         if self.bw_opt['normed']:
-            self.model.sort(group=True)
+            self.est.sort(group=True)
 
-    def plot_occ(self, handle: Union[Axes, Image, Line],
-                 ind: Tuple[Union[int, slice], ...],
-                 **kwds) -> Union[Image, Line]:
+    def plot_occ(self, handle: ps.Handle, ind: ps.Inds, **kwds) -> ps.Plot:
         """Plot current estimate of state occupation
 
         Parameters
@@ -345,7 +349,7 @@ class BaumWelchFitter(SynapseFitter):
         # (T.M)
         state_prob = self.alpha[ind] * self.beta[ind]
         state_prob = state_prob if trn else state_prob.T
-        return set_plot(handle, state_prob, **kwds)
+        return ps.set_plot(handle, state_prob, **kwds)
 
 
 # =============================================================================
@@ -353,18 +357,18 @@ class BaumWelchFitter(SynapseFitter):
 # =============================================================================
 
 
-class GroundedBWFitter(GroundedFitter, BaumWelchFitter):
+class GroundedBWFitter(_fs.GroundedFitter, BaumWelchFitter):
     """Class that performs BW/RJ EM updates with known ground-truth.
 
     Parameters
     ----------
     data : SimPlasticitySequence
         The simulated data used to fit the synapse model.
-    model : SynapseIdModel
+    est : SynapseIdModel
         The initial guess/current estimate of the synapse model.
     truth : SynapseIdModel
         The model used to generate `data`.
-    Other keywords added to `self.stats` (see `SynapseFitter`).
+    Other keywords added to `self.opt` (see `SynapseFitter`).
 
     Attributes
     ----------
@@ -381,8 +385,8 @@ class GroundedBWFitter(GroundedFitter, BaumWelchFitter):
     true_dmodel : float
         Distance between `truth` and `model`.
     true_dlike : float
-        `nlog_like - true_like`.
-    All of the above are stored in `self.stats`.
+        `nlike - true_like`.
+    All of the above are stored in `self.info`.
     See `SynapseFitter` for other statistics.
 
     Options
@@ -403,42 +407,17 @@ class GroundedBWFitter(GroundedFitter, BaumWelchFitter):
     SynapseFitter, GroundedFitter, BaumWelchFitter.
     """
 
-    def __init__(self, data: SimPlasticitySequence, model: SynapseIdModel,
-                 truth: SynapseIdModel, **kwds) -> None:
-        super().__init__(data, model, truth=truth, **kwds)
-        if 'truth' in self.stats:
-            self.truth = self.stats.pop('truth')
-        self.stats['true_like'] = likelihood(self.truth, self.data)
-        self.stats['y_scale'] = self.stats['true_like']
-        self.stats['true_dlike'] = (self.stats['nlog_like']
-                                    - self.stats['true_like'])
+    def __init__(self, data: ps.SimPlasticitySequence, est: si.SynapseIdModel,
+                 truth: si.SynapseIdModel, **kwds) -> None:
+        super().__init__(data, est, truth=truth, **kwds)
+        if 'truth' in self.info:
+            self.truth = self.info.pop('truth')
+        self.info['true_like'] = likelihood(self.truth, self.data)
+        self.info['y_scale'] = self.info['true_like']
+        self.info['true_dlike'] = self.info['nlike'] - self.info['true_like']
 
-    def update_stats(self) -> None:
+    def update_info(self) -> None:
         """Calculate stats for termination and display.
         """
-        super().update_stats()
-        self.stats['true_dlike'] = (self.stats['nlog_like']
-                                    - self.stats['true_like'])
-
-    # def update_model(self) -> None:
-    #     """Perform a single update of the model"""
-    #     super().update_model()
-
-    # def plot_occ(self, handle: Union[Axes, Image, Line],
-    #              ind: Tuple[Union[int, slice], ...],
-    #              **kwds) -> Union[Image, Line]:
-    #     """Plot current estimate of state occupation
-
-    #     Parameters
-    #     ----------
-    #     handle : Union[Axes, Image, Line]
-    #         Axes to plot on, or Image/Lines to update with new data
-    #     ind : Tuple[Union[int, slice], ...]
-    #         Time, experiment indices/slices to plot
-
-    #     Returns
-    #     -------
-    #     imh : Union[Image, Line]
-    #         Image/Line objects for the plots
-    #     """
-    #     return super().plot_occ(handle, ind, **kwds)
+        super().update_info()
+        self.info['true_dlike'] = self.info['nlike'] - self.info['true_like']
