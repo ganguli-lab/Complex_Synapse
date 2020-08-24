@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Sep 18 16:06:34 2017
-
-@author: Subhy
+"""Class for complex synapses, suitable for optimisation
 """
 from __future__ import annotations
 
@@ -14,7 +11,7 @@ import numpy as np
 import numpy_linalg as la
 import sl_py_tools.numpy_tricks.markov.params as mp
 
-from .. import builders as bld
+from .. import builders as _bld
 from .. import synapse_mem as _sm
 from .. import synapse_base as _sb
 # =============================================================================
@@ -250,7 +247,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             Gradient of ``snr_laplace`` at ``s`` with respect to parameters.
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
-            return bld.RNG.random(self.nparam)
+            return _bld.RNG.random(self.nparam)
         # (p,c), (eta,theta)
         rows, cols, _ = self._derivs(rate, **kwds)
 
@@ -278,7 +275,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             Hessian of ``snr_laplace`` at ``s`` with respect to parameters.
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
-            return bld.RNG.random((self.nparam,) * 2)
+            return _bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
         rows, cols, mats = self._derivs(rate, **kwds)
@@ -322,7 +319,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             ``snr_laplace`` at ``s`` with respect to parameters.
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
-            return bld.RNG.random(self.nparam)
+            return _bld.RNG.random(self.nparam)
         # (p,c), (eta,theta), (Zi,Zis)
         kwds.setdefault('inv', False)
         rows, cols, mats = self._derivs(rate, **kwds)
@@ -427,7 +424,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             Gradient of ``func`` with respect to parameters.
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
-            return -bld.RNG.random((self.nplast*self.nstate**2, self.nparam,))
+            return -_bld.RNG.random((self.nplast*self.nstate**2, self.nparam,))
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
         rows, _, mats = self._derivs(None, **kwds)
@@ -464,7 +461,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             Hessian of ``peq_min_fun(rate) @ lag`` with respect to parameters.
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
-            return bld.RNG.random((self.nparam,) * 2)
+            return _bld.RNG.random((self.nparam,) * 2)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
         rows, _, mats = self._derivs(None, **kwds)
@@ -530,7 +527,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         """
         if not _sm.well_behaved(self, rate, False):
             nout = 1 if rate is None else 2
-            return bld.RNG.random((nout, self.nparam))
+            return _bld.RNG.random((nout, self.nparam))
         kwds['svd'] = True
         # (p,c,U.h), (eta,theta,V), (Z,Zs,ZQZs,S)
         row, col, svs = [drv[-1] for drv in self._derivs(rate, **kwds)]
@@ -629,7 +626,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         if npar is None:
             npl = kwds.get('npl', len(cls.directions))
             npar = npl * mp.num_param(nst, **cls.directed(0))
-        return cls.from_params(bld.RNG.random(npar), *args, nst=nst, **kwds)
+        return cls.from_params(_bld.RNG.random(npar), *args, nst=nst, **kwds)
 
 
 # =============================================================================

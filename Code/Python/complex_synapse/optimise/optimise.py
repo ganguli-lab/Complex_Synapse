@@ -11,22 +11,22 @@ import numpy as np
 import scipy.optimize as sco
 
 import numpy_linalg as la
-import sl_py_tools.arg_tricks as ag
-import sl_py_tools.containers as cn
-import sl_py_tools.iter_tricks as it
-import sl_py_tools.numpy_tricks.markov.params as mp
+import sl_py_tools.arg_tricks as _ag
+import sl_py_tools.containers as _cn
+import sl_py_tools.iter_tricks as _it
+import sl_py_tools.numpy_tricks.markov.params as _mp
 
-from .. import builders as bld
-from . import shorten as sh
-from . import sticky as st
-from . import synapse_opt as so
+from .. import builders as _bld
+from . import shorten as _sh
+from . import sticky as _st
+from . import synapse_opt as _so
 
 # =============================================================================
 # Problem creation helper functions
 # =============================================================================
 
 
-def constraint_coeff(model: so.SynapseOptModel) -> la.lnarray:
+def constraint_coeff(model: _so.SynapseOptModel) -> la.lnarray:
     """Coefficient matrix for upper bound on off-diagonal row sums.
 
     Parameters
@@ -49,7 +49,7 @@ def constraint_coeff(model: so.SynapseOptModel) -> la.lnarray:
     return coeffs
 
 
-def make_fn(model: so.SynapseOptModel, method: str, *args, **kwds) -> Func:
+def make_fn(model: _so.SynapseOptModel, method: str, *args, **kwds) -> Func:
     """Make a loss function from model, method and value
     """
     if isinstance(method, str):
@@ -65,7 +65,7 @@ def make_fn(model: so.SynapseOptModel, method: str, *args, **kwds) -> Func:
     return loss_function
 
 
-def cond_limit(model: so.SynapseOptModel, rate: Number,
+def cond_limit(model: _so.SynapseOptModel, rate: float,
                keep_feasible: bool = False, **kwds) -> sco.NonlinearConstraint:
     """Create a constraint on the condition number
     """
@@ -111,16 +111,16 @@ def conv_constraint(constraint: Constraint) -> List[dict]:
 def set_param_opts(opts: Optional[dict] = None):
     """Set options dict for SynapseOptModel Markov processes.
     """
-    opts = ag.default(opts, {})
+    opts = _ag.default(opts, {})
     # set opts
-    so.SynapseOptModel.CondThresh = opts.pop('CondThresh', 1e4)
-    so.SynapseOptModel.type['serial'] = opts.pop('serial', False)
-    so.SynapseOptModel.type['ring'] = opts.pop('ring', False)
-    so.SynapseOptModel.type['uniform'] = opts.pop('uniform', False)
-    if any(so.SynapseOptModel.type.values()):
-        so.SynapseOptModel.directions = opts.pop('drn', (1, -1))
+    _so.SynapseOptModel.CondThresh = opts.pop('CondThresh', 1e4)
+    _so.SynapseOptModel.type['serial'] = opts.pop('serial', False)
+    _so.SynapseOptModel.type['ring'] = opts.pop('ring', False)
+    _so.SynapseOptModel.type['uniform'] = opts.pop('uniform', False)
+    if any(_so.SynapseOptModel.type.values()):
+        _so.SynapseOptModel.directions = opts.pop('drn', (1, -1))
     else:
-        so.SynapseOptModel.directions = opts.pop('drn', (0, 0))
+        _so.SynapseOptModel.directions = opts.pop('drn', (0, 0))
 
 
 def get_model_opts(opts: Optional[dict] = None) -> dict:
@@ -131,15 +131,15 @@ def get_model_opts(opts: Optional[dict] = None) -> dict:
     modelopts : dict
         Options for `Synapse*Model` instances.
     """
-    opts = ag.default(opts, {})
+    opts = _ag.default(opts, {})
     modelopts = opts.pop('modelopts', {})
     modelopts.setdefault('frac', opts.pop('frac', 0.5))
     modelopts.setdefault('binary', opts.pop('binary', True))
-    modelopts.setdefault('npl', len(so.SynapseOptModel.directions))
+    modelopts.setdefault('npl', len(_so.SynapseOptModel.directions))
     return modelopts
 
 
-def make_model(opts: Optional[dict] = None, **kwds) -> so.SynapseOptModel:
+def make_model(opts: Optional[dict] = None, **kwds) -> _so.SynapseOptModel:
     """Make a SynapseOptModel from options dict.
 
     `kwds` are added to `opts`, then all model related options are popped.
@@ -149,7 +149,7 @@ def make_model(opts: Optional[dict] = None, **kwds) -> so.SynapseOptModel:
     model : SynapseOptModel
         An instance to use in loss functions etc
     """
-    opts = ag.default(opts, {})
+    opts = _ag.default(opts, {})
     opts.update(kwds)
     model = opts.pop('model', None)
     params = opts.pop('params', None)
@@ -159,17 +159,17 @@ def make_model(opts: Optional[dict] = None, **kwds) -> so.SynapseOptModel:
     set_param_opts(opts)
     modelopts = get_model_opts(opts)
     if params is not None:
-        return so.SynapseOptModel.from_params(params, **modelopts)
-    paramopts = so.SynapseOptModel.type.copy()
-    paramopts['drn'] = so.SynapseOptModel.directions[0]
+        return _so.SynapseOptModel.from_params(params, **modelopts)
+    paramopts = _so.SynapseOptModel.type.copy()
+    paramopts['drn'] = _so.SynapseOptModel.directions[0]
     npl = modelopts.get('npl', 2)
     if nst is not None:
-        npar = ag.default(npar, npl * mp.num_param(nst, **paramopts))
+        npar = _ag.default(npar, npl * _mp.num_param(nst, **paramopts))
     if npar is not None and not paramopts['uniform']:
-        nst = ag.default(nst, mp.num_state(npar // npl, **paramopts))
+        nst = _ag.default(nst, _mp.num_state(npar // npl, **paramopts))
     if None in {nst, npar}:
         raise TypeError("Must specify one of [model, params, nst, npar]")
-    return so.SynapseOptModel.rand(nst=nst, npar=npar, **modelopts)
+    return _so.SynapseOptModel.rand(nst=nst, npar=npar, **modelopts)
 
 
 # =============================================================================
@@ -177,7 +177,7 @@ def make_model(opts: Optional[dict] = None, **kwds) -> so.SynapseOptModel:
 # =============================================================================
 
 
-def make_problem(maker: Maker, rate: Number, **kwds) -> dict:
+def make_problem(maker: Maker, rate: float, **kwds) -> dict:
     """Make an optimize problem.
     """
     model = make_model(kwds)
@@ -192,7 +192,7 @@ def make_problem(maker: Maker, rate: Number, **kwds) -> dict:
     x_init = model.get_params()
     fun, jac, hess, bounds, constraints = maker(model, rate, **opts)
     if not opts['inv']:
-        constraints = cn.map_join(conv_constraint, constraints)
+        constraints = _cn.map_join(conv_constraint, constraints)
 
     problem = {'fun': fun, 'x0': x_init, 'jac': jac, 'hess': hess,
                'bounds': bounds, 'constraints': constraints}
@@ -202,7 +202,7 @@ def make_problem(maker: Maker, rate: Number, **kwds) -> dict:
     return problem
 
 
-def normal_problem(model: so.SynapseOptModel, rate: Number, inv: bool = False,
+def normal_problem(model: _so.SynapseOptModel, rate: float, inv: bool = False,
                    keep_feasible: bool = False, **kwds) -> Problem:
     """Make an optimize problem.
     """
@@ -226,11 +226,11 @@ def normal_problem(model: so.SynapseOptModel, rate: Number, inv: bool = False,
 # -----------------------------------------------------------------------------
 
 
-def shifted_problem(model: so.SynapseOptModel, rate: Number, inv: bool = False,
+def shifted_problem(model: _so.SynapseOptModel, rate: float, inv: bool = False,
                     keep_feasible: bool = False, **kwds) -> Problem:
     """Make an optimize problem with rate shifted to constraints.
     """
-    if any(so.SynapseOptModel.type.values()):
+    if any(_so.SynapseOptModel.type.values()):
         raise ValueError('Shifted problem cannot have special topology')
 
     svd = kwds.pop('svd', False)
@@ -247,7 +247,7 @@ def shifted_problem(model: so.SynapseOptModel, rate: Number, inv: bool = False,
     if svd:
         lims = [lims, cond_limit(model, None, keep_feasible, inv=True)]
 
-    return fun, jac, hess, bounds, cn.listify(lims)
+    return fun, jac, hess, bounds, _cn.listify(lims)
 
 
 # =============================================================================
@@ -258,7 +258,7 @@ def shifted_problem(model: so.SynapseOptModel, rate: Number, inv: bool = False,
 def update_laplace_problem(problem: dict):
     """Update an optimize problem with new x_init.
     """
-    problem['x0'] = bld.RNG.random(problem['x0'].size)
+    problem['x0'] = _bld.RNG.random(problem['x0'].size)
 
 
 def check_trust_constr(sol: np.ndarray, con: Constraint
@@ -291,7 +291,7 @@ def constr_violation(prob: dict, result: sco.OptimizeResult) -> bool:
     if bounds is not None:
         maxcv = max(maxcv, (solution - bounds.ub).max())
         maxcv = max(maxcv, (bounds.lb - solution).max())
-    for cons in cn.listify(prob.get('constraints', [])):
+    for cons in _cn.listify(prob.get('constraints', [])):
         kind, vals = cons['type'] == 'eq', cons['fun'](solution)
         maxcv = max(maxcv, np.fabs(vals).max() if kind else - vals.min())
     return maxcv
@@ -311,7 +311,7 @@ def verify_solution(prob: dict, result: sco.OptimizeResult) -> bool:
     if bounds is not None:
         if (solution < bounds.lb).any() or (solution > bounds.ub).any():
             return False
-    for cons in cn.listify(prob.get('constraints', [])):
+    for cons in _cn.listify(prob.get('constraints', [])):
         if _fail_cons(solution, cons, itol):
             return False
     return True
@@ -333,7 +333,7 @@ def first_good(prob: dict) -> sco.OptimizeResult:
     """First solution that satisfies constraints"""
     max_tries = prob.pop('max_tries', 100)
     res = sco.OptimizeResult()
-    for _ in it.dcount('tries', max_tries):
+    for _ in _it.dcount('tries', max_tries):
         res = sco.minimize(**prob)
         if verify_solution(prob, res):
             break
@@ -341,15 +341,15 @@ def first_good(prob: dict) -> sco.OptimizeResult:
     return res
 
 
-def optim_laplace(rate: Number, nst: Optional[int] = None, *,
-                  model: Optional[so.SynapseOptModel] = None,
+def optim_laplace(rate: float, nst: Optional[int] = None, *,
+                  model: Optional[_so.SynapseOptModel] = None,
                   maker: Maker = normal_problem, **kwds) -> sco.OptimizeResult:
     """Optimised model at one value of rate
     """
     repeats = kwds.pop('repeats', 0)
     prob = make_problem(maker, rate, nst=nst, model=model, **kwds)
     res = first_good(prob)
-    for _ in it.dcount('repeats', repeats, disp_step=1):
+    for _ in _it.dcount('repeats', repeats, disp_step=1):
         update_laplace_problem(prob)
         new_res = sco.minimize(**prob)
         if verify_solution(prob, new_res) and new_res.fun < res.fun:
@@ -366,8 +366,8 @@ def optim_laplace_range(rates: np.ndarray, nst: int,
     model = make_model(kwds, nst=nst)
     snr = la.empty_like(rates)
     models = la.empty((len(rates), model.nparam))
-    with it.delay_warnings():
-        for i, rate in it.denumerate('rate', rates):
+    with _it.delay_warnings():
+        for i, rate in _it.denumerate('rate', rates):
             res = optim_laplace(rate, model=model, **kwds)
             snr[i] = - res.fun
             models[i] = res.x
@@ -380,8 +380,8 @@ def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
     """Reoptimised model at many values of rate
     """
     model = make_model(kwds, params=models[inds[0]])
-    with it.delay_warnings():
-        for ind, rate in it.dzip('rate', inds, rates[inds]):
+    with _it.delay_warnings():
+        for ind, rate in _it.dzip('rate', inds, rates[inds]):
             res = optim_laplace(rate, model=model, **kwds)
             if - res.fun > snr[ind]:
                 snr[ind] = - res.fun
@@ -407,7 +407,7 @@ def check_cond_range(rates: np.ndarray, models: np.ndarray,
     """
     cnd = la.empty_like(rates)
     model = make_model(kwds, params=models[0])
-    for i, rate, params in it.zenumerate(rates, models):
+    for i, rate, params in _it.zenumerate(rates, models):
         model.set_params(params)
         cnd[i] = model.cond(rate, rate_max=True)
     return cnd
@@ -452,12 +452,12 @@ def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
         Putative maximum A(s) for all models.
     """
     rate = la.array(rate)
-    s_two = rate >= sh.s_star(2)
-    s_sticky = rate < sh.s_star(nst)
+    s_two = rate >= _sh.s_star(2)
+    s_sticky = rate < _sh.s_star(nst)
     s_short = np.logical_not(np.logical_or(s_two, s_sticky))
-    env_two = sh.short_star_s(rate[s_two], 2)
-    env_short = sh.uni_star_s(rate[s_short])
-    env_sticky = st.sticky_star_s(rate[s_sticky], nst)
+    env_two = _sh.short_star_s(rate[s_two], 2)
+    env_short = _sh.uni_star_s(rate[s_short])
+    env_sticky = _st.sticky_star_s(rate[s_sticky], nst)
     return np.concatenate((env_sticky, env_short, env_two))
 
 
@@ -467,6 +467,6 @@ def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
 Data = TypeVar('Data', Number, np.ndarray)
 Func = Callable[[np.ndarray], Data]
 Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint]
-Problem = Tuple[Func[Number], Func[np.ndarray], Func[np.ndarray],
+Problem = Tuple[Func[float], Func[np.ndarray], Func[np.ndarray],
                 sco.Bounds, List[Constraint]]
-Maker = Callable[[so.SynapseOptModel, Number, bool, bool], Problem]
+Maker = Callable[[_so.SynapseOptModel, float, bool, bool], Problem]

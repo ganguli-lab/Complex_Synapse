@@ -33,8 +33,8 @@ from typing import Dict, Tuple, Callable
 import numpy as np
 
 import numpy_linalg as la
-import sl_py_tools.numpy_tricks.markov as ma
-import sl_py_tools.numpy_tricks.markov.params as mp
+import sl_py_tools.numpy_tricks.markov as _ma
+import sl_py_tools.numpy_tricks.markov.params as _mp
 
 RNG = la.random.default_rng()
 MatFunc = Callable[[int, int], la.lnarray]
@@ -105,9 +105,9 @@ def serial_trans(nst: int, npl: int = 2, jmp: float = 1.) -> la.lnarray:
         raise ValueError("serial mdel has 2 plasticity types")
     if npl == 1:
         # drn scalar, so no broadcast axis. drn = 0, so shape[-1] == 2.
-        return mp.uni_serial_params_to_mat([jmp, jmp], nst, drn=0)
+        return _mp.uni_serial_params_to_mat([jmp, jmp], nst, drn=0)
     # broadcast drn with axis 0. drn != 0, so shape[-1] == 1.
-    return mp.uni_serial_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
+    return _mp.uni_serial_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
 
 
 def cascade_trans(nst: int, npl: int = 2, jmp: float = 0.5) -> la.lnarray:
@@ -130,9 +130,9 @@ def cascade_trans(nst: int, npl: int = 2, jmp: float = 0.5) -> la.lnarray:
         raise ValueError("cascade mdel has 2 plasticity types")
     if npl == 1:
         # drn is scalar, so no broadcast axis. drn = 0, so shape[-1] == 2.
-        return mp.std_cascade_params_to_mat([jmp, jmp], nst, drn=0)
+        return _mp.std_cascade_params_to_mat([jmp, jmp], nst, drn=0)
     # broadcast drn with axis 0. drn != 0, so shape[-1] == 1.
-    return mp.std_cascade_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
+    return _mp.std_cascade_params_to_mat([[jmp], [jmp]], nst, drn=(1, -1))
 
 
 # =============================================================================
@@ -300,7 +300,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False, **kwds) -> SynKWs:
             desired signal contribution from each plasticity type
     """
     kwds.setdefault('rng', RNG)
-    return build_generic(ma.rand_trans, nst, npl, binary, **kwds)
+    return build_generic(_ma.rand_trans, nst, npl, binary, **kwds)
 
 
 def build_serial(nst: int, jmp: float) -> SynKWs:

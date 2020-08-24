@@ -3,7 +3,7 @@
 from typing import Tuple
 
 import numpy as np
-import scipy.optimize as sco
+import scipy.optimize as _sco
 
 from .shorten import Y_STAR, Values
 # =============================================================================
@@ -122,7 +122,7 @@ def limits(num: int, debug: bool = False) -> Tuple[float, float]:
     if num == 2:
         return (0.01, np.exp(-Y_STAR))
     x_0, x_1 = beta_star(num), beta_star(num + 2)
-    lo_sol = sco.root_scalar(lower, args=(num,), x0=x_0, x1=x_1)
+    lo_sol = _sco.root_scalar(lower, args=(num,), x0=x_0, x1=x_1)
     if debug:
         print(lo_sol.flag, eps_star(lo_sol.root, num))
     return lo_sol.root, 0

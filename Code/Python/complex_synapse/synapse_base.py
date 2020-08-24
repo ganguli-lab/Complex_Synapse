@@ -11,9 +11,9 @@ from typing import Any, Dict, Sequence, Tuple, Union, Callable, ClassVar
 import numpy as np
 
 import numpy_linalg as la
-import numpy_linalg.convert as cvl
+import numpy_linalg.convert as _cvl
 
-from . import builders as bld
+from . import builders as _bld
 
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
@@ -77,14 +77,14 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     def __array_ufunc__(self, ufunc: np.ufunc, method: str, *inputs, **kwargs):
         """Handling ufuncs with SynapseBases
         """
-        args, _ = cvl.conv_in_attr('plast', SynapseBase, inputs)
+        args, _ = _cvl.conv_in_attr('plast', SynapseBase, inputs)
 
         conv = [True] + [False] * (ufunc.nout-1)
-        outputs, conv = cvl.conv_in_attr('plast', SynapseBase, kwargs, conv)
+        outputs, conv = _cvl.conv_in_attr('plast', SynapseBase, kwargs, conv)
 
         results = self.plast.__array_ufunc__(ufunc, method, *args, **kwargs)
 
-        return cvl.conv_out_attr(self, 'plast', results, outputs, conv)
+        return _cvl.conv_out_attr(self, 'plast', results, outputs, conv)
 
     # -------------------------------------------------------------------------
     # Housekeeping
@@ -196,7 +196,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         synobj
             SynapseBase instance
         """
-        return cls.build(bld.build_zero, *args, **kwargs)
+        return cls.build(_bld.build_zero, *args, **kwargs)
 
     @classmethod
     def empty(cls, *args, **kwargs) -> SynapseBase:
@@ -224,7 +224,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         synobj
             SynapseBase instance
         """
-        return cls.build(bld.build_empty, *args, **kwargs)
+        return cls.build(_bld.build_empty, *args, **kwargs)
 
     @classmethod
     def rand(cls, nst, *args, **kwargs) -> SynapseBase:
@@ -255,7 +255,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         synobj
             SynapseBase instance
         """
-        return cls.build(bld.build_rand, nst, *args, **kwargs)
+        return cls.build(_bld.build_rand, nst, *args, **kwargs)
 
 
 # =============================================================================

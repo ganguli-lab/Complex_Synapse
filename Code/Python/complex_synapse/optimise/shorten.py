@@ -5,12 +5,12 @@ alpha = exp(beta) from the notes
 from typing import Tuple, TypeVar
 
 import numpy as np
-import scipy.optimize as sco
+import scipy.optimize as _sco
 
 Values = TypeVar('Values', float, np.ndarray)
 # =============================================================================
-_sol = sco.root_scalar(lambda x: np.sinh(x) - np.tanh(x/2) - x, bracket=(1, 2))
-Y_STAR = _sol.root
+Y_STAR = _sco.root_scalar(lambda x: np.sinh(x) - np.tanh(x/2) - x,
+                          bracket=(1, 2)).root
 A_STAR = 2 * np.sinh(Y_STAR / 2)**2 / (Y_STAR * np.cosh(Y_STAR))
 
 
@@ -176,11 +176,11 @@ def limits(num: int, debug: bool = False) -> Tuple[float, float]:
     if num == 2:
         return 0.01, np.exp(-Y_STAR)
     x_0, x_1 = alpha_star(num - 2)[0], alpha_star(num)[0]
-    lo_sol = sco.root_scalar(lower, args=(num,), x0=x_0, x1=x_1)
+    lo_sol = _sco.root_scalar(lower, args=(num,), x0=x_0, x1=x_1)
     if debug:
         print(lo_sol.flag, eps_star(lo_sol.root, num))
     x_0, x_1 = alpha_star(num)[0], alpha_star(num + 2)[0]
-    hi_sol = sco.root_scalar(upper, args=(num,), x0=x_0, x1=x_1)
+    hi_sol = _sco.root_scalar(upper, args=(num,), x0=x_0, x1=x_1)
     if debug:
         print(hi_sol.flag, eps_star(hi_sol.root, num))
     return lo_sol.root, hi_sol.root

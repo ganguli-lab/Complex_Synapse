@@ -10,10 +10,10 @@ from typing import ClassVar, Optional, Tuple, Union
 import numpy as np
 
 import numpy_linalg as la
-import sl_py_tools.arg_tricks as ag
-import sl_py_tools.numpy_tricks.markov as ma
+import sl_py_tools.arg_tricks as _ag
+import sl_py_tools.numpy_tricks.markov as _ma
 
-from . import builders as bld
+from . import builders as _bld
 from . import synapse_base as _sb
 
 Order = Union[int, float, str, None]
@@ -84,10 +84,10 @@ class SynapseMemoryModel(_sb.SynapseBase):
         """
         super().__init__(plast, frac)
         # store inputs
-        self.weight = ag.default_non_eval(weight, la.asarray,
-                                          bld.linear_weights(self.nstate))
-        self.signal = ag.default_non_eval(signal, la.asarray,
-                                          la.linspace(1, -1, self.nplast))
+        self.weight = _ag.default_non_eval(weight, la.asarray,
+                                           _bld.linear_weights(self.nstate))
+        self.signal = _ag.default_non_eval(signal, la.asarray,
+                                           la.linspace(1, -1, self.nplast))
     # -------------------------------------------------------------------------
     # Housekeeping
     # -------------------------------------------------------------------------
@@ -369,11 +369,11 @@ def sign_fix(model: SynapseMemoryModel):
 def normalise(model: SynapseMemoryModel):
     """Ensure that all attributes are valid.
     """
-    ma.stochastify_c(model.plast)
+    _ma.stochastify_c(model.plast)
     scale = -np.diagonal(model.plast).min()
     if scale > 1:
         model /= scale
-    ma.stochastify_d(model.frac)
+    _ma.stochastify_d(model.frac)
 
 
 def valid_shapes(model: SynapseMemoryModel) -> bool:
@@ -387,8 +387,8 @@ def valid_shapes(model: SynapseMemoryModel) -> bool:
 
 def valid_values(model: SynapseMemoryModel) -> bool:
     """Do attributes (plast, frac) have valid values?"""
-    vld = ma.isstochastic_c(model.plast, model.StochThresh)
-    vld &= ma.isstochastic_d(model.frac, model.StochThresh)
+    vld = _ma.isstochastic_c(model.plast, model.StochThresh)
+    vld &= _ma.isstochastic_d(model.frac, model.StochThresh)
     return vld
 
 
