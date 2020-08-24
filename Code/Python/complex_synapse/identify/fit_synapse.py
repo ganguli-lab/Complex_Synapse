@@ -9,11 +9,11 @@ from typing import Callable, Dict, List, Optional
 
 import numpy as np
 
-import sl_py_tools.arg_tricks as ag
-import sl_py_tools.iter_tricks as it
+import sl_py_tools.arg_tricks as _ag
+import sl_py_tools.iter_tricks as _it
 
-from . import plast_seq as ps
-from . import synapse_id as si
+from . import plast_seq as _ps
+from . import synapse_id as _si
 
 # =============================================================================
 MESSAGES = (
@@ -204,15 +204,15 @@ class SynapseFitter(abc.ABC):
         Display progress update every `disp_step` iterations.
     All of the above are stored in `SynapseFitter.opt`.
     """
-    data: ps.PlasticitySequence
-    est: si.SynapseIdModel
-    prev_est: Optional[si.SynapseIdModel]
+    data: _ps.PlasticitySequence
+    est: _si.SynapseIdModel
+    prev_est: Optional[_si.SynapseIdModel]
     # Stats of current state:
     info: Dict[str, Number]
     # options:
     opt: SynapseFitOptions
 
-    def __init__(self, data: ps.PlasticitySequence, est: si.SynapseIdModel,
+    def __init__(self, data: _ps.PlasticitySequence, est: _si.SynapseIdModel,
                  **kwds) -> None:
         """Base class for synapse fitters.
 
@@ -262,8 +262,8 @@ class SynapseFitter(abc.ABC):
 
     def calc_thresh(self) -> None:
         """Calculate thresholds for stopping"""
-        x_scale = ag.default_eval(self.info['x_scale'], self.est.norm)
-        y_scale = ag.default(self.info['y_scale'], self.info['nlike'])
+        x_scale = _ag.default_eval(self.info['x_scale'], self.est.norm)
+        y_scale = _ag.default(self.info['y_scale'], self.info['nlike'])
         self.info['x_thresh'] = self.opt.atolx + self.opt.rtolx * x_scale
         self.info['y_thresh'] = self.opt.atoly + self.opt.rtoly * y_scale
 
@@ -286,7 +286,7 @@ class SynapseFitter(abc.ABC):
 
     def valid(self) -> bool:
         """Check that current model estimate is valid"""
-        return not self.est.nmodel and si.valid_values(self.est)
+        return not self.est.nmodel and _si.valid_values(self.est)
 
     def run(self, callback: Callback = print_callback) -> int:
         """Run the synapse fitter until termination conditions are met
@@ -308,7 +308,7 @@ class SynapseFitter(abc.ABC):
                 0: Failure, maximum iterations reached.
                 1: Success, change in log-likelihood and model below threshold.
         """
-        count = it.undcount if self.opt.verbose >= 2 else it.dcount
+        count = _it.undcount if self.opt.verbose >= 2 else _it.dcount
         callback(self, 0)
         self.info['result'] = 0
         for i in count('iteration', self.opt.max_it,
@@ -330,7 +330,7 @@ class SynapseFitter(abc.ABC):
         return self.info['result']
 
     @abc.abstractmethod
-    def plot_occ(self, handle: ps.Handle, ind: ps.Inds, **kwds) -> ps.Plot:
+    def plot_occ(self, handle: _ps.Handle, ind: _ps.Inds, **kwds) -> _ps.Plot:
         """Plot current estimate of state occupation
 
         Parameters
@@ -376,11 +376,12 @@ class GroundedFitter(SynapseFitter):
     All of the above are stored in `self.info`.
     See `SynapseFitter` for other statistics.
     """
-    data: ps.SimPlasticitySequence
-    truth: si.SynapseIdModel
+    data: _ps.SimPlasticitySequence
+    truth: _si.SynapseIdModel
 
-    def __init__(self, data: ps.SimPlasticitySequence, est: si.SynapseIdModel,
-                 truth: si.SynapseIdModel, **kwds) -> None:
+    def __init__(self, data: _ps.SimPlasticitySequence,
+                 est: _si.SynapseIdModel, truth: _si.SynapseIdModel,
+                 **kwds) -> None:
         """SynapseFitter where groud-truth is known.
 
         Parameters

@@ -7,18 +7,19 @@ from typing import ClassVar, Dict, Optional, Tuple
 import numpy as np
 
 import numpy_linalg as la
-import sl_py_tools.arg_tricks as ag
-import sl_py_tools.iter_tricks as it
+import sl_py_tools.arg_tricks as _ag
+import sl_py_tools.iter_tricks as _it
 
 from .. import synapse_base as _sb
-from . import plast_seq as ps
-from . import synapse_id as si
+from . import plast_seq as _ps
+from . import synapse_id as _si
 from . import fit_synapse as _fs
 
 # =============================================================================
 
 
-def likelihood(model: si.SynapseIdModel, data: ps.PlasticitySequence) -> float:
+def likelihood(model: _si.SynapseIdModel, data: _ps.PlasticitySequence
+               ) -> float:
     """Negative log-likelihood of observed readouts given model
 
     Parameters
@@ -39,7 +40,7 @@ def likelihood(model: si.SynapseIdModel, data: ps.PlasticitySequence) -> float:
     return _sb.scalarise(np.log(_calc_alpha_beta(update, initial)[2]).sum())
 
 
-def state_est(model: si.SynapseIdModel, data: ps.PlasticitySequence
+def state_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence
               ) -> la.lnarray:
     """Marginal probability of state occupation at each time
 
@@ -63,7 +64,7 @@ def state_est(model: si.SynapseIdModel, data: ps.PlasticitySequence
     return alpha * beta
 
 
-def model_est(model: si.SynapseIdModel, data: ps.PlasticitySequence,
+def model_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
               steady: bool = True, combine: bool = True) -> la.lnarray:
     """New, unnormalised estimate of the model
 
@@ -102,7 +103,7 @@ def model_est(model: si.SynapseIdModel, data: ps.PlasticitySequence,
 # =============================================================================
 
 
-def _get_updaters(model: si.SynapseIdModel, data: ps.PlasticitySequence,
+def _get_updaters(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
                   ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
     """Get updater matrices for each time-step
 
@@ -164,12 +165,12 @@ def _calc_alpha_beta(updaters: la.lnarray, initial: la.lnarray
     # (E,1,M),(E,1,1)
     alpha[0] = initial.r
     norm(0)
-    for i, updater in it.zenumerate(updaters):
+    for i, updater in _it.zenumerate(updaters):
         alpha[i+1] = alpha[i] @ updater
         norm(i+1)
     # (E,M,1)
     beta[-1] = 1.
-    for i, updater in it.rzenumerate(updaters):
+    for i, updater in _it.rzenumerate(updaters):
         beta[i] = updater @ beta[i+1] * eta[i+1]
     return alpha.ur, beta.uc, eta.us
 
@@ -214,7 +215,7 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
     initial : array_like, (M,) float[0:1]
         new estimate of distribution of initial state.
     """
-    nplast = ag.default_eval(nplast, plast_type.max)
+    nplast = _ag.default_eval(nplast, plast_type.max)
     nexpt = plast_type.shape[1:]
     if not combine:
         # (E,P,M,M)
@@ -298,7 +299,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
                                          'normed': True}
 
 
-    def __init__(self, data: ps.PlasticitySequence, est: si.SynapseIdModel,
+    def __init__(self, data: _ps.PlasticitySequence, est: _si.SynapseIdModel,
                  **kwds) -> None:
         super().__init__(data, est, **kwds)
         # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
@@ -330,7 +331,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
         if self.bw_opt['normed']:
             self.est.sort(group=True)
 
-    def plot_occ(self, handle: ps.Handle, ind: ps.Inds, **kwds) -> ps.Plot:
+    def plot_occ(self, handle: _ps.Handle, ind: _ps.Inds, **kwds) -> _ps.Plot:
         """Plot current estimate of state occupation
 
         Parameters
@@ -349,7 +350,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
         # (T.M)
         state_prob = self.alpha[ind] * self.beta[ind]
         state_prob = state_prob if trn else state_prob.T
-        return ps.set_plot(handle, state_prob, **kwds)
+        return _ps.set_plot(handle, state_prob, **kwds)
 
 
 # =============================================================================
@@ -407,8 +408,9 @@ class GroundedBWFitter(_fs.GroundedFitter, BaumWelchFitter):
     SynapseFitter, GroundedFitter, BaumWelchFitter.
     """
 
-    def __init__(self, data: ps.SimPlasticitySequence, est: si.SynapseIdModel,
-                 truth: si.SynapseIdModel, **kwds) -> None:
+    def __init__(self, data: _ps.SimPlasticitySequence,
+                 est: _si.SynapseIdModel, truth: _si.SynapseIdModel,
+                 **kwds) -> None:
         super().__init__(data, est, truth=truth, **kwds)
         if 'truth' in self.info:
             self.truth = self.info.pop('truth')

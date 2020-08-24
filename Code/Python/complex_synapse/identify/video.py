@@ -511,23 +511,21 @@ def vid_fig(trn: bool = False, layout: Optional[VideoLayout] = None,
     true_ax : List[Axes]
         The axes objects for the ground-truth `SynapseIdModel`.
     """
-    # width/height ratios
+    # width/height ratios, etc
     layout = ag.default(layout, VideoLayout())
-    ground = layout.drows[0]
+    gnd = layout.drows[0]
 
-    # width/height ratios
-    ratios = layout.grid_ratios()
     # figure, grid-spec
-    fig, gsp = _make_fig(ratios, trn, layout.sizes.get('scale', 0.3))
+    fig, gsp = _make_fig(layout.grid_ratios(), trn, layout.sizes['scale'])
 
     # plast_seq
     ps_ax = _data_axes(fig, gsp, layout.drows, layout.dcols)
     # fit_model
     fit_ax = _model_axes(fig, gsp, layout.mrows[0], layout.mcols)
     # true_model
-    true_ax = _model_axes(fig, gsp, layout.mrows[1], layout.mcols) if ground else []
+    tr_ax = _model_axes(fig, gsp, layout.mrows[1], layout.mcols) if gnd else []
 
-    return fig, ps_ax, fit_ax, true_ax
+    return fig, ps_ax, fit_ax, tr_ax
 
 
 def label_model(axs: AxList, titles: List[str], labels: List[str], cbar: bool,

@@ -8,10 +8,10 @@ import matplotlib as mpl
 import numpy as np
 
 import numpy_linalg as la
-import numpy_linalg.convert as cvl
-import sl_py_tools.arg_tricks as ag
-import sl_py_tools.containers as cn
-import sl_py_tools.numpy_tricks.markov as ma
+import numpy_linalg.convert as _cvl
+import sl_py_tools.arg_tricks as _ag
+import sl_py_tools.containers as _cn
+import sl_py_tools.numpy_tricks.markov as _ma
 
 from .. import builders as _bld
 from .. import synapse_base as _sb
@@ -57,9 +57,9 @@ class SynapseIdModel(_sb.SynapseBase):
                  ) -> None:
         super().__init__(plast, frac)
         nst = self.nstate
-        self.initial = ag.default_non_eval(initial, la.asarray, la.ones(nst)/nst)
-        self.readout = ag.default_non_eval(readout, la.asarray, la.arange(nst))
-        if ma.isstochastic_c(self.plast):
+        self.initial = la.asarray(_ag.default(initial, la.ones(nst)/nst))
+        self.readout = la.asarray(_ag.default(readout, la.arange(nst)))
+        if _ma.isstochastic_c(self.plast):
             self.plast += la.identity(nst) * max(- self.plast.min(), 1.)
 
     def __repr__(self) -> str:
@@ -75,12 +75,12 @@ class SynapseIdModel(_sb.SynapseBase):
         """
         base_result = super().__array_ufunc__(ufunc, method, *inputs, **kwargs)
 
-        args, _ = cvl.conv_in_attr('initial', SynapseIdModel, inputs)
+        args, _ = _cvl.conv_in_attr('initial', SynapseIdModel, inputs)
         conv = [True] + [False] * (ufunc.nout-1)
-        outs, conv = cvl.conv_in_attr('initial', SynapseIdModel, kwargs, conv)
+        outs, conv = _cvl.conv_in_attr('initial', SynapseIdModel, kwargs, conv)
 
         results = self.initial.__array_ufunc__(ufunc, method, *args, **kwargs)
-        return cvl.conv_out_attr(base_result, 'initial', results, outs, conv)
+        return _cvl.conv_out_attr(base_result, 'initial', results, outs, conv)
 
     @property
     def nreadout(self) -> int:
@@ -116,8 +116,8 @@ class SynapseIdModel(_sb.SynapseBase):
 
     def normalise(self) -> None:
         """normalise `plast` and `initial`, in place"""
-        ma.stochastify_d(self.plast)
-        ma.stochastify_d(self.initial)
+        _ma.stochastify_d(self.plast)
+        _ma.stochastify_d(self.initial)
 
     def set_init(self, init: Optional[_sb.ArrayLike] = None) -> None:
         """Set initial to steady-state, in place
@@ -130,7 +130,7 @@ class SynapseIdModel(_sb.SynapseBase):
         """
         if init is None:
             markov = (self.frac.s * self.plast).sum(-3)
-            self.initial = ma.calc_peq_d(markov)
+            self.initial = _ma.calc_peq_d(markov)
         else:
             self.initial = la.asarray(init)
 
@@ -247,8 +247,8 @@ class SynapseIdModel(_sb.SynapseBase):
         # only simulate a single model
         assert not self.nmodel
         if plast_seq is None:
-            nexpt = ag.default_non_eval(nexpt, cn.tuplify, ())
-            ntime = ag.default_non_eval(ntime, int, 1)
+            nexpt = _ag.default_non_eval(nexpt, _cn.tuplify, ())
+            ntime = _ag.default_non_eval(ntime, int, 1)
             # (T-1,E)
             plast_seq = rng.choice(la.arange(self.nplast), p=self.frac,
                                    size=(ntime - 1,) + nexpt)
@@ -410,7 +410,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
             desired signal contribution from each plasticity type
     """
     kwds.setdefault('rng', rng)
-    return _bld.build_generic(ma.rand_trans_d, nst, npl, binary, **kwds)
+    return _bld.build_generic(_ma.rand_trans_d, nst, npl, binary, **kwds)
 
 
 def valid_shapes(model: SynapseIdModel) -> bool:
@@ -427,9 +427,9 @@ def valid_values(model: SynapseIdModel) -> bool:
     """Do attributes (plast, initial, frac) have valid values?
     """
     vld = np.isfinite(model.plast).all() and np.isfinite(model.initial).all()
-    vld &= ma.isstochastic_d(model.plast, model.StochThresh)
-    vld &= ma.isstochastic_d(model.initial, model.StochThresh)
-    vld &= ma.isstochastic_d(model.frac, model.StochThresh)
+    vld &= _ma.isstochastic_d(model.plast, model.StochThresh)
+    vld &= _ma.isstochastic_d(model.initial, model.StochThresh)
+    vld &= _ma.isstochastic_d(model.frac, model.StochThresh)
     return vld
 
 

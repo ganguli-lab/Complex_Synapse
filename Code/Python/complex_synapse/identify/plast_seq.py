@@ -6,11 +6,10 @@ from typing import List, Tuple, Union, Sequence
 
 import numpy as np
 import matplotlib as mpl
-import matplotlib.colors as mco
 
 import numpy_linalg as la
-import sl_py_tools.containers as cn
-import sl_py_tools.matplotlib_tricks as mpt
+import sl_py_tools.containers as _cn
+import sl_py_tools.matplotlib_tricks as _mpt
 
 from .. import synapse_base as _sb
 
@@ -126,9 +125,9 @@ class PlasticitySequence:
         newobj.readouts = np.moveaxis(self.readouts, source, destination)
         newobj.plast_type = np.moveaxis(self.plast_type, source, destination)
         ndim = self.readouts.ndim
-        source = tuple(x % ndim for x in cn.tuplify(source))
+        source = tuple(x % ndim for x in _cn.tuplify(source))
         if self.t_axis in source:
-            destination = cn.tuplify(destination)
+            destination = _cn.tuplify(destination)
             newobj.t_axis = destination[source.index(self.t_axis)] % ndim
         return newobj
 
@@ -384,10 +383,10 @@ def _pad(array: np.ndarray, axis: int, end: bool = True) -> np.ma.masked_array:
     return np.ma.masked_equal(padded, -1, copy=False)
 
 
-def _int_bdry_norm(nval: int, cmap: str) -> mco.BoundaryNorm:
+def _int_bdry_norm(nval: int, cmap: str) -> mpl.colors.BoundaryNorm:
     """BoundaryNorm map for integer values"""
     cmap = mpl.cm.get_cmap(cmap)
-    return mco.BoundaryNorm(np.arange(nval + 1.) - 0.5, cmap.N)
+    return mpl.colors.BoundaryNorm(np.arange(nval + 1.) - 0.5, cmap.N)
 
 
 def set_plot(handle: Handle, data: np.ndarray, **kwds) -> Plot:
@@ -408,7 +407,7 @@ def set_plot(handle: Handle, data: np.ndarray, **kwds) -> Plot:
     trn = kwds.pop('trn', False)
     line = kwds.pop('line', False)
     if line:
-        data = mpt.stepify_data(np.arange(-0.5, data.size), data)
+        data = _mpt.stepify_data(np.arange(-0.5, data.size), data)
         data = data[::-1] if trn else data
     else:
         data = data.T if trn else data
