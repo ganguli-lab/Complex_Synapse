@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from functools import wraps
 from numbers import Number
-from typing import Callable, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
 import numpy as np
 import scipy.optimize as sco
@@ -16,7 +16,7 @@ import sl_py_tools.containers as cn
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.numpy_tricks.markov.params as mp
 
-from . import builders as bld
+from .. import builders as bld
 from . import shorten as sh
 from . import sticky as st
 from . import synapse_opt as so
@@ -140,7 +140,7 @@ def get_model_opts(opts: Optional[dict] = None) -> dict:
 
 
 def make_model(opts: Optional[dict] = None, **kwds) -> so.SynapseOptModel:
-    """Make options dict for Markov processes.
+    """Make a SynapseOptModel from options dict.
 
     `kwds` are added to `opts`, then all model related options are popped.
 
@@ -306,19 +306,23 @@ def verify_solution(prob: dict, result: sco.OptimizeResult) -> bool:
     if maxcv is not None:
         return maxcv < itol
     # must be SLSQP
-    maxcv = 0
     solution = result.x
     bounds = prob['bounds']
     if bounds is not None:
         if (solution < bounds.lb).any() or (solution > bounds.ub).any():
             return False
     for cons in cn.listify(prob.get('constraints', [])):
-        vals, kind = cons['fun'](solution), cons['type'] == 'eq'
-        fail = (not np.allclose(0, vals)) if kind else (vals < -itol).any()
-        if fail:
+        if _fail_cons(solution, cons, itol):
             return False
     return True
 
+
+def _fail_cons(soln: np.ndarray, cons: Dict[str, Any], itol: float) -> bool:
+    """Check if solution fails SLSQP constraint"""
+    vals = cons['fun'](soln)
+    if cons['type'] == 'eq':
+        return not np.allclose(0, vals)
+    return (vals < -itol).any()
 
 # =============================================================================
 # Optimisation

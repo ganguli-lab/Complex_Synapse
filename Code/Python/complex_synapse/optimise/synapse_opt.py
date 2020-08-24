@@ -14,9 +14,9 @@ import numpy as np
 import numpy_linalg as la
 import sl_py_tools.numpy_tricks.markov.params as mp
 
-from . import builders as bld
-from . import synapse_mem as _sm
-from . import synapse_base as _sb
+from .. import builders as bld
+from .. import synapse_mem as _sm
+from .. import synapse_base as _sb
 # =============================================================================
 
 
