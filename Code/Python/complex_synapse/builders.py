@@ -212,6 +212,11 @@ def build_standard(func: ArrFunc, nst: int, npl: int = 2, binary: bool = False,
     return build_generic(wrapped, nst, npl, binary, **kwds)
 
 
+# -----------------------------------------------------------------------------
+# Specific builders
+# -----------------------------------------------------------------------------
+
+
 def build_zero(nst: int, npl: int = 2, binary: bool = False) -> SynKWs:
     """Make an empty model.
 

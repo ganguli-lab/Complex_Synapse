@@ -21,7 +21,7 @@ fitter = idfy.baum_welch.GroundedBWFitter(sim, fit_model, true_model)
 fitter.opt.verbose = 0
 fitter.opt.disp_step = 10
 # %%
-vid = idfy.FitterVideo(2, True, np.s_[:100, 0], transpose=True)
+vid = idfy.FitterVideo(fitter, np.s_[:100, 0], transpose=False)
 vid.create_plots(fitter)
 # %%
 fitter.run()

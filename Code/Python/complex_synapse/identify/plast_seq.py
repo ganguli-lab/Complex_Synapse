@@ -26,6 +26,8 @@ class PlasticitySequence:
         id of plasticity type after each time-step
     readouts : ArrayLike, (T,E), int[0:R]
         id of readout from synapse at each time-step
+    t_axis : int
+        Which axis is the time axis?
 
     Properties
     ----------
@@ -130,6 +132,21 @@ class PlasticitySequence:
             newobj.t_axis = destination[source.index(self.t_axis)] % ndim
         return newobj
 
+    def move_t_axis(self, destination: int) -> PlasticitySequence:
+        """Change position of time axis in self.readouts and self.plast_type.
+
+        Parameters
+        ----------
+        destination : int
+            New position of time axis
+
+        Returns
+        -------
+        newobj : PlasticitySequence
+            Model with axes moved. Its attributes are views of the originals
+        """
+        return self.moveaxis(self.t_axis, destination)
+
     @property
     def nplast(self) -> int:
         """Minimum number of types of plasticity, P
@@ -215,6 +232,8 @@ class SimPlasticitySequence(PlasticitySequence):
         id of readout from synapse at each time-step
     states : ArrayLike, (T,E), int[0:M]
         which state it is in at each time-step
+    t_axis : int
+        Which axis is the time axis?
 
     Properties
     ----------
@@ -315,7 +334,9 @@ class SimPlasticitySequence(PlasticitySequence):
         nplast = kwds.pop('nplast', self.nplast)
         nreadout = kwds.pop('nreadout', self.nreadout)
         label = kwds.pop('label', 'True path')
+        line_opts = kwds.pop('line_opts', {})
         imh = super().plot(hnds[:-1], nplast=nplast, nreadout=nreadout, **kwds)
+        kwds.update(line_opts)
         kwds['line'] = True
         kwds['label'] = label
         kwds.pop('cmap', None)

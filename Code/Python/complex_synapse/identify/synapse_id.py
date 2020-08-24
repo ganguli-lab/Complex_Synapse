@@ -96,7 +96,7 @@ class SynapseIdModel(_sb.SynapseBase):
 
     def moveaxis(self, source: Union[int, Sequence[int]],
                  destination: Union[int, Sequence[int]]) -> SynapseIdModel:
-        """Change order of axes in self.plast and self.initial.
+        """Change order of axes in `self.plast` and `self.initial`.
 
         Parameters
         ----------
@@ -115,12 +115,19 @@ class SynapseIdModel(_sb.SynapseBase):
         newobj.initial = np.moveaxis(self.initial, source, destination)
 
     def normalise(self) -> None:
-        """normalise plast and initial, in place"""
+        """normalise `plast` and `initial`, in place"""
         ma.stochastify_d(self.plast)
         ma.stochastify_d(self.initial)
 
     def set_init(self, init: Optional[_sb.ArrayLike] = None) -> None:
-        """Set initial to steady-state, in place"""
+        """Set initial to steady-state, in place
+
+        Parameters
+        ----------
+        init : None or ArrayLike (M,), optional
+            Vector to use as initial probability distribution.
+            By default `None` -> use steady-state distribution.
+        """
         if init is None:
             markov = (self.frac.s * self.plast).sum(-3)
             self.initial = ma.calc_peq_d(markov)
@@ -132,7 +139,7 @@ class SynapseIdModel(_sb.SynapseBase):
 
         Parameters
         ----------
-        inds : ArrayLike, (M,)
+        inds : ArrayLike[int] (M,)
             `inds[i] = j` means state `j` moves to position `i`.
         """
         self.plast = self.plast[(...,) + np.ix_(inds, inds)]
@@ -407,7 +414,8 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False,
 
 
 def valid_shapes(model: SynapseIdModel) -> bool:
-    """Do attributes (plast, weight, frac) have correct shapes?"""
+    """Do attributes (plast, weight, frac) have correct shapes?
+    """
     vld = model.plast.shape[-2] == model.nstate
     vld &= model.initial.shape[-1] == model.nstate
     vld &= model.frac.shape[-1] == model.nplast
@@ -416,18 +424,26 @@ def valid_shapes(model: SynapseIdModel) -> bool:
 
 
 def valid_values(model: SynapseIdModel) -> bool:
-    """Do attributes (plast, frac) have valid values?"""
+    """Do attributes (plast, initial, frac) have valid values?
+    """
     vld = np.isfinite(model.plast).all() and np.isfinite(model.initial).all()
     vld &= ma.isstochastic_d(model.plast, model.StochThresh)
+    vld &= ma.isstochastic_d(model.initial, model.StochThresh)
     vld &= ma.isstochastic_d(model.frac, model.StochThresh)
     return vld
 
 
 def well_behaved(model: SynapseIdModel, cond: bool = False) -> bool:
-    """Do attributes plast have finite values, and is Zinv well conditioned?"""
+    """Are attributes (plast, initial) finite, and is Zinv well conditioned?
+
+    Parameters
+    ----------
+    cond : bool, optional
+        Do we check if Zinv is well conditioned? By default `False`.
+    """
     vld = np.isfinite(model.plast).all() and np.isfinite(model.initial).all()
     if cond:
         markov = (model.frac.s * model.plast).sum(-3)
         fundi = np.ones_like(markov) + la.identity(model.nstate) - markov
-        vld &= np.linalg.cond(fundi) < model.CondThresh
+        vld &= np.linalg.cond(fundi).max() < model.CondThresh
     return vld

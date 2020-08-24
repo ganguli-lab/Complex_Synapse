@@ -153,12 +153,12 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         Returns
         -------
         rows : tuple(la.lnarray)
-            (p,c) + (U.h if svd)
+            (p, c) + (U.h if svd,)
         cols : tuple(la.lnarray)
-            (eta,theta) + (V if svd)
+            (eta, theta) + (V if svd,)
         mats : tuple(la.lnarray)
-            if not inv: (Z^{-1},Zs^{-1}) + (S if svd)
-            if inv: (Z,Zs,ZQZs) + (if inv)
+            if not inv: (Z(0)^{-1}, Z(s)^{-1}) + (S if svd,)
+            if inv: (Z(0), Z(s), Z(0)QZ(s)) + (if not inv)
         """
         args = (rate, inv, svd)
         if self._unchanged and args == self._saved[0]:
@@ -170,17 +170,6 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
 
         # (svs, srow, scol)
         svdata = _fund_svd(fundi if svd else None)
-        # if svd:
-        #     extract = np.s_[::self.nstate-1]
-        #     swap = la.array([[0, 1], [-1, 0]])
-        #     fund_u, fund_s, fund_v = np.linalg.svd(fundi)
-        #     # svs = diag(smin, -smax) / smin**2
-        #     svs = (np.diagflat(swap @ fund_s[extract] / fund_s[-1]**2),)
-        #     srow = (fund_u.h[extract],)
-        #     scol = (fund_v.h[:, extract],)
-        # else:
-        #     swap, extract = la.array(1), slice(None)
-        #     svs, scol, srow = (), (), ()
 
         if rate is None:
             # (peq, c_s, u.h)
@@ -200,12 +189,9 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         fundis = self.zinv(rate)
 
         if svd:
+            # (svs, srow, scol)
+            # svs = diag(smin, -smax) / smin**2
             svdata = _fund_svd(fundi, svdata)
-            # fund_u, fund_s, fund_v = np.linalg.svd(fundis)
-            # # svs = diag(smin, -smax) / smin**2
-            # svs += (np.diagflat(swap @ fund_s[extract] / fund_s[-1]**2),)
-            # srow += (fund_u.h[extract],)
-            # scol += (fund_v.h[:, extract],)
             svdata = [(np.stack(arr),) for arr in svdata]
 
         # (peq, c_s, u.h)

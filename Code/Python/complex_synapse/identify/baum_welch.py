@@ -122,7 +122,7 @@ def _get_updaters(model: si.SynapseIdModel, data: ps.PlasticitySequence,
     plast_type : la.lnarray, (T-1,E), int[0:P]
         id of plasticity type after each time-step
     """
-    data = data.moveaxis(data.t_axis, 0)
+    data = data.move_t_axis(0)
     # (R,P,M,M),(R,M)
     updaters, initial = model.updaters()
     # (T-1,E,M,M) - makes a copy :(

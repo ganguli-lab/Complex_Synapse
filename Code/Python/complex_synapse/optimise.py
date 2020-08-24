@@ -19,14 +19,14 @@ import sl_py_tools.numpy_tricks.markov.params as mp
 from . import builders as bld
 from . import shorten as sh
 from . import sticky as st
-from .synapse_opt import SynapseOptModel
+from . import synapse_opt as so
 
 # =============================================================================
 # Problem creation helper functions
 # =============================================================================
 
 
-def constraint_coeff(model: SynapseOptModel) -> la.lnarray:
+def constraint_coeff(model: so.SynapseOptModel) -> la.lnarray:
     """Coefficient matrix for upper bound on off-diagonal row sums.
 
     Parameters
@@ -49,7 +49,7 @@ def constraint_coeff(model: SynapseOptModel) -> la.lnarray:
     return coeffs
 
 
-def make_fn(model: SynapseOptModel, method: str, *args, **kwds) -> Func:
+def make_fn(model: so.SynapseOptModel, method: str, *args, **kwds) -> Func:
     """Make a loss function from model, method and value
     """
     if isinstance(method, str):
@@ -65,7 +65,7 @@ def make_fn(model: SynapseOptModel, method: str, *args, **kwds) -> Func:
     return loss_function
 
 
-def cond_limit(model: SynapseOptModel, rate: Number,
+def cond_limit(model: so.SynapseOptModel, rate: Number,
                keep_feasible: bool = False, **kwds) -> sco.NonlinearConstraint:
     """Create a constraint on the condition number
     """
@@ -113,15 +113,14 @@ def set_param_opts(opts: Optional[dict] = None):
     """
     opts = ag.default(opts, {})
     # set opts
-    SynapseOptModel.CondThresh = opts.pop('CondThresh', 1e4)
-    SynapseOptModel.type['serial'] = opts.pop('serial', False)
-    SynapseOptModel.type['ring'] = opts.pop('ring', False)
-    SynapseOptModel.type['uniform'] = opts.pop('uniform', False)
-    if any(SynapseOptModel.type.values()):
-        SynapseOptModel.directions = (1, -1)
+    so.SynapseOptModel.CondThresh = opts.pop('CondThresh', 1e4)
+    so.SynapseOptModel.type['serial'] = opts.pop('serial', False)
+    so.SynapseOptModel.type['ring'] = opts.pop('ring', False)
+    so.SynapseOptModel.type['uniform'] = opts.pop('uniform', False)
+    if any(so.SynapseOptModel.type.values()):
+        so.SynapseOptModel.directions = opts.pop('drn', (1, -1))
     else:
-        SynapseOptModel.directions = (0, 0)
-    SynapseOptModel.directions = opts.pop('drn', SynapseOptModel.directions)
+        so.SynapseOptModel.directions = opts.pop('drn', (0, 0))
 
 
 def get_model_opts(opts: Optional[dict] = None) -> dict:
@@ -136,11 +135,11 @@ def get_model_opts(opts: Optional[dict] = None) -> dict:
     modelopts = opts.pop('modelopts', {})
     modelopts.setdefault('frac', opts.pop('frac', 0.5))
     modelopts.setdefault('binary', opts.pop('binary', True))
-    modelopts.setdefault('npl', len(SynapseOptModel.directions))
+    modelopts.setdefault('npl', len(so.SynapseOptModel.directions))
     return modelopts
 
 
-def make_model(opts: Optional[dict] = None, **kwds) -> SynapseOptModel:
+def make_model(opts: Optional[dict] = None, **kwds) -> so.SynapseOptModel:
     """Make options dict for Markov processes.
 
     `kwds` are added to `opts`, then all model related options are popped.
@@ -160,9 +159,9 @@ def make_model(opts: Optional[dict] = None, **kwds) -> SynapseOptModel:
     set_param_opts(opts)
     modelopts = get_model_opts(opts)
     if params is not None:
-        return SynapseOptModel.from_params(params, **modelopts)
-    paramopts = SynapseOptModel.type.copy()
-    paramopts['drn'] = SynapseOptModel.directions[0]
+        return so.SynapseOptModel.from_params(params, **modelopts)
+    paramopts = so.SynapseOptModel.type.copy()
+    paramopts['drn'] = so.SynapseOptModel.directions[0]
     npl = modelopts.get('npl', 2)
     if nst is not None:
         npar = ag.default(npar, npl * mp.num_param(nst, **paramopts))
@@ -170,7 +169,7 @@ def make_model(opts: Optional[dict] = None, **kwds) -> SynapseOptModel:
         nst = ag.default(nst, mp.num_state(npar // npl, **paramopts))
     if None in {nst, npar}:
         raise TypeError("Must specify one of [model, params, nst, npar]")
-    return SynapseOptModel.rand(nst=nst, npar=npar, **modelopts)
+    return so.SynapseOptModel.rand(nst=nst, npar=npar, **modelopts)
 
 
 # =============================================================================
@@ -203,7 +202,7 @@ def make_problem(maker: Maker, rate: Number, **kwds) -> dict:
     return problem
 
 
-def normal_problem(model: SynapseOptModel, rate: Number, inv: bool = False,
+def normal_problem(model: so.SynapseOptModel, rate: Number, inv: bool = False,
                    keep_feasible: bool = False, **kwds) -> Problem:
     """Make an optimize problem.
     """
@@ -227,11 +226,11 @@ def normal_problem(model: SynapseOptModel, rate: Number, inv: bool = False,
 # -----------------------------------------------------------------------------
 
 
-def shifted_problem(model: SynapseOptModel, rate: Number, inv: bool = False,
+def shifted_problem(model: so.SynapseOptModel, rate: Number, inv: bool = False,
                     keep_feasible: bool = False, **kwds) -> Problem:
     """Make an optimize problem with rate shifted to constraints.
     """
-    if any(SynapseOptModel.type.values()):
+    if any(so.SynapseOptModel.type.values()):
         raise ValueError('Shifted problem cannot have special topology')
 
     svd = kwds.pop('svd', False)
@@ -339,7 +338,7 @@ def first_good(prob: dict) -> sco.OptimizeResult:
 
 
 def optim_laplace(rate: Number, nst: Optional[int] = None, *,
-                  model: Optional[SynapseOptModel] = None,
+                  model: Optional[so.SynapseOptModel] = None,
                   maker: Maker = normal_problem, **kwds) -> sco.OptimizeResult:
     """Optimised model at one value of rate
     """
@@ -466,4 +465,4 @@ Func = Callable[[np.ndarray], Data]
 Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint]
 Problem = Tuple[Func[Number], Func[np.ndarray], Func[np.ndarray],
                 sco.Bounds, List[Constraint]]
-Maker = Callable[[SynapseOptModel, Number, bool, bool], Problem]
+Maker = Callable[[so.SynapseOptModel, Number, bool, bool], Problem]
