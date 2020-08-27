@@ -92,7 +92,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         fab[degenerate] = 1.
         fab = (expqt.c - expqt.r) / fab
         fab[degenerate] = expqt[degenerate.nonzero()[0]] * time
-        fab *= evs.inv @ self.weight
+        fab *= (evs.inv @ self.weight).r
         fab *= (peq_enc @ evs).c
         expwftw = (evs * expqt) @ (evs.inv @ self.weight)
         return (evs.inv @ fab @ evs), expwftw
@@ -384,6 +384,11 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         """
         return self.laplace_hess(None, **kwds)
 
+    @property
+    def nshift(self) -> int:
+        """number of shifted constraints."""
+        return self.nplast * self.nstate**2
+
     def peq_min_fun(self, rate: Number, **kwds) -> la.lnarray:
         """Gradient of lower bound of shifted Laplace problem.
 
@@ -400,7 +405,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             Value of ``W - s * e @ peq``.
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
-            return -np.ones(self.nplast*self.nstate**2)
+            return -np.ones(self.nshift)
         rate = rate / (2 * self.frac.s)
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
@@ -424,7 +429,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             Gradient of ``func`` with respect to parameters.
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
-            return -_bld.RNG.random((self.nplast*self.nstate**2, self.nparam,))
+            return -_bld.RNG.random((self.nshift, self.nparam,))
         # (p,c), (eta,theta), (Z,Zs,ZQZs)
         kwds['inv'] = True
         rows, _, mats = self._derivs(None, **kwds)
@@ -539,9 +544,6 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
         # (2n(n-1),)
         return grad.ravelaxes(-2) / self.CondThresh
-        # grad = [mp.mat_to_params(grad[..., i, :, :], drn=d, **self.type)
-        #         for i, d in enumerate(self.directions)]
-        # return np.hstack(grad) / self.CondThresh
 
     @classmethod
     def directed(cls, which: Union[int, slice] = np.s_[:], **kwds) -> dict:

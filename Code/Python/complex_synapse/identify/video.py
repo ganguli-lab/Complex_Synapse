@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 """Creating video frames for synapse fitting
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, ClassVar, Dict, List, Optional, Sequence, Tuple, Union
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -12,44 +13,19 @@ import sl_py_tools.arg_tricks as ag
 import sl_py_tools.containers as cn
 import sl_py_tools.matplotlib_tricks as mpt
 
-from .. import synapse_base as _sb
 from . import fit_synapse as _fs
 from . import plast_seq as _ps
+from .. import options as _opt
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
 # =============================================================================
-# Fitter video options class
+# Fitter video options classes
 # =============================================================================
 
 
-class _Options:
-    """Base class for video options"""
-
-    def __contains__(self, key: str) -> bool:
-        """Is key valid for self.update?"""
-        return hasattr(self, 'set_' + key) or key in _sb.instance_attrs(self)
-
-    def update(self, opt: cn.Dictable[str, Any] = (), **kwds) -> None:
-        """Update options.
-        """
-        opt = dict(opt, **kwds)
-        for key, val in opt.items():
-            self.set(key, val)
-
-    def set(self, key: str, val: Any) -> None:
-        """Set an option.
-        """
-        if hasattr(self, 'set_' + key):
-            getattr(self, 'set_' + key)(val)
-        else:
-            setattr(self, key, val)
-
-    def __repr__(self) -> str:
-        return type(self).__name__ + f"(**{self.__dict__})"
-
-
-class VideoLabels(_Options):
+# pylint: disable=too-many-ancestors
+class VideoLabels(_opt.Options):
     """Tiles, axes labels, etc. for FitterVideo
 
     Parameters
@@ -61,7 +37,7 @@ class VideoLabels(_Options):
         Title, axis and colourbar labels for `fitter.data.readout`. By default:
         `["Synaptic efficacy", "", "weak", "strong"]`.
     state : List[str]
-        Title, axes, line labels for `fitter.data.state` and
+        Title, axes and line labels for `fitter.data.state` and
         `fitter.model.plot_occ`. By default:
         `["Occupation probability", "Time", "State", "True path"]`.
     model : List[str]
@@ -72,8 +48,14 @@ class VideoLabels(_Options):
         from state, to state]. By default:
         `[["Potentiation", "Depression"],
           ["Probability", "Initial state", "From state", "To state"]]`.
-    All of them are keyword only.
+    transpose : bool
+        Transpose the layout of the video, swapping rows and columns?
+
+    Notes
+    -----
+    All parameters are keyword only. Unknown keywords are stored as attributes.
     """
+    prop_attributes: ClassVar[Tuple[str, ...]] = ('transpose',)
     # Text for labels
     plast_type: List[str]
     readout: List[str]
@@ -89,16 +71,22 @@ class VideoLabels(_Options):
         self.plast = [["Potentiation", "Depression"],
                       ["Probability", "Initial state", "From state",
                        "To state"]]
-        self.keys = {'transpose'} | _sb.instance_attrs(self).keys()
         self.update(kwds)
+
+    def model_labs(self, ind: _ps.Inds) -> Tuple[List[str], List[str]]:
+        """Labels for a model's heatmaps"""
+        return cn.listify(self.model[ind]) + self.plast[0], self.plast[1]
 
     def set_transpose(self, transpose: Optional[bool]) -> None:
         """Put the time-axis label on the lowest/leftmost of the data axes.
 
         Also adds/removes linebreaks from axes titles.
         Does nothing if `transpose` is `None`.
+
+        It is usually better to use `VideoOptions.set_transpose` in the parent
+        object instead of calling this function directly.
         """
-        if transpose is None:
+        if transpose is None or transpose == self.transpose:
             return
         labels = (self.plast_type[1], self.readout[1], self.state[1])
         label = labels[list(map(bool, labels)).index(True)]
@@ -110,12 +98,14 @@ class VideoLabels(_Options):
         self.readout[0] = self.readout[0].replace(*swap)
         self.state[0] = self.state[0].replace(*swap)
 
-    def model_labs(self, ind: _ps.Inds) -> Tuple[List[str], List[str]]:
-        """Labels for a model's heatmaps"""
-        return cn.listify(self.model[ind]) + self.plast[0], self.plast[1]
+    @property
+    def transpose(self) -> bool:
+        """Do we swap rows and columns?"""
+        return bool(self.plast_type[1])
 
 
-class VideoLayout(_Options):
+# pylint: disable=too-many-ancestors
+class VideoLayout(_opt.Options):
     """Tiles, axes labels, etc. for FitterVideo
 
     Parameters
@@ -135,9 +125,29 @@ class VideoLayout(_Options):
         Heights (for data) - pr: `plast_type` and `readout`, st: states,
         scale: Controls figure size: inches per grid-ratio unit.
         By default `None -> dict(c=1, i=2, p=12, pr=2, st=6, md=12, scale=0.3)`
-    All of them are keyword only. Unknown keywords are passed to `sizes` if it
-    is an existing key, or stored as an attribute if not.
+    transpose : bool
+        Transpose the layout of the video, swapping rows and columns?
+    ground : bool
+        Do we have axes for a ground truth model?
+    npl : int
+        How many plasticity types are there?
+    verbose : int
+        Display verbose information?
+    fitter : SynapseFitter
+        Get `npl`, `ground` and `verbose` from `fitter.est`, `truth` and `opt`.
+    When constructing a `FitterVideo`, `set_fitter` is called. Therefore,
+    there is usually no need to provide `npl`, `ground` or `verbose`.
+
+    Notes
+    -----
+    All parameters are keyword only. Unknown keywords are passed to `sizes` if
+    it is an existing key, or stored as an attribute if not.
+
+    Attributes can also be referenced and modified by subscripting with the
+    attribute name. If the name is not found, it will search `sizes`.
     """
+    map_attributes: ClassVar[Tuple[str, ...]] = ('sizes',)
+    prop_attributes: ClassVar[Tuple[str, ...]] = ('transpose', 'ground', 'npl')
     # row/column assignments for models/data
     mrows: _ps.Inds
     mcols: _ps.Inds
@@ -145,63 +155,32 @@ class VideoLayout(_Options):
     dcols: _ps.Inds
     # height/width ratios for rows/columns
     sizes: Dict[str, float]
+    # swap rows and columns?
+    _transpose: bool
+    # display verbose information?
+    _verbose: int
 
     def __init__(self, **kwds) -> None:
         self.mrows = (-1, 0)
         self.mcols = (-1, 0, 1)
         self.drows = (0, 1, 2)
         self.dcols = (-1, slice(-1))
-        # width: [c]bar=1, [i]nit=2, [p]last=12, {plast_seq=sum-cbar}
+        # width: [c]olourbar=1, [i]nitial=2, [p]last=12, {data=sum-cbar}
         # height: [m]o[d]el=12, [p]last_type/[r]eadout=2, [st]ates=6
         self.sizes = dict(c=1, i=2, p=12, pr=2, st=6, md=12, scale=0.3)
+        self._transpose = False
+        self._verbose = 1
         self.update(kwds)
 
-    def __contains__(self, key: str) -> bool:
-        """Is key valid for self.update?"""
-        return super().__contains__(key) or key in self.sizes
-
-    def set(self, key: str, val: Any) -> None:
+    def __setitem__(self, key: str, val: Any) -> None:
         """Set an option.
 
         If `sizes` is specified, it is updated with the new value, rather than
         being replaced like other variables.
         """
-        if key == 'sizes':
-            self.sizes.update(val)
-        elif key in self.sizes:
-            self.sizes[key] = val
-        else:
-            super().set(key, val)
+        super().__setitem__(key, val)
         if key in {'mcols', 'mrows', 'dcols', 'drows'}:
             setattr(self, key, cn.tuplify(getattr(self, key)))
-
-    def set_ground(self, ground: Optional[bool]) -> None:
-        """Put the time-axis label on the lowest/leftmost of the data axes.
-
-        Also adds/removes linebreaks from axes titles.
-        Does nothing if `transpose` is `None`.
-        """
-        if ground is None:
-            return
-        change = int(ground) - self.drows[0]
-        if change:
-            self.drows = tuple(x + change for x in self.drows)
-
-    def set_npl(self, npl: Optional[int]) -> None:
-        """Put the time-axis label on the lowest/leftmost of the data axes.
-
-        Also adds/removes linebreaks from axes titles.
-        Does nothing if `transpose` is `None`.
-        """
-        if npl is None:
-            return
-        if len(self.mcols) - 2 != npl:
-            self.mcols = self.mcols[:2] + tuple(self.mcols[2] + np.arange(npl))
-
-    def set_fitter(self, fitter: Optional[_fs.SynapseFitter]) -> None:
-        """Set `npl` and `ground` from a `SynapseFitter`"""
-        self.set_npl(fitter.est.nplast)
-        self.set_ground(isinstance(fitter, _fs.GroundedFitter))
 
     def grid_ratios(self) -> Tuple[List[int], List[int]]:
         """Ratios of row heights and column widths"""
@@ -211,11 +190,85 @@ class VideoLayout(_Options):
             cols[self.mcols[i]] = col
         for i, row in enumerate(('pr', 'pr', 'st')):
             rows[self.drows[i]] = row
-        return [self.sizes[k] for k in rows], [self.sizes[k] for k in cols]
+        ratios = [self.sizes[k] for k in rows], [self.sizes[k] for k in cols]
+        return ratios[::-1] if self._transpose else ratios
+
+    def set_transpose(self, transpose: Optional[bool]) -> None:
+        """Choose whether to swap rows and columns
+
+        Does nothing if `transpose` is `None`.
+
+        It is usually better to use `VideoOptions.set_transpose` in the parent
+        object instead of calling this function directly.
+        """
+        if transpose is None:
+            return
+        self._transpose = transpose
+
+    def set_ground(self, ground: Optional[bool]) -> None:
+        """Include axes for ground truth model?
+
+        Does nothing if `ground` is `None`.
+        """
+        if ground is None:
+            return
+        change = int(ground) - self.drows[0]
+        if change:
+            self.drows = tuple(x + change for x in self.drows)
+
+    def set_npl(self, npl: Optional[int]) -> None:
+        """Set the number of plasticity types.
+
+        Does nothing if `npl` is `None`.
+        """
+        if npl is None:
+            return
+        if len(self.mcols) - 2 != npl:
+            self.mcols = self.mcols[:2] + tuple(self.mcols[2] + np.arange(npl))
+
+    def set_verbose(self, verbose: Optional[int]) -> None:
+        """Choose whether to display verbose information
+
+        Does nothing if `verbose` is `None`.
+        """
+        if verbose is None:
+            return
+        self._verbose = verbose
+
+    def set_fitter(self, fitter: Optional[_fs.SynapseFitter]) -> None:
+        """Set `npl`, `ground` and `verbose` from a `SynapseFitter`
+
+        Does nothing if `fitter` is `None`.
+        """
+        if fitter is None:
+            return
+        self.set_npl(fitter.est.nplast)
+        self.set_ground(isinstance(fitter, _fs.GroundedFitter))
+        self.set_verbose(fitter.opt.disp_each)
+
+    @property
+    def transpose(self) -> bool:
+        """Do we swap rows and columns?"""
+        return self._transpose
+
+    @property
+    def ground(self) -> bool:
+        """Do we have axes for a ground truth model?"""
+        return bool(self.drows[0])
+
+    @property
+    def npl(self) -> int:
+        """How many plasticity types are there?"""
+        return len(self.mcols) - 2
+
+    @property
+    def verbose(self) -> int:
+        """Do we display verbose information?"""
+        return self._verbose
 
 
-
-class VideoOptions(_Options):
+# pylint: disable=too-many-ancestors
+class VideoOptions(_opt.Options):
     """Visual options for FitterVideo
 
     Parameters
@@ -227,63 +280,76 @@ class VideoOptions(_Options):
     transpose : bool
         Transpose the layout of the video? Stored in `txt_opt` and `im_opt`
         under the key `'trn'`. By default: `False`
-    txt_opt : Dict[str, bool]
+    txt_opt : Dict[str, Any]
          Options for text. See `sl_py_tools.matplotlib_tricks.clean_axes`.
          By default: `{'box': False, 'tight': False}`.
     im_opt : Dict[str, str]
         Options for image plots. By default: `{'cmap': 'YlOrBr'}`.
-    All of them are keyword only. Unknown keywords are passed to `txt_opt` if
-    `sl_py_tools.matplotlib_tricks.clean_axes` takes them, `txt` or `layout`
-    if it is an existing attribute, or `im_opt` if not.
+    ln_opt : Dict[str, Any]
+        Options for line plots. By default: `{}`.
+
+    Notes
+    -----
+    All parameters are keyword only. Unknown keywords are passed to `txt_opt`
+    if `sl_py_tools.matplotlib_tricks.clean_axes` takes them, `txt`, `layout`
+    or `ln_opt` if it is an existing attribute/key, or `im_opt` if not.
+
+    Attributes can also be referenced and modified by subscripting with the
+    attribute name. If the name is not found, it will search `txt`, `layout`,
+    `txt_opt`, `ln_opt` and `im_opt`. Setting a new key adds it to `im_opt`.
+    To add a new item to a `VideoOptions` instance, set it as an attribute.
     """
+    map_attributes: ClassVar[Tuple[str, ...]] = (
+        'txt', 'layout', 'ln_opt', 'im_opt', 'txt_opt')
+    prop_attributes: ClassVar[Tuple[str, ...]] = ('transpose',)
     # Text for labels
     txt: VideoLabels
     # Layout
     layout: VideoLayout
     # keyword options
-    txt_opt: Dict[str, bool]
-    im_opt: Dict[str, str]
+    ln_opt: Dict[str, Any]
+    im_opt: Dict[str, Any]
+    txt_opt: Dict[str, Any]
 
     def __init__(self, **kwds) -> None:
-
-        transpose = kwds.pop('transpose', False)
         self.txt = kwds.pop('txt', VideoLabels())
         self.layout = kwds.pop('sizes', VideoLayout())
-        self.txt_opt = kwds.pop('txt_opt', {'box': False, 'tight': False})
+        self.ln_opt = kwds.pop('line_opt', {})
         self.im_opt = kwds.pop('im_opt', {'cmap': 'YlOrBr'})
+        self.txt_opt = kwds.pop('txt_opt', {'box': False, 'tight': False})
 
         for key, val in self.txt_opt.items():
             kwds.setdefault(key, val)
         self.txt_opt.update(mpt.clean_axes_keys(kwds))
         self.update(kwds)
-        if transpose:
-            self.txt_opt['trn'] = True
-            self.im_opt['trn'] = True
-        self.txt.set_transpose(transpose)
 
-    def update(self, opt: cn.Dictable[str, Any] = (), **kwds) -> None:
+    def __setitem__(self, key: str, val: Any) -> None:
+        """Set an option.
+        """
+        try:
+            super().__setitem__(key, val)
+        except KeyError:
+            self.im_opt[key] = val
+
+    def update(self, other: cn.Dictable[str, Any] = (), /, **kwds) -> None:
         """Update options.
 
         Attributes are updated with the new value, rather than being replaced.
         """
-        super().update(opt, **kwds)
-        self.txt.set_transpose(self.transpose)
+        super().update(other, **kwds)
+        self.set_transpose(self.transpose)
 
-    def set(self, key: str, val: Any) -> None:
-        """Set an option.
+    def set_transpose(self, transpose: Optional[bool]) -> None:
+        """Choose whether to swap rows and columns
+
+        Does nothing if `transpose` is `None`.
         """
-        if key == 'transpose':
-            self.transpose = val
+        if transpose is None:
             return
-        myattrs = _sb.instance_attrs(self)
-        for attr in myattrs.values():
-            if key in attr:
-                attr.update(**{key: val})
-                return
-        if key in myattrs:
-            myattrs[key].update(val)
-        else:
-            self.im_opt[key] = val
+        self.txt_opt['trn'] = transpose
+        self.im_opt['trn'] = transpose
+        self.txt.set_transpose(transpose)
+        self.layout.set_transpose(transpose)
 
     @property
     def transpose(self) -> bool:
@@ -293,16 +359,7 @@ class VideoOptions(_Options):
     @transpose.setter
     def transpose(self, value: bool) -> None:
         """Transpose the layout of the video?"""
-        self.txt_opt['trn'] = value
-        self.im_opt['trn'] = value
-        self.txt.set_transpose(value)
-
-    @transpose.deleter
-    def transpose(self) -> None:
-        """Transpose the layout of the video?"""
-        self.txt_opt.pop('trn', None)
-        self.im_opt.pop('trn', None)
-        self.txt.set_transpose(False)
+        self.set_transpose(value)
 
 
 # =============================================================================
@@ -316,7 +373,7 @@ class FitterVideo:
     Parameters
     ----------
     fitter : SynapseFitter
-        Object that performs model fit
+        Object that performs model fit.
     inds : Inds
         Indices for `fitter.data` for snippet to plot. Must result in
         `fitter.data[ind].nexpt = ()`.
@@ -324,9 +381,10 @@ class FitterVideo:
         Strings for filenames - produced by `fname.format(frams_number)`,
         by default `""`: don't save files.
     opt : VideoOptions, optional
-        Choices for Axes labels, plot styles, etc
+        Choices for Axes labels, plot styles, etc.
     norm : Optional[Normalize], optional keyword
         Data range for probability heatmaps, by default `Normalize(0, 1)`.
+    Other keywords passed to `self.opt.update`.
 
     Attributes
     ----------
@@ -339,7 +397,7 @@ class FitterVideo:
         pt: for plasticity types used [legend, heatmap]
         ro: for readouts types observed [legend, heatmap]
         st: for true/estimated path [legend, heatmap & plot]
-        info: for display of the state of the fitter
+        info: for display of the state of the fitter (not a list)
     imh: Dict[str, List[Image or Line or Text]]
         fit: List[Image] - estimated model [initial, plasticity matrices]
         tr: List[Image] - true model [initial, plasticity matrices]
@@ -355,8 +413,9 @@ class FitterVideo:
     imh: Dict[str, List[Disp]]
     opt: VideoOptions
 
-    def __init__(self, fitter: _fs.SynapseFitter, ind: _ps.Inds, fname: str = "",
-                 opt: Optional[VideoOptions] = None, **kwds) -> None:
+    def __init__(self, fitter: _fs.SynapseFitter, ind: _ps.Inds,
+                 fname: str = "", opt: Optional[VideoOptions] = None,
+                 **kwds) -> None:
         """Video frame producing callback for SynapseFitter.
 
         Parameters
@@ -384,11 +443,11 @@ class FitterVideo:
         self.norm = kwds.pop('norm', mpl.colors.Normalize(vmin, vmax))
         self.opt = ag.default(opt, VideoOptions())
         self.opt.update(kwds)
+        self.opt.layout.set_fitter(fitter)
 
         self.axh = {}
         self.imh = {}
-        self.opt.layout.set_fitter(fitter)
-        figax = vid_fig(self.opt.transpose, self.opt.layout)
+        figax = vid_fig(self.opt.layout)
         self.fig, psax, self.axh['fit'], self.axh['tr'] = figax
         self.axh['ps'] = psax[1::2]
         self.axh['pt'] = psax[:2]
@@ -433,10 +492,10 @@ class FitterVideo:
             Object performing fit whose state we display.
         """
         ft_lab, tr_lab = self.opt.txt.model_labs(0), self.opt.txt.model_labs(1)
-        lbo = self.opt.txt_opt
         mdo = {**self.opt.im_opt, 'zorder': 0, 'norm': self.norm}
         pso = {**self.opt.im_opt, 'zorder': 10, 'nplast': fitter.est.nplast,
-               'nreadout': fitter.est.nreadout}
+               'nreadout': fitter.est.nreadout, 'line_opts': self.opt.ln_opt}
+        lbo, verbose = self.opt.txt_opt, self.opt.layout.verbose
 
         self.imh['st'] = fitter.plot_occ(self.axh['st'][1], self.ind, **mdo)
         self.imh['ps'] = fitter.data[self.ind].plot(self.axh['ps'], **pso)
@@ -451,9 +510,11 @@ class FitterVideo:
             self.imh['tr'] = fitter.truth.plot(self.axh['tr'][1:], **mdo)
             label_model(self.axh['tr'], *tr_lab, cbar=False, **lbo)
 
-        self.imh['info'] = write_info(format(fitter, 'tex'), self.axh['info'],
-                                      trn=self.opt.transpose,
-                                      size=lbo.get('tickfontsize', 10))
+        if verbose:
+            self.imh['info'] = write_info(format(fitter, f'tex0,{verbose}'),
+                                          self.axh['info'],
+                                          trn=self.opt.transpose,
+                                          size=lbo.get('tickfontsize', 10))
         # self.fig.canvas.draw_idle()
         plt.draw()
         # plt.show()
@@ -466,9 +527,11 @@ class FitterVideo:
         obj : SynapseFitter
             Object performing fit whose state we update.
         """
-        fitter.plot_occ(self.imh['st'], self.ind, trn=self.opt.transpose)
-        fitter.est.plot(self.imh['fit'], trn=self.opt.transpose)
-        self.imh['info'].set_text(format(fitter, 'tex'))
+        trn, verbose = self.opt.transpose, self.opt.layout.verbose
+        fitter.plot_occ(self.imh['st'], self.ind, trn=trn)
+        fitter.est.plot(self.imh['fit'], trn=trn)
+        if verbose:
+            self.imh['info'].set_text(format(fitter, f'tex1,{verbose}'))
         plt.draw()
         # self.fig.canvas.draw_idle()
 
@@ -489,7 +552,7 @@ class FitterVideo:
 # =============================================================================
 
 
-def vid_fig(trn: bool = False, layout: Optional[VideoLayout] = None,
+def vid_fig(layout: Optional[VideoLayout] = None,
             ) -> Tuple[Figure, AxList, AxList, AxList]:
     """Create a figure with axes for an experiment/simulation fit.
 
@@ -514,9 +577,11 @@ def vid_fig(trn: bool = False, layout: Optional[VideoLayout] = None,
     # width/height ratios, etc
     layout = ag.default(layout, VideoLayout())
     gnd = layout.drows[0]
+    ratios = layout.grid_ratios()
 
     # figure, grid-spec
-    fig, gsp = _make_fig(layout.grid_ratios(), trn, layout.sizes['scale'])
+    fig, gsp = _make_fig(ratios, layout.sizes['scale'])
+    gsp = TransposeGridSpec(gsp) if layout.transpose else gsp
 
     # plast_seq
     ps_ax = _data_axes(fig, gsp, layout.drows, layout.dcols)
@@ -671,18 +736,17 @@ def write_info(txt: str, axs: mpl.axes.Axes, **kwds) -> mpl.text.Text:
 # =============================================================================
 
 
-def _make_fig(ratios: Tuple[List[int], List[int]], trn: bool, scale: float
+def _make_fig(ratios: Tuple[List[int], List[int]], scale: float
               ) -> Tuple[Figure, GridSpec]:
-    """Create a figure and grid spec"""
+    """Create a figure and grid spec
+    """
     keys = ['height_ratios', 'width_ratios']
-    ratios = ratios[::-1] if trn else ratios
 
     fsiz = tuple(scale * sum(g) for g in reversed(ratios))
     gsiz, kwargs = tuple(map(len, ratios)), dict(zip(keys, ratios))
 
     fig = plt.figure(figsize=fsiz, frameon=True, constrained_layout=True)
     gsp = fig.add_gridspec(*gsiz, **kwargs)
-    gsp = TransposeGridSpec(gsp) if trn else gsp
     return fig, gsp
 
 
@@ -714,16 +778,6 @@ def _data_axes(fig: Figure, gsp: GridSpec, rows: _ps.Inds, cols: _ps.Inds
     rax = fig.add_subplot(gsp[rows[1], cols[1]], **share)
     sax = fig.add_subplot(gsp[rows[2], cols[1]], **share)
     return [cpax, pax, crax, rax, csax, sax]
-
-
-def _rep_every_other(txt: str, old: str, new: str) -> str:
-    """Replace every-other occurence"""
-    ind = -len(old)
-    while old in txt[ind+len(old):]:
-        ind = txt.find(old, ind+len(old))
-        txt = txt[:ind] + new + txt[ind+len(old):]
-        ind = txt.find(old, ind+len(new))
-    return txt
 
 
 # =============================================================================

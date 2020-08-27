@@ -18,7 +18,7 @@ fit_model = idfy.SynapseIdModel.rand(6, binary=True)
 fit_model.normalise()
 fitter = idfy.baum_welch.GroundedBWFitter(sim, fit_model, true_model)
 # %%
-fitter.opt.verbose = 0
+fitter.opt.verbose = 2 + 6 + 9
 fitter.opt.disp_step = 10
 # %%
 vid = idfy.FitterVideo(fitter, np.s_[:100, 0], transpose=False)
@@ -29,4 +29,7 @@ fitter.run()
 vid = idfy.FitterVideo(fitter, np.s_[:100, 0],
                        'C:/Users/subhy/Documents/videos/Fit/fit_{:03d}.png')
 fitter.run(vid)
+# %%
+vo = idfy.VideoOptions()
+vo
 # %%

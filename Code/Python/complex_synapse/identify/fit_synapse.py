@@ -1,11 +1,12 @@
+# -*- coding: utf-8 -*-
 """Classes for updating synapse models to fit data
 """
 from __future__ import annotations
 
 import abc
-from dataclasses import dataclass
 from numbers import Number
-from typing import Callable, Dict, List, Optional
+import re
+from typing import Callable, ClassVar, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -14,6 +15,7 @@ import sl_py_tools.iter_tricks as _it
 
 from . import plast_seq as _ps
 from . import synapse_id as _si
+from .. import options as _opt
 
 # =============================================================================
 MESSAGES = (
@@ -21,14 +23,14 @@ MESSAGES = (
     "Success, changes in log-likelihood and model estimate below threshold.",
     "Error, invalid model generated.",
 )
-
+_FSPEC = re.compile(r'(\w*?)(\d?),(\d?)')
 
 def _like_str(model: str = '') -> str:
     """TeX string for likelihood"""
     return f"P(\\text{{{{data}}}}|\\mathbf{{{{M}}}}{model})"
 
 
-def _frmt_vars(format_spec: str) -> Dict[str, str]:
+def _frmt_vars(format_spec: str) -> Tuple[Dict[str, str], str, str, str]:
     """Variables for __format__ method"""
     if format_spec == "tex":
         return {"t": "t &= {nit:d}",
@@ -40,7 +42,9 @@ def _frmt_vars(format_spec: str) -> Dict[str, str]:
                         + _like_str() + "}} &= {true_dlike:.0f}"),
                 "df": "\\Delta\\log " + _like_str() + " &= {dlike:.2g}",
                 "dx": "\\lVert\\Delta\\mathbf{{M}}\\rVert &= {dmodel:.2g}",
-                }
+                "df-": "\\Delta\\log " + _like_str() + " &= -",
+                "dx-": "\\lVert\\Delta\\mathbf{{M}}\\rVert &= -",
+                }, "\\begin{align*} ", " ,\\\\ ", ". \\end{align*}"
     return {"t": "nit = {nit}",
             "tr": "-log P(data|true) = {true_like:.3f}",
             "fit": "-log P(data|fit) = {nlike:.3f}",
@@ -48,16 +52,33 @@ def _frmt_vars(format_spec: str) -> Dict[str, str]:
             "dtr": "log[P(data|true) / P(data|fit)] = {true_dlike:.3g}",
             "df": "\nlog[P(data|fit) / P(data|prev)] = {dlike:.3g}",
             "dx": "||fit-prev|| = {dmodel:.3g}",
-            }
+            "df-": "\nlog[P(data|fit) / P(data|prev)] = ---",
+            "dx-": "||fit-prev|| = ---",
+            }, "", ", ", ""
 
 
 def _frmt_out(disp: List[str], info: Dict[str, Number], frm_spec: str) -> str:
     """Variables for __format__ method"""
-    if frm_spec == "tex":
-        pre, delim, post = "\\begin{align*} ", " ,\\\\ ", ". \\end{align*}"
+    templates, pre, delim, post = _frmt_vars(frm_spec)
+    disped = [templates[k] for k in disp]
+    return pre + delim.join(disped).format(**info) + post
+
+
+def _choose_verbosity(obj: SynapseFitter, format_spec: str):
+    """Choose verbosity etc from format_spec or obj"""
+    fspec = _FSPEC.fullmatch(format_spec)
+    if fspec is not None:
+        format_spec = fspec[1]
+    if fspec is None or not fspec[2]:
+        # not from a callback, so not during
+        pos = 2 * np.isfinite(obj.info['dlike'])
     else:
-        pre, delim, post = "", ", ", ""
-    return pre + delim.join(disp).format(**info) + post
+        pos = int(fspec[2])
+    if fspec is None or not fspec[3]:
+        verbose = obj.opt.disp_when()[pos] == 2
+    else:
+        verbose = fspec[3] == '2'
+    return format_spec, pos, verbose
 
 
 def print_callback(obj: SynapseFitter, pos: int) -> None:
@@ -73,14 +94,16 @@ def print_callback(obj: SynapseFitter, pos: int) -> None:
             1: During itertions.
             2: After completion.
     """
-    if pos == 0 and obj.opt.verbose >= 0:
-        gap = ('',) if obj.opt.verbose >= 2 else ()
-        print('Before:', obj, *gap, sep='\n')
-    elif pos == 1 and obj.opt.verbose >= 2:
+    fmt = f"{pos},{obj.opt.disp_when()[pos]}"
+    if pos == 0 and obj.opt.disp_before:
+        gap = ('',) if obj.opt.disp_each else ()
+        print('Before:', format(obj, fmt), *gap, sep='\n')
+    elif pos == 1 and obj.opt.disp_each:
         if obj.info['nit'] % obj.opt.disp_step == 0:
-            print('*', obj)
-    elif pos == 2 and obj.opt.verbose >= 0:
-        print('', 'After:', obj, MESSAGES[obj.info['result']], sep='\n')
+            print('*', format(obj, fmt))
+    elif pos == 2 and obj.opt.disp_after:
+        gap = ('',) if obj.opt.disp_each or obj.opt.disp_before else ()
+        print(*gap, 'After:', format(obj, fmt), MESSAGES[obj.info['result']], sep='\n')
 
 
 # =============================================================================
@@ -88,8 +111,8 @@ def print_callback(obj: SynapseFitter, pos: int) -> None:
 # =============================================================================
 
 
-@dataclass
-class SynapseFitOptions:
+# pylint: disable=too-many-ancestors
+class SynapseFitOptions(_opt.Options):
     """Options for synapse fitters
 
     Parameters
@@ -104,31 +127,117 @@ class SynapseFitOptions:
         Relative tolerance for `dlike`. Multiplies `y_scale` if given.
     max_it : int = 1e3
         Maximum number of iterations
-    verbose : int = -2
+    verbose : int = 0
         When statistics are printed, and how verbose:
-            -2: print called
-            -1: print called, detailed
-            0: end of iteration
-            1: end of iteration, detailed
-            2: each iteration
-            3: each iteration, detailed
-    disp_step : int = -2
+            0: do not print
+            1: after iteration
+            2: after iteration, detailed
+            3: before iteration
+            6: before iteration, detailed
+            9: each iteration
+            18: each iteration, detailed
+        Values in different categories can be summed to produce combinations
+    disp_step : int = 50
         Display progress update every `disp_step` iterations.
+
+    Properties
+    ----------
+    disp_before : int
+        Display before starting iteration?
+    disp_each : int
+        Display at each iteration?
+    disp_after : int
+        Display after the end of iteration?
+    They are interpreted as: 0=do not print, 1=print summary, 2=print detailed.
+    They are related to `verbose` as `verbose = after + 3 * before + 9 * each`.
     """
+    prop_attributes: ClassVar[Tuple[str, ...]] = ('disp_after', 'disp_before',
+                                                  'disp_each')
     # Absolute tolerance for `dmodel`.
-    atolx: float = 1e-5
+    atolx: float
     # Absolute tolerance for `dlike`.
-    atoly: float = 1e-5
+    atoly: float
     # Relative tolerance for `dmodel`. Multiplies `x_scale` if given.
-    rtolx: float = 1e-5
+    rtolx: float
     # Relative tolerance for `dlike`. Multiplies `y_scale` if given.
-    rtoly: float = 1e-5
+    rtoly: float
     # Maximum number of iterations
-    max_it: int = 1000
+    max_it: int
     # When statistics are printed, and how verbose:
-    verbose: int = -2
+    verbose: int
     # Display progress update every `disp_step` iterations.
-    disp_step: int = -2
+    disp_step: int
+
+    def __init__(self, **kwds) -> None:
+        self.atolx = 1e-5
+        self.atoly = 1e-5
+        self.rtolx = 1e-5
+        self.rtoly = 1e-5
+        self.max_it = 1000
+        self.verbose = 1
+        self.disp_step = 50
+        self.update(kwds)
+
+    def set_disp_after(self, value: int) -> None:
+        """Display after the end of iteration?
+
+        0: do not print, 1: print summary, 2: print detailed.
+        """
+        if not 0 <= value < 3:
+            raise ValueError(f"Allowed values: 0,1,2, not {value}.")
+        change = value - self.disp_after
+        if change:
+            self.verbose += change
+
+    def set_disp_before(self, value: int) -> None:
+        """Display before starting iteration?
+
+        0: do not print, 1: print summary, 2: print detailed.
+        """
+        if not 0 <= value < 3:
+            raise ValueError(f"Allowed values: 0,1,2, not {value}.")
+        change = value - self.disp_after
+        if change:
+            self.verbose += change * 3
+
+    def set_disp_each(self, value: int) -> None:
+        """Display at each iteration?
+
+        0: do not print, 1: print summary, 2: print detailed.
+        """
+        if not 0 <= value < 3:
+            raise ValueError(f"Allowed values: 0,1,2, not {value}.")
+        change = value - self.disp_after
+        if change:
+            self.verbose += change * 9
+
+    @property
+    def disp_after(self) -> int:
+        """Display after the end of iteration?
+
+        0: do not print, 1: print summary, 2: print detailed.
+        """
+        return self.verbose % 3
+
+    @property
+    def disp_before(self) -> int:
+        """Display before starting iteration?
+
+        0: do not print, 1: print summary, 2: print detailed.
+        """
+        return (self.verbose // 3) % 3
+
+    @property
+    def disp_each(self) -> int:
+        """Display at each iteration?
+
+        0: do not print, 1: print summary, 2: print detailed.
+        """
+        return (self.verbose // 9) % 3
+
+    def disp_when(self) -> Tuple[int, int, int]:
+        """Tuple of (disp_before, disp_each, disp_after)"""
+        return self.disp_before, self.disp_each, self.disp_after
 
 
 # =============================================================================
@@ -231,17 +340,23 @@ class SynapseFitter(abc.ABC):
         self.info = {'nit': 0, 'nlike': np.inf, 'dmodel': np.inf,
                      'dlike': np.inf, 'x_thresh': 0., 'y_thresh': 0.,
                      'x_scale': None, 'y_scale': None}
-        self.opt = SynapseFitOptions(**kwds)
+        self.opt = kwds.pop('opt', SynapseFitOptions())
+        self.opt.update(**kwds)
 
     def __format__(self, format_spec: str) -> str:
-        """Printing info"""
-        templates = _frmt_vars(format_spec)
-        disp = [templates['t'], templates['fit']]
-        if self.opt.verbose % 2 and np.isfinite(self.info['dlike']):
-            disp += [templates['df'], templates['dx']]
-        elif self.opt.verbose % 2 and not format_spec:
-            disp += [templates['df'].replace('{dlike:.2g}', '-'),
-                     templates['dx'].replace('{dmodel:.2g}', '-')]
+        """Printing info
+
+        Parameters
+        ----------
+        format_spec : str
+            In it is `'tex'`, produces a LaTeX equation environment.
+        """
+        format_spec, pos, verbose = _choose_verbosity(self, format_spec)
+        disp = ['t', 'fit']
+        if verbose and pos:
+            disp += ['df', 'dx']
+        elif verbose and not format_spec:
+            disp += ['df-', 'dx-']
         return _frmt_out(disp, self.info, format_spec)
 
     def __str__(self) -> str:
@@ -251,12 +366,13 @@ class SynapseFitter(abc.ABC):
     def __repr__(self) -> str:
         """Accurate representation of object"""
         rpr = type(self).__name__ + "(\n"
-        rpr += "    data = "
-        rpr += repr(self.data).replace("\n", "\n" + " " * 11) + ",\n"
-        rpr += "    model = "
-        rpr += repr(self.est).replace("\n", "\n" + " " * 12) + ",\n"
-        rpr += "    info = "
-        rpr += repr(self.info).replace(", ", ",\n" + " " * 13) + ",\n"
+        with np.printoptions(threshold=20, precision=2):
+            rpr += "    data = "
+            rpr += repr(self.data).replace("\n", "\n" + " " * 11) + ",\n"
+            rpr += "    model = "
+            rpr += repr(self.est).replace("\n", "\n" + " " * 12) + ",\n"
+            rpr += "    info = "
+            rpr += repr(self.info).replace(", ", ",\n" + " " * 13) + ",\n"
         rpr += ")"
         return rpr
 
@@ -308,7 +424,7 @@ class SynapseFitter(abc.ABC):
                 0: Failure, maximum iterations reached.
                 1: Success, change in log-likelihood and model below threshold.
         """
-        count = _it.undcount if self.opt.verbose >= 2 else _it.dcount
+        count = _it.undcount if self.opt.disp_each else _it.dcount
         callback(self, 0)
         self.info['result'] = 0
         for i in count('iteration', self.opt.max_it,
@@ -403,26 +519,30 @@ class GroundedFitter(SynapseFitter):
 
     def __format__(self, format_spec: str) -> str:
         """Printing info"""
-        templates = _frmt_vars(format_spec)
-        disp = [templates[k] for k in ['t', 'tr', 'fit', 'trx']]
-        if self.prev_est is not None and not format_spec:
+        format_spec, pos, verbose = _choose_verbosity(self, format_spec)
+        disp = ['t', 'tr', 'fit', 'trx']
+        if pos == 1 and not format_spec:
             del disp[1]
-        if self.opt.verbose % 2 and np.isfinite(self.info['dlike']):
-            disp += [templates[k] for k in ['dtr', 'df', 'dx']]
-        elif self.opt.verbose % 2 and format_spec:
-            disp += [templates['dtr'],
-                     templates['df'].replace('{dlike:.2g}', '-'),
-                     templates['dx'].replace('{dmodel:.2g}', '-')]
+        if verbose and pos:
+            disp += ['dtr', 'df', 'dx']
+        elif verbose and format_spec:
+            disp += ['dtr', 'df-', 'dx-']
         return _frmt_out(disp, self.info, format_spec)
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
         rpr = super().__repr__()
         insert = "    truth = "
-        insert += repr(self.data).replace("\n", "\n" + " " * 12) + ",\n"
+        with np.printoptions(threshold=20, precision=2):
+            insert += repr(self.data).replace("\n", "\n" + " " * 12) + ",\n"
         ind = rpr.find("    info = ")
         rpr = rpr[:ind] + insert + rpr[ind:]
         return rpr
+
+    def calc_thresh(self) -> None:
+        """Calculate thresholds for stopping"""
+        if self.info['x_thresh'] == 0 or self.info['y_thresh'] == 0:
+            super().calc_thresh()
 
     @abc.abstractmethod
     def update_info(self) -> None:

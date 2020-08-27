@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 """Baum-Welch update
 """
 from __future__ import annotations
 
-from typing import ClassVar, Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 
@@ -246,6 +247,75 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
 
 
 # =============================================================================
+# Model fitter options class
+# =============================================================================
+
+
+# pylint: disable=too-many-ancestors
+class BaumWelchOptions(_fs.SynapseFitOptions):
+    """Options for Baum-Welch synapse fitters
+
+    Parameters
+    ----------
+    steady : bool = True
+        Can we assume that `initial` is the steady-state?
+        If `True`, we can use all times to estimate `initial`.
+        If `False`, we can only use `t=0`. By default `True`.
+    combine : bool = True
+        Should we sum over experiments? By default `True`.
+    normed : bool = True
+        Should we normalise the result? By default `True`.
+    atolx : float = 1e-5
+        Absolute tolerance for `dmodel`.
+    atoly : float = 1e-5
+        Absolute tolerance for `dlike`.
+    rtolx : float = 1e-5
+        Relative tolerance for `dmodel`. Multiplies `x_scale` if given.
+    rtoly : float = 1e-5
+        Relative tolerance for `dlike`. Multiplies `y_scale` if given.
+    max_it : int = 1e3
+        Maximum number of iterations
+    verbose : int = 0
+        When statistics are printed, and how verbose:
+            0: do not print
+            1: after iteration
+            2: after iteration, detailed
+            3: before iteration
+            6: before iteration, detailed
+            9: each iteration
+            18: each iteration, detailed
+        Values in different categories can be summed to produce combinations
+    disp_step : int = 50
+        Display progress update every `disp_step` iterations.
+
+    Properties
+    ----------
+    disp_before : int
+        Display before starting iteration?
+    disp_each : int
+        Display at each iteration?
+    disp_after : int
+        Display after the end of iteration?
+    They are interpreted as: 0=do not print, 1=print summary, 2=print detailed.
+    They are related to `verbose` as `verbose = after + 3 * before + 9 * each`.
+    """
+    steady: bool
+    combine: bool
+    normed: bool
+
+    def __init__(self, **kwds) -> None:
+        self.steady = True
+        self.combine = True
+        self.normed = True
+        super().__init__(**kwds)
+
+    def bw_opts(self) -> Dict[str, bool]:
+        """Those options specifically needed by Baum-Welch fitters
+        """
+        return {k: self[k] for k in ['steady', 'combine', 'normed']}
+
+
+# =============================================================================
 # Model fitter classes
 # =============================================================================
 
@@ -265,7 +335,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
     ----------
     alpha, beta, eta : la.lnarray
         Normalised Baum-Welch forward/backward variables and the normalisers.
-    bw_opt : ClassVar[Dict[str, bool]]
+    opt : BaumWelchOptions
         Optins for BW update
     See `SynapseFitter` for other attributes.
 
@@ -279,7 +349,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
         Should we sum over experiments? By default `True`.
     normed : ClassVar[bool] = True
         Should we normalise the result? By default `True`.
-    All of the above are stored in `BaumWelchFitter.bw_opt`.
+    All of the above are stored in `BaumWelchFitter.opt`.
     See `SynapseFitter` for other options and attributes.
 
     See Also
@@ -294,13 +364,12 @@ class BaumWelchFitter(_fs.SynapseFitter):
     # (T,E)
     eta: la.lnarray
     # BW update options
-    bw_opt: ClassVar[Dict[str, bool]] = {'steady': True,
-                                         'combine': True,
-                                         'normed': True}
+    opt: BaumWelchOptions
 
 
     def __init__(self, data: _ps.PlasticitySequence, est: _si.SynapseIdModel,
                  **kwds) -> None:
+        kwds.setdefault('opt', BaumWelchOptions())
         super().__init__(data, est, **kwds)
         # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
         update, initial, _ = _get_updaters(self.est, self.data)
@@ -326,9 +395,9 @@ class BaumWelchFitter(_fs.SynapseFitter):
         # (P,M,M),(M,)
         self.est.plast, self.est.initial = _calc_model(
             update, plast_type, self.alpha, self.beta, self.eta,
-            nplast=self.est.nplast, **self.bw_opt)
+            nplast=self.est.nplast, **self.opt.bw_opts())
 
-        if self.bw_opt['normed']:
+        if self.opt.normed:
             self.est.sort(group=True)
 
     def plot_occ(self, handle: _ps.Handle, ind: _ps.Inds, **kwds) -> _ps.Plot:
@@ -375,7 +444,7 @@ class GroundedBWFitter(_fs.GroundedFitter, BaumWelchFitter):
     ----------
     alpha, beta, eta : la.lnarray
         Normalised Baum-Welch forward/backward variables and the normalisers.
-    bw_opt : ClassVar[Dict[str, bool]]
+    opt : BaumWelchOptions
         Options for BW update
     See `SynapseFitter` for other attributes.
 
@@ -400,7 +469,7 @@ class GroundedBWFitter(_fs.GroundedFitter, BaumWelchFitter):
         Should we sum over experiments? By default `True`.
     normed : ClassVar[bool] = True
         Should we normalise the result? By default `True`.
-    All of the above are stored in `BaumWelchFitter.bw_opt`.
+    All of the above are stored in `BaumWelchFitter.opt`.
     See `SynapseFitter` for other options.
 
     See Also
@@ -411,6 +480,7 @@ class GroundedBWFitter(_fs.GroundedFitter, BaumWelchFitter):
     def __init__(self, data: _ps.SimPlasticitySequence,
                  est: _si.SynapseIdModel, truth: _si.SynapseIdModel,
                  **kwds) -> None:
+        kwds.setdefault('opt', BaumWelchOptions())
         super().__init__(data, est, truth=truth, **kwds)
         if 'truth' in self.info:
             self.truth = self.info.pop('truth')

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Storing the results of experiments
 """
 from __future__ import annotations

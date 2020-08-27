@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Model that is being fit to data
 """
 from __future__ import annotations
@@ -81,6 +82,13 @@ class SynapseIdModel(_sb.SynapseBase):
 
         results = self.initial.__array_ufunc__(ufunc, method, *args, **kwargs)
         return _cvl.conv_out_attr(base_result, 'initial', results, outs, conv)
+
+    def __getitem__(self, inds: _ps.Inds) -> SynapseIdModel:
+        """Subscript to get a single/subset of models
+        """
+        newobj = self.view()
+        newobj.plast = self.plast[inds]
+        newobj.initial = self.initial[inds]
 
     @property
     def nreadout(self) -> int:
@@ -181,20 +189,20 @@ class SynapseIdModel(_sb.SynapseBase):
         initial = self.initial * indic
         return updaters, initial
 
-    def elements(self) -> la.lnarray:
-        """All elements of self.plast and self.initial, concatenated.
+    # def elements(self) -> la.lnarray:
+    #     """All elements of self.plast and self.initial, concatenated.
 
-        Returns
-        -------
-        elems : la.lnarray (PM**2+M,)
-            When `self.nmodel = ()`, concatenation of ravelled `self.plast` and
-            `self.initial`. Otherwise, broadcasts over `nmodel` axes.
-        """
-        if not self.nmodel:
-            return np.concatenate((self.plast.ravel(), self.initial))
-        vectors = (self.plast.ravelaxes(-3), self.initial)
-        bcast_vectors = la.gufuncs.broadcast_matrices('(a),(b)', *vectors)
-        return np.concatenate(bcast_vectors, -1)
+    #     Returns
+    #     -------
+    #     elems : la.lnarray (PM**2+M,)
+    #         When `self.nmodel = ()`, concatenation of ravelled `self.plast` and
+    #         `self.initial`. Otherwise, broadcasts over `nmodel` axes.
+    #     """
+    #     if not self.nmodel:
+    #         return np.concatenate((self.plast.ravel(), self.initial))
+    #     vectors = (self.plast.ravelaxes(-3), self.initial)
+    #     bcast_vectors = la.gufuncs.broadcast_matrices('(a),(b)', *vectors)
+    #     return np.concatenate(bcast_vectors, -1)
 
     def norm(self, **kwargs) -> la.lnarray:
         """Norm of vector of parameters.
@@ -208,16 +216,16 @@ class SynapseIdModel(_sb.SynapseBase):
         norm : la.lnarray, ()
             Norm of parameters.
         """
-        return np.linalg.norm(self.elements(), axis=-1, **kwargs)
+        return _sb.scalarise(np.linalg.norm(elements(self), axis=-1, **kwargs))
 
     def kl_div(self, other: SynapseIdModel) -> la.lnarray:
         """Kullback-Leibler divergence between plast & initial of self & other
         """
-        mine, theirs = self.elements(), other.elements()
+        mine, theirs = elements(self), elements(other)
         per_param = mine * np.log(mine / theirs)
         mine, per_param = np.broadcast_arrays(mine, per_param, subok=True)
         per_param[np.isclose(0, mine)] = 0.
-        return per_param.sum(-1)
+        return _sb.scalarise(per_param.sum(-1))
 
     def simulate(self, ntime: Optional[int] = None,
                  nexpt: Union[None, int, Sequence[int]] = None,
@@ -447,3 +455,63 @@ def well_behaved(model: SynapseIdModel, cond: bool = False) -> bool:
         fundi = np.ones_like(markov) + la.identity(model.nstate) - markov
         vld &= np.linalg.cond(fundi).max() < model.CondThresh
     return vld
+
+
+def elements(obj: SynapseIdModel) -> la.lnarray:
+    """All elements of self.plast and self.initial, concatenated.
+
+    Parameters
+    ----------
+    obj : SySynapseIdModel
+        The model(s) whose elements we want.
+
+    Returns
+    -------
+    elems : la.lnarray (PM**2+M,)
+        When `self.nmodel = ()`, concatenation of ravelled `self.plast` and
+        `self.initial`. Otherwise, broadcasts over `nmodel` axes.
+    """
+    if not obj.nmodel:
+        return np.concatenate((obj.plast.ravel(), obj.initial))
+    vectors = (obj.plast.ravelaxes(-3), obj.initial)
+    bcast_vectors = la.gufuncs.broadcast_matrices('(a),(b)', *vectors)
+    return np.concatenate(bcast_vectors, -1)
+
+
+def from_elements(elems: np.ndarray, nst: int, npl: int
+                  ) -> Tuple[la.lnarray, la.lnarray]:
+    """Get model's matrices from a vector of its elements
+
+    Parameters
+    ----------
+    elems : np.ndarray (PM**2+M,)
+        Concatenation of model's ravelled `plast` and `initial`.
+    nst : int
+        Number of states, M
+    npl : int
+        Number of plasticity types, P
+
+    Returns
+    -------
+    plast : array_like, (P,M,M), float[0:1]
+        potentiation/depression transition probability matrix.
+    initial : array_like, (M,) float[0:1]
+        distribution of initial state
+    """
+    elems = la.asarray(elems)
+    initial = elems[..., -nst:]
+    plast = elems[..., :-nst].unravelaxis(-1, (npl, nst, nst))
+    return plast, initial
+
+
+def set_elements(obj: SynapseIdModel, elems: np.ndarray) -> None:
+    """Set model's matrices from a vector of its elements
+
+    Parameters
+    ----------
+    obj : SySynapseIdModel
+        The model(s) whose elements we want to set.
+    elems : np.ndarray (PM**2+M,)
+        Concatenation of model's ravelled `plast` and `initial`.
+    """
+    obj.plast, obj.initial = from_elements(elems, obj.nstate, obj.nplast)
