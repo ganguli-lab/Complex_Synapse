@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from functools import wraps
 from numbers import Number
-from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Callable, ClassVar, Dict, List, Optional, Tuple, TypeVar, Union
 
 import numpy as np
 import scipy.optimize as sco
@@ -20,6 +20,440 @@ from .. import builders as _bld
 from . import shorten as _sh
 from . import sticky as _st
 from . import synapse_opt as _so
+from .. import options as _opt
+from .. import synapse_base as _sb
+# =============================================================================
+# Class for specifying types of synapses
+# =============================================================================
+
+
+# pylint: disable=too-many-ancestors
+class ModelOptions(_opt.Options):
+    """Class that contains model definition options.
+
+    It can be unpacked to give keywords for `SynapseParamModel` classmethods.
+
+    Parameters
+    ----------
+    topology : TopologyOptions, optional keyword
+        Topology specifying options. By default `TopologyOptions()`.
+    binary : bool, optional keyword
+        Is the weight vector binary? Otherwise it's linear. Default: `False`
+    rng : np.random.Generator, optional keyword
+        Source of random numbers. By default, `builders.RNG`.
+    frac : ArrayLike, optional keyword
+        Fraction of events of each plasticity type, An extra element is added
+        if it is subnormalised. By default `0.5`.
+    npl : int, optional keyword
+        Total number of plasticity types. By default `topology.npl`
+    nst : int or None, optional keyword
+        Total number of states. Calculate from `npar` if `None` (default).
+    npar : int or None, optional keyword
+        Total number of parameters. Calculate from `nst` if `None` (default).
+    """
+    map_attributes: ClassVar[Tuple[str, ...]] = ('topology',)
+    prop_attributes: ClassVar[Tuple[str, ...]] = ('frac', 'npl', 'nst', 'npar')
+    # topology specifying options
+    topology: _so.TopologyOptions
+    # Is the weight vector binary?
+    binary: bool
+    # source of random numbers
+    rng: np.random.Generator
+    # used by properties
+    _frac: la.lnarray
+    _nst: Optional[int]
+    _npar: Optional[int]
+
+    def __init__(self, **kwds) -> None:
+        self.topology = _so.TopologyOptions()
+        self.binary = False
+        self.rng = _bld.RNG
+        self._frac = la.array([0.5, 0.5])
+        self._nst = None
+        self._npar = None
+        # put kwds in order
+        opts = {**self}
+        opts.update(kwds)
+        self.update(opts)
+
+    def check_complete(self) -> bool:
+        """Check if model's options have been completely set
+
+        Returns
+        -------
+        done : bool
+            True if `nst` and `npr` both have vaalues.
+
+        Raises
+        ------
+        TypeError
+            If `nst` and `npar` are bith `None`
+        """
+        if None in {self.nst, self.npar}:
+            raise TypeError("Must specify one of [nst, npar]")
+
+
+    def set_frac(self, value: Optional[_sb.ArrayLike]) -> None:
+        """Set the probability of each plasticity type.
+
+        Does noting if `value` is `None`. Adds an element to the end if
+        subnormalised.
+        """
+        if value is None:
+            return
+        self._frac = _sb.append_frac(value, self.topology.npl)
+        self._frac = _sb.trim_frac(self._frac, self.topology.npl)
+
+    def set_npl(self, value: Optional[int]) -> None:
+        """Set the number of plasticity types.
+
+        Does noting if `value` is `None`. Removes end elements of `frac`
+        if shortening. Appends 0s if lengthening.
+        """
+        if value is None:
+            return
+        self.topology.set_npl(value)
+        if value <= self.npl:
+            self._frac = _sb.trim_frac(self._frac, value)
+            return
+        extra = la.zeros(self._frac.shape[:-1] + (value - self.npl,))
+        self._frac = np.concatenate((self._frac, extra), axis=-1)
+
+    def set_nst(self, value: Optional[int]) -> None:
+        """Set the number of states.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            return
+        self._nst = value
+        self._npar = self.npl * _mp.num_param(value,
+                                              **self.topology.directed(0))
+
+    def set_npar(self, value: Optional[int]) -> None:
+        """Set the number of states.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            return
+        self._npar = value
+        self._nst = _mp.num_state(value // self.npl,
+                                  **self.topology.directed(0))
+
+    @property
+    def frac(self) -> la.lnarray:
+        """Probability of each plasticity type.
+        """
+        return self._frac
+
+    @property
+    def npl(self) -> int:
+        """Number of plasticity types
+        """
+        return self._frac.shape[-1]
+
+    @property
+    def nst(self) -> int:
+        """Number of states
+        """
+        return self._nst
+
+    @property
+    def npar(self) -> int:
+        """Number of parameters
+        """
+        return self._npar
+
+# =============================================================================
+# Class for specifying optimiser options
+# =============================================================================
+
+
+class ProblemOptions(_opt.Options):
+    """Class for specifying problem creator options
+
+    Parameters
+    ----------
+    keep_feasible : bool
+        Ensure constraints are kept at intermediate steps? By default `False`.
+    inv : bool
+        Store inverses of fundamental matrices? This will be set `True` by
+        other options when needed, so there is no need to set it manually.
+    cond : bool
+        Include condition number when checking if model is well behaved? This
+        will be set to the inverse of `cond_lim`, so there is usually no need
+        to set it manually.
+    hess : bool
+        Use Hessian of loss function/constraints? By default `False`.
+        It is automatically set `False` when parent sets `method` to 'SLSQP'.
+    cond_lim : bool
+        Use the condition number as a constraint? By default `False`.
+    """
+    prop_attributes: ClassVar[Tuple[str, ...]] = ('hess', 'cond_lim')
+    # Ensure constraints are kept at intermediate steps?
+    keep_feasible: bool
+    # Include condition number when checking if model is well behaved?
+    cond: bool
+    # Store inverses of fundamental matrices?
+    inv: bool
+    # Use Hessian of loss function/constraints?
+    _hess: bool
+    # Use the condition number as a constraint?
+    _cond_lim: bool
+    # Upper bound on condition number
+    cond_thresh: float
+
+    def __init__(self, **kwds) -> None:
+        self.keep_feasible = False
+        self.inv = False
+        self.cond = True
+        self._hess = False
+        self._cond_lim = False
+        # One param we don't store here
+        self.cond_thresh = 1e4
+        # put kwds in order
+        opts = {**self}
+        opts.update(kwds)
+        self.update(opts)
+
+    def for_fns(self) -> Dict[str, bool]:
+        """keywords for a Maker function"""
+        return {'inv': self.inv, 'cond': self.cond, 'svd': self._cond_lim}
+
+    def lin(self) -> Dict[str, bool]:
+        """keywords for a `LinearConstraint`"""
+        return {'keep_feasible': self.keep_feasible}
+
+    def nlin(self) -> Dict[str, bool]:
+        """keywords for a `NonlinearConstraint`"""
+        # could add _diff_rel_step=None, finite_diff_jac_sparsity=None
+        return {'keep_feasible': self.keep_feasible}
+
+    def set_hess(self, value: Optional[bool]) -> None:
+        """Choose whether to use the hessian.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            return
+        self._hess = value
+        if value:
+            self.inv = True
+
+    def set_cond_lim(self, value: Optional[bool]) -> None:
+        """Choose whether to use a condition number constraint.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            return
+        self._cond_lim = value
+        self.cond = not value
+
+    @property
+    def hess(self) -> bool:
+        """Do we use the hessian?
+        """
+        return self._hess
+
+    @property
+    def cond_lim(self) -> bool:
+        """Do we use a condition number constraint?
+        """
+        return self._cond_lim
+
+
+class OptimOptions(_opt.Options):
+    """Class for specifying optimiser options
+
+    Parameters
+    ----------
+    model_opts : ModelOptions
+        Options for constructing models, by default `ModelOptions()`.
+    problem_opts : ProblemOptions
+        Options for creating problem, by default `ProblemOptions()`.
+    extra : Dict[str, Any]
+        Extra keyword arguments for `scipy.optimize.minimize`, by default `{}`.
+    max_tries : int
+        Maximum number of times to attempt optimisation until a good solution
+        is found. By default 100
+    repeats : int
+        Number of times each optimisation is repeated after the first good
+        solution. By default 0
+    method : str
+        Method to use in `scipy.optimize.minimize`, which must be one of
+        `'SLSQP'` or `'trust-constr'`. By default `'SLSQP'`.
+    maker : Maker
+        The function that creates the problem, usually `normal_problem` or
+        `shifted_problem`. By default `normal_problem`.
+    """
+    map_attributes: ClassVar[Tuple[str, ...]] = ('model_opts', 'problem_opts',
+                                                 'extra')
+    prop_attributes: ClassVar[Tuple[str, ...]] = ('method',)
+    model_opts: ModelOptions
+    problem_opts: ProblemOptions
+    extra: Dict[str, Any]
+    max_tries: int
+    repeats: int
+    _method: str
+    _maker: Maker
+
+    def __init__(self, **kwds) -> None:
+        self.model_opts = ModelOptions()
+        self.problem_opts = ProblemOptions()
+        self.extra = {}
+        self.max_tries = 100
+        self.repeats = 0
+        self._method = "SLSQP"
+        self._maker = normal_problem
+        # put kwds in order
+        opts = {**self}
+        opts.update(kwds)
+        self.update(opts)
+
+    def maker(self, model: _so.SynapseOptModel, rate: Optional[Number]
+              ) -> Problem:
+        """Call the `Maker` unction
+
+        Parameters
+        ----------
+        model : SynapseOptModel
+            The model to be used to compute function and gradients.
+        rate : Optional[Number]
+            Rate parameter to loss fuctions
+
+        Returns
+        -------
+        problem : Tuple[Func, Func, Func|None, Bounds, List[Constraint]]
+            The problem's ingredients: (fun, jac, hess, bounds, lims)
+        """
+        return self._maker(model, rate, self.problem_opts)
+
+    def __setitem__(self, key: str, val: Any) -> None:
+        try:
+            super().__setitem__(key, val)
+        except KeyError:
+            self.extra[key] = val
+
+    def set_method(self, value: Optional[str]) -> None:
+        """Choose method to use in `scipy.optimize.minimize`.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            return
+        if value not in {'SLSQP', 'trust-constr'}:
+            raise ValueError('method must be one of "SLSQP", "trust-constr"')
+        self._method = value
+        if value == 'SLSQP':
+            self.problem_opts.inv = True
+
+    def set_maker(self, value: Optional[Maker]) -> None:
+        """Choose the function that creates the problem.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            return
+        self._maker = value
+        if value is shifted_problem:
+            self.problem_opts.set_hess(False)
+
+    @property
+    def method(self) -> str:
+        """Method to use in `scipy.optimize.minimize`.
+        """
+        return self._method
+
+
+# =============================================================================
+# Class for holding optimisation problems
+# =============================================================================
+# options, model, fun, jac, hess, bounds, constraints, x_init, rate
+
+
+class OptimProblem:
+    """Class for holding optimisation problems
+    """
+    opts: OptimOptions
+    model: Optional[_so.SynapseOptModel]
+    fns: Tuple[Optional[Func], Optional[Func], Optional[Func]]
+    bounds: Optional[sco.Bounds]
+    constraints: List[Constraint]
+    _x_init: Optional[la.lnarray]
+    _rate: Optional[float]
+
+    def __init__(self, **kwds) -> None:
+        self.model = None
+        self.fns = (None, None, None)
+        self.bounds, self.constraints = None, []
+        self._rate = kwds.pop('rate', None)
+        self._x_init = kwds.pop('params', None)
+        self.opts = OptimOptions()
+        self.opts.pop_my_args(kwds)
+        self._make_model()
+
+    def _make_model(self) -> None:
+        """Create a model"""
+        if self._x_init is None:
+            self.model = _so.SynapseOptModel.rand(**self.opts.model_opts)
+        else:
+            self.model = _so.SynapseOptModel.from_params(
+                self._x_init, **self.opts.model_opts)
+
+    def _make_problem(self) -> None:
+        if self.model is None:
+            self._make_model()
+        self._x_init = self.model.get_params()
+        prob = self.opts.maker(self.model, self._rate)
+        self.fns = prob[:3]
+        self.bounds, self.constraints = prob[3:]
+        if self.model.topology.constrained:
+            self.constraints = []
+        elif self.opts.method == 'SLSQP':
+            self.constraints = _cn.map_join(conv_constraint, self.constraints)
+
+    def for_scipy(self) -> Dict[str, Any]:
+        """Make an optimize problem.
+        """
+        if self.fns[0] is None:
+            self._make_problem()
+        problem = {'fun': self.fns[0], 'jac': self.fns[1], 'hess': self.fns[2],
+                   'bounds': self.bounds, 'constraints': self.constraints,
+                   'x0': self._x_init, **self.opts.extra}
+        return problem
+
+    def update_init(self, value: Optional[la.lnarray] = None) -> None:
+        """Change initial guess"""
+        if value is None:
+            self._x_init = self.opts.model_opts.rng.random(self._x_init.size)
+        else:
+            self._x_init = value
+
+    def update_rate(self, value: Optional[float]) -> None:
+        """Change initial guess"""
+        self.fns = (None, None, None)
+        self.bounds, self.constraints = None, []
+        if value is not None:
+            self._rate = value
+
+    def verify_solution(self, result: sco.OptimizeResult) -> bool:
+        """Verify that solution satisfies constraints"""
+        # maxcv = constr_violation(prob, result)
+        # return maxcv < prob.get('tol', 1e-3)
+        itol = self.opts.extra.get('tol', 1e-3)
+        maxcv = getattr(result, 'constr_violation', None)
+        if maxcv is not None:
+            return maxcv < itol
+        # must be SLSQP
+        if _fail_bnd(result.x, self.bounds, itol):
+            return False
+        for cons in self.constraints:
+            if _fail_cons(result.x, cons, itol):
+                return False
+        return True
+
 
 # =============================================================================
 # Problem creation helper functions
@@ -49,9 +483,13 @@ def constraint_coeff(model: _so.SynapseOptModel) -> la.lnarray:
     return coeffs
 
 
-def make_fn(model: _so.SynapseOptModel, method: str, *args, **kwds) -> Func:
+def make_fn(model: _so.SynapseOptModel, method: str, *args,
+            opts: Optional[ProblemOptions] = None, **kwds) -> Func:
     """Make a loss function from model, method and value
     """
+    if opts is not None:
+        kwds.update(opts.for_fns())
+
     if isinstance(method, str):
         method = getattr(model, method)
 
@@ -65,18 +503,30 @@ def make_fn(model: _so.SynapseOptModel, method: str, *args, **kwds) -> Func:
     return loss_function
 
 
-def cond_limit(model: _so.SynapseOptModel, rate: float,
-               keep_feasible: bool = False, **kwds) -> sco.NonlinearConstraint:
+def make_fn_set(model: _so.SynapseOptModel, method: str, opts: ProblemOptions,
+                *args, **kwds) -> Tuple[Func, ...]:
+    """Make a loss function from model, method and value
+    """
+    fun = make_fn(model, method + '_fun', *args, opts=opts, **kwds)
+    jac = make_fn(model, method + '_grad', *args, opts=opts, **kwds)
+    if opts.hess and hasattr(model, method + '_hess'):
+        hess = make_fn(model, method + '_hess', *args, opts=opts, **kwds)
+    else:
+        hess = None
+    return fun, jac, hess
+
+
+
+def cond_limit(model: _so.SynapseOptModel, rate: float, opts: ProblemOptions,
+               ) -> sco.NonlinearConstraint:
     """Create a constraint on the condition number
     """
-    kwds['svd'] = True
-    cond_fn = make_fn(model, model.cond_fun, rate, **kwds)
-    cond_jac = make_fn(model, model.cond_grad, rate, **kwds)
-    return sco.NonlinearConstraint(cond_fn, 0, np.inf, cond_jac,
-                                   keep_feasible=keep_feasible)
+    cond_fn, cond_jac, _ = make_fn_set(model, 'cond', opts, rate,
+                                       cond_thresh=opts.cond_thresh)
+    return sco.NonlinearConstraint(cond_fn, 0, np.inf, cond_jac, **opts.nlin())
 
 
-def conv_constraint(constraint: Constraint) -> List[dict]:
+def conv_constraint(constraint: Constraint) -> List[Dict[str, Any]]:
     """Convert constraint from trust-constr to SLSQP format
     """
     if isinstance(constraint, dict):
@@ -108,23 +558,26 @@ def conv_constraint(constraint: Constraint) -> List[dict]:
     return [slsqp_lb, slsqp_ub]
 
 
-def set_param_opts(opts: Optional[dict] = None):
-    """Set options dict for SynapseOptModel Markov processes.
+# =============================================================================
+
+
+def get_param_opts(opts: Optional[dict] = None, **kwds) -> _so.TopologyOptions:
+    """Set options dict for `SynapseOptModel` Markov processes.
     """
     opts = _ag.default(opts, {})
+    opts.update(kwds)
     # set opts
     _so.SynapseOptModel.CondThresh = opts.pop('CondThresh', 1e4)
-    _so.SynapseOptModel.type['serial'] = opts.pop('serial', False)
-    _so.SynapseOptModel.type['ring'] = opts.pop('ring', False)
-    _so.SynapseOptModel.type['uniform'] = opts.pop('uniform', False)
-    if any(_so.SynapseOptModel.type.values()):
-        _so.SynapseOptModel.directions = opts.pop('drn', (1, -1))
-    else:
-        _so.SynapseOptModel.directions = opts.pop('drn', (0, 0))
+    optim_opts = get_optim_opts(opts)
+    # if paramopts.constrained:
+    #     paramopts.directions = opts.pop('drn', (1, -1))
+    # else:
+    #     paramopts.directions = opts.pop('drn', (0, 0))
+    return optim_opts.model_opts.topology
 
 
-def get_model_opts(opts: Optional[dict] = None) -> dict:
-    """Make options dict for SynapseOptModel instances.
+def get_model_opts(opts: Optional[dict] = None, **kwds) -> ModelOptions:
+    """Make options dict for `SynapseOptModel` instances.
 
     Returns
     -------
@@ -132,11 +585,26 @@ def get_model_opts(opts: Optional[dict] = None) -> dict:
         Options for `Synapse*Model` instances.
     """
     opts = _ag.default(opts, {})
-    modelopts = opts.pop('modelopts', {})
-    modelopts.setdefault('frac', opts.pop('frac', 0.5))
-    modelopts.setdefault('binary', opts.pop('binary', True))
-    modelopts.setdefault('npl', len(_so.SynapseOptModel.directions))
-    return modelopts
+    opts.update(kwds)
+    _so.SynapseOptModel.CondThresh = opts.pop('CondThresh', 1e4)
+    optim_opts = get_optim_opts(opts)
+    return optim_opts.model_opts
+
+
+def get_optim_opts(opts: Optional[dict] = None, **kwds) -> OptimOptions:
+    """Make options dict for `SynapseOptModel` instances.
+
+    Returns
+    -------
+    modelopts : dict
+        Options for `Synapse*Model` instances.
+    """
+    opts = _ag.default(opts, {})
+    opts.update(kwds)
+    optim_opts = opts.pop('optim_opts', OptimOptions())
+    optim_opts.pop_my_args(opts)
+    opts.setdefault('optim_opts', optim_opts)
+    return optim_opts
 
 
 def make_model(opts: Optional[dict] = None, **kwds) -> _so.SynapseOptModel:
@@ -153,23 +621,15 @@ def make_model(opts: Optional[dict] = None, **kwds) -> _so.SynapseOptModel:
     opts.update(kwds)
     model = opts.pop('model', None)
     params = opts.pop('params', None)
-    nst, npar = opts.pop('nst', None), opts.pop('npar', None)
     if model is not None:
+        opts.pop('nst', None)
+        opts.pop('npar', None)
         return model
-    set_param_opts(opts)
-    modelopts = get_model_opts(opts)
+    model_opts = get_model_opts(opts)
     if params is not None:
-        return _so.SynapseOptModel.from_params(params, **modelopts)
-    paramopts = _so.SynapseOptModel.type.copy()
-    paramopts['drn'] = _so.SynapseOptModel.directions[0]
-    npl = modelopts.get('npl', 2)
-    if nst is not None:
-        npar = _ag.default(npar, npl * _mp.num_param(nst, **paramopts))
-    if npar is not None and not paramopts['uniform']:
-        nst = _ag.default(nst, _mp.num_state(npar // npl, **paramopts))
-    if None in {nst, npar}:
-        raise TypeError("Must specify one of [model, params, nst, npar]")
-    return _so.SynapseOptModel.rand(nst=nst, npar=npar, **modelopts)
+        return _so.SynapseOptModel.from_params(params, **model_opts)
+    model_opts.check_complete()
+    return _so.SynapseOptModel.rand(**model_opts)
 
 
 # =============================================================================
@@ -177,46 +637,37 @@ def make_model(opts: Optional[dict] = None, **kwds) -> _so.SynapseOptModel:
 # =============================================================================
 
 
-def make_problem(maker: Maker, rate: float, **kwds) -> dict:
+def make_problem(maker: Maker, rate: float, *, nst: Optional[int] = None,
+                 model: Optional[_so.SynapseOptModel] = None, **kwds) -> dict:
     """Make an optimize problem.
     """
-    model = make_model(kwds)
-
-    method = kwds.get('method', 'SLSQP')
-    if method not in {'SLSQP', 'trust-constr'}:
-        raise ValueError('method must be one of SLSQP, trust-constr')
-    opts = {'keep_feasible': kwds.pop('keep_feasible', False),
-            'inv': method == 'trust-constr',
-            'svd': kwds.pop('cond', False)}
+    model = make_model(kwds, nst=nst, model=model)
+    opts = get_optim_opts(kwds)
 
     x_init = model.get_params()
-    fun, jac, hess, bounds, constraints = maker(model, rate, **opts)
-    if not opts['inv']:
+    fun, jac, hess, bounds, constraints = maker(model, rate, opts.problem_opts)
+    if opts.method == 'SLSQP':
         constraints = _cn.map_join(conv_constraint, constraints)
 
     problem = {'fun': fun, 'x0': x_init, 'jac': jac, 'hess': hess,
                'bounds': bounds, 'constraints': constraints}
-    if any(model.type.values()):
+    if model.topology.constrained:
         del problem['constraints']
-    problem.update(kwds)
+    problem.update(opts.extra)
     return problem
 
 
-def normal_problem(model: _so.SynapseOptModel, rate: float, inv: bool = False,
-                   keep_feasible: bool = False, **kwds) -> Problem:
+def normal_problem(model: _so.SynapseOptModel, rate: float,
+                   opts: ProblemOptions) -> Problem:
     """Make an optimize problem.
     """
-    svd = kwds.pop('svd', False)
-    kwds['cond'] = not svd
-    fun = make_fn(model, model.laplace_fun, rate, inv=inv, **kwds)
-    jac = make_fn(model, model.laplace_grad, rate, inv=inv, **kwds)
-    hess = make_fn(model, model.laplace_hess, rate, **kwds) if inv else None
+    fun, jac, hess = make_fn_set(model, 'laplace', opts, rate)
 
     con_coeff = constraint_coeff(model)
-    bounds = sco.Bounds(0, 1, keep_feasible)
-    diag = [sco.LinearConstraint(con_coeff, -np.inf, 1, keep_feasible)]
-    if svd:
-        diag.append(cond_limit(model, rate, keep_feasible, inv=inv))
+    bounds = sco.Bounds(0, 1, **opts.lin())
+    diag = [sco.LinearConstraint(con_coeff, -np.inf, 1, **opts.lin())]
+    if opts.cond_lim:
+        diag.append(cond_limit(model, rate, opts))
 
     return fun, jac, hess, bounds, diag
 
@@ -226,26 +677,20 @@ def normal_problem(model: _so.SynapseOptModel, rate: float, inv: bool = False,
 # -----------------------------------------------------------------------------
 
 
-def shifted_problem(model: _so.SynapseOptModel, rate: float, inv: bool = False,
-                    keep_feasible: bool = False, **kwds) -> Problem:
+def shifted_problem(model: _so.SynapseOptModel, rate: float,
+                    opts: ProblemOptions) -> Problem:
     """Make an optimize problem with rate shifted to constraints.
     """
-    if any(_so.SynapseOptModel.type.values()):
+    if model.topology.constrained:
         raise ValueError('Shifted problem cannot have special topology')
 
-    svd = kwds.pop('svd', False)
-    kwds['cond'] = not svd
-    fun = make_fn(model, model.area_fun, inv=True, **kwds)
-    jac = make_fn(model, model.area_grad, inv=True, **kwds)
-    hess = make_fn(model, model.area_hess, **kwds) if inv else None
+    fun, jac, hess = make_fn_set(model, 'area', opts, rate)
 
     bounds = None
-    cfun = make_fn(model, model.peq_min_fun, rate, **kwds)
-    cjac = make_fn(model, model.peq_min_grad, rate, **kwds)
-    chess = make_fn(model, model.peq_min_hess, rate, **kwds) if inv else None
-    lims = sco.NonlinearConstraint(cfun, 0, np.inf, cjac, chess, keep_feasible)
-    if svd:
-        lims = [lims, cond_limit(model, None, keep_feasible, inv=True)]
+    cfun, cjac, chess = make_fn_set(model, 'peq_min', opts, rate)
+    lims = sco.NonlinearConstraint(cfun, 0, np.inf, cjac, chess, **opts.nlin())
+    if opts.cond_lim:
+        lims = [lims, cond_limit(model, None, opts)]
 
     return fun, jac, hess, bounds, _cn.listify(lims)
 
@@ -255,14 +700,14 @@ def shifted_problem(model: _so.SynapseOptModel, rate: float, inv: bool = False,
 # =============================================================================
 
 
-def update_laplace_problem(problem: dict):
+def update_laplace_problem(problem: dict, rng: np.random.Generator = _bld.RNG):
     """Update an optimize problem with new x_init.
     """
-    problem['x0'] = _bld.RNG.random(problem['x0'].size)
+    problem['x0'] = rng.random(problem['x0'].size)
 
 
 def check_trust_constr(sol: np.ndarray, con: Constraint
-                       ) -> Tuple[bool, np.ndarray]:
+                       ) -> Tuple[np.ndarray, bool]:
     """Verify that solution satisfies a constraint for method trust-constr"""
     if isinstance(con, sco.LinearConstraint):
         vals = con.A @ sol
@@ -317,6 +762,13 @@ def verify_solution(prob: dict, result: sco.OptimizeResult) -> bool:
     return True
 
 
+def _fail_bnd(sol: np.ndarray, bnds: Optional[sco.Bounds], tol: float) -> bool:
+    """Check if solution fails SLSQP constraint"""
+    if bnds is None:
+        return False
+    return (sol < bnds.lb - tol).any() or (sol > bnds.ub + tol).any()
+
+
 def _fail_cons(soln: np.ndarray, cons: Dict[str, Any], itol: float) -> bool:
     """Check if solution fails SLSQP constraint"""
     vals = cons['fun'](soln)
@@ -329,32 +781,61 @@ def _fail_cons(soln: np.ndarray, cons: Dict[str, Any], itol: float) -> bool:
 # =============================================================================
 
 
-def first_good(prob: dict) -> sco.OptimizeResult:
+# def first_good(prob: dict, **kwds) -> sco.OptimizeResult:
+#     """First solution that satisfies constraints"""
+#     opts = get_optim_opts(kwds)
+#     res = sco.OptimizeResult()
+#     for _ in _it.dcount('tries', opts.max_tries):
+#         res = sco.minimize(**prob)
+#         if verify_solution(prob, res):
+#             break
+#         update_laplace_problem(prob)
+#     return res
+
+
+def first_good(prob: OptimProblem) -> sco.OptimizeResult:
     """First solution that satisfies constraints"""
-    max_tries = prob.pop('max_tries', 100)
     res = sco.OptimizeResult()
-    for _ in _it.dcount('tries', max_tries):
-        res = sco.minimize(**prob)
-        if verify_solution(prob, res):
+    for _ in _it.dcount('tries', prob.opts.max_tries):
+        res = sco.minimize(**prob.for_scipy())
+        if prob.verify_solution(res):
             break
-        update_laplace_problem(prob)
+        prob.update_init()
     return res
 
 
-def optim_laplace(rate: float, nst: Optional[int] = None, *,
-                  model: Optional[_so.SynapseOptModel] = None,
-                  maker: Maker = normal_problem, **kwds) -> sco.OptimizeResult:
+# def optim_laplace(rate: float, nst: Optional[int] = None, *,
+#                   model: Optional[_so.SynapseOptModel] = None,
+#                   maker: Maker = normal_problem, **kwds) -> sco.OptimizeResult:
+#     """Optimised model at one value of rate
+#     """
+#     opts = get_optim_opts(kwds)
+#     prob = make_problem(maker, rate, nst=nst, model=model, **kwds)
+#     res = first_good(prob, optim_opts=opts)
+#     for _ in _it.dcount('repeats', opts.repeats, disp_step=1):
+#         update_laplace_problem(prob)
+#         new_res = sco.minimize(**prob)
+#         if verify_solution(prob, new_res) and new_res.fun < res.fun:
+#             res = new_res
+#     if not verify_solution(prob, res):
+#         res.fun = np.nan
+#     return res
+
+def optim_laplace(rate: float, prob: Optional[OptimProblem] = None,
+                  **kwds) -> sco.OptimizeResult:
     """Optimised model at one value of rate
     """
-    repeats = kwds.pop('repeats', 0)
-    prob = make_problem(maker, rate, nst=nst, model=model, **kwds)
+    if prob is None:
+        prob = OptimProblem(rate=rate, **kwds)
+    else:
+        prob.update_rate(rate)
     res = first_good(prob)
-    for _ in _it.dcount('repeats', repeats, disp_step=1):
-        update_laplace_problem(prob)
-        new_res = sco.minimize(**prob)
-        if verify_solution(prob, new_res) and new_res.fun < res.fun:
+    for _ in _it.dcount('repeats', prob.opts.repeats, disp_step=1):
+        prob.update_init()
+        new_res = sco.minimize(**prob.for_scipy())
+        if prob.verify_solution(new_res) and new_res.fun < res.fun:
             res = new_res
-    if not verify_solution(prob, res):
+    if not prob.verify_solution(res):
         res.fun = np.nan
     return res
 
@@ -363,12 +844,13 @@ def optim_laplace_range(rates: np.ndarray, nst: int,
                         **kwds) -> Tuple[la.lnarray, la.lnarray]:
     """Optimised model at many values of rate
     """
-    model = make_model(kwds, nst=nst)
+    prob = OptimProblem(nst=nst, **kwds)
+    # model = make_model(kwds, nst=nst)
     snr = la.empty_like(rates)
-    models = la.empty((len(rates), model.nparam))
+    models = la.empty((len(rates), prob.opts.model_opts.npar))
     with _it.delay_warnings():
         for i, rate in _it.denumerate('rate', rates):
-            res = optim_laplace(rate, model=model, **kwds)
+            res = optim_laplace(rate, prob)
             snr[i] = - res.fun
             models[i] = res.x
     return snr, models
@@ -379,10 +861,11 @@ def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
                           **kwds) -> Tuple[la.lnarray, la.lnarray]:
     """Reoptimised model at many values of rate
     """
-    model = make_model(kwds, params=models[inds[0]])
+    prob = OptimProblem(params=models[inds[0]], **kwds)
+    # model = make_model(kwds, params=models[inds[0]])
     with _it.delay_warnings():
         for ind, rate in _it.dzip('rate', inds, rates[inds]):
-            res = optim_laplace(rate, model=model, **kwds)
+            res = optim_laplace(rate, prob)
             if - res.fun > snr[ind]:
                 snr[ind] = - res.fun
                 models[ind] = res.x
@@ -466,7 +949,8 @@ def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
 # =============================================================================
 Data = TypeVar('Data', Number, np.ndarray)
 Func = Callable[[np.ndarray], Data]
-Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint]
+Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint, Dict[str, Any]]
 Problem = Tuple[Func[float], Func[np.ndarray], Func[np.ndarray],
-                sco.Bounds, List[Constraint]]
-Maker = Callable[[_so.SynapseOptModel, float, bool, bool], Problem]
+                Optional[sco.Bounds], List[Constraint]]
+Maker = Callable[[_so.SynapseOptModel, Optional[float], ProblemOptions],
+                 Problem]

@@ -10,5 +10,5 @@ s = la.geomspace(1e-4, 10, 5)
 # print(m.peq_min_fun(0.1))
 with time_with():
     envelope, models = cs.optimise.optim_laplace_range(
-        s, 10, repeats=10, cond=True, CondThresh=1e3,
-        maker=cs.optimise.normal_problem, method='trust-constr')
+        s, 10, repeats=10, cond_lim=True, cond_thresh=1e3,
+        maker=cs.optimise.normal_problem, method='SLSQP')

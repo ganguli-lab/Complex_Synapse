@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from numbers import Number
-from typing import ClassVar, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Optional, Sequence, Tuple, Union
 
 import numpy as np
 
@@ -14,26 +14,125 @@ import sl_py_tools.numpy_tricks.markov.params as mp
 from .. import builders as _bld
 from .. import synapse_mem as _sm
 from .. import synapse_base as _sb
+from .. import options as _opt
+# =============================================================================
+# Class for specifying topology of parameterised synapses
 # =============================================================================
 
 
-class SynapseOptModel(_sm.SynapseMemoryModel):
-    """Class for complex synapses, suitable for optimisation
+# pylint: disable=too-many-ancestors
+class TopologyOptions(_opt.Options):
+    """Class that contains topology specifying options.
+
+    Parameters
+    ----------
+    serial : bool, optional keyword
+        Restrict to models of serial topology? By default `False`.
+    ring : bool, optional keyword
+        Restrict to models of ring topology? By default `False`.
+    uniform : bool, optional keyword
+        Restrict to models with equal rates per direction? By default `False`.
+    directions: Tuple[int] (P,), optional keyword
+        If nonzero, only include transitions in direction `i -> i + sgn(drn)`,
+        one value for each plasticity type. By default `(0, 0)`.
+    """
+    serial: bool
+    ring: bool
+    uniform: bool
+    directions: Tuple[int, ...]
+
+    def __init__(self, **kwds) -> None:
+        self.serial = False
+        self.ring = False
+        self.uniform = False
+        self.directions = (0, 0)
+        self.update(kwds)
+        if self.constrained and 'directions' not in kwds:
+            # different default if any(serial, ring, uniform)
+            self.directions = (1, -1)
+            if 'npl' in kwds:
+                self.set_npl(kwds['npl'])
+
+    def directed(self, which: Union[int, slice, None] = slice(None), **kwds
+                 ) -> Dict[str, Any]:
+        """Dictionary of Markov parameter options
+
+        Parameters
+        ----------
+        which : int, slice, None, optional
+            Which element of `self.directions` to use as the `'drn'` value,
+            where `None` -> omit `'drn'` item. By default `slice(None)`
+        Extra arguments are default values or unknown keys in `opts`
+
+        Returns
+        -------
+        opts : Dict[str, Any]
+            All options for `sl_py_tools.numpy_tricks.markov.params`.
+        """
+        if which is not None:
+            kwds['drn'] = self.directions[which]
+        kwds.update(serial=self.serial, ring=self.ring, uniform=self.uniform)
+        return kwds
+
+    def set_constrained(self, value: Optional[bool]) -> None:
+        """Remove all constraints on topology by setting it `False`.
+
+        Does noting if `value` is `None`. Raises `ValueError if it is `True`.
+        """
+        if value is None:
+            return
+        if value:
+            raise ValueError("Cannot directly set `constrained=True`. "
+                             + "Set a specific constraint instead.")
+        self.serial = False
+        self.ring = False
+        self.uniform = False
+        self.directions = (0,) * self.npl
+
+    def set_npl(self, value: Optional[int]) -> None:
+        """Set the number of plasticity types.
+
+        Does noting if `value` is `None`. Removes end elements of `directions`
+        if shortening. Appends zeros if lengthening.
+        """
+        if value is None:
+            return
+        self.directions = self.directions[:value] + (0,) * (value - self.npl)
+
+    @property
+    def constrained(self) -> bool:
+        """Are there any constraints on the topology?
+        """
+        return any((self.serial, self.ring, self.uniform) + self.directions)
+
+    @property
+    def npl(self) -> int:
+        """Number of plasticity types
+        """
+        return len(self.directions)
+
+
+# =============================================================================
+# Class for parameterised synapses
+# =============================================================================
+# type ClassVar[Dict[str, bool]] = {'serial': False,
+#                                    'ring': False,
+#                                    'uniform': False}
+# directions: ClassVar[Tuple[int, ...]] = (0, 0)
+
+
+class SynapseParamModel(_sm.SynapseModel):
+    """Class for complex synapses, for working with independent parameters
 
     Subclass of SynapseMemoryModel.
     Same constructor & attributes, only methods added.
     """
-    _saved: Tuple[Tuple[la.lnarray, ...], ...]
-    _unchanged: bool
-    type: ClassVar[Dict[str, bool]] = {'serial': False,
-                                       'ring': False,
-                                       'uniform': False}
-    directions: ClassVar[Tuple[int, ...]] = (0, 0)
+    topology: TopologyOptions
 
-    def __init__(self, *args, **kwds):
+    def __init__(self, *args, **kwds) -> None:
+        self.topology = kwds.pop('opt', TopologyOptions())
+        self.topology.pop_my_args(kwds)
         super().__init__(*args, **kwds)
-        self._saved = ((), (), (), ())
-        self._unchanged = False
 
     @property
     def nparam(self) -> int:
@@ -50,6 +149,8 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             each in order:
             Wp_01, Wp_02, ... Wp_0n-1, Wp_10, Wp_12, ... Wp_n-2,n-1,
             Wm_01, Wm_02, ... Wm_0n-1, Wm_10, Wm_12, ... Wm_n-2,n-1.
+            Unless a special topology is specified, in which case see
+            `sl_py_tools.numpy_tricks.markov.params`.
 
         See Also
         --------
@@ -58,8 +159,8 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         params = mp.mat_to_params(self.plast, **self.directed(daxis=-3))
         return params.ravelaxes(-2)
 
-    def set_params(self, params: np.ndarray, *args, **kwds):
-        """Transition matrices. from independent parameters
+    def set_params(self, params: np.ndarray, *args, **kwds) -> None:
+        """Update transition matrices from independent parameters.
 
         Does not update if parameters are unchanged Optional arguments are
         passed on to `numpy.allclose`.
@@ -71,6 +172,8 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             each in order:
             Wp_01, Wp_02, ... Wp_0n-1, Wp_10, Wp_12, ... Wp_n-2n-1,
             Wm_01, Wm_02, ... Wm_0n-1, Wm_10, Wm_12, ... Wm_n-2n-1.
+            Unless a special topology is specified, in which case see
+            `sl_py_tools.numpy_tricks.markov.params`.
 
         See Also
         --------
@@ -80,6 +183,156 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             return
         params = la.asarray(params).unravelaxis(-1, (self.nplast, -1))
         mp.mat_update_params(self.plast, params, **self.directed(pdaxis=-2))
+
+    def directed(self, which: Union[int, slice] = slice(None),
+                 **kwds) -> Dict[str, Any]:
+        """Markov parameter options
+
+        Parameters
+        ----------
+        which : int, slice, optional
+            Which element of `self.topology.directions` to use as the `'drn'`
+            item, where `None` -> omit `'drn'` item. By default `slice(None)`.
+        Extra arguments are default values or unknown keys in `opts`
+
+        Returns
+        -------
+        opts : Dict[str, Any]
+            All options for `sl_py_tools.numpy_tricks.markov.params`.
+        """
+        return self.topology.directed(which, **kwds)
+
+    @classmethod
+    def from_params(cls, params: np.ndarray, *args, **kwds) -> SynapseParamModel:
+        """Builds SynapseOpt object from independent parameters
+
+        Parameters
+        ----------
+        params : np.ndarray
+            Vector of off-diagonal elements, potentiation before depression,
+            each in order:
+            mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2n-1.
+        frac : float
+            Fraction of events of each plasticity type, An extra element is
+            added if it is subnormalised. By default 0.5.
+        binary : bool
+            is the weight vector binary? Otherwise it's linear. Default: False
+        topology : TopologyOptions, optional keyword
+            Topology specifying options. By default `TopologyOptions()`.
+        npl : int, optional keyword
+            Total number of plasticity types. By default `topology.npl`
+        nst : int or None, optional keyword
+            Total number of states. Calculate from `len(params)` if `None`.
+        npar : int or None, optional keyword
+            Total number of parameters. Ignored.
+        ...
+            extra arguments passed to `cls.zero`.
+
+        Returns
+        -------
+        synobj
+            SynapseParamModel instance
+        """
+        topology = kwds.pop('topology', TopologyOptions())
+        npl = kwds.setdefault('npl', topology.npl)
+        topology.set_npl(npl)
+        nst = kwds.pop('nst', None)
+        kwds.pop('npar', None)
+        if nst is None:
+            nst = mp.num_state(params.shape[-1] // npl, **topology.directed(0))
+        obj = cls.zero(nst, *args, **kwds)
+        obj.topology = topology
+        obj.set_params(params)
+        return obj
+
+    @classmethod
+    def rand(cls, nst: Optional[int], *args, **kwds) -> SynapseParamModel:
+        """Random model
+
+        Synapse model with random transition matrices
+
+        Parameters
+        ----------
+            All passed to `cls.build`, `builders.build_rand`
+            or `sl_py_tools.numpy_tricks.markov_param`:
+        nst : int or None
+            Total number of states. Calculate from `npar` if `None`.
+        npar : int or None, optional keyword
+            Total number of parameters. By default calculate from `nst`,
+            (or if `None`).
+        npl : int, optional keyword
+            Total number of plasticity types. By default `topology.npl`.
+        frac : float, optional keyword
+            fraction of events that are potentiating, by default `0.5`.
+        binary : bool, optional keyword
+            is the weight vector binary? Otherwise it's linear. Default: False
+        topology : TopologyOptions, optional keyword
+            Topology specifying options. By default `TopologyOptions()`.
+        rng : np.random.Generator, optional keyword
+            Source of random numbers. By default, `builders.RNG`.
+        ...
+            extra arguments passed to `cls.from_params`.
+
+        One of 'nst/npar' must be provided
+
+        Returns
+        -------
+        synobj
+            SynapseParamModel instance
+        """
+        rng = kwds.pop('rng', _bld.RNG)
+        topology = kwds.pop('opt', TopologyOptions())
+        npar = kwds.pop('npar', None)
+        if npar is None:
+            if nst is None:
+                raise TypeError("Must specify one of [nst, npar]")
+            npl = kwds.setdefault('npl', topology.npl)
+            topology.set_npl(npl)
+            npar = npl * mp.num_param(nst, **topology.directed(0))
+        kwds.update(nst=nst, topology=topology)
+        return cls.from_params(rng.random(npar), *args, **kwds)
+
+
+# =============================================================================
+# Class for optimisable synapses
+# =============================================================================
+
+
+class SynapseOptModel(SynapseParamModel):
+    """Class for complex synapses, suitable for optimisation
+
+    Subclass of SynapseMemoryModel.
+    Same constructor & attributes, only methods added.
+    """
+    _saved: Tuple[Tuple[la.lnarray, ...], ...]
+    _unchanged: bool
+
+    def __init__(self, *args, **kwds) -> None:
+        super().__init__(*args, **kwds)
+        self._saved = ((), (), (), ())
+        self._unchanged = False
+
+    def set_params(self, params: np.ndarray, *args, **kwds) -> None:
+        """Update transition matrices from independent parameters.
+
+        Does not update if parameters are unchanged Optional arguments are
+        passed on to `numpy.allclose`.
+
+        Parameters
+        ----------
+        params : np.ndarray
+            Vector of off-diagonal elements, potentiation before depression,
+            each in order:
+            Wp_01, Wp_02, ... Wp_0n-1, Wp_10, Wp_12, ... Wp_n-2n-1,
+            Wm_01, Wm_02, ... Wm_0n-1, Wm_10, Wm_12, ... Wm_n-2n-1.
+            Unless a special topology is specified, in which case see
+            `sl_py_tools.numpy_tricks.markov.params`.
+
+        See Also
+        --------
+        markov.params_to_mat
+        """
+        super().set_params(params, *args, **kwds)
         self._unchanged = False
 
     def _calc_fab(self, time: Number, qas: la.lnarray, evs: la.lnarray,
@@ -163,23 +416,15 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         self._unchanged = True
 
         fundi = self.zinv()
-        peq = self.peq()
 
         # (svs, srow, scol)
         svdata = _fund_svd(fundi if svd else None)
 
         if rate is None:
-            # (peq, c_s, u.h)
-            rows = (peq, peq @ self.enc() @ fundi.inv) + svdata[1]
-            # (eta, theta, v)
-            eta = fundi.inv @ self.weight
-            cols = (eta, fundi.inv @ self.enc() @ eta) + svdata[2]
-            # (Z(0).inv, Z(s).inv, s)
-            mats = (fundi, fundi) + svdata[0]
+            rows, cols, mats = self._derivs_rcm(fundi, fundi, svdata, inv)
             if inv:
                 # (Z(0), Z(s), Z(0)KZ(s), Z(0).inv, Z(s).inv, s)
-                zqz = fundi.inv @ self.enc() @ fundi.inv
-                mats = (fundi.inv(),) * 2 + (zqz,) + mats
+                mats = (fundi.inv(),) * 2 + mats
             self._saved = args, rows, cols, mats
             return self._saved[1:]
 
@@ -188,9 +433,23 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         if svd:
             # (svs, srow, scol)
             # svs = diag(smin, -smax) / smin**2
-            svdata = _fund_svd(fundi, svdata)
+            svdata = _fund_svd(fundis, svdata)
             svdata = [(np.stack(arr),) for arr in svdata]
 
+        rows, cols, mats = self._derivs_rcm(fundi, fundis, svdata, inv)
+        if inv:
+            # (Z(0), Z(s), Z(0)KZ(s), Z(0).inv, Z(s).inv, s)
+            mats = (fundi.inv(), fundis.inv()) + mats
+
+        self._saved = args, rows, cols, mats
+        return self._saved[1:]
+
+    def _derivs_rcm(self, fundi: la.lnarray, fundis: la.lnarray,
+                    svdata: Sequence[Tuple[la.lnarray]],
+                    inv: bool = False) -> Tuple[Tuple[la.lnarray, ...], ...]:
+        """helper for _derivs
+        """
+        peq = self.peq()
         # (peq, c_s, u.h)
         rows = (peq, peq @ self.enc() @ fundis.inv) + svdata[1]
         # (eta, theta, v)
@@ -200,11 +459,8 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         mats = (fundi, fundis) + svdata[0]
         if inv:
             # (Z(0), Z(s), Z(0)KZ(s), Z(0).inv, Z(s).inv, s)
-            zqz = fundi.inv @ self.enc() @ fundis.inv
-            mats = (fundi.inv(), fundis.inv(), zqz) + mats
-
-        self._saved = args, rows, cols, mats
-        return self._saved[1:]
+            mats = (fundi.inv @ self.enc() @ fundis.inv,) + mats
+        return rows, cols, mats
 
     def laplace_fun(self, rate: Number, **kwds) -> float:
         """Gradient of Laplace transform of SNR memory curve.
@@ -507,13 +763,15 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         if not _sm.well_behaved(self, rate, False):
             nout = 1 if rate is None else 2
             return -np.ones(nout)
+        thresh = kwds.pop('cond_thresh', self.CondThresh)
         if kwds.pop('svd', False):
+            kwds.pop('cond', None)
             # (p,c,U.h), (eta,theta,V), (Z,Zs,ZQZs,S)
             svs = self._derivs(rate, svd=True, **kwds)[-1][-1]
             # svs = diag(smin, -smax) / smin**2
-            return 1 + svs[..., 1, 1] / svs[..., 0, 0] / self.CondThresh
+            return 1 + svs[..., 1, 1] / svs[..., 0, 0] / thresh
         conds = la.array([self.cond(val) for val in {None, rate}])
-        return 1 - conds / self.CondThresh
+        return 1 - conds / thresh
 
     def cond_grad(self, rate: Number, **kwds) -> float:
         """Gradient of gap between condition number and threshold
@@ -534,6 +792,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
             nout = 1 if rate is None else 2
             return _bld.RNG.random((nout, self.nparam))
         kwds['svd'] = True
+        thresh = kwds.pop('cond_thresh', self.CondThresh)
         # (p,c,U.h), (eta,theta,V), (Z,Zs,ZQZs,S)
         row, col, svs = [drv[-1] for drv in self._derivs(rate, **kwds)]
         # svs = diag(smin, -smax) / smin**2
@@ -543,92 +802,7 @@ class SynapseOptModel(_sm.SynapseMemoryModel):
         # (2,n(n-1))
         grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
         # (2n(n-1),)
-        return grad.ravelaxes(-2) / self.CondThresh
-
-    @classmethod
-    def directed(cls, which: Union[int, slice] = np.s_[:], **kwds) -> dict:
-        """Markov parameter options
-
-        Parameters
-        ----------
-        which : int, slice, optional
-            Which element of `cls.directions` to use, by default
-        extra arguments are default values or unknown keys in `opts`
-
-        Returns
-        -------
-        opts
-            Dictionary with `cls.type`, `drn = cls.directions[which]`.
-        """
-        kwds['drn'] = cls.directions[which]
-        kwds.update(cls.type)
-        return kwds
-
-    @classmethod
-    def from_params(cls, params: np.ndarray, *args, **kwds) -> SynapseOptModel:
-        """Builds SynapseOpt object from independent parameters
-
-        Parameters
-        ----------
-        params : np.ndarray
-            Vector of off-diagonal elements, potentiation before depression,
-            each in order:
-            mat_01, mat_02, ..., mat_0n-1, mat10, mat_12, ..., mat_n-2n-1.
-        frac : float
-            fraction of events that are potentiating, default=0.5.
-        binary : bool
-            is the weight vector binary? Otherwise it's linear. Default: False
-        ...
-            extra arguments passed to `cls.zero`.
-
-        Returns
-        -------
-        synobj
-            SynapseOpt instance
-        """
-        npl = kwds.pop('npl', len(cls.directions))
-        nst = kwds.pop('nst', None)
-        if nst is None:
-            nst = mp.num_state(params.size // npl, **cls.directed(0))
-        obj = cls.zero(nst, *args, npl=npl, **kwds)
-        obj.set_params(params)
-        return obj
-
-    @classmethod
-    def rand(cls, nst: Optional[int], *args, **kwds) -> SynapseOptModel:
-        """Random model
-
-        Synapse model with random transition matrices
-
-        Parameters
-        ----------
-            All passed to `cls.build`, `builders.build_rand`
-            or `sl_py_tools.numpy_tricks.markov_param`:
-        nst : int or None
-            total number of states. Use `npar` if `None`.
-        npar : int or None
-            total number of parameters. Use `nst` if `None` (default).
-        npl : int
-            total number of plasticity types
-        frac : float
-            fraction of events that are potentiating, default=0.5.
-        binary : bool
-            is the weight vector binary? Otherwise it's linear. Default: False
-        ...
-            extra arguments passed to `cls.from_params`.
-
-        One of 'nst/npar' must be provided
-
-        Returns
-        -------
-        synobj
-            SynapseOpt instance
-        """
-        npar = kwds.pop('npar', None)
-        if npar is None:
-            npl = kwds.get('npl', len(cls.directions))
-            npar = npl * mp.num_param(nst, **cls.directed(0))
-        return cls.from_params(_bld.RNG.random(npar), *args, nst=nst, **kwds)
+        return grad.ravelaxes(-2) / thresh
 
 
 # =============================================================================

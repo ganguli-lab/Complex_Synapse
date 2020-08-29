@@ -6,7 +6,7 @@ from __future__ import annotations
 import abc
 from numbers import Number
 import re
-from typing import Callable, ClassVar, Dict, List, Optional, Tuple
+from typing import Callable, ClassVar, Dict, Optional, Tuple
 
 import numpy as np
 
@@ -57,15 +57,8 @@ def _frmt_vars(format_spec: str) -> Tuple[Dict[str, str], str, str, str]:
             }, "", ", ", ""
 
 
-def _frmt_out(disp: List[str], info: Dict[str, Number], frm_spec: str) -> str:
-    """Variables for __format__ method"""
-    templates, pre, delim, post = _frmt_vars(frm_spec)
-    disped = [templates[k] for k in disp]
-    return pre + delim.join(disped).format(**info) + post
-
-
-def _choose_verbosity(obj: SynapseFitter, format_spec: str):
-    """Choose verbosity etc from format_spec or obj"""
+def _get_pos_verbosity(obj: SynapseFitter, format_spec: str):
+    """Read pos & verbosity from format_spec if possible else from obj"""
     fspec = _FSPEC.fullmatch(format_spec)
     if fspec is not None:
         format_spec = fspec[1]
@@ -127,7 +120,7 @@ class SynapseFitOptions(_opt.Options):
         Relative tolerance for `dlike`. Multiplies `y_scale` if given.
     max_it : int = 1e3
         Maximum number of iterations
-    verbose : int = 0
+    verbosity : int = 0
         When statistics are printed, and how verbose:
             0: do not print
             1: after iteration
@@ -164,7 +157,7 @@ class SynapseFitOptions(_opt.Options):
     # Maximum number of iterations
     max_it: int
     # When statistics are printed, and how verbose:
-    verbose: int
+    verbosity: int
     # Display progress update every `disp_step` iterations.
     disp_step: int
 
@@ -174,7 +167,7 @@ class SynapseFitOptions(_opt.Options):
         self.rtolx = 1e-5
         self.rtoly = 1e-5
         self.max_it = 1000
-        self.verbose = 1
+        self.verbosity = 1
         self.disp_step = 50
         self.update(kwds)
 
@@ -187,7 +180,7 @@ class SynapseFitOptions(_opt.Options):
             raise ValueError(f"Allowed values: 0,1,2, not {value}.")
         change = value - self.disp_after
         if change:
-            self.verbose += change
+            self.verbosity += change
 
     def set_disp_before(self, value: int) -> None:
         """Display before starting iteration?
@@ -198,7 +191,7 @@ class SynapseFitOptions(_opt.Options):
             raise ValueError(f"Allowed values: 0,1,2, not {value}.")
         change = value - self.disp_after
         if change:
-            self.verbose += change * 3
+            self.verbosity += change * 3
 
     def set_disp_each(self, value: int) -> None:
         """Display at each iteration?
@@ -209,7 +202,7 @@ class SynapseFitOptions(_opt.Options):
             raise ValueError(f"Allowed values: 0,1,2, not {value}.")
         change = value - self.disp_after
         if change:
-            self.verbose += change * 9
+            self.verbosity += change * 9
 
     @property
     def disp_after(self) -> int:
@@ -217,7 +210,7 @@ class SynapseFitOptions(_opt.Options):
 
         0: do not print, 1: print summary, 2: print detailed.
         """
-        return self.verbose % 3
+        return self.verbosity % 3
 
     @property
     def disp_before(self) -> int:
@@ -225,7 +218,7 @@ class SynapseFitOptions(_opt.Options):
 
         0: do not print, 1: print summary, 2: print detailed.
         """
-        return (self.verbose // 3) % 3
+        return (self.verbosity // 3) % 3
 
     @property
     def disp_each(self) -> int:
@@ -233,7 +226,7 @@ class SynapseFitOptions(_opt.Options):
 
         0: do not print, 1: print summary, 2: print detailed.
         """
-        return (self.verbose // 9) % 3
+        return (self.verbosity // 9) % 3
 
     def disp_when(self) -> Tuple[int, int, int]:
         """Tuple of (disp_before, disp_each, disp_after)"""
@@ -301,17 +294,23 @@ class SynapseFitter(abc.ABC):
         Relative tolerance. Multiplies `x_scale` and `y_scale` if given.
     max_it : int = 1e3
         Maximum number of iterations
-    verbose : int = -2
+    verbosity : int = -2
         When statistics are printed, and how verbose:
-            -2: print called
-            -1: print called, detailed
-            0: end of iteration
-            1: end of iteration, detailed
-            2: each iteration
-            3: each iteration, detailed
+            0: do not print
+            1: after iteration
+            2: after iteration, detailed
+            3: before iteration
+            6: before iteration, detailed
+            9: each iteration
+            18: each iteration, detailed
+        Values in different categories can be summed to produce combinations
     disp_step : int = -2
         Display progress update every `disp_step` iterations.
     All of the above are stored in `SynapseFitter.opt`.
+
+    See Also
+    --------
+    SynapseFitOptions.
     """
     data: _ps.PlasticitySequence
     est: _si.SynapseIdModel
@@ -344,20 +343,32 @@ class SynapseFitter(abc.ABC):
         self.opt.update(**kwds)
 
     def __format__(self, format_spec: str) -> str:
-        """Printing info
+        """Printing info about state of fitter
 
         Parameters
         ----------
         format_spec : str
-            In it is `'tex'`, produces a LaTeX equation environment.
+            If it begins `'tex'`, produces a LaTeX equation environment.
+            If it ends with `'<digit>,<digit>'`, the first digit is
+            interpreted as `pos` and the second as `verbose`.
+
+        For `pos`:
+            0: Before first iteration.
+            1: During itertions.
+            2: After completion.
+        For `verbose`:
+            1: print summary,
+            2: print detailed.
         """
-        format_spec, pos, verbose = _choose_verbosity(self, format_spec)
+        format_spec, pos, verbose = _get_pos_verbosity(self, format_spec)
         disp = ['t', 'fit']
         if verbose and pos:
             disp += ['df', 'dx']
         elif verbose and not format_spec:
             disp += ['df-', 'dx-']
-        return _frmt_out(disp, self.info, format_spec)
+        templates, pre, delim, post = _frmt_vars(format_spec)
+        disped = [templates[k] for k in disp]
+        return pre + delim.join(disped).format(**self.info) + post
 
     def __str__(self) -> str:
         """Printing info"""
@@ -392,7 +403,7 @@ class SynapseFitter(abc.ABC):
     def update_info(self) -> None:
         """Calculate stats for termination and display.
 
-        Subclass must update `info[nlike]` and `info[dlike]`.
+        Subclass must update `self.info['nlike']` and `self.info['dlike']`.
         """
         self.info['dmodel'] = (self.est - self.prev_est).norm()
 
@@ -413,7 +424,7 @@ class SynapseFitter(abc.ABC):
             Function called on every iteration, by default `print_callback`.
             Second argument:
                 0: Before first iteration.
-                1: During itertions.
+                1: During iterations.
                 2: After completion.
 
         Returns
@@ -491,6 +502,11 @@ class GroundedFitter(SynapseFitter):
         `nlike - true_like`.
     All of the above are stored in `self.info`.
     See `SynapseFitter` for other statistics.
+
+    See Also
+    --------
+    SynapseFitter.
+    SynapseFitOptions.
     """
     data: _ps.SimPlasticitySequence
     truth: _si.SynapseIdModel
@@ -509,8 +525,7 @@ class GroundedFitter(SynapseFitter):
         truth : SynapseIdModel
             The model used to generate `data`.
 
-        Subclass should set `self.info` items `['true_like', 'y_scale',
-        'true_dlike']`.
+        Subclass should set `self.info['true_like', 'y_scale', 'true_dlike']`.
         """
         super().__init__(data, est, **kwds)
         self.truth = truth
@@ -518,16 +533,34 @@ class GroundedFitter(SynapseFitter):
                          true_like=0., x_scale=self.truth.norm())
 
     def __format__(self, format_spec: str) -> str:
-        """Printing info"""
-        format_spec, pos, verbose = _choose_verbosity(self, format_spec)
+        """Printing info about state of fitter
+
+        Parameters
+        ----------
+        format_spec : str
+            If it begins `'tex'`, produces a LaTeX equation environment.
+            If it ends with `'<digit>,<digit>'`, the first digit is
+            interpreted as `pos` and the second as `verbose`.
+
+        For `pos`:
+            0: Before first iteration.
+            1: During itertions.
+            2: After completion.
+        For `verbose`:
+            1: print summary,
+            2: print detailed.
+        """
+        format_spec, pos, verbose = _get_pos_verbosity(self, format_spec)
         disp = ['t', 'tr', 'fit', 'trx']
-        if pos == 1 and not format_spec:
+        if not verbose and pos == 1 and not format_spec:
             del disp[1]
         if verbose and pos:
             disp += ['dtr', 'df', 'dx']
         elif verbose and format_spec:
             disp += ['dtr', 'df-', 'dx-']
-        return _frmt_out(disp, self.info, format_spec)
+        templates, pre, delim, post = _frmt_vars(format_spec)
+        disped = [templates[k] for k in disp]
+        return pre + delim.join(disped).format(**self.info) + post
 
     def __repr__(self) -> str:
         """Accurate representation of object"""
@@ -548,8 +581,7 @@ class GroundedFitter(SynapseFitter):
     def update_info(self) -> None:
         """Calculate info for termination.
 
-        Subclass must update `self.info` fields `[nlike, dlike,
-        true_dlike]`.
+        Subclass must update `self.info['nlike', 'dlike', 'true_dlike']`.
         """
         super().update_info()
         self.info['true_dmodel'] = (self.truth - self.est).norm()

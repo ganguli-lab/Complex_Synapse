@@ -50,7 +50,7 @@ class Options(collections.abc.MutableMapping):
     unless their names are included in `property_attributes`.
     If an attribute's value is only set by a default value in a type hint, and
     not set in `__init__`, it will be omitted when iterating, unpacking or
-    printing. If it both exists in the instance `__dict__` and is listed in
+    printing. If it is both a member of `self.__dict__` and listed in
     `prop_attributes`, it will appear twice.
 
     Existing attributes may be modified by subscripting. If the name is not
@@ -67,8 +67,12 @@ class Options(collections.abc.MutableMapping):
     propagate to this class.
 
     The attributes listed in `mapping_attributes` should be `MutableMapping`s.
-    They, as well as the attributes in `property_attributes` will raise a
+    They, as well as the attributes in `property_attributes`, will raise a
     `TypeError` if you try to delete them.
+
+    If the same item appears in more than one of the `mapping_attributes`, or
+    in `self`, they can be partially synchronised by making it a property in
+    the parent `Options` with a `set_<key>` method that updates the children.
     """
     map_attributes: typing.ClassVar[typing.Tuple[str, ...]] = ()
     prop_attributes: typing.ClassVar[typing.Tuple[str, ...]] = ()
@@ -141,9 +145,23 @@ class Options(collections.abc.MutableMapping):
             raise KeyError(f"Unknown key: {key}.")
 
     def __len__(self) -> int:
-        # tuple(self) would appear to call len -> would lead to recursion
+        # tuple(self) appears to call len(self) -> would lead to recursion.
         return len(tuple(x for x in self))
 
     def __iter__(self) -> typing.Iterator[typing.Any]:
         yield from filter(_public, self.__dict__)
         yield from self.prop_attributes
+
+    def pop_my_args(self, kwds: typing.Dict[str, typing.Any]) -> None:
+        """Pop any key from dict that can be set and use the value to set.
+        """
+        to_pop = []
+        for key, val in kwds.items():
+            try:
+                self[key] = val
+            except KeyError:
+                pass
+            else:
+                to_pop.append(key)
+        for key in to_pop:
+            del kwds[key]

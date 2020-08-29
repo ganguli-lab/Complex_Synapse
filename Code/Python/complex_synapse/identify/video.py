@@ -131,7 +131,7 @@ class VideoLayout(_opt.Options):
         Do we have axes for a ground truth model?
     npl : int
         How many plasticity types are there?
-    verbose : int
+    verbosity : int
         Display verbose information?
     fitter : SynapseFitter
         Get `npl`, `ground` and `verbose` from `fitter.est`, `truth` and `opt`.
@@ -147,7 +147,8 @@ class VideoLayout(_opt.Options):
     attribute name. If the name is not found, it will search `sizes`.
     """
     map_attributes: ClassVar[Tuple[str, ...]] = ('sizes',)
-    prop_attributes: ClassVar[Tuple[str, ...]] = ('transpose', 'ground', 'npl')
+    prop_attributes: ClassVar[Tuple[str, ...]] = ('transpose', 'ground',
+                                                  'npl', 'verbosity')
     # row/column assignments for models/data
     mrows: _ps.Inds
     mcols: _ps.Inds
@@ -158,7 +159,7 @@ class VideoLayout(_opt.Options):
     # swap rows and columns?
     _transpose: bool
     # display verbose information?
-    _verbose: int
+    _verbosity: int
 
     def __init__(self, **kwds) -> None:
         self.mrows = (-1, 0)
@@ -169,7 +170,7 @@ class VideoLayout(_opt.Options):
         # height: [m]o[d]el=12, [p]last_type/[r]eadout=2, [st]ates=6
         self.sizes = dict(c=1, i=2, p=12, pr=2, st=6, md=12, scale=0.3)
         self._transpose = False
-        self._verbose = 1
+        self._verbosity = 1
         self.update(kwds)
 
     def __setitem__(self, key: str, val: Any) -> None:
@@ -226,14 +227,14 @@ class VideoLayout(_opt.Options):
         if len(self.mcols) - 2 != npl:
             self.mcols = self.mcols[:2] + tuple(self.mcols[2] + np.arange(npl))
 
-    def set_verbose(self, verbose: Optional[int]) -> None:
+    def set_verbosity(self, verbose: Optional[int]) -> None:
         """Choose whether to display verbose information
 
         Does nothing if `verbose` is `None`.
         """
         if verbose is None:
             return
-        self._verbose = verbose
+        self._verbosity = verbose
 
     def set_fitter(self, fitter: Optional[_fs.SynapseFitter]) -> None:
         """Set `npl`, `ground` and `verbose` from a `SynapseFitter`
@@ -244,7 +245,7 @@ class VideoLayout(_opt.Options):
             return
         self.set_npl(fitter.est.nplast)
         self.set_ground(isinstance(fitter, _fs.GroundedFitter))
-        self.set_verbose(fitter.opt.disp_each)
+        self.set_verbosity(fitter.opt.disp_each)
 
     @property
     def transpose(self) -> bool:
@@ -262,9 +263,10 @@ class VideoLayout(_opt.Options):
         return len(self.mcols) - 2
 
     @property
-    def verbose(self) -> int:
-        """Do we display verbose information?"""
-        return self._verbose
+    def verbosity(self) -> int:
+        """Do we display verbose information?
+        """
+        return self._verbosity
 
 
 # pylint: disable=too-many-ancestors
@@ -408,7 +410,7 @@ class FitterVideo:
     ind: _ps.Inds
     fname: str
     norm: mpl.colors.Normalize
-    fig: Figure
+    fig: Optional[Figure]
     axh: Dict[str, AxList]
     imh: Dict[str, List[Disp]]
     opt: VideoOptions
@@ -444,16 +446,9 @@ class FitterVideo:
         self.opt = ag.default(opt, VideoOptions())
         self.opt.update(kwds)
         self.opt.layout.set_fitter(fitter)
-
+        self.fig = None
         self.axh = {}
         self.imh = {}
-        figax = vid_fig(self.opt.layout)
-        self.fig, psax, self.axh['fit'], self.axh['tr'] = figax
-        self.axh['ps'] = psax[1::2]
-        self.axh['pt'] = psax[:2]
-        self.axh['ro'] = psax[2:4]
-        self.axh['st'] = psax[4:]
-        self.axh['info'] = self.axh['tr' if self.ground else 'st'][0]
 
     def __call__(self, fitter: _fs.SynapseFitter, pos: int) -> None:
         """Callback that displays fitter state as appropriate
@@ -465,10 +460,11 @@ class FitterVideo:
         pos : int
             At what stage of the fit are we?
                 0: Before first iteration.
-                1: During itertions.
+                1: During iterations.
                 2: After completion.
         """
         if pos == 0:
+            self.make_fig(fitter)
             self.create_plots(fitter)
             _fs.print_callback(fitter, 0)
         elif pos == 1:
@@ -483,6 +479,17 @@ class FitterVideo:
         """Do we have ground truth?"""
         return bool(self.axh['tr'])
 
+    def make_fig(self, fitter: _fs.SynapseFitter) -> None:
+        """Create the figure and axes for the video frames"""
+        self.opt.layout.set_fitter(fitter)
+        figax = vid_fig(self.opt.layout)
+        self.fig, psax, self.axh['fit'], self.axh['tr'] = figax
+        self.axh['ps'] = psax[1::2]
+        self.axh['pt'] = psax[:2]
+        self.axh['ro'] = psax[2:4]
+        self.axh['st'] = psax[4:]
+        self.axh['info'] = self.axh['tr' if self.ground else 'st'][0]
+
     def create_plots(self, fitter: _fs.SynapseFitter) -> None:
         """Create initial plots
 
@@ -495,7 +502,7 @@ class FitterVideo:
         mdo = {**self.opt.im_opt, 'zorder': 0, 'norm': self.norm}
         pso = {**self.opt.im_opt, 'zorder': 10, 'nplast': fitter.est.nplast,
                'nreadout': fitter.est.nreadout, 'line_opts': self.opt.ln_opt}
-        lbo, verbose = self.opt.txt_opt, self.opt.layout.verbose
+        lbo, verbose = self.opt.txt_opt, self.opt.layout.verbosity
 
         self.imh['st'] = fitter.plot_occ(self.axh['st'][1], self.ind, **mdo)
         self.imh['ps'] = fitter.data[self.ind].plot(self.axh['ps'], **pso)
@@ -527,7 +534,7 @@ class FitterVideo:
         obj : SynapseFitter
             Object performing fit whose state we update.
         """
-        trn, verbose = self.opt.transpose, self.opt.layout.verbose
+        trn, verbose = self.opt.transpose, self.opt.layout.verbosity
         fitter.plot_occ(self.imh['st'], self.ind, trn=trn)
         fitter.est.plot(self.imh['fit'], trn=trn)
         if verbose:

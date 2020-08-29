@@ -275,7 +275,7 @@ class BaumWelchOptions(_fs.SynapseFitOptions):
         Relative tolerance for `dlike`. Multiplies `y_scale` if given.
     max_it : int = 1e3
         Maximum number of iterations
-    verbose : int = 0
+    verbosity : int = 0
         When statistics are printed, and how verbose:
             0: do not print
             1: after iteration
@@ -354,7 +354,8 @@ class BaumWelchFitter(_fs.SynapseFitter):
 
     See Also
     --------
-    SynapseFitter
+    SynapseFitter.
+    SynapseFitOptions, BaumWelchOptions.
     """
     # Baum-Welch forward/backward variables
     # (T,E,M)
@@ -475,6 +476,7 @@ class GroundedBWFitter(_fs.GroundedFitter, BaumWelchFitter):
     See Also
     --------
     SynapseFitter, GroundedFitter, BaumWelchFitter.
+    SynapseFitOptions, BaumWelchOptions.
     """
 
     def __init__(self, data: _ps.SimPlasticitySequence,

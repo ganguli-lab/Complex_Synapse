@@ -6,17 +6,18 @@
 from __future__ import annotations
 
 from numbers import Number
-from typing import Any, Dict, Sequence, Tuple, Union, Callable, ClassVar
+from typing import (Any, Callable, ClassVar, Dict, Optional, Sequence, Tuple,
+                    Type, TypeVar, Union)
 
 import numpy as np
 
 import numpy_linalg as la
 import numpy_linalg.convert as _cvl
+import sl_py_tools.arg_tricks as _ag
+import sl_py_tools.numpy_tricks.markov as _ma
 
 from . import builders as _bld
 
-# types that can multiply with/add to a matrix
-ArrayLike = Union[Number, Sequence[Number], np.ndarray]
 # =============================================================================
 
 
@@ -37,9 +38,9 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
     Properties
     ----------
-    nstate
+    nstate : int
         number of states, M.
-    nplast
+    nplast : int
         number of plasticity types, P.
     nmodel : Tuple[int]
         Number and shape of models being broadcast.
@@ -61,18 +62,15 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
         Parameters (and attributes)
         ---------------------------
-        plast : la.lnarray
+        plast : array_like, (P,M,M), float[0:1]
             potentiation/depression transition rate matrix.
-        frac : array_like
+        frac : array_like, (P,), float[0:1]
             fraction of events that are potentiating/depressing.
-        weight : array_like
-            synaptic weight of each state.
         """
         # store inputs
         self.plast = la.asarray(plast)
-        self.frac = la.asarray(frac).ravel()
-        if len(self.frac) == len(self.plast) - 1:
-            self.frac = la.concatenate((self.frac, [1. - self.frac.sum()]))
+        self.frac = append_frac(frac, self.nplast)
+        self.frac = trim_frac(self.frac, self.nplast)
 
     def __array_ufunc__(self, ufunc: np.ufunc, method: str, *inputs, **kwargs):
         """Handling ufuncs with SynapseBases
@@ -106,25 +104,44 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     # Utility methods
     # -------------------------------------------------------------------------
 
-    def view(self, **kwds) -> SynapseBase:
+    def view(self, astype: Optional[Type[Syn]], **kwds) -> Syn:
         """Copy of object, with views of array attributes
 
+        Parameters
+        ----------
+        astype : type|None, optional
+            The returned view is cast to this type. Requires the names of
+            attributes/parameters to be the same in both classes.
+            By default `None` -> `type(self)`.
+
         Requires `__init__` parameter names to be the same as attribute names.
         """
+        astype = _ag.default(astype, type(self))
         attrs = array_attrs(self)
         attrs.update(kwds)
-        return type(self)(**attrs)
+        return astype(**attrs)
 
-    def copy(self, order: str = 'C', **kwargs) -> SynapseBase:
+    def copy(self, astype: Optional[Type[Syn]], order: str = 'C', **kwargs
+             ) -> Syn:
         """Copy of object, with copies of array attributes
+
+        Parameters
+        ----------
+        astype : type|None, optional
+            The returned view is cast to this type. Requires the names of
+            attributes/parameters to be the same in both classes.
+            By default `None` -> `type(self)`.
+        order : str, optional
+            Memory order of new arrays. By default `'C'`.
 
         Requires `__init__` parameter names to be the same as attribute names.
         """
+        astype = _ag.default(astype, type(self))
         attrs = array_attrs(self)
         for k in attrs:
             if k not in kwargs.keys():
                 kwargs[k] = attrs[k].copy(order)
-        return type(self)(**kwargs)
+        return astype(**kwargs)
 
     @property
     def nplast(self) -> int:
@@ -259,6 +276,54 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
 
 # =============================================================================
+# Utility functions
+# =============================================================================
+
+
+def append_frac(frac: ArrayLike, npl: int) -> la.lnarray:
+    """Add an extra element to the end of `frac` if it is one short or
+    subnormalised
+
+    Parameters
+    ----------
+    frac : ArrayLike
+        Fraction of events of each plasticity type
+    npl : int
+        Number of plasticity types. If you only want to fix subnormalised
+        `frac`, set this to 0.
+
+    Returns
+    -------
+    frac : la.lnarray
+        Input with extra elements, if needed
+    """
+    frac = np.atleast_1d(la.asarray(frac))
+    stoch_thresh = 1 - SynapseBase.StochThresh
+    if frac.shape[-1] == npl - 1 or (frac.sum(-1) < stoch_thresh).any():
+        total = frac.sum(axis=-1, keepdims=True)
+        frac = np.concatenate((frac, 1. - total), axis=-1)
+    return frac
+
+
+def trim_frac(frac: ArrayLike, npl: int) -> la.lnarray:
+    """Remove elements from the end of `frac` if it has too many
+
+    Parameters
+    ----------
+    frac : ArrayLike
+        Fraction of events of each plasticity type
+    npl : int
+        Number of plasticity types.
+
+    Returns
+    -------
+    frac : la.lnarray
+        Input with extra elements, if needed
+    """
+    frac = np.atleast_1d(la.asarray(frac))
+    frac = frac[..., :npl]
+    _ma.stochastify_d(frac)
+    return frac
 
 
 def insert_axes(arr: np.ndarray, how_many: int, where: int = -1) -> np.ndarray:
@@ -312,3 +377,11 @@ def array_attrs(obj: Any) -> Dict[str, np.ndarray]:
     """
     attrs = instance_attrs(obj)
     return {k: v for k, v in attrs.items() if isinstance(v, np.ndarray)}
+
+
+# =============================================================================
+# Hinting variables and aliases
+# =============================================================================
+# types that can multiply with/add to a matrix
+ArrayLike = Union[Number, Sequence[Number], np.ndarray]
+Syn = TypeVar('Syn', bound=SynapseBase)

@@ -20,8 +20,8 @@ Order = Union[int, float, str, None]
 # =============================================================================
 
 
-class SynapseMemoryModel(_sb.SynapseBase):
-    """Class for memory curves of complex synapse models.
+class SynapseModel(_sb.SynapseBase):
+    """Class for Markovian dynamics of complex synapse models.
 
     Parameters (and attributes)
     ---------------------------
@@ -271,6 +271,46 @@ class SynapseMemoryModel(_sb.SynapseBase):
         eta = - self.zinv(rate).inv @ self.weight.c
         return eta - eta.t
 
+    @contextmanager
+    def shifted(self, rate: _sb.ArrayLike, rowv: Optional[_sb.ArrayLike] = None
+                ) -> None:
+        """Move rate parametr of Laplace transform to plast
+        """
+        rowv = self.peq() if rowv is None else rowv
+        # convert to lnarray, add singletons to broadcast with plast
+        sss = _sb.insert_axes(la.asarray(rate), 3)
+        # sss = la.asarray(rate).expand_dims((-3, -2, -1)) / (2 * self.frac.s)
+        try:
+            old_plast = self.plast.copy()
+            self.plast = old_plast + sss * (rowv - la.eye(self.nstate))
+            yield
+        finally:
+            self.plast = old_plast
+
+
+class SynapseMemoryModel(SynapseModel):
+    """Class for memory curves of complex synapse models.
+
+    Parameters (and attributes)
+    ---------------------------
+    plast : array_like, (P,M,M), float[0:1]
+        potentiation/depression transition rate matrix.
+    frac : array_like, (P,), float[0:1]
+        fraction of events that are potentiating/depressing.
+    weight : array_like, (M,), float[-1:1]
+        synaptic weight of each state.
+    signal : array_like, (P,), float[-1:1]
+        desired signal contribution from each plasticity type.
+
+    Properties
+    ----------
+    nstate : int
+        number of states, M.
+    nplast : int
+        number of plasticity types, P.
+    nmodel : Tuple[int]
+        Number and shape of models being broadcast.
+    """
     # -------------------------------------------------------------------------
     # Memory curves
     # -------------------------------------------------------------------------
@@ -338,22 +378,6 @@ class SynapseMemoryModel(_sb.SynapseBase):
         """
         return _sb.scalarise(self.peq() @ self.enc() @ self.weight)
 
-    @contextmanager
-    def shifted(self, rate: _sb.ArrayLike, rowv: Optional[_sb.ArrayLike] = None
-                ) -> None:
-        """Move rate parametr of Laplace transform to plast
-        """
-        rowv = self.peq() if rowv is None else rowv
-        # convert to lnarray, add singletons to broadcast with plast
-        sss = _sb.insert_axes(la.asarray(rate), 3)
-        # sss = la.asarray(rate).expand_dims((-3, -2, -1)) / (2 * self.frac.s)
-        try:
-            old_plast = self.plast.copy()
-            self.plast = old_plast + sss * (rowv - la.eye(self.nstate))
-            yield
-        finally:
-            self.plast = old_plast
-
 
 # =============================================================================
 # Helper functions
@@ -366,7 +390,7 @@ def sign_fix(model: SynapseMemoryModel):
         model.signal *= -1
 
 
-def normalise(model: SynapseMemoryModel):
+def normalise(model: SynapseModel):
     """Ensure that all attributes are valid.
     """
     _ma.stochastify_c(model.plast)
@@ -376,7 +400,7 @@ def normalise(model: SynapseMemoryModel):
     _ma.stochastify_d(model.frac)
 
 
-def valid_shapes(model: SynapseMemoryModel) -> bool:
+def valid_shapes(model: SynapseModel) -> bool:
     """Do attributes (plast, weight, frac) have correct shapes?"""
     vld = model.plast.shape[-2] == model.nstate
     vld &= model.frac.shape[-1] == model.nplast
@@ -385,14 +409,14 @@ def valid_shapes(model: SynapseMemoryModel) -> bool:
     return vld
 
 
-def valid_values(model: SynapseMemoryModel) -> bool:
+def valid_values(model: SynapseModel) -> bool:
     """Do attributes (plast, frac) have valid values?"""
     vld = _ma.isstochastic_c(model.plast, model.StochThresh)
     vld &= _ma.isstochastic_d(model.frac, model.StochThresh)
     return vld
 
 
-def well_behaved(model: SynapseMemoryModel,
+def well_behaved(model: SynapseModel,
                  rate: Optional[float] = None, cond: bool = False) -> bool:
     """Do attributes plast have finite values, and is Zinv well conditioned?"""
     vld = np.isfinite(model.plast).all()
