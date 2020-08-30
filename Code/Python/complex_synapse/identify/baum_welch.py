@@ -303,11 +303,11 @@ class BaumWelchOptions(_fs.SynapseFitOptions):
     combine: bool
     normed: bool
 
-    def __init__(self, **kwds) -> None:
+    def __init__(self, *args, **kwds) -> None:
         self.steady = True
         self.combine = True
         self.normed = True
-        super().__init__(**kwds)
+        super().__init__(*args, **kwds)
 
     def bw_opts(self) -> Dict[str, bool]:
         """Those options specifically needed by Baum-Welch fitters

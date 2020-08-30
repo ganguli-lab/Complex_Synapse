@@ -41,12 +41,14 @@ class TopologyOptions(_opt.Options):
     uniform: bool
     directions: Tuple[int, ...]
 
-    def __init__(self, **kwds) -> None:
+    def __init__(self, *args, **kwds) -> None:
         self.serial = False
         self.ring = False
         self.uniform = False
         self.directions = (0, 0)
-        self.update(kwds)
+        args = _opt.sort_dicts(args, ('directions', 'npl'), -1)
+        kwds = _opt.sort_dict(kwds, ('directions', 'npl'), -1)
+        super().__init__(*args, **kwds)
         if self.constrained and 'directions' not in kwds:
             # different default if any(serial, ring, uniform)
             self.directions = (1, -1)
@@ -234,8 +236,8 @@ class SynapseParamModel(_sm.SynapseModel):
             SynapseParamModel instance
         """
         topology = kwds.pop('topology', TopologyOptions())
+        topology.pop_my_args(kwds)
         npl = kwds.setdefault('npl', topology.npl)
-        topology.set_npl(npl)
         nst = kwds.pop('nst', None)
         kwds.pop('npar', None)
         if nst is None:
@@ -281,13 +283,13 @@ class SynapseParamModel(_sm.SynapseModel):
             SynapseParamModel instance
         """
         rng = kwds.pop('rng', _bld.RNG)
-        topology = kwds.pop('opt', TopologyOptions())
+        topology = kwds.pop('topology', TopologyOptions())
+        topology.pop_my_args(kwds)
+        npl = kwds.setdefault('npl', topology.npl)
         npar = kwds.pop('npar', None)
         if npar is None:
             if nst is None:
                 raise TypeError("Must specify one of [nst, npar]")
-            npl = kwds.setdefault('npl', topology.npl)
-            topology.set_npl(npl)
             npar = npl * mp.num_param(nst, **topology.directed(0))
         kwds.update(nst=nst, topology=topology)
         return cls.from_params(rng.random(npar), *args, **kwds)
@@ -788,6 +790,7 @@ class SynapseOptModel(SynapseParamModel):
         func : la.lnarray (2,2n(n-1)) or (1,2n(n-1))
             Gradient of ``[CondThresh - cond(Z)] / CondThresh``.
         """
+        kwds.pop('cond', None)
         if not _sm.well_behaved(self, rate, False):
             nout = 1 if rate is None else 2
             return _bld.RNG.random((nout, self.nparam))

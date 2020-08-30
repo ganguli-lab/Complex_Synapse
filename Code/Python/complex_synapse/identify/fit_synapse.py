@@ -161,7 +161,7 @@ class SynapseFitOptions(_opt.Options):
     # Display progress update every `disp_step` iterations.
     disp_step: int
 
-    def __init__(self, **kwds) -> None:
+    def __init__(self, *args, **kwds) -> None:
         self.atolx = 1e-5
         self.atoly = 1e-5
         self.rtolx = 1e-5
@@ -169,7 +169,9 @@ class SynapseFitOptions(_opt.Options):
         self.max_it = 1000
         self.verbosity = 1
         self.disp_step = 50
-        self.update(kwds)
+        args = _opt.sort_dicts(args, self.prop_attributes, -1)
+        kwds = _opt.sort_dict(kwds, self.prop_attributes, -1)
+        super().__init__(*args, **kwds)
 
     def set_disp_after(self, value: int) -> None:
         """Display after the end of iteration?

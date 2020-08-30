@@ -104,7 +104,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     # Utility methods
     # -------------------------------------------------------------------------
 
-    def view(self, astype: Optional[Type[Syn]], **kwds) -> Syn:
+    def view(self, astype: Optional[Type[Syn]] = None, **kwds) -> Syn:
         """Copy of object, with views of array attributes
 
         Parameters
@@ -121,8 +121,8 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         attrs.update(kwds)
         return astype(**attrs)
 
-    def copy(self, astype: Optional[Type[Syn]], order: str = 'C', **kwargs
-             ) -> Syn:
+    def copy(self, astype: Optional[Type[Syn]] = None, order: str = 'C',
+             **kwargs) -> Syn:
         """Copy of object, with copies of array attributes
 
         Parameters
@@ -145,7 +145,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
 
     @property
     def nplast(self) -> int:
-        """number of plasticity types, P."""
+        """Number of plasticity types, P."""
         return self.plast.shape[-3]
 
     @property

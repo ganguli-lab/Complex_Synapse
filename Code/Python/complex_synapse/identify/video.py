@@ -63,7 +63,7 @@ class VideoLabels(_opt.Options):
     model: List[List[str]]
     plast: List[str]
 
-    def __init__(self, **kwds) -> None:
+    def __init__(self, *args, **kwds) -> None:
         self.plast_type = ["Plasticity type", "", "dep.", "pot."]
         self.readout = ["Synaptic efficacy", "", "weak", "strong"]
         self.state = ["Occupation probability", "Time", "State", "True path"]
@@ -71,7 +71,9 @@ class VideoLabels(_opt.Options):
         self.plast = [["Potentiation", "Depression"],
                       ["Probability", "Initial state", "From state",
                        "To state"]]
-        self.update(kwds)
+        args = _opt.sort_dicts(args, ('transpose',), -1)
+        kwds = _opt.sort_dict(kwds, ('transpose',), -1)
+        super().__init__(*args, **kwds)
 
     def model_labs(self, ind: _ps.Inds) -> Tuple[List[str], List[str]]:
         """Labels for a model's heatmaps"""
@@ -161,7 +163,7 @@ class VideoLayout(_opt.Options):
     # display verbose information?
     _verbosity: int
 
-    def __init__(self, **kwds) -> None:
+    def __init__(self, *args, **kwds) -> None:
         self.mrows = (-1, 0)
         self.mcols = (-1, 0, 1)
         self.drows = (0, 1, 2)
@@ -171,7 +173,10 @@ class VideoLayout(_opt.Options):
         self.sizes = dict(c=1, i=2, p=12, pr=2, st=6, md=12, scale=0.3)
         self._transpose = False
         self._verbosity = 1
-        self.update(kwds)
+        order = ('transpose', 'ground', 'npl', 'verbosity', 'fitter')
+        args = _opt.sort_dicts(args, order, -1)
+        kwds = _opt.sort_dict(kwds, order, -1)
+        super().__init__(*args, **kwds)
 
     def __setitem__(self, key: str, val: Any) -> None:
         """Set an option.
@@ -313,17 +318,17 @@ class VideoOptions(_opt.Options):
     im_opt: Dict[str, Any]
     txt_opt: Dict[str, Any]
 
-    def __init__(self, **kwds) -> None:
+    def __init__(self, *args, **kwds) -> None:
         self.txt = kwds.pop('txt', VideoLabels())
         self.layout = kwds.pop('sizes', VideoLayout())
         self.ln_opt = kwds.pop('line_opt', {})
         self.im_opt = kwds.pop('im_opt', {'cmap': 'YlOrBr'})
         self.txt_opt = kwds.pop('txt_opt', {'box': False, 'tight': False})
 
-        for key, val in self.txt_opt.items():
-            kwds.setdefault(key, val)
-        self.txt_opt.update(mpt.clean_axes_keys(kwds))
-        self.update(kwds)
+        self.txt_opt.update(mpt.clean_axes_keys(self.txt_opt))
+        args = _opt.sort_dicts(args, ('transpose',), -1)
+        kwds = _opt.sort_dict(kwds, ('transpose',), -1)
+        super().__init__(*args, **kwds)
 
     def __setitem__(self, key: str, val: Any) -> None:
         """Set an option.

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import collections.abc
 import re
-import typing
+import typing as _ty
 
 _LINE_SEP = re.compile('\n {4,}')
 # =============================================================================
@@ -18,7 +18,7 @@ def _public(key: str) -> bool:
     return not key.startswith('_')
 
 
-def _fmt_sep(format_spec: str) -> typing.Tuple[str, str, str]:
+def _fmt_sep(format_spec: str) -> _ty.Tuple[str, str, str]:
     """helper for Options.__format__: process `format_spec`."""
     if '#' not in format_spec:
         conv, next_spec = '', format_spec
@@ -30,7 +30,7 @@ def _fmt_sep(format_spec: str) -> typing.Tuple[str, str, str]:
     return sep, conv, next_spec
 
 
-def _fmt_help(key: str, val: typing.Any, conv: str, next_spec: str) -> str:
+def _fmt_help(key: str, val: _ty.Any, conv: str, next_spec: str) -> str:
     """helper for Options.__format__: entry for one item"""
     if not isinstance(val, Options):
         item = f"{{}}={{{conv}}}" if conv else "{}={}"
@@ -74,8 +74,26 @@ class Options(collections.abc.MutableMapping):
     in `self`, they can be partially synchronised by making it a property in
     the parent `Options` with a `set_<key>` method that updates the children.
     """
-    map_attributes: typing.ClassVar[typing.Tuple[str, ...]] = ()
-    prop_attributes: typing.ClassVar[typing.Tuple[str, ...]] = ()
+    map_attributes: _ty.ClassVar[_ty.Tuple[str, ...]] = ()
+    prop_attributes: _ty.ClassVar[_ty.Tuple[str, ...]] = ()
+
+    def __init__(self, *args, **kwds) -> None:
+        """The recommended approach to a subclass constructor is
+        ```
+        def __init__(self, *args, **kwds) -> None:
+            self.my_attr = its_default
+            self.other_attr = other_default
+            ...
+            self.last_attr = last_default
+            order = ('my_attr', 'other_attr', ..., 'last_attr')
+            args = sort_dicts(args, order, -1)
+            kwds = sort_dict(kwds, order, -1)
+            super().__init__(*args, **kwds)
+        ```
+        """
+        for mapping in args:
+            self.pop_my_args(mapping)
+        self.update(kwds)
 
     def __format__(self, format_spec: str) -> str:
         """formatted string represdenting object.
@@ -104,7 +122,7 @@ class Options(collections.abc.MutableMapping):
     def __repr__(self) -> str:
         return self.__format__('r#\n    ')
 
-    def __getitem__(self, key: str) -> typing.Any:
+    def __getitem__(self, key: str) -> _ty.Any:
         """Get an attribute"""
         try:
             return getattr(self, key)
@@ -116,7 +134,7 @@ class Options(collections.abc.MutableMapping):
                     pass
         raise KeyError(f"Unknown key: {key}.")
 
-    def __setitem__(self, key: str, value: typing.Any) -> None:
+    def __setitem__(self, key: str, value: _ty.Any) -> None:
         """Set an existing attribute"""
         if hasattr(self, 'set_' + key):
             getattr(self, 'set_' + key)(value)
@@ -148,11 +166,11 @@ class Options(collections.abc.MutableMapping):
         # tuple(self) appears to call len(self) -> would lead to recursion.
         return len(tuple(x for x in self))
 
-    def __iter__(self) -> typing.Iterator[typing.Any]:
+    def __iter__(self) -> _ty.Iterator[str]:
         yield from filter(_public, self.__dict__)
         yield from self.prop_attributes
 
-    def pop_my_args(self, kwds: typing.Dict[str, typing.Any]) -> None:
+    def pop_my_args(self, kwds: StrDict) -> None:
         """Pop any key from dict that can be set and use the value to set.
         """
         to_pop = []
@@ -165,3 +183,64 @@ class Options(collections.abc.MutableMapping):
                 to_pop.append(key)
         for key in to_pop:
             del kwds[key]
+
+
+# =============================================================================
+# Helpers
+# =============================================================================
+
+
+def sort_dict(unordered: StrDict, order: _ty.Sequence[str],
+              default: _ty.Optional[int] = None) -> StrDict:
+    """Sort a dict by the order the keys appear in another list
+
+    Parameters
+    ----------
+    unordered : Dict[str, Any]
+        Dictionary whose entries we want to sort
+    order : Sequence[str]
+        Keys in order we want
+    default : int|None, optional
+        Sort keys for items that do not appear in `order`.
+        By default `None` -> `len(order)`.
+
+    Returns
+    -------
+    ordered : Dict[str, Any]
+        Dictionary whose keys are in the same order as `order`
+    """
+    default = len(order) if default is None else default
+    def key_fn(item: _ty.Tuple[str, _ty.Any]) -> int:
+        """Key function for sorting"""
+        return order.index(item[0]) if item[0] in order else default
+
+    return dict(sorted(unordered.items(), key=key_fn))
+
+
+def sort_dicts(unordered: _ty.Sequence[StrDict], order: _ty.Sequence[str],
+               default: _ty.Optional[int] = None) -> _ty.List[StrDict]:
+    """Sort a dict by the order the keys appear in another list
+
+    Parameters
+    ----------
+    unordered : Sequence[Dict[str, Any]]
+        Dictionary whose entries we want to sort
+    order : Sequence[str]
+        Keys in order we want
+    default : int|None, optional
+        Sort keys for items that do not appear in `order`.
+        By default `None` -> `len(order)`.
+
+    Returns
+    -------
+    ordered : Dict[str, Any]
+        Dictionary whose keys are in the same order as `order`
+    """
+    default = len(order) if default is None else default
+    return [sort_dict(arg, order, default) for arg in unordered]
+
+
+# =============================================================================
+# Hinting aliases
+# =============================================================================
+StrDict = _ty.Dict[str, _ty.Any]
