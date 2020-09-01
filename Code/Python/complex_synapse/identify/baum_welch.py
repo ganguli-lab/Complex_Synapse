@@ -184,15 +184,15 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
 
     Parameters
     ----------
-    updaters : la.lnarray, (T-1,E,M,M), Modified
-        Plasticity matrices multiplied by readout indicators of 'to' state.
+    updaters : la.lnarray, (T-1,E,M,M) float[0:1], Modified
+        Plasticity matrices multiplied by readout probability given 'to' state.
     plast_type : la.lnarray, (T-1,E), int[0:P]
         id of plasticity type after each time-step
-    alpha : la.lnarray, (T,E,M)
+    alpha : la.lnarray, (T,E,M) float[0:1]
         Normalised Baum-Welch forward variable
-    beta : la.lnarray, (T,E,M)
+    beta : la.lnarray, (T,E,M) float
         Scaled Baum-Welch backward variable
-    eta : la.lnarray, (T,E)
+    eta : la.lnarray, (T,E) float[1:]
         Norm of Baum-Welch forward variable
 
     Keyword only:
@@ -341,7 +341,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
 
     Attributes
     ----------
-    alpha, beta, eta : la.lnarray
+    alpha, beta, eta : la.lnarray (T,E,M),(T,E,M),(T,E,) float
         Normalised Baum-Welch forward/backward variables and the normalisers.
     opt : BaumWelchOptions
         Optins for BW update
@@ -422,7 +422,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
         data : lnarray,  (M,T) float[0:1]
             Estimate of state occupation
         """
-        # (T,M)
+        # (M,T)
         return (self.alpha[ind] * self.beta[ind]).t
 
 

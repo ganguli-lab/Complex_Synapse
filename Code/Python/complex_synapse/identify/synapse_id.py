@@ -89,13 +89,13 @@ class SynapseIdModel(_sb.SynapseBase):
         newobj = self.view()
         newobj.plast = self.plast[inds]
         newobj.initial = self.initial[inds]
+        return newobj
 
     @property
     def nreadout(self) -> int:
         """Number of readout values, R
         """
-        return self.readout.max() + 1
-
+        return _sb.scalarise(self.readout.max() + 1)
     @property
     def nmodel(self) -> Tuple[int, ...]:
         """Number and shape of models being broadcast."""

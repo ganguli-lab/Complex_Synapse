@@ -386,8 +386,6 @@ class FitterVideo:
 
     Parameters
     ----------
-    fitter : SynapseFitter
-        Object that performs model fit.
     inds : Inds
         Indices for `fitter.data` for snippet to plot. Must result in
         `fitter.data[ind].nexpt = ()`.
@@ -427,15 +425,12 @@ class FitterVideo:
     imh: Dict[str, List[Disp]]
     opt: VideoOptions
 
-    def __init__(self, fitter: fs.SynapseFitter, ind: ps.Inds,
-                 fname: str = "", opt: Optional[VideoOptions] = None,
-                 **kwds) -> None:
+    def __init__(self, ind: ps.Inds, fname: str = "",
+                 opt: Optional[VideoOptions] = None, **kwds) -> None:
         """Video frame producing callback for SynapseFitter.
 
         Parameters
         ----------
-        fitter : SynapseFitter
-            Object that performs model fit
         ind : Tuple[Union[int, slice], ...]
             Indices for `fitter.data` for snippet to plot. Must result in
             `fitter.data[ind].nexpt = ()`.
@@ -457,7 +452,6 @@ class FitterVideo:
         self.norm = kwds.pop('norm', mpl.colors.Normalize(vmin, vmax))
         self.opt = ag.default(opt, VideoOptions())
         self.opt.update(kwds)
-        self.opt.layout.set_fitter(fitter)
         self.fig = None
         self.axh = {}
         self.imh = {}
@@ -478,11 +472,16 @@ class FitterVideo:
         if pos == 0:
             self.make_fig(fitter)
             self.create_plots(fitter)
+            self.format_axes()
+            self.savefig(fitter.info['nit'])
             fs.print_callback(fitter, 0)
         elif pos == 1:
             self.update_plots(fitter)
             self.savefig(fitter.info['nit'])
         elif pos == 2:
+            if fitter.info['nit'] % fitter.opt.disp_step:
+                self.update_plots(fitter)
+                self.savefig(fitter.info['nit'])
             fs.print_callback(fitter, 2)
 
     @property
@@ -507,35 +506,49 @@ class FitterVideo:
     def create_plots(self, fitter: fs.SynapseFitter) -> None:
         """Create initial plots
 
+        Should only be called after `make_fig`.
+
         Parameters
         ----------
         fitter : SynapseFitter
             Object performing fit whose state we display.
         """
-        ft_lab, tr_lab = self.opt.txt.model_labs(0), self.opt.txt.model_labs(1)
         mdo = {**self.opt.im_opt, 'zorder': 0, 'norm': self.norm}
         pso = {**self.opt.im_opt, 'zorder': 10, 'nplast': fitter.est.nplast,
                'nreadout': fitter.est.nreadout, 'line_opts': self.opt.ln_opt}
-        lbo, verbose = self.opt.txt_opt, self.opt.layout.verbosity
+        txo = {'size': self.opt.txt_opt.get('tickfontsize', 10),
+               'trn': self.opt.transpose}
+        verbose = self.opt.layout.verbosity
 
         self.imh['st'] = [fitter.plot_occ(self.axh['st'][1], self.ind, **mdo)]
         self.imh['ps'] = fitter.data[self.ind].plot(self.axh['ps'], **pso)
+
+        self.imh['fit'] = fitter.est.plot(self.axh['fit'][1:], **mdo)
+
+        if self.ground:
+            self.imh['tr'] = fitter.truth.plot(self.axh['tr'][1:], **mdo)
+
+        if verbose:
+            self.imh['info'] = [write_info(format(fitter, f'tex0,{verbose}'),
+                                           self.axh['info'][0], **txo)]
+
+    def format_axes(self) -> None:
+        """Format axes labels, legends and colourbars
+
+        Should only be called after `create_plots`.
+        """
+        ft_lab, tr_lab = self.opt.txt.model_labs(0), self.opt.txt.model_labs(1)
+        lbo = self.opt.txt_opt
+
         label_data(self.axh['pt'], self.opt.txt.plast_type, leg=True, **lbo)
         label_data(self.axh['ro'], self.opt.txt.readout, leg=True, **lbo)
         label_sim(self.axh['st'], self.opt.txt.state, leg=self.ground, **lbo)
 
-        self.imh['fit'] = fitter.est.plot(self.axh['fit'][1:], **mdo)
         label_model(self.axh['fit'], *ft_lab, cbar=True, **lbo)
 
         if self.ground:
-            self.imh['tr'] = fitter.truth.plot(self.axh['tr'][1:], **mdo)
             label_model(self.axh['tr'], *tr_lab, cbar=False, **lbo)
 
-        if verbose:
-            self.imh['info'] = [write_info(format(fitter, f'tex0,{verbose}'),
-                                           self.axh['info'][0],
-                                           trn=self.opt.transpose,
-                                           size=lbo.get('tickfontsize', 10))]
         # self.fig.canvas.draw_idle()
         plt.draw()
         # plt.show()

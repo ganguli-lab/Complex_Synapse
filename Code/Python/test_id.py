@@ -21,6 +21,13 @@ fitter = idfy.baum_welch.GroundedBWFitter(sim, fit_model, true_model)
 fitter.opt.verbosity = 2 + 6 + 9
 fitter.opt.disp_step = 10
 # %%
+rec = idfy.RecordingCallback(np.s_[:100, 0], idfy.print_callback)
+fitter.run(rec)
+# %%
+old_fit = idfy.GroundedFitterReplay(sim, rec.info, verbosity=17)
+vid = idfy.FitterVideo(fitter, np.s_[:100, 0], transpose=False)
+old_fit.run(vid)
+# %%
 vid = idfy.FitterVideo(fitter, np.s_[:100, 0], transpose=False)
 vid(fitter, 0)
 # %%

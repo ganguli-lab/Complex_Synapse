@@ -151,13 +151,13 @@ class PlasticitySequence:
     def nplast(self) -> int:
         """Minimum number of types of plasticity, P
         """
-        return self.plast_type.max() + 1
+        return _sb.scalarise(self.plast_type.max() + 1)
 
     @property
     def nreadout(self) -> int:
         """Minimum number of readout values, R
         """
-        return self.readouts.max() + 1
+        return _sb.scalarise(self.readouts.max() + 1)
 
     @property
     def ntime(self) -> int:
@@ -306,7 +306,7 @@ class SimPlasticitySequence(PlasticitySequence):
     def nstate(self) -> int:
         """Minimum number of states, M
         """
-        return self.states.max() + 1
+        return _sb.scalarise(self.states.max() + 1)
 
     def state_dwells(self) -> List[la.lnarray]:
         """Sets of dwell times for each state

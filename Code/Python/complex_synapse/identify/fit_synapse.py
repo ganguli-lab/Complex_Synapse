@@ -125,7 +125,7 @@ class SynapseFitOptions(_opt.Options):
         Relative tolerance for `dlike`. Multiplies `y_scale` if given.
     max_it : int = 1000
         Maximum number of iterations
-    verbosity : int[:27] = 0
+    verbosity : int[0:27] = 0
         When statistics are printed, and how verbose:
             0: do not print
             1: after iteration
@@ -278,7 +278,7 @@ class SynapseFitter(abc.ABC):
     dmodel : float
         Distance between `model` and `prev_model`.
     nit : int
-        Number of iterations.
+        Number of updates performed.
     x_thresh : float
         Threshold on `dmodel` for termination.
     y_thresh : float
@@ -398,16 +398,22 @@ class SynapseFitter(abc.ABC):
         return rpr
 
     def calc_thresh(self) -> None:
-        """Calculate thresholds for stopping"""
+        """Calculate thresholds for stopping
+        """
         x_scale = _ag.default_eval(self.info['x_scale'], self.est.norm)
         y_scale = _ag.default(self.info['y_scale'], self.info['nlike'])
         self.info['x_thresh'] = self.opt.atolx + self.opt.rtolx * x_scale
         self.info['y_thresh'] = self.opt.atoly + self.opt.rtoly * y_scale
 
     def check_thresh(self) -> bool:
-        """Check if last update was below threshold"""
+        """Check if last update was below threshold
+        """
         return (self.info['dmodel'] < self.info['x_thresh'] and
                 abs(self.info['dlike']) < self.info['y_thresh'])
+
+    def valid(self) -> bool:
+        """Check that current model estimate is valid"""
+        return not self.est.nmodel and _si.valid_values(self.est)
 
     @abc.abstractmethod
     def update_info(self) -> None:
@@ -420,52 +426,6 @@ class SynapseFitter(abc.ABC):
     @abc.abstractmethod
     def update_fit(self) -> None:
         """Perform a single update of the model"""
-
-    def valid(self) -> bool:
-        """Check that current model estimate is valid"""
-        return not self.est.nmodel and _si.valid_values(self.est)
-
-    def run(self, callback: Callback = print_callback) -> int:
-        """Run the synapse fitter until termination conditions are met
-
-        Parameters
-        ----------
-        callback : Callable[[self, int]->None], optional
-            Function called on every iteration, by default `print_callback`.
-            Second argument:
-                0: Before first iteration.
-                1: During iterations.
-                2: After completion.
-
-        Returns
-        -------
-        result : int
-            Flag for the outcome:
-                -1: Error, invalid model generated.
-                0: Failure, maximum iterations reached.
-                1: Success, change in log-likelihood and model below threshold.
-        """
-        count = _it.undcount if self.opt.disp_each else _it.dcount
-        callback(self, 0)
-        self.info['result'] = 0
-        for i in count('iteration', self.opt.max_it,
-                       disp_step=self.opt.disp_step):
-            self.info['nit'] = i
-            self.prev_est = self.est.copy()
-            self.update_fit()
-            if not self.valid():
-                self.info['result'] = -1
-                break
-            self.update_info()
-            self.calc_thresh()
-            if i % self.opt.disp_step == 0:
-                callback(self, 1)
-            self.prev_est = None
-            if self.check_thresh():
-                self.info['result'] = 1
-                break
-        callback(self, 2)
-        return self.info['result']
 
     @abc.abstractmethod
     def est_occ(self, ind: _ps.Inds) -> la.lnarray:
@@ -497,10 +457,52 @@ class SynapseFitter(abc.ABC):
         imh : Union[Image, Line]
             Image/Line objects for the plots
         """
-        # (T,M) or (T,)
+        # (M,T) or (T,)
         state_prob = self.est_occ(ind)
         kwds['line'] = state_prob.ndim == 1
         return _ps.set_plot(handle, state_prob, **kwds)
+
+    def run(self, callback: Callback = print_callback) -> int:
+        """Run the synapse fitter until termination conditions are met
+
+        Parameters
+        ----------
+        callback : Callable[[self, int]->None], optional
+            Function called on every iteration, by default `print_callback`.
+            Second argument:
+                0: Before first iteration.
+                1: During iterations.
+                2: After completion.
+
+        Returns
+        -------
+        result : int
+            Flag for the outcome:
+                -1: Error, invalid model generated.
+                0: Failure, maximum iterations reached.
+                1: Success, change in log-likelihood and model below threshold.
+        """
+        count = _it.undcount if self.opt.disp_each else _it.dcount
+        callback(self, 0)
+        self.info['result'] = 0
+        for i in count('iteration', self.opt.max_it,
+                       disp_step=self.opt.disp_step):
+            self.info['nit'] = i + 1
+            self.prev_est = self.est.copy()
+            self.update_fit()
+            if not self.valid():
+                self.info['result'] = -1
+                break
+            self.update_info()
+            self.calc_thresh()
+            if i + 1 % self.opt.disp_step == 0:
+                callback(self, 1)
+            self.prev_est = None
+            if self.check_thresh():
+                self.info['result'] = 1
+                break
+        callback(self, 2)
+        return self.info['result']
 
 
 # =============================================================================
