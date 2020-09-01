@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from functools import wraps
 from numbers import Number
-from typing import Any, Callable, ClassVar, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
 
 import numpy as np
 import scipy.optimize as sco
@@ -31,7 +31,10 @@ from .. import synapse_base as _sb
 class ModelOptions(_opt.Options):
     """Class that contains model definition options.
 
-    It can be unpacked to give keywords for `SynapseParamModel` classmethods.
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+    It can be unpacked to give keywords for `SynapseParamModel` `classmethods`.
 
     Parameters
     ----------
@@ -50,9 +53,13 @@ class ModelOptions(_opt.Options):
         Total number of states. Calculate from `npar` if `None` (default).
     npar : int or None, optional keyword
         Total number of parameters. Calculate from `nst` if `None` (default).
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
     """
-    map_attributes: ClassVar[Tuple[str, ...]] = ('topology',)
-    prop_attributes: ClassVar[Tuple[str, ...]] = ('frac', 'npl', 'nst', 'npar')
+    map_attributes: _opt.Attrs = ('topology',)
+    prop_attributes: _opt.Attrs = ('frac', 'npl', 'nst', 'npar')
     # topology specifying options
     topology: _so.TopologyOptions
     # Is the weight vector binary?
@@ -127,8 +134,7 @@ class ModelOptions(_opt.Options):
         if value is None:
             return
         self._nst = value
-        self._npar = self.npl * _mp.num_param(value,
-                                              **self.topology.directed(0))
+        self._npar = self.npl * _mp.num_param(value, **self.topology)
 
     def set_npar(self, value: Optional[int]) -> None:
         """Set the number of states.
@@ -138,8 +144,7 @@ class ModelOptions(_opt.Options):
         if value is None:
             return
         self._npar = value
-        self._nst = _mp.num_state(value // self.npl,
-                                  **self.topology.directed(0))
+        self._nst = _mp.num_state(value // self.npl, **self.topology)
 
     @property
     def frac(self) -> la.lnarray:
@@ -173,6 +178,10 @@ class ModelOptions(_opt.Options):
 class ProblemOptions(_opt.Options):
     """Class for specifying problem creator options
 
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
     Parameters
     ----------
     keep_feasible : bool
@@ -191,8 +200,12 @@ class ProblemOptions(_opt.Options):
         Use the condition number as a constraint? By default `False`.
     cond_thresh : float
         Upper bound on condition number. By default `1e4`.
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
     """
-    prop_attributes: ClassVar[Tuple[str, ...]] = ('hess', 'cond_lim')
+    prop_attributes: _opt.Attrs = ('hess', 'cond_lim')
     # Ensure constraints are kept at intermediate steps?
     keep_feasible: bool
     # Include condition number when checking if model is well behaved?
@@ -266,8 +279,14 @@ class ProblemOptions(_opt.Options):
         return self._cond_lim
 
 
-class OptimOptions(_opt.Options):
+class OptimOptions(_opt.MasterOptions, fallback='extra'):
     """Class for specifying optimiser options
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting. When subscripting with an unknown key, it will search
+    through `model_opts`, `problem_opts` and `extra`. Setting completely
+    unknown keys will store them in `extra`.
 
     Parameters
     ----------
@@ -289,10 +308,12 @@ class OptimOptions(_opt.Options):
     maker : Maker
         The function that creates the problem, usually `normal_problem` or
         `shifted_problem`. By default `normal_problem`.
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items.
     """
-    map_attributes: ClassVar[Tuple[str, ...]] = ('model_opts', 'problem_opts',
-                                                 'extra')
-    prop_attributes: ClassVar[Tuple[str, ...]] = ('method',)
+    map_attributes: _opt.Attrs = ('model_opts', 'problem_opts', 'extra')
+    prop_attributes: _opt.Attrs = ('method',)
     model_opts: ModelOptions
     problem_opts: ProblemOptions
     extra: Dict[str, Any]
@@ -331,12 +352,6 @@ class OptimOptions(_opt.Options):
             The problem's ingredients: (fun, jac, hess, bounds, lims)
         """
         return self._maker(model, rate, self.problem_opts)
-
-    def __setitem__(self, key: str, val: Any) -> None:
-        try:
-            super().__setitem__(key, val)
-        except KeyError:
-            self.extra[key] = val
 
     def set_method(self, value: Optional[str]) -> None:
         """Choose method to use in `scipy.optimize.minimize`.
@@ -796,7 +811,7 @@ def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
 # =============================================================================
 Data = TypeVar('Data', Number, np.ndarray)
 Func = Callable[[np.ndarray], Data]
-Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint, Dict[str, Any]]
+Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint, _opt.StrDict]
 Problem = Tuple[Func[float], Func[np.ndarray], Func[np.ndarray],
                 Optional[sco.Bounds], List[Constraint]]
 Maker = Callable[[_so.SynapseOptModel, Optional[float], ProblemOptions],

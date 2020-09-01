@@ -6,10 +6,11 @@ from __future__ import annotations
 import abc
 from numbers import Number
 import re
-from typing import Callable, ClassVar, Dict, Optional, Tuple
+from typing import Callable, Dict, Optional, Tuple
 
 import numpy as np
 
+import numpy_linalg as la
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.iter_tricks as _it
 
@@ -92,11 +93,11 @@ def print_callback(obj: SynapseFitter, pos: int) -> None:
         gap = ('',) if obj.opt.disp_each else ()
         print('Before:', format(obj, fmt), *gap, sep='\n')
     elif pos == 1 and obj.opt.disp_each:
-        if obj.info['nit'] % obj.opt.disp_step == 0:
-            print('*', format(obj, fmt))
+        print('*', format(obj, fmt))
     elif pos == 2 and obj.opt.disp_after:
         gap = ('',) if obj.opt.disp_each or obj.opt.disp_before else ()
-        print(*gap, 'After:', format(obj, fmt), MESSAGES[obj.info['result']], sep='\n')
+        print(*gap, 'After:', format(obj, fmt), MESSAGES[obj.info['result']],
+              sep='\n')
 
 
 # =============================================================================
@@ -108,6 +109,10 @@ def print_callback(obj: SynapseFitter, pos: int) -> None:
 class SynapseFitOptions(_opt.Options):
     """Options for synapse fitters
 
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
     Parameters
     ----------
     atolx : float = 1e-5
@@ -118,9 +123,9 @@ class SynapseFitOptions(_opt.Options):
         Relative tolerance for `dmodel`. Multiplies `x_scale` if given.
     rtoly : float = 1e-5
         Relative tolerance for `dlike`. Multiplies `y_scale` if given.
-    max_it : int = 1e3
+    max_it : int = 1000
         Maximum number of iterations
-    verbosity : int = 0
+    verbosity : int[:27] = 0
         When statistics are printed, and how verbose:
             0: do not print
             1: after iteration
@@ -133,6 +138,10 @@ class SynapseFitOptions(_opt.Options):
     disp_step : int = 50
         Display progress update every `disp_step` iterations.
 
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
+
     Properties
     ----------
     disp_before : int
@@ -144,8 +153,7 @@ class SynapseFitOptions(_opt.Options):
     They are interpreted as: 0=do not print, 1=print summary, 2=print detailed.
     They are related to `verbose` as `verbose = after + 3 * before + 9 * each`.
     """
-    prop_attributes: ClassVar[Tuple[str, ...]] = ('disp_after', 'disp_before',
-                                                  'disp_each')
+    prop_attributes: _opt.Attrs = ('disp_after', 'disp_before', 'disp_each')
     # Absolute tolerance for `dmodel`.
     atolx: float
     # Absolute tolerance for `dlike`.
@@ -276,9 +284,9 @@ class SynapseFitter(abc.ABC):
     y_thresh : float
         Threshold on `dlike` for termination.
     x_scale : float or None
-        Typical scale for `dmodel`. By default, `None`.
+        Typical scale for `dmodel`. By default, `None` -> `est.norm()`.
     y_scale : float or None
-        Typical scale for `dlike`. By default, `None`.
+        Typical scale for `dlike`. By default, `None` -> `nlike`.
     result : int
         Flag for the outcome of fitting:
             -1: Error, invalid model generated.
@@ -450,7 +458,8 @@ class SynapseFitter(abc.ABC):
                 break
             self.update_info()
             self.calc_thresh()
-            callback(self, 1)
+            if i % self.opt.disp_step == 0:
+                callback(self, 1)
             self.prev_est = None
             if self.check_thresh():
                 self.info['result'] = 1
@@ -459,6 +468,20 @@ class SynapseFitter(abc.ABC):
         return self.info['result']
 
     @abc.abstractmethod
+    def est_occ(self, ind: _ps.Inds) -> la.lnarray:
+        """Current estimate of state occupation
+
+        Parameters
+        ----------
+        ind : Tuple[Union[int, slice], ...]
+            Time, experiment indices/slices to plot
+
+        Returns
+        -------
+        data : lnarray,  (M,T) float[0:1] or (T,) int[0:M]
+            Estimate of state occupation
+        """
+
     def plot_occ(self, handle: _ps.Handle, ind: _ps.Inds, **kwds) -> _ps.Plot:
         """Plot current estimate of state occupation
 
@@ -474,6 +497,10 @@ class SynapseFitter(abc.ABC):
         imh : Union[Image, Line]
             Image/Line objects for the plots
         """
+        # (T,M) or (T,)
+        state_prob = self.est_occ(ind)
+        kwds['line'] = state_prob.ndim == 1
+        return _ps.set_plot(handle, state_prob, **kwds)
 
 
 # =============================================================================
@@ -502,8 +529,28 @@ class GroundedFitter(SynapseFitter):
         Distance between `truth` and `model`.
     true_dlike : float
         `nlike - true_like`.
+    nlike : float
+        Negative log-likelihood of `data` given `model`.
+    dlike : float
+        Decrease in negative log-likelihood of `data` given `model`.
+    dmodel : float
+        Distance between `model` and `prev_model`.
+    nit : int
+        Number of iterations.
+    x_thresh : float
+        Threshold on `dmodel` for termination.
+    y_thresh : float
+        Threshold on `dlike` for termination.
+    x_scale : float or None
+        Typical scale for `dmodel`. By default, `None` -> `truth.norm()`.
+    y_scale : float or None
+        Typical scale for `dlike`. By default, `None` -> `true_like`.
+    result : int
+        Flag for the outcome of fitting:
+            -1: Error, invalid model generated.
+            0: Failure, maximum iterations reached.
+            1: Success, change in log-likelihood and model below threshold.
     All of the above are stored in `self.info`.
-    See `SynapseFitter` for other statistics.
 
     See Also
     --------
@@ -532,7 +579,7 @@ class GroundedFitter(SynapseFitter):
         super().__init__(data, est, **kwds)
         self.truth = truth
         self.info.update(true_dmodel=(self.truth - self.est).norm(),
-                         true_like=0., x_scale=self.truth.norm())
+                         x_scale=self.truth.norm())
 
     def __format__(self, format_spec: str) -> str:
         """Printing info about state of fitter

@@ -478,7 +478,7 @@ def elements(obj: SynapseIdModel) -> la.lnarray:
     return np.concatenate(bcast_vectors, -1)
 
 
-def from_elements(elems: np.ndarray, nst: int, npl: int
+def from_elements(elems: np.ndarray, frac: int, readout: int
                   ) -> Tuple[la.lnarray, la.lnarray]:
     """Get model's matrices from a vector of its elements
 
@@ -486,10 +486,10 @@ def from_elements(elems: np.ndarray, nst: int, npl: int
     ----------
     elems : np.ndarray (PM**2+M,)
         Concatenation of model's ravelled `plast` and `initial`.
-    nst : int
-        Number of states, M
-    npl : int
-        Number of plasticity types, P
+    frac : array_like, (P,), float[0:1]
+        fraction of events that are potentiating/depressing.
+    readout : array_like, (M,), int[0:R].
+        id of readout when in that state.
 
     Returns
     -------
@@ -498,10 +498,12 @@ def from_elements(elems: np.ndarray, nst: int, npl: int
     initial : array_like, (M,) float[0:1]
         distribution of initial state
     """
+    frac = _sb.append_frac(frac, 0)
+    npl, nst = len(frac), len(readout)
     elems = la.asarray(elems)
     initial = elems[..., -nst:]
     plast = elems[..., :-nst].unravelaxis(-1, (npl, nst, nst))
-    return plast, initial
+    return SynapseIdModel(plast, frac, initial, readout)
 
 
 def set_elements(obj: SynapseIdModel, elems: np.ndarray) -> None:

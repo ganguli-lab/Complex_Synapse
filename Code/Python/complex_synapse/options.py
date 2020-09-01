@@ -26,39 +26,48 @@ def _fmt_sep(format_spec: str) -> _ty.Tuple[str, str, str]:
         conv, next_spec = format_spec.split('#', maxsplit=1)
     sep = ',' + next_spec if next_spec else ', '
     conv = "!" + conv if conv else conv
-    next_spec += "    " if _LINE_SEP.fullmatch(next_spec) else ""
     return sep, conv, next_spec
 
 
 def _fmt_help(key: str, val: _ty.Any, conv: str, next_spec: str) -> str:
     """helper for Options.__format__: entry for one item"""
-    if not isinstance(val, Options):
-        item = f"{{}}={{{conv}}}" if conv else "{}={}"
+    if not conv == '!r' or _LINE_SEP.fullmatch(next_spec) is None:
+        item = "{}={" + conv + "}"
         return item.format(key, val)
-    conv = conv[1:] + "#" if conv else ""
-    item = "{}={:" + conv + next_spec + "}"
-    return item.format(key, val)
+    val = repr(val).replace('\n', next_spec)
+    return "{}={}".format(key, val)
 
 
+# =============================================================================
+# Base options class
+# =============================================================================
+
+
+# pylint: disable=too-many-ancestors
 class Options(collections.abc.MutableMapping):
     """Base class for options classes
 
-    Attributes can also be referenced by subscripting with the attribute name.
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
     If the name is not found, it will search the attributes whose names are
-    listed in `mapping_attributes`. Iterating and unpacking do not recurse
-    through these attributes or include properties and private attributes,
-    unless their names are included in `property_attributes`.
+    listed in `mapping_attributes`. This does not apply to use as attributes
+    (either `obj.name` or `getattr(obj, 'name')`). Iterating and unpacking do
+    not recurse through these attributes, nor include properties and private
+    attributes, unless their names are included in `property_attributes`.
     If an attribute's value is only set by a default value in a type hint, and
     not set in `__init__`, it will be omitted when iterating, unpacking or
     printing. If it is both a member of `self.__dict__` and listed in
     `prop_attributes`, it will appear twice.
 
-    Existing attributes may be modified by subscripting. If the name is not
-    found, it will search the attributes listed in `mapping_attributes`.
+    Setting attributes may be achieved via subscripting. If the name is not
+    found, it will search the attributes listed in `mapping_attributes`. If
+    a key is not found when recursing these attributes, a `KeyError` is raised.
     If an attribute's name is found in `mapping_attributes`, the attribute is
-    updated when set rather than replaced like other attributes. These two
-    statements do not apply to setting as an attribute.
-    New keys may be added by setting as attributes.
+    updated when set rather than replaced like other attributes. These three
+    statements do not apply to setting as an attribute. New keys may be added
+    by setting as attributes, e.g. `obj.name=val` or `setattr(obj,'name',val)`.
 
     If a method `set_<name>(val)` exists, then `'<name>'` can be used as a key
     for setting but (unless it exists as a property or attribute) it cannot
@@ -73,6 +82,18 @@ class Options(collections.abc.MutableMapping):
     If the same item appears in more than one of the `mapping_attributes`, or
     in `self`, they can be partially synchronised by making it a property in
     the parent `Options` with a `set_<key>` method that updates the children.
+
+    Parameters
+    ----------
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
+
+    Raises
+    ------
+    KeyError
+        If an invalid key is used when subscripting. This does not apply to use
+        as attributes (either `obj.name` or `getattr(obj, 'name')`).
     """
     map_attributes: _ty.ClassVar[_ty.Tuple[str, ...]] = ()
     prop_attributes: _ty.ClassVar[_ty.Tuple[str, ...]] = ()
@@ -90,13 +111,22 @@ class Options(collections.abc.MutableMapping):
             kwds = sort_dict(kwds, order, -1)
             super().__init__(*args, **kwds)
         ```
+        Mappings provided as positional arguments will be popped for the
+        relevant items.
         """
         for mapping in args:
             self.pop_my_args(mapping)
         self.update(kwds)
+        # for name in self.map_attributes:
+        #     if isinstance(self[name], MasterOptions):
+        #         raise TypeError(
+        #             f"{name} is a {type(self[name]).__name__}, a subclass of"
+        #             + "MasterOptions. It should not be used as a member of "
+        #             + "another Options class, as it will block searches for "
+        #             + "unknown keys when setting.")
 
     def __format__(self, format_spec: str) -> str:
-        """formatted string represdenting object.
+        """formatted string representing object.
 
         Parameters
         ----------
@@ -145,8 +175,14 @@ class Options(collections.abc.MutableMapping):
         else:
             for attr in self.map_attributes:
                 if key in self[attr]:
-                    self[attr][key] = value
+                    getattr(self, attr).__setitem__(key, value)
                     return
+                # try:
+                #     getattr(self, attr).__setitem__(key, value)
+                # except KeyError:
+                #     pass
+                # else:
+                #     return
             raise KeyError(f"Unknown key: {key}.")
 
     def __delitem__(self, key: str) -> None:
@@ -155,16 +191,25 @@ class Options(collections.abc.MutableMapping):
         try:
             delattr(self, key)
         except AttributeError:
+            # raise KeyError(f"Unknown key: {key}.")
             for attr in self.map_attributes:
                 try:
                     del getattr(self, attr)[key]
                 except KeyError:
                     pass
+                else:
+                    return
             raise KeyError(f"Unknown key: {key}.")
 
     def __len__(self) -> int:
-        # tuple(self) appears to call len(self) -> would lead to recursion.
-        return len(tuple(x for x in self))
+        # len(self.__dict__) + len(self.prop_attributes) includes privates.
+        # tuple(self) appears to call len(self) -> infinite recursion.
+        # return len(tuple(x for x in self))
+        # barely any speed difference:
+        count = 0
+        for _ in self:
+            count += 1
+        return count
 
     def __iter__(self) -> _ty.Iterator[str]:
         yield from filter(_public, self.__dict__)
@@ -183,6 +228,55 @@ class Options(collections.abc.MutableMapping):
                 to_pop.append(key)
         for key in to_pop:
             del kwds[key]
+
+
+# =============================================================================
+# Fallback options class
+# =============================================================================
+
+
+class AnyOptions(Options):
+    """Same to `Options`, except it stores unknown keys as attributes.
+
+    This can be used as a default place to store unknown items.
+    """
+    def __setitem__(self, key: str, val: _ty.Any) -> None:
+        try:
+            super().__setitem__(key, val)
+        except KeyError:
+            setattr(self, key, val)
+
+
+# =============================================================================
+# Master options class
+# =============================================================================
+
+
+class MasterOptions(Options):
+    """Same to `Options`, except ot stores unknown keys in a mapping attribute.
+
+    The name of the fallback mapping attribute is specified with the keyword
+    `fallback` in the class definition.
+
+    fallback : str|None
+        Name of a mutable mapping attribute to store any completely unknown
+        keys, i.e. if recursing through the mappings listed in `map_attributes`
+        does not turn anything up. Any empty string indacates using `self` as
+        the fallback storage, `None` indicates raising a `KeyError`.
+    """
+    def __init_subclass__(cls, fallback: _ty.Optional[str] = None) -> None:
+        cls._fallback_mapping = fallback
+
+    def __setitem__(self, key: str, val: _ty.Any) -> None:
+        try:
+            super().__setitem__(key, val)
+        except KeyError:
+            if self._fallback_mapping is None:
+                raise
+            if self._fallback_mapping:
+                getattr(self, self._fallback_mapping).__setitem__(key, val)
+            else:
+                setattr(self, key, val)
 
 
 # =============================================================================
@@ -244,3 +338,4 @@ def sort_dicts(unordered: _ty.Sequence[StrDict], order: _ty.Sequence[str],
 # Hinting aliases
 # =============================================================================
 StrDict = _ty.Dict[str, _ty.Any]
+Attrs = _ty.ClassVar[_ty.Tuple[str, ...]]

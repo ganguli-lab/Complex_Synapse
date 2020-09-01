@@ -24,6 +24,10 @@ from .. import options as _opt
 class TopologyOptions(_opt.Options):
     """Class that contains topology specifying options.
 
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
     Parameters
     ----------
     serial : bool, optional keyword
@@ -35,6 +39,10 @@ class TopologyOptions(_opt.Options):
     directions: Tuple[int] (P,), optional keyword
         If nonzero, only include transitions in direction `i -> i + sgn(drn)`,
         one value for each plasticity type. By default `(0, 0)`.
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
     """
     serial: bool
     ring: bool

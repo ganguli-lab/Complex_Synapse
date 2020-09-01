@@ -255,6 +255,10 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
 class BaumWelchOptions(_fs.SynapseFitOptions):
     """Options for Baum-Welch synapse fitters
 
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
     Parameters
     ----------
     steady : bool = True
@@ -287,6 +291,10 @@ class BaumWelchOptions(_fs.SynapseFitOptions):
         Values in different categories can be summed to produce combinations
     disp_step : int = 50
         Display progress update every `disp_step` iterations.
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
 
     Properties
     ----------
@@ -401,26 +409,21 @@ class BaumWelchFitter(_fs.SynapseFitter):
         if self.opt.normed:
             self.est.sort(group=True)
 
-    def plot_occ(self, handle: _ps.Handle, ind: _ps.Inds, **kwds) -> _ps.Plot:
-        """Plot current estimate of state occupation
+    def est_occ(self, ind: _ps.Inds) -> la.lnarray:
+        """Current estimate of state occupation
 
         Parameters
         ----------
-        handle : Union[Axes, Image, Line]
-            Axes to plot on, or Image/Lines to update with new data
         ind : Tuple[Union[int, slice], ...]
             Time, experiment indices/slices to plot
 
         Returns
         -------
-        imh : Union[Image, Line]
-            Image/Line objects for the plots
+        data : lnarray,  (M,T) float[0:1]
+            Estimate of state occupation
         """
-        trn = kwds.pop('trn', False)
-        # (T.M)
-        state_prob = self.alpha[ind] * self.beta[ind]
-        state_prob = state_prob if trn else state_prob.T
-        return _ps.set_plot(handle, state_prob, **kwds)
+        # (T,M)
+        return (self.alpha[ind] * self.beta[ind]).t
 
 
 # =============================================================================

@@ -3,7 +3,7 @@
 """
 from __future__ import annotations
 
-from typing import Any, ClassVar, Dict, List, Optional, Sequence, Tuple, Union
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -13,9 +13,9 @@ import sl_py_tools.arg_tricks as ag
 import sl_py_tools.containers as cn
 import sl_py_tools.matplotlib_tricks as mpt
 
-from . import fit_synapse as _fs
-from . import plast_seq as _ps
-from .. import options as _opt
+from . import fit_synapse as fs
+from . import plast_seq as ps
+from .. import options as op
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
@@ -25,8 +25,12 @@ mpt.rc_fonts('sans-serif')
 
 
 # pylint: disable=too-many-ancestors
-class VideoLabels(_opt.Options):
+class VideoLabels(op.Options):
     """Tiles, axes labels, etc. for FitterVideo
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
 
     Parameters
     ----------
@@ -51,11 +55,11 @@ class VideoLabels(_opt.Options):
     transpose : bool
         Transpose the layout of the video, swapping rows and columns?
 
-    Notes
-    -----
-    All parameters are keyword only. Unknown keywords are stored as attributes.
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
     """
-    prop_attributes: ClassVar[Tuple[str, ...]] = ('transpose',)
+    prop_attributes: op.Attrs = ('transpose',)
     # Text for labels
     plast_type: List[str]
     readout: List[str]
@@ -71,11 +75,11 @@ class VideoLabels(_opt.Options):
         self.plast = [["Potentiation", "Depression"],
                       ["Probability", "Initial state", "From state",
                        "To state"]]
-        args = _opt.sort_dicts(args, ('transpose',), -1)
-        kwds = _opt.sort_dict(kwds, ('transpose',), -1)
+        args = op.sort_dicts(args, ('transpose',), -1)
+        kwds = op.sort_dict(kwds, ('transpose',), -1)
         super().__init__(*args, **kwds)
 
-    def model_labs(self, ind: _ps.Inds) -> Tuple[List[str], List[str]]:
+    def model_labs(self, ind: ps.Inds) -> Tuple[List[str], List[str]]:
         """Labels for a model's heatmaps"""
         return cn.listify(self.model[ind]) + self.plast[0], self.plast[1]
 
@@ -107,8 +111,12 @@ class VideoLabels(_opt.Options):
 
 
 # pylint: disable=too-many-ancestors
-class VideoLayout(_opt.Options):
+class VideoLayout(op.Options):
     """Tiles, axes labels, etc. for FitterVideo
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
 
     Parameters
     ----------
@@ -140,22 +148,22 @@ class VideoLayout(_opt.Options):
     When constructing a `FitterVideo`, `set_fitter` is called. Therefore,
     there is usually no need to provide `npl`, `ground` or `verbose`.
 
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
+
     Notes
     -----
-    All parameters are keyword only. Unknown keywords are passed to `sizes` if
-    it is an existing key, or stored as an attribute if not.
-
     Attributes can also be referenced and modified by subscripting with the
     attribute name. If the name is not found, it will search `sizes`.
     """
-    map_attributes: ClassVar[Tuple[str, ...]] = ('sizes',)
-    prop_attributes: ClassVar[Tuple[str, ...]] = ('transpose', 'ground',
-                                                  'npl', 'verbosity')
+    map_attributes: op.Attrs = ('sizes',)
+    prop_attributes: op.Attrs = ('transpose', 'ground', 'npl', 'verbosity')
     # row/column assignments for models/data
-    mrows: _ps.Inds
-    mcols: _ps.Inds
-    drows: _ps.Inds
-    dcols: _ps.Inds
+    mrows: ps.Inds
+    mcols: ps.Inds
+    drows: ps.Inds
+    dcols: ps.Inds
     # height/width ratios for rows/columns
     sizes: Dict[str, float]
     # swap rows and columns?
@@ -174,8 +182,8 @@ class VideoLayout(_opt.Options):
         self._transpose = False
         self._verbosity = 1
         order = ('transpose', 'ground', 'npl', 'verbosity', 'fitter')
-        args = _opt.sort_dicts(args, order, -1)
-        kwds = _opt.sort_dict(kwds, order, -1)
+        args = op.sort_dicts(args, order, -1)
+        kwds = op.sort_dict(kwds, order, -1)
         super().__init__(*args, **kwds)
 
     def __setitem__(self, key: str, val: Any) -> None:
@@ -204,7 +212,7 @@ class VideoLayout(_opt.Options):
 
         Does nothing if `transpose` is `None`.
 
-        It is usually better to use `VideoOptions.set_transpose` in the parent
+        It is better to use `VideoOptions.set_transpose` in the parent
         object instead of calling this function directly.
         """
         if transpose is None:
@@ -241,7 +249,7 @@ class VideoLayout(_opt.Options):
             return
         self._verbosity = verbose
 
-    def set_fitter(self, fitter: Optional[_fs.SynapseFitter]) -> None:
+    def set_fitter(self, fitter: Optional[fs.SynapseFitter]) -> None:
         """Set `npl`, `ground` and `verbose` from a `SynapseFitter`
 
         Does nothing if `fitter` is `None`.
@@ -249,7 +257,7 @@ class VideoLayout(_opt.Options):
         if fitter is None:
             return
         self.set_npl(fitter.est.nplast)
-        self.set_ground(isinstance(fitter, _fs.GroundedFitter))
+        self.set_ground(isinstance(fitter, fs.GroundedFitter))
         self.set_verbosity(fitter.opt.disp_each)
 
     @property
@@ -275,8 +283,12 @@ class VideoLayout(_opt.Options):
 
 
 # pylint: disable=too-many-ancestors
-class VideoOptions(_opt.Options):
+class VideoOptions(op.MasterOptions, fallback='im_opt'):
     """Visual options for FitterVideo
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
 
     Parameters
     ----------
@@ -295,6 +307,9 @@ class VideoOptions(_opt.Options):
     ln_opt : Dict[str, Any]
         Options for line plots. By default: `{}`.
 
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items.
+
     Notes
     -----
     All parameters are keyword only. Unknown keywords are passed to `txt_opt`
@@ -306,9 +321,8 @@ class VideoOptions(_opt.Options):
     `txt_opt`, `ln_opt` and `im_opt`. Setting a new key adds it to `im_opt`.
     To add a new item to a `VideoOptions` instance, set it as an attribute.
     """
-    map_attributes: ClassVar[Tuple[str, ...]] = (
-        'txt', 'layout', 'ln_opt', 'im_opt', 'txt_opt')
-    prop_attributes: ClassVar[Tuple[str, ...]] = ('transpose',)
+    map_attributes: op.Attrs = ('txt', 'layout', 'ln_opt', 'im_opt', 'txt_opt')
+    prop_attributes: op.Attrs = ('transpose',)
     # Text for labels
     txt: VideoLabels
     # Layout
@@ -326,17 +340,9 @@ class VideoOptions(_opt.Options):
         self.txt_opt = kwds.pop('txt_opt', {'box': False, 'tight': False})
 
         self.txt_opt.update(mpt.clean_axes_keys(self.txt_opt))
-        args = _opt.sort_dicts(args, ('transpose',), -1)
-        kwds = _opt.sort_dict(kwds, ('transpose',), -1)
+        args = op.sort_dicts(args, ('transpose',), -1)
+        kwds = op.sort_dict(kwds, ('transpose',), -1)
         super().__init__(*args, **kwds)
-
-    def __setitem__(self, key: str, val: Any) -> None:
-        """Set an option.
-        """
-        try:
-            super().__setitem__(key, val)
-        except KeyError:
-            self.im_opt[key] = val
 
     def update(self, other: cn.Dictable[str, Any] = (), /, **kwds) -> None:
         """Update options.
@@ -367,6 +373,7 @@ class VideoOptions(_opt.Options):
     def transpose(self, value: bool) -> None:
         """Transpose the layout of the video?"""
         self.set_transpose(value)
+# pylint: enable=too-many-ancestors
 
 
 # =============================================================================
@@ -404,15 +411,15 @@ class FitterVideo:
         pt: for plasticity types used [legend, heatmap]
         ro: for readouts types observed [legend, heatmap]
         st: for true/estimated path [legend, heatmap & plot]
-        info: for display of the state of the fitter (not a list)
-    imh: Dict[str, List[Image or Line or Text]]
+        info: for display of the state of the fitter
+    imh: Dict[str, List[Image|Line|Text]]
         fit: List[Image] - estimated model [initial, plasticity matrices]
         tr: List[Image] - true model [initial, plasticity matrices]
-        ps: List[Image, Image, Line] - expt/sim [plast_type, readouts, path]
-        st: Image - heatmap for estimated path
-        info: Text - the display of the fitter's state
+        ps: List[Plot] - experiment/simulation data [plast_type, readout, path]
+        st: List[Image] - heatmap for estimated path
+        info: List[Text] - the display of the fitter's state
     """
-    ind: _ps.Inds
+    ind: ps.Inds
     fname: str
     norm: mpl.colors.Normalize
     fig: Optional[Figure]
@@ -420,7 +427,7 @@ class FitterVideo:
     imh: Dict[str, List[Disp]]
     opt: VideoOptions
 
-    def __init__(self, fitter: _fs.SynapseFitter, ind: _ps.Inds,
+    def __init__(self, fitter: fs.SynapseFitter, ind: ps.Inds,
                  fname: str = "", opt: Optional[VideoOptions] = None,
                  **kwds) -> None:
         """Video frame producing callback for SynapseFitter.
@@ -455,7 +462,7 @@ class FitterVideo:
         self.axh = {}
         self.imh = {}
 
-    def __call__(self, fitter: _fs.SynapseFitter, pos: int) -> None:
+    def __call__(self, fitter: fs.SynapseFitter, pos: int) -> None:
         """Callback that displays fitter state as appropriate
 
         Parameters
@@ -471,36 +478,38 @@ class FitterVideo:
         if pos == 0:
             self.make_fig(fitter)
             self.create_plots(fitter)
-            _fs.print_callback(fitter, 0)
+            fs.print_callback(fitter, 0)
         elif pos == 1:
-            if fitter.info['nit'] % fitter.opt.disp_step == 0:
-                self.update_plots(fitter)
-                self.savefig(fitter.info['nit'])
+            self.update_plots(fitter)
+            self.savefig(fitter.info['nit'])
         elif pos == 2:
-            _fs.print_callback(fitter, 2)
+            fs.print_callback(fitter, 2)
 
     @property
     def ground(self) -> bool:
         """Do we have ground truth?"""
         return bool(self.axh['tr'])
 
-    def make_fig(self, fitter: _fs.SynapseFitter) -> None:
+    def make_fig(self, fitter: fs.SynapseFitter) -> None:
         """Create the figure and axes for the video frames"""
         self.opt.layout.set_fitter(fitter)
         figax = vid_fig(self.opt.layout)
         self.fig, psax, self.axh['fit'], self.axh['tr'] = figax
+        # All PlasticitySequence main plots
         self.axh['ps'] = psax[1::2]
+        # Individual PlasticitySequence plots & their legends
         self.axh['pt'] = psax[:2]
         self.axh['ro'] = psax[2:4]
         self.axh['st'] = psax[4:]
-        self.axh['info'] = self.axh['tr' if self.ground else 'st'][0]
+        # Which axes to use to display `fitter.info`
+        self.axh['info'] = self.axh['tr' if self.ground else 'st'][:1]
 
-    def create_plots(self, fitter: _fs.SynapseFitter) -> None:
+    def create_plots(self, fitter: fs.SynapseFitter) -> None:
         """Create initial plots
 
         Parameters
         ----------
-        obj : SynapseFitter
+        fitter : SynapseFitter
             Object performing fit whose state we display.
         """
         ft_lab, tr_lab = self.opt.txt.model_labs(0), self.opt.txt.model_labs(1)
@@ -509,7 +518,7 @@ class FitterVideo:
                'nreadout': fitter.est.nreadout, 'line_opts': self.opt.ln_opt}
         lbo, verbose = self.opt.txt_opt, self.opt.layout.verbosity
 
-        self.imh['st'] = fitter.plot_occ(self.axh['st'][1], self.ind, **mdo)
+        self.imh['st'] = [fitter.plot_occ(self.axh['st'][1], self.ind, **mdo)]
         self.imh['ps'] = fitter.data[self.ind].plot(self.axh['ps'], **pso)
         label_data(self.axh['pt'], self.opt.txt.plast_type, leg=True, **lbo)
         label_data(self.axh['ro'], self.opt.txt.readout, leg=True, **lbo)
@@ -523,15 +532,15 @@ class FitterVideo:
             label_model(self.axh['tr'], *tr_lab, cbar=False, **lbo)
 
         if verbose:
-            self.imh['info'] = write_info(format(fitter, f'tex0,{verbose}'),
-                                          self.axh['info'],
-                                          trn=self.opt.transpose,
-                                          size=lbo.get('tickfontsize', 10))
+            self.imh['info'] = [write_info(format(fitter, f'tex0,{verbose}'),
+                                           self.axh['info'][0],
+                                           trn=self.opt.transpose,
+                                           size=lbo.get('tickfontsize', 10))]
         # self.fig.canvas.draw_idle()
         plt.draw()
         # plt.show()
 
-    def update_plots(self, fitter: _fs.SynapseFitter) -> None:
+    def update_plots(self, fitter: fs.SynapseFitter) -> None:
         """Update plots after iteration
 
         Parameters
@@ -540,10 +549,10 @@ class FitterVideo:
             Object performing fit whose state we update.
         """
         trn, verbose = self.opt.transpose, self.opt.layout.verbosity
-        fitter.plot_occ(self.imh['st'], self.ind, trn=trn)
+        fitter.plot_occ(self.imh['st'][0], self.ind, trn=trn)
         fitter.est.plot(self.imh['fit'], trn=trn)
         if verbose:
-            self.imh['info'].set_text(format(fitter, f'tex1,{verbose}'))
+            self.imh['info'][0].set_text(format(fitter, f'tex1,{verbose}'))
         plt.draw()
         # self.fig.canvas.draw_idle()
 
@@ -777,7 +786,7 @@ def _model_axes(fig: Figure, gsp: GridSpec, row: int, cols: Sequence[int]
     return [cax, iax] + pax
 
 
-def _data_axes(fig: Figure, gsp: GridSpec, rows: _ps.Inds, cols: _ps.Inds
+def _data_axes(fig: Figure, gsp: GridSpec, rows: ps.Inds, cols: ps.Inds
                ) -> AxList:
     """Create axes for an experiment/simulation.
     """
@@ -805,7 +814,7 @@ class TransposeGridSpec:
     def __init__(self, gsp: GridSpec) -> None:
         self.gsp = gsp
 
-    def __getitem__(self, ind: _ps.Inds) -> mpl.gridspec.SubplotSpec:
+    def __getitem__(self, ind: ps.Inds) -> mpl.gridspec.SubplotSpec:
         return self.gsp[ind[::-1]]
 
     def __getattr__(self, attr: str) -> Any:
@@ -817,6 +826,6 @@ class TransposeGridSpec:
 # =============================================================================
 Figure = mpl.figure.Figure
 GridSpec = mpl.gridspec.GridSpec
-Disp = Union[mpl.lines.Line2D, _ps.Image, mpl.text.Text]
+Disp = Union[mpl.lines.Line2D, ps.Image, mpl.text.Text]
 TxHandle = Union[mpl.axes.Axes, mpl.text.Text]
 AxList = List[mpl.axes.Axes]
