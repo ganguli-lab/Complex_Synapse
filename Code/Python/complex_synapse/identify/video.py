@@ -132,7 +132,7 @@ class VideoLayout(op.Options):
         Grid size ratios for various axes.
         Widths (for model) - c: colourbar, i: `initial`, p: `plast`,
         Heights (for model) - md: model,
-        Heights (for data) - pr: `plast_type` and `readout`, st: states,
+        Heights (for data) - pr: `plast_type` and `readout`, st: `states`,
         scale: Controls figure size: inches per grid-ratio unit.
         By default `None -> dict(c=1, i=2, p=12, pr=2, st=6, md=12, scale=0.3)`
     transpose : bool
@@ -197,7 +197,15 @@ class VideoLayout(op.Options):
             setattr(self, key, cn.tuplify(getattr(self, key)))
 
     def grid_ratios(self) -> Tuple[List[int], List[int]]:
-        """Ratios of row heights and column widths"""
+        """Ratios of row heights and column widths
+
+        Returns
+        -------
+        height_ratios : List[int]
+            Ratios of row heights
+        width_ratios : List[int]
+            Ratios of column widths
+        """
         cols = ['p'] * len(self.mcols)
         rows = ['md'] * (4 + self.drows[0])
         for i, col in enumerate(('c', 'i')):
@@ -835,7 +843,7 @@ class TransposeGridSpec:
 
 
 # =============================================================================
-# Hint valiases
+# Hint aliases
 # =============================================================================
 Figure = mpl.figure.Figure
 GridSpec = mpl.gridspec.GridSpec

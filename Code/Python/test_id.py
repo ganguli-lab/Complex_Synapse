@@ -25,10 +25,10 @@ rec = idfy.RecordingCallback(np.s_[:100, 0], idfy.print_callback)
 fitter.run(rec)
 # %%
 old_fit = idfy.GroundedFitterReplay(sim, rec.info, verbosity=17)
-vid = idfy.FitterVideo(fitter, np.s_[:100, 0], transpose=False)
+vid = idfy.FitterVideo(np.s_[:100, 0], transpose=False)
 old_fit.run(vid)
 # %%
-vid = idfy.FitterVideo(fitter, np.s_[:100, 0], transpose=False)
+vid = idfy.FitterVideo(np.s_[:100, 0], transpose=False)
 vid(fitter, 0)
 # %%
 fitter.run()

@@ -152,6 +152,15 @@ class Options(collections.abc.MutableMapping):
     def __repr__(self) -> str:
         return self.__format__('r#\n    ')
 
+    # def __getattr__(self, name: str) -> _ty.Any:
+    #     for attr in self.map_attributes:
+    #         try:
+    #             return getattr(getattr(self, attr), name)
+    #         except AttributeError:
+    #             pass
+    #     raise AttributeError(type(self).__name__ +
+    #                          " does not have an attribute " + name)
+
     def __getitem__(self, key: str) -> _ty.Any:
         """Get an attribute"""
         try:

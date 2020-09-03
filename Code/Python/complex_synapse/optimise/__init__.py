@@ -2,7 +2,7 @@
 """
 Code for studying complex synapses
 """
-from . import optimise, sticky, shorten
+from . import optimise, sticky, shorten, plot, video
 from .synapse_opt import SynapseOptModel, SynapseParamModel, TopologyOptions
 from .optimise import ModelOptions, ProblemOptions, OptimOptions, OptimProblem
 from .optimise import (normal_problem, shifted_problem, optim_laplace,
@@ -10,7 +10,7 @@ from .optimise import (normal_problem, shifted_problem, optim_laplace,
                        check_cond_range, proven_envelope_laplace,
                        heuristic_envelope_laplace)
 
-assert any((True, optimise, sticky, shorten))
+assert any((True, optimise, sticky, shorten, plot, video))
 assert any((True, SynapseOptModel, SynapseParamModel, TopologyOptions))
 assert any((True, ModelOptions, ProblemOptions, OptimOptions, OptimProblem))
 assert any((True, normal_problem, shifted_problem, optim_laplace,
