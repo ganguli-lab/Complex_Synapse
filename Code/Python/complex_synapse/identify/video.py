@@ -389,7 +389,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
 # =============================================================================
 
 
-class FitterVideo:
+class FitterPlots:
     """Class to produce video frames showing fitter in action.
 
     Parameters
@@ -464,7 +464,7 @@ class FitterVideo:
         self.axh = {}
         self.imh = {}
 
-    def __call__(self, fitter: fs.SynapseFitter, pos: int) -> None:
+    def __call__(self, fitter: fs.SynapseFitter, pos: int) -> List[Disp]:
         """Callback that displays fitter state as appropriate
 
         Parameters
@@ -478,9 +478,13 @@ class FitterVideo:
                 2: After completion.
         """
         if pos == 0:
-            self.make_fig(fitter)
-            self.create_plots(fitter)
-            self.format_axes()
+            self.opt.layout.set_fitter(fitter)
+            if self.fig is None:
+                self.make_fig()
+                self.create_plots(fitter)
+                self.format_axes()
+                # plt.draw()
+                # self.fig.set_constrained_layout(False)
             self.savefig(fitter.info['nit'])
             fs.print_callback(fitter, 0)
         elif pos == 1:
@@ -492,14 +496,18 @@ class FitterVideo:
                 self.savefig(fitter.info['nit'])
             fs.print_callback(fitter, 2)
 
+        # self.fig.canvas.draw_idle()
+        # plt.draw()
+        # plt.show()
+        return self.updated()
+
     @property
     def ground(self) -> bool:
         """Do we have ground truth?"""
         return bool(self.axh['tr'])
 
-    def make_fig(self, fitter: fs.SynapseFitter) -> None:
+    def make_fig(self) -> None:
         """Create the figure and axes for the video frames"""
-        self.opt.layout.set_fitter(fitter)
         figax = vid_fig(self.opt.layout)
         self.fig, psax, self.axh['fit'], self.axh['tr'] = figax
         # All PlasticitySequence main plots
@@ -553,13 +561,10 @@ class FitterVideo:
         label_sim(self.axh['st'], self.opt.txt.state, leg=self.ground, **lbo)
 
         label_model(self.axh['fit'], *ft_lab, cbar=True, **lbo)
+        self.axh['info'][0].set_clip_on(False)
 
         if self.ground:
             label_model(self.axh['tr'], *tr_lab, cbar=False, **lbo)
-
-        # self.fig.canvas.draw_idle()
-        plt.draw()
-        # plt.show()
 
     def update_plots(self, fitter: fs.SynapseFitter) -> None:
         """Update plots after iteration
@@ -574,8 +579,14 @@ class FitterVideo:
         fitter.est.plot(self.imh['fit'], trn=trn)
         if verbose:
             self.imh['info'][0].set_text(format(fitter, f'tex1,{verbose}'))
-        plt.draw()
-        # self.fig.canvas.draw_idle()
+            self.axh['info'][0].set_clip_on(False)
+
+    def updated(self) -> List[Disp]:
+        """The artists that are updated at each step
+        """
+        out = self.imh['st'] + self.imh['fit'] + self.imh['ps'][2:]
+        out += self.imh.get('info', [])
+        return out
 
     def savefig(self, fileno: Union[None, int, str]) -> None:
         """Save current figure as a file

@@ -377,9 +377,9 @@ class BaumWelchFitter(_fs.SynapseFitter):
 
 
     def __init__(self, data: _ps.PlasticitySequence, est: _si.SynapseIdModel,
-                 **kwds) -> None:
+                 callback: _fs.Callback = _fs.print_callback, **kwds) -> None:
         kwds.setdefault('opt', BaumWelchOptions())
-        super().__init__(data, est, **kwds)
+        super().__init__(data, est, callback, **kwds)
         # (T-1,E,M,M),(E,M),(T-1,E) - makes a copy :)
         update, initial, _ = _get_updaters(self.est, self.data)
         # (T,E,M),(T,E,M),(T,E),
@@ -484,9 +484,9 @@ class GroundedBWFitter(_fs.GroundedFitter, BaumWelchFitter):
 
     def __init__(self, data: _ps.SimPlasticitySequence,
                  est: _si.SynapseIdModel, truth: _si.SynapseIdModel,
-                 **kwds) -> None:
+                 callback: _fs.Callback = _fs.print_callback, **kwds) -> None:
         kwds.setdefault('opt', BaumWelchOptions())
-        super().__init__(data, est, truth=truth, **kwds)
+        super().__init__(data, est=est, truth=truth, callback=callback, **kwds)
         if 'truth' in self.info:
             self.truth = self.info.pop('truth')
         self.info['true_like'] = likelihood(self.truth, self.data)

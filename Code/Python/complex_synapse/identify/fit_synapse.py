@@ -6,7 +6,7 @@ from __future__ import annotations
 import abc
 from numbers import Number
 import re
-from typing import Callable, Dict, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 
@@ -75,7 +75,7 @@ def _get_pos_verbosity(obj: SynapseFitter, format_spec: str):
     return format_spec, pos, verbose
 
 
-def print_callback(obj: SynapseFitter, pos: int) -> None:
+def print_callback(obj: SynapseFitter, pos: int) -> List:
     """Callback that prints fitter state as appropriate
 
     Parameters
@@ -98,6 +98,7 @@ def print_callback(obj: SynapseFitter, pos: int) -> None:
         gap = ('',) if obj.opt.disp_each or obj.opt.disp_before else ()
         print(*gap, 'After:', format(obj, fmt), MESSAGES[obj.info['result']],
               sep='\n')
+    return []
 
 
 # =============================================================================
@@ -257,6 +258,12 @@ class SynapseFitter(abc.ABC):
         The data used to fit the synapse model.
     est : SynapseIdModel
         The initial guess/current estimate of the synapse model.
+    callback : Callable[[self, int]->None], optional
+        Function called on every iteration, by default `print_callback`.
+        Second argument:
+            0: Before first iteration.
+            1: During iterations.
+            2: After completion.
     Other keywords added to `self.opts` below.
 
     Other Attributes
@@ -329,9 +336,11 @@ class SynapseFitter(abc.ABC):
     info: Dict[str, Number]
     # options:
     opt: SynapseFitOptions
+    # callback to report on each step/result
+    callback: Callback
 
     def __init__(self, data: _ps.PlasticitySequence, est: _si.SynapseIdModel,
-                 **kwds) -> None:
+                 callback: Callback = print_callback, **kwds) -> None:
         """Base class for synapse fitters.
 
         Parameters
@@ -340,6 +349,12 @@ class SynapseFitter(abc.ABC):
             The data used to fit the synapse model.
         est : SynapseIdModel
             The initial guess/current estimate of the synapse model
+        callback : Callable[[self, int]->None], optional
+            Function called on every iteration, by default `print_callback`.
+            Second argument:
+                0: Before first iteration.
+                1: During iterations.
+                2: After completion.
 
         Subclass should set `self.info['nlike']`.
         """
@@ -351,6 +366,7 @@ class SynapseFitter(abc.ABC):
                      'x_scale': None, 'y_scale': None}
         self.opt = kwds.pop('opt', SynapseFitOptions())
         self.opt.update(**kwds)
+        self.callback = callback
 
     def __format__(self, format_spec: str) -> str:
         """Printing info about state of fitter
@@ -462,17 +478,52 @@ class SynapseFitter(abc.ABC):
         kwds['line'] = state_prob.ndim == 1
         return _ps.set_plot(handle, state_prob, **kwds)
 
-    def run(self, callback: Callback = print_callback) -> int:
+    def init(self) -> List[Any]:
+        """Prepare for first iteration.
+        """
+        self.info['nit'] = 0
+        self.info['result'] = 0
+        return self.callback(self, 0)
+
+    def step(self, step_num: int) -> List[Any]:
+        """One update step
+
+        Parameters
+        ----------
+        step_num : int
+            Number of steps completed
+        """
+        self.info['nit'] = step_num + 1
+        self.prev_est = self.est.copy()
+        self.update_fit()
+        if not self.valid():
+            self.info['result'] = -1
+            return []
+        self.update_info()
+        self.calc_thresh()
+        self.prev_est = None
+        if self.check_thresh():
+            self.info['result'] = 1
+            return self.callback(self, 2)
+        if self.info['nit'] == self.opt.max_it:
+            return self.callback(self, 2)
+        if self.info['nit'] % self.opt.disp_step == 0:
+            return self.callback(self, 1)
+        return []
+
+    def run(self, callback: Optional[Callback] = None) -> int:
         """Run the synapse fitter until termination conditions are met
 
         Parameters
         ----------
-        callback : Callable[[self, int]->None], optional
+        callback : Callable[[self, int]->List], optional
             Function called on every iteration, by default `print_callback`.
             Second argument:
                 0: Before first iteration.
                 1: During iterations.
                 2: After completion.
+            It should return an empty list unless it is involved in an
+            animation, in which case it should return a list of updated artists
 
         Returns
         -------
@@ -483,25 +534,13 @@ class SynapseFitter(abc.ABC):
                 1: Success, change in log-likelihood and model below threshold.
         """
         count = _it.undcount if self.opt.disp_each else _it.dcount
-        callback(self, 0)
-        self.info['result'] = 0
+        self.callback = _ag.default(callback, self.callback)
+        self.init()
         for i in count('iteration', self.opt.max_it,
                        disp_step=self.opt.disp_step):
-            self.info['nit'] = i + 1
-            self.prev_est = self.est.copy()
-            self.update_fit()
-            if not self.valid():
-                self.info['result'] = -1
+            self.step(i)
+            if self.info['result']:
                 break
-            self.update_info()
-            self.calc_thresh()
-            if i + 1 % self.opt.disp_step == 0:
-                callback(self, 1)
-            self.prev_est = None
-            if self.check_thresh():
-                self.info['result'] = 1
-                break
-        callback(self, 2)
         return self.info['result']
 
 
@@ -521,6 +560,12 @@ class GroundedFitter(SynapseFitter):
         The initial guess/current estimate of the synapse model.
     truth : SynapseIdModel
         The model used to generate `data`.
+    callback : Callable[[self, int]->None], optional
+        Function called on every iteration, by default `print_callback`.
+        Second argument:
+            0: Before first iteration.
+            1: During iterations.
+            2: After completion.
     Other keywords added to `self.opt` (see `SynapseFitter`).
 
     Statistics
@@ -564,6 +609,7 @@ class GroundedFitter(SynapseFitter):
 
     def __init__(self, data: _ps.SimPlasticitySequence,
                  est: _si.SynapseIdModel, truth: _si.SynapseIdModel,
+                 callback: Callback = print_callback,
                  **kwds) -> None:
         """SynapseFitter where groud-truth is known.
 
@@ -578,7 +624,7 @@ class GroundedFitter(SynapseFitter):
 
         Subclass should set `self.info['true_like', 'y_scale', 'true_dlike']`.
         """
-        super().__init__(data, est, **kwds)
+        super().__init__(data, est, callback, **kwds)
         self.truth = truth
         self.info.update(true_dmodel=(self.truth - self.est).norm(),
                          x_scale=self.truth.norm())
@@ -639,4 +685,4 @@ class GroundedFitter(SynapseFitter):
 
 
 # =============================================================================
-Callback = Callable[[SynapseFitter, int], None]
+Callback = Callable[[SynapseFitter, int], List[Any]]

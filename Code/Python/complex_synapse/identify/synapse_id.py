@@ -478,8 +478,8 @@ def elements(obj: SynapseIdModel) -> la.lnarray:
     return np.concatenate(bcast_vectors, -1)
 
 
-def from_elements(elems: np.ndarray, frac: int, readout: int
-                  ) -> Tuple[la.lnarray, la.lnarray]:
+def from_elements(elems: np.ndarray, frac: la.lnarray, readout: la.lnarray
+                  ) -> SynapseIdModel:
     """Get model's matrices from a vector of its elements
 
     Parameters

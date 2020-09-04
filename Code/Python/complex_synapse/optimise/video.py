@@ -229,7 +229,7 @@ def make_plots(rate: la.lnarray, envs: Sequence[la.lnarray], jmps: la.lnarray,
     # fig.set_constrained_layout(True)
     fig.set_constrained_layout_pads(hpad=0, hspace=0)
     plt.draw()
-    fig.set_constrained_layout(False)
+    # fig.set_constrained_layout(False)
     return fig, obj
 
 
