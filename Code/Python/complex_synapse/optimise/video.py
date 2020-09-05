@@ -6,12 +6,14 @@ from __future__ import annotations
 from typing import List, Optional, Sequence, Tuple
 
 import matplotlib as mpl
+import matplotlib.animation as mpla
 import matplotlib.pyplot as plt
 import numpy as np
 
 import numpy_linalg as la
 import sl_py_tools.arg_tricks as ag
 # import sl_py_tools.containers as cn
+import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
 
 from . import synapse_opt as so
@@ -154,7 +156,7 @@ def _format_axes_snr(ax_snr: mpl.axes.Axes):
     ax_snr.set_xlabel(r"Time, $\tau$")
     ax_snr.set_ylabel(r"SNR")
     ax_snr.legend(loc='lower left', edgecolor=ax_snr.get_facecolor())
-    mpt.clean_axes(ax_snr, legendbox=False)
+    mpt.clean_axes(ax_snr, legendbox=False, tight=False)
 
 
 def _format_axes_eqp(axs: AxList, imh: mpl.image.AxesImage, nst: int):
@@ -195,7 +197,8 @@ def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool):
         ax_bar.invert_yaxis()
         ax_bar.xaxis.set_ticks_position('top')
     ax_bar.set_ylabel("Trans. prob.")
-    ax_bar.set_yticks([0, 0.5, 1])
+    ax_bar.set_yticks([0, 0.25, 0.5, 0.75, 1])
+    ax_bar.set_yticklabels(['0', '', '', '', '1'])
     ax_bar.set_xticks(np.arange(nst))
     ax_bar.set_xticklabels([''])
     mpt.clean_axes(ax_bar, tight=False)
@@ -316,10 +319,10 @@ class ModelPlots:
         for rect, height in zip(self.brd, dep):
             rect.set_height(height)
 
-    def update_plots(self, rate: la.lnarray, model: la.lnarray, tau: float):
+    def update_plots(self, time: la.lnarray, model: la.lnarray, tau: float):
         """Update plots with new model
         """
-        snr = serial_snr(model, 1/rate)
+        snr = serial_snr(model, time)
         eqp = serial_eqp(model)
         pot, dep = trim_params(model)
 
@@ -329,11 +332,48 @@ class ModelPlots:
 
         plt.draw()
 
+    @classmethod
+    def from_data(cls, axs: AxList, time: la.lnarray, model: la.lnarray,
+                  tau: float) -> ModelPlots:
+        """Plot data to make an instance"""
+        snr = serial_snr(model, time)
+        eqp = serial_eqp(model)
+        pot, dep = trim_params(model)
+        njmp = len(pot)
+
+        lnh = axs[0].loglog(time, snr, label="One model")
+        vln = axs[0].axvline(tau)
+
+        # imh = axs[1].imshow(eqp.r, norm=mpl.colors.Normalize(0, 1))
+        imh = axs[1].pcolormesh(np.arange(-0.5, njmp+1), [0, 1], eqp.r,
+                                norm=mpl.colors.Normalize(0, 1),
+                                edgecolors='black')
+
+        brp = axs[3].bar(np.arange(0.5, njmp), pot)
+        brd = axs[4].bar(np.arange(0.5, njmp), dep)
+
+        return cls([lnh[0], vln], imh, brp, brd)
+
 
 class EnvelopeFig:
     """Data and figure objects for an envelope plot
+
+    Parameters
+    ----------
+    rate : la.lnarray (T,)
+        Rate parameter of Laplace transform (stored as `time = 1/rate`)
+    env_th : la.lnarray (T,)
+        Theoretical Laplacian envelope (stored as exponential running average,
+        `env_th -> env_th * rate`)
+    env_num : la.lnarray (T,)
+        Numerical Laplacian envelope (stored as exponential running average,
+        `env_num -> env_num * rate`)
+    models : la.lnarray (T,2N-2)
+        Parameters of serial models that form envelope, in the order
+        mat_01, mat_12, ..., mat_n-2,n-1,
+        mat_10, mat_21, ..., mat_n-1,n-2.
     """
-    rate: la.lnarray
+    time: la.lnarray
     env_th: la.lnarray
     env_num: la.lnarray
     models: la.lnarray
@@ -342,28 +382,108 @@ class EnvelopeFig:
 
     def __init__(self, rate: la.lnarray, env_th: la.lnarray,
                  env_num: la.lnarray, models: la.lnarray) -> None:
-        self.rate = rate
-        self.env_th = env_th
-        self.env_num = env_num
+        """Data and figure objects for an envelope plot
+
+        Parameters
+        ----------
+        rate : la.lnarray (T,)
+            Rate parameter of Laplace transform (stored as `time = 1/rate`)
+        env_th : la.lnarray (T,)
+            Theoretical Laplacian envelope (stored as exponential running
+            average, `env_th -> env_th * rate`)
+        env_num : la.lnarray (T,)
+            Numerical Laplacian envelope (stored as exponential running
+            average, `env_num -> env_num * rate`)
+        models : la.lnarray (T,2N-2)
+            Parameters of serial models that form envelope, in the order
+            mat_01, mat_12, ..., mat_n-2,n-1,
+            mat_10, mat_21, ..., mat_n-1,n-2.
+        """
+        self.time = 1 / rate
+        self.env_th = env_th * rate
+        self.env_num = env_num * rate
         self.models = models
-        self.fig, self.model_plots = make_plots(
-            self.rate, (self.env_num, self.env_th), self.models[0], 1/rate[0])
+        if self.time[0] > self.time[-1]:
+            self.flip()
+
+        self.fig, axs = _make_fig()
+
+        axs[0].loglog(self.time, self.env_th, label="Theory")
+        axs[0].loglog(self.time, self.env_num, label="Numeric")
+
+        self.model_plots = ModelPlots.from_data(axs, self.time, self.models[0],
+                                                self.time[0])
+
+        _format_axes_snr(axs[0])
+        _format_axes_eqp(axs[1:3], self.model_plots.imh, self.nstate)
+        _format_axes_bar(axs[3], self.nstate, False)
+        _format_axes_bar(axs[4], self.nstate, True)
+
+        # fig.set_constrained_layout(True)
+        self.fig.set_constrained_layout_pads(hpad=0, hspace=0)
+        plt.draw()
+
+    @property
+    def nstate(self) -> int:
+        """Number of states"""
+        return self.models.shape[-1] // 2 + 1
+
+    @property
+    def ntime(self) -> int:
+        """Number of time points"""
+        return self.models.shape[0]
 
     def update(self, ind: int):
         """Change which model we're plotting
         """
-        self.model_plots.update_plots(self.rate, self.models[ind],
-                                      1/self.rate[ind])
+        self.model_plots.update_plots(self.time, self.models[ind],
+                                      self.time[ind])
 
     def savefig(self, fname: str):
         """Save the current figure
         """
         self.fig.savefig(fname)
 
+    def flip(self) -> None:
+        """Flip arrays along time axis
+        """
+        self.time = np.flip(self.time, axis=0)
+        self.env_th = np.flip(self.env_th, axis=0)
+        self.env_num = np.flip(self.env_num, axis=0)
+        self.models = np.flip(self.models, axis=0)
+
+
+# =============================================================================
+# Animation
+# =============================================================================
+
+
+def animate(env_fig: EnvelopeFig, **kwargs) -> mpla.FuncAnimation:
+    """Animate a fitter video
+
+    Parameters
+    ----------
+    fitter : SynapseFitter
+        The synapse fitter we will animate. An instance of `FitterReplay` or
+        one of its subclasses is recommended.
+    Other keywords
+        Passed to `FuncAnimation`.
+
+    Returns
+    -------
+    ani : FuncAnimation
+        The animation.
+    """
+    kwargs.setdefault('init_func', None)
+    kwargs.setdefault('frames', it.erange(env_fig.ntime))
+    kwargs.setdefault('interval', 500)
+    kwargs.setdefault('repeat_delay', 1000)
+    kwargs.setdefault('blit', False)
+    return mpla.FuncAnimation(env_fig.fig, env_fig.update, **kwargs)
+
 
 # =============================================================================
 # Hint aliases
 # =============================================================================
-GridSpec = mpl.gridspec.GridSpec
 AxList = List[mpl.axes.Axes]
 Ratios = Tuple[List[int], List[int]]
