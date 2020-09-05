@@ -6,13 +6,15 @@ from __future__ import annotations
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import matplotlib as mpl
+import matplotlib.animation as mpla
 import matplotlib.pyplot as plt
 import numpy as np
 
 import sl_py_tools.arg_tricks as ag
 import sl_py_tools.containers as cn
+import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
-
+# pyright: reportUndefinedVariable=false
 from . import fit_synapse as fs
 from . import plast_seq as ps
 from .. import options as op
@@ -344,13 +346,15 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.txt = kwds.pop('txt', VideoLabels())
         self.layout = kwds.pop('sizes', VideoLayout())
         self.ln_opt = kwds.pop('line_opt', {})
-        self.im_opt = kwds.pop('im_opt', {'cmap': 'YlOrBr'})
+        self.im_opt = kwds.pop('im_opt', {'cmap': 'YlOrBr', 'vmin': 0, 'vmax': 1})
         self.txt_opt = kwds.pop('txt_opt', {'box': False, 'tight': False})
 
         self.txt_opt.update(mpt.clean_axes_keys(self.txt_opt))
         args = op.sort_dicts(args, ('transpose',), -1)
         kwds = op.sort_dict(kwds, ('transpose',), -1)
         super().__init__(*args, **kwds)
+        vmin, vmax = self.im_opt.pop('vmin', 0.), self.im_opt.pop('vmax', 1.)
+        self.im_opt['norm'] = self.im_opt.pop('norm', mpl.colors.Normalize(vmin, vmax))
 
     def update(self, other: cn.Dictable[str, Any] = (), /, **kwds) -> None:
         """Update options.
@@ -382,6 +386,38 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         """Transpose the layout of the video?"""
         self.set_transpose(value)
 # pylint: enable=too-many-ancestors
+
+
+# =============================================================================
+# Animation
+# =============================================================================
+
+
+def animate(fitter: fs.SynapseFitter, **kwargs) -> mpla.FuncAnimation:
+    """Animate a fitter video
+
+    Parameters
+    ----------
+    fitter : SynapseFitter
+        The synapse fitter we will animate. An instance of `FitterReplay` or
+        one of its subclasses is recommended.
+    Other keywords
+        Passed to `FuncAnimation`.
+
+    Returns
+    -------
+    ani : FuncAnimation
+        The animation.
+    """
+    if not isinstance(fitter.callback, FitterPlots):
+        raise TypeError
+    fitter.callback.build(fitter)
+    kwargs.setdefault('init_func', fitter.init)
+    kwargs.setdefault('frames', it.erange(fitter.opt.max_it))
+    kwargs.setdefault('interval', 500)
+    kwargs.setdefault('repeat_delay', 1000)
+    kwargs.setdefault('blit', False)
+    return mpla.FuncAnimation(fitter.callback.fig, fitter.step, **kwargs)
 
 
 # =============================================================================
@@ -456,10 +492,9 @@ class FitterPlots:
         """
         self.ind = ind
         self.fname = fname
-        vmin, vmax = kwds.pop('vmin', 0.), kwds.pop('vmax', 1.)
-        self.norm = kwds.pop('norm', mpl.colors.Normalize(vmin, vmax))
         self.opt = ag.default(opt, VideoOptions())
         self.opt.update(kwds)
+        self.norm = self.opt.im_opt.pop('norm')
         self.fig = None
         self.axh = {}
         self.imh = {}
@@ -478,15 +513,9 @@ class FitterPlots:
                 2: After completion.
         """
         if pos == 0:
-            self.opt.layout.set_fitter(fitter)
-            if self.fig is None:
-                self.make_fig()
-                self.create_plots(fitter)
-                self.format_axes()
-                # plt.draw()
-                # self.fig.set_constrained_layout(False)
-            self.savefig(fitter.info['nit'])
+            self.build(fitter)
             fs.print_callback(fitter, 0)
+            self.savefig(fitter.info['nit'])
         elif pos == 1:
             self.update_plots(fitter)
             self.savefig(fitter.info['nit'])
@@ -506,7 +535,7 @@ class FitterPlots:
         """Do we have ground truth?"""
         return bool(self.axh['tr'])
 
-    def make_fig(self) -> None:
+    def _make_fig(self) -> None:
         """Create the figure and axes for the video frames"""
         figax = vid_fig(self.opt.layout)
         self.fig, psax, self.axh['fit'], self.axh['tr'] = figax
@@ -519,7 +548,7 @@ class FitterPlots:
         # Which axes to use to display `fitter.info`
         self.axh['info'] = self.axh['tr' if self.ground else 'st'][:1]
 
-    def create_plots(self, fitter: fs.SynapseFitter) -> None:
+    def _create_plots(self, fitter: fs.SynapseFitter) -> None:
         """Create initial plots
 
         Should only be called after `make_fig`.
@@ -548,7 +577,7 @@ class FitterPlots:
             self.imh['info'] = [write_info(format(fitter, f'tex0,{verbose}'),
                                            self.axh['info'][0], **txo)]
 
-    def format_axes(self) -> None:
+    def _format_axes(self) -> None:
         """Format axes labels, legends and colourbars
 
         Should only be called after `create_plots`.
@@ -566,6 +595,35 @@ class FitterPlots:
         if self.ground:
             label_model(self.axh['tr'], *tr_lab, cbar=False, **lbo)
 
+    def _info_axes(self) -> None:
+        """Fix the size for the Text's Axes
+
+        Should be called after first `draw`.
+        """
+        txt_bbox = self.imh['info'][0].get_window_extent().frozen()
+        transf = self.fig.transFigure.inverted()
+        self.axh['info'][0].set_position(transf.transform_bbox(txt_bbox))
+        self.imh['info'][0].set_in_layout(False)
+        # self.imh['info'][0].set_zorder(10)
+
+    def build(self, fitter: fs.SynapseFitter) -> None:
+        """Create the figure and axes with the first plot on them
+
+        Parameters
+        ----------
+        fitter : SynapseFitter
+            The object that performs the fit, whose state we display.
+        """
+        if self.fig is None:
+            self.opt.layout.set_fitter(fitter)
+            self._make_fig()
+            self._create_plots(fitter)
+            self._format_axes()
+            self.fig.canvas.draw_idle()
+        else:
+            self._info_axes()
+        # self.fig.set_constrained_layout(False)
+
     def update_plots(self, fitter: fs.SynapseFitter) -> None:
         """Update plots after iteration
 
@@ -579,7 +637,7 @@ class FitterPlots:
         fitter.est.plot(self.imh['fit'], trn=trn)
         if verbose:
             self.imh['info'][0].set_text(format(fitter, f'tex1,{verbose}'))
-            self.axh['info'][0].set_clip_on(False)
+            # self.axh['info'][0].set_clip_on(False)
 
     def updated(self) -> List[Disp]:
         """The artists that are updated at each step

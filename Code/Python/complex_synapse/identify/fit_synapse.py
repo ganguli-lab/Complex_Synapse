@@ -480,6 +480,11 @@ class SynapseFitter(abc.ABC):
 
     def init(self) -> List[Any]:
         """Prepare for first iteration.
+
+        Returns
+        -------
+        output : Any
+            Whatever the callback returns.
         """
         self.info['nit'] = 0
         self.info['result'] = 0
@@ -491,7 +496,12 @@ class SynapseFitter(abc.ABC):
         Parameters
         ----------
         step_num : int
-            Number of steps completed
+            Number of steps completed.
+
+        Returns
+        -------
+        output : Any
+            Whatever the callback returns.
         """
         self.info['nit'] = step_num + 1
         self.prev_est = self.est.copy()

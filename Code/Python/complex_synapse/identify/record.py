@@ -7,7 +7,7 @@ from typing import Any, Dict, List, Optional
 # import numpy as np
 
 import numpy_linalg as la
-import sl_py_tools.arg_tricks as _ag
+# import sl_py_tools.arg_tricks as _ag
 # import sl_py_tools.iter_tricks as _it
 
 from . import plast_seq as _ps
@@ -154,6 +154,7 @@ class FitterReplay(_fs.SynapseFitter):
         kwds.setdefault('max_it', self.saved_est.nmodel[0])
         kwds.setdefault('disp_step', 1)
         super().__init__(callback=callback, **kwds)
+        self.update_info()
 
     def update_info(self) -> None:
         """Calculate stats for termination and display.
@@ -175,7 +176,7 @@ class FitterReplay(_fs.SynapseFitter):
 
         Returns
         -------
-        data : lnarray,  (T,M) float[0:1] or (T,) int[0:M]
+        data : lnarray, (T,M) float[0:1] or (T,) int[0:M]
             Estimate of state occupation
         """
         # (T.M)
@@ -183,6 +184,11 @@ class FitterReplay(_fs.SynapseFitter):
 
     def init(self) -> List[Any]:
         """Prepare for first iteration.
+
+        Returns
+        -------
+        output : Any
+            Whatever the callback returns.
         """
         self._ind = 0
         self.info['result'] = 0
@@ -197,6 +203,11 @@ class FitterReplay(_fs.SynapseFitter):
         ----------
         step_num : int
             Number of steps completed
+
+        Returns
+        -------
+        output : Any
+            Whatever the callback returns.
         """
         self._ind = step_num
         self.update_fit()
@@ -226,12 +237,12 @@ class GroundedFitterReplay(FitterReplay, _fs.GroundedFitter):
 
     def __init__(self, saved: Dict[str, la.lnarray],
                  callback: _fs.Callback = _fs.print_callback, **kwds) -> None:
-        saved = saved.copy()
-        data = _ps.SimPlasticitySequence(saved['plast_type'],
-                                         saved['readouts'],
-                                         saved.pop('states'))
-        truth = _si.from_elements(saved.pop('truth'),
-                                  saved['frc'], saved['rdo'])
+        self.saved = saved.copy()
+        data = _ps.SimPlasticitySequence(self.saved['plast_type'],
+                                         self.saved['readouts'],
+                                         self.saved.pop('states'))
+        truth = _si.from_elements(self.saved.pop('truth'),
+                                  self.saved['frc'], self.saved['rdo'])
         kwds.setdefault('data', data)
         kwds.setdefault('truth', truth)
-        super().__init__(saved=saved, callback=callback, **kwds)
+        super().__init__(saved=self.saved, callback=callback, **kwds)
