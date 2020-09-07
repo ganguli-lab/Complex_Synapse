@@ -20,7 +20,7 @@ Order = Union[int, float, str, None]
 # =============================================================================
 
 
-class SynapseModel(_sb.SynapseBase):
+class SynapseModel(_sb.SynapseContinuousModel):
     """Class for Markovian dynamics of complex synapse models.
 
     Parameters (and attributes)
@@ -106,16 +106,20 @@ class SynapseModel(_sb.SynapseBase):
         rpr += f", w = {self.weight}"
         return rpr
 
+    def reorder(self, inds: _sb.ArrayLike) -> None:
+        """Put the states into a new order, in-place.
+
+        Parameters
+        ----------
+        inds : ArrayLike[int] (M,)
+            `inds[i] = j` means state `j` moves to position `i`.
+        """
+        super().reorder(inds)
+        self.weight = self.weight[..., inds]
+
     # -------------------------------------------------------------------------
     # Markov quantities
     # -------------------------------------------------------------------------
-
-    def markov(self) -> la.lnarray:
-        """Average transition rate matrix.
-
-        .. math:: W^f = fp Wp + fm Wm
-        """
-        return (self.frac.s * self.plast).sum(-3)
 
     def enc(self) -> la.lnarray:
         """Average transition rate matrix, weighted by initial desired weight.
@@ -123,118 +127,6 @@ class SynapseModel(_sb.SynapseBase):
         .. math:: Q = fp Wp - fm Wm
         """
         return (self.signal.s * self.frac.s * self.plast).sum(-3)
-
-    def zinv(self, rate: Optional[_sb.ArrayLike] = None,
-             rowv: Optional[_sb.ArrayLike] = None) -> la.lnarray:
-        r"""Inverse of generalised fundamental matrix.
-
-        Parameters
-        ----------
-        rate : float, array, optional
-            Parameter of Laplace transform, ``s``. Default: 0.
-        rowv : la.lnarray, optional
-            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
-            If `np.nan`, use  `peq`. By default: `None`.
-
-        Returns
-        -------
-        Zi : la.lnarray
-            inverse of generalised fundamental matrix, ``Z``.
-
-        Notes
-        -----
-        ``zinv`` is the inverse of :math:`Z`, defined as
-
-        .. math:: Z = (e \xi - W^f)^{-1},
-
-        where :math:`e` is a vector of ones and :math:`\xi` is any row vector
-        with :math:`\xi.e \neq 0`.
-        When we include :math:`s`
-
-        .. math:: Z(s) = (s I + e \xi - W^f)^{-1} \simeq \int e^{t(W^f-sI)} dt,
-
-        i.e. :math:`Z^{-1}` with :math:`s` added to the diagonal.
-        Effectively the matrix inverse of the genarator's Laplace transform.
-        """
-        onev = la.ones_like(self.weight)
-        if rowv is None:
-            rowv = onev
-        elif np.isnan(rowv).all():
-            rowv = self.peq()
-        else:
-            rowv = la.asarray(rowv)
-        if rate is None:
-            s_arr = 0
-        else:
-            # convert to lnarray, add singletons to broadcast with matrix
-            s_arr = la.asarray(rate).s * la.eye(self.nstate)
-        return onev.c * rowv - self.markov() + s_arr
-
-    def cond(self, rate: Optional[_sb.ArrayLike] = None, *,
-             rowv: Optional[_sb.ArrayLike] = None,
-             order: Order = None,
-             rate_max: bool = False) -> la.lnarray:
-        r"""Condition number of generalised fundamental matrix.
-
-        Parameters
-        ----------
-        rate : float, array, optional
-            Parameter of Laplace transform, ``s``. Default: 0.
-        rowv : la.lnarray, optional
-            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
-            If `np.nan`, use  `peq`. By default: `None`.
-        order : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
-            Order of the norm. By default `None`.
-        rate_max : bool, optional
-            Compute `max(cond(rate), cond(None))`. By default, `False`.
-
-        Returns
-        -------
-        r : la.lnarray
-             condition number of ``Z``.
-
-        Notes
-        -----
-        ``c`` is the condition number, :math:`c(Z)`
-
-        .. math:: c(Z) = \Vert Z \Vert \cdot \Vert Z^{-1} \Vert,
-
-        where :math:`Z` is defined as
-
-        .. math:: Z = (e \xi - W^f)^{-1},
-
-        where :math:`e` is a vector of ones and :math:`\xi` is any row vector
-        with :math:`\xi.e \neq 0`.
-        When we include :math:`s`
-
-        .. math:: Z(s) = (s I + e \xi - W^f)^{-1} \simeq \int e^{t(W^f-sI)} dt,
-
-        i.e. :math:`Z^{-1}` with :math:`s` added to the diagonal.
-        Effectively the matrix inverse of the genarator's Laplace transform.
-
-        See Also
-        --------
-        zinv : fundamental matrix
-        """
-        zinv = self.zinv(rate, rowv)
-        cond = np.linalg.cond(zinv, order)
-        if rate_max and rate is not None:
-            zinv = self.zinv(None, rowv)
-            cond = max(cond, np.linalg.cond(zinv, order))
-        return cond
-
-    def peq(self) -> la.lnarray:
-        """Steady state distribution.
-
-        Returns
-        -------
-        peq : la.lnarray
-            Steady state distribution, :math:`\\pi`.
-            Solution of: :math:`\\pi W^f = 0`.
-        """
-        rowv = np.ones_like(self.weight)
-        fundi = self.zinv(rowv=rowv)
-        return rowv @ fundi.inv
 
     def mean_weight(self) -> float:
         """Mean synaptic weight in steady state distribution.

@@ -104,6 +104,16 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     # Utility methods
     # -------------------------------------------------------------------------
 
+    def reorder(self, inds: ArrayLike) -> None:
+        """Put the states into a new order, in-place.
+
+        Parameters
+        ----------
+        inds : ArrayLike[int] (M,)
+            `inds[i] = j` means state `j` moves to position `i`.
+        """
+        self.plast = self.plast[(...,) + np.ix_(inds, inds)]
+
     def view(self, astype: Optional[Type[Syn]] = None, **kwds) -> Syn:
         """Copy of object, with views of array attributes
 
@@ -157,6 +167,17 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
     def nmodel(self) -> Tuple[int, ...]:
         """Number and shape of models being broadcast."""
         return self.plast.shape[:-3]
+
+    # -------------------------------------------------------------------------
+    # Markov quantities
+    # -------------------------------------------------------------------------
+
+    def markov(self) -> la.lnarray:
+        """Average transition rate matrix.
+
+        .. math:: W^f = fp Wp + fm Wm
+        """
+        return (self.frac.s * self.plast).sum(-3)
 
     # -------------------------------------------------------------------------
     # Factory methods
@@ -275,6 +296,260 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         return cls.build(_bld.build_rand, nst, *args, **kwargs)
 
 
+class SynapseContinuousModel(SynapseBase):
+    """Class for Continuous time Markovian dynamics of complex synapse models.
+
+    Parameters (and attributes)
+    ---------------------------
+    plast : array_like, (P,M,M), float[0:1]
+        potentiation/depression transition rate matrix.
+    frac : array_like, (P,), float[0:1]
+        fraction of events that are potentiating/depressing.
+
+    Properties
+    ----------
+    nstate : int
+        number of states, M.
+    nplast : int
+        number of plasticity types, P.
+    nmodel : Tuple[int]
+        Number and shape of models being broadcast.
+    """
+    # Common constatnts / parameters
+
+    # # largest row sum for valid plast & frac
+    # StochThresh: ClassVar[float] = 1e-5
+    # # largest condition number for inverting zinv
+    # CondThresh: ClassVar[float] = 1e-5
+
+    # -------------------------------------------------------------------------
+    # Markov quantities
+    # -------------------------------------------------------------------------
+
+    def zinv(self, rate: Optional[ArrayLike] = None,
+             rowv: Optional[ArrayLike] = None) -> la.lnarray:
+        r"""Inverse of generalised fundamental matrix.
+
+        Parameters
+        ----------
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
+        rowv : la.lnarray, optional
+            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
+            If `np.nan`, use  `peq`. By default: `None`.
+
+        Returns
+        -------
+        Zi : la.lnarray
+            inverse of generalised fundamental matrix, ``Z``.
+
+        Notes
+        -----
+        ``zinv`` is the inverse of :math:`Z`, defined as
+
+        .. math:: Z = (e \xi - W^f)^{-1},
+
+        where :math:`e` is a vector of ones and :math:`\xi` is any row vector
+        with :math:`\xi.e \neq 0`.
+        When we include :math:`s`
+
+        .. math:: Z(s) = (s I + e \xi - W^f)^{-1} \simeq \int e^{t(W^f-sI)} dt,
+
+        i.e. :math:`Z^{-1}` with :math:`s` added to the diagonal.
+        Effectively the matrix inverse of the genarator's Laplace transform.
+        """
+        onev = la.ones(self.nstate)
+        if rowv is None:
+            rowv = onev
+        elif np.isnan(rowv).all():
+            rowv = self.peq()
+        else:
+            rowv = la.asarray(rowv)
+        if rate is None:
+            s_arr = 0
+        else:
+            # convert to lnarray, add singletons to broadcast with matrix
+            s_arr = la.asarray(rate).s * la.eye(self.nstate)
+        return onev.c * rowv - self.markov() + s_arr
+
+    def cond(self, rate: Optional[ArrayLike] = None, *,
+             rowv: Optional[ArrayLike] = None,
+             order: Order = None,
+             rate_max: bool = False) -> la.lnarray:
+        r"""Condition number of generalised fundamental matrix.
+
+        Parameters
+        ----------
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
+        rowv : la.lnarray, optional
+            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
+            If `np.nan`, use  `peq`. By default: `None`.
+        order : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
+            Order of the norm. By default `None`.
+        rate_max : bool, optional
+            Compute `max(cond(rate), cond(None))`. By default, `False`.
+
+        Returns
+        -------
+        r : la.lnarray
+             condition number of ``Z``.
+
+        Notes
+        -----
+        ``c`` is the condition number, :math:`c(Z)`
+
+        .. math:: c(Z) = \Vert Z \Vert \cdot \Vert Z^{-1} \Vert,
+
+        where :math:`Z` is the inverse of the matrix returned by `self.zinv()`.
+
+        See Also
+        --------
+        zinv : fundamental matrix
+        """
+        zinv = self.zinv(rate, rowv)
+        cond = np.linalg.cond(zinv, order)
+        if rate_max and rate is not None:
+            zinv = self.zinv(None, rowv)
+            cond = max(cond, np.linalg.cond(zinv, order))
+        return cond
+
+    def peq(self) -> la.lnarray:
+        """Steady state distribution.
+
+        Returns
+        -------
+        peq : la.lnarray
+            Steady state distribution, :math:`\\pi`.
+            Solution of: :math:`\\pi W^f = 0`.
+        """
+        rowv = la.ones(self.nstate)
+        fundi = self.zinv(rowv=rowv)
+        return rowv @ fundi.inv
+
+
+class SynapseDiscreteModel(SynapseBase):
+    """Synapse model in discrete time
+
+    Parameters (and attributes)
+    ---------------------------
+    plast : array_like, (P,M,M), float[0:1]
+        potentiation/depression transition probability matrix.
+    frac : array_like, (P,), float[0:1]
+        fraction of events that are potentiating/depressing.
+
+    Properties
+    ----------
+    nstate : int
+        number of states, M.
+    nplast : int
+        number of plasticity types, P.
+    nmodel : Tuple[int]
+        Number and shape of models being broadcast.
+    """
+
+    def zinv(self, rate: Optional[ArrayLike] = None,
+             rowv: Optional[ArrayLike] = None) -> la.lnarray:
+        r"""Inverse of generalised fundamental matrix.
+
+        Parameters
+        ----------
+        rate : float, array, optional
+            Parameter of discrete Laplace transform, ``s``. Default: 0.
+        rowv : la.lnarray, optional
+            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
+            If `np.nan`, use  `peq`. By default: `None`.
+
+        Returns
+        -------
+        Zi : la.lnarray
+            inverse of generalised fundamental matrix, ``Z``.
+
+        Notes
+        -----
+        ``zinv`` is the inverse of :math:`Z`, defined as
+
+        .. math:: Z = (e \xi + I - M^f)^{-1},
+
+        where :math:`e` is a vector of ones, :math:`\xi` is any row vector
+        with :math:`\xi.e \neq 0` and :math:`I` is the identity matrix.
+        When we include :math:`s`
+
+        .. math:: Z(s) = (e \xi + I - e^{-s} M^f)^{-1}
+                        \simeq \sum_n e^{-ns} (M^f)^n,
+
+        Effectively the genarator's discrete Laplace transform.
+        """
+        onev = la.ones(self.nstate)
+        if rowv is None:
+            rowv = onev
+        elif np.isnan(rowv).all():
+            rowv = self.peq()
+        else:
+            rowv = la.asarray(rowv)
+        if rate is None:
+            s_arr = 1
+        else:
+            # convert to lnarray, add singletons to broadcast with matrix
+            s_arr = np.exp(-la.asarray(rate)).s
+        return onev.c * rowv + la.eye(self.nstate) - self.markov() * s_arr
+
+    def cond(self, rate: Optional[ArrayLike] = None, *,
+             rowv: Optional[ArrayLike] = None,
+             order: Order = None,
+             rate_max: bool = False) -> la.lnarray:
+        r"""Condition number of generalised fundamental matrix.
+
+        Parameters
+        ----------
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
+        rowv : la.lnarray, optional
+            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
+            If `np.nan`, use  `peq`. By default: `None`.
+        order : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
+            Order of the norm. By default `None`.
+        rate_max : bool, optional
+            Compute `max(cond(rate), cond(None))`. By default, `False`.
+
+        Returns
+        -------
+        r : la.lnarray
+             condition number of ``Z``.
+
+        Notes
+        -----
+        ``c`` is the condition number, :math:`c(Z)`
+
+        .. math:: c(Z) = \Vert Z \Vert \cdot \Vert Z^{-1} \Vert,
+
+        where :math:`Z` is the inverse of the matrix returned by `self.zinv()`.
+
+        See Also
+        --------
+        zinv : fundamental matrix
+        """
+        zinv = self.zinv(rate, rowv)
+        cond = np.linalg.cond(zinv, order)
+        if rate_max and rate is not None:
+            zinv = self.zinv(None, rowv)
+            cond = max(cond, np.linalg.cond(zinv, order))
+        return cond
+
+    def peq(self) -> la.lnarray:
+        """Steady state distribution.
+
+        Returns
+        -------
+        peq : la.lnarray
+            Steady state distribution, :math:`\\pi`.
+            Solution of: :math:`\\pi M^f = \\pi`.
+        """
+        rowv = la.ones(self.nstate)
+        fundi = self.zinv(rowv)
+        return rowv @ fundi.inv
+
+
 # =============================================================================
 # Utility functions
 # =============================================================================
@@ -385,3 +660,4 @@ def array_attrs(obj: Any) -> Dict[str, np.ndarray]:
 # types that can multiply with/add to a matrix
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
 Syn = TypeVar('Syn', bound=SynapseBase)
+Order = Union[int, float, str, None]

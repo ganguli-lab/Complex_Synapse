@@ -18,10 +18,11 @@ from .. import builders as _bld
 from .. import synapse_base as _sb
 from . import plast_seq as _ps
 
+Order = Union[int, float, str, None]
 # =============================================================================
 
 
-class SynapseIdModel(_sb.SynapseBase):
+class SynapseIdModel(_sb.SynapseDiscreteModel):
     """Model that is being fit to data
 
     Parameters (and attributes)
@@ -96,6 +97,7 @@ class SynapseIdModel(_sb.SynapseBase):
         """Number of readout values, R
         """
         return _sb.scalarise(self.readout.max() + 1)
+
     @property
     def nmodel(self) -> Tuple[int, ...]:
         """Number and shape of models being broadcast."""
@@ -137,8 +139,7 @@ class SynapseIdModel(_sb.SynapseBase):
             By default `None` -> use steady-state distribution.
         """
         if init is None:
-            markov = (self.frac.s * self.plast).sum(-3)
-            self.initial = _ma.calc_peq_d(markov)
+            self.initial = self.peq()
         else:
             self.initial = la.asarray(init)
 
@@ -150,7 +151,7 @@ class SynapseIdModel(_sb.SynapseBase):
         inds : ArrayLike[int] (M,)
             `inds[i] = j` means state `j` moves to position `i`.
         """
-        self.plast = self.plast[(...,) + np.ix_(inds, inds)]
+        super().reorder(inds)
         self.initial = self.initial[..., inds]
         self.readout = self.readout[..., inds]
 
@@ -162,9 +163,7 @@ class SynapseIdModel(_sb.SynapseBase):
         group : bool, optional
             Sort by `-eta` within groups of common readout? By default `True`
         """
-        markov = (self.frac.s * self.plast).sum(-3)
-        fundi = np.ones_like(markov) + la.identity(self.nstate) - markov
-        eta = - fundi.inv @ self.readout
+        eta = - self.zinv().inv @ self.readout
         inds = np.lexsort((-eta, self.readout)) if group else np.argsort(-eta)
         self.reorder(inds)
 
@@ -188,21 +187,6 @@ class SynapseIdModel(_sb.SynapseBase):
         updaters = self.plast.expand_dims(-4) * indic.expand_dims((-3, -2))
         initial = self.initial * indic
         return updaters, initial
-
-    # def elements(self) -> la.lnarray:
-    #     """All elements of self.plast and self.initial, concatenated.
-
-    #     Returns
-    #     -------
-    #     elems : la.lnarray (PM**2+M,)
-    #         When `self.nmodel = ()`, concatenation of ravelled `self.plast` and
-    #         `self.initial`. Otherwise, broadcasts over `nmodel` axes.
-    #     """
-    #     if not self.nmodel:
-    #         return np.concatenate((self.plast.ravel(), self.initial))
-    #     vectors = (self.plast.ravelaxes(-3), self.initial)
-    #     bcast_vectors = la.gufuncs.broadcast_matrices('(a),(b)', *vectors)
-    #     return np.concatenate(bcast_vectors, -1)
 
     def norm(self, **kwargs) -> la.lnarray:
         """Norm of vector of parameters.
@@ -451,9 +435,7 @@ def well_behaved(model: SynapseIdModel, cond: bool = False) -> bool:
     """
     vld = np.isfinite(model.plast).all() and np.isfinite(model.initial).all()
     if cond:
-        markov = (model.frac.s * model.plast).sum(-3)
-        fundi = np.ones_like(markov) + la.identity(model.nstate) - markov
-        vld &= np.linalg.cond(fundi).max() < model.CondThresh
+        vld &= model.cond() < model.CondThresh
     return vld
 
 
