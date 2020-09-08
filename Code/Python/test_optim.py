@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy_linalg as la
 import complex_synapse as cs
 import complex_synapse.optimise as cso
+import complex_synapse.graphs as csg
 import sl_py_tools.matplotlib_tricks as mpt
 from sl_py_tools.time_tricks import time_with
 np.set_printoptions(precision=2, suppress=True)
@@ -28,6 +29,12 @@ if __name__ != "__main__":
     # %%
     nst, sss, opts, envs, mods = cso.plot.load_data()
     obj = cso.video.EnvelopeFig(sss, envs[3], envs[1], mods[1])
+    obj.update(40)
+    # %%
+    serial = cs.optimise.SynapseParamModel.rand(
+        6, serial=True, directions=(1, -1), binary=True)
+    graph = csg.param_model_to_graph(serial)
+    nodes, edges = csg.draw_graph(graph)
     # %%
 # %%
 nst, sss, opts, envs, mods = cso.plot.load_data()

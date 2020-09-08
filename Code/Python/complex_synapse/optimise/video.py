@@ -2,13 +2,13 @@
 """Creating video frames for optimal serial models
 """
 from __future__ import annotations
-
 from typing import List, Optional, Sequence, Tuple
 
 import matplotlib as mpl
 import matplotlib.animation as mpla
 import matplotlib.pyplot as plt
 import numpy as np
+import networkx as nx
 
 import numpy_linalg as la
 import sl_py_tools.arg_tricks as ag
@@ -18,6 +18,8 @@ import sl_py_tools.matplotlib_tricks as mpt
 
 from . import synapse_opt as so
 from .. import synapse_mem as sm
+from .. import builders as bld
+from .. import graphs as gr
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
@@ -126,7 +128,7 @@ def _make_fig(ratios: Optional[Ratios] = None, scale: Optional[float] = None
     axs : List[Axes]
         Axes for [SNR, Equilibrium, Colourbar, Potentiation, Depression]
     """
-    ratios = ag.default(ratios, ([4, 1, 4], [12, 9, 1]))
+    ratios = ag.default(ratios, ([2, 2, 1, 2, 2], [12, 9, 1]))
     scale = ag.default(scale, 0.6)
     keys = ['height_ratios', 'width_ratios']
 
@@ -136,16 +138,17 @@ def _make_fig(ratios: Optional[Ratios] = None, scale: Optional[float] = None
     fig = plt.figure(figsize=fsiz, frameon=True, constrained_layout=True)
     gsp = fig.add_gridspec(*gsiz, **kwargs)
     fig.set_constrained_layout_pads(hpad=0, hspace=0)
-    ax_snr = fig.add_subplot(gsp[:, 0])
-    ax_eqp = fig.add_subplot(gsp[1, 1])
-    ax_pot = fig.add_subplot(gsp[0, 1], sharex=ax_eqp)
-    ax_dep = fig.add_subplot(gsp[2, 1], sharex=ax_eqp)
+    ax_snr = fig.add_subplot(gsp[1:, 0])
+    ax_eqp = fig.add_subplot(gsp[2, 1])
+    ax_pot = fig.add_subplot(gsp[:2, 1], sharex=ax_eqp)
+    ax_dep = fig.add_subplot(gsp[3:, 1], sharex=ax_eqp)
     ax_cbr = fig.add_subplot(gsp[:, 2])
+    ax_grf = fig.add_subplot(gsp[0, 0])
 
-    return fig, [ax_snr, ax_eqp, ax_cbr, ax_pot, ax_dep]
+    return fig, [ax_snr, ax_eqp, ax_cbr, ax_pot, ax_dep, ax_grf]
 
 
-def _format_axes_snr(ax_snr: mpl.axes.Axes):
+def _format_axes_snr(ax_snr: mpl.axes.Axes) -> None:
     """Format axes for SNR plots
 
     Parameters
@@ -159,7 +162,7 @@ def _format_axes_snr(ax_snr: mpl.axes.Axes):
     mpt.clean_axes(ax_snr, legendbox=False, tight=False)
 
 
-def _format_axes_eqp(axs: AxList, imh: mpl.image.AxesImage, nst: int):
+def _format_axes_eqp(axs: AxList, imh: mpl.image.AxesImage, nst: int) -> None:
     """Format axes for equilibrium distribution plots
 
     Parameters
@@ -182,7 +185,7 @@ def _format_axes_eqp(axs: AxList, imh: mpl.image.AxesImage, nst: int):
     mpt.clean_axes(ax_cbr, box=False, tight=False)
 
 
-def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool):
+def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool) -> None:
     """Format axes for potentiation probability plots
 
     Parameters
@@ -200,7 +203,7 @@ def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool):
     ax_bar.set_yticks([0, 0.25, 0.5, 0.75, 1])
     ax_bar.set_yticklabels(['0', '', '', '', '1'])
     ax_bar.set_xticks(np.arange(nst))
-    ax_bar.set_xticklabels([''])
+    ax_bar.set_xticklabels([''] * nst)
     mpt.clean_axes(ax_bar, tight=False)
     if dep:
         ax_bar.spines['top'].set_visible(True)
@@ -256,7 +259,63 @@ def make_model_plots(axs: AxList, time: la.lnarray,
     brp = axs[3].bar(np.arange(0.5, njmp), pot)
     brd = axs[4].bar(np.arange(0.5, njmp), dep)
 
-    return ModelPlots([lnh[0], vln], imh, brp, brd)
+    graph = GraphPlots.from_data(axs[5], model, eqp)
+
+    return ModelPlots([lnh[0], vln], imh, [brp, brd], graph)
+
+
+class GraphPlots:
+    """Class for plotting model as a graph.
+    """
+    nodes: gr.NodePlots
+    edges: gr.DirectedEdgeCollection
+    pinds: np.ndarray
+    opt: gr.GraphOptions
+
+    def __init__(self, graph: nx.DiGraph,
+                 opt: Optional[gr.GraphOptions] = None, **kwds) -> None:
+        """Class for plotting model as a graph.
+
+        Parameters
+        ----------
+        graph : nx.DiGraph
+            Graph object describing model. Nodes have attributes `kind` and
+            `value`.  Edges have attributes `kind`, `value` and `pind` (if the
+            model was a `SynapseParamModel`).
+        opt : GraphOptions
+            Options for plotting the graph.
+        Other keywords passed to `opt` or `complex_synapse.graph.draw_graph`.
+        """
+        if gr.has_edge_attr(graph, 'pind'):
+            self.pinds = gr.collect_edge_values(graph, 'pind')
+        else:
+            self.pinds = np.array(0)
+        self.opt = ag.default_eval(opt, gr.GraphOptions)
+        self.opt.pop_my_args(kwds)
+        self.nodes, self.edges = gr.draw_graph(graph, opts=self.opt, **kwds)
+
+    def update(self, params: la.lnarray, peq: Optional[la.lnarray] = None
+               ) -> None:
+        """Update plots"""
+        params = la.asarray(params).ravel()
+        peq = ag.default_eval(peq, lambda: serial_eqp(params))
+        self.nodes.set_sizes(peq * self.opt.size)
+        self.edges.set_widths(params[self.pinds] * self.opt.width)
+        self.edges.set_node_sizes(peq * self.opt.size)
+
+    @classmethod
+    def from_data(cls, axs: mpl.axes.Axes, model: la.lnarray,
+                  peq: Optional[la.lnarray] = None,
+                  weight: Optional[la.lnarray] = None, **kwds) -> GraphPlots:
+        """Plot data to make an instance"""
+        opts: gr.GraphOptions = kwds.pop('opts', gr.GraphOptions())
+        opts.pop_my_args(kwds)
+        model = la.asarray(model)
+        peq = ag.default_eval(peq, lambda: serial_eqp(model.ravel()))
+        weight = ag.default_eval(weight, lambda: bld.binary_weights(len(peq)))
+        graph = gr.param_to_graph(model.reshape((2, -1)), peq, weight,
+                                  opts.topology)
+        return cls(graph, axs=axs, opt=opts, **kwds)
 
 
 class ModelPlots:
@@ -268,16 +327,18 @@ class ModelPlots:
     imh: mpl.collections.QuadMesh
     brp: mpl.container.BarContainer
     brd: mpl.container.BarContainer
+    graph: GraphPlots
 
     def __init__(self, lns: Sequence[mpl.lines.Line2D],
                  imh: mpl.image.AxesImage,
-                 brp: mpl.container.BarContainer,
-                 brd: mpl.container.BarContainer) -> None:
+                 brs: List[mpl.container.BarContainer],
+                 graph: GraphPlots) -> None:
         self.lnh = lns[0]
         self.vln = lns[1]
         self.imh = imh
-        self.brp = brp
-        self.brd = brd
+        self.brp = brs[0]
+        self.brd = brs[1]
+        self.graph = graph
 
     def update_snr(self, snr: la.lnarray, tau: float):
         """Update model's SNR plot
@@ -329,30 +390,32 @@ class ModelPlots:
         self.update_snr(snr, tau)
         self.update_eqp(eqp)
         self.update_potdep(pot, dep)
-
-        plt.draw()
+        self.graph.update(np.r_[pot, dep], eqp)
 
     @classmethod
     def from_data(cls, axs: AxList, time: la.lnarray, model: la.lnarray,
-                  tau: float) -> ModelPlots:
+                  tau: float, **kwds) -> ModelPlots:
         """Plot data to make an instance"""
         snr = serial_snr(model, time)
         eqp = serial_eqp(model)
-        pot, dep = trim_params(model)
-        njmp = len(pot)
+        pot_dep = trim_params(model)
+        njmp = len(pot_dep[0])
 
-        lnh = axs[0].loglog(time, snr, label="One model")
-        vln = axs[0].axvline(tau)
+        graph = GraphPlots.from_data(axs[5], pot_dep, eqp, **kwds)
+
+        lns = axs[0].loglog(time, snr, label="One model")
+        lns.append(axs[0].axvline(tau))
 
         # imh = axs[1].imshow(eqp.r, norm=mpl.colors.Normalize(0, 1))
         imh = axs[1].pcolormesh(np.arange(-0.5, njmp+1), [0, 1], eqp.r,
                                 norm=mpl.colors.Normalize(0, 1),
                                 edgecolors='black')
 
-        brp = axs[3].bar(np.arange(0.5, njmp), pot)
-        brd = axs[4].bar(np.arange(0.5, njmp), dep)
+        cmap = graph.opt.edge_cmap
+        brs = [axs[3].bar(np.arange(0.5, njmp), pot_dep[0], color=cmap(1.0)),
+               axs[4].bar(np.arange(0.5, njmp), pot_dep[1], color=cmap(0.0))]
 
-        return cls([lnh[0], vln], imh, brp, brd)
+        return cls(lns, imh, brs, graph)
 
 
 class EnvelopeFig:
@@ -418,6 +481,7 @@ class EnvelopeFig:
         _format_axes_eqp(axs[1:3], self.model_plots.imh, self.nstate)
         _format_axes_bar(axs[3], self.nstate, False)
         _format_axes_bar(axs[4], self.nstate, True)
+        axs[5].set_frame_on(False)
 
         # fig.set_constrained_layout(True)
         self.fig.set_constrained_layout_pads(hpad=0, hspace=0)
