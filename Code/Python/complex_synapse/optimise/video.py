@@ -2,28 +2,30 @@
 """Creating video frames for optimal serial models
 """
 from __future__ import annotations
-from typing import List, Optional, Sequence, Tuple
+
+from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import matplotlib as mpl
 import matplotlib.animation as mpla
 import matplotlib.pyplot as plt
-import numpy as np
 import networkx as nx
+import numpy as np
 
 import numpy_linalg as la
 import sl_py_tools.arg_tricks as ag
-# import sl_py_tools.containers as cn
+import sl_py_tools.containers as cn
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
 
-from . import synapse_opt as so
-from .. import synapse_mem as sm
+# pyright: reportUndefinedVariable=false
 from .. import builders as bld
 from .. import graphs as gr
+from .. import options as op
+from .. import synapse_mem as sm
+from . import synapse_opt as so
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
-Figure = mpl.figure.Figure
 # =============================================================================
 # Calculation
 # =============================================================================
@@ -96,29 +98,278 @@ def trim_params(param: la.lnarray) -> la.lnarray:
         Transition probabilities for depression, in the order
         mat_10, mat_21, ..., mat_n-1,n-2.
     """
+    outward, inward, thresh = 1e-5, 1e-5, 1e-3
     # pylint: disable=unbalanced-tuple-unpacking
     pot, dep = np.split(param.copy(), 2)
     nstw = (len(pot) + 1) // 2
-    test = pot[nstw:] < 1e-3
+    test = pot[nstw:] < thresh
     if test.any():
         ind = test.nonzero()[0][0] + nstw
-        pot[ind:] = 1e-5
-        dep[ind:] = 1e-5
-    test = dep[:nstw-1] < 1e-3
+        pot[ind:] = outward
+        dep[ind:] = inward
+    test = dep[:nstw-1] < thresh
     if test.any():
         ind = test.nonzero()[0][-1] + 1
-        pot[:ind] = 1e-5
-        dep[:ind] = 1e-5
+        pot[:ind] = inward
+        dep[:ind] = outward
     return pot, dep
 
 
 # =============================================================================
-# Fitter video figure
+# Fitter video options classes
 # =============================================================================
 
 
-def _make_fig(ratios: Optional[Ratios] = None, scale: Optional[float] = None
-              ) -> Tuple[Figure, AxList]:
+# pylint: disable=too-many-ancestors
+class ImageOptions(op.AnyOptions):
+    """Options for heatmaps
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
+    Parameters
+    ----------
+    snr : List[str]
+        XY Axes labels for memory curve plots.
+        By default: `[r"Time, $\tau$", "SNR"]`.
+    env : List[str]
+        Legend labels for theoretical envelope, numerical envelope and example.
+        By default: `["Theory", "Numeric", "One model"]`.
+    potdep : List[str]
+        Y axis labels for transition probability bar charts.
+        By default: `["Pot. prob.", "Dep. prob."]`.
+    eqp : str
+        Colourbar label for steady state distribution.
+        By default: `"Equilibrium probability"`
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
+    """
+    cmap: str
+    edgecolors: str
+    norm: mpl.colors.Normalize
+
+    def __init__(self, *args, **kwds) -> None:
+        self.cmap = 'YlOrBr'
+        self.edgecolors = 'black'
+        self.norm = mpl.colors.Normalize(0., 1.)
+        super().__init__(*args, **kwds)
+
+    def set_vmin(self, value: float) -> None:
+        """Set the lower bound for the colour map.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            pass
+        else:
+            self.norm.vmin = value
+
+    def set_vmax(self, value: float) -> None:
+        """Set the upper bound for the colour map.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            pass
+        else:
+            self.norm.vmax = value
+
+
+# pylint: disable=too-many-ancestors
+class VideoLabels(op.Options):
+    """Tiles, axes labels, etc. for EnvelopeFig
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
+    Parameters
+    ----------
+    snr : List[str]
+        XY Axes labels for memory curve plots.
+        By default: `[r"Time, $\tau$", "SNR"]`.
+    env : List[str]
+        Legend labels for theoretical envelope, numerical envelope and example.
+        By default: `["Theory", "Numeric", "One model"]`.
+    potdep : List[str]
+        Y axis labels for transition probability bar charts.
+        By default: `["Pot. prob.", "Dep. prob."]`.
+    eqp : str
+        Colourbar label for steady state distribution.
+        By default: `"Equilibrium probability"`
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
+    """
+    # Text for labels
+    snr: List[str]
+    env: List[str]
+    potdep: List[str]
+    eqp: str
+
+    def __init__(self, *args, **kwds) -> None:
+        self.snr = [r"Time, $\tau$", "SNR"]
+        self.env = ["Theory", "Numeric", "One model"]
+        self.potdep = ["Pot. prob.", "Dep. prob."]
+        self.eqp = "Equilibrium probability"
+        super().__init__(*args, **kwds)
+
+
+# pylint: disable=too-many-ancestors
+class VideoLayout(op.Options):
+    """Tiles, axes labels, etc. for FitterVideo
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
+    Parameters
+    ----------
+    height_ratios: Tuple[int, ...]
+        Grid size ratios for various axes.
+    width_ratios: Tuple[int, ...]
+        Grid size ratios for various axes.
+    ax_pos: Dict[str, Inds]
+        which rows/cols for each Axes
+    scale : float
+        Controls figure size: inches per grid-ratio unit.
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
+
+    Notes
+    -----
+    Attributes can also be referenced and modified by subscripting with the
+    attribute name. If the name is not found, it will search `sizes`.
+    """
+    map_attributes: op.Attrs = ('ax_pos',)
+    # height/width ratios for rows/columns
+    height_ratios: Tuple[int, ...]
+    width_ratios: Tuple[int, ...]
+    # row/column assignments for models/data
+    ax_pos: Dict[str, Inds]
+    scale: float
+
+    def __init__(self, *args, **kwds) -> None:
+        self.height_ratios = (2, 2, 1, 2, 2)
+        self.width_ratios = (12, 9, 1)
+        self.ax_pos = {'snr': np.s_[1:, 0], 'eqp': np.s_[2, 1],
+                       'pot': np.s_[:2, 1], 'dep': np.s_[3:, 1],
+                       'cbr': np.s_[:, 2], 'grf': np.s_[0, 0]}
+        self.scale = 0.6
+        super().__init__(*args, **kwds)
+
+    def __setitem__(self, key: str, val: Any) -> None:
+        """Set an option.
+
+        If `ax_pos` is specified, it is updated with the new value, rather than
+        being replaced like other variables.
+        """
+        super().__setitem__(key, val)
+        if key in {'height_ratios', 'width_ratios'}:
+            setattr(self, key, cn.tuplify(getattr(self, key)))
+
+    def gspec_opts(self) -> Tuple[Tuple[float, float], Tuple[int, int],
+                                  Dict[str, Tuple[int, ...]]]:
+        """Options for creating a gridspec"""
+        kwargs = {'height_ratios': self.height_ratios,
+                  'width_ratios': self.width_ratios}
+        gargs = tuple(map(len, kwargs.values()))
+        fsiz = tuple(self.scale * sum(g) for g in reversed(kwargs.values()))
+        return fsiz, gargs, kwargs
+
+
+# pylint: disable=too-many-ancestors
+class VideoOptions(op.MasterOptions, fallback='im_opt'):
+    """Visual options for FitterVideo
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
+    Parameters
+    ----------
+    txt : VideoLabels
+        Title, axis, legend and colourbar labels.
+    layout : VideoLayout
+        Options for arrangement and sizes of video frames.
+    graph : bool
+        Transpose the layout of the video? Stored in `txt_opt` and `im_opt`
+        under the key `'trn'`. By default: `False`
+    txt_opt : Dict[str, Any]
+         Options for text. See `sl_py_tools.matplotlib_tricks.clean_axes`.
+         By default: `{'box': False, 'tight': False}`.
+    im_opt : Dict[str, str]
+        Options for image plots. By default: `{'cmap': 'YlOrBr'}`.
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items.
+
+    Notes
+    -----
+    All parameters are keyword only. Unknown keywords are passed to `txt_opt`
+    if `sl_py_tools.matplotlib_tricks.clean_axes` takes them, `txt`, `layout`
+    or `ln_opt` if it is an existing attribute/key, or `im_opt` if not.
+
+    Attributes can also be referenced and modified by subscripting with the
+    attribute name. If the name is not found, it will search `txt`, `layout`,
+    `txt_opt`, `ln_opt` and `im_opt`. Setting a new key adds it to `im_opt`.
+    To add a new item to a `VideoOptions` instance, set it as an attribute.
+    """
+    map_attributes: op.Attrs = ('txt', 'layout', 'graph', 'im_opt', 'txt_opt')
+    # Text for labels
+    txt: VideoLabels
+    # Layout
+    layout: VideoLayout
+    # Graph
+    graph: gr.GraphOptions
+    # keyword options
+    im_opt: ImageOptions
+    txt_opt: Dict[str, Any]
+
+    def __init__(self, *args, **kwds) -> None:
+        self.txt = VideoLabels()
+        self.layout = VideoLayout()
+        self.graph = gr.GraphOptions()
+        self.im_opt = ImageOptions()
+        self.txt_opt = {'box': False, 'tight': False}
+
+        self.txt_opt.update(mpt.clean_axes_keys(self.txt_opt))
+        super().__init__(*args, **kwds)
+    #     self._fix_norm()
+
+    # def _fix_norm(self) -> None:
+    #     vmin, vmax = self.im_opt.pop('vmin', 0.), self.im_opt.pop('vmax', 1.)
+    #     self.im_opt.setdefault('norm', mpl.colors.Normalize(vmin, vmax))
+
+    # def _change_norm(self) -> None:
+    #     self.im_opt['norm'].vmin = self.im_opt.pop('vmin',
+    #                                                self.im_opt['norm'].vmin)
+    #     self.im_opt['norm'].vmax = self.im_opt.pop('vmax',
+    #                                                self.im_opt['norm'].vmax)
+    # def __setitem__(self, key: str, val: Any) -> None:
+    #     """Set an option.
+
+    #     If `vmin/vmax` is specified, `norm` is updated.
+    #     """
+    #     super().__setitem__(key, val)
+    #     if key in {'vmin', 'vmax'}:
+    #         self._change_norm()
+
+# pylint: enable=too-many-ancestors
+
+
+# =============================================================================
+# Envelope video figure
+# =============================================================================
+
+
+def _make_fig(opt: VideoLayout) -> Tuple[Figure, AxList]:
     """Create a figure with axes for an experiment/simulation fit.
 
     Returns
@@ -126,29 +377,25 @@ def _make_fig(ratios: Optional[Ratios] = None, scale: Optional[float] = None
     fig : Figure
         Figure object
     axs : List[Axes]
-        Axes for [SNR, Equilibrium, Colourbar, Potentiation, Depression]
+        Axes for [SNR, Equilibrium, Colourbar, Potentiation, Depression, Graph]
     """
-    ratios = ag.default(ratios, ([2, 2, 1, 2, 2], [12, 9, 1]))
-    scale = ag.default(scale, 0.6)
-    keys = ['height_ratios', 'width_ratios']
-
-    fsiz = tuple(scale * sum(g) for g in reversed(ratios))
-    gsiz, kwargs = tuple(map(len, ratios)), dict(zip(keys, ratios))
+    fsiz, gsiz, kwargs = opt.gspec_opts()
 
     fig = plt.figure(figsize=fsiz, frameon=True, constrained_layout=True)
     gsp = fig.add_gridspec(*gsiz, **kwargs)
     fig.set_constrained_layout_pads(hpad=0, hspace=0)
-    ax_snr = fig.add_subplot(gsp[1:, 0])
-    ax_eqp = fig.add_subplot(gsp[2, 1])
-    ax_pot = fig.add_subplot(gsp[:2, 1], sharex=ax_eqp)
-    ax_dep = fig.add_subplot(gsp[3:, 1], sharex=ax_eqp)
-    ax_cbr = fig.add_subplot(gsp[:, 2])
-    ax_grf = fig.add_subplot(gsp[0, 0])
+
+    ax_snr = fig.add_subplot(gsp[opt.ax_pos['snr']])
+    ax_eqp = fig.add_subplot(gsp[opt.ax_pos['eqp']])
+    ax_pot = fig.add_subplot(gsp[opt.ax_pos['pot']], sharex=ax_eqp)
+    ax_dep = fig.add_subplot(gsp[opt.ax_pos['dep']], sharex=ax_eqp)
+    ax_cbr = fig.add_subplot(gsp[opt.ax_pos['cbr']])
+    ax_grf = fig.add_subplot(gsp[opt.ax_pos['grf']])
 
     return fig, [ax_snr, ax_eqp, ax_cbr, ax_pot, ax_dep, ax_grf]
 
 
-def _format_axes_snr(ax_snr: mpl.axes.Axes) -> None:
+def _format_axes_snr(ax_snr: mpl.axes.Axes, opt: VideoOptions) -> None:
     """Format axes for SNR plots
 
     Parameters
@@ -156,22 +403,30 @@ def _format_axes_snr(ax_snr: mpl.axes.Axes) -> None:
     ax_snr : Axes
         Axes for SNR
     """
-    ax_snr.set_xlabel(r"Time, $\tau$")
-    ax_snr.set_ylabel(r"SNR")
+    ax_snr.set_xlabel(opt.txt.snr[0])
+    ax_snr.set_ylabel(opt.txt.snr[1])
     ax_snr.legend(loc='lower left', edgecolor=ax_snr.get_facecolor())
-    mpt.clean_axes(ax_snr, legendbox=False, tight=False)
+    mpt_opts = opt.txt_opt.copy()
+    mpt_opts.update(legendbox=False, box=True)
+    mpt.clean_axes(ax_snr, **mpt_opts)
 
 
-def _format_axes_eqp(axs: AxList, imh: mpl.image.AxesImage, nst: int) -> None:
+def _format_axes_eqp(axs: AxList, imh: mpl.collections.QuadMesh, nst: int,
+                     opt: VideoOptions) -> None:
     """Format axes for equilibrium distribution plots
 
     Parameters
     ----------
     axs : List[Axes]
         Axes for [Equilibrium, Colourbar]
+    imh : QuadMesh
+        Heatmap of equilibrium distribution.
     nst : int
         Number of states
     """
+    mpt_opts = opt.txt_opt.copy()
+    mpt_opts.update(box=False)
+
     ax_eqp, ax_cbr = axs
     fig = ax_cbr.get_figure()
     fig.colorbar(imh, cax=ax_cbr)
@@ -179,13 +434,14 @@ def _format_axes_eqp(axs: AxList, imh: mpl.image.AxesImage, nst: int) -> None:
     ax_eqp.set_xticklabels([''] * nst)
     ax_eqp.set_yticks([])
     ax_eqp.xaxis.set_ticks_position('both')
-    mpt.clean_axes(ax_eqp, box=False, tight=False)
+    mpt.clean_axes(ax_eqp, **mpt_opts)
 
-    ax_cbr.set_ylabel("Equilibrium probability")
-    mpt.clean_axes(ax_cbr, box=False, tight=False)
+    ax_cbr.set_ylabel(opt.txt.eqp)
+    mpt.clean_axes(ax_cbr, **mpt_opts)
 
 
-def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool) -> None:
+def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool,
+                     opt: VideoOptions) -> None:
     """Format axes for potentiation probability plots
 
     Parameters
@@ -194,74 +450,32 @@ def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool) -> None:
         Axes for Potentiation
     nst : int
         Number of states
+    dep : bool
+        Is this the bar chart for depression transitions?
     """
+    mpt_opts = opt.txt_opt.copy()
+    mpt_opts.update(box=False)
+
     ax_bar.set_ylim([0, 1])
     if dep:
         ax_bar.invert_yaxis()
         ax_bar.xaxis.set_ticks_position('top')
-    ax_bar.set_ylabel("Trans. prob.")
+        ax_bar.set_ylabel(opt.txt.potdep[1])
+        ax_bar.spines['bottom'].set_visible(False)
+    else:
+        ax_bar.set_ylabel(opt.txt.potdep[0])
+        ax_bar.spines['top'].set_visible(False)
+    ax_bar.spines['right'].set_visible(False)
     ax_bar.set_yticks([0, 0.25, 0.5, 0.75, 1])
     ax_bar.set_yticklabels(['0', '', '', '', '1'])
     ax_bar.set_xticks(np.arange(nst))
     ax_bar.set_xticklabels([''] * nst)
-    mpt.clean_axes(ax_bar, tight=False)
-    if dep:
-        ax_bar.spines['top'].set_visible(True)
-        ax_bar.spines['bottom'].set_visible(False)
+    mpt.clean_axes(ax_bar, **mpt_opts)
 
 
 # =============================================================================
 # Plot
 # =============================================================================
-
-
-def make_plots(rate: la.lnarray, envs: Sequence[la.lnarray], jmps: la.lnarray,
-               tau: float) -> Tuple[Figure, ModelPlots]:
-    """Create the original plots
-    """
-    fig, axs = _make_fig()
-
-    axs[0].loglog(1/rate, rate * envs[1], label="Theory")
-    axs[0].loglog(1/rate, rate * envs[0], label="Numeric")
-
-    obj = make_model_plots(axs, 1/rate, jmps, tau)
-    nst = len(obj.brp) + 1
-
-    _format_axes_snr(axs[0])
-    _format_axes_eqp(axs[1:3], obj.imh, nst)
-    _format_axes_bar(axs[3], nst, False)
-    _format_axes_bar(axs[4], nst, True)
-
-    # fig.set_constrained_layout(True)
-    fig.set_constrained_layout_pads(hpad=0, hspace=0)
-    plt.draw()
-    # fig.set_constrained_layout(False)
-    return fig, obj
-
-
-def make_model_plots(axs: AxList, time: la.lnarray,
-                     model: la.lnarray, tau: float) -> ModelPlots:
-    """Create the original plots for a model
-    """
-    snr = serial_snr(model, time)
-    eqp = serial_eqp(model)
-    pot, dep = trim_params(model)
-    njmp = len(pot)
-
-    lnh = axs[0].loglog(time, snr, label="One model")
-    vln = axs[0].axvline(tau)
-
-    # imh = axs[1].imshow(eqp.r, norm=mpl.colors.Normalize(0, 1))
-    imh = axs[1].pcolormesh(np.arange(-0.5, njmp+1), [0, 1], eqp.r,
-                            norm=mpl.colors.Normalize(0, 1),
-                            edgecolors='black')
-
-    brp = axs[3].bar(np.arange(0.5, njmp), pot)
-    brd = axs[4].bar(np.arange(0.5, njmp), dep)
-
-    graph = GraphPlots.from_data(axs[5], model, eqp)
-
-    return ModelPlots([lnh[0], vln], imh, [brp, brd], graph)
 
 
 class GraphPlots:
@@ -396,24 +610,29 @@ class ModelPlots:
     def from_data(cls, axs: AxList, time: la.lnarray, model: la.lnarray,
                   tau: float, **kwds) -> ModelPlots:
         """Plot data to make an instance"""
+        opt: VideoOptions = kwds.pop('opt', VideoOptions())
+        opt.pop_my_args(kwds)
+
         snr = serial_snr(model, time)
         eqp = serial_eqp(model)
         pot_dep = trim_params(model)
         njmp = len(pot_dep[0])
 
-        graph = GraphPlots.from_data(axs[5], pot_dep, eqp, **kwds)
 
-        lns = axs[0].loglog(time, snr, label="One model")
+        lns = axs[0].loglog(time, snr, label=opt.txt.env[2])
         lns.append(axs[0].axvline(tau))
 
         # imh = axs[1].imshow(eqp.r, norm=mpl.colors.Normalize(0, 1))
         imh = axs[1].pcolormesh(np.arange(-0.5, njmp+1), [0, 1], eqp.r,
-                                norm=mpl.colors.Normalize(0, 1),
-                                edgecolors='black')
+                                **opt.im_opt)
 
-        cmap = graph.opt.edge_cmap
-        brs = [axs[3].bar(np.arange(0.5, njmp), pot_dep[0], color=cmap(1.0)),
-               axs[4].bar(np.arange(0.5, njmp), pot_dep[1], color=cmap(0.0))]
+        graph = GraphPlots.from_data(axs[5], pot_dep, eqp, opts=opt.graph,
+                                     **kwds)
+
+        brs = [axs[3].bar(np.arange(0.5, njmp), pot_dep[0],
+                          color=graph.opt.edge_cmap(1.0)),
+               axs[4].bar(np.arange(0.5, njmp), pot_dep[1],
+                          color=graph.opt.edge_cmap(0.0))]
 
         return cls(lns, imh, brs, graph)
 
@@ -442,9 +661,10 @@ class EnvelopeFig:
     models: la.lnarray
     fig: Figure
     model_plots: ModelPlots
+    opt: VideoOptions
 
     def __init__(self, rate: la.lnarray, env_th: la.lnarray,
-                 env_num: la.lnarray, models: la.lnarray) -> None:
+                 env_num: la.lnarray, models: la.lnarray, **kwds) -> None:
         """Data and figure objects for an envelope plot
 
         Parameters
@@ -462,6 +682,8 @@ class EnvelopeFig:
             mat_01, mat_12, ..., mat_n-2,n-1,
             mat_10, mat_21, ..., mat_n-1,n-2.
         """
+        self.opt = kwds.pop('opt', VideoOptions())
+        self.opt.pop_my_args(kwds)
         self.time = 1 / rate
         self.env_th = env_th * rate
         self.env_num = env_num * rate
@@ -469,18 +691,18 @@ class EnvelopeFig:
         if self.time[0] > self.time[-1]:
             self.flip()
 
-        self.fig, axs = _make_fig()
+        self.fig, axs = _make_fig(self.opt.layout)
 
-        axs[0].loglog(self.time, self.env_th, label="Theory")
-        axs[0].loglog(self.time, self.env_num, label="Numeric")
+        axs[0].loglog(self.time, self.env_th, label=self.opt.txt.env[0])
+        axs[0].loglog(self.time, self.env_num, label=self.opt.txt.env[1])
 
         self.model_plots = ModelPlots.from_data(axs, self.time, self.models[0],
-                                                self.time[0])
+                                                self.time[0], opt=self.opt)
 
-        _format_axes_snr(axs[0])
-        _format_axes_eqp(axs[1:3], self.model_plots.imh, self.nstate)
-        _format_axes_bar(axs[3], self.nstate, False)
-        _format_axes_bar(axs[4], self.nstate, True)
+        _format_axes_snr(axs[0], self.opt)
+        _format_axes_eqp(axs[1:3], self.model_plots.imh, self.nstate, self.opt)
+        _format_axes_bar(axs[3], self.nstate, False, self.opt)
+        _format_axes_bar(axs[4], self.nstate, True, self.opt)
         axs[5].set_frame_on(False)
 
         # fig.set_constrained_layout(True)
@@ -549,5 +771,8 @@ def animate(env_fig: EnvelopeFig, **kwargs) -> mpla.FuncAnimation:
 # =============================================================================
 # Hint aliases
 # =============================================================================
+Figure = mpl.figure.Figure
 AxList = List[mpl.axes.Axes]
 Ratios = Tuple[List[int], List[int]]
+Ind = Union[int, slice]
+Inds = Tuple[Ind, ...]

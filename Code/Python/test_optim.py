@@ -38,7 +38,7 @@ if __name__ != "__main__":
     # %%
 # %%
 nst, sss, opts, envs, mods = cso.plot.load_data()
-obj = cso.video.EnvelopeFig(sss, envs[3], envs[1], mods[1])
+obj = cso.video.EnvelopeFig(sss, envs[3], envs[1], mods[1], vmax=0.5)
 ani = cso.video.animate(obj)
 plt.show()
 # %%

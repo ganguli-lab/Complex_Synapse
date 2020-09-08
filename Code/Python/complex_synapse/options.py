@@ -52,19 +52,19 @@ class Options(collections.abc.MutableMapping):
     getting and setting.
 
     If the name is not found, it will search the attributes whose names are
-    listed in `mapping_attributes`. This does not apply to use as attributes
+    listed in `map_attributes`. This does not apply to use as attributes
     (either `obj.name` or `getattr(obj, 'name')`). Iterating and unpacking do
     not recurse through these attributes, nor include properties and private
-    attributes, unless their names are included in `property_attributes`.
+    attributes, unless their names are included in `prop_attributes`.
     If an attribute's value is only set by a default value in a type hint, and
     not set in `__init__`, it will be omitted when iterating, unpacking or
     printing. If it is both a member of `self.__dict__` and listed in
     `prop_attributes`, it will appear twice.
 
     Setting attributes may be achieved via subscripting. If the name is not
-    found, it will search the attributes listed in `mapping_attributes`. If
+    found, it will search the attributes listed in `map_attributes`. If
     a key is not found when recursing these attributes, a `KeyError` is raised.
-    If an attribute's name is found in `mapping_attributes`, the attribute is
+    If an attribute's name is found in `map_attributes`, the attribute is
     updated when set rather than replaced like other attributes. These three
     statements do not apply to setting as an attribute. New keys may be added
     by setting as attributes, e.g. `obj.name=val` or `setattr(obj,'name',val)`.
@@ -75,11 +75,11 @@ class Options(collections.abc.MutableMapping):
     iteration will not include them and setting in a parent class will not
     propagate to this class.
 
-    The attributes listed in `mapping_attributes` should be `MutableMapping`s.
-    They, as well as the attributes in `property_attributes`, will raise a
+    The attributes listed in `map_attributes` should be `MutableMapping`s.
+    They, as well as the attributes in `prop_attributes`, will raise a
     `TypeError` if you try to delete them.
 
-    If the same item appears in more than one of the `mapping_attributes`, or
+    If the same item appears in more than one of the `map_attributes`, or
     in `self`, they can be partially synchronised by making it a property in
     the parent `Options` with a `set_<key>` method that updates the children.
 
@@ -208,7 +208,7 @@ class Options(collections.abc.MutableMapping):
                     pass
                 else:
                     return
-            raise KeyError(f"Unknown key: {key}.")
+            raise KeyError(f"Unknown key: {key}.") from None
 
     def __len__(self) -> int:
         # len(self.__dict__) + len(self.prop_attributes) includes privates.

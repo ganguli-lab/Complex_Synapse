@@ -28,7 +28,7 @@ mpt.rc_fonts('sans-serif')
 
 # pylint: disable=too-many-ancestors
 class VideoLabels(op.Options):
-    """Tiles, axes labels, etc. for FitterVideo
+    """Tiles, axes labels, etc. for `FitterPlots`
 
     The individual options can be accessed as object instance attributes
     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
@@ -114,7 +114,7 @@ class VideoLabels(op.Options):
 
 # pylint: disable=too-many-ancestors
 class VideoLayout(op.Options):
-    """Tiles, axes labels, etc. for FitterVideo
+    """Axes sizes, positions etc. for `FitterPlots`
 
     The individual options can be accessed as object instance attributes
     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
@@ -294,7 +294,7 @@ class VideoLayout(op.Options):
 
 # pylint: disable=too-many-ancestors
 class VideoOptions(op.MasterOptions, fallback='im_opt'):
-    """Visual options for FitterVideo
+    """Visual options for `FitterPlots`
 
     The individual options can be accessed as object instance attributes
     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
