@@ -309,11 +309,11 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     transpose : bool
         Transpose the layout of the video? Stored in `txt_opt` and `im_opt`
         under the key `'trn'`. By default: `False`
-    txt_opt : Dict[str, Any]
-         Options for text. See `sl_py_tools.matplotlib_tricks.clean_axes`.
+    ax_opt : Dict[str, Any]
+         Options for `Axes`. See `sl_py_tools.matplotlib_tricks.clean_axes`.
          By default: `{'box': False, 'tight': False}`.
-    im_opt : Dict[str, str]
-        Options for image plots. By default: `{'cmap': 'YlOrBr'}`.
+    im_opt : ImageOptions
+        Options for image plots. By default: `ImageOptions()`.
     ln_opt : Dict[str, Any]
         Options for line plots. By default: `{}`.
 
@@ -322,16 +322,16 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
 
     Notes
     -----
-    All parameters are keyword only. Unknown keywords are passed to `txt_opt`
+    All parameters are keyword only. Unknown keywords are passed to `ax_opt`
     if `sl_py_tools.matplotlib_tricks.clean_axes` takes them, `txt`, `layout`
     or `ln_opt` if it is an existing attribute/key, or `im_opt` if not.
 
     Attributes can also be referenced and modified by subscripting with the
     attribute name. If the name is not found, it will search `txt`, `layout`,
-    `txt_opt`, `ln_opt` and `im_opt`. Setting a new key adds it to `im_opt`.
+    `ax_opt`, `ln_opt` and `im_opt`. Setting a new key adds it to `im_opt`.
     To add a new item to a `VideoOptions` instance, set it as an attribute.
     """
-    map_attributes: op.Attrs = ('txt', 'layout', 'ln_opt', 'im_opt', 'txt_opt')
+    map_attributes: op.Attrs = ('txt', 'layout', 'ln_opt', 'im_opt', 'ax_opt')
     prop_attributes: op.Attrs = ('transpose',)
     # Text for labels
     txt: VideoLabels
@@ -339,22 +339,20 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     layout: VideoLayout
     # keyword options
     ln_opt: Dict[str, Any]
-    im_opt: Dict[str, Any]
-    txt_opt: Dict[str, Any]
+    im_opt: op.ImageOptions
+    ax_opt: Dict[str, Any]
 
     def __init__(self, *args, **kwds) -> None:
-        self.txt = kwds.pop('txt', VideoLabels())
-        self.layout = kwds.pop('sizes', VideoLayout())
-        self.ln_opt = kwds.pop('line_opt', {})
-        self.im_opt = kwds.pop('im_opt', {'cmap': 'YlOrBr', 'vmin': 0, 'vmax': 1})
-        self.txt_opt = kwds.pop('txt_opt', {'box': False, 'tight': False})
+        self.txt = VideoLabels()
+        self.layout = VideoLayout()
+        self.ln_opt = {}
+        self.im_opt = op.ImageOptions()
+        self.ax_opt = {'box': False, 'tight': False}
 
-        self.txt_opt.update(mpt.clean_axes_keys(self.txt_opt))
+        self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
         args = op.sort_dicts(args, ('transpose',), -1)
         kwds = op.sort_dict(kwds, ('transpose',), -1)
         super().__init__(*args, **kwds)
-        vmin, vmax = self.im_opt.pop('vmin', 0.), self.im_opt.pop('vmax', 1.)
-        self.im_opt['norm'] = self.im_opt.pop('norm', mpl.colors.Normalize(vmin, vmax))
 
     def update(self, other: cn.Dictable[str, Any] = (), /, **kwds) -> None:
         """Update options.
@@ -371,7 +369,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         """
         if transpose is None:
             return
-        self.txt_opt['trn'] = transpose
+        self.ax_opt['trn'] = transpose
         self.im_opt['trn'] = transpose
         self.txt.set_transpose(transpose)
         self.layout.set_transpose(transpose)
@@ -379,7 +377,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     @property
     def transpose(self) -> bool:
         """Transpose the layout of the video?"""
-        return self.txt_opt.get('trn', False)
+        return self.ax_opt.get('trn', False)
 
     @transpose.setter
     def transpose(self, value: bool) -> None:
@@ -400,7 +398,8 @@ def animate(fitter: fs.SynapseFitter, **kwargs) -> mpla.FuncAnimation:
     ----------
     fitter : SynapseFitter
         The synapse fitter we will animate. An instance of `FitterReplay` or
-        one of its subclasses is recommended.
+        one of its subclasses is recommended. Its `callback` must be an
+        instance of `FitterPlots`.
     Other keywords
         Passed to `FuncAnimation`.
 
@@ -561,8 +560,8 @@ class FitterPlots:
         mdo = {**self.opt.im_opt, 'zorder': 0, 'norm': self.norm}
         pso = {**self.opt.im_opt, 'zorder': 10, 'nplast': fitter.est.nplast,
                'nreadout': fitter.est.nreadout, 'line_opts': self.opt.ln_opt}
-        txo = {'size': self.opt.txt_opt.get('tickfontsize', 10),
-               'trn': self.opt.transpose}
+        txo = {'size': self.opt.ax_opt.get('tickfontsize', 10),
+               'trn': self.opt.transpose, 'clip_on': False}
         verbose = self.opt.layout.verbosity
 
         self.imh['st'] = [fitter.plot_occ(self.axh['st'][1], self.ind, **mdo)]
@@ -583,7 +582,7 @@ class FitterPlots:
         Should only be called after `create_plots`.
         """
         ft_lab, tr_lab = self.opt.txt.model_labs(0), self.opt.txt.model_labs(1)
-        lbo = self.opt.txt_opt
+        lbo = self.opt.ax_opt
 
         label_data(self.axh['pt'], self.opt.txt.plast_type, leg=True, **lbo)
         label_data(self.axh['ro'], self.opt.txt.readout, leg=True, **lbo)
@@ -600,8 +599,11 @@ class FitterPlots:
 
         Should be called after first `draw`.
         """
-        txt_bbox = self.imh['info'][0].get_window_extent().frozen()
-        transf = self.fig.transFigure.inverted()
+        # txt_bbox = self.imh['info'][0].get_window_extent().frozen()
+        # transf = self.fig.transFigure.inverted()
+        patch = self.imh['info'][0].get_bbox_patch()
+        txt_bbox = patch.get_bbox().frozen()
+        transf = patch.get_transform() - self.fig.transFigure
         self.axh['info'][0].set_position(transf.transform_bbox(txt_bbox))
         self.imh['info'][0].set_in_layout(False)
         # self.imh['info'][0].set_zorder(10)
@@ -637,7 +639,6 @@ class FitterPlots:
         fitter.est.plot(self.imh['fit'], trn=trn)
         if verbose:
             self.imh['info'][0].set_text(format(fitter, f'tex1,{verbose}'))
-            # self.axh['info'][0].set_clip_on(False)
 
     def updated(self) -> List[Disp]:
         """The artists that are updated at each step
@@ -838,6 +839,8 @@ def write_info(txt: str, axs: mpl.axes.Axes, **kwds) -> mpl.text.Text:
         `Text` object that was written.
     """
     trn = kwds.pop('trn', False)
+    ax_colour = axs.get_facecolor()
+    kwds['bbox'] = {'edgecolor': ax_colour, 'facecolor': ax_colour}
     kwds.update(transform=axs.transAxes, ha='center')
     pos, kwds['va'] = ((.5, 3), 'top') if trn else ((.5, 0), 'bottom')
     return axs.text(*pos, txt, **kwds)

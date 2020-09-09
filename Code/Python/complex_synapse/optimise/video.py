@@ -46,7 +46,8 @@ def serial_eqp(param: la.lnarray) -> la.lnarray:
     eqp : la.lnarray (M,)
         Steady state probability
     """
-    pot, dep = np.split(param, 2)  # pylint: disable=unbalanced-tuple-unpacking
+    param = la.asarray(param).reshape((2, -1))
+    pot, dep = tuple(param)
     nstw = (len(pot) + 1) // 2
     eqp = la.ones(2 * nstw)
     eqp[nstw + 1:] = np.cumprod(pot[nstw:] / dep[nstw:])
@@ -100,7 +101,8 @@ def trim_params(param: la.lnarray) -> la.lnarray:
     """
     outward, inward, thresh = 1e-5, 1e-5, 1e-3
     # pylint: disable=unbalanced-tuple-unpacking
-    pot, dep = np.split(param.copy(), 2)
+    param = la.array(param, copy=True).reshape((2, -1))
+    pot, dep = tuple(param)
     nstw = (len(pot) + 1) // 2
     test = pot[nstw:] < thresh
     if test.any():
@@ -118,64 +120,6 @@ def trim_params(param: la.lnarray) -> la.lnarray:
 # =============================================================================
 # Fitter video options classes
 # =============================================================================
-
-
-# pylint: disable=too-many-ancestors
-class ImageOptions(op.AnyOptions):
-    """Options for heatmaps
-
-    The individual options can be accessed as object instance attributes
-    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
-    getting and setting.
-
-    Parameters
-    ----------
-    snr : List[str]
-        XY Axes labels for memory curve plots.
-        By default: `[r"Time, $\tau$", "SNR"]`.
-    env : List[str]
-        Legend labels for theoretical envelope, numerical envelope and example.
-        By default: `["Theory", "Numeric", "One model"]`.
-    potdep : List[str]
-        Y axis labels for transition probability bar charts.
-        By default: `["Pot. prob.", "Dep. prob."]`.
-    eqp : str
-        Colourbar label for steady state distribution.
-        By default: `"Equilibrium probability"`
-
-    All parameters are optional keywords. Any dictionary passed as positional
-    parameters will be popped for the relevant items. Keyword parameters must
-    be valid keys, otherwise a `KeyError` is raised.
-    """
-    cmap: str
-    edgecolors: str
-    norm: mpl.colors.Normalize
-
-    def __init__(self, *args, **kwds) -> None:
-        self.cmap = 'YlOrBr'
-        self.edgecolors = 'black'
-        self.norm = mpl.colors.Normalize(0., 1.)
-        super().__init__(*args, **kwds)
-
-    def set_vmin(self, value: float) -> None:
-        """Set the lower bound for the colour map.
-
-        Does noting if `value` is `None`.
-        """
-        if value is None:
-            pass
-        else:
-            self.norm.vmin = value
-
-    def set_vmax(self, value: float) -> None:
-        """Set the upper bound for the colour map.
-
-        Does noting if `value` is `None`.
-        """
-        if value is None:
-            pass
-        else:
-            self.norm.vmax = value
 
 
 # pylint: disable=too-many-ancestors
@@ -301,27 +245,27 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     graph : bool
         Transpose the layout of the video? Stored in `txt_opt` and `im_opt`
         under the key `'trn'`. By default: `False`
-    txt_opt : Dict[str, Any]
-         Options for text. See `sl_py_tools.matplotlib_tricks.clean_axes`.
+    ax_opt : Dict[str, Any]
+         Options for `Axes`. See `sl_py_tools.matplotlib_tricks.clean_axes`.
          By default: `{'box': False, 'tight': False}`.
-    im_opt : Dict[str, str]
-        Options for image plots. By default: `{'cmap': 'YlOrBr'}`.
+    im_opt : ImageOptions
+        Options for image plots. By default: `ImageOptions(edgecolors='black')`.
 
     All parameters are optional keywords. Any dictionary passed as positional
     parameters will be popped for the relevant items.
 
     Notes
     -----
-    All parameters are keyword only. Unknown keywords are passed to `txt_opt`
+    All parameters are keyword only. Unknown keywords are passed to `ax_opt`
     if `sl_py_tools.matplotlib_tricks.clean_axes` takes them, `txt`, `layout`
     or `ln_opt` if it is an existing attribute/key, or `im_opt` if not.
 
     Attributes can also be referenced and modified by subscripting with the
     attribute name. If the name is not found, it will search `txt`, `layout`,
-    `txt_opt`, `ln_opt` and `im_opt`. Setting a new key adds it to `im_opt`.
+    `ax_opt`, `ln_opt` and `im_opt`. Setting a new key adds it to `im_opt`.
     To add a new item to a `VideoOptions` instance, set it as an attribute.
     """
-    map_attributes: op.Attrs = ('txt', 'layout', 'graph', 'im_opt', 'txt_opt')
+    map_attributes: op.Attrs = ('txt', 'layout', 'graph', 'im_opt', 'ax_opt')
     # Text for labels
     txt: VideoLabels
     # Layout
@@ -329,38 +273,18 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     # Graph
     graph: gr.GraphOptions
     # keyword options
-    im_opt: ImageOptions
-    txt_opt: Dict[str, Any]
+    im_opt: op.ImageOptions
+    ax_opt: Dict[str, Any]
 
     def __init__(self, *args, **kwds) -> None:
         self.txt = VideoLabels()
         self.layout = VideoLayout()
         self.graph = gr.GraphOptions()
-        self.im_opt = ImageOptions()
-        self.txt_opt = {'box': False, 'tight': False}
+        self.im_opt = op.ImageOptions(edgecolors='black')
+        self.ax_opt = {'box': False, 'tight': False}
 
-        self.txt_opt.update(mpt.clean_axes_keys(self.txt_opt))
+        self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
         super().__init__(*args, **kwds)
-    #     self._fix_norm()
-
-    # def _fix_norm(self) -> None:
-    #     vmin, vmax = self.im_opt.pop('vmin', 0.), self.im_opt.pop('vmax', 1.)
-    #     self.im_opt.setdefault('norm', mpl.colors.Normalize(vmin, vmax))
-
-    # def _change_norm(self) -> None:
-    #     self.im_opt['norm'].vmin = self.im_opt.pop('vmin',
-    #                                                self.im_opt['norm'].vmin)
-    #     self.im_opt['norm'].vmax = self.im_opt.pop('vmax',
-    #                                                self.im_opt['norm'].vmax)
-    # def __setitem__(self, key: str, val: Any) -> None:
-    #     """Set an option.
-
-    #     If `vmin/vmax` is specified, `norm` is updated.
-    #     """
-    #     super().__setitem__(key, val)
-    #     if key in {'vmin', 'vmax'}:
-    #         self._change_norm()
-
 # pylint: enable=too-many-ancestors
 
 
@@ -403,11 +327,12 @@ def _format_axes_snr(ax_snr: mpl.axes.Axes, opt: VideoOptions) -> None:
     ax_snr : Axes
         Axes for SNR
     """
+    mpt_opts = opt.ax_opt.copy()
+    mpt_opts.update(legendbox=False, box=True)
+
     ax_snr.set_xlabel(opt.txt.snr[0])
     ax_snr.set_ylabel(opt.txt.snr[1])
     ax_snr.legend(loc='lower left', edgecolor=ax_snr.get_facecolor())
-    mpt_opts = opt.txt_opt.copy()
-    mpt_opts.update(legendbox=False, box=True)
     mpt.clean_axes(ax_snr, **mpt_opts)
 
 
@@ -424,7 +349,7 @@ def _format_axes_eqp(axs: AxList, imh: mpl.collections.QuadMesh, nst: int,
     nst : int
         Number of states
     """
-    mpt_opts = opt.txt_opt.copy()
+    mpt_opts = opt.ax_opt.copy()
     mpt_opts.update(box=False)
 
     ax_eqp, ax_cbr = axs
@@ -453,7 +378,7 @@ def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool,
     dep : bool
         Is this the bar chart for depression transitions?
     """
-    mpt_opts = opt.txt_opt.copy()
+    mpt_opts = opt.ax_opt.copy()
     mpt_opts.update(box=False)
 
     ax_bar.set_ylim([0, 1])
@@ -474,12 +399,22 @@ def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool,
 
 
 # =============================================================================
-# Plot
+# Plotting
 # =============================================================================
 
 
 class GraphPlots:
     """Class for plotting model as a graph.
+
+    Parameters
+    ----------
+    graph : nx.DiGraph
+        Graph object describing model. Nodes have attributes `kind` and
+        `value`. Edges have attributes `kind`, `value` and `pind` (if the
+        model was a `SynapseParamModel`).
+    opt : GraphOptions|None, optional
+        Options for plotting the graph, by default `None -> GraphOptions()`.
+    Other keywords passed to `opt` or `complex_synapse.graph.draw_graph`.
     """
     nodes: gr.NodePlots
     edges: gr.DirectedEdgeCollection
@@ -496,44 +431,93 @@ class GraphPlots:
             Graph object describing model. Nodes have attributes `kind` and
             `value`.  Edges have attributes `kind`, `value` and `pind` (if the
             model was a `SynapseParamModel`).
-        opt : GraphOptions
-            Options for plotting the graph.
+        opt : GraphOptions|None, optional
+            Options for drawing the graph, by default `None -> GraphOptions()`.
         Other keywords passed to `opt` or `complex_synapse.graph.draw_graph`.
         """
-        if gr.has_edge_attr(graph, 'pind'):
-            self.pinds = gr.collect_edge_values(graph, 'pind')
-        else:
-            self.pinds = np.array(0)
         self.opt = ag.default_eval(opt, gr.GraphOptions)
         self.opt.pop_my_args(kwds)
         self.nodes, self.edges = gr.draw_graph(graph, opts=self.opt, **kwds)
+        if gr.has_edge_attr(graph, 'pind'):
+            self.pinds = gr.edge_attr_vec(graph, 'pind')
+        else:
+            self.pinds = np.arange(len(self.edges))
 
     def update(self, params: la.lnarray, peq: Optional[la.lnarray] = None
                ) -> None:
-        """Update plots"""
+        """Update plots.
+
+        Parameters
+        ----------
+        params : la.lnarray (E,)
+            Transition probabilities, for edge line widdths.
+        peq : None|la.lnarray (N,), optional
+            Equilibrium distribution,for nodes sizes (area), by default `None`
+            -> calculate from `params`.
+        """
         params = la.asarray(params).ravel()
         peq = ag.default_eval(peq, lambda: serial_eqp(params))
         self.nodes.set_sizes(peq * self.opt.size)
         self.edges.set_widths(params[self.pinds] * self.opt.width)
         self.edges.set_node_sizes(peq * self.opt.size)
 
+    def update_from(self, graph: nx.DiGraph) -> None:
+        """Update plots using a graph object.
+
+        Parameters
+        ----------
+        graph : nx.DiGraph
+            Graph object describing model. Nodes have attributes `kind` and
+            `value`.  Edges have attributes `kind`, `value`.
+        """
+        params = gr.edge_attr_vec(graph, 'value')
+        peq = gr.node_attr_vec(graph, 'value')
+        self.update(params, peq)
+
     @classmethod
     def from_data(cls, axs: mpl.axes.Axes, model: la.lnarray,
                   peq: Optional[la.lnarray] = None,
                   weight: Optional[la.lnarray] = None, **kwds) -> GraphPlots:
-        """Plot data to make an instance"""
+        """Plot data from model parameters to make an instance
+
+        Parameters
+        ----------
+        axs : mpl.axes.Axes
+            Axes on which we plot
+        model : la.lnarray (2M-2,)
+            Parameters of serial model
+        peq : None|la.lnarray (M,), optional
+            Equilbrium distribution, by default `None` -> `serial_eqp(model)`.
+        weight : None|la.lnarray (M,), optional
+            Maps state to synaptic weight, by default `None` -> `binary_weights`.
+
+        Returns
+        -------
+        obj : GraphPlots
+            A `GraphPlots` instance containing plotted objects.
+        """
         opts: gr.GraphOptions = kwds.pop('opts', gr.GraphOptions())
         opts.pop_my_args(kwds)
-        model = la.asarray(model)
-        peq = ag.default_eval(peq, lambda: serial_eqp(model.ravel()))
+        model = la.asarray(model).reshape((2, -1))
+        peq = ag.default_eval(peq, lambda: serial_eqp(model))
         weight = ag.default_eval(weight, lambda: bld.binary_weights(len(peq)))
-        graph = gr.param_to_graph(model.reshape((2, -1)), peq, weight,
-                                  opts.topology)
+        graph = gr.param_to_graph(model, peq, weight, opts.topology)
         return cls(graph, axs=axs, opt=opts, **kwds)
 
 
 class ModelPlots:
     """The plots associated with a model
+
+    Parameters
+    ----------
+    lns : Sequence[mpl.lines.Line2D]
+        The plots for [model's memory curve, time at which it's optimal].
+    imh : mpl.image.AxesImage
+        Heatmap of equilibrium distribution.
+    brs : List[mpl.container.BarContainer]
+        Bar charts of transition rates under [potentiation, depression].
+    graph : GraphPlots
+        Plot of graph describing the model.
     """
     lnh: mpl.lines.Line2D
     vln: mpl.lines.Line2D
@@ -547,6 +531,19 @@ class ModelPlots:
                  imh: mpl.image.AxesImage,
                  brs: List[mpl.container.BarContainer],
                  graph: GraphPlots) -> None:
+        """The plots associated with a model
+
+        Parameters
+        ----------
+        lns : Sequence[mpl.lines.Line2D]
+            The plots for [model's memory curve, time at which it's optimal].
+        imh : mpl.image.AxesImage
+            Heatmap of equilibrium distribution.
+        brs : List[mpl.container.BarContainer]
+            Bar charts of transition rates under [potentiation, depression].
+        graph : GraphPlots
+            Plot of graph describing the model.
+        """
         self.lnh = lns[0]
         self.vln = lns[1]
         self.imh = imh
@@ -596,6 +593,15 @@ class ModelPlots:
 
     def update_plots(self, time: la.lnarray, model: la.lnarray, tau: float):
         """Update plots with new model
+
+        Parameters
+        ----------
+        time : la.lnarray (T,)
+            Array of times for memory curve
+        model : la.lnarray (2M-2,)
+            Parameters of serial model.
+        tau : float
+            Time at which `model` is optimal.
         """
         snr = serial_snr(model, time)
         eqp = serial_eqp(model)
@@ -609,7 +615,24 @@ class ModelPlots:
     @classmethod
     def from_data(cls, axs: AxList, time: la.lnarray, model: la.lnarray,
                   tau: float, **kwds) -> ModelPlots:
-        """Plot data to make an instance"""
+        """Plot data to make an instance
+
+        Parameters
+        ----------
+        axs : AxList
+            Array of Axes on which we plot.
+        time : la.lnarray (T,)
+            Array of times for memory curve
+        model : la.lnarray (2M-2,)
+            Parameters of serial model.
+        tau : float
+            Time at which `model` is optimal.
+
+        Returns
+        -------
+        obj : ModelPlots
+            Object holding the plot objects associated with `model`.
+        """
         opt: VideoOptions = kwds.pop('opt', VideoOptions())
         opt.pop_my_args(kwds)
 
@@ -677,7 +700,7 @@ class EnvelopeFig:
         env_num : la.lnarray (T,)
             Numerical Laplacian envelope (stored as exponential running
             average, `env_num -> env_num * rate`)
-        models : la.lnarray (T,2N-2)
+        models : la.lnarray (T,2M-2)
             Parameters of serial models that form envelope, in the order
             mat_01, mat_12, ..., mat_n-2,n-1,
             mat_10, mat_21, ..., mat_n-1,n-2.
@@ -720,15 +743,15 @@ class EnvelopeFig:
         return self.models.shape[0]
 
     def update(self, ind: int):
-        """Change which model we're plotting
+        """Change which model we're plotting.
+
+        Parameters
+        ----------
+        ind : int
+            Which row of `models` should we plot?
         """
         self.model_plots.update_plots(self.time, self.models[ind],
                                       self.time[ind])
-
-    def savefig(self, fname: str):
-        """Save the current figure
-        """
-        self.fig.savefig(fname)
 
     def flip(self) -> None:
         """Flip arrays along time axis
@@ -749,9 +772,8 @@ def animate(env_fig: EnvelopeFig, **kwargs) -> mpla.FuncAnimation:
 
     Parameters
     ----------
-    fitter : SynapseFitter
-        The synapse fitter we will animate. An instance of `FitterReplay` or
-        one of its subclasses is recommended.
+    env_fig : EnvelopeFig
+        The envelope figure we will animate.
     Other keywords
         Passed to `FuncAnimation`.
 

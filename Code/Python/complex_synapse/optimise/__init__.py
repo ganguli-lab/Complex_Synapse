@@ -9,8 +9,9 @@ from .optimise import (normal_problem, shifted_problem, optim_laplace,
                        optim_laplace_range, reoptim_laplace_range,
                        check_cond_range, proven_envelope_laplace,
                        heuristic_envelope_laplace)
-from .video import (ImageOptions, VideoLabels, VideoLayout, VideoOptions,
+from .video import (VideoLabels, VideoLayout, VideoOptions,
                     GraphPlots, ModelPlots, EnvelopeFig, animate)
+from ..options import ImageOptions
 
 assert any((True, optimise, sticky, shorten, plot, video))
 assert any((True, SynapseOptModel, SynapseParamModel, TopologyOptions))

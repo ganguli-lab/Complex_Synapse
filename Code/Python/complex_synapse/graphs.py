@@ -2,8 +2,9 @@
 """
 from __future__ import annotations
 
-from typing import (Callable, Dict, Hashable, Iterable, List, Optional, Tuple,
-                    TypeVar, Union)
+from numbers import Number
+from typing import (Any, Callable, Dict, Hashable, Iterable, List, Optional,
+                    Tuple, TypeVar, Union)
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -16,6 +17,7 @@ import sl_py_tools.containers as cn
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.numpy_tricks.markov as ma
 
+# pyright: reportUndefinedVariable=false
 from . import optimise as opt
 from . import options as op
 from . import synapse_base as sb
@@ -151,40 +153,102 @@ def has_edge_attr(graph: nx.DiGraph, key: str) -> bool:
     return all(key in edge for edge in graph.edges.values())
 
 
-def collect_node_values(graph: nx.DiGraph, key: str) -> np.ndarray:
-    """Collect values of node attributes.
+def node_attrs(graph: nx.DiGraph, key: str) -> Dict[Node, Any]:
+    """Dictionary of node attribute values.
 
     Parameters
     ----------
-    graph : nx.DiGraph
+    graph : nx.DiGraph (N,E)
         Graph with nodes whose attributes we want.
     key : str
         Name of attribute.
 
     Returns
     -------
-    vec : np.ndarray
-        Vector of node attribute values.
+    attrs : Dict[Node, Any]
+        Dictionary of node attribute values, keyed by node.
     """
-    return np.array([node[key] for node in graph.nodes.values()])
+    return {node: values[key] for node, values in graph.nodes.items()}
 
 
-def collect_edge_values(graph: nx.DiGraph, key: str) -> np.ndarray:
-    """Collect values of edge attributes.
+def edge_attrs(graph: nx.DiGraph, key: str) -> Dict[Edge, Any]:
+    """Dictionary of edge attribute values.
 
     Parameters
     ----------
-    graph : nx.DiGraph
+    graph : nx.DiGraph (N,E)
         Graph with edges whose attributes we want.
     key : str
         Name of attribute.
 
     Returns
     -------
-    vec : np.ndarray
+    attrs : Dict[Tuple[Node, Node], Any]
+        Dictionary of edge attribute values, keyed by edge (node tuple).
+    """
+    return {edge: values[key] for edge, values in graph.edges.items()}
+
+
+def node_attr_vec(graph: nx.DiGraph, key: str) -> np.ndarray:
+    """Collect values of node attributes.
+
+    Parameters
+    ----------
+    graph : nx.DiGraph (N,E)
+        Graph with nodes whose attributes we want.
+    key : str
+        Name of attribute.
+
+    Returns
+    -------
+    vec : np.ndarray (N,)
+        Vector of node attribute values.
+    """
+    return np.array([node[key] for node in graph.nodes.values()])
+
+
+def edge_attr_vec(graph: nx.DiGraph, key: str) -> np.ndarray:
+    """Collect values of edge attributes.
+
+    Parameters
+    ----------
+    graph : nx.DiGraph (N,E)
+        Graph with edges whose attributes we want.
+    key : str
+        Name of attribute.
+
+    Returns
+    -------
+    vec : np.ndarray (E,)
         Vector of edge attribute values.
     """
     return np.array([edge[key] for edge in graph.edges.values()])
+
+
+def edge_attr_matrix(graph: nx.DiGraph, key: str, fill: Number = 0.
+                        ) -> np.ndarray:
+    """Collect values of edge attributes in a matrix.
+
+    Parameters
+    ----------
+    graph : nx.DiGraph (N,E)
+        Graph with edges whose attributes we want.
+    key : str
+        Name of attribute to use for matrix elements.
+    fill : Number
+        Value given to missing edges.
+
+    Returns
+    -------
+    mat : np.ndarray (N,N)
+        Matrix of edge attribute values.
+    """
+    nodes = list(graph.nodes)
+    mat = np.full((len(nodes),) * 2, fill)
+    for edge, vals in graph.edges.items():
+        ind = tuple(nodes.index(u) for u in edge)
+        mat[ind] = vals[key]
+    return mat
 
 
 def collect_node_colours(graph: nx.DiGraph, key: str) -> Dict[str, np.ndarray]:
@@ -203,7 +267,7 @@ def collect_node_colours(graph: nx.DiGraph, key: str) -> Dict[str, np.ndarray]:
         Dictionary of keyword arguments for `nx.draw_networkx_nodes` related to
         colour values: `{'node_color', 'vmin', 'vmax'}`.
     """
-    vals = collect_node_values(graph, key)
+    vals = node_attr_vec(graph, key)
     vmin, vmax = vals.min(), vals.max()
     return {'node_color': vals, 'vmin': vmin, 'vmax': vmax}
 
@@ -224,7 +288,7 @@ def collect_edge_colours(graph: nx.DiGraph, key: str) -> Dict[str, np.ndarray]:
         Dictionary of keyword arguments for `nx.draw_networkx_edges` related to
         colour values: `{'edge_color', 'edge_vmin', 'edge_vmax'}`.
     """
-    vals = collect_edge_values(graph, key)
+    vals = edge_attr_vec(graph, key)
     vmin, vmax = vals.min(), vals.max()
     return {'edge_color': vals, 'edge_vmin': vmin, 'edge_vmax': vmax}
 
@@ -376,9 +440,9 @@ def draw_graph(graph: nx.DiGraph,
 
     node_col = collect_node_colours(graph, 'kind')
     # note: PathCollection.size is area
-    node_siz = collect_node_values(graph, 'value') * opts.size
+    node_siz = node_attr_vec(graph, 'value') * opts.size
     edge_col = collect_edge_colours(graph, 'kind')
-    edge_wid = collect_edge_values(graph, 'value') * opts.width
+    edge_wid = edge_attr_vec(graph, 'value') * opts.width
 
     node_col.update(kwds, ax=axs, cmap=opts.node_cmap, edgecolors='k')
     edge_col.update(kwds, ax=axs, edge_cmap=opts.edge_cmap, node_size=node_siz,
@@ -426,7 +490,7 @@ class DirectedEdgeCollection:
     _edges: Dict[Edge, EdgePlot]
     _node_ids: List[Node]
 
-    def __init__(self, edges: List[EdgePlot], graph: nx.DiGraph) -> None:
+    def __init__(self, edges: Iterable[EdgePlot], graph: nx.DiGraph) -> None:
         self._edges = dict(zip(graph.edges, edges))
         self._node_ids = list(graph.nodes)
 

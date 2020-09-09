@@ -7,6 +7,8 @@ import collections.abc
 import re
 import typing as _ty
 
+import matplotlib as mpl
+
 _LINE_SEP = re.compile('\n {4,}')
 # =============================================================================
 # Fitter video options class
@@ -31,6 +33,8 @@ def _fmt_sep(format_spec: str) -> _ty.Tuple[str, str, str]:
 
 def _fmt_help(key: str, val: _ty.Any, conv: str, next_spec: str) -> str:
     """helper for Options.__format__: entry for one item"""
+    if isinstance(val, mpl.colors.Colormap):
+        val = val.name
     if not conv == '!r' or _LINE_SEP.fullmatch(next_spec) is None:
         item = "{}={" + conv + "}"
         return item.format(key, val)
@@ -286,6 +290,82 @@ class MasterOptions(Options):
                 getattr(self, self._fallback_mapping).__setitem__(key, val)
             else:
                 setattr(self, key, val)
+
+
+# pylint: disable=too-many-ancestors
+class ImageOptions(AnyOptions):
+    """Options for heatmaps
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
+    Parameters
+    ----------
+    cmap : str|Colormap
+        Colour map used to map numbers to colours. By default, `'YlOrBr'`.
+    norm : Normalize
+        Mapsheatmap values to interval `[0, 1]` for `cmap`.
+        By default: `Normalise(0, 1)`.
+    vmin : float
+        Lower bound of `norm`. By default: `0`.
+    vmax : float
+        Lower bound of `norm`. By default: `1`.
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
+    """
+    prop_attributes: Attrs = ('cmap',)
+    _cmap: mpl.colors.Colormap
+    norm: mpl.colors.Normalize
+
+    def __init__(self, *args, **kwds) -> None:
+        self._cmap = mpl.cm.get_cmap('YlOrBr')
+        self.norm = mpl.colors.Normalize(0., 1.)
+        super().__init__(*args, **kwds)
+
+    @property
+    def cmap(self) -> mpl.colors.Colormap:
+        """Get the colour map.
+        """
+        return self._cmap
+
+    def set_cmap(self, value: _ty.Union[str, mpl.colors.Colormap]) -> None:
+        """Set the colour map.
+
+        Does noting if `value` is `None`. Converts to `Colormap` if `str`.
+        """
+        if value is None:
+            pass
+        elif isinstance(value, str):
+            self._cmap = mpl.cm.get_cmap(value)
+        elif isinstance(value, mpl.colors.Colormap):
+            self._cmap = value
+        else:
+            raise TypeError("cmap must be `str` or `mpl.colors.Colormap`, not "
+                            + type(value).__name__)
+
+    def set_vmin(self, value: float) -> None:
+        """Set the lower bound for the colour map.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            pass
+        else:
+            self.norm.vmin = value
+
+    def set_vmax(self, value: float) -> None:
+        """Set the upper bound for the colour map.
+
+        Does noting if `value` is `None`.
+        """
+        if value is None:
+            pass
+        else:
+            self.norm.vmax = value
+# pylint: enable=too-many-ancestors
 
 
 # =============================================================================

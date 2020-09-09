@@ -546,7 +546,7 @@ class SynapseDiscreteModel(SynapseBase):
             Solution of: :math:`\\pi M^f = \\pi`.
         """
         rowv = la.ones(self.nstate)
-        fundi = self.zinv(rowv)
+        fundi = self.zinv(None, rowv)
         return rowv @ fundi.inv
 
 

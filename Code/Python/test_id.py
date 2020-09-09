@@ -38,12 +38,13 @@ if __name__ != "__main__":
     np.savez_compressed('test_fit', **rec.info)
     # %%
     fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
-    # %%
     vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
     vid(fitter, 0)
     # %%
+    fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
     fitter.run()
     # %%
+    fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
     vid = idfy.FitterPlots(
         np.s_[:100, 0], 'C:/Users/subhy/Documents/videos/Fit/fit_{:03d}.png')
     fitter.run(vid)
