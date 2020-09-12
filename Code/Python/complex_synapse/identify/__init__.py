@@ -8,12 +8,13 @@ from .fit_synapse import SynapseFitter, GroundedFitter, SynapseFitOptions
 from .baum_welch import BaumWelchFitter, GroundedBWFitter, BaumWelchOptions
 from .record import RecordingCallback, FitterReplay, GroundedFitterReplay
 from .video import FitterPlots, VideoOptions, VideoLabels, VideoLayout, animate
-from ..options import ImageOptions
+from ..options import ImageOptions, AnimationOptions
 # from . import fit_synapse, video, plast_seq
 
 assert any((True, baum_welch, synapse_id, print_callback, animate,
             SynapseIdModel, PlasticitySequence, SimPlasticitySequence,
-            SynapseFitOptions, SynapseFitter, GroundedFitter,
-            BaumWelchOptions, BaumWelchFitter, GroundedBWFitter,
-            FitterPlots, VideoOptions, VideoLabels, VideoLayout, ImageOptions,
-            RecordingCallback, FitterReplay, GroundedFitterReplay))
+            SynapseFitter, GroundedFitter, BaumWelchFitter, GroundedBWFitter,
+            FitterReplay, GroundedFitterReplay, RecordingCallback, FitterPlots,
+            SynapseFitOptions, BaumWelchOptions, VideoOptions,
+            VideoLabels, VideoLayout, ImageOptions, AnimationOptions,
+            ))

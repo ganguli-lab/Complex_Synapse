@@ -13,7 +13,7 @@ import numpy as np
 
 import numpy_linalg as la
 import sl_py_tools.arg_tricks as ag
-import sl_py_tools.containers as cn
+# import sl_py_tools.containers as cn
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
 
@@ -208,16 +208,6 @@ class VideoLayout(op.Options):
         self.scale = 0.6
         super().__init__(*args, **kwds)
 
-    def __setitem__(self, key: str, val: Any) -> None:
-        """Set an option.
-
-        If `ax_pos` is specified, it is updated with the new value, rather than
-        being replaced like other variables.
-        """
-        super().__setitem__(key, val)
-        if key in {'height_ratios', 'width_ratios'}:
-            setattr(self, key, cn.tuplify(getattr(self, key)))
-
     def gspec_opts(self) -> Tuple[Tuple[float, float], Tuple[int, int],
                                   Dict[str, Tuple[int, ...]]]:
         """Options for creating a gridspec"""
@@ -249,7 +239,9 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
          Options for `Axes`. See `sl_py_tools.matplotlib_tricks.clean_axes`.
          By default: `{'box': False, 'tight': False}`.
     im_opt : ImageOptions
-        Options for image plots. By default: `ImageOptions(edgecolors='black')`.
+        Options for heatmaps. By default: `ImageOptions(edgecolors='black')`.
+    an_opt : AnimationOptions
+        Options for animating the video.
 
     All parameters are optional keywords. Any dictionary passed as positional
     parameters will be popped for the relevant items.
@@ -273,15 +265,17 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     # Graph
     graph: gr.GraphOptions
     # keyword options
-    im_opt: op.ImageOptions
     ax_opt: Dict[str, Any]
+    im_opt: op.ImageOptions
+    an_opt: op.AnimationOptions
 
     def __init__(self, *args, **kwds) -> None:
         self.txt = VideoLabels()
         self.layout = VideoLayout()
         self.graph = gr.GraphOptions()
-        self.im_opt = op.ImageOptions(edgecolors='black')
         self.ax_opt = {'box': False, 'tight': False}
+        self.im_opt = op.ImageOptions(edgecolors='black')
+        self.an_opt = op.AnimationOptions()
 
         self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
         super().__init__(*args, **kwds)
@@ -773,7 +767,8 @@ def animate(env_fig: EnvelopeFig, **kwargs) -> mpla.FuncAnimation:
     Parameters
     ----------
     env_fig : EnvelopeFig
-        The envelope figure we will animate.
+        The envelope figure we will animate. Default options are in
+        `env_fig.opt.an_opt`.
     Other keywords
         Passed to `FuncAnimation`.
 
@@ -781,13 +776,16 @@ def animate(env_fig: EnvelopeFig, **kwargs) -> mpla.FuncAnimation:
     -------
     ani : FuncAnimation
         The animation.
+
+    To view the animation call `plt.show()`. To save a video, call `ani.save()`
+    (see https://matplotlib.org/api/_as_gen/matplotlib.animation.Animation.html
+    #matplotlib.animation.Animation.save)
     """
     kwargs.setdefault('init_func', None)
     kwargs.setdefault('frames', it.erange(env_fig.ntime))
-    kwargs.setdefault('interval', 500)
-    kwargs.setdefault('repeat_delay', 1000)
-    kwargs.setdefault('blit', False)
-    return mpla.FuncAnimation(env_fig.fig, env_fig.update, **kwargs)
+    opt = env_fig.opt.an_opt.copy()
+    opt.update(kwargs)
+    return mpla.FuncAnimation(env_fig.fig, env_fig.update, **opt)
 
 
 # =============================================================================

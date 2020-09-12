@@ -71,7 +71,7 @@ class VideoLabels(op.Options):
 
     def __init__(self, *args, **kwds) -> None:
         self.plast_type = ["Plasticity type", "", "dep.", "pot."]
-        self.readout = ["Synaptic efficacy", "", "weak", "strong"]
+        self.readout = ["Synapse strength", "", "weak", "strong"]
         self.state = ["Occupation probability", "Time", "State", "True path"]
         self.model = ["Fit, $\\mathbf{M}$", "Truth, $\\mathbf{M}^*$"]
         self.plast = [["Potentiation", "Depression"],
@@ -96,10 +96,11 @@ class VideoLabels(op.Options):
         """
         if transpose is None or transpose == self.transpose:
             return
-        labels = (self.plast_type[1], self.readout[1], self.state[1])
-        label = labels[list(map(bool, labels)).index(True)]
-        labels = (label, "", "") if transpose else ("", "", label)
-        self.plast_type[1], self.readout[1], self.state[1] = labels
+        # label = self.plast_type[1] + self.readout[1] + self.state[1]
+        # labels = (label, "", "") if transpose else ("", "", label)
+        # self.plast_type[1], self.readout[1], self.state[1] = labels
+        label = self.state[1] if transpose else ""
+        self.plast_type[1], self.readout[1] = label, label
 
         swap = (" ", "\n") if transpose else ("\n", " ")
         self.plast_type[0] = self.plast_type[0].replace(*swap)
@@ -217,6 +218,16 @@ class VideoLayout(op.Options):
         ratios = [self.sizes[k] for k in rows], [self.sizes[k] for k in cols]
         return ratios[::-1] if self._transpose else ratios
 
+    def gspec_opts(self) -> Tuple[Tuple[float, float], Tuple[int, int],
+                                  Dict[str, List[int]]]:
+        """Options for creating a Figure and GridSpec"""
+        keys = ['height_ratios', 'width_ratios']
+        ratios = self.grid_ratios()
+
+        fsiz = tuple(self.sizes['scale'] * sum(g) for g in reversed(ratios))
+        gsiz, kwargs = tuple(map(len, ratios)), dict(zip(keys, ratios))
+        return fsiz, gsiz, kwargs
+
     def set_transpose(self, transpose: Optional[bool]) -> None:
         """Choose whether to swap rows and columns
 
@@ -316,6 +327,8 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         Options for image plots. By default: `ImageOptions()`.
     ln_opt : Dict[str, Any]
         Options for line plots. By default: `{}`.
+    an_opt : AnimationOptions
+        Options for animating the video.
 
     All parameters are optional keywords. Any dictionary passed as positional
     parameters will be popped for the relevant items.
@@ -338,9 +351,10 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     # Layout
     layout: VideoLayout
     # keyword options
+    ax_opt: Dict[str, Any]
     ln_opt: Dict[str, Any]
     im_opt: op.ImageOptions
-    ax_opt: Dict[str, Any]
+    an_opt: op.AnimationOptions
 
     def __init__(self, *args, **kwds) -> None:
         self.txt = VideoLabels()
@@ -348,6 +362,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.ln_opt = {}
         self.im_opt = op.ImageOptions()
         self.ax_opt = {'box': False, 'tight': False}
+        self.an_opt = op.AnimationOptions()
 
         self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
         args = op.sort_dicts(args, ('transpose',), -1)
@@ -407,16 +422,19 @@ def animate(fitter: fs.SynapseFitter, **kwargs) -> mpla.FuncAnimation:
     -------
     ani : FuncAnimation
         The animation.
+
+    To view the animation call `plt.show()`. To save a video, call `ani.save()`
+    (see https://matplotlib.org/api/_as_gen/matplotlib.animation.Animation.html
+    #matplotlib.animation.Animation.save)
     """
     if not isinstance(fitter.callback, FitterPlots):
         raise TypeError
     fitter.callback.build(fitter)
     kwargs.setdefault('init_func', fitter.init)
     kwargs.setdefault('frames', it.erange(fitter.opt.max_it))
-    kwargs.setdefault('interval', 500)
-    kwargs.setdefault('repeat_delay', 1000)
-    kwargs.setdefault('blit', False)
-    return mpla.FuncAnimation(fitter.callback.fig, fitter.step, **kwargs)
+    opt = fitter.callback.opt.an_opt.copy()
+    opt.update(kwargs)
+    return mpla.FuncAnimation(fitter.callback.fig, fitter.step, **opt)
 
 
 # =============================================================================
@@ -561,7 +579,7 @@ class FitterPlots:
         pso = {**self.opt.im_opt, 'zorder': 10, 'nplast': fitter.est.nplast,
                'nreadout': fitter.est.nreadout, 'line_opts': self.opt.ln_opt}
         txo = {'size': self.opt.ax_opt.get('tickfontsize', 10),
-               'trn': self.opt.transpose, 'clip_on': False}
+               'clip_on': False}
         verbose = self.opt.layout.verbosity
 
         self.imh['st'] = [fitter.plot_occ(self.axh['st'][1], self.ind, **mdo)]
@@ -599,14 +617,16 @@ class FitterPlots:
 
         Should be called after first `draw`.
         """
-        # txt_bbox = self.imh['info'][0].get_window_extent().frozen()
-        # transf = self.fig.transFigure.inverted()
-        patch = self.imh['info'][0].get_bbox_patch()
-        txt_bbox = patch.get_bbox().frozen()
-        transf = patch.get_transform() - self.fig.transFigure
-        self.axh['info'][0].set_position(transf.transform_bbox(txt_bbox))
-        self.imh['info'][0].set_in_layout(False)
-        # self.imh['info'][0].set_zorder(10)
+        if self.opt.layout.verbosity:
+            # txt_bbox = self.imh['info'][0].get_window_extent().frozen()
+            # transf = self.fig.transFigure.inverted()
+            patch = self.imh['info'][0].get_bbox_patch()
+            txt_bbox = patch.get_bbox().frozen()
+            transf = patch.get_transform() - self.fig.transFigure
+            self.axh['info'][0].set_position(transf.transform_bbox(txt_bbox))
+            self.imh['info'][0].set_in_layout(False)
+            self.imh['info'][0].set_position((0, 0.5))
+            self.imh['info'][0].set_ha('left')
 
     def build(self, fitter: fs.SynapseFitter) -> None:
         """Create the figure and axes with the first plot on them
@@ -688,11 +708,12 @@ def vid_fig(layout: Optional[VideoLayout] = None,
     """
     # width/height ratios, etc
     layout = ag.default(layout, VideoLayout())
-    gnd = layout.drows[0]
-    ratios = layout.grid_ratios()
+    gnd = layout.ground
+    fsiz, gsiz, kwargs = layout.gspec_opts()
 
     # figure, grid-spec
-    fig, gsp = _make_fig(ratios, layout.sizes['scale'])
+    fig = plt.figure(figsize=fsiz, frameon=True, constrained_layout=True)
+    gsp = fig.add_gridspec(*gsiz, **kwargs)
     gsp = TransposeGridSpec(gsp) if layout.transpose else gsp
 
     # plast_seq
@@ -778,11 +799,11 @@ def label_data(axs: AxList, labels: List[str], leg: bool, **kwds) -> None:
         axs[0].set(frame_on=False, xticks=[], yticks=[])
 
     axs[1].set_title(labels[0])
-    if labels[1]:
-        axs[1].set_ylabel(labels[1])
     if trn:
+        axs[1].set_ylabel(labels[1])
         axs[1].set_xticks([])
     else:
+        axs[1].set_xlabel(labels[1])
         axs[1].set_yticks([])
         axs[1].xaxis.set_ticks_position('bottom')
     axs[1].set_aspect('auto')
@@ -814,8 +835,7 @@ def label_sim(axs: AxList, labels: List[str], leg: bool, **kwds) -> None:
     axs[1].xaxis.set_ticks_position('bottom')
     axlabels = labels[2:0:-1] if trn else labels[1:3]
     axs[1].set_xlabel(axlabels[0])
-    if axlabels[1]:
-        axs[1].set_ylabel(axlabels[1])
+    axs[1].set_ylabel(axlabels[1])
     axs[1].set_aspect('auto')
     mpt.clean_axes(axs[1], **kwds)
 
@@ -838,30 +858,16 @@ def write_info(txt: str, axs: mpl.axes.Axes, **kwds) -> mpl.text.Text:
     txh : matplotlib.text.Text
         `Text` object that was written.
     """
-    trn = kwds.pop('trn', False)
+    # trn = kwds.pop('trn', False)
     ax_colour = axs.get_facecolor()
     kwds['bbox'] = {'edgecolor': ax_colour, 'facecolor': ax_colour}
-    kwds.update(transform=axs.transAxes, ha='center')
-    pos, kwds['va'] = ((.5, 3), 'top') if trn else ((.5, 0), 'bottom')
-    return axs.text(*pos, txt, **kwds)
+    kwds.update(transform=axs.transAxes, ha='center', va='center')
+    # pos, kwds['va'] = ((0.5, 1), 'top') if trn else ((0.5, 1), 'top')
+    return axs.text(0.5, 0.5, txt, **kwds)
 
 # =============================================================================
 # Private helpers
 # =============================================================================
-
-
-def _make_fig(ratios: Tuple[List[int], List[int]], scale: float
-              ) -> Tuple[Figure, GridSpec]:
-    """Create a figure and grid spec
-    """
-    keys = ['height_ratios', 'width_ratios']
-
-    fsiz = tuple(scale * sum(g) for g in reversed(ratios))
-    gsiz, kwargs = tuple(map(len, ratios)), dict(zip(keys, ratios))
-
-    fig = plt.figure(figsize=fsiz, frameon=True, constrained_layout=True)
-    gsp = fig.add_gridspec(*gsiz, **kwargs)
-    return fig, gsp
 
 
 def _model_axes(fig: Figure, gsp: GridSpec, row: int, cols: Sequence[int]
@@ -882,6 +888,11 @@ def _model_axes(fig: Figure, gsp: GridSpec, row: int, cols: Sequence[int]
 def _data_axes(fig: Figure, gsp: GridSpec, rows: ps.Inds, cols: ps.Inds
                ) -> AxList:
     """Create axes for an experiment/simulation.
+
+    rows : Sequence[int] (3,)
+        which row for (plasticity types, readouts, state path)
+    cols : Sequence[int] (2,)
+        which column for (legend, heatmap)
     """
     shared = 'y' if isinstance(gsp, TransposeGridSpec) else 'x'
     cpax = fig.add_subplot(gsp[rows[0], cols[0]])
@@ -901,10 +912,24 @@ def _data_axes(fig: Figure, gsp: GridSpec, rows: ps.Inds, cols: ps.Inds
 
 class TransposeGridSpec:
     """A grid spec that transposes subscripts
+
+    Parameters
+    ----------
+    gsp : GridSpec
+        The Grid spec being transposed.
+
+    When subscripted, `self[i,j] == gsp[j,i]`.
     """
     gsp: GridSpec
 
     def __init__(self, gsp: GridSpec) -> None:
+        """A grid spec that transposes subscripts
+
+        Parameters
+        ----------
+        gsp : GridSpec
+            The Grid spec being transposed.
+        """
         self.gsp = gsp
 
     def __getitem__(self, ind: ps.Inds) -> mpl.gridspec.SubplotSpec:

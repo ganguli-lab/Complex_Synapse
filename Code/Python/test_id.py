@@ -17,12 +17,12 @@ mpt.rc_fonts('sans-serif')
 opt = idfy.BaumWelchOptions(disp_step = 10, verbosity = 2 + 6 + 9)
 true_model = idfy.SynapseIdModel.build(cs.builders.build_serial, 6, jmp=0.7)
 # %%
-opt.verbosity = 17
+opt.verbosity = 9
 with np.load('test_fit.npz') as saved_file:
     saved = {**saved_file}
 vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
 old_fit = idfy.GroundedFitterReplay(saved, callback=vid, opt=opt)
-ani = idfy.animate(old_fit, blit=True)
+ani = idfy.animate(old_fit, blit=False)
 plt.show()
 # %%
 if __name__ != "__main__":

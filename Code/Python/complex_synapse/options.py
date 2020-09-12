@@ -35,7 +35,7 @@ def _fmt_help(key: str, val: _ty.Any, conv: str, next_spec: str) -> str:
     """helper for Options.__format__: entry for one item"""
     if isinstance(val, mpl.colors.Colormap):
         val = val.name
-    if not conv == '!r' or _LINE_SEP.fullmatch(next_spec) is None:
+    if conv != '!r' or _LINE_SEP.fullmatch(next_spec) is None:
         item = "{}={" + conv + "}"
         return item.format(key, val)
     val = repr(val).replace('\n', next_spec)
@@ -125,9 +125,9 @@ class Options(collections.abc.MutableMapping):
         #     if isinstance(self[name], MasterOptions):
         #         raise TypeError(
         #             f"{name} is a {type(self[name]).__name__}, a subclass of"
-        #             + "MasterOptions. It should not be used as a member of "
-        #             + "another Options class, as it will block searches for "
-        #             + "unknown keys when setting.")
+        #             + "MasterOptions. It should not be a member of another "
+        #             + "Options class, as it will block searches for unknown "
+        #             + "keys when setting.")
 
     def __format__(self, format_spec: str) -> str:
         """formatted string representing object.
@@ -162,8 +162,8 @@ class Options(collections.abc.MutableMapping):
     #             return getattr(getattr(self, attr), name)
     #         except AttributeError:
     #             pass
-    #     raise AttributeError(type(self).__name__ +
-    #                          " does not have an attribute " + name)
+    #     raise AttributeError(s
+    #         f"{type(self).__name__} has no item named {name}")
 
     def __getitem__(self, key: str) -> _ty.Any:
         """Get an attribute"""
@@ -228,6 +228,13 @@ class Options(collections.abc.MutableMapping):
         yield from filter(_public, self.__dict__)
         yield from self.prop_attributes
 
+    def copy(self) -> Options:
+        """Get a shallow copy of the object.
+
+        Onlu copies those attributes that appear when iterating.
+        """
+        return type(self)(**self)
+
     def pop_my_args(self, kwds: StrDict) -> None:
         """Pop any key from dict that can be set and use the value to set.
         """
@@ -241,6 +248,7 @@ class Options(collections.abc.MutableMapping):
                 to_pop.append(key)
         for key in to_pop:
             del kwds[key]
+# pylint: enable=too-many-ancestors
 
 
 # =============================================================================
@@ -248,6 +256,7 @@ class Options(collections.abc.MutableMapping):
 # =============================================================================
 
 
+# pylint: disable=too-many-ancestors
 class AnyOptions(Options):
     """Same to `Options`, except it stores unknown keys as attributes.
 
@@ -258,6 +267,7 @@ class AnyOptions(Options):
             super().__setitem__(key, val)
         except KeyError:
             setattr(self, key, val)
+# pylint: enable=too-many-ancestors
 
 
 # =============================================================================
@@ -265,6 +275,7 @@ class AnyOptions(Options):
 # =============================================================================
 
 
+# pylint: disable=too-many-ancestors
 class MasterOptions(Options):
     """Same to `Options`, except ot stores unknown keys in a mapping attribute.
 
@@ -290,6 +301,7 @@ class MasterOptions(Options):
                 getattr(self, self._fallback_mapping).__setitem__(key, val)
             else:
                 setattr(self, key, val)
+# pylint: enable=too-many-ancestors
 
 
 # pylint: disable=too-many-ancestors
@@ -365,6 +377,44 @@ class ImageOptions(AnyOptions):
             pass
         else:
             self.norm.vmax = value
+# pylint: enable=too-many-ancestors
+
+
+# pylint: disable=too-many-ancestors
+class AnimationOptions(AnyOptions):
+    """Options for animations
+
+    The individual options can be accessed as object instance attributes
+    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+    getting and setting.
+
+    Parameters
+    ----------
+    interval : float
+        The gap between frames in milliseconds, by default `500`.
+    repeat_delay : float
+        The gap between repetitions in milliseconds, by default `1000`.
+    repeat : bool
+        Whether the animation repeats when the sequence of frames is completed,
+        by default `True`.
+    blit : bool
+        Do we only redraw the parts that have changed? By default `False`.
+
+    All parameters are optional keywords. Any dictionary passed as positional
+    parameters will be popped for the relevant items. Keyword parameters must
+    be valid keys, otherwise a `KeyError` is raised.
+    """
+    interval: float
+    repeat_delay: float
+    repeat: bool
+    blit: bool
+
+    def __init__(self, *args, **kwds) -> None:
+        self.interval = 500
+        self.repeat_delay = 1000
+        self.repeat = True
+        self.blit = False
+        super().__init__(*args, **kwds)
 # pylint: enable=too-many-ancestors
 
 
