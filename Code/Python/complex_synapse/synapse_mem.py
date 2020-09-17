@@ -13,8 +13,8 @@ import numpy_linalg as la
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.numpy_tricks.markov as _ma
 
-from . import builders as _bld
-from . import synapse_base as _sb
+import complex_synapse.builders as _bld
+import complex_synapse.synapse_base as _sb
 
 Order = Union[int, float, str, None]
 # =============================================================================

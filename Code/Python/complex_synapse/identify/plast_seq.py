@@ -12,7 +12,7 @@ import numpy_linalg as la
 import sl_py_tools.containers as _cn
 import sl_py_tools.matplotlib_tricks as _mpt
 
-from .. import synapse_base as _sb
+import complex_synapse.synapse_base as _sb
 
 # =============================================================================
 

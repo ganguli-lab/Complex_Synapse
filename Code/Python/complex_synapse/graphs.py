@@ -17,11 +17,10 @@ import sl_py_tools.containers as cn
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.numpy_tricks.markov as ma
 
-# pyright: reportUndefinedVariable=false
-from . import optimise as opt
-from . import options as op
-from . import synapse_base as sb
-from . import synapse_mem as sm
+import complex_synapse.optimise as opt
+import complex_synapse.options as op
+import complex_synapse.synapse_base as sb
+import complex_synapse.synapse_mem as sm
 
 # import sl_py_tools.matplotlib_tricks as mpt
 

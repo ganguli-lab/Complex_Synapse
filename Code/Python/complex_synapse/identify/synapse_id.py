@@ -14,9 +14,9 @@ import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.containers as _cn
 import sl_py_tools.numpy_tricks.markov as _ma
 
-from .. import builders as _bld
-from .. import synapse_base as _sb
-from . import plast_seq as _ps
+import complex_synapse.builders as _bld
+import complex_synapse.synapse_base as _sb
+import complex_synapse.identify.plast_seq as _ps
 
 Order = Union[int, float, str, None]
 # =============================================================================

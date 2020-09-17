@@ -1,11 +1,14 @@
 """Creating figures for Envelopes
 """
 import typing as ty
-import numpy as np
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
+
 import numpy_linalg as la
 import sl_py_tools.matplotlib_tricks as mplt
+
 import complex_synapse.optimise as cso
 import complex_synapse.optimise.shorten as sh
 

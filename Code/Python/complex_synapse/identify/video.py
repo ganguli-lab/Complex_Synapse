@@ -14,10 +14,11 @@ import sl_py_tools.arg_tricks as ag
 import sl_py_tools.containers as cn
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
-# pyright: reportUndefinedVariable=false
-from . import fit_synapse as fs
-from . import plast_seq as ps
-from .. import options as op
+from sl_py_tools.dict_tricks import Dictable
+
+import complex_synapse.identify.fit_synapse as fs
+import complex_synapse.identify.plast_seq as ps
+import complex_synapse.options as op
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
@@ -369,7 +370,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         kwds = op.sort_dict(kwds, ('transpose',), -1)
         super().__init__(*args, **kwds)
 
-    def update(self, other: cn.Dictable[str, Any] = (), /, **kwds) -> None:
+    def update(self, other: Dictable[str, Any] = (), /, **kwds) -> None:
         """Update options.
 
         Attributes are updated with the new value, rather than being replaced.

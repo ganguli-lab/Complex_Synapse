@@ -18,11 +18,11 @@ import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
 
 # pyright: reportUndefinedVariable=false
-from .. import builders as bld
-from .. import graphs as gr
-from .. import options as op
-from .. import synapse_mem as sm
-from . import synapse_opt as so
+import complex_synapse.builders as bld
+import complex_synapse.graphs as gr
+import complex_synapse.options as op
+import complex_synapse.synapse_mem as sm
+import complex_synapse.optimise.synapse_opt as so
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')

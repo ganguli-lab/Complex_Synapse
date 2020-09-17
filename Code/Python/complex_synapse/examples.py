@@ -1,14 +1,16 @@
 """Creating figures for Examples
 """
 import typing as ty
-import numpy as np
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
+
 import numpy_linalg as la
 import sl_py_tools.arg_tricks as ag
 import sl_py_tools.matplotlib_tricks as mplt
-import complex_synapse as cs
 
+import complex_synapse as cs
 
 np.set_printoptions(precision=3, suppress=False, linewidth=90)
 mplt.rc_fonts()

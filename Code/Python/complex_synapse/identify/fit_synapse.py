@@ -14,9 +14,9 @@ import numpy_linalg as la
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.iter_tricks as _it
 
-from . import plast_seq as _ps
-from . import synapse_id as _si
-from .. import options as _opt
+import complex_synapse.identify.plast_seq as _ps
+import complex_synapse.identify.synapse_id as _si
+import complex_synapse.options as _opt
 
 # =============================================================================
 MESSAGES = (

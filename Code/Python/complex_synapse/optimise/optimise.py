@@ -16,12 +16,12 @@ import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.iter_tricks as _it
 import sl_py_tools.numpy_tricks.markov.params as _mp
 
-from .. import builders as _bld
-from . import shorten as _sh
-from . import sticky as _st
-from . import synapse_opt as _so
-from .. import options as _opt
-from .. import synapse_base as _sb
+import complex_synapse.builders as _bld
+import complex_synapse.optimise.shorten as _sh
+import complex_synapse.optimise.sticky as _st
+import complex_synapse.optimise.synapse_opt as _so
+import complex_synapse.options as _opt
+import complex_synapse.synapse_base as _sb
 # =============================================================================
 # Class for specifying types of synapses
 # =============================================================================

@@ -16,7 +16,7 @@ import numpy_linalg.convert as _cvl
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.numpy_tricks.markov as _ma
 
-from . import builders as _bld
+import complex_synapse.builders as _bld
 
 # =============================================================================
 
