@@ -555,9 +555,8 @@ class SynapseDiscreteModel(SynapseBase):
 # =============================================================================
 
 
-def append_frac(frac: ArrayLike, npl: int) -> la.lnarray:
-    """Add an extra element to the end of `frac` if it is one short or
-    subnormalised
+def append_frac(frac: ArrayLike, npl: int = 0) -> la.lnarray:
+    """Add an element to the end of `frac` if it is one short or subnormalised
 
     Parameters
     ----------
@@ -574,8 +573,8 @@ def append_frac(frac: ArrayLike, npl: int) -> la.lnarray:
     """
     frac = np.atleast_1d(la.asarray(frac))
     stoch_thresh = 1 - SynapseBase.StochThresh
-    if frac.shape[-1] == npl - 1 or (frac.sum(-1) < stoch_thresh).any():
-        total = frac.sum(axis=-1, keepdims=True)
+    total = frac.sum(axis=-1, keepdims=True)
+    if frac.shape[-1] == npl - 1 or (total < stoch_thresh).any():
         frac = np.concatenate((frac, 1. - total), axis=-1)
     return frac
 

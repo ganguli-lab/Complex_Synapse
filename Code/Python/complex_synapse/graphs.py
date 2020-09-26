@@ -2,6 +2,7 @@
 """
 from __future__ import annotations
 
+import operator as opr
 from numbers import Number
 from typing import (Any, Callable, Dict, Hashable, Iterable, List, Optional,
                     Tuple, TypeVar, Union)
@@ -14,11 +15,15 @@ import numpy as np
 import numpy_linalg as la
 import sl_py_tools.arg_tricks as ag
 import sl_py_tools.containers as cn
-import sl_py_tools.iter_tricks as it
+# import sl_py_tools.iter_tricks as it
 import sl_py_tools.numpy_tricks.markov as ma
+import sl_py_tools.graph_tricks as gt
+# import sl_py_tools.graph_plots as gp
+import sl_py_tools.options_classes as op
 
+import complex_synapse.identify as idfy
 import complex_synapse.optimise as opt
-import complex_synapse.options as op
+# import complex_synapse.options as op
 import complex_synapse.synapse_base as sb
 import complex_synapse.synapse_mem as sm
 
@@ -30,8 +35,11 @@ import complex_synapse.synapse_mem as sm
 # =============================================================================
 
 
-def  model_to_graph(model: sm.SynapseModel, thresh: float = 0.,
-                    node_id: str = 'weight') -> nx.DiGraph:
+def _base_to_graph(model: sb.SynapseBase,
+                   node_id: Getter = opr.attrgetter('weight'),
+                   edge_id: Getter = opr.attrgetter('signal'),
+                   node_val: Getter = opr.methodcaller('peq')
+                   ) -> gt.MultiDiGraph:
     """Create a directed graph from a synapse model.
 
     Parameters
@@ -44,21 +52,48 @@ def  model_to_graph(model: sm.SynapseModel, thresh: float = 0.,
     graph : nx.DiGraph
         Graph describing model.
     """
-    peq = model.peq()
-    graph = nx.DiGraph()
-    for i, weight, prob in it.zenumerate(getattr(model, node_id), peq):
-        graph.add_node(i, kind=weight, value=prob)
-    inds = np.unravel_index(ma.indices.offdiag_inds(model.nstate),
-                            model.plast.shape[-2:])
-    for k, sig in enumerate(model.signal):
-        for i, j in zip(*inds):
-            val = model.plast[k, i, j]
-            if val > thresh:
-                graph.add_edge(i, j, kind=sig, value=val)
-    return graph
+    params = ma.params.gen_mat_to_params(model.plast, (0,) * model.nplast)
+    return gt.param_to_graph(params, node_val(model),
+                             node_id(model), edge_id(model))
 
 
-def param_model_to_graph(model: opt.SynapseParamModel) -> nx.DiGraph:
+def model_to_graph(model: sm.SynapseModel) -> gt.MultiDiGraph:
+    """Create a directed graph from a synapse model.
+
+    Parameters
+    ----------
+    model : SynapseModel
+        Synapse model.
+
+    Returns
+    -------
+    graph : nx.DiGraph
+        Graph describing model.
+    """
+    return _base_to_graph(model, node_id=opr.attrgetter('weight'),
+                          edge_id=opr.attrgetter('signal'),
+                          node_val=opr.methodcaller('peq'))
+
+
+def idmodel_to_graph(model: idfy.SynapseIdModel) -> gt.MultiDiGraph:
+    """Create a directed graph from a synapse model.
+
+    Parameters
+    ----------
+    model : SynapseModel
+        Synapse model.
+
+    Returns
+    -------
+    graph : nx.DiGraph
+        Graph describing model.
+    """
+    return _base_to_graph(model, node_id=opr.attrgetter('readout'),
+                          edge_id=lambda x: np.arange(x.nplast),
+                          node_val=opr.attrgetter('initial'))
+
+
+def param_model_to_graph(model: opt.SynapseParamModel) -> gt.MultiDiGraph:
     """Create a directed graph from a parameterised synapse model.
 
     Parameters
@@ -72,22 +107,22 @@ def param_model_to_graph(model: opt.SynapseParamModel) -> nx.DiGraph:
         Graph describing model.
     """
     peq = model.peq()
-    param = model.get_params().reshape((model.nplast, -1))
-    return param_to_graph(param, peq, model.weight, model.topology)
+    param = model.get_params()
+    return gt.param_to_graph(param, peq, model.weight, None, model.topology)
 
 
-def param_to_graph(param: la.lnarray, peq: la.lnarray, weight: la.lnarray,
-                   topology: opt.TopologyOptions) -> nx.DiGraph:
+def param_to_graph(param: la.lnarray, values: la.lnarray, kinds: la.lnarray,
+                   topology: opt.TopologyOptions) -> gt.MultiDiGraph:
     """Create a directed graph from a parameters of a synapse model.
 
     Parameters
     ----------
-    param : la.lnarray (P,Q), Q in [M(M-1), M, M-1, 1]
+    param : la.lnarray (PQ,), Q in [M(M-1), M, M-1, 1]
         Independent parameters of model.
-    peq : la.lnarray (M,)
-        Steady state distribution.
-    weight : la.lnarray (M,)
-        Synaptic weight in each state.
+    values : la.lnarray (M,)
+        Value assigned to each state.
+    kinds : la.lnarray (M,)
+        Type label for each state.
     topology : opt.TopologyOptions
         Encapsulation of model class.
 
@@ -96,19 +131,7 @@ def param_to_graph(param: la.lnarray, peq: la.lnarray, weight: la.lnarray,
     graph : DiGraph
         Graph describing model.
     """
-    nstate = len(peq)
-    graph = nx.DiGraph()
-    for node in it.zenumerate(weight, peq):
-        graph.add_node(node[0], kind=node[1], value=node[2])
-    # (P,)(2,)(Q,)
-    inds = [ma.indices.param_subs(nstate, **topology.directed(k))
-            for k in range(param.shape[0])]
-    # (P,Q,2)
-    inds = np.array(inds).swapaxes(1, 2)
-    drn = topology.directions
-    for i, ijk in enumerate(np.ndindex(*param.shape)):
-        graph.add_edge(*inds[ijk], kind=drn[ijk[0]], value=param[ijk], pind=i)
-    return graph
+    return gt.param_to_graph(param, values, kinds, None, topology)
 
 
 # =============================================================================
@@ -534,6 +557,79 @@ def _to_marker_edge(marker_size, marker):
         return np.sqrt(2 * marker_size) / 2
     return np.sqrt(marker_size) / 2
 
+
+class GraphPlots:
+    """Class for plotting model as a graph.
+
+    Parameters
+    ----------
+    graph : nx.DiGraph
+        Graph object describing model. Nodes have attributes `kind` and
+        `value`. Edges have attributes `kind`, `value` and `pind` (if the
+        model was a `SynapseParamModel`).
+    opts : GraphOptions|None, optional
+        Options for plotting the graph, by default `None -> GraphOptions()`.
+    Other keywords passed to `opt` or `complex_synapse.graph.draw_graph`.
+    """
+    nodes: NodePlots
+    edges: DirectedEdgeCollection
+    pinds: np.ndarray
+    opts: GraphOptions
+
+    def __init__(self, graph: nx.DiGraph,
+                 opts: Optional[GraphOptions] = None, **kwds) -> None:
+        """Class for plotting model as a graph.
+
+        Parameters
+        ----------
+        graph : nx.DiGraph
+            Graph object describing model. Nodes have attributes `kind` and
+            `value`.  Edges have attributes `kind`, `value` and `pind` (if the
+            model was a `SynapseParamModel`).
+        opt : GraphOptions|None, optional
+            Options for drawing the graph, by default `None -> GraphOptions()`.
+        Other keywords passed to `opt` or `complex_synapse.graph.draw_graph`.
+        """
+        self.opts = ag.default_eval(opts, GraphOptions)
+        self.opts.pop_my_args(kwds)
+        self.nodes, self.edges = draw_graph(graph, opts=self.opts, **kwds)
+        if has_edge_attr(graph, 'pind'):
+            self.pinds = edge_attr_vec(graph, 'pind')
+        else:
+            self.pinds = np.arange(len(self.edges))
+
+    def update(self, edge_vals: la.lnarray, node_vals: Optional[la.lnarray]
+               ) -> None:
+        """Update plots.
+
+        Parameters
+        ----------
+        edge_vals : la.lnarray (E,)
+            Transition probabilities, for edge line widdths.
+        node_vals : None|la.lnarray (N,), optional
+            Equilibrium distribution,for nodes sizes (area), by default `None`
+            -> calculate from `params`.
+        """
+        edge_vals = la.asarray(edge_vals).ravel()
+        # peq = ag.default_eval(peq, lambda: serial_eqp(params))
+        self.nodes.set_sizes(node_vals * self.opts.size)
+        self.edges.set_widths(edge_vals[self.pinds] * self.opts.width)
+        self.edges.set_node_sizes(node_vals * self.opts.size)
+
+    def update_from(self, graph: nx.DiGraph) -> None:
+        """Update plots using a graph object.
+
+        Parameters
+        ----------
+        graph : nx.DiGraph
+            Graph object describing model. Nodes have attributes `kind` and
+            `value`.  Edges have attributes `kind`, `value`.
+        """
+        params = edge_attr_vec(graph, 'value')
+        peq = node_attr_vec(graph, 'value')
+        self.update(params, peq)
+
+
 # =============================================================================
 # Aliases
 # =============================================================================
@@ -543,3 +639,4 @@ NodePlots = mpl.collections.PathCollection
 EdgePlot = mpl.patches.FancyArrowPatch
 NodePos = Dict[Node, sb.ArrayLike]
 Layout = Callable[[nx.DiGraph], NodePos]
+Getter = Callable[[sb.SynapseBase], np.ndarray]

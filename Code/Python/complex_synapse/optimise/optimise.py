@@ -15,12 +15,13 @@ import sl_py_tools.containers as _cn
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.iter_tricks as _it
 import sl_py_tools.numpy_tricks.markov.params as _mp
+import sl_py_tools.options_classes as _opt
 
 import complex_synapse.builders as _bld
 import complex_synapse.optimise.shorten as _sh
 import complex_synapse.optimise.sticky as _st
 import complex_synapse.optimise.synapse_opt as _so
-import complex_synapse.options as _opt
+# import complex_synapse.options as _opt
 import complex_synapse.synapse_base as _sb
 # =============================================================================
 # Class for specifying types of synapses

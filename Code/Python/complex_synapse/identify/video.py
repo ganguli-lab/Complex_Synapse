@@ -14,11 +14,12 @@ import sl_py_tools.arg_tricks as ag
 import sl_py_tools.containers as cn
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
+import sl_py_tools.options_classes as op
 from sl_py_tools.dict_tricks import Dictable
 
 import complex_synapse.identify.fit_synapse as fs
 import complex_synapse.identify.plast_seq as ps
-import complex_synapse.options as op
+# import complex_synapse.options as op
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
@@ -354,16 +355,16 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     # keyword options
     ax_opt: Dict[str, Any]
     ln_opt: Dict[str, Any]
-    im_opt: op.ImageOptions
-    an_opt: op.AnimationOptions
+    im_opt: mpt.ImageOptions
+    an_opt: mpt.AnimationOptions
 
     def __init__(self, *args, **kwds) -> None:
         self.txt = VideoLabels()
         self.layout = VideoLayout()
         self.ln_opt = {}
-        self.im_opt = op.ImageOptions()
+        self.im_opt = mpt.ImageOptions()
         self.ax_opt = {'box': False, 'tight': False}
-        self.an_opt = op.AnimationOptions()
+        self.an_opt = mpt.AnimationOptions()
 
         self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
         args = op.sort_dicts(args, ('transpose',), -1)

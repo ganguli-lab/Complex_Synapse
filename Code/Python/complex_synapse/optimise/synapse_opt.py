@@ -10,125 +10,122 @@ import numpy as np
 
 import numpy_linalg as la
 import sl_py_tools.numpy_tricks.markov.params as mp
+from sl_py_tools.numpy_tricks.markov import TopologyOptions
 
 import complex_synapse.builders as _bld
 import complex_synapse.synapse_mem as _sm
 import complex_synapse.synapse_base as _sb
-import complex_synapse.options as _opt
+# import complex_synapse.options as _opt
 # =============================================================================
 # Class for specifying topology of parameterised synapses
 # =============================================================================
 
 
 # pylint: disable=too-many-ancestors
-class TopologyOptions(_opt.Options):
-    """Class that contains topology specifying options.
+# class TopologyOptions(_opt.Options):
+#     """Class that contains topology specifying options.
 
-    The individual options can be accessed as object instance attributes
-    (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
-    getting and setting.
+#     The individual options can be accessed as object instance attributes
+#     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
+#     getting and setting.
 
-    Parameters
-    ----------
-    serial : bool, optional keyword
-        Restrict to models of serial topology? By default `False`.
-    ring : bool, optional keyword
-        Restrict to models of ring topology? By default `False`.
-    uniform : bool, optional keyword
-        Restrict to models with equal rates per direction? By default `False`.
-    directions: Tuple[int] (P,), optional keyword
-        If nonzero, only include transitions in direction `i -> i + sgn(drn)`,
-        one value for each plasticity type. By default `(0, 0)`.
+#     Parameters
+#     ----------
+#     serial : bool, optional keyword
+#         Restrict to models of serial topology? By default `False`.
+#     ring : bool, optional keyword
+#         Restrict to models of ring topology? By default `False`.
+#     uniform : bool, optional keyword
+#         Restrict to models with equal rates per direction? By default `False`.
+#     directions: Tuple[int] (P,), optional keyword
+#         If nonzero, only include transitions in direction `i -> i + sgn(drn)`,
+#         one value for each plasticity type. By default `(0, 0)`.
 
-    All parameters are optional keywords. Any dictionary passed as positional
-    parameters will be popped for the relevant items. Keyword parameters must
-    be valid keys, otherwise a `KeyError` is raised.
-    """
-    serial: bool
-    ring: bool
-    uniform: bool
-    directions: Tuple[int, ...]
+#     All parameters are optional keywords. Any dictionary passed as positional
+#     parameters will be popped for the relevant items. Keyword parameters must
+#     be valid keys, otherwise a `KeyError` is raised.
+#     """
+#     serial: bool
+#     ring: bool
+#     uniform: bool
+#     directions: Tuple[int, ...]
 
-    def __init__(self, *args, **kwds) -> None:
-        self.serial = False
-        self.ring = False
-        self.uniform = False
-        self.directions = (0, 0)
-        args = _opt.sort_dicts(args, ('directions', 'npl'), -1)
-        kwds = _opt.sort_dict(kwds, ('directions', 'npl'), -1)
-        super().__init__(*args, **kwds)
-        if self.constrained and 'directions' not in kwds:
-            # different default if any(serial, ring, uniform)
-            self.directions = (1, -1)
-            if 'npl' in kwds:
-                self.set_npl(kwds['npl'])
+#     def __init__(self, *args, **kwds) -> None:
+#         self.serial = False
+#         self.ring = False
+#         self.uniform = False
+#         self.directions = (0, 0)
+#         args = _opt.sort_dicts(args, ('directions', 'npl'), -1)
+#         kwds = _opt.sort_dict(kwds, ('directions', 'npl'), -1)
+#         super().__init__(*args, **kwds)
+#         if self.constrained and 'directions' not in kwds:
+#             # different default if any(serial, ring, uniform)
+#             self.directions = (1, -1)
+#             if 'npl' in kwds:
+#                 self.set_npl(kwds['npl'])
 
-    def directed(self, which: Union[int, slice, None] = slice(None), **kwds
-                 ) -> Dict[str, Any]:
-        """Dictionary of Markov parameter options
+#     def directed(self, which: Union[int, slice, None] = slice(None), **kwds
+#                  ) -> Dict[str, Any]:
+#         """Dictionary of Markov parameter options
 
-        Parameters
-        ----------
-        which : int, slice, None, optional
-            Which element of `self.directions` to use as the `'drn'` value,
-            where `None` -> omit `'drn'` item. By default `slice(None)`
-        Extra arguments are default values or unknown keys in `opts`
+#         Parameters
+#         ----------
+#         which : int, slice, None, optional
+#             Which element of `self.directions` to use as the `'drn'` value,
+#             where `None` -> omit `'drn'` item. By default `slice(None)`
+#         Extra arguments are default values or unknown keys in `opts`
 
-        Returns
-        -------
-        opts : Dict[str, Any]
-            All options for `sl_py_tools.numpy_tricks.markov.params`.
-        """
-        if which is not None:
-            kwds['drn'] = self.directions[which]
-        kwds.update(serial=self.serial, ring=self.ring, uniform=self.uniform)
-        return kwds
+#         Returns
+#         -------
+#         opts : Dict[str, Any]
+#             All options for `sl_py_tools.numpy_tricks.markov.params`.
+#         """
+#         if which is not None:
+#             kwds['drn'] = self.directions[which]
+#         kwds.update(serial=self.serial, ring=self.ring, uniform=self.uniform)
+#         return kwds
 
-    def set_constrained(self, value: Optional[bool]) -> None:
-        """Remove all constraints on topology by setting it `False`.
+#     def set_constrained(self, value: Optional[bool]) -> None:
+#         """Remove all constraints on topology by setting it `False`.
 
-        Does noting if `value` is `None`. Raises `ValueError if it is `True`.
-        """
-        if value is None:
-            return
-        if value:
-            raise ValueError("Cannot directly set `constrained=True`. "
-                             + "Set a specific constraint instead.")
-        self.serial = False
-        self.ring = False
-        self.uniform = False
-        self.directions = (0,) * self.npl
+#         Does noting if `value` is `None`. Raises `ValueError if it is `True`.
+#         """
+#         if value is None:
+#             return
+#         if value:
+#             raise ValueError("Cannot directly set `constrained=True`. "
+#                              + "Set a specific constraint instead.")
+#         self.serial = False
+#         self.ring = False
+#         self.uniform = False
+#         self.directions = (0,) * self.npl
 
-    def set_npl(self, value: Optional[int]) -> None:
-        """Set the number of plasticity types.
+#     def set_npl(self, value: Optional[int]) -> None:
+#         """Set the number of plasticity types.
 
-        Does noting if `value` is `None`. Removes end elements of `directions`
-        if shortening. Appends zeros if lengthening.
-        """
-        if value is None:
-            return
-        self.directions = self.directions[:value] + (0,) * (value - self.npl)
+#         Does noting if `value` is `None`. Removes end elements of `directions`
+#         if shortening. Appends zeros if lengthening.
+#         """
+#         if value is None:
+#             return
+#         self.directions = self.directions[:value] + (0,) * (value - self.npl)
 
-    @property
-    def constrained(self) -> bool:
-        """Are there any constraints on the topology?
-        """
-        return any((self.serial, self.ring, self.uniform) + self.directions)
+#     @property
+#     def constrained(self) -> bool:
+#         """Are there any constraints on the topology?
+#         """
+#         return any((self.serial, self.ring, self.uniform) + self.directions)
 
-    @property
-    def npl(self) -> int:
-        """Number of plasticity types
-        """
-        return len(self.directions)
+#     @property
+#     def npl(self) -> int:
+#         """Number of plasticity types
+#         """
+#         return len(self.directions)
 
 
 # =============================================================================
 # Class for parameterised synapses
 # =============================================================================
-# type ClassVar[Dict[str, bool]] = {'serial': False,
-#                                    'ring': False,
-#                                    'uniform': False}
-# directions: ClassVar[Tuple[int, ...]] = (0, 0)
 
 
 class SynapseParamModel(_sm.SynapseModel):
@@ -149,7 +146,7 @@ class SynapseParamModel(_sm.SynapseModel):
         """number of plasticity types."""
         return self.nplast * mp.num_param(self.nstate, **self.directed(0))
 
-    def get_params(self) -> la.lnarray:
+    def get_params(self, ravel: bool = True) -> la.lnarray:
         """Independent parameters of transition matrices.
 
         Returns
@@ -167,7 +164,7 @@ class SynapseParamModel(_sm.SynapseModel):
         markov.mat_to_params
         """
         params = mp.mat_to_params(self.plast, **self.directed(daxis=-3))
-        return params.ravelaxes(-2)
+        return params.ravelaxes(-2) if ravel else params
 
     def set_params(self, params: np.ndarray, *args, **kwds) -> None:
         """Update transition matrices from independent parameters.

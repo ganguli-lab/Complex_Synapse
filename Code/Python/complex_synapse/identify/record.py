@@ -65,7 +65,7 @@ class RecordingCallback:
         """Setup the callback to record data"""
         self.step_num = 0
         maxit = fitter.opt.max_it // fitter.opt.disp_step + 2
-        nelm = fitter.est.nplast * fitter.est.nstate**2 + fitter.est.nstate
+        nelm = _si.num_elements(fitter.est)
         self.est = la.empty((maxit, nelm), fitter.est.plast.dtype)
         if self.ind is not None:
             occ = fitter.est_occ(self.ind)

@@ -439,6 +439,22 @@ def well_behaved(model: SynapseIdModel, cond: bool = False) -> bool:
     return vld
 
 
+def num_elements(obj: SynapseIdModel) -> int:
+    """Number of elements describing model
+
+    Parameters
+    ----------
+    obj : SynapseIdModel
+        The model(s) whose elements we want
+
+    Returns
+    -------
+    nelm : int
+        Number of elements in `obj.plast` ans `obj.initial`.
+    """
+    return obj.nplast * obj.nstate**2 + obj.nstate
+
+
 def elements(obj: SynapseIdModel) -> la.lnarray:
     """All elements of self.plast and self.initial, concatenated.
 
@@ -458,6 +474,15 @@ def elements(obj: SynapseIdModel) -> la.lnarray:
     vectors = (obj.plast.ravelaxes(-3), obj.initial)
     bcast_vectors = la.gufuncs.broadcast_matrices('(a),(b)', *vectors)
     return np.concatenate(bcast_vectors, -1)
+
+
+def _elements_to_mats(elems: np.ndarray, nst: int, npl: int
+                      ) -> Tuple[la.lnarray, la.lnarray]:
+    """Reconstruct plast and initial from elements"""
+    elems = la.asarray(elems)
+    initial = elems[..., -nst:]
+    plast = elems[..., :-nst].unravelaxis(-1, (npl, nst, nst))
+    return plast, initial
 
 
 def from_elements(elems: np.ndarray, frac: la.lnarray, readout: la.lnarray
@@ -481,10 +506,7 @@ def from_elements(elems: np.ndarray, frac: la.lnarray, readout: la.lnarray
         distribution of initial state
     """
     frac = _sb.append_frac(frac, 0)
-    npl, nst = len(frac), len(readout)
-    elems = la.asarray(elems)
-    initial = elems[..., -nst:]
-    plast = elems[..., :-nst].unravelaxis(-1, (npl, nst, nst))
+    plast, initial = _elements_to_mats(elems, len(readout), len(frac))
     return SynapseIdModel(plast, frac, initial, readout)
 
 
@@ -498,4 +520,4 @@ def set_elements(obj: SynapseIdModel, elems: np.ndarray) -> None:
     elems : np.ndarray (PM**2+M,)
         Concatenation of model's ravelled `plast` and `initial`.
     """
-    obj.plast, obj.initial = from_elements(elems, obj.nstate, obj.nplast)
+    obj.plast, obj.initial = _elements_to_mats(elems, obj.nstate, obj.nplast)

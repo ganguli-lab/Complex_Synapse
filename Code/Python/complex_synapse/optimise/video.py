@@ -8,7 +8,6 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 import matplotlib as mpl
 import matplotlib.animation as mpla
 import matplotlib.pyplot as plt
-import networkx as nx
 import numpy as np
 
 import numpy_linalg as la
@@ -16,11 +15,13 @@ import sl_py_tools.arg_tricks as ag
 # import sl_py_tools.containers as cn
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
+import sl_py_tools.graph_tricks as gt
+import sl_py_tools.graph_plots as gp
+import sl_py_tools.options_classes as op
 
-# pyright: reportUndefinedVariable=false
 import complex_synapse.builders as bld
-import complex_synapse.graphs as gr
-import complex_synapse.options as op
+# import complex_synapse.graphs as gr
+# import complex_synapse.options as op
 import complex_synapse.synapse_mem as sm
 import complex_synapse.optimise.synapse_opt as so
 
@@ -36,7 +37,7 @@ def serial_eqp(param: la.lnarray) -> la.lnarray:
 
     Parameters
     ----------
-    param : la.lnarray (2M-2,)
+    param : la.lnarray (2,M-1)
         Transition probabilities, in the order
         mat_01, mat_12, ..., mat_n-2,n-1,
         mat_10, mat_21, ..., mat_n-1,n-2.
@@ -263,19 +264,19 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     # Layout
     layout: VideoLayout
     # Graph
-    graph: gr.GraphOptions
+    graph: gp.GraphOptions
     # keyword options
     ax_opt: Dict[str, Any]
-    im_opt: op.ImageOptions
-    an_opt: op.AnimationOptions
+    im_opt: mpt.ImageOptions
+    an_opt: mpt.AnimationOptions
 
     def __init__(self, *args, **kwds) -> None:
         self.txt = VideoLabels()
         self.layout = VideoLayout()
-        self.graph = gr.GraphOptions()
+        self.graph = gp.GraphOptions()
         self.ax_opt = {'box': False, 'tight': False}
-        self.im_opt = op.ImageOptions(edgecolors='black')
-        self.an_opt = op.AnimationOptions()
+        self.im_opt = mpt.ImageOptions(edgecolors='black')
+        self.an_opt = mpt.AnimationOptions()
 
         self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
         super().__init__(*args, **kwds)
@@ -397,7 +398,7 @@ def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool,
 # =============================================================================
 
 
-class GraphPlots:
+class GraphPlots(gp.GraphPlots):
     """Class for plotting model as a graph.
 
     Parameters
@@ -406,39 +407,13 @@ class GraphPlots:
         Graph object describing model. Nodes have attributes `kind` and
         `value`. Edges have attributes `kind`, `value` and `pind` (if the
         model was a `SynapseParamModel`).
-    opt : GraphOptions|None, optional
+    opts : GraphOptions|None, optional
         Options for plotting the graph, by default `None -> GraphOptions()`.
     Other keywords passed to `opt` or `complex_synapse.graph.draw_graph`.
     """
-    nodes: gr.NodePlots
-    edges: gr.DirectedEdgeCollection
-    pinds: np.ndarray
-    opt: gr.GraphOptions
 
-    def __init__(self, graph: nx.DiGraph,
-                 opt: Optional[gr.GraphOptions] = None, **kwds) -> None:
-        """Class for plotting model as a graph.
-
-        Parameters
-        ----------
-        graph : nx.DiGraph
-            Graph object describing model. Nodes have attributes `kind` and
-            `value`.  Edges have attributes `kind`, `value` and `pind` (if the
-            model was a `SynapseParamModel`).
-        opt : GraphOptions|None, optional
-            Options for drawing the graph, by default `None -> GraphOptions()`.
-        Other keywords passed to `opt` or `complex_synapse.graph.draw_graph`.
-        """
-        self.opt = ag.default_eval(opt, gr.GraphOptions)
-        self.opt.pop_my_args(kwds)
-        self.nodes, self.edges = gr.draw_graph(graph, opts=self.opt, **kwds)
-        if gr.has_edge_attr(graph, 'pind'):
-            self.pinds = gr.edge_attr_vec(graph, 'pind')
-        else:
-            self.pinds = np.arange(len(self.edges))
-
-    def update(self, params: la.lnarray, peq: Optional[la.lnarray] = None
-               ) -> None:
+    def update(self, edge_vals: la.lnarray,
+               node_vals: Optional[la.lnarray] = None) -> None:
         """Update plots.
 
         Parameters
@@ -449,24 +424,9 @@ class GraphPlots:
             Equilibrium distribution,for nodes sizes (area), by default `None`
             -> calculate from `params`.
         """
-        params = la.asarray(params).ravel()
-        peq = ag.default_eval(peq, lambda: serial_eqp(params))
-        self.nodes.set_sizes(peq * self.opt.size)
-        self.edges.set_widths(params[self.pinds] * self.opt.width)
-        self.edges.set_node_sizes(peq * self.opt.size)
-
-    def update_from(self, graph: nx.DiGraph) -> None:
-        """Update plots using a graph object.
-
-        Parameters
-        ----------
-        graph : nx.DiGraph
-            Graph object describing model. Nodes have attributes `kind` and
-            `value`.  Edges have attributes `kind`, `value`.
-        """
-        params = gr.edge_attr_vec(graph, 'value')
-        peq = gr.node_attr_vec(graph, 'value')
-        self.update(params, peq)
+        edge_vals = la.asarray(edge_vals).ravel()
+        node_vals = ag.default_eval(node_vals, lambda: serial_eqp(edge_vals))
+        super().update(edge_vals, node_vals)
 
     @classmethod
     def from_data(cls, axs: mpl.axes.Axes, model: la.lnarray,
@@ -483,20 +443,20 @@ class GraphPlots:
         peq : None|la.lnarray (M,), optional
             Equilbrium distribution, by default `None` -> `serial_eqp(model)`.
         weight : None|la.lnarray (M,), optional
-            Maps state to synaptic weight, by default `None` -> `binary_weights`.
+            Synaptic weight of states, by default `None` -> `binary_weights`.
 
         Returns
         -------
         obj : GraphPlots
             A `GraphPlots` instance containing plotted objects.
         """
-        opts: gr.GraphOptions = kwds.pop('opts', gr.GraphOptions())
+        opts: gp.GraphOptions = kwds.pop('opts', gp.GraphOptions())
         opts.pop_my_args(kwds)
         model = la.asarray(model).reshape((2, -1))
-        peq = ag.default_eval(peq, lambda: serial_eqp(model))
-        weight = ag.default_eval(weight, lambda: bld.binary_weights(len(peq)))
-        graph = gr.param_to_graph(model, peq, weight, opts.topology)
-        return cls(graph, axs=axs, opt=opts, **kwds)
+        peq = ag.default(peq, serial_eqp(model))
+        weight = ag.default(weight, bld.binary_weights(len(peq)))
+        graph = gt.param_to_graph(model, peq, weight, None, opts.topology)
+        return cls(graph, axs=axs, opts=opts, **kwds)
 
 
 class ModelPlots:
@@ -633,23 +593,19 @@ class ModelPlots:
         snr = serial_snr(model, time)
         eqp = serial_eqp(model)
         pot_dep = trim_params(model)
-        njmp = len(pot_dep[0])
+        bnds = np.arange(-0.5, len(pot_dep[0])+1)
 
 
         lns = axs[0].loglog(time, snr, label=opt.txt.env[2])
         lns.append(axs[0].axvline(tau))
 
-        # imh = axs[1].imshow(eqp.r, norm=mpl.colors.Normalize(0, 1))
-        imh = axs[1].pcolormesh(np.arange(-0.5, njmp+1), [0, 1], eqp.r,
-                                **opt.im_opt)
+        imh = axs[1].pcolormesh(bnds, [0, 1], eqp.r, **opt.im_opt)
 
         graph = GraphPlots.from_data(axs[5], pot_dep, eqp, opts=opt.graph,
                                      **kwds)
 
-        brs = [axs[3].bar(np.arange(0.5, njmp), pot_dep[0],
-                          color=graph.opt.edge_cmap(1.0)),
-               axs[4].bar(np.arange(0.5, njmp), pot_dep[1],
-                          color=graph.opt.edge_cmap(0.0))]
+        brs = [axh.bar(bnds[1:-1], jmp, color=graph.edges.colours.cmap(col))
+               for axh, jmp, col in zip(axs[3:5], pot_dep, [1.0, 0.0])]
 
         return cls(lns, imh, brs, graph)
 
