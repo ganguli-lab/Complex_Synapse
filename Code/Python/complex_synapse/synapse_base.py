@@ -4,6 +4,7 @@
 """Base class for complex synapse models, andd utility functions
 """
 from __future__ import annotations
+from abc import abstractmethod, ABC
 
 from numbers import Number
 from typing import (Any, Callable, ClassVar, Dict, Optional, Sequence, Tuple,
@@ -21,7 +22,7 @@ import complex_synapse.builders as _bld
 # =============================================================================
 
 
-class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
+class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin, ABC):
     """Base class for complex synapses.
 
     Contains methods that modify instance variables, those that do not
@@ -179,6 +180,66 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         """
         return (self.frac.s * self.plast).sum(-3)
 
+    @abstractmethod
+    def zinv(self, rate: Optional[ArrayLike] = None,
+             rowv: Optional[ArrayLike] = None) -> la.lnarray:
+        """Inverse of fundamental matrix"""
+
+    def cond(self, rate: Optional[ArrayLike] = None, *,
+             rowv: Optional[ArrayLike] = None,
+             order: Order = None,
+             rate_max: bool = False) -> la.lnarray:
+        r"""Condition number of generalised fundamental matrix.
+
+        Parameters
+        ----------
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
+        rowv : la.lnarray, optional
+            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
+            If `np.nan`, use  `peq`. By default: `None`.
+        order : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
+            Order of the norm. By default `None`.
+        rate_max : bool, optional
+            Compute `max(cond(rate), cond(None))`. By default, `False`.
+
+        Returns
+        -------
+        r : la.lnarray
+             condition number of ``Z``.
+
+        Notes
+        -----
+        ``c`` is the condition number, :math:`c(Z)`
+
+        .. math:: c(Z) = \Vert Z \Vert \cdot \Vert Z^{-1} \Vert,
+
+        where :math:`Z` is the inverse of the matrix returned by `self.zinv()`.
+
+        See Also
+        --------
+        zinv : fundamental matrix
+        """
+        zinv = self.zinv(rate, rowv)
+        cond = np.linalg.cond(zinv, order)
+        if rate_max and rate is not None:
+            zinv = self.zinv(None, rowv)
+            cond = max(cond, np.linalg.cond(zinv, order))
+        return cond
+
+    def peq(self) -> la.lnarray:
+        """Steady state distribution.
+
+        Returns
+        -------
+        peq : la.lnarray
+            Steady state distribution, :math:`\\pi`.
+            Solution of: :math:`\\pi W^f = 0`.
+        """
+        rowv = la.ones(self.nstate)
+        fundi = self.zinv(rowv=rowv)
+        return rowv @ fundi.inv
+
     # -------------------------------------------------------------------------
     # Factory methods
     # -------------------------------------------------------------------------
@@ -296,7 +357,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin):
         return cls.build(_bld.build_rand, nst, *args, **kwargs)
 
 
-class SynapseContinuousModel(SynapseBase):
+class SynapseContinuousTime(SynapseBase):
     """Class for Continuous time Markovian dynamics of complex synapse models.
 
     Parameters (and attributes)
@@ -372,63 +433,8 @@ class SynapseContinuousModel(SynapseBase):
             s_arr = la.asarray(rate).s * la.eye(self.nstate)
         return onev.c * rowv - self.markov() + s_arr
 
-    def cond(self, rate: Optional[ArrayLike] = None, *,
-             rowv: Optional[ArrayLike] = None,
-             order: Order = None,
-             rate_max: bool = False) -> la.lnarray:
-        r"""Condition number of generalised fundamental matrix.
 
-        Parameters
-        ----------
-        rate : float, array, optional
-            Parameter of Laplace transform, ``s``. Default: 0.
-        rowv : la.lnarray, optional
-            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
-            If `np.nan`, use  `peq`. By default: `None`.
-        order : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
-            Order of the norm. By default `None`.
-        rate_max : bool, optional
-            Compute `max(cond(rate), cond(None))`. By default, `False`.
-
-        Returns
-        -------
-        r : la.lnarray
-             condition number of ``Z``.
-
-        Notes
-        -----
-        ``c`` is the condition number, :math:`c(Z)`
-
-        .. math:: c(Z) = \Vert Z \Vert \cdot \Vert Z^{-1} \Vert,
-
-        where :math:`Z` is the inverse of the matrix returned by `self.zinv()`.
-
-        See Also
-        --------
-        zinv : fundamental matrix
-        """
-        zinv = self.zinv(rate, rowv)
-        cond = np.linalg.cond(zinv, order)
-        if rate_max and rate is not None:
-            zinv = self.zinv(None, rowv)
-            cond = max(cond, np.linalg.cond(zinv, order))
-        return cond
-
-    def peq(self) -> la.lnarray:
-        """Steady state distribution.
-
-        Returns
-        -------
-        peq : la.lnarray
-            Steady state distribution, :math:`\\pi`.
-            Solution of: :math:`\\pi W^f = 0`.
-        """
-        rowv = la.ones(self.nstate)
-        fundi = self.zinv(rowv=rowv)
-        return rowv @ fundi.inv
-
-
-class SynapseDiscreteModel(SynapseBase):
+class SynapseDiscreteTime(SynapseBase):
     """Synapse model in discrete time
 
     Parameters (and attributes)
@@ -493,61 +499,6 @@ class SynapseDiscreteModel(SynapseBase):
             # convert to lnarray, add singletons to broadcast with matrix
             s_arr = np.exp(-la.asarray(rate)).s
         return onev.c * rowv + la.eye(self.nstate) - self.markov() * s_arr
-
-    def cond(self, rate: Optional[ArrayLike] = None, *,
-             rowv: Optional[ArrayLike] = None,
-             order: Order = None,
-             rate_max: bool = False) -> la.lnarray:
-        r"""Condition number of generalised fundamental matrix.
-
-        Parameters
-        ----------
-        rate : float, array, optional
-            Parameter of Laplace transform, ``s``. Default: 0.
-        rowv : la.lnarray, optional
-            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
-            If `np.nan`, use  `peq`. By default: `None`.
-        order : {None, 1, -1, 2, -2, inf, -inf, 'fro'}, optional
-            Order of the norm. By default `None`.
-        rate_max : bool, optional
-            Compute `max(cond(rate), cond(None))`. By default, `False`.
-
-        Returns
-        -------
-        r : la.lnarray
-             condition number of ``Z``.
-
-        Notes
-        -----
-        ``c`` is the condition number, :math:`c(Z)`
-
-        .. math:: c(Z) = \Vert Z \Vert \cdot \Vert Z^{-1} \Vert,
-
-        where :math:`Z` is the inverse of the matrix returned by `self.zinv()`.
-
-        See Also
-        --------
-        zinv : fundamental matrix
-        """
-        zinv = self.zinv(rate, rowv)
-        cond = np.linalg.cond(zinv, order)
-        if rate_max and rate is not None:
-            zinv = self.zinv(None, rowv)
-            cond = max(cond, np.linalg.cond(zinv, order))
-        return cond
-
-    def peq(self) -> la.lnarray:
-        """Steady state distribution.
-
-        Returns
-        -------
-        peq : la.lnarray
-            Steady state distribution, :math:`\\pi`.
-            Solution of: :math:`\\pi M^f = \\pi`.
-        """
-        rowv = la.ones(self.nstate)
-        fundi = self.zinv(None, rowv)
-        return rowv @ fundi.inv
 
 
 # =============================================================================
@@ -660,3 +611,4 @@ def array_attrs(obj: Any) -> Dict[str, np.ndarray]:
 ArrayLike = Union[Number, Sequence[Number], np.ndarray]
 Syn = TypeVar('Syn', bound=SynapseBase)
 Order = Union[int, float, str, None]
+Getter = Callable[[SynapseBase], np.ndarray]

@@ -10,6 +10,7 @@ import numpy as np
 
 import numpy_linalg as la
 import sl_py_tools.numpy_tricks.markov.params as mp
+from sl_py_tools.graph_tricks import MultiDiGraph, param_to_graph
 from sl_py_tools.numpy_tricks.markov import TopologyOptions
 
 import complex_synapse.builders as _bld
@@ -88,7 +89,7 @@ import complex_synapse.synapse_base as _sb
 #     def set_constrained(self, value: Optional[bool]) -> None:
 #         """Remove all constraints on topology by setting it `False`.
 
-#         Does noting if `value` is `None`. Raises `ValueError if it is `True`.
+#         Does nothing if `value` is `None`. Raises `ValueError if it is `True`.
 #         """
 #         if value is None:
 #             return
@@ -103,7 +104,7 @@ import complex_synapse.synapse_base as _sb
 #     def set_npl(self, value: Optional[int]) -> None:
 #         """Set the number of plasticity types.
 
-#         Does noting if `value` is `None`. Removes end elements of `directions`
+#         Does nothing if `value` is `None`. Removes end elements of `directions`
 #         if shortening. Appends zeros if lengthening.
 #         """
 #         if value is None:
@@ -137,7 +138,7 @@ class SynapseParamModel(_sm.SynapseModel):
     topology: TopologyOptions
 
     def __init__(self, *args, **kwds) -> None:
-        self.topology = kwds.pop('opt', TopologyOptions())
+        self.topology = kwds.pop('topology', TopologyOptions())
         self.topology.pop_my_args(kwds)
         super().__init__(*args, **kwds)
 
@@ -190,6 +191,27 @@ class SynapseParamModel(_sm.SynapseModel):
             return
         params = la.asarray(params).unravelaxis(-1, (self.nplast, -1))
         mp.mat_update_params(self.plast, params, **self.directed(pdaxis=-2))
+
+    def to_graph(self, graph: Optional[MultiDiGraph] = None) -> MultiDiGraph:
+        """Create/modify a directed graph from a parameterised synapse model.
+
+        Parameters
+        ----------
+        graph : MultiDiGraph
+            Graph to be modified.
+
+        Returns
+        -------
+        graph : MultiDiGraph
+            Graph describing model.
+        """
+        peq = self.peq()
+        param = self.get_params()
+        if graph is None:
+            return param_to_graph(param, peq, self.weight, None, self.topology)
+        graph.set_node_attr('value', peq)
+        graph.set_edge_attr('value', param)
+        return graph
 
     def directed(self, which: Union[int, slice] = slice(None),
                  **kwds) -> Dict[str, Any]:
@@ -296,8 +318,15 @@ class SynapseParamModel(_sm.SynapseModel):
             if nst is None:
                 raise TypeError("Must specify one of [nst, npar]")
             npar = npl * mp.num_param(nst, **topology.directed(0))
+        elif nst is None:
+            nst = mp.num_state(npar // npl, **topology.directed(0))
         kwds.update(nst=nst, topology=topology)
-        return cls.from_params(rng.random(npar), *args, **kwds)
+        params = rng.random(npar)
+        if not topology.constrained:
+            cnstr = (constraint_coeff(npl, nst) @ params).max()
+            if cnstr > 1:
+                params /= cnstr
+        return cls.from_params(params, *args, **kwds)
 
 
 # =============================================================================
@@ -339,6 +368,8 @@ class SynapseOptModel(SynapseParamModel):
         --------
         markov.params_to_mat
         """
+        if np.allclose(params, self.get_params(), *args, **kwds):
+            return
         super().set_params(params, *args, **kwds)
         self._unchanged = False
 
@@ -875,6 +906,28 @@ def _fund_svd(fundi: Optional[la.lnarray],
     srow += (fund_u.h[extract],)
     scol += (fund_v.h[:, extract],)
     return svs, srow, scol
+
+
+def constraint_coeff(npl: int, nst: int) -> la.lnarray:
+    """Coefficient matrix for upper bound on off-diagonal row sums.
+
+    Parameters
+    ----------
+    npl : int
+        Number of types of plasticity
+    nst: int
+        Number of states.
+
+    Returns
+    -------
+    coeffs : la.lnarray (2*nst, 2*nst(nst-1))
+        matrix of coefficients s.t ``coeffs @ params <= 1``.
+    """
+    rows, cols = la.arange(npl*nst), la.arange(nst-1)
+    cols = cols + rows.c * (nst-1)
+    coeffs = la.zeros((npl*nst, npl*nst*(nst-1)))
+    coeffs[rows.c, cols] = 1
+    return coeffs
 
 
 if __name__ == "__main__":

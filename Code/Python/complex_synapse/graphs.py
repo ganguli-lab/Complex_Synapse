@@ -366,7 +366,7 @@ class GraphOptions(op.Options):
     def set_node_cmap(self, value: Union[str, mpl.colors.Colormap]) -> None:
         """Set the colour map for nodes.
 
-        Does noting if `value` is `None`. Converts to `Colormap` if `str`.
+        Does nothing if `value` is `None`. Converts to `Colormap` if `str`.
         """
         if value is None:
             pass
@@ -378,7 +378,7 @@ class GraphOptions(op.Options):
     def set_edge_cmap(self, value: Union[str, mpl.colors.Colormap]) -> None:
         """Set the colour map for edges.
 
-        Does noting if `value` is `None`. Converts to `Colormap` if `str`.
+        Does nothing if `value` is `None`. Converts to `Colormap` if `str`.
         """
         if value is None:
             pass

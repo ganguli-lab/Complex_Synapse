@@ -85,6 +85,25 @@ def linear_weights(nst: int) -> la.lnarray:  # linear synaptic weights
 # =============================================================================
 
 
+def constraint_vals(plast: np.ndarray) -> la.lnarray:
+    """Row sums of off-diagonal row sums.
+
+    Parameters
+    ----------
+    plast : np.ndarray (P,M,M)
+        Array of transition matrices
+
+    Returns
+    -------
+    constr : np.ndarray (P,M)
+        Sums of off-diagonal elements across each row.
+    """
+    npl, nst = plast.shape[-3:-1]
+    coeffs = la.ones((npl, nst, nst))
+    coeffs[:, np.diag_indices(nst)] = 0
+    return (coeffs * plast).sum(-1)
+
+
 def serial_trans(nst: int, npl: int = 2, jmp: float = 1.) -> la.lnarray:
     """
     Make a serial transition matrix (continuous time).
@@ -158,6 +177,8 @@ def build_generic(func: MatFunc, nst: int, npl: int = 2, binary: bool = False,
         number of plasticity matrices
     binary : optional, bool = True
         is the weight vector binary? Otherwise it's linear. Default: False
+    fix_scale : bool, optional
+        Scale so that off-diagonal row-sums < 1?
     Other keywords passed to `func`.
 
     Returns
@@ -170,7 +191,10 @@ def build_generic(func: MatFunc, nst: int, npl: int = 2, binary: bool = False,
         signal : la.lnarray
             desired signal contribution from each plasticity type
     """
+    fix_scale = kwds.pop('fix_scale', False)
     plast = la.asarray(func(nst, npl, **kwds))
+    if fix_scale:
+        plast /= constraint_vals(plast).max()
     weight = binary_weights(nst) if binary else linear_weights(nst)
     signal = la.linspace(1, -1, npl)
     return {'plast': plast, 'weight': weight, 'signal': signal}
@@ -300,6 +324,7 @@ def build_rand(nst: int, npl: int = 2, binary: bool = False, **kwds) -> SynKWs:
             desired signal contribution from each plasticity type
     """
     kwds.setdefault('rng', RNG)
+    kwds.setdefault('fix_scale', True)
     return build_generic(_ma.rand_trans, nst, npl, binary, **kwds)
 
 

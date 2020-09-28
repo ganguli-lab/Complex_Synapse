@@ -13,6 +13,7 @@ import numpy_linalg.convert as _cvl
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.containers as _cn
 import sl_py_tools.numpy_tricks.markov as _ma
+from sl_py_tools.graph_tricks import MultiDiGraph, param_to_graph
 
 import complex_synapse.builders as _bld
 import complex_synapse.synapse_base as _sb
@@ -22,7 +23,7 @@ Order = Union[int, float, str, None]
 # =============================================================================
 
 
-class SynapseIdModel(_sb.SynapseDiscreteModel):
+class SynapseIdModel(_sb.SynapseDiscreteTime):
     """Model that is being fit to data
 
     Parameters (and attributes)
@@ -293,6 +294,27 @@ class SynapseIdModel(_sb.SynapseDiscreteModel):
         for axh, mat in zip(axs[1:], self.plast):
             imh.append(_ps.set_plot(axh, mat, **kwds))
         return imh
+
+    def to_graph(self, graph: Optional[MultiDiGraph] = None) -> MultiDiGraph:
+        """Create/modify a directed graph from a parameterised synapse model.
+
+        Parameters
+        ----------
+        graph : MultiDiGraph
+            Graph to be modified.
+
+        Returns
+        -------
+        graph : MultiDiGraph
+            Graph describing model.
+        """
+        params = _ma.params.gen_mat_to_params(self.plast, (0,) * self.nplast)
+        plasts = self.nplast - 1 - np.arange(self.nplast)
+        if graph is None:
+            return param_to_graph(params, self.initial, self.readout, plasts)
+        graph.set_node_attr('value', self.initial)
+        graph.set_edge_attr('value', params)
+        return graph
 
     @classmethod
     def build(cls, builder: Callable[..., Dict[str, la.lnarray]],

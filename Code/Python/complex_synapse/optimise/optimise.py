@@ -12,6 +12,7 @@ import scipy.optimize as sco
 
 import numpy_linalg as la
 import sl_py_tools.containers as _cn
+# import sl_py_tools.dict_tricks as _dt
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.iter_tricks as _it
 import sl_py_tools.numpy_tricks.markov.params as _mp
@@ -61,6 +62,7 @@ class ModelOptions(_opt.Options):
     """
     map_attributes: _opt.Attrs = ('topology',)
     prop_attributes: _opt.Attrs = ('frac', 'npl', 'nst', 'npar')
+    key_order: _opt.Attrs = ('frac', 'npl', 'nst', 'npar')
     # topology specifying options
     topology: _so.TopologyOptions
     # Is the weight vector binary?
@@ -79,9 +81,6 @@ class ModelOptions(_opt.Options):
         self._frac = la.array([0.5, 0.5])
         self._nst = None
         self._npar = None
-        # put kwds in order
-        args = _opt.sort_dicts(args, ('frac', 'npl', 'nst', 'npar'), -1)
-        kwds = _opt.sort_dict(kwds, ('frac', 'npl', 'nst', 'npar'), -1)
         super().__init__(*args, **kwds)
 
     def check_complete(self) -> bool:
@@ -104,7 +103,7 @@ class ModelOptions(_opt.Options):
     def set_frac(self, value: Optional[_sb.ArrayLike]) -> None:
         """Set the probability of each plasticity type.
 
-        Does noting if `value` is `None`. Adds an element to the end if
+        Does nothing if `value` is `None`. Adds an element to the end if
         subnormalised.
         """
         if value is None:
@@ -115,7 +114,7 @@ class ModelOptions(_opt.Options):
     def set_npl(self, value: Optional[int]) -> None:
         """Set the number of plasticity types.
 
-        Does noting if `value` is `None`. Removes end elements of `frac`
+        Does nothing if `value` is `None`. Removes end elements of `frac`
         if shortening. Appends 0s if lengthening.
         """
         if value is None:
@@ -130,7 +129,7 @@ class ModelOptions(_opt.Options):
     def set_nst(self, value: Optional[int]) -> None:
         """Set the number of states.
 
-        Does noting if `value` is `None`.
+        Does nothing if `value` is `None`.
         """
         if value is None:
             return
@@ -140,7 +139,7 @@ class ModelOptions(_opt.Options):
     def set_npar(self, value: Optional[int]) -> None:
         """Set the number of states.
 
-        Does noting if `value` is `None`.
+        Does nothing if `value` is `None`.
         """
         if value is None:
             return
@@ -207,6 +206,7 @@ class ProblemOptions(_opt.Options):
     be valid keys, otherwise a `KeyError` is raised.
     """
     prop_attributes: _opt.Attrs = ('hess', 'cond_lim')
+    key_order: _opt.Attrs = ('hess', 'cond_lim')
     # Ensure constraints are kept at intermediate steps?
     keep_feasible: bool
     # Include condition number when checking if model is well behaved?
@@ -228,9 +228,6 @@ class ProblemOptions(_opt.Options):
         self._cond_lim = False
         # One param we don't store here
         self.cond_thresh = 1e4
-        # put kwds in order
-        args = _opt.sort_dicts(args, ('hess', 'cond_lim'), -1)
-        kwds = _opt.sort_dict(kwds, ('hess', 'cond_lim'), -1)
         super().__init__(*args, **kwds)
 
     def for_fns(self) -> Dict[str, bool]:
@@ -249,7 +246,7 @@ class ProblemOptions(_opt.Options):
     def set_hess(self, value: Optional[bool]) -> None:
         """Choose whether to use the hessian.
 
-        Does noting if `value` is `None`.
+        Does nothing if `value` is `None`.
         """
         if value is None:
             return
@@ -260,7 +257,7 @@ class ProblemOptions(_opt.Options):
     def set_cond_lim(self, value: Optional[bool]) -> None:
         """Choose whether to use a condition number constraint.
 
-        Does noting if `value` is `None`.
+        Does nothing if `value` is `None`.
         """
         if value is None:
             return
@@ -315,6 +312,8 @@ class OptimOptions(_opt.MasterOptions, fallback='extra'):
     """
     map_attributes: _opt.Attrs = ('model_opts', 'problem_opts', 'extra')
     prop_attributes: _opt.Attrs = ('method',)
+    key_order: _opt.Attrs = (ModelOptions.key_order + ProblemOptions.key_order
+                             + ('method', 'maker'))
     model_opts: ModelOptions
     problem_opts: ProblemOptions
     extra: Dict[str, Any]
@@ -331,9 +330,6 @@ class OptimOptions(_opt.MasterOptions, fallback='extra'):
         self.repeats = 0
         self._method = "SLSQP"
         self._maker = normal_problem
-        # put kwds in order
-        args = _opt.sort_dicts(args, ('method', 'maker'), -1)
-        kwds = _opt.sort_dict(kwds, ('method', 'maker'), -1)
         super().__init__(*args, **kwds)
 
     def maker(self, model: _so.SynapseOptModel, rate: Optional[Number]
@@ -357,7 +353,7 @@ class OptimOptions(_opt.MasterOptions, fallback='extra'):
     def set_method(self, value: Optional[str]) -> None:
         """Choose method to use in `scipy.optimize.minimize`.
 
-        Does noting if `value` is `None`.
+        Does nothing if `value` is `None`.
         """
         if value is None:
             return
@@ -370,7 +366,7 @@ class OptimOptions(_opt.MasterOptions, fallback='extra'):
     def set_maker(self, value: Optional[Maker]) -> None:
         """Choose the function that creates the problem.
 
-        Does noting if `value` is `None`.
+        Does nothing if `value` is `None`.
         """
         if value is None:
             return
@@ -556,9 +552,7 @@ def constraint_coeff(model: _so.SynapseOptModel) -> la.lnarray:
     Parameters
     ----------
     model: _so.SynapseOptModel
-        Number of states.
-    npl : int
-        Number of types of plasticity
+        Model whose shape determines `coeffs`.
 
     Returns
     -------
@@ -566,11 +560,7 @@ def constraint_coeff(model: _so.SynapseOptModel) -> la.lnarray:
         matrix of coefficients s.t ``coeffs @ params <= 1``.
     """
     npl, nst = model.nplast, model.nstate
-    rows, cols = la.arange(npl*nst), la.arange(nst-1)
-    cols = cols + rows.c * (nst-1)
-    coeffs = la.zeros((npl*nst, npl*nst*(nst-1)))
-    coeffs[rows.c, cols] = 1
-    return coeffs
+    return _so.constraint_coeff(npl, nst)
 
 
 def conv_constraint(constraint: Constraint) -> List[Dict[str, Any]]:

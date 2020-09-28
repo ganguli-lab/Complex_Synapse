@@ -12,6 +12,7 @@ import numpy as np
 import numpy_linalg as la
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.numpy_tricks.markov as _ma
+from sl_py_tools.graph_tricks import MultiDiGraph, param_to_graph
 
 import complex_synapse.builders as _bld
 import complex_synapse.synapse_base as _sb
@@ -20,7 +21,7 @@ Order = Union[int, float, str, None]
 # =============================================================================
 
 
-class SynapseModel(_sb.SynapseContinuousModel):
+class SynapseModel(_sb.SynapseContinuousTime):
     """Class for Markovian dynamics of complex synapse models.
 
     Parameters (and attributes)
@@ -162,6 +163,27 @@ class SynapseModel(_sb.SynapseContinuousModel):
         """
         eta = - self.zinv(rate).inv @ self.weight.c
         return eta - eta.t
+
+    def to_graph(self, graph: Optional[MultiDiGraph] = None) -> MultiDiGraph:
+        """Create/modify a directed graph from a parameterised synapse model.
+
+        Parameters
+        ----------
+        graph : MultiDiGraph
+            Graph to be modified.
+
+        Returns
+        -------
+        graph : MultiDiGraph
+            Graph describing model.
+        """
+        peq = self.peq()
+        param = _ma.params.gen_mat_to_params(self.plast, (0,) * self.nplast)
+        if graph is None:
+            return param_to_graph(param, peq, self.weight, self.signal)
+        graph.set_node_attr('value', peq)
+        graph.set_edge_attr('value', param)
+        return graph
 
     @contextmanager
     def shifted(self, rate: _sb.ArrayLike, rowv: Optional[_sb.ArrayLike] = None

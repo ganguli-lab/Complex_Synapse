@@ -346,7 +346,7 @@ class ImageOptions(AnyOptions):
     def set_cmap(self, value: _ty.Union[str, mpl.colors.Colormap]) -> None:
         """Set the colour map.
 
-        Does noting if `value` is `None`. Converts to `Colormap` if `str`.
+        Does nothing if `value` is `None`. Converts to `Colormap` if `str`.
         """
         if value is None:
             pass
@@ -361,7 +361,7 @@ class ImageOptions(AnyOptions):
     def set_vmin(self, value: float) -> None:
         """Set the lower bound for the colour map.
 
-        Does noting if `value` is `None`.
+        Does nothing if `value` is `None`.
         """
         if value is None:
             pass
@@ -371,7 +371,7 @@ class ImageOptions(AnyOptions):
     def set_vmax(self, value: float) -> None:
         """Set the upper bound for the colour map.
 
-        Does noting if `value` is `None`.
+        Does nothing if `value` is `None`.
         """
         if value is None:
             pass
