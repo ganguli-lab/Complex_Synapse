@@ -2,7 +2,6 @@
 """Test script for optimisation
 """
 # %%
-from complex_synapse.optimise.video import serial_eqp
 import numpy as np
 import matplotlib as mpl
 import matplotlib.animation as mpla
@@ -11,6 +10,7 @@ import numpy_linalg as la
 import complex_synapse as cs
 import complex_synapse.optimise as cso
 import complex_synapse.graphs as csg
+import complex_synapse.optimise.plot as csp
 import sl_py_tools.matplotlib_tricks as mpt
 from sl_py_tools.time_tricks import time_with
 np.set_printoptions(precision=2, suppress=True)
@@ -26,7 +26,8 @@ with time_with():
         s, 10, repeats=10, cond_lim=True, cond_thresh=1e3, serial=False,
         maker=cso.normal_problem, method='SLSQP')
 # %%
-nst, sss, opts, envs, mods = cso.plot.load_data()
+nst, sss, opts, envs, mods = csp.load_data()
+# %%
 obj = cso.video.EnvelopeFig(sss, envs[3], envs[1], mods[1])
 obj.update(40)
 # %%

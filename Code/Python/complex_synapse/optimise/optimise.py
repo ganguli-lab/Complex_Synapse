@@ -695,6 +695,20 @@ def optim_laplace(rate: float, prob: Optional[OptimProblem] = None,
 def optim_laplace_range(rates: np.ndarray, nst: int,
                         **kwds) -> Tuple[la.lnarray, la.lnarray]:
     """Optimised model at many values of rate
+
+    Parameters
+    ----------
+    rates : np.ndarray (T,)
+        Parameters of Laplace transform at which we maximise.
+    nst : int
+        Number of states
+
+    Returns
+    -------
+    snr : la.lnarray (T,)
+        Maximum snr (Laplace transformed) at each value of `rates`.
+    models : la.lnarray (T,Q)
+        Parameters of models that achieve `snr`.
     """
     prob = OptimProblem(nst=nst, **kwds)
     # model = make_model(kwds, nst=nst)
