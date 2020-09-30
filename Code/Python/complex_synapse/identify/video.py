@@ -12,10 +12,11 @@ import numpy as np
 
 import sl_py_tools.arg_tricks as ag
 import sl_py_tools.containers as cn
+from sl_py_tools.graph_plots import GraphPlots, GraphOptions
+from sl_py_tools.graph_tricks import MultiDiGraph
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
 import sl_py_tools.options_classes as op
-from sl_py_tools.dict_tricks import Dictable
 
 import complex_synapse.identify.fit_synapse as fs
 import complex_synapse.identify.plast_seq as ps
@@ -64,6 +65,7 @@ class VideoLabels(op.Options):
     be valid keys, otherwise a `KeyError` is raised.
     """
     prop_attributes: op.Attrs = ('transpose',)
+    key_order: op.Attrs = ('transpose',)
     # Text for labels
     plast_type: List[str]
     readout: List[str]
@@ -79,8 +81,8 @@ class VideoLabels(op.Options):
         self.plast = [["Potentiation", "Depression"],
                       ["Probability", "Initial state", "From state",
                        "To state"]]
-        args = op.sort_dicts(args, ('transpose',), -1)
-        kwds = op.sort_dict(kwds, ('transpose',), -1)
+        # args = op.sort_dicts(args, ('transpose',), -1)
+        # kwds = op.sort_dict(kwds, ('transpose',), -1)
         super().__init__(*args, **kwds)
 
     def model_labs(self, ind: ps.Inds) -> Tuple[List[str], List[str]]:
@@ -164,6 +166,7 @@ class VideoLayout(op.Options):
     """
     map_attributes: op.Attrs = ('sizes',)
     prop_attributes: op.Attrs = ('transpose', 'ground', 'npl', 'verbosity')
+    key_order: op.Attrs = ('transpose', 'ground', 'npl', 'verbosity', 'fitter')
     # row/column assignments for models/data
     mrows: ps.Inds
     mcols: ps.Inds
@@ -178,17 +181,17 @@ class VideoLayout(op.Options):
 
     def __init__(self, *args, **kwds) -> None:
         self.mrows = (-1, 0)
-        self.mcols = (-1, 0, 1)
+        self.mcols = (-1, -2, 0, 1)
         self.drows = (0, 1, 2)
         self.dcols = (-1, slice(-1))
-        # width: [c]olourbar=1, [i]nitial=2, [p]last=12, {data=sum-cbar}
-        # height: [m]o[d]el=12, [p]last_type/[r]eadout=2, [st]ates=6
-        self.sizes = dict(c=1, i=2, p=12, pr=2, st=6, md=12, scale=0.3)
+        # width: [c]olourbar, [g]raph, [i]nitial, [p]last, {data=sum-cbar}
+        # height: [m]o[d]el, [p]last_type/[r]eadout, [st]ates
+        self.sizes = dict(c=1, g=5, i=2, p=12, pr=2, st=6, md=12, scale=0.3)
         self._transpose = False
         self._verbosity = 1
-        order = ('transpose', 'ground', 'npl', 'verbosity', 'fitter')
-        args = op.sort_dicts(args, order, -1)
-        kwds = op.sort_dict(kwds, order, -1)
+        # order = ('transpose', 'ground', 'npl', 'verbosity', 'fitter')
+        # args = op.sort_dicts(args, order, -1)
+        # kwds = op.sort_dict(kwds, order, -1)
         super().__init__(*args, **kwds)
 
     def __setitem__(self, key: str, val: Any) -> None:
@@ -213,7 +216,7 @@ class VideoLayout(op.Options):
         """
         cols = ['p'] * len(self.mcols)
         rows = ['md'] * (4 + self.drows[0])
-        for i, col in enumerate(('c', 'i')):
+        for i, col in enumerate(('c', 'g', 'i')):
             cols[self.mcols[i]] = col
         for i, row in enumerate(('pr', 'pr', 'st')):
             rows[self.drows[i]] = row
@@ -260,8 +263,8 @@ class VideoLayout(op.Options):
         """
         if npl is None:
             return
-        if len(self.mcols) - 2 != npl:
-            self.mcols = self.mcols[:2] + tuple(self.mcols[2] + np.arange(npl))
+        if len(self.mcols) - 3 != npl:
+            self.mcols = self.mcols[:3] + tuple(self.mcols[3] + np.arange(npl))
 
     def set_verbosity(self, verbose: Optional[int]) -> None:
         """Choose whether to display verbose information
@@ -296,7 +299,7 @@ class VideoLayout(op.Options):
     @property
     def npl(self) -> int:
         """How many plasticity types are there?"""
-        return len(self.mcols) - 2
+        return len(self.mcols) - 3
 
     @property
     def verbosity(self) -> int:
@@ -331,6 +334,8 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         Options for line plots. By default: `{}`.
     an_opt : AnimationOptions
         Options for animating the video.
+    gr_opt : GraphOptions
+        Options for drawing the graph of the models.
 
     All parameters are optional keywords. Any dictionary passed as positional
     parameters will be popped for the relevant items.
@@ -348,6 +353,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     """
     map_attributes: op.Attrs = ('txt', 'layout', 'ln_opt', 'im_opt', 'ax_opt')
     prop_attributes: op.Attrs = ('transpose',)
+    key_order: op.Attrs = ('transpose',)
     # Text for labels
     txt: VideoLabels
     # Layout
@@ -357,27 +363,25 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     ln_opt: Dict[str, Any]
     im_opt: mpt.ImageOptions
     an_opt: mpt.AnimationOptions
+    gr_opt: GraphOptions
 
     def __init__(self, *args, **kwds) -> None:
         self.txt = VideoLabels()
         self.layout = VideoLayout()
         self.ln_opt = {}
-        self.im_opt = mpt.ImageOptions()
-        self.ax_opt = {'box': False, 'tight': False}
+        self.im_opt = mpt.ImageOptions(trn=False)
+        self.ax_opt = {'box': False, 'tight': False, 'trn': False}
         self.an_opt = mpt.AnimationOptions()
+        self.gr_opt = GraphOptions()
+        self.gr_opt.layout_args = ((0.0, -1.0), {})
+        self.gr_opt.node_style.mult = 1200
+        self.gr_opt.edge_style.mult = 1.5
+        self.gr_opt.edge_style.mut_scale = 2
 
         self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
-        args = op.sort_dicts(args, ('transpose',), -1)
-        kwds = op.sort_dict(kwds, ('transpose',), -1)
+        # args = op.sort_dicts(args, ('transpose',), -1)
+        # kwds = op.sort_dict(kwds, ('transpose',), -1)
         super().__init__(*args, **kwds)
-
-    def update(self, other: Dictable[str, Any] = (), /, **kwds) -> None:
-        """Update options.
-
-        Attributes are updated with the new value, rather than being replaced.
-        """
-        super().update(other, **kwds)
-        self.set_transpose(self.transpose)
 
     def set_transpose(self, transpose: Optional[bool]) -> None:
         """Choose whether to swap rows and columns
@@ -390,6 +394,8 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.im_opt['trn'] = transpose
         self.txt.set_transpose(transpose)
         self.layout.set_transpose(transpose)
+        sep = (1.0, 0.0) if transpose else (0.0, -1.0)
+        self.gr_opt.layout_args = (sep, {})
 
     @property
     def transpose(self) -> bool:
@@ -486,6 +492,7 @@ class FitterPlots:
     fig: Optional[Figure]
     axh: Dict[str, AxList]
     imh: Dict[str, List[Disp]]
+    grf: Dict[str, MultiDiGraph]
     opt: VideoOptions
 
     def __init__(self, ind: ps.Inds, fname: str = "",
@@ -517,6 +524,7 @@ class FitterPlots:
         self.fig = None
         self.axh = {}
         self.imh = {}
+        self.grf = {}
 
     def __call__(self, fitter: fs.SynapseFitter, pos: int) -> List[Disp]:
         """Callback that displays fitter state as appropriate
@@ -587,10 +595,12 @@ class FitterPlots:
         self.imh['st'] = [fitter.plot_occ(self.axh['st'][1], self.ind, **mdo)]
         self.imh['ps'] = fitter.data[self.ind].plot(self.axh['ps'], **pso)
 
-        self.imh['fit'] = fitter.est.plot(self.axh['fit'][1:], **mdo)
+        mdo['gopts'] = self.opt.gr_opt
+        self.imh['fit'], self.grf['fit'] = fitter.est.plot(self.axh['fit'][1:],
+                                                           **mdo)
 
         if self.ground:
-            self.imh['tr'] = fitter.truth.plot(self.axh['tr'][1:], **mdo)
+            self.imh['tr'], self.grf['tr'] = fitter.truth.plot(self.axh['tr'][1:], **mdo)
 
         if verbose:
             self.imh['info'] = [write_info(format(fitter, f'tex0,{verbose}'),
@@ -658,7 +668,7 @@ class FitterPlots:
         """
         trn, verbose = self.opt.transpose, self.opt.layout.verbosity
         fitter.plot_occ(self.imh['st'][0], self.ind, trn=trn)
-        fitter.est.plot(self.imh['fit'], trn=trn)
+        fitter.est.plot(self.imh['fit'], self.grf['fit'], trn=trn)
         if verbose:
             self.imh['info'][0].set_text(format(fitter, f'tex1,{verbose}'))
 
@@ -748,22 +758,24 @@ def label_model(axs: AxList, titles: List[str], labels: List[str], cbar: bool,
     """
     trn = kwds.pop('trn', False)
     if cbar:
-        fig, imh = axs[1].get_figure(), axs[1].get_images()[0]
+        fig, imh = axs[2].get_figure(), axs[2].get_images()[0]
         cbopt = {'orientation': 'horizontal'} if trn else {}
         fig.colorbar(imh, cax=axs[0], label=labels[0], **cbopt)
         mpt.clean_axes(axs[0], **kwds)
     else:
         axs[0].set(frame_on=False, xticks=[], yticks=[])
 
-    axs[1].set_title(f"\\textit{{{titles[0]}}}", pad=20)
-    if trn:
-        axs[1].xaxis.set_ticks_position('bottom')
-        axs[1].set(yticks=[], xlabel=labels[1])
-    else:
-        axs[1].set(xticks=[], ylabel=labels[1])
-    mpt.clean_axes(axs[1], **kwds)
+    axs[1].set(frame_on=False, xticks=[], yticks=[])
 
-    for axh, lab in zip(axs[2:], titles[1:]):
+    axs[2].set_title(f"\\textit{{{titles[0]}}}", pad=20)
+    if trn:
+        axs[2].xaxis.set_ticks_position('bottom')
+        axs[2].set(yticks=[], xlabel=labels[1])
+    else:
+        axs[2].set(xticks=[], ylabel=labels[1])
+    mpt.clean_axes(axs[2], **kwds)
+
+    for axh, lab in zip(axs[3:], titles[1:]):
         axh.set_ylabel(labels[2])
         axh.set_xlabel(labels[3])
         axh.set_title(lab)
@@ -881,10 +893,11 @@ def _model_axes(fig: Figure, gsp: GridSpec, row: int, cols: Sequence[int]
     """
     shared = 'x' if isinstance(gsp, TransposeGridSpec) else 'y'
     cax = fig.add_subplot(gsp[row, cols[0]])
-    iax = fig.add_subplot(gsp[row, cols[1]])
+    gax = fig.add_subplot(gsp[row, cols[1]])
+    iax = fig.add_subplot(gsp[row, cols[2]])
     share = {'share' + shared: iax}
-    pax = [fig.add_subplot(gsp[row, i], **share) for i in cols[2:]]
-    return [cax, iax] + pax
+    pax = [fig.add_subplot(gsp[row, i], **share) for i in cols[3:]]
+    return [cax, gax, iax] + pax
 
 
 def _data_axes(fig: Figure, gsp: GridSpec, rows: ps.Inds, cols: ps.Inds
@@ -946,6 +959,6 @@ class TransposeGridSpec:
 # =============================================================================
 Figure = mpl.figure.Figure
 GridSpec = mpl.gridspec.GridSpec
-Disp = Union[mpl.lines.Line2D, ps.Image, mpl.text.Text]
+Disp = Union[mpl.lines.Line2D, ps.Image, mpl.text.Text, GraphPlots]
 TxHandle = Union[mpl.axes.Axes, mpl.text.Text]
 AxList = List[mpl.axes.Axes]

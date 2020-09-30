@@ -156,6 +156,7 @@ class SynapseFitOptions(_opt.Options):
     They are related to `verbose` as `verbose = after + 3 * before + 9 * each`.
     """
     prop_attributes: _opt.Attrs = ('disp_after', 'disp_before', 'disp_each')
+    key_order: _opt.Attrs = ('disp_after', 'disp_before', 'disp_each')
     # Absolute tolerance for `dmodel`.
     atolx: float
     # Absolute tolerance for `dlike`.
@@ -179,8 +180,8 @@ class SynapseFitOptions(_opt.Options):
         self.max_it = 1000
         self.verbosity = 1
         self.disp_step = 50
-        args = _opt.sort_dicts(args, self.prop_attributes, -1)
-        kwds = _opt.sort_dict(kwds, self.prop_attributes, -1)
+        # args = _opt.sort_dicts(args, self.prop_attributes, -1)
+        # kwds = _opt.sort_dict(kwds, self.prop_attributes, -1)
         super().__init__(*args, **kwds)
 
     def set_disp_after(self, value: int) -> None:

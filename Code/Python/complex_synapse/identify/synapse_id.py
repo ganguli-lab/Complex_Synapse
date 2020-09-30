@@ -14,6 +14,7 @@ import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.containers as _cn
 import sl_py_tools.numpy_tricks.markov as _ma
 from sl_py_tools.graph_tricks import MultiDiGraph, param_to_graph
+from sl_py_tools.graph_plots import GraphPlots, GraphOptions
 
 import complex_synapse.builders as _bld
 import complex_synapse.synapse_base as _sb
@@ -271,12 +272,13 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
         readouts = self.readout[states]
         return _ps.SimPlasticitySequence(plast_seq, readouts, states, t_axis=0)
 
-    def plot(self, axs: Sequence[_ps.ImHandle], **kwds) -> List[_ps.Image]:
+    def plot(self, axs: Sequence[_ps.ImHandle],
+             graph: Optional[MultiDiGraph] = None, **kwds) -> List[_ps.Image]:
         """Plot heatmaps for initial and plast
 
         Parameters
         ----------
-        axs : Sequence[Image or Axes], (P+1,)
+        axs : Sequence[Image or Axes], (P+1,) or (P+2)
             Axes to plot on, or Images to update with new data
 
         Returns
@@ -290,10 +292,14 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
         trn = kwds.pop('trn', False)
         kwds.setdefault('norm', mpl.colors.Normalize(0., 1.))
         initial = self.initial.r if trn else self.initial.c
-        imh = [_ps.set_plot(axs[0], initial, **kwds)]
-        for axh, mat in zip(axs[1:], self.plast):
+        graph = self.to_graph(graph)
+        gopts = kwds.pop('gopts', None)
+        imh = []
+        imh.append(set_graph(axs[0], graph, gopts))
+        imh.append(_ps.set_plot(axs[1], initial, **kwds))
+        for axh, mat in zip(axs[2:], self.plast):
             imh.append(_ps.set_plot(axh, mat, **kwds))
-        return imh
+        return imh, graph
 
     def to_graph(self, graph: Optional[MultiDiGraph] = None) -> MultiDiGraph:
         """Create/modify a directed graph from a parameterised synapse model.
@@ -313,7 +319,7 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
         if graph is None:
             return param_to_graph(params, self.initial, self.readout, plasts)
         graph.set_node_attr('value', self.initial)
-        graph.set_edge_attr('value', params)
+        graph.set_edge_attr('value', params.ravel())
         return graph
 
     @classmethod
@@ -543,3 +549,28 @@ def set_elements(obj: SynapseIdModel, elems: np.ndarray) -> None:
         Concatenation of model's ravelled `plast` and `initial`.
     """
     obj.plast, obj.initial = _elements_to_mats(elems, obj.nstate, obj.nplast)
+
+
+def set_graph(handle: Union[mpl.axes.Axes, GraphPlots],
+              data: MultiDiGraph,
+              opts: Optional[GraphOptions]) -> GraphPlots:
+    """Set/update graph plot
+
+    Parameters
+    ----------
+    handle : Axes|GraphPlots
+        The axes to plot on or the previous plot.
+    data : MultiDiGraph
+        The graph to plot
+    opts : GraphOptions
+        Plot options
+
+    Returns
+    -------
+    graph_handle : GraphPlots
+        Object containing graph plots
+    """
+    if isinstance(handle, mpl.axes.Axes):
+        return GraphPlots(data, axs=handle, opts=opts)
+    handle.update_from(data)
+    return handle

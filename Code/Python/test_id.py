@@ -9,12 +9,13 @@ import numpy_linalg as la
 import complex_synapse as cs
 import complex_synapse.identify as idfy
 import sl_py_tools.matplotlib_tricks as mpt
-import sl_py_tools.iter_tricks as it
+# import sl_py_tools.iter_tricks as it
+import sl_py_tools.display_tricks as dt
 np.set_printoptions(precision=3, suppress=True, threshold=90)
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
 # %%
-opt = idfy.BaumWelchOptions(disp_step = 10, verbosity = 2 + 6 + 9)
+opt = idfy.BaumWelchOptions(disp_step=10, verbosity=2 + 6 + 9)
 true_model = idfy.SynapseIdModel.build(cs.builders.build_serial, 6, jmp=0.7)
 # %%
 opt.verbosity = 9
@@ -22,8 +23,20 @@ with np.load('test_fit.npz') as saved_file:
     saved = {**saved_file}
 vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
 old_fit = idfy.GroundedFitterReplay(saved, callback=vid, opt=opt)
+# vid(old_fit, 0)
+# %%
+# ani = idfy.animate(old_fit, blit=False)
+# plt.show()
+# %%
 ani = idfy.animate(old_fit, blit=False)
-plt.show()
+folder = 'C:/Users/subhy/Documents/videos/Fit/test/'
+writer = None
+# writer = mpla.FFMpegFileWriter(fps=2)
+# writer.setup(vid.fig, folder + 'fit_test.mp4',
+#              frame_prefix=folder + 'test_', clear_temp=False)
+# %%
+ani.save(folder + 'fit_test.mp4', writer=writer,
+         progress_callback=dt.FormattedTempDisplay("frame {:3d}/{:3d}"))
 # %%
 if __name__ != "__main__":
     # %%

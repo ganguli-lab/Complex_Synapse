@@ -5,8 +5,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sl_py_tools.matplotlib_tricks as mpt
+import sl_py_tools.display_tricks as dt
 import complex_synapse.optimise as cso
-np.set_printoptions(precision=2, suppress=True)
+np.set_printoptions(precision=2, suppress=True, threshold=90)
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
 # %%
@@ -15,3 +16,5 @@ obj = cso.video.EnvelopeFig(sss, envs[3], envs[1], mods[1], vmax=0.5)
 ani = cso.video.animate(obj)
 plt.show()
 # %%
+ani.save('C:/Users/subhy/Documents/videos/envelope.mp4',
+         progress_callback=dt.FormattedTempDisplay("frame {:3d}/{:3d}"))
