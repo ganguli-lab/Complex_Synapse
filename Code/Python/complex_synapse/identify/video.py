@@ -12,15 +12,14 @@ import numpy as np
 
 import sl_py_tools.arg_tricks as ag
 import sl_py_tools.containers as cn
-from sl_py_tools.graph_plots import GraphPlots, GraphOptions
-from sl_py_tools.graph_tricks import MultiDiGraph
+import sl_py_tools.graph_plots as gp
 import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
 import sl_py_tools.options_classes as op
+from sl_py_tools.graph_tricks import MultiDiGraph
 
 import complex_synapse.identify.fit_synapse as fs
 import complex_synapse.identify.plast_seq as ps
-# import complex_synapse.options as op
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
@@ -186,7 +185,7 @@ class VideoLayout(op.Options):
         self.dcols = (-1, slice(-1))
         # width: [c]olourbar, [g]raph, [i]nitial, [p]last, {data=sum-cbar}
         # height: [m]o[d]el, [p]last_type/[r]eadout, [st]ates
-        self.sizes = dict(c=1, g=5, i=2, p=12, pr=2, st=6, md=12, scale=0.3)
+        self.sizes = dict(c=1, g=6, i=2, p=12, pr=2, st=6, md=12, scale=0.3)
         self._transpose = False
         self._verbosity = 1
         # order = ('transpose', 'ground', 'npl', 'verbosity', 'fitter')
@@ -363,7 +362,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     ln_opt: Dict[str, Any]
     im_opt: mpt.ImageOptions
     an_opt: mpt.AnimationOptions
-    gr_opt: GraphOptions
+    gr_opt: gp.GraphOptions
 
     def __init__(self, *args, **kwds) -> None:
         self.txt = VideoLabels()
@@ -372,11 +371,12 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.im_opt = mpt.ImageOptions(trn=False)
         self.ax_opt = {'box': False, 'tight': False, 'trn': False}
         self.an_opt = mpt.AnimationOptions()
-        self.gr_opt = GraphOptions()
-        self.gr_opt.layout_args = ((0.0, -1.0), {})
+        self.gr_opt = gp.GraphOptions()
+
+        self.gr_opt.set_layout(gp.linear_layout, sep=(0.0, -1.0))
         self.gr_opt.node_style.mult = 1200
         self.gr_opt.edge_style.mult = 1.5
-        self.gr_opt.edge_style.mut_scale = 2
+        self.gr_opt.edge_style.mut_scale = 3
 
         self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
         # args = op.sort_dicts(args, ('transpose',), -1)
@@ -395,7 +395,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.txt.set_transpose(transpose)
         self.layout.set_transpose(transpose)
         sep = (1.0, 0.0) if transpose else (0.0, -1.0)
-        self.gr_opt.layout_args = (sep, {})
+        self.gr_opt.set_layout(gp.linear_layout, sep=sep)
 
     @property
     def transpose(self) -> bool:
@@ -458,9 +458,6 @@ class FitterPlots:
     inds : Inds
         Indices for `fitter.data` for snippet to plot. Must result in
         `fitter.data[ind].nexpt = ()`.
-    fname : str, optional
-        Strings for filenames - produced by `fname.format(frams_number)`,
-        by default `""`: don't save files.
     opt : VideoOptions, optional
         Choices for Axes labels, plot styles, etc.
     norm : Optional[Normalize], optional keyword
@@ -487,7 +484,6 @@ class FitterPlots:
         info: List[Text] - the display of the fitter's state
     """
     ind: ps.Inds
-    fname: str
     norm: mpl.colors.Normalize
     fig: Optional[Figure]
     axh: Dict[str, AxList]
@@ -495,8 +491,8 @@ class FitterPlots:
     grf: Dict[str, MultiDiGraph]
     opt: VideoOptions
 
-    def __init__(self, ind: ps.Inds, fname: str = "",
-                 opt: Optional[VideoOptions] = None, **kwds) -> None:
+    def __init__(self, ind: ps.Inds, opt: Optional[VideoOptions] = None,
+                 **kwds) -> None:
         """Video frame producing callback for SynapseFitter.
 
         Parameters
@@ -517,7 +513,6 @@ class FitterPlots:
         Other keywords passed to `self.opt.update`
         """
         self.ind = ind
-        self.fname = fname
         self.opt = ag.default(opt, VideoOptions())
         self.opt.update(kwds)
         self.norm = self.opt.im_opt.pop('norm')
@@ -542,20 +537,19 @@ class FitterPlots:
         if pos == 0:
             self.build(fitter)
             fs.print_callback(fitter, 0)
-            self.savefig(fitter.info['nit'])
         elif pos == 1:
             self.update_plots(fitter)
-            self.savefig(fitter.info['nit'])
         elif pos == 2:
             if fitter.info['nit'] % fitter.opt.disp_step:
                 self.update_plots(fitter)
-                self.savefig(fitter.info['nit'])
             fs.print_callback(fitter, 2)
 
         # self.fig.canvas.draw_idle()
         # plt.draw()
         # plt.show()
-        return self.updated()
+        if self.opt.an_opt.blit:
+            return self.updated()
+        return None
 
     @property
     def ground(self) -> bool:
@@ -675,11 +669,13 @@ class FitterPlots:
     def updated(self) -> List[Disp]:
         """The artists that are updated at each step
         """
-        out = self.imh['st'] + self.imh['fit'] + self.imh['ps'][2:]
+        out = self.imh['st'] + self.imh['fit'][1:] + self.imh['ps'][2:]
+        grf: gp.GraphPlots = self.imh['fit'][0]
+        out += [grf.nodes.collection] + list(grf.edges.values())
         out += self.imh.get('info', [])
         return out
 
-    def savefig(self, fileno: Union[None, int, str]) -> None:
+    def savefig(self, filename: str, *args, **kwds) -> None:
         """Save current figure as a file
 
         Parameters
@@ -687,8 +683,7 @@ class FitterPlots:
         fileno : int, str or None
             Identifier for video frame to save. Passed to `self.fname.format`.
         """
-        if self.fname:
-            self.fig.savefig(self.fname.format(fileno))
+        self.fig.savefig(filename, *args, **kwds)
 
 
 # =============================================================================
@@ -959,6 +954,6 @@ class TransposeGridSpec:
 # =============================================================================
 Figure = mpl.figure.Figure
 GridSpec = mpl.gridspec.GridSpec
-Disp = Union[mpl.lines.Line2D, ps.Image, mpl.text.Text, GraphPlots]
+Disp = Union[mpl.lines.Line2D, ps.Image, mpl.text.Text, gp.GraphPlots]
 TxHandle = Union[mpl.axes.Axes, mpl.text.Text]
 AxList = List[mpl.axes.Axes]

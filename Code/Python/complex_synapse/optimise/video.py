@@ -17,11 +17,10 @@ import sl_py_tools.matplotlib_tricks as mpt
 import sl_py_tools.graph_plots as gp
 import sl_py_tools.options_classes as op
 
-# import complex_synapse.graphs as gr
-# import complex_synapse.options as op
 import complex_synapse.synapse_mem as sm
 import complex_synapse.optimise.synapse_opt as so
 from .plot import GraphPlots, serial_eqp
+from .optimise import proven_envelope_laplace
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
@@ -527,9 +526,6 @@ class EnvelopeFig:
     ----------
     rate : la.lnarray (T,)
         Rate parameter of Laplace transform (stored as `time = 1/rate`)
-    env_th : la.lnarray (T,)
-        Theoretical Laplacian envelope (stored as exponential running average,
-        `env_th -> env_th * rate`)
     env_num : la.lnarray (T,)
         Numerical Laplacian envelope (stored as exponential running average,
         `env_num -> env_num * rate`)
@@ -537,6 +533,7 @@ class EnvelopeFig:
         Parameters of serial models that form envelope, in the order
         mat_01, mat_12, ..., mat_n-2,n-1,
         mat_10, mat_21, ..., mat_n-1,n-2.
+    Other keywords passed to `VideoOptions`.
     """
     time: la.lnarray
     env_th: la.lnarray
@@ -546,17 +543,14 @@ class EnvelopeFig:
     model_plots: ModelPlots
     opt: VideoOptions
 
-    def __init__(self, rate: la.lnarray, env_th: la.lnarray,
-                 env_num: la.lnarray, models: la.lnarray, **kwds) -> None:
+    def __init__(self, rate: la.lnarray, env_num: la.lnarray,
+                 models: la.lnarray, **kwds) -> None:
         """Data and figure objects for an envelope plot
 
         Parameters
         ----------
         rate : la.lnarray (T,)
             Rate parameter of Laplace transform (stored as `time = 1/rate`)
-        env_th : la.lnarray (T,)
-            Theoretical Laplacian envelope (stored as exponential running
-            average, `env_th -> env_th * rate`)
         env_num : la.lnarray (T,)
             Numerical Laplacian envelope (stored as exponential running
             average, `env_num -> env_num * rate`)
@@ -567,10 +561,10 @@ class EnvelopeFig:
         """
         self.opt = kwds.pop('opt', VideoOptions())
         self.opt.pop_my_args(kwds)
-        self.time = 1 / rate
-        self.env_th = env_th * rate
-        self.env_num = env_num * rate
         self.models = models
+        self.time = 1 / rate
+        self.env_num = env_num * rate
+        self.env_th = proven_envelope_laplace(rate, self.nstate) * rate
         if self.time[0] > self.time[-1]:
             self.flip()
 

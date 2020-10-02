@@ -1,6 +1,8 @@
+# -*- coding: utf-8 -*-
 """Test script for synapse identification
 """
 # %%
+from pathlib import Path
 import numpy as np
 import matplotlib as mpl
 import matplotlib.animation as mpla
@@ -23,20 +25,26 @@ with np.load('test_fit.npz') as saved_file:
     saved = {**saved_file}
 vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
 old_fit = idfy.GroundedFitterReplay(saved, callback=vid, opt=opt)
+folder = Path('~/Documents/videos').expanduser()
+# %%
 # vid(old_fit, 0)
+# vid.fig.savefig(folder / 'identification_frame.pdf')
+# plt.draw()
 # %%
 # ani = idfy.animate(old_fit, blit=False)
 # plt.show()
 # %%
-ani = idfy.animate(old_fit, blit=False)
-folder = 'C:/Users/subhy/Documents/videos/Fit/test/'
-writer = None
-# writer = mpla.FFMpegFileWriter(fps=2)
-# writer.setup(vid.fig, folder + 'fit_test.mp4',
-#              frame_prefix=folder + 'test_', clear_temp=False)
-# %%
-ani.save(folder + 'fit_test.mp4', writer=writer,
-         progress_callback=dt.FormattedTempDisplay("frame {:3d}/{:3d}"))
+# ani = idfy.animate(old_fit, blit=False)
+# folder = Path('~/Documents/videos').expanduser()
+# writer = None
+# writer = mpt.FileSeqWriter(fps=2)
+# fname = str(folder / 'identification/test_.pdf')
+# writer.setup(vid.fig, fname, ndigit=3)
+# writer = mpla.FFMpegWriter(fps=2)
+# fname = str(folder / 'identification.mp4')
+# writer.setup(vid.fig, fname)
+# ani.save(fname, writer=writer, progress_callback=dt.FormattedTempDisplay(
+#     "frame {:3d}/{:3d}"))
 # %%
 if __name__ != "__main__":
     # %%

@@ -12,9 +12,9 @@ mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
 # %%
 nst, sss, opts, envs, mods = cso.plot.load_data()
-obj = cso.video.EnvelopeFig(sss, envs[3], envs[1], mods[1], vmax=0.5)
+obj = cso.video.EnvelopeFig(sss, envs[1], mods[1], vmax=0.5)
 ani = cso.video.animate(obj)
 plt.show()
 # %%
-ani.save('C:/Users/subhy/Documents/videos/envelope.mp4',
+ani.save('~/Documents/videos/envelope.mp4',
          progress_callback=dt.FormattedTempDisplay("frame {:3d}/{:3d}"))

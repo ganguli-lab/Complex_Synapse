@@ -9,8 +9,9 @@ import matplotlib.pyplot as plt
 import numpy_linalg as la
 import complex_synapse as cs
 import complex_synapse.optimise as cso
-import complex_synapse.graphs as csg
 import complex_synapse.optimise.plot as csp
+import sl_py_tools.graph_tricks as gt
+import sl_py_tools.graph_plots as gp
 import sl_py_tools.matplotlib_tricks as mpt
 from sl_py_tools.time_tricks import time_with
 np.set_printoptions(precision=2, suppress=True)
@@ -33,6 +34,6 @@ obj.update(40)
 # %%
 serial = cs.optimise.SynapseParamModel.rand(
     6, serial=True, directions=(1, -1), binary=True)
-graph = csg.param_model_to_graph(serial)
-nodes, edges = csg.draw_graph(graph)
+graph = gt.param_model_to_graph(serial)
+grplot = gp.GraphPlots(graph)
 # %%
