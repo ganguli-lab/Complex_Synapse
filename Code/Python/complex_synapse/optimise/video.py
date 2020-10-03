@@ -3,7 +3,7 @@
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List, Sequence, Tuple, Union
+from typing import Dict, List, Sequence, Tuple, Union
 
 import matplotlib as mpl
 import matplotlib.animation as mpla
@@ -236,7 +236,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     # Graph
     graph: gp.GraphOptions
     # keyword options
-    ax_opt: Dict[str, Any]
+    ax_opt: mpt.AxesOptions
     im_opt: mpt.ImageOptions
     an_opt: mpt.AnimationOptions
 
@@ -244,11 +244,10 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.txt = VideoLabels()
         self.layout = VideoLayout()
         self.graph = gp.GraphOptions()
-        self.ax_opt = {'box': False, 'tight': False}
+        self.ax_opt = mpt.AxesOptions(box=False, tight=False)
         self.im_opt = mpt.ImageOptions(edgecolors='black')
         self.an_opt = mpt.AnimationOptions()
 
-        self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
         super().__init__(*args, **kwds)
 # pylint: enable=too-many-ancestors
 

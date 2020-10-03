@@ -64,7 +64,7 @@ class VideoLabels(op.Options):
     be valid keys, otherwise a `KeyError` is raised.
     """
     prop_attributes: op.Attrs = ('transpose',)
-    key_order: op.Attrs = ('transpose',)
+    key_last: op.Attrs = ('transpose',)
     # Text for labels
     plast_type: List[str]
     readout: List[str]
@@ -165,7 +165,7 @@ class VideoLayout(op.Options):
     """
     map_attributes: op.Attrs = ('sizes',)
     prop_attributes: op.Attrs = ('transpose', 'ground', 'npl', 'verbosity')
-    key_order: op.Attrs = ('transpose', 'ground', 'npl', 'verbosity', 'fitter')
+    key_last: op.Attrs = ('transpose', 'ground', 'npl', 'verbosity', 'fitter')
     # row/column assignments for models/data
     mrows: ps.Inds
     mcols: ps.Inds
@@ -352,13 +352,13 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     """
     map_attributes: op.Attrs = ('txt', 'layout', 'ln_opt', 'im_opt', 'ax_opt')
     prop_attributes: op.Attrs = ('transpose',)
-    key_order: op.Attrs = ('transpose',)
+    key_last: op.Attrs = ('transpose',)
     # Text for labels
     txt: VideoLabels
     # Layout
     layout: VideoLayout
     # keyword options
-    ax_opt: Dict[str, Any]
+    ax_opt: mpt.AxesOptions
     ln_opt: Dict[str, Any]
     im_opt: mpt.ImageOptions
     an_opt: mpt.AnimationOptions
@@ -369,7 +369,8 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.layout = VideoLayout()
         self.ln_opt = {}
         self.im_opt = mpt.ImageOptions(trn=False)
-        self.ax_opt = {'box': False, 'tight': False, 'trn': False}
+        self.ax_opt = mpt.AxesOptions(box=False, tight=False)
+        self.ax_opt.trn = False
         self.an_opt = mpt.AnimationOptions()
         self.gr_opt = gp.GraphOptions()
 
@@ -378,9 +379,6 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.gr_opt.edge_style.mult = 1.5
         self.gr_opt.edge_style.mut_scale = 3
 
-        self.ax_opt.update(mpt.clean_axes_keys(self.ax_opt))
-        # args = op.sort_dicts(args, ('transpose',), -1)
-        # kwds = op.sort_dict(kwds, ('transpose',), -1)
         super().__init__(*args, **kwds)
 
     def set_transpose(self, transpose: Optional[bool]) -> None:

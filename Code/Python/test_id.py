@@ -29,20 +29,16 @@ folder = Path('~/Documents/videos').expanduser()
 # %%
 # vid(old_fit, 0)
 # vid.fig.savefig(folder / 'identification_frame.pdf')
-# plt.draw()
+# %%
+ani = idfy.animate(old_fit, blit=False)
+plt.show()
 # %%
 # ani = idfy.animate(old_fit, blit=False)
-# plt.show()
-# %%
-# ani = idfy.animate(old_fit, blit=False)
-# folder = Path('~/Documents/videos').expanduser()
-# writer = None
 # writer = mpt.FileSeqWriter(fps=2)
 # fname = str(folder / 'identification/test_.pdf')
 # writer.setup(vid.fig, fname, ndigit=3)
 # writer = mpla.FFMpegWriter(fps=2)
 # fname = str(folder / 'identification.mp4')
-# writer.setup(vid.fig, fname)
 # ani.save(fname, writer=writer, progress_callback=dt.FormattedTempDisplay(
 #     "frame {:3d}/{:3d}"))
 # %%
@@ -66,8 +62,7 @@ if __name__ != "__main__":
     fitter.run()
     # %%
     fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
-    vid = idfy.FitterPlots(
-        np.s_[:100, 0], 'C:/Users/subhy/Documents/videos/Fit/fit_{:03d}.png')
+    vid = idfy.FitterPlots(np.s_[:100, 0])
     fitter.run(vid)
     # %%
     vo = idfy.VideoOptions()

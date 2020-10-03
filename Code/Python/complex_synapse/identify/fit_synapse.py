@@ -156,7 +156,7 @@ class SynapseFitOptions(_opt.Options):
     They are related to `verbose` as `verbose = after + 3 * before + 9 * each`.
     """
     prop_attributes: _opt.Attrs = ('disp_after', 'disp_before', 'disp_each')
-    key_order: _opt.Attrs = ('disp_after', 'disp_before', 'disp_each')
+    key_last: _opt.Attrs = ('disp_after', 'disp_before', 'disp_each')
     # Absolute tolerance for `dmodel`.
     atolx: float
     # Absolute tolerance for `dlike`.

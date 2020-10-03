@@ -278,8 +278,9 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
 
         Parameters
         ----------
-        axs : Sequence[Image or Axes], (P+1,) or (P+2)
-            Axes to plot on, or Images to update with new data
+        axs : Sequence[Image or Axes], (P+2)
+            Axes to plot on, or Images to update with new data, in order
+            `[graph, initial, plast_1, ..., plast_P]`.
 
         Returns
         -------

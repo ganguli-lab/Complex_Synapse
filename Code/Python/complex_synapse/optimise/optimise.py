@@ -62,7 +62,7 @@ class ModelOptions(_opt.Options):
     """
     map_attributes: _opt.Attrs = ('topology',)
     prop_attributes: _opt.Attrs = ('frac', 'npl', 'nst', 'npar')
-    key_order: _opt.Attrs = ('frac', 'npl', 'nst', 'npar')
+    key_last: _opt.Attrs = ('frac', 'npl', 'nst', 'npar')
     # topology specifying options
     topology: _so.TopologyOptions
     # Is the weight vector binary?
@@ -206,7 +206,7 @@ class ProblemOptions(_opt.Options):
     be valid keys, otherwise a `KeyError` is raised.
     """
     prop_attributes: _opt.Attrs = ('hess', 'cond_lim')
-    key_order: _opt.Attrs = ('hess', 'cond_lim')
+    key_last: _opt.Attrs = ('hess', 'cond_lim')
     # Ensure constraints are kept at intermediate steps?
     keep_feasible: bool
     # Include condition number when checking if model is well behaved?
@@ -312,7 +312,7 @@ class OptimOptions(_opt.MasterOptions, fallback='extra'):
     """
     map_attributes: _opt.Attrs = ('model_opts', 'problem_opts', 'extra')
     prop_attributes: _opt.Attrs = ('method',)
-    key_order: _opt.Attrs = (ModelOptions.key_order + ProblemOptions.key_order
+    key_last: _opt.Attrs = (ModelOptions.key_last + ProblemOptions.key_last
                              + ('method', 'maker'))
     model_opts: ModelOptions
     problem_opts: ProblemOptions
