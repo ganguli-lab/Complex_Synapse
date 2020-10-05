@@ -14,7 +14,6 @@ import numpy as np
 import sl_py_tools.arg_tricks as ag
 import sl_py_tools.containers as cn
 import sl_py_tools.graph_plots as gp
-import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
 import sl_py_tools.options_classes as op
 from sl_py_tools.graph_tricks import MultiDiGraph
@@ -440,7 +439,7 @@ def animate(fitter: fs.SynapseFitter, **kwargs) -> mpla.FuncAnimation:
     _log.debug("Calling build before creating animation")
     fitter.callback.build(fitter)
     kwargs.setdefault('init_func', fitter.init)
-    kwargs.setdefault('frames', it.erange(fitter.opt.max_it))
+    kwargs.setdefault('frames', fitter.opt.max_it)
     opt = fitter.callback.opt.an_opt.copy()
     opt.update(kwargs)
     _log.debug("Creating animation")
@@ -655,9 +654,9 @@ class FitterPlots:
             self._make_fig()
             self._create_plots(fitter)
             self._format_axes()
-            self.fig.canvas.draw_idle()
-        else:
-            self._info_axes()
+            # self.fig.canvas.draw_idle()
+        # else:
+        #     self._info_axes()
         # self.fig.set_constrained_layout(False)
 
     def update_plots(self, fitter: fs.SynapseFitter) -> None:
@@ -669,6 +668,8 @@ class FitterPlots:
             Object performing fit whose state we update.
         """
         _log.debug("update plots")
+        if self.imh['info'][0].get_in_layout():
+            self._info_axes()
         trn, verbose = self.opt.transpose, self.opt.layout.verbosity
         fitter.plot_occ(self.imh['st'][0], self.ind, trn=trn)
         fitter.est.plot(self.imh['fit'], self.grf['fit'], trn=trn)
@@ -679,9 +680,7 @@ class FitterPlots:
         """The artists that are updated at each step
         """
         out = self.imh['st'] + self.imh['fit'][1:] + self.imh['ps'][2:]
-        grf: gp.GraphPlots = self.imh['fit'][0]
-        out += [grf.nodes.collection] + list(grf.edges.values())
-        out += self.imh.get('info', [])
+        out += self.imh['fit'][0].collection + self.imh.get('info', [])
         return out
 
     def savefig(self, filename: str, *args, **kwds) -> None:
@@ -895,12 +894,14 @@ def _model_axes(fig: Figure, gsp: GridSpec, row: int, cols: Sequence[int]
     cols : Sequence[int] (4,)
         which column for (colourbar, initial, first,last+1 plasticity matrices)
     """
+    mdl = 'fit' if row else 'truth'
     shared = 'x' if isinstance(gsp, TransposeGridSpec) else 'y'
-    cax = fig.add_subplot(gsp[row, cols[0]])
-    gax = fig.add_subplot(gsp[row, cols[1]])
-    iax = fig.add_subplot(gsp[row, cols[2]])
+    cax = fig.add_subplot(gsp[row, cols[0]], label=f"{mdl}-cbar")
+    gax = fig.add_subplot(gsp[row, cols[1]], label=f"{mdl}-graph")
+    iax = fig.add_subplot(gsp[row, cols[2]], label=f"{mdl}-init")
     share = {'share' + shared: iax}
-    pax = [fig.add_subplot(gsp[row, i], **share) for i in cols[3:]]
+    pax = [fig.add_subplot(gsp[row, i], label=f"{mdl}-plast[{i-1}]", **share)
+           for i in cols[3:]]
     return [cax, gax, iax] + pax
 
 
@@ -914,13 +915,13 @@ def _data_axes(fig: Figure, gsp: GridSpec, rows: ps.Inds, cols: ps.Inds
         which column for (legend, heatmap)
     """
     shared = 'y' if isinstance(gsp, TransposeGridSpec) else 'x'
-    cpax = fig.add_subplot(gsp[rows[0], cols[0]])
-    crax = fig.add_subplot(gsp[rows[1], cols[0]])
-    csax = fig.add_subplot(gsp[rows[2], cols[0]])
-    pax = fig.add_subplot(gsp[rows[0], cols[1]])
+    cpax = fig.add_subplot(gsp[rows[0], cols[0]], label="plast_type legend")
+    crax = fig.add_subplot(gsp[rows[1], cols[0]], label="readout legend")
+    csax = fig.add_subplot(gsp[rows[2], cols[0]], label="state legend")
+    pax = fig.add_subplot(gsp[rows[0], cols[1]], label="plast_type")
     share = {'share' + shared: pax}
-    rax = fig.add_subplot(gsp[rows[1], cols[1]], **share)
-    sax = fig.add_subplot(gsp[rows[2], cols[1]], **share)
+    rax = fig.add_subplot(gsp[rows[1], cols[1]], label="readout", **share)
+    sax = fig.add_subplot(gsp[rows[2], cols[1]], label="state", **share)
     return [cpax, pax, crax, rax, csax, sax]
 
 

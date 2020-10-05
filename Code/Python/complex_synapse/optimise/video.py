@@ -12,7 +12,6 @@ import numpy as np
 
 import numpy_linalg as la
 # import sl_py_tools.containers as cn
-import sl_py_tools.iter_tricks as it
 import sl_py_tools.matplotlib_tricks as mpt
 import sl_py_tools.graph_plots as gp
 import sl_py_tools.options_classes as op
@@ -273,12 +272,13 @@ def _make_fig(opt: VideoLayout) -> Tuple[Figure, AxList]:
     gsp = fig.add_gridspec(*gsiz, **kwargs)
     fig.set_constrained_layout_pads(hpad=0, hspace=0)
 
-    ax_snr = fig.add_subplot(gsp[opt.ax_pos['snr']])
-    ax_eqp = fig.add_subplot(gsp[opt.ax_pos['eqp']])
-    ax_pot = fig.add_subplot(gsp[opt.ax_pos['pot']], sharex=ax_eqp)
-    ax_dep = fig.add_subplot(gsp[opt.ax_pos['dep']], sharex=ax_eqp)
-    ax_cbr = fig.add_subplot(gsp[opt.ax_pos['cbr']])
-    ax_grf = fig.add_subplot(gsp[opt.ax_pos['grf']])
+    ax_snr = fig.add_subplot(gsp[opt.ax_pos['snr']], label="SNR")
+    ax_eqp = fig.add_subplot(gsp[opt.ax_pos['eqp']], label="Steady-state")
+    share = {'sharex': ax_eqp}
+    ax_pot = fig.add_subplot(gsp[opt.ax_pos['pot']], label="pot", **share)
+    ax_dep = fig.add_subplot(gsp[opt.ax_pos['dep']], label="dep", **share)
+    ax_cbr = fig.add_subplot(gsp[opt.ax_pos['cbr']], label="cbar")
+    ax_grf = fig.add_subplot(gsp[opt.ax_pos['grf']], label="graph")
 
     return fig, [ax_snr, ax_eqp, ax_cbr, ax_pot, ax_dep, ax_grf]
 
@@ -474,6 +474,13 @@ class ModelPlots:
         self.update_potdep(pot, dep)
         self.graph.update(np.r_[pot, dep], eqp)
 
+    def updated(self) -> List[mpl.artist.Artist]:
+        """The artists that are updated at each step.
+        """
+        out = [self.lnh, self.vln, self.imh, self.brp, self.brd]
+        out += self.graph.collection
+        return out
+
     @classmethod
     def from_data(cls, axs: AxList, time: la.lnarray, model: la.lnarray,
                   tau: float, **kwds) -> ModelPlots:
@@ -644,7 +651,7 @@ def animate(env_fig: EnvelopeFig, **kwargs) -> mpla.FuncAnimation:
     See <https://matplotlib.org/api/animation_api.html>.
     """
     kwargs.setdefault('init_func', None)
-    kwargs.setdefault('frames', it.erange(env_fig.ntime))
+    kwargs.setdefault('frames', env_fig.ntime)
     opt = env_fig.opt.an_opt.copy()
     opt.update(kwargs)
     return mpla.FuncAnimation(env_fig.fig, env_fig.update, **opt)
