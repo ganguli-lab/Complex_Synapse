@@ -22,7 +22,10 @@ plt.show()
 # ani.save(str(folder / 'envelope.mp4'),
 #          progress_callback=dt.FormattedTempDisplay("frame {:3d}/{:3d}"))
 # %%
+# ani.save(str(folder / 'envelope.pdf'), 'pdf_pages',
+#          progress_callback=dt.FormattedTempDisplay("frame {:3d}/{:3d}"))
+# %%
 # writer = mpt.FileSeqWriter(fps=2)
 # writer.setup(obj.fig, str(folder / 'envelope/test_.pdf'), None, 2)
-# ani.save(folder / 'envelope/test_.pdf',
+# ani.save(folder / 'envelope/test_.pdf', writer,
 #          progress_callback=dt.FormattedTempDisplay("frame {:3d}/{:3d}"))

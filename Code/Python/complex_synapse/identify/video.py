@@ -3,6 +3,7 @@
 """
 from __future__ import annotations
 
+import logging
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 import matplotlib as mpl
@@ -23,6 +24,7 @@ import complex_synapse.identify.plast_seq as ps
 
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
+_log = logging.getLogger(__name__)
 # =============================================================================
 # Fitter video options classes
 # =============================================================================
@@ -30,7 +32,7 @@ mpt.rc_fonts('sans-serif')
 
 # pylint: disable=too-many-ancestors
 class VideoLabels(op.Options):
-    """Tiles, axes labels, etc. for `FitterPlots`
+    """Tiles, axes labels, etc. for `FitterPlots`.
 
     The individual options can be accessed as object instance attributes
     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
@@ -85,7 +87,7 @@ class VideoLabels(op.Options):
         super().__init__(*args, **kwds)
 
     def model_labs(self, ind: ps.Inds) -> Tuple[List[str], List[str]]:
-        """Labels for a model's heatmaps"""
+        """Labels for a model's heatmaps."""
         return cn.listify(self.model[ind]) + self.plast[0], self.plast[1]
 
     def set_transpose(self, transpose: Optional[bool]) -> None:
@@ -118,7 +120,7 @@ class VideoLabels(op.Options):
 
 # pylint: disable=too-many-ancestors
 class VideoLayout(op.Options):
-    """Axes sizes, positions etc. for `FitterPlots`
+    """Axes sizes, positions etc. for `FitterPlots`.
 
     The individual options can be accessed as object instance attributes
     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
@@ -127,13 +129,13 @@ class VideoLayout(op.Options):
     Parameters
     ----------
     mrows : Sequence[int] (2,)
-        which row for [estimated model, true model]
+        which row for [estimated model, true model].
     mcols : Sequence[int] (4,)
         which column for [colourbar, initial, first,last+1 plasticity matrices]
     drows : Sequence[int] (3,)
-        rows for (plast_type, readout, states),
+        rows for (plast_type, readout, states).
     dcol : Sequence[int or slice] (2,)
-        cols for (legend, plot)
+        cols for (legend, plot).
     sizes : Dict[str, float]
         Grid size ratios for various axes.
         Widths (for model) - c: colourbar, i: `initial`, p: `plast`,
@@ -204,7 +206,7 @@ class VideoLayout(op.Options):
             setattr(self, key, cn.tuplify(getattr(self, key)))
 
     def grid_ratios(self) -> Tuple[List[int], List[int]]:
-        """Ratios of row heights and column widths
+        """Ratios of row heights and column widths.
 
         Returns
         -------
@@ -224,7 +226,7 @@ class VideoLayout(op.Options):
 
     def gspec_opts(self) -> Tuple[Tuple[float, float], Tuple[int, int],
                                   Dict[str, List[int]]]:
-        """Options for creating a Figure and GridSpec"""
+        """Options for creating a `Figure` and `GridSpec`."""
         keys = ['height_ratios', 'width_ratios']
         ratios = self.grid_ratios()
 
@@ -233,7 +235,7 @@ class VideoLayout(op.Options):
         return fsiz, gsiz, kwargs
 
     def set_transpose(self, transpose: Optional[bool]) -> None:
-        """Choose whether to swap rows and columns
+        """Choose whether to swap rows and columns.
 
         Does nothing if `transpose` is `None`.
 
@@ -266,7 +268,7 @@ class VideoLayout(op.Options):
             self.mcols = self.mcols[:3] + tuple(self.mcols[3] + np.arange(npl))
 
     def set_verbosity(self, verbose: Optional[int]) -> None:
-        """Choose whether to display verbose information
+        """Choose whether to display verbose information.
 
         Does nothing if `verbose` is `None`.
         """
@@ -275,7 +277,7 @@ class VideoLayout(op.Options):
         self._verbosity = verbose
 
     def set_fitter(self, fitter: Optional[fs.SynapseFitter]) -> None:
-        """Set `npl`, `ground` and `verbose` from a `SynapseFitter`
+        """Set `npl`, `ground` and `verbose` from a `SynapseFitter`.
 
         Does nothing if `fitter` is `None`.
         """
@@ -309,7 +311,7 @@ class VideoLayout(op.Options):
 
 # pylint: disable=too-many-ancestors
 class VideoOptions(op.MasterOptions, fallback='im_opt'):
-    """Visual options for `FitterPlots`
+    """Visual options for `FitterPlots`.
 
     The individual options can be accessed as object instance attributes
     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
@@ -375,14 +377,14 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.gr_opt = gp.GraphOptions()
 
         self.gr_opt.set_layout(gp.linear_layout, sep=(0.0, -1.0))
-        self.gr_opt.node_style.mult = 1200
+        self.gr_opt.node_style.mult = 800
         self.gr_opt.edge_style.mult = 1.5
         self.gr_opt.edge_style.mut_scale = 3
 
         super().__init__(*args, **kwds)
 
     def set_transpose(self, transpose: Optional[bool]) -> None:
-        """Choose whether to swap rows and columns
+        """Choose whether to swap rows and columns.
 
         Does nothing if `transpose` is `None`.
         """
@@ -413,7 +415,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
 
 
 def animate(fitter: fs.SynapseFitter, **kwargs) -> mpla.FuncAnimation:
-    """Animate a fitter video
+    """Animate a fitter video.
 
     Parameters
     ----------
@@ -429,17 +431,19 @@ def animate(fitter: fs.SynapseFitter, **kwargs) -> mpla.FuncAnimation:
     ani : FuncAnimation
         The animation.
 
-    To view the animation call `plt.show()`. To save a video, call `ani.save()`
-    (see https://matplotlib.org/api/_as_gen/matplotlib.animation.Animation.html
-    #matplotlib.animation.Animation.save)
+    To view the animation call `plt.show()`.
+    To save a video, call `ani.save(...)`.
+    See <https://matplotlib.org/api/animation_api.html>.
     """
     if not isinstance(fitter.callback, FitterPlots):
         raise TypeError
+    _log.debug("Calling build before creating animation")
     fitter.callback.build(fitter)
     kwargs.setdefault('init_func', fitter.init)
     kwargs.setdefault('frames', it.erange(fitter.opt.max_it))
     opt = fitter.callback.opt.an_opt.copy()
     opt.update(kwargs)
+    _log.debug("Creating animation")
     return mpla.FuncAnimation(fitter.callback.fig, fitter.step, **opt)
 
 
@@ -491,7 +495,7 @@ class FitterPlots:
 
     def __init__(self, ind: ps.Inds, opt: Optional[VideoOptions] = None,
                  **kwds) -> None:
-        """Video frame producing callback for SynapseFitter.
+        """Video frame producing callback for `SynapseFitter`.
 
         Parameters
         ----------
@@ -541,6 +545,7 @@ class FitterPlots:
             if fitter.info['nit'] % fitter.opt.disp_step:
                 self.update_plots(fitter)
             fs.print_callback(fitter, 2)
+            _log.debug("Final callback")
 
         # self.fig.canvas.draw_idle()
         # plt.draw()
@@ -556,6 +561,7 @@ class FitterPlots:
 
     def _make_fig(self) -> None:
         """Create the figure and axes for the video frames"""
+        _log.debug("Create figure and axes")
         figax = vid_fig(self.opt.layout)
         self.fig, psax, self.axh['fit'], self.axh['tr'] = figax
         # All PlasticitySequence main plots
@@ -577,6 +583,7 @@ class FitterPlots:
         fitter : SynapseFitter
             Object performing fit whose state we display.
         """
+        _log.debug("Create plots")
         mdo = {**self.opt.im_opt, 'zorder': 0, 'norm': self.norm}
         pso = {**self.opt.im_opt, 'zorder': 10, 'nplast': fitter.est.nplast,
                'nreadout': fitter.est.nreadout, 'line_opts': self.opt.ln_opt}
@@ -588,11 +595,12 @@ class FitterPlots:
         self.imh['ps'] = fitter.data[self.ind].plot(self.axh['ps'], **pso)
 
         mdo['gopts'] = self.opt.gr_opt
-        self.imh['fit'], self.grf['fit'] = fitter.est.plot(self.axh['fit'][1:],
-                                                           **mdo)
+        (self.imh['fit'],
+         self.grf['fit']) = fitter.est.plot(self.axh['fit'][1:], **mdo)
 
         if self.ground:
-            self.imh['tr'], self.grf['tr'] = fitter.truth.plot(self.axh['tr'][1:], **mdo)
+            (self.imh['tr'],
+             self.grf['tr']) = fitter.truth.plot(self.axh['tr'][1:], **mdo)
 
         if verbose:
             self.imh['info'] = [write_info(format(fitter, f'tex0,{verbose}'),
@@ -603,6 +611,7 @@ class FitterPlots:
 
         Should only be called after `create_plots`.
         """
+        _log.debug("Format axes, except info")
         ft_lab, tr_lab = self.opt.txt.model_labs(0), self.opt.txt.model_labs(1)
         lbo = self.opt.ax_opt
 
@@ -621,6 +630,7 @@ class FitterPlots:
 
         Should be called after first `draw`.
         """
+        _log.debug('resizing info axes')
         if self.opt.layout.verbosity:
             # txt_bbox = self.imh['info'][0].get_window_extent().frozen()
             # transf = self.fig.transFigure.inverted()
@@ -658,6 +668,7 @@ class FitterPlots:
         obj : SynapseFitter
             Object performing fit whose state we update.
         """
+        _log.debug("update plots")
         trn, verbose = self.opt.transpose, self.opt.layout.verbosity
         fitter.plot_occ(self.imh['st'][0], self.ind, trn=trn)
         fitter.est.plot(self.imh['fit'], self.grf['fit'], trn=trn)
@@ -678,8 +689,8 @@ class FitterPlots:
 
         Parameters
         ----------
-        fileno : int, str or None
-            Identifier for video frame to save. Passed to `self.fname.format`.
+        filename : int, str or None
+            Name of file to save.
         """
         self.fig.savefig(filename, *args, **kwds)
 

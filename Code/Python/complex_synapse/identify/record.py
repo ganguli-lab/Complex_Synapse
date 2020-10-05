@@ -2,6 +2,7 @@
 """
 from __future__ import annotations
 
+import logging
 from typing import Any, Dict, List, Optional
 
 # import numpy as np
@@ -15,6 +16,7 @@ import complex_synapse.identify.synapse_id as _si
 import complex_synapse.identify.fit_synapse as _fs
 import complex_synapse.synapse_base as _sb
 
+_log = logging.getLogger(__name__)
 # =============================================================================
 
 
@@ -190,6 +192,7 @@ class FitterReplay(_fs.SynapseFitter):
         output : Any
             Whatever the callback returns.
         """
+        _log.debug("Calling fitter.init")
         self._ind = 0
         self.info['result'] = 0
         self.update_fit()
@@ -214,7 +217,9 @@ class FitterReplay(_fs.SynapseFitter):
         self.update_info()
         if self._ind == self.opt.max_it - 1:
             self.info['result'] = int(self.check_thresh())
+            _log.debug("Calling last fitter.step(%d)", step_num)
             return self.callback(self, 2)
+        _log.debug("Calling fitter.step(%d)", step_num)
         return self.callback(self, 1)
 
 

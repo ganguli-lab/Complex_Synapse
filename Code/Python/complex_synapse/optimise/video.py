@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Creating video frames for optimal serial models
+"""Creating video frames for optimal serial models.
 """
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ mpt.rc_fonts('sans-serif')
 
 
 def serial_snr(param: la.lnarray, tau: la.lnarray) -> la.lnarray:
-    """Signal-to-noise ratio, averaged over exponential distribution in time
+    """Signal-to-noise ratio, averaged over exponential distribution in time.
 
     Parameters
     ----------
@@ -44,7 +44,7 @@ def serial_snr(param: la.lnarray, tau: la.lnarray) -> la.lnarray:
     Returns
     -------
     snr : la.lnarray (T,)
-        Signal-to-noise ratio
+        Signal-to-noise ratio.
     """
     topology = so.TopologyOptions(serial=True)
     obj = so.SynapseParamModel.from_params(
@@ -53,7 +53,7 @@ def serial_snr(param: la.lnarray, tau: la.lnarray) -> la.lnarray:
 
 
 def trim_params(param: la.lnarray) -> Tuple[la.lnarray]:
-    """Set transition probability between orphaned states to zero
+    """Set transition probability between orphaned states to zero.
 
     Parameters
     ----------
@@ -66,7 +66,7 @@ def trim_params(param: la.lnarray) -> Tuple[la.lnarray]:
     -------
     pot : la.lnarray (M-1,)
         Transition probabilities for potentiation, in the order
-        mat_01, mat_12, ..., mat_n-2,n-1,
+        mat_01, mat_12, ..., mat_n-2,n-1.
     dep : la.lnarray (M-1,)
         Transition probabilities for depression, in the order
         mat_10, mat_21, ..., mat_n-1,n-2.
@@ -95,7 +95,7 @@ def trim_params(param: la.lnarray) -> Tuple[la.lnarray]:
 
 # pylint: disable=too-many-ancestors
 class VideoLabels(op.Options):
-    """Tiles, axes labels, etc. for EnvelopeFig
+    """Tiles, axes labels, etc. for `EnvelopeFig`.
 
     The individual options can be accessed as object instance attributes
     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
@@ -114,7 +114,7 @@ class VideoLabels(op.Options):
         By default: `["Pot. prob.", "Dep. prob."]`.
     eqp : str
         Colourbar label for steady state distribution.
-        By default: `"Equilibrium probability"`
+        By default: `"Equilibrium probability"`.
 
     All parameters are optional keywords. Any dictionary passed as positional
     parameters will be popped for the relevant items. Keyword parameters must
@@ -136,7 +136,7 @@ class VideoLabels(op.Options):
 
 # pylint: disable=too-many-ancestors
 class VideoLayout(op.Options):
-    """Tiles, axes labels, etc. for FitterVideo
+    """Tiles, axes labels, etc. for `EnvelopeFig`.
 
     The individual options can be accessed as object instance attributes
     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
@@ -149,7 +149,7 @@ class VideoLayout(op.Options):
     width_ratios: Tuple[int, ...]
         Grid size ratios for various axes.
     ax_pos: Dict[str, Inds]
-        which rows/cols for each Axes
+        which rows/cols for each Axes.
     scale : float
         Controls figure size: inches per grid-ratio unit.
 
@@ -181,7 +181,7 @@ class VideoLayout(op.Options):
 
     def gspec_opts(self) -> Tuple[Tuple[float, float], Tuple[int, int],
                                   Dict[str, Tuple[int, ...]]]:
-        """Options for creating a gridspec"""
+        """Options for creating a gridspec."""
         kwargs = {'height_ratios': self.height_ratios,
                   'width_ratios': self.width_ratios}
         gargs = tuple(map(len, kwargs.values()))
@@ -191,7 +191,7 @@ class VideoLayout(op.Options):
 
 # pylint: disable=too-many-ancestors
 class VideoOptions(op.MasterOptions, fallback='im_opt'):
-    """Visual options for FitterVideo
+    """Visual options for `EnvelopeFig`.
 
     The individual options can be accessed as object instance attributes
     (e.g. `obj.name`) or as dictionary items (e.g. `obj['name']`) for both
@@ -205,12 +205,12 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         Options for arrangement and sizes of video frames.
     graph : bool
         Transpose the layout of the video? Stored in `txt_opt` and `im_opt`
-        under the key `'trn'`. By default: `False`
+        under the key `'trn'`. By default `False`.
     ax_opt : Dict[str, Any]
          Options for `Axes`. See `sl_py_tools.matplotlib_tricks.clean_axes`.
-         By default: `{'box': False, 'tight': False}`.
+         By default `{'box': False, 'tight': False}`.
     im_opt : ImageOptions
-        Options for heatmaps. By default: `ImageOptions(edgecolors='black')`.
+        Options for heatmaps. By default `ImageOptions(edgecolors='black')`.
     an_opt : AnimationOptions
         Options for animating the video.
 
@@ -263,7 +263,7 @@ def _make_fig(opt: VideoLayout) -> Tuple[Figure, AxList]:
     Returns
     -------
     fig : Figure
-        Figure object
+        Figure object.
     axs : List[Axes]
         Axes for [SNR, Equilibrium, Colourbar, Potentiation, Depression, Graph]
     """
@@ -284,12 +284,12 @@ def _make_fig(opt: VideoLayout) -> Tuple[Figure, AxList]:
 
 
 def _format_axes_snr(ax_snr: mpl.axes.Axes, opt: VideoOptions) -> None:
-    """Format axes for SNR plots
+    """Format axes for SNR plots.
 
     Parameters
     ----------
     ax_snr : Axes
-        Axes for SNR
+        Axes for SNR.
     """
     mpt_opts = opt.ax_opt.copy()
     mpt_opts.update(legendbox=False, box=True)
@@ -302,16 +302,16 @@ def _format_axes_snr(ax_snr: mpl.axes.Axes, opt: VideoOptions) -> None:
 
 def _format_axes_eqp(axs: AxList, imh: mpl.collections.QuadMesh, nst: int,
                      opt: VideoOptions) -> None:
-    """Format axes for equilibrium distribution plots
+    """Format axes for equilibrium distribution plots.
 
     Parameters
     ----------
     axs : List[Axes]
-        Axes for [Equilibrium, Colourbar]
+        Axes for [Equilibrium, Colourbar].
     imh : QuadMesh
         Heatmap of equilibrium distribution.
     nst : int
-        Number of states
+        Number of states.
     """
     mpt_opts = opt.ax_opt.copy()
     mpt_opts.update(box=False)
@@ -331,7 +331,7 @@ def _format_axes_eqp(axs: AxList, imh: mpl.collections.QuadMesh, nst: int,
 
 def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool,
                      opt: VideoOptions) -> None:
-    """Format axes for potentiation probability plots
+    """Format axes for potentiation probability plots.
 
     Parameters
     ----------
@@ -368,7 +368,7 @@ def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool,
 
 
 class ModelPlots:
-    """The plots associated with a model
+    """The plots associated with a model.
 
     Parameters
     ----------
@@ -393,7 +393,7 @@ class ModelPlots:
                  imh: mpl.image.AxesImage,
                  brs: List[mpl.container.BarContainer],
                  graph: GraphPlots) -> None:
-        """The plots associated with a model
+        """The plots associated with a model.
 
         Parameters
         ----------
@@ -414,25 +414,25 @@ class ModelPlots:
         self.graph = graph
 
     def update_snr(self, snr: la.lnarray, tau: float):
-        """Update model's SNR plot
+        """Update model's SNR plot.
 
         Parameters
         ----------
         snr : la.lnarray
-            SNR of model
+            SNR of model.
         tau : float
-            Time at which this model is optimal
+            Time at which this model is optimal.
         """
         self.lnh.set_ydata(snr)
         self.vln.set_xdata([tau, tau])
 
     def update_eqp(self, eqp: la.lnarray):
-        """Update model's wquilibrium distribution heatmap
+        """Update model's wquilibrium distribution heatmap.
 
         Parameters
         ----------
         eqp : la.lnarray (M,)
-            Equilibrium probability distribution
+            Equilibrium probability distribution.
         """
         # self.imh.set_data(eqp.r)
         self.imh.set_array(eqp)
@@ -443,9 +443,9 @@ class ModelPlots:
         Parameters
         ----------
         pot : la.lnarray (M-1,)
-            Potentiation transition probability, M_i,i+1
+            Potentiation transition probability, M_i,i+1.
         dep : la.lnarray
-            Depression transition probability, M_i+1,i
+            Depression transition probability, M_i+1,i.
         """
         for rect, height in zip(self.brp, pot):
             rect.set_height(height)
@@ -454,12 +454,12 @@ class ModelPlots:
             rect.set_height(height)
 
     def update_plots(self, time: la.lnarray, model: la.lnarray, tau: float):
-        """Update plots with new model
+        """Update plots with new model.
 
         Parameters
         ----------
         time : la.lnarray (T,)
-            Array of times for memory curve
+            Array of times for memory curve.
         model : la.lnarray (2M-2,)
             Parameters of serial model.
         tau : float
@@ -477,14 +477,14 @@ class ModelPlots:
     @classmethod
     def from_data(cls, axs: AxList, time: la.lnarray, model: la.lnarray,
                   tau: float, **kwds) -> ModelPlots:
-        """Plot data to make an instance
+        """Plot data to make an instance.
 
         Parameters
         ----------
         axs : AxList
             Array of Axes on which we plot.
         time : la.lnarray (T,)
-            Array of times for memory curve
+            Array of times for memory curve.
         model : la.lnarray (2M-2,)
             Parameters of serial model.
         tau : float
@@ -519,15 +519,15 @@ class ModelPlots:
 
 
 class EnvelopeFig:
-    """Data and figure objects for an envelope plot
+    """Data and figure objects for an envelope plot.
 
     Parameters
     ----------
     rate : la.lnarray (T,)
-        Rate parameter of Laplace transform (stored as `time = 1/rate`)
+        Rate parameter of Laplace transform (stored as `time = 1/rate`).
     env_num : la.lnarray (T,)
         Numerical Laplacian envelope (stored as exponential running average,
-        `env_num -> env_num * rate`)
+        `env_num -> env_num * rate`).
     models : la.lnarray (T,2N-2)
         Parameters of serial models that form envelope, in the order
         mat_01, mat_12, ..., mat_n-2,n-1,
@@ -544,7 +544,7 @@ class EnvelopeFig:
 
     def __init__(self, rate: la.lnarray, env_num: la.lnarray,
                  models: la.lnarray, **kwds) -> None:
-        """Data and figure objects for an envelope plot
+        """Data and figure objects for an envelope plot.
 
         Parameters
         ----------
@@ -587,12 +587,12 @@ class EnvelopeFig:
 
     @property
     def nstate(self) -> int:
-        """Number of states"""
+        """Number of states."""
         return self.models.shape[-1] // 2 + 1
 
     @property
     def ntime(self) -> int:
-        """Number of time points"""
+        """Number of time points."""
         return self.models.shape[0]
 
     def update(self, ind: int):
@@ -605,9 +605,12 @@ class EnvelopeFig:
         """
         self.model_plots.update_plots(self.time, self.models[ind],
                                       self.time[ind])
+        if self.opt.an_opt.blit:
+            return self.model_plots.updated()
+        return None
 
     def flip(self) -> None:
-        """Flip arrays along time axis
+        """Flip arrays along time axis.
         """
         self.time = np.flip(self.time, axis=0)
         self.env_th = np.flip(self.env_th, axis=0)
@@ -636,9 +639,9 @@ def animate(env_fig: EnvelopeFig, **kwargs) -> mpla.FuncAnimation:
     ani : FuncAnimation
         The animation.
 
-    To view the animation call `plt.show()`. To save a video, call `ani.save()`
-    (see https://matplotlib.org/api/_as_gen/matplotlib.animation.Animation.html
-    #matplotlib.animation.Animation.save)
+    To view the animation call `plt.show()`.
+    To save a video, call `ani.save(...)`.
+    See <https://matplotlib.org/api/animation_api.html>.
     """
     kwargs.setdefault('init_func', None)
     kwargs.setdefault('frames', it.erange(env_fig.ntime))
