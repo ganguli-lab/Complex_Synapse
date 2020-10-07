@@ -323,7 +323,7 @@ def heuristic_plot(nst: int, sss: Array, env_gen: Array, models_srl: Array,
     kwds.setdefault('legend_loc', "upper right")
     kwds.setdefault('legendfontscale', 0.8)
     kwds.setdefault('legendbox', False)
-    ax_opts = mplt.clean_axes_keys(kwds)
+    ax_opts = mplt.AxesOptions(kwds)
 
     env_th = cso.proven_envelope_laplace(sss, nst)
     env_heu = cso.heuristic_envelope_laplace(sss, nst)

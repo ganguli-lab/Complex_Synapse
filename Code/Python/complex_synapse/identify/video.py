@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import logging
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+import tempfile
+from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.animation as mpla
@@ -186,7 +188,7 @@ class VideoLayout(op.Options):
         self.dcols = (-1, slice(-1))
         # width: [c]olourbar, [g]raph, [i]nitial, [p]last, {data=sum-cbar}
         # height: [m]o[d]el, [p]last_type/[r]eadout, [st]ates
-        self.sizes = dict(c=1, g=6, i=2, p=12, pr=2, st=6, md=12, scale=0.3)
+        self.sizes = dict(c=1, g=8, i=2, p=12, pr=2, st=6, md=12, scale=0.3)
         self._transpose = False
         self._verbosity = 1
         # order = ('transpose', 'ground', 'npl', 'verbosity', 'fitter')
@@ -371,7 +373,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.ln_opt = {}
         self.im_opt = mpt.ImageOptions(trn=False)
         self.ax_opt = mpt.AxesOptions(box=False, tight=False)
-        self.ax_opt.trn = False
+        # self.ax_opt.trn = False
         self.an_opt = mpt.AnimationOptions()
         self.gr_opt = gp.GraphOptions()
 
@@ -389,7 +391,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         """
         if transpose is None:
             return
-        self.ax_opt['trn'] = transpose
+        # self.ax_opt['trn'] = transpose
         self.im_opt['trn'] = transpose
         self.txt.set_transpose(transpose)
         self.layout.set_transpose(transpose)
@@ -438,6 +440,10 @@ def animate(fitter: fs.SynapseFitter, **kwargs) -> mpla.FuncAnimation:
         raise TypeError
     _log.debug("Calling build before creating animation")
     fitter.callback.build(fitter)
+    frmt = kwargs.pop('format', 'pdf')
+    # make sure we have a renderer
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        fitter.callback.savefig(Path(tmpdirname, 'blah'), format=frmt)
     kwargs.setdefault('init_func', fitter.init)
     kwargs.setdefault('frames', fitter.opt.max_it)
     opt = fitter.callback.opt.an_opt.copy()
@@ -605,24 +611,25 @@ class FitterPlots:
             self.imh['info'] = [write_info(format(fitter, f'tex0,{verbose}'),
                                            self.axh['info'][0], **txo)]
 
-    def _format_axes(self) -> None:
+    def _format_axes(self, fitter: fs.SynapseFitter) -> None:
         """Format axes labels, legends and colourbars
 
         Should only be called after `create_plots`.
         """
         _log.debug("Format axes, except info")
         ft_lab, tr_lab = self.opt.txt.model_labs(0), self.opt.txt.model_labs(1)
-        lbo = self.opt.ax_opt
+        lbo = {'rad': self.opt.gr_opt.rad, 'trn': self.opt.transpose, **self.opt.ax_opt}
+        nst = fitter.est.nstate
 
         label_data(self.axh['pt'], self.opt.txt.plast_type, leg=True, **lbo)
         label_data(self.axh['ro'], self.opt.txt.readout, leg=True, **lbo)
         label_sim(self.axh['st'], self.opt.txt.state, leg=self.ground, **lbo)
 
-        label_model(self.axh['fit'], *ft_lab, cbar=True, **lbo)
+        label_model(self.axh['fit'], *ft_lab, cbar=True, nst=nst, **lbo)
         self.axh['info'][0].set_clip_on(False)
 
         if self.ground:
-            label_model(self.axh['tr'], *tr_lab, cbar=False, **lbo)
+            label_model(self.axh['tr'], *tr_lab, cbar=False, nst=nst, **lbo)
 
     def _info_axes(self) -> None:
         """Fix the size for the Text's Axes
@@ -631,12 +638,13 @@ class FitterPlots:
         """
         _log.debug('resizing info axes')
         if self.opt.layout.verbosity:
-            # txt_bbox = self.imh['info'][0].get_window_extent().frozen()
-            # transf = self.fig.transFigure.inverted()
-            patch = self.imh['info'][0].get_bbox_patch()
-            txt_bbox = patch.get_bbox().frozen()
-            transf = patch.get_transform() - self.fig.transFigure
-            self.axh['info'][0].set_position(transf.transform_bbox(txt_bbox))
+            txt_bbox = self.imh['info'][0].get_window_extent().frozen()
+            transf = self.fig.transFigure.inverted()
+            # patch = self.imh['info'][0].get_bbox_patch()
+            # txt_bbox = patch.get_bbox()
+            # transf = patch.get_transform() - self.fig.transFigure
+            ax_bbox = transf.transform_bbox(txt_bbox)
+            self.axh['info'][0].set_position(ax_bbox)
             self.imh['info'][0].set_in_layout(False)
             self.imh['info'][0].set_position((0, 0.5))
             self.imh['info'][0].set_ha('left')
@@ -653,8 +661,9 @@ class FitterPlots:
             self.opt.layout.set_fitter(fitter)
             self._make_fig()
             self._create_plots(fitter)
-            self._format_axes()
+            self._format_axes(fitter)
             # self.fig.canvas.draw_idle()
+            # plt.draw()
         # else:
         #     self._info_axes()
         # self.fig.set_constrained_layout(False)
@@ -742,7 +751,7 @@ def vid_fig(layout: Optional[VideoLayout] = None,
 
 
 def label_model(axs: AxList, titles: List[str], labels: List[str], cbar: bool,
-                **kwds) -> None:
+                nst: int, **kwds) -> None:
     """Label axes and create colourbar for model
 
     Parameters
@@ -760,6 +769,7 @@ def label_model(axs: AxList, titles: List[str], labels: List[str], cbar: bool,
     Other keywords passed to `sl_py_tools.matplotlib_tricks.clean_axes`.
     """
     trn = kwds.pop('trn', False)
+    rad = np.max(np.abs((kwds.pop('rad', [-0.7, 0.35])))) / 1.95
     if cbar:
         fig, imh = axs[2].get_figure(), axs[2].get_images()[0]
         cbopt = {'orientation': 'horizontal'} if trn else {}
@@ -768,7 +778,11 @@ def label_model(axs: AxList, titles: List[str], labels: List[str], cbar: bool,
     else:
         axs[0].set(frame_on=False, xticks=[], yticks=[])
 
-    axs[1].set(frame_on=False, xticks=[], yticks=[])
+    axs[1].set(frame_on=False, xticks=[], yticks=[], aspect=1)
+    if trn:
+        axs[1].set(xlim=(-0.5, nst + 0.5), ylim=(-rad * nst, rad * nst))
+    else:
+        axs[1].set(xlim=(-rad * nst, rad * nst), ylim=(-nst - 0.5, 0.5))
 
     axs[2].set_title(f"\\textit{{{titles[0]}}}", pad=20)
     if trn:
