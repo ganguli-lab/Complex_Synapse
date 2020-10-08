@@ -419,11 +419,11 @@ class BaumWelchFitter(_fs.SynapseFitter):
 
         Returns
         -------
-        data : lnarray,  (M,T) float[0:1]
+        data : lnarray,  (T[,E],M) float[0:1]
             Estimate of state occupation
         """
-        # (M,T)
-        return (self.alpha[ind] * self.beta[ind]).t
+        # (T[,E],M)
+        return self.alpha[ind] * self.beta[ind]
 
 
 # =============================================================================

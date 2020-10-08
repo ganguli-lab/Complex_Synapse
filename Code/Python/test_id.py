@@ -21,28 +21,35 @@ mpt.rc_fonts('sans-serif')
 opt = idfy.BaumWelchOptions(disp_step=10, verbosity=2 + 6 + 9)
 true_model = idfy.SynapseIdModel.build(cs.builders.build_serial, 6, jmp=0.7)
 # %%
-opt.verbosity = 9
-with np.load('test_fit.npz') as saved_file:
-    saved = {**saved_file}
-vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
-old_fit = idfy.GroundedFitterReplay(saved, callback=vid, opt=opt)
-# opt.max_it = 10
-# %%
-folder = Path('~/Documents/videos').expanduser()
-vid(old_fit, 0)
-vid(old_fit, 1)
-vid.fig.savefig(str(folder / 'identification_frame.pdf'), format='pdf')
-# %%
-sim = true_model.simulate(100, 10)
+sim = true_model.simulate(400, 20)
 fit_model = idfy.SynapseIdModel.rand(6, binary=True)
 fit_model.normalise()
 # %%
 opt.verbosity = 8
-rec = idfy.RecordingCallback(np.s_[:100, 0], idfy.print_callback)
+rec = idfy.RecordingCallback(idfy.print_callback)
 fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, rec, opt=opt)
 fitter.run()
 # %%
 np.savez_compressed('test_fit', **rec.info)
+# %%
+opt.verbosity = 9
+with la.load('test_fit.npz') as saved_file:
+    saved = {**saved_file}
+# %%
+vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
+old_fit = idfy.GroundedFitterReplay(saved, callback=vid, opt=opt)
+# opt.max_it = 10
+# %%
+opt.disp_step = 5
+opt.verbosity = 8
+rec = idfy.RecordingCallback(idfy.print_callback)
+fitter = idfy.GroundedBWFitter.rerun(saved, callback=rec, opt=opt)
+fitter.run()
+# %%
+vid(old_fit, 0)
+vid(old_fit, 1)
+# folder = Path('~/Documents/videos').expanduser()
+# vid.fig.savefig(str(folder / 'identification_frame.pdf'), format='pdf')
 # %%
 fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
 vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)

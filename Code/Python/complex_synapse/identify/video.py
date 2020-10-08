@@ -375,12 +375,9 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.ax_opt = mpt.AxesOptions(box=False, tight=False)
         # self.ax_opt.trn = False
         self.an_opt = mpt.AnimationOptions()
-        self.gr_opt = gp.GraphOptions()
-
-        self.gr_opt.set_layout(gp.linear_layout, sep=(0.0, -1.0))
-        self.gr_opt.node_style.mult = 800
-        self.gr_opt.edge_style.mult = 1.5
-        self.gr_opt.edge_style.mut_scale = 3
+        self.gr_opt = gp.GraphOptions({'nodes.mult': 600, 'edges.mult': 2,
+                                       'edges.mut_scale': 3})
+        self.gr_opt.set_layout(gp.linear_layout, sep=(0.0, 1.0))
 
         super().__init__(*args, **kwds)
 
@@ -395,7 +392,7 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         self.im_opt['trn'] = transpose
         self.txt.set_transpose(transpose)
         self.layout.set_transpose(transpose)
-        sep = (1.0, 0.0) if transpose else (0.0, -1.0)
+        sep = (1.0, 0.0) if transpose else (0.0, 1.0)
         self.gr_opt.set_layout(gp.linear_layout, sep=sep)
 
     @property
@@ -440,10 +437,6 @@ def animate(fitter: fs.SynapseFitter, **kwargs) -> mpla.FuncAnimation:
         raise TypeError
     _log.debug("Calling build before creating animation")
     fitter.callback.build(fitter)
-    frmt = kwargs.pop('format', 'pdf')
-    # make sure we have a renderer
-    with tempfile.TemporaryDirectory() as tmpdirname:
-        fitter.callback.savefig(Path(tmpdirname, 'blah'), format=frmt)
     kwargs.setdefault('init_func', fitter.init)
     kwargs.setdefault('frames', fitter.opt.max_it)
     opt = fitter.callback.opt.an_opt.copy()
@@ -618,38 +611,45 @@ class FitterPlots:
         """
         _log.debug("Format axes, except info")
         ft_lab, tr_lab = self.opt.txt.model_labs(0), self.opt.txt.model_labs(1)
-        lbo = {'rad': self.opt.gr_opt.rad, 'trn': self.opt.transpose, **self.opt.ax_opt}
+        lbo = {'trn': self.opt.transpose, **self.opt.ax_opt}
         nst = fitter.est.nstate
 
         label_data(self.axh['pt'], self.opt.txt.plast_type, leg=True, **lbo)
         label_data(self.axh['ro'], self.opt.txt.readout, leg=True, **lbo)
         label_sim(self.axh['st'], self.opt.txt.state, leg=self.ground, **lbo)
 
+        lbo['rad'] = self.opt.gr_opt.rad
         label_model(self.axh['fit'], *ft_lab, cbar=True, nst=nst, **lbo)
         self.axh['info'][0].set_clip_on(False)
 
         if self.ground:
             label_model(self.axh['tr'], *tr_lab, cbar=False, nst=nst, **lbo)
 
-    def _info_axes(self) -> None:
+    def _info_axes(self, **kwargs) -> None:
         """Fix the size for the Text's Axes
 
         Should be called after first `draw`.
         """
         _log.debug('resizing info axes')
         if self.opt.layout.verbosity:
+            # make sure we have a renderer
+            frmt = kwargs.pop('format', 'pdf')
+            with tempfile.TemporaryDirectory() as tmpdirname:
+                self.savefig(Path(tmpdirname, 'blah'), format=frmt)
+            # get bbox of text and transform to figure coordinates
             txt_bbox = self.imh['info'][0].get_window_extent().frozen()
             transf = self.fig.transFigure.inverted()
             # patch = self.imh['info'][0].get_bbox_patch()
             # txt_bbox = patch.get_bbox()
             # transf = patch.get_transform() - self.fig.transFigure
+            # set bbox of axes in figure coordinates
             ax_bbox = transf.transform_bbox(txt_bbox)
             self.axh['info'][0].set_position(ax_bbox)
             self.imh['info'][0].set_in_layout(False)
             self.imh['info'][0].set_position((0, 0.5))
             self.imh['info'][0].set_ha('left')
 
-    def build(self, fitter: fs.SynapseFitter) -> None:
+    def build(self, fitter: fs.SynapseFitter, **kwds) -> None:
         """Create the figure and axes with the first plot on them
 
         Parameters
@@ -664,8 +664,7 @@ class FitterPlots:
             self._format_axes(fitter)
             # self.fig.canvas.draw_idle()
             # plt.draw()
-        # else:
-        #     self._info_axes()
+            self._info_axes(**kwds)
         # self.fig.set_constrained_layout(False)
 
     def update_plots(self, fitter: fs.SynapseFitter) -> None:
@@ -677,8 +676,8 @@ class FitterPlots:
             Object performing fit whose state we update.
         """
         _log.debug("update plots")
-        if self.imh['info'][0].get_in_layout():
-            self._info_axes()
+        # if self.imh['info'][0].get_in_layout():
+        #     self._info_axes()
         trn, verbose = self.opt.transpose, self.opt.layout.verbosity
         fitter.plot_occ(self.imh['st'][0], self.ind, trn=trn)
         fitter.est.plot(self.imh['fit'], self.grf['fit'], trn=trn)
@@ -779,10 +778,11 @@ def label_model(axs: AxList, titles: List[str], labels: List[str], cbar: bool,
         axs[0].set(frame_on=False, xticks=[], yticks=[])
 
     axs[1].set(frame_on=False, xticks=[], yticks=[], aspect=1)
+    para, perp = (-0.5, nst - 0.5), (-rad * nst, rad * nst)
     if trn:
-        axs[1].set(xlim=(-0.5, nst + 0.5), ylim=(-rad * nst, rad * nst))
+        axs[1].set(xlim=para, ylim=perp)
     else:
-        axs[1].set(xlim=(-rad * nst, rad * nst), ylim=(-nst - 0.5, 0.5))
+        axs[1].set(xlim=perp[::-1], ylim=para[::-1])
 
     axs[2].set_title(f"\\textit{{{titles[0]}}}", pad=20)
     if trn:
@@ -889,11 +889,9 @@ def write_info(txt: str, axs: mpl.axes.Axes, **kwds) -> mpl.text.Text:
     txh : matplotlib.text.Text
         `Text` object that was written.
     """
-    # trn = kwds.pop('trn', False)
     ax_colour = axs.get_facecolor()
     kwds['bbox'] = {'edgecolor': ax_colour, 'facecolor': ax_colour}
     kwds.update(transform=axs.transAxes, ha='center', va='center')
-    # pos, kwds['va'] = ((0.5, 1), 'top') if trn else ((0.5, 1), 'top')
     return axs.text(0.5, 0.5, txt, **kwds)
 
 # =============================================================================

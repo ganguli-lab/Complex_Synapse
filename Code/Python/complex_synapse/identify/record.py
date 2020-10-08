@@ -10,6 +10,7 @@ from typing import Any, Dict, List, Optional
 import numpy_linalg as la
 # import sl_py_tools.arg_tricks as _ag
 # import sl_py_tools.iter_tricks as _it
+import sl_py_tools.containers as _cn
 
 import complex_synapse.identify.plast_seq as _ps
 import complex_synapse.identify.synapse_id as _si
@@ -35,7 +36,6 @@ class RecordingCallback:
     info : Dict[str, lnarray]
         Dictionary carrying all of the recorded data.
     """
-    ind: _ps.Inds
     callback: Optional[_fs.Callback] = None
     step_num: int
     info: Dict[str, la.lnarray]
@@ -43,10 +43,8 @@ class RecordingCallback:
     truth: Optional[la.lnarray]
     occ: Optional[la.lnarray]
 
-    def __init__(self, ind: Optional[_ps.Inds] = None,
-                 callback: Optional[_fs.Callback] = None
-                 ) -> None:
-        self.ind, self.callback, self.step_num = ind, callback, 0
+    def __init__(self, callback: Optional[_fs.Callback] = None) -> None:
+        self.callback, self.step_num = callback, 0
         self.info, self.est, self.truth, self.occ = {}, None, None, None
 
     def __call__(self, fitter: _fs.SynapseFitter, pos: int) -> List:
@@ -69,9 +67,10 @@ class RecordingCallback:
         maxit = fitter.opt.max_it // fitter.opt.disp_step + 2
         nelm = _si.num_elements(fitter.est)
         self.est = la.empty((maxit, nelm), fitter.est.plast.dtype)
-        if self.ind is not None:
-            occ = fitter.est_occ(self.ind)
-            self.occ = la.empty((maxit,) + occ.shape, occ.dtype)
+        # (T[,E],M) or (T[,E])
+        occ = fitter.est_occ(slice(None))
+        # (S,T[,E],M) or (S,T[,E])
+        self.occ = la.empty((maxit,) + occ.shape, occ.dtype)
         if isinstance(fitter, _fs.GroundedFitter):
             self.truth = _si.elements(fitter.truth)
         for key, val in fitter.info.items():
@@ -80,8 +79,7 @@ class RecordingCallback:
     def update(self, fitter: _fs.SynapseFitter) -> None:
         """Record one data point"""
         self.est[self.step_num] = _si.elements(fitter.est)
-        if self.ind is not None:
-            self.occ[self.step_num] = fitter.est_occ(self.ind)
+        self.occ[self.step_num] = fitter.est_occ(slice(None))
         for key, val in fitter.info.items():
             if key != 'result':
                 self.info[key][self.step_num] = val
@@ -168,7 +166,7 @@ class FitterReplay(_fs.SynapseFitter):
         """Perform a single update of the model"""
         self.est = self.saved_est[self._ind]
 
-    def est_occ(self, ind: _ps.Inds) -> la.lnarray:
+    def est_occ(self, ind: _ps.Inds = slice(None)) -> la.lnarray:
         """Current estimate of state occupation
 
         Parameters
@@ -181,8 +179,8 @@ class FitterReplay(_fs.SynapseFitter):
         data : lnarray, (T,M) float[0:1] or (T,) int[0:M]
             Estimate of state occupation
         """
-        # (T.M)
-        return self.saved_occ[self._ind]
+        # (T,M)
+        return self.saved_occ[(self._ind,) + _cn.tuplify(ind)]
 
     def init(self) -> List[Any]:
         """Prepare for first iteration.

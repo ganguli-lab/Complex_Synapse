@@ -17,7 +17,6 @@ import sl_py_tools.options_classes as _opt
 
 import complex_synapse.identify.plast_seq as _ps
 import complex_synapse.identify.synapse_id as _si
-# import complex_synapse.options as _opt
 
 # =============================================================================
 MESSAGES = (
@@ -173,10 +172,10 @@ class SynapseFitOptions(_opt.Options):
     disp_step: int
 
     def __init__(self, *args, **kwds) -> None:
-        self.atolx = 1e-5
-        self.atoly = 1e-5
-        self.rtolx = 1e-5
-        self.rtoly = 1e-5
+        self.atolx = 1e-4
+        self.atoly = 1e-4
+        self.rtolx = 1e-4
+        self.rtoly = 1e-4
         self.max_it = 1000
         self.verbosity = 1
         self.disp_step = 50
@@ -456,7 +455,7 @@ class SynapseFitter(abc.ABC):
 
         Returns
         -------
-        data : lnarray,  (M,T) float[0:1] or (T,) int[0:M]
+        data : lnarray, (T[,E],M) float[0:1] or (T[,E]) int[0:M]
             Estimate of state occupation
         """
 
@@ -475,10 +474,10 @@ class SynapseFitter(abc.ABC):
         imh : Union[Image, Line]
             Image/Line objects for the plots
         """
-        # (M,T) or (T,)
+        # (T,M) or (T,)
         state_prob = self.est_occ(ind)
         kwds['line'] = state_prob.ndim == 1
-        return _ps.set_plot(handle, state_prob, **kwds)
+        return _ps.set_plot(handle, state_prob.t, **kwds)
 
     def init(self) -> List[Any]:
         """Prepare for first iteration.
@@ -554,6 +553,44 @@ class SynapseFitter(abc.ABC):
             if self.info['result']:
                 break
         return self.info['result']
+
+    @classmethod
+    def rerun(cls, saved: Dict[str, la.lnarray],
+              callback: Callback = print_callback, **kwds
+              ) -> SynapseFitter:
+        """Recreate a fitter from its saved state.
+
+        Parameters
+        ----------
+        saved : Dict[str, la.lnarray]
+            The `info` dictionary of a `RecordingCallback`.
+        callback : Callable[[self, int]->None], optional
+            Function called on every iteration, by default `print_callback`.
+            Second argument:
+                0: Before first iteration.
+                1: During iterations.
+                2: After completion.
+        Other keywords passed to `cls`.
+
+        Returns
+        -------
+        fitter : SynapseFitter
+            The recreated fitter.
+        """
+        kwds['callback'] = callback
+        est = _si.from_elements(saved['est'][0], saved['frc'], saved['rdo'])
+        if 'states' in saved:
+            data = _ps.SimPlasticitySequence(saved['plast_type'],
+                                             saved['readouts'],
+                                             saved['states'])
+        else:
+            data = _ps.PlasticitySequence(saved['plast_type'],
+                                          saved['readouts'])
+        if 'truth' in saved:
+            truth = _si.from_elements(saved['truth'], saved['frc'],
+                                      saved['rdo'])
+            kwds['truth'] = truth
+        return cls(data, est, **kwds)
 
 
 # =============================================================================
