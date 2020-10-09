@@ -353,31 +353,35 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     `ax_opt`, `ln_opt` and `im_opt`. Setting a new key adds it to `im_opt`.
     To add a new item to a `VideoOptions` instance, set it as an attribute.
     """
-    map_attributes: op.Attrs = ('txt', 'layout', 'ln_opt', 'im_opt', 'ax_opt')
+    map_attributes: op.Attrs = ('txt', 'layout', 'image', 'line', 'axes',
+                                'animate', 'graph')
     prop_attributes: op.Attrs = ('transpose',)
-    key_last: op.Attrs = ('transpose',)
     # Text for labels
     txt: VideoLabels
     # Layout
     layout: VideoLayout
-    # keyword options
-    ax_opt: mpt.AxesOptions
-    ln_opt: Dict[str, Any]
-    im_opt: mpt.ImageOptions
-    an_opt: mpt.AnimationOptions
-    gr_opt: gp.GraphOptions
+    # Heatmaps
+    image: mpt.ImageOptions
+    # Line plots
+    line: Dict[str, Any]
+    # Fonts for labels
+    axes: mpt.AxesOptions
+    # Animation
+    animate: mpt.AnimationOptions
+    # Graph
+    graph: gp.GraphOptions
 
     def __init__(self, *args, **kwds) -> None:
         self.txt = VideoLabels()
         self.layout = VideoLayout()
-        self.ln_opt = {}
-        self.im_opt = mpt.ImageOptions(trn=False)
-        self.ax_opt = mpt.AxesOptions(box=False, tight=False)
+        self.line = {}
+        self.image = mpt.ImageOptions(trn=False)
+        self.axes = mpt.AxesOptions(box=False, tight=False)
         # self.ax_opt.trn = False
-        self.an_opt = mpt.AnimationOptions()
-        self.gr_opt = gp.GraphOptions({'nodes.mult': 600, 'edges.mult': 2,
+        self.animate = mpt.AnimationOptions()
+        self.graph = gp.GraphOptions({'nodes.mult': 600, 'edges.mult': 2,
                                        'edges.mut_scale': 3})
-        self.gr_opt.set_layout(gp.linear_layout, sep=(0.0, 1.0))
+        self.graph.set_layout(gp.linear_layout, sep=(0.0, 1.0))
 
         super().__init__(*args, **kwds)
 
@@ -389,16 +393,16 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
         if transpose is None:
             return
         # self.ax_opt['trn'] = transpose
-        self.im_opt['trn'] = transpose
+        self.image['trn'] = transpose
         self.txt.set_transpose(transpose)
         self.layout.set_transpose(transpose)
         sep = (1.0, 0.0) if transpose else (0.0, 1.0)
-        self.gr_opt.set_layout(gp.linear_layout, sep=sep)
+        self.graph.set_layout(gp.linear_layout, sep=sep)
 
     @property
     def transpose(self) -> bool:
         """Transpose the layout of the video?"""
-        return self.ax_opt.get('trn', False)
+        return self.axes.get('trn', False)
 
     @transpose.setter
     def transpose(self, value: bool) -> None:
@@ -515,7 +519,7 @@ class FitterPlots:
         self.ind = ind
         self.opt = ag.default(opt, VideoOptions())
         self.opt.update(kwds)
-        self.norm = self.opt.im_opt.pop('norm')
+        self.norm = self.opt.image.pop('norm')
         self.fig = None
         self.axh = {}
         self.imh = {}
@@ -548,7 +552,7 @@ class FitterPlots:
         # self.fig.canvas.draw_idle()
         # plt.draw()
         # plt.show()
-        if self.opt.an_opt.blit:
+        if self.opt.animate.blit:
             return self.updated()
         return None
 
@@ -582,17 +586,17 @@ class FitterPlots:
             Object performing fit whose state we display.
         """
         _log.debug("Create plots")
-        mdo = {**self.opt.im_opt, 'zorder': 0, 'norm': self.norm}
-        pso = {**self.opt.im_opt, 'zorder': 10, 'nplast': fitter.est.nplast,
-               'nreadout': fitter.est.nreadout, 'line_opts': self.opt.ln_opt}
-        txo = {'size': self.opt.ax_opt.get('tickfontsize', 10),
+        mdo = {**self.opt.image, 'zorder': 0, 'norm': self.norm}
+        pso = {**self.opt.image, 'zorder': 10, 'nplast': fitter.est.nplast,
+               'nreadout': fitter.est.nreadout, 'line_opts': self.opt.line}
+        txo = {'size': self.opt.axes.get('tickfontsize', 10),
                'clip_on': False}
         verbose = self.opt.layout.verbosity
 
         self.imh['st'] = [fitter.plot_occ(self.axh['st'][1], self.ind, **mdo)]
         self.imh['ps'] = fitter.data[self.ind].plot(self.axh['ps'], **pso)
 
-        mdo['gopts'] = self.opt.gr_opt
+        mdo['gopts'] = self.opt.graph
         (self.imh['fit'],
          self.grf['fit']) = fitter.est.plot(self.axh['fit'][1:], **mdo)
 
@@ -611,14 +615,14 @@ class FitterPlots:
         """
         _log.debug("Format axes, except info")
         ft_lab, tr_lab = self.opt.txt.model_labs(0), self.opt.txt.model_labs(1)
-        lbo = {'trn': self.opt.transpose, **self.opt.ax_opt}
+        lbo = {'trn': self.opt.transpose, **self.opt.axes}
         nst = fitter.est.nstate
 
         label_data(self.axh['pt'], self.opt.txt.plast_type, leg=True, **lbo)
         label_data(self.axh['ro'], self.opt.txt.readout, leg=True, **lbo)
         label_sim(self.axh['st'], self.opt.txt.state, leg=self.ground, **lbo)
 
-        lbo['rad'] = self.opt.gr_opt.rad
+        lbo['rad'] = self.opt.graph.rad
         label_model(self.axh['fit'], *ft_lab, cbar=True, nst=nst, **lbo)
         self.axh['info'][0].set_clip_on(False)
 
@@ -714,7 +718,7 @@ def vid_fig(layout: Optional[VideoLayout] = None,
     Parameters
     ----------
     trn : bool, optional
-        Transpose the layout of the video? By default `False`
+        Transpose the layout of the video? By default `False`.
     layout : VideoLayout, optional
         Options for arrangement and sizes of video frames.
 
@@ -723,7 +727,7 @@ def vid_fig(layout: Optional[VideoLayout] = None,
     fig : Figure
         The figure object for video frames.
     ps_ax : List[Axes]
-        The axes objects for the `PlasticitySequence` data
+        The axes objects for the `PlasticitySequence` data.
     fit_ax : List[Axes]
         The axes objects for the `SynapseIdModel` fit.
     true_ax : List[Axes]
@@ -751,20 +755,20 @@ def vid_fig(layout: Optional[VideoLayout] = None,
 
 def label_model(axs: AxList, titles: List[str], labels: List[str], cbar: bool,
                 nst: int, **kwds) -> None:
-    """Label axes and create colourbar for model
+    """Label axes and create colourbar for model.
 
     Parameters
     ----------
     axs : List[Axes] (P+2,)
-        Axes for the [colourbar, initial state, each plasticity matrix ...]
+        Axes for the [colourbar, initial state, each plasticity matrix ...].
     titles : List[str] (P+1,)
-        Titles for [the full model, each plasticty matrix ...]
+        Titles for [the full model, each plasticty matrix ...].
     labels : List[str] (4,)
-        Labels for [colourbar, initial state, from state, to state]
+        Labels for [colourbar, initial state, from state, to state].
     cbar :  bool
         Create a colourbar?
     trn : bool, optional keyword
-        Transpose the layout of the video? By default `False`
+        Transpose the layout of the video? By default `False`.
     Other keywords passed to `sl_py_tools.matplotlib_tricks.clean_axes`.
     """
     trn = kwds.pop('trn', False)
@@ -801,18 +805,18 @@ def label_model(axs: AxList, titles: List[str], labels: List[str], cbar: bool,
 
 
 def label_data(axs: AxList, labels: List[str], leg: bool, **kwds) -> None:
-    """Label axes and create colourbar for plasticity-type/readout sequence
+    """Label axes and create colourbar for plasticity-type/readout sequence.
 
     Parameters
     ----------
     axs : List[Axes] (2,)
-        The Axes for the [colourbar/key, the image plot]
+        The Axes for the [colourbar/key, the image plot].
     labels : List[str] (P+1,) or (R+1)
-        Text for [Axes title, each value on the colourbar/key]
+        Text for [Axes title, each value on the colourbar/key].
     leg :  bool
         Create a legend?
     trn : bool, optional keyword
-        Transpose the layout of the video? By default `False`
+        Transpose the layout of the video? By default `False`.
     Other keywords passed to `sl_py_tools.matplotlib_tricks.clean_axes`.
     """
     trn = kwds.pop('trn', False)
@@ -842,18 +846,18 @@ def label_data(axs: AxList, labels: List[str], leg: bool, **kwds) -> None:
 
 
 def label_sim(axs: AxList, labels: List[str], leg: bool, **kwds) -> None:
-    """Label axes and create legend for state sequence
+    """Label axes and create legend for state sequence.
 
     Parameters
     ----------
     axs : List[Axes] (2,)
-        The axes for the [legend, the true path plot]
+        The axes for the [legend, the true path plot].
     labels : List[str] (3,)
-        Text for the [title, time-axis, state-axis, true state line labels]
+        Text for the [title, time-axis, state-axis, true state line labels].
     leg :  bool
         Create a legend?
     trn : bool, optional keyword
-        Transpose the layout of the video? By default `False`
+        Transpose the layout of the video? By default `False`.
     Other keywords passed to `sl_py_tools.matplotlib_tricks.clean_axes`.
     """
     trn = kwds.pop('trn', False)
@@ -872,7 +876,7 @@ def label_sim(axs: AxList, labels: List[str], leg: bool, **kwds) -> None:
 
 
 def write_info(txt: str, axs: mpl.axes.Axes, **kwds) -> mpl.text.Text:
-    """Write info in an axes
+    """Write info in an axes.
 
     Parameters
     ----------
@@ -903,8 +907,8 @@ def _model_axes(fig: Figure, gsp: GridSpec, row: int, cols: Sequence[int]
                 ) -> AxList:
     """Create axes for a synapse model.
 
-    cols : Sequence[int] (4,)
-        which column for (colourbar, initial, first,last+1 plasticity matrices)
+    cols : Sequence[int] (3+P,)
+        which column for (colourbar, graph, initial, plasticity matrices).
     """
     mdl = 'fit' if row else 'truth'
     shared = 'x' if isinstance(gsp, TransposeGridSpec) else 'y'
@@ -922,9 +926,9 @@ def _data_axes(fig: Figure, gsp: GridSpec, rows: ps.Inds, cols: ps.Inds
     """Create axes for an experiment/simulation.
 
     rows : Sequence[int] (3,)
-        which row for (plasticity types, readouts, state path)
+        Which row for (plasticity types, readouts, state path).
     cols : Sequence[int] (2,)
-        which column for (legend, heatmap)
+        Which column for (legend, heatmap).
     """
     shared = 'y' if isinstance(gsp, TransposeGridSpec) else 'x'
     cpax = fig.add_subplot(gsp[rows[0], cols[0]], label="plast_type legend")
@@ -943,7 +947,7 @@ def _data_axes(fig: Figure, gsp: GridSpec, rows: ps.Inds, cols: ps.Inds
 
 
 class TransposeGridSpec:
-    """A grid spec that transposes subscripts
+    """A grid spec that transposes subscripts.
 
     Parameters
     ----------
@@ -955,13 +959,6 @@ class TransposeGridSpec:
     gsp: GridSpec
 
     def __init__(self, gsp: GridSpec) -> None:
-        """A grid spec that transposes subscripts
-
-        Parameters
-        ----------
-        gsp : GridSpec
-            The Grid spec being transposed.
-        """
         self.gsp = gsp
 
     def __getitem__(self, ind: ps.Inds) -> mpl.gridspec.SubplotSpec:

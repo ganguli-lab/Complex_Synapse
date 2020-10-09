@@ -17,15 +17,15 @@ nst, sss, opts, envs, mods = cso.plot.load_data()
 vid = cso.video.EnvelopeFig(sss, envs[1], mods[1], vmax=0.5)
 ani = cso.video.animate(vid)
 disp = dt.FormattedTempDisplay("frame: {:2d}/{:2d}")
-folder = Path('~/Documents/videos').expanduser()
+folder = Path('~/Documents/videos/envelope').expanduser()
 # -----------------------------------------------------------------------------
+fname = 'envelope.' + fmt
 if fmt == 'mp4':
-    writer, fname = 'ffmpeg', 'envelope.mp4'
+    writer = 'ffmpeg'
 elif fmt == 'pdf':
-    writer, fname = 'pdf_pages', 'envelope.pdf'
+    writer = 'pdf_pages'
 elif fmt == 'png':
-    writer = mpt.FileSeqWriter(fps=2, ndigit=3)
-    fname = 'envelope/test_.png'
+    writer = mpt.FileSeqWriter(fps=2, ndigit=2)
 else:
     writer, fname = None, None
 # -----------------------------------------------------------------------------

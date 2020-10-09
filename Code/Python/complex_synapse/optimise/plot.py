@@ -401,9 +401,9 @@ def add_graph(axs: mpl.axes.Axes, bounds: ty.Sequence[float], model: Array,
     nst = ma.params.num_state(model.shape[-1], serial=True)
     bounds, scale = scale_bounds(bounds, nst, (3, 2), axs)
     bounds = logify(bounds, axs, hal, val)
-    kwds.setdefault('edge_style.mut_scale', 0.1 * scale)
-    kwds.setdefault('edge_style.mult', 2 * scale)
-    kwds.setdefault('node_style.mult', 150 * scale**2)
+    kwds.setdefault('edges.mut_scale', 0.1 * scale)
+    kwds.setdefault('edges.mult', 2 * scale)
+    kwds.setdefault('nodes.mult', 150 * scale**2)
     opts = gp.GraphOptions(kwds)
 
     axin = axs.inset_axes(bounds, transform=axs.transData, frame_on=False)

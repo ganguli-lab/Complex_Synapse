@@ -189,7 +189,7 @@ class VideoLayout(op.Options):
 
 
 # pylint: disable=too-many-ancestors
-class VideoOptions(op.MasterOptions, fallback='im_opt'):
+class VideoOptions(op.MasterOptions, fallback='image'):
     """Visual options for `EnvelopeFig`.
 
     The individual options can be accessed as object instance attributes
@@ -227,25 +227,28 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     `ax_opt`, `ln_opt` and `im_opt`. Setting a new key adds it to `im_opt`.
     To add a new item to a `VideoOptions` instance, set it as an attribute.
     """
-    map_attributes: op.Attrs = ('txt', 'layout', 'graph', 'im_opt', 'ax_opt')
+    map_attributes: op.Attrs = ('txt', 'layout', 'image', 'axes', 'animate',
+                                'graph')
     # Text for labels
     txt: VideoLabels
     # Layout
     layout: VideoLayout
+    # Fonts for labels
+    axes: mpt.AxesOptions
+    # Heatmaps
+    image: mpt.ImageOptions
+    # Animation
+    animate: mpt.AnimationOptions
     # Graph
     graph: gp.GraphOptions
-    # keyword options
-    ax_opt: mpt.AxesOptions
-    im_opt: mpt.ImageOptions
-    an_opt: mpt.AnimationOptions
 
     def __init__(self, *args, **kwds) -> None:
         self.txt = VideoLabels()
         self.layout = VideoLayout()
+        self.axes = mpt.AxesOptions(box=False, tight=False)
+        self.image = mpt.ImageOptions(edgecolors='black')
+        self.animate = mpt.AnimationOptions()
         self.graph = gp.GraphOptions()
-        self.ax_opt = mpt.AxesOptions(box=False, tight=False)
-        self.im_opt = mpt.ImageOptions(edgecolors='black')
-        self.an_opt = mpt.AnimationOptions()
 
         super().__init__(*args, **kwds)
 # pylint: enable=too-many-ancestors
@@ -291,7 +294,7 @@ def _format_axes_snr(ax_snr: mpl.axes.Axes, opt: VideoOptions) -> None:
     ax_snr : Axes
         Axes for SNR.
     """
-    mpt_opts = opt.ax_opt.copy()
+    mpt_opts = opt.axes.copy()
     mpt_opts.update(legendbox=False, box=True)
 
     ax_snr.set_xlabel(opt.txt.snr[0])
@@ -313,7 +316,7 @@ def _format_axes_eqp(axs: AxList, imh: mpl.collections.QuadMesh, nst: int,
     nst : int
         Number of states.
     """
-    mpt_opts = opt.ax_opt.copy()
+    mpt_opts = opt.axes.copy()
     mpt_opts.update(box=False)
 
     ax_eqp, ax_cbr = axs
@@ -342,7 +345,7 @@ def _format_axes_bar(ax_bar: mpl.axes.Axes, nst: int, dep: bool,
     dep : bool
         Is this the bar chart for depression transitions?
     """
-    mpt_opts = opt.ax_opt.copy()
+    mpt_opts = opt.axes.copy()
     mpt_opts.update(box=False)
 
     ax_bar.set_ylim([0, 1])
@@ -514,7 +517,7 @@ class ModelPlots:
         lns = axs[0].loglog(time, snr, label=opt.txt.env[2])
         lns.append(axs[0].axvline(tau))
 
-        imh = axs[1].pcolormesh(bnds, [0, 1], eqp.r, **opt.im_opt)
+        imh = axs[1].pcolormesh(bnds, [0, 1], eqp.r, **opt.image)
 
         graph = GraphPlots.from_data(axs[5], pot_dep, eqp, opts=opt.graph,
                                      **kwds)
@@ -612,7 +615,7 @@ class EnvelopeFig:
         """
         self.model_plots.update_plots(self.time, self.models[ind],
                                       self.time[ind])
-        if self.opt.an_opt.blit:
+        if self.opt.animate.blit:
             return self.model_plots.updated()
         return None
 
@@ -652,7 +655,7 @@ def animate(env_fig: EnvelopeFig, **kwargs) -> mpla.FuncAnimation:
     """
     kwargs.setdefault('init_func', None)
     kwargs.setdefault('frames', env_fig.ntime)
-    opt = env_fig.opt.an_opt.copy()
+    opt = env_fig.opt.animate.copy()
     opt.update(kwargs)
     return mpla.FuncAnimation(env_fig.fig, env_fig.update, **opt)
 
