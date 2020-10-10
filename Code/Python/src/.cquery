@@ -1,0 +1,19 @@
+%cquery-clang
+-IC:/Anaconda3/include
+-IC:/Anaconda3/Library/include
+-IC:/Anaconda3/lib/site-packages/numpy/core/include
+-I"C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.15.26726/include"
+-I"C:/Program Files (x86)/Windows Kits/10/include/10.0.17134.0/ucrt"
+-I"C:/Program Files (x86)/Windows Kits/10/include/10.0.17134.0/shared"
+-I"C:/Program Files (x86)/Windows Kits/10/include/10.0.17134.0/um"
+-I"C:/Program Files (x86)/Windows Kits/10/include/10.0.17134.0/winrt"
+-I"C:/Program Files (x86)/Windows Kits/10/include/10.0.17134.0/cppwinrt"
+-LC:/Anaconda3/Library/lib
+-LC:/Anaconda3/libs
+-LC:/Anaconda3/PCbuild/amd64
+-LC:/Anaconda3/lib/site-packages/numpy/core/lib
+-L"C:/Program Files (x86)/Microsoft Visual Studio/2017/BuildTools/VC/Tools/MSVC/14.15.26726/lib/x64"
+-L"C:/Program Files (x86)/Windows Kits/10/lib/10.0.17134.0/ucrt/x64"
+-L"C:/Program Files (x86)/Windows Kits/10/lib/10.0.17134.0/um/x64"
+mkl_rt.lib
+npymath.lib
