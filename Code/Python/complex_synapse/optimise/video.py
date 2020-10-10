@@ -15,6 +15,7 @@ import numpy_linalg as la
 import sl_py_tools.matplotlib_tricks as mpt
 import sl_py_tools.graph_plots as gp
 import sl_py_tools.options_classes as op
+import sl_py_tools.numpy_tricks.markov as ma
 
 import complex_synapse.synapse_mem as sm
 import complex_synapse.optimise.synapse_opt as so
@@ -45,8 +46,8 @@ def serial_snr(param: la.lnarray, tau: la.lnarray) -> la.lnarray:
     snr : la.lnarray (T,)
         Signal-to-noise ratio.
     """
-    topology = so.TopologyOptions(serial=True)
-    obj = so.SynapseParamModel.from_params(
+    topology = ma.TopologyOptions(serial=True)
+    obj = so.SynapseOptModel.from_params(
         param, binary=True, topology=topology).view(sm.SynapseMemoryModel)
     return obj.snr_exp_ave(tau)
 

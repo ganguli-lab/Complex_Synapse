@@ -29,11 +29,13 @@ with time_with():
 # %%
 nst, sss, opts, envs, mods = csp.load_data()
 # %%
-obj = cso.video.EnvelopeFig(sss, envs[3], envs[1], mods[1])
+obj = cso.video.EnvelopeFig(sss, envs[1], mods[1])
 obj.update(40)
 # %%
-serial = cs.optimise.SynapseParamModel.rand(
+serial = cs.optimise.SynapseOptModel.rand(
     6, serial=True, directions=(1, -1), binary=True)
-graph = gt.param_model_to_graph(serial)
-grplot = gp.GraphPlots(graph)
+gopt = gp.GraphOptions()
+gopt['edges.mult'] = 3
+graph = serial.to_graph()
+grplot = gp.GraphPlots(graph, opts=gopt)
 # %%

@@ -164,26 +164,30 @@ class SynapseModel(_sb.SynapseContinuousTime):
         eta = - self.zinv(rate).inv @ self.weight.c
         return eta - eta.t
 
-    def to_graph(self, graph: Optional[MultiDiGraph] = None) -> MultiDiGraph:
+    def to_graph(self, graph: Optional[MultiDiGraph] = None, **kwds
+                 ) -> MultiDiGraph:
         """Create/modify a directed graph from a parameterised synapse model.
 
         Parameters
         ----------
         graph : MultiDiGraph
             Graph to be modified.
+        node_v : ndarray (M,)
+            Values that determine node size (area), by default `self.peq()`.
+        edge_v : ndarray (P,Q)
+            Values that determine edge size (width), by default off-diagonals.
+            `Q in {PM(M-1), P(M-1), P}`.
+        topology : TopologyOptions
+            Options describing topology of model class.
 
         Returns
         -------
         graph : MultiDiGraph
             Graph describing model.
         """
-        peq = self.peq()
-        param = _ma.params.gen_mat_to_params(self.plast, (0,) * self.nplast)
-        if graph is None:
-            return param_to_graph(param, peq, self.weight, self.signal)
-        graph.set_node_attr('value', peq)
-        graph.set_edge_attr('value', param)
-        return graph
+        kwds.setdefault('edge_k', self.signal)
+        kwds.setdefault('node_k', self.weight)
+        return super().to_graph(graph, **kwds)
 
     @contextmanager
     def shifted(self, rate: _sb.ArrayLike, rowv: Optional[_sb.ArrayLike] = None

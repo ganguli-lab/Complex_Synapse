@@ -13,7 +13,7 @@ import numpy_linalg.convert as _cvl
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.containers as _cn
 import sl_py_tools.numpy_tricks.markov as _ma
-from sl_py_tools.graph_tricks import MultiDiGraph, param_to_graph
+from sl_py_tools.graph_tricks import MultiDiGraph
 from sl_py_tools.graph_plots import GraphPlots, GraphOptions
 
 import complex_synapse.builders as _bld
@@ -302,26 +302,31 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
             imh.append(_ps.set_plot(axh, mat, **kwds))
         return imh, graph
 
-    def to_graph(self, graph: Optional[MultiDiGraph] = None) -> MultiDiGraph:
+    def to_graph(self, graph: Optional[MultiDiGraph] = None, **kwds
+                 ) -> MultiDiGraph:
         """Create/modify a directed graph from a parameterised synapse model.
 
         Parameters
         ----------
         graph : MultiDiGraph
             Graph to be modified.
+        edge_v : ndarray (P,Q)
+            Values that determine edge size (width), by default off-diagonals.
+            `Q in {PM(M-1), P(M-1), P}`.
+        edge_k : ndarray (P,)
+            Values that determine edge colour, by default `topology.directions`
+            or `[P:0:-1]`.
+        topology : TopologyOptions
+            Options describing topology of model class.
 
         Returns
         -------
         graph : MultiDiGraph
             Graph describing model.
         """
-        params = _ma.params.gen_mat_to_params(self.plast, (0,) * self.nplast)
-        plasts = self.nplast - 1 - np.arange(self.nplast)
-        if graph is None:
-            return param_to_graph(params, self.initial, self.readout, plasts)
-        graph.set_node_attr('value', self.initial)
-        graph.set_edge_attr('value', params.ravel())
-        return graph
+        kwds.setdefault('node_k', self.readout)
+        kwds.setdefault('node_v', self.initial)
+        return super().to_graph(graph, **kwds)
 
     @classmethod
     def build(cls, builder: Callable[..., Dict[str, la.lnarray]],

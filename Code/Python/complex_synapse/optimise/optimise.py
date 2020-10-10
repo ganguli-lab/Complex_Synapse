@@ -15,6 +15,7 @@ import sl_py_tools.containers as _cn
 # import sl_py_tools.dict_tricks as _dt
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.iter_tricks as _it
+import sl_py_tools.numpy_tricks.markov as _ma
 import sl_py_tools.numpy_tricks.markov.params as _mp
 import sl_py_tools.options_classes as _opt
 
@@ -64,7 +65,7 @@ class ModelOptions(_opt.Options):
     prop_attributes: _opt.Attrs = ('frac', 'npl', 'nst', 'npar')
     key_last: _opt.Attrs = ('frac', 'npl', 'nst', 'npar')
     # topology specifying options
-    topology: _so.TopologyOptions
+    topology: _ma.TopologyOptions
     # Is the weight vector binary?
     binary: bool
     # source of random numbers
@@ -75,7 +76,7 @@ class ModelOptions(_opt.Options):
     _npar: Optional[int]
 
     def __init__(self, *args, **kwds) -> None:
-        self.topology = _so.TopologyOptions()
+        self.topology = _ma.TopologyOptions()
         self.binary = False
         self.rng = _bld.RNG
         self._frac = la.array([0.5, 0.5])
@@ -560,7 +561,7 @@ def constraint_coeff(model: _so.SynapseOptModel) -> la.lnarray:
         matrix of coefficients s.t ``coeffs @ params <= 1``.
     """
     npl, nst = model.nplast, model.nstate
-    return _so.constraint_coeff(npl, nst)
+    return _sb.constraint_coeff(npl, nst)
 
 
 def conv_constraint(constraint: Constraint) -> List[Dict[str, Any]]:
