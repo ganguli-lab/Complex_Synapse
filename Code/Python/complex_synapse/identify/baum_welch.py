@@ -15,6 +15,7 @@ import complex_synapse.synapse_base as _sb
 import complex_synapse.identify.plast_seq as _ps
 import complex_synapse.identify.synapse_id as _si
 import complex_synapse.identify.fit_synapse as _fs
+import complex_synapse.identify._baum_welch as _bw
 
 # =============================================================================
 
@@ -174,6 +175,43 @@ def _calc_alpha_beta(updaters: la.lnarray, initial: la.lnarray
     for i, updater in _it.rzenumerate(updaters):
         beta[i] = updater @ beta[i+1] * eta[i+1]
     return alpha.ur, beta.uc, eta.us
+
+
+
+
+def _calc_alpha_beta_c(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
+                       ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+    """Calculate BW forward/backward variables.
+
+    Parameters
+    ----------
+    updaters : la.lnarray, (R,P,M,M)
+        Plasticity matrices multiplied by readout indicators of 'to' state
+    initial : la.lnarray, (R,M)
+        Initial state distribution multiplied by readout indicators of state
+    plast_type : ArrayLike, (E,T-1), int[0:P]
+        id of plasticity type after each time-step
+    readouts : ArrayLike, (E,T), int[0:R]
+        id of readout from synapse at each time-step
+
+    Returns
+    -------
+    alpha : la.lnarray, (T,E,M)
+        Normalised Baum-Welch forward variable
+    beta : la.lnarray, (T,E,M)
+        Scaled Baum-Welch backward variable
+    eta : la.lnarray, (T,E)
+        Norm of Baum-Welch forward variable
+    """
+    if (data.readouts >= model.nreadout).any():
+        raise IndexError("data.readouts out of bounds")
+    if (data.plast_type >= model.nplast).any():
+        raise IndexError("data.plast_type out of bounds")
+    data = data.move_t_axis(-1)
+    # (R,P,M,M),(R,M)
+    updaters, initial = model.updaters()
+    # err = la.gufuncs.make_errobj("GUfunc reported a floating point error")
+    return _bw.alpha_beta(updaters, initial, data.plast_type, data.readouts)
 
 
 def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,

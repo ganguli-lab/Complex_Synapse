@@ -13,6 +13,7 @@ import complex_synapse as cs
 import complex_synapse.identify as idfy
 import sl_py_tools.matplotlib_tricks as mpt
 np.set_printoptions(precision=3, suppress=True, threshold=90)
+np.seterr(all='warn')
 mpt.rc_colours()
 mpt.rc_fonts('sans-serif')
 # logging.basicConfig(filename='save_fitter.log', filemode='w', level=logging.INFO)
@@ -25,43 +26,46 @@ sim = true_model.simulate(400, 20)
 fit_model = idfy.SynapseIdModel.rand(6, binary=True)
 fit_model.normalise()
 # %%
-opt.verbosity = 8
-rec = idfy.RecordingCallback(idfy.print_callback)
-fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, rec, opt=opt)
-fitter.run()
+a, b, e = idfy.baum_welch._calc_alpha_beta_c(fit_model, sim)
+print(a[0,0,0])
 # %%
-np.savez_compressed('test_fit', **rec.info)
-# %%
-opt.verbosity = 9
-with la.load('test_fit.npz') as saved_file:
-    saved = {**saved_file}
-# %%
-vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
-old_fit = idfy.GroundedFitterReplay(saved, callback=vid, opt=opt)
-# opt.max_it = 10
-# %%
-opt.disp_step = 5
-opt.verbosity = 8
-rec = idfy.RecordingCallback(idfy.print_callback)
-fitter = idfy.GroundedBWFitter.rerun(saved, callback=rec, opt=opt)
-fitter.run()
-# %%
-vid(old_fit, 0)
-vid(old_fit, 1)
-# folder = Path('~/Documents/videos').expanduser()
-# vid.fig.savefig(str(folder / 'identification_frame.pdf'), format='pdf')
-# %%
-fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
-vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
-vid(fitter, 0)
-# %%
-fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
-fitter.run()
-# %%
-fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
-vid = idfy.FitterPlots(np.s_[:100, 0])
-fitter.run(vid)
-# %%
-vo = idfy.VideoOptions()
-vo
-# %%
+# opt.verbosity = 8
+# rec = idfy.RecordingCallback(idfy.print_callback)
+# fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, rec, opt=opt)
+# fitter.run()
+# # %%
+# np.savez_compressed('test_fit', **rec.info)
+# # %%
+# opt.verbosity = 9
+# with la.load('test_fit.npz') as saved_file:
+#     saved = {**saved_file}
+# # %%
+# vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
+# old_fit = idfy.GroundedFitterReplay(saved, callback=vid, opt=opt)
+# # opt.max_it = 10
+# # %%
+# opt.disp_step = 5
+# opt.verbosity = 8
+# rec = idfy.RecordingCallback(idfy.print_callback)
+# fitter = idfy.GroundedBWFitter.rerun(saved, callback=rec, opt=opt)
+# fitter.run()
+# # %%
+# vid(old_fit, 0)
+# vid(old_fit, 1)
+# # folder = Path('~/Documents/videos').expanduser()
+# # vid.fig.savefig(str(folder / 'identification_frame.pdf'), format='pdf')
+# # %%
+# fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
+# vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
+# vid(fitter, 0)
+# # %%
+# fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
+# fitter.run()
+# # %%
+# fitter = idfy.GroundedBWFitter(sim, fit_model, true_model, opt=opt)
+# vid = idfy.FitterPlots(np.s_[:100, 0])
+# fitter.run(vid)
+# # %%
+# vo = idfy.VideoOptions()
+# vo
+# # %%

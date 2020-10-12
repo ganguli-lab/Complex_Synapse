@@ -43,7 +43,7 @@ Copyright/licence info for that file:
 
 #include "rearrange_data.h"
 
-static const char* gufuncs_blas_version = "0.2.0";
+static const char* baum_welch_version = "0.1.0";
 
 /*
 *****************************************************************************
@@ -51,48 +51,31 @@ static const char* gufuncs_blas_version = "0.2.0";
 *****************************************************************************
 */
 
-PyDoc_STRVAR(matmul__doc__,
-/* "matmul(X: ndarray, Y: ndarray) -> (Z: ndarray)\n\n" */
-"Matrix-matrix product.\n\n"
-".. deprecated:: 0.2.0\n"
-"    This `gufunc` is no longer needed as NumPy switched to a gufunc in v1.16.\n\n"
-"Uses BLAS routine `_gemm` for acceleration.\n"
-"Does matrix-matrix, matrix-vector, vector-matrix and vector-vector versions,\n"
-"with vector versions used *only* when one-dimensional.\n"
-"\nParameters\n-----------\n"
-"X: ndarray (...,M,N) or (N,)\n"
-"    Matrix multiplying from left.\n"
-"Y: ndarray (...,N,P) or (N,)\n"
-"    Matrix multiplying from right.\n"
-"\nReturns\n-------\n"
-"Z: ndarray (...,M,P), (...,M), (...,P) or ()\n"
-"    Result of matrix multiplication.");
+/* alpha_beta_signature = "(r,p,m,m),(r,m),(tm),(t)->(t,m),(t,m),(t)"; */
 
-PyDoc_STRVAR(rmatmul__doc__,
-/* "rmatmul(Y: ndarray, X: ndarray) -> (Z: ndarray)\n\n" */
-"Reversed matrix-matrix product.\n\n"
-"Uses BLAS routine `_gemm` for acceleration.\n"
-"Does matrix-matrix, matrix-vector, vector-matrix and vector-vector versions,\n"
-"with vector versions used *only* when one-dimensional.\n"
+PyDoc_STRVAR(alpha_beta__doc__,
+/* "alpha_beta(M, S, P, R: ndarray) -> (A, B, E: ndarray)\n\n" */
+"Calculate BW forward/backward variables\n"
 "\nParameters\n-----------\n"
-"Y: ndarray (...,N,P) or (N,)\n"
-"    Matrix multiplying from right.\n"
-"X: ndarray (...,M,N) or (N,)\n"
-"    Matrix multiplying from left.\n"
+"updaters : la.lnarray, (R,P,M,M)\n"
+"    Plasticity matrices multiplied by readout indicators of 'to' state,\n"
+"    `Prob(i(t+1)=j, w(t+1)=r|i(t)=i, mu(t)=p)`.\n"
+"initial : la.lnarray, (R,M)\n"
+"    Initial state distribution multiplied by readout indicators of state,\n"
+"    `Prob(w(0)=r, i(0)=i)`.\n"
+"plast_type : ArrayLike, (T-1,E), int[0:P]\n"
+"    id of plasticity type after each time-step.\n"
+"readouts : ArrayLike, (T,E), int[0:R]\n"
+"    id of readout from synapse at each time-step.\n"
 "\nReturns\n-------\n"
-"Z: ndarray (...,M,P), (...,M), (...,P) or ()\n"
-"    Result of matrix multiplication.");
+"alpha : la.lnarray, (T,M)\n"
+"    Normalised Baum-Welch forward variable.\n"
+"beta : la.lnarray, (T,M)\n"
+"    Scaled Baum-Welch backward variable.\n"
+"eta : la.lnarray, (T,)\n"
+"    Norm of Baum-Welch forward variable.\n"
+);
 
-PyDoc_STRVAR(norm__doc__,
-/* "norm(X: ndarray) -> (Z: ndarray)\n\n" */
-"Euclidean norm of a vector.\n\n"
-"Unlike `numpy.linalg.norm`, it only computes the vector 2-norm.\n"
-"\nParameters\n-----------\n"
-"X: ndarray (...,N)\n"
-"    Vector, or array of vectors.\n"
-"\nReturns\n-------\n"
-"Z: float\n"
-"    Euclidean norm of X.");
 
 /*
 *****************************************************************************
@@ -106,207 +89,169 @@ FNAME(dcopy)(int *n,
             double *sx, int *incx,
             double *sy, int *incy);
 
-/* x -> sqrt(x'*x) */
-extern double
-FNAME(dnrm2)(int *n, double sx[], int *inc_x);
-
-/* z -> a x*y + b z */
+/* set vector x to constant */
 extern void
-FNAME(dgemm)(char tra[], char trb[], int *m, int *n, int *k,
-    double *alpha, double a[], int *lda, double b[], int *ldb,
-    double *beta, float c[], int *ldc);
+FNAME(dlaset)(char trans[], int *m, int *n,
+            double *alpha, double *beta,
+            double a[], int *lda);
 
-/*
-******************************************************************************
-**                              NORM                                        **
-******************************************************************************
+/* x -> x / a */
+extern void
+FNAME(drscl)(int *n, double *alpha, double x[], int *incx);
+
+/* x -> ||x||_1 */
+extern double
+FNAME(dasum)(int *n, double x[], int *incx);
+
+/* y -> a A*x + b y */
+extern void
+FNAME(dgemv)(char trans[], int *m, int *n,
+    double *alpha, double a[], int *lda, double x[], int *incx,
+    double *beta, double y[], int *incy);
+
+/* Need:
+    dasum, (dscal), dgemv, drscl
 */
-/* to hold arguments for BLAS _nrm2 */
-typedef struct nrm2_params_struct
-{
-    /* X is (N,) of base type */
-    void *X;
-
-    fortran_int N;
-    fortran_int INCX;
-} NRM2_PARAMS_t;
-
-
-/***************************************************
-* Calling BLAS/Lapack function _nrm2               *
-****************************************************/
-
-static NPY_INLINE double
-call_dnrm2(NRM2_PARAMS_t *params)
-{
-    return BLAS(dnrm2)(&params->N, params->X, &params->INCX);
-}
-
-/********************************************************************
-* Initialize the parameters to use in for the lapack function _nrm2 *
-* Handles buffer allocation
-*********************************************************************/
-/*initialise parameters for BLAS
- N = length of vector */
-static NPY_INLINE int
-init_DOUBLE_nrm2(NRM2_PARAMS_t *params, npy_intp N_in)
-{
-    npy_uint8 *mem_buff = NULL;
-    size_t safe_N = N_in;
-    fortran_int N = (fortran_int)N_in;
-
-    mem_buff = malloc(safe_N * sizeof(fortran_doublereal));
-    if (!mem_buff) {
-        goto error;
-    }
-
-    params->X = mem_buff;
-    params->N = N;
-    params->INCX = 1;
-
-    return 1;
- error:
-    free(mem_buff);
-    memset(params, 0, sizeof(*params));
-    PyErr_NoMemory();
-
-    return 0;
-}
-
-/************************
-* Deallocate buffer     *
-*************************/
-
-static NPY_INLINE void
-release_DOUBLE_nrm2(NRM2_PARAMS_t *params)
-{
-    /* memory block base is in X */
-    free(params->X);
-    memset(params, 0, sizeof(*params));
-}
-
-/****************************
-* Inner GUfunc loop         *
-*****************************/
-
-static void
-DOUBLE_norm(char **args, npy_intp *dimensions, npy_intp *steps,
-              void *NPY_UNUSED(func))
-{
-INIT_OUTER_LOOP_2
-
-    /* dimensions of vector */
-    npy_intp len_n = *dimensions++;
-    /* 1st arg */
-    npy_intp stride_n = *steps++;
-    NRM2_PARAMS_t params;
-    LINEARIZE_DATA_t y_in;
-
-    /* allocate buffer, init params */
-    if(init_DOUBLE_nrm2(&params, len_n)) {
-        /* init size data */
-        init_linearize_vdata(&y_in, len_n, stride_n);
-
-        BEGIN_OUTER_LOOP
-
-            /* copy to buffer */
-            linearize_DOUBLE_vec(params.X, args[0], &y_in);
-            /* call BLAS */
-            *(double *)args[1] = call_dnrm2(&params);
-
-        END_OUTER_LOOP_2
-        /* deallocate buffer */
-        release_DOUBLE_nrm2(&params);
-    }
-
-}
 
 /*
 ******************************************************************************
-**                               MATMUL                                     **
+**                             ALPHA_BETA                                   **
 ******************************************************************************
 */
 /* to hold arguments for BLAS _gemm */
-typedef struct gemm_params_struct
+typedef struct gemv_params_struct
 {
   void *A; /* A is scalar of base type */
   void *B; /* B is scalar of base type */
-  void *X; /* X is (M,K) of base type */
-  void *Y; /* Y is (K,N) of base type */
-  void *Z; /* Z is (M,N) of base type */
+  void *E; /* E is scalar of base type */
+  void *X; /* X is (M,) of base type */
+  void *Y; /* Y is (M) of base type */
+  void *Z;  /* Z is (M,M) of base type */
+  void *ZZ; /* ZZ is (R,P,M,M) of base type */
+  void *S;  /* S is (M) of base type */
+  void *SS; /* SS is (R,M) of base type */
 
+  /* strides for choosing */
+  size_t IP;
+  size_t IR;
+  size_t ISR;
+  /* for fortran functions */
   fortran_int M;
-  fortran_int N;
-  fortran_int K;
-  fortran_int LDX;
-  fortran_int LDY;
+  fortran_int P;
+  fortran_int R;
+  fortran_int ISM;
+  fortran_int IX;
+  fortran_int IY;
   fortran_int LDZ;
-  char TRANSX;
-  char TRANSY;
-} GEMM_PARAMS_t;
+  char TRANSZ;
+} GEMV_PARAMS_t;
 
-/****************************************
-* Calling BLAS/Lapack function _gemm    *
-*****************************************/
-/* Z -> A*X.Y + B*Z, need A=1, B=0 */
+/***************************************************
+* Calling BLAS functions drscl, dasum, dgemv       *
+****************************************************/
+
+/* Copy vector: X -> S */
 static NPY_INLINE void
-call_dgemm(GEMM_PARAMS_t *params)
+call_dcopy_x_i(GEMV_PARAMS_t *params)
 {
-    BLAS(dgemm)(&params->TRANSX, &params->TRANSY,
-       &params->M, &params->N, &params->K,
-       params->A,  params->X, &params->LDX, params->Y, &params->LDY,
-       params->B, params->Z, &params->LDZ);
+    BLAS(dcopy)(&params->M, params->S, &params->ISM, params->X, &params->IX);
+}
+
+/* Set vector: X -> [1,1,...] */
+static NPY_INLINE void
+call_dlaset_x(GEMV_PARAMS_t *params)
+{
+    LAPACK(dlaset)(&char_N, &params->M, &params->IX,
+                    params->A, params->A, params->X, &params->M);
+}
+
+/* Scale vector: X -> X/E */
+static NPY_INLINE void
+call_drscl_x_e(GEMV_PARAMS_t *params)
+{
+    if (*(npy_double *)params->E > 0.0)
+    {
+        BLAS(drscl)(&params->M, params->E, params->X, &params->IX);
+    }
+}
+
+/* L1 norm: E -> ||X||_1 */
+static NPY_INLINE void
+call_dasum_e_x(GEMV_PARAMS_t *params)
+{
+    npy_double norm = BLAS(dasum)(&params->M, params->X, &params->IX);
+    *(npy_double *)(params->E) = norm;
+}
+
+/* Matrix vector product: X -> Z.X */
+static NPY_INLINE void
+call_dgemv_x_z_x(GEMV_PARAMS_t *params)
+{
+    BLAS(dgemv)(&params->TRANSZ, &params->M, &params->M,
+        params->A,  params->Z, &params->LDZ, params->X, &params->IX,
+        params->B, params->Y, &params->IY);
+    npy_uint8 *a;
+    a = params->X;
+    params->X = params->Y;
+    params->Y = a;
 }
 
 /********************************************************************
-* Initialize the parameters to use in for the lapack function _gemm *
-* Handles buffer allocation
+* Initialize the parameters to use in for the lapack function _gemv *
+* Handles buffer allocation                                         *
 *********************************************************************/
 /* initialise parameters for BLAS
-    M: left dimension
-    N: right dimension
-    K: inner dimension */
+    M: matrix dimension
+    P: number of matrices
+    R: number of readouts */
 static NPY_INLINE int
-init_DOUBLE_matm(GEMM_PARAMS_t *params,
-                npy_intp M_in, npy_intp N_in, npy_intp K_in)
+init_DOUBLE_alpha_beta(GEMV_PARAMS_t *params,
+                npy_intp M_in, npy_intp P_in, npy_intp R_in)
 {
     npy_uint8 *mem_buff = NULL;
-    npy_uint8 *a, *b, *c;
-    fortran_int M, N, K, ldx, ldy, ldz;
-    size_t safe_M, safe_N, safe_K;
+    npy_uint8 *a, *b, *c, *d;
+    fortran_int M, P, R, ldz;
+    size_t safe_M, safe_P, safe_R;
 
     M = (fortran_int)M_in;
-    N = (fortran_int)N_in;
-    K = (fortran_int)K_in;
+    P = (fortran_int)P_in;
+    R = (fortran_int)R_in;
     safe_M = M_in;
-    safe_N = N_in;
-    safe_K = K_in;
-    ldx = fortran_int_max(M, 1);
-    ldy = fortran_int_max(K, 1);
+    safe_P = P_in;
+    safe_R = R_in;
     ldz = fortran_int_max(M, 1);
 
-    mem_buff = malloc(safe_M * safe_K * sizeof(fortran_doublereal)
-                      + safe_K * safe_N * sizeof(fortran_doublereal)
-                      + safe_M * safe_N * sizeof(fortran_doublereal));
+    mem_buff = malloc(safe_M * sizeof(fortran_doublereal)
+                      + safe_M * sizeof(fortran_doublereal)
+                      + safe_R * safe_M * sizeof(fortran_doublereal)
+                      + safe_R * safe_P * safe_M * safe_M * sizeof(fortran_doublereal)
+                      );
     if (!mem_buff) {
         goto error;
     }
     a = mem_buff;  /* X at start of buffer */
-    b = a + safe_M * safe_K * sizeof(fortran_doublereal);  /* Y after space for X */
-    c = b + safe_K * safe_N * sizeof(fortran_doublereal);  /* Z after space for Y */
+    b = a + safe_M * sizeof(fortran_doublereal);  /* Y after space for X */
+    c = b + safe_M * sizeof(fortran_doublereal);  /* S after space for Y */
+    d = c + safe_R * safe_M * sizeof(fortran_doublereal);  /* Z after space for S */
 
-    params->TRANSX = 'N';
-    params->TRANSY = 'N';
-    params->A = &d_one;  /* Z -> A*X.Y + B*Z, need A=1, B=0 */
+    params->TRANSZ = 'N';
+    params->A = &d_one;  /* Y -> A*Z.X + B*Y, need A=1, B=0 */
     params->B = &d_zero;
     params->X = a;
     params->Y = b;
-    params->Z = c;
+    params->S = c;
+    params->SS = c;
+    params->Z = d;
+    params->ZZ = d;
+    params->IP = safe_M * safe_M * sizeof(fortran_doublereal);
+    params->IR = safe_P * (params->IP);
+    params->ISR = safe_M * sizeof(fortran_doublereal);
     params->M = M;
-    params->N = N;
-    params->K = K;
-    params->LDX = ldx;
-    params->LDY = ldy;
+    params->P = P;
+    params->R = R;
+    params->ISM = 1;
+    params->IX = 1;
+    params->IY = 1;
     params->LDZ = ldz;
 
     return 1;
@@ -323,95 +268,242 @@ init_DOUBLE_matm(GEMM_PARAMS_t *params,
 *************************************/
 
 static NPY_INLINE void
-release_DOUBLE_matm(GEMM_PARAMS_t *params)
+release_DOUBLE_alpha_beta(GEMV_PARAMS_t *params)
 {
     /* memory block base is in X */
     free(params->X);
     memset(params, 0, sizeof(*params));
 }
 
+/************************************
+* Move parameters                   *
+*************************************/
+
+static NPY_INLINE int
+choose_updater(GEMV_PARAMS_t *params, const char *plasttype, const char *readout)
+{
+    npy_int P_in = *(npy_int *)plasttype;
+    npy_int R_in = *(npy_int *)readout;
+    if (P_in < params->P && R_in < params->R)
+    {
+        npy_uint8 *a;
+        a = params->ZZ;
+        params->Z = a + (size_t)P_in * params->IP + (size_t)R_in * params->IR;
+        return 0;
+    } else {
+        // printf("[P_in: %d, P_max: %d. %d\n", P_in, params->P, P_in < params->P);
+        // printf(" R_in: %d, R_max: %d. %d]\n", R_in, params->R, R_in < params->R);
+        return 1;
+    }
+}
+
+static NPY_INLINE int
+choose_init(GEMV_PARAMS_t *params, const char *readout)
+{
+    npy_int R_in = *(npy_int *)readout;
+    if (R_in < params->R)
+    {
+        npy_uint8 *a;
+        a = params->SS;
+        params->S = a + (size_t)R_in * params->ISR;
+        return 0;
+    } else {
+        // printf("[R_in: %d, R_max: %d. %d]\n", R_in, params->R, R_in < params->R);
+        return 1;
+    }
+}
+
 /*****************************
 * BLAS Inner GUfunc loop     *
 ******************************/
 
-/* matmul_signature = "(m,k),(k,n)->(m,n)"; */
-
+/* copy initial, updaters into struct for fortran */
 static void
-DOUBLE_matmul(char **args, npy_intp *dimensions, npy_intp *steps,
-              void *NPY_UNUSED(func))
+linearize_updaters(const char **args, npy_intp *dimensions, npy_intp *steps,
+                   GEMV_PARAMS_t *params, const LINEARIZE_DATA_t *lin_data)
 {
-INIT_OUTER_LOOP_3
+    LINEARIZE_DATA_t *u_in = lin_data++;
+    LINEARIZE_DATA_t *s_in = lin_data++;
 
-    npy_intp len_m = *dimensions++;  /* dimensions of left */
-    npy_intp len_k = *dimensions++;  /* dimensions of inner */
-    npy_intp len_n = *dimensions++;  /* dimensions of right */
-    npy_intp stride_x_m = *steps++;  /* 1st arg */
-    npy_intp stride_x_k = *steps++;
-    npy_intp stride_y_k = *steps++;  /* 2nd arg */
-    npy_intp stride_y_n = *steps++;
-    npy_intp stride_z_m = *steps++;  /* output */
-    npy_intp stride_z_n = *steps++;
-    GEMM_PARAMS_t params;
-    LINEARIZE_DATA_t x_in, y_in, z_out;
+    const char *ip_updater = args[0];  //  in-ptr: updater readouts
+    const char *ip_updatep = args[0];  //  in-ptr: updater plast types
+    const char *ip_initial = args[1];  //  in-ptr: init readouts
+    npy_intp cnt_r, cnt_p;
 
-    /* allocate buffer */
-    if(init_DOUBLE_matm(&params, len_m, len_n, len_k)) {
-        /* initialise size parameters */
-        init_linearize_data(&x_in, len_k, len_m, stride_x_k, stride_x_m);
-        init_linearize_data(&y_in, len_n, len_k, stride_y_n, stride_y_k);
-        init_linearize_data(&z_out, len_n, len_m, stride_z_n, stride_z_m);
+    /* Copy updaters, initials */
+    for (cnt_r = 0; cnt_r < dimensions[0]; cnt_r++)
+    {
+        choose_init(params, cnt_r);
+        linearize_DOUBLE_vec(params->S, ip_initial, s_in);
+        ip_updatep = ip_updater;
 
-        BEGIN_OUTER_LOOP
-            /* copy inputs */
-            linearize_DOUBLE_matrix(params.X, args[0], &x_in);
-            linearize_DOUBLE_matrix(params.Y, args[1], &y_in);
-            /* call BLAS */
-            call_dgemm(&params);
-            /* copy output */
-            delinearize_DOUBLE_matrix(args[2], params.Z, &z_out);
-        END_OUTER_LOOP_3
-        /* deallocate buffer */
-        release_DOUBLE_matm(&params);
+        for (cnt_p = 0; cnt_p < dimensions[1]; cnt_p++)
+        {
+            choose_updater(params, cnt_p, cnt_r);
+            linearize_DOUBLE_matrix(params->Z, ip_updatep, u_in);
+            ip_updatep += steps[0];
+        }
+        ip_updater += steps[1];
+        ip_initial += steps[2];
     }
 }
 
-
-/************************************************
-*               RMATMUL                         *
-*************************************************/
-
-/* rmatmul_signature = "(k,n),(m,k)->(m,n)" */
-
+/* normalise, copy out alpha, eta */
 static void
-DOUBLE_rmatmul(char **args, npy_intp *dimensions, npy_intp *steps,
-              void *NPY_UNUSED(func))
+norm_alpha(char *alpha, char *eta, GEMV_PARAMS_t *params, const LINEARIZE_DATA_t *a_out)
 {
-    /*swap (X,Y) for (Y,X)
-    x,y here are not the same as X,Y  in docstring: x=Y, y=X
-    args = {y, x, z}
-    rargs = {x, y, z} */
-    char *rargs[] = {args[1], args[0], args[2]};
-    /* dimensions = {N, len_k, len_n, len_m};
-       rdimensions[] = {N, len_m, len_k, len_n}; */
-    npy_intp rdimensions[] = {dimensions[0], dimensions[3], dimensions[1],
-                            dimensions[2]};
-    /* steps = {strides_y, strides_x, strides_z,
-         strides_y_r, strides_y_c,
-         strides_x_r, strides_x_c,
-         strides_z_r, strides_z_c, };
-       rsteps = {strides_x, strides_y, strides_z,
-         strides_x_r, strides_x_c,
-         strides_y_r, strides_y_c,
-         strides_z_r, strides_z_c, }; */
-    npy_intp rsteps[] = {steps[1], steps[0], steps[2],
-        steps[5], steps[6],
-        steps[3], steps[4],
-        steps[7], steps[8]};
-    /* now that we've swapped a,b and transposed, proceed as if we're in lstsq */
-    DOUBLE_matmul(rargs, rdimensions, rsteps, NULL);
+    /* normalise */
+    call_dasum_e_x(params);
+    call_drscl_x_e(params);
+    /* copy alpha out */
+    delinearize_DOUBLE_vec(alpha, params->X, a_out);
+    /* eta(0) is 1/eta from here */
+    *(npy_double *)eta = *(npy_double *)(params->E);
 }
 
+/* scale, copy out beta, invert eta */
+static void
+scale_beta(char *beta, char *eta, GEMV_PARAMS_t *params, const LINEARIZE_DATA_t *b_out)
+{
+    /* scale by eta */
+    *(npy_double *)(params->E) = *(npy_double *)eta;
+    call_drscl_x_e(params);
+    /* copy beta out */
+    delinearize_DOUBLE_vec(beta, params->X, b_out);
+    /* eta(T) back to eta from here */
+    if (*(npy_double *)params->E > 0.0)
+    {
+        *(npy_double *)eta = 1. / *(npy_double *)eta;
+    }
+}
 
+/* alpha_beta_signature = "(r,p,m,m),(r,m),(tm),(t)->(t,m),(t,m),(t)"; */
+
+static void
+DOUBLE_alpha_beta(char **args, npy_intp *dimensions, npy_intp *steps,
+              void *NPY_UNUSED(func))
+{
+INIT_OUTER_LOOP_7
+
+    npy_intp len_r = dimensions[0];  /* number of readouts */
+    npy_intp len_p = dimensions[1];  /* number of matrices */
+    npy_intp len_m = dimensions[2];  /* number of states */
+    npy_intp len_tm = dimensions[3]; /* number of time-points - 1 */
+    npy_intp len_t = dimensions[4];  /* number of time-points */
+    npy_intp stride_u_r = *steps++;  /* 1st arg */
+    npy_intp stride_u_p = *steps++;
+    npy_intp stride_u_mr = *steps++;
+    npy_intp stride_u_mc = *steps++;
+    npy_intp stride_s_r = *steps++;  /* 2nd arg */
+    npy_intp stride_s_m = *steps++;
+    npy_intp stride_p_t = *steps++;  /* 3rd arg */
+    npy_intp stride_r_t = *steps++;  /* 4th arg */
+    npy_intp stride_a_t = *steps++;  /* 1st output */
+    npy_intp stride_a_m = *steps++;
+    npy_intp stride_b_t = *steps++;  /* 2nd output */
+    npy_intp stride_b_m = *steps++;
+    npy_intp stride_e_t = *steps++;  /* 3rd output */
+    int error_occurred = get_fp_invalid_and_clear();
+    GEMV_PARAMS_t params;
+    LINEARIZE_DATA_t u_in, s_in, a_out, b_out;
+    npy_intp cnt_t;
+
+    if (len_t != len_tm + 1)
+    {
+        error_occurred = 1;
+    }
+
+
+   /* allocate buffer */
+    if (error_occurred == 0 &&
+        init_DOUBLE_alpha_beta(&params, len_m, len_p, len_r))
+    {
+        /* initialise size parameters */
+        init_linearize_data(&u_in, len_m, len_m, stride_u_mc, stride_u_mr);
+        init_linearize_vdata(&s_in, len_m, stride_s_m);
+        init_linearize_vdata(&a_out, len_m, stride_a_m);
+        init_linearize_vdata(&b_out, len_m, stride_b_m);
+
+        /* Copy updaters, initials, assume no broadcasting */
+        npy_intp rsteps[] = {stride_u_p, stride_u_r, stride_s_r};
+        LINEARIZE_DATA_t lin_data[] = {u_in, s_in};
+        linearize_updaters(args, dimensions, rsteps, &params, lin_data);
+
+        BEGIN_OUTER_LOOP
+
+            const char *ip_plast = args[2];  //  in-ptr: plast_type
+            const char *ip_reado = args[3];  //  in-ptr: readouts
+            char *op_alpha = args[4];  //  out-ptr: alpha
+            char *op_beta = args[5];   //  out-ptr: beta
+            char *op_eta = args[6];    //  out-ptr: eta
+            params.TRANSZ = 'T';
+
+            /* first alpha */
+            error_occurred = choose_init(&params, ip_reado);
+            if (error_occurred)
+                { break; }
+
+            /* set first alpha to init */
+            call_dcopy_x_i(&params);
+            /* normalise, copy out alpha, eta */
+            norm_alpha(op_alpha, op_eta, &params, &a_out);
+            /* eta(0) is 1/eta from here */
+
+            for (cnt_t = 0; cnt_t < len_tm; cnt_t++)
+            {
+                ip_reado += stride_r_t;
+                op_alpha += stride_a_t;
+                op_eta += stride_e_t;
+
+                error_occurred = choose_updater(&params, ip_plast, ip_reado);
+                if (error_occurred)
+                    { break; }
+
+                /* forward step */
+                call_dgemv_x_z_x(&params);
+                /* normalise, copy out alpha, eta */
+                norm_alpha(op_alpha, op_eta, &params, &a_out);
+                /* eta(t) is 1/eta from here */
+
+                ip_plast += stride_p_t;
+            }
+            if (error_occurred)
+                { break; }
+
+            params.TRANSZ = 'N';
+            ip_plast -= stride_p_t;
+            op_beta += len_tm * stride_b_t;
+            /* ip_plast, ip_reado, op_beta, op_eta all point to last element */
+
+            /* set last beta to one */
+            call_dlaset_x(&params);
+            /* scale, copy out beta, invert eta */
+            scale_beta(op_beta, op_eta, &params, &b_out);
+            /* eta(T) back to eta from here */
+
+            for (cnt_t = 0; cnt_t < len_tm; cnt_t++)
+            {
+                op_beta -= stride_b_t;
+                op_eta -= stride_e_t;
+
+                choose_updater(&params, ip_plast, ip_reado);
+                /* backward step */
+                call_dgemv_x_z_x(&params);
+                /* scale, copy out beta, invert eta */
+                scale_beta(op_beta, op_eta, &params, &b_out);
+                /* eta(T) back to eta from here */
+
+                ip_plast -= stride_p_t;
+                ip_reado -= stride_r_t;
+            }
+            // ip_plast += stride_p_t;
+
+        END_OUTER_LOOP_7
+        /* deallocate buffer */
+        release_DOUBLE_alpha_beta(&params);
+    }
+    set_fp_invalid_or_clear(error_occurred);
+}
 
 /*
 *****************************************************************************
@@ -420,33 +512,19 @@ DOUBLE_rmatmul(char **args, npy_intp *dimensions, npy_intp *steps,
 */
 
 /* types argument for creating 'norm' ufunc */
-static char ufn_types_1_3[] = {NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
-static char ufn_types_1_2[] = {NPY_DOUBLE, NPY_DOUBLE};
+static char ufn_types_1_7[] = {NPY_DOUBLE, NPY_DOUBLE, NPY_INT, NPY_INT,
+                               NPY_DOUBLE, NPY_DOUBLE, NPY_DOUBLE};
 
 /* array of functions for each ufunc loop */
 static PyUFuncGenericFunction
-FUNC_ARRAY_NAME(matmul)[] = {
-    DOUBLE_matmul
-};
-
-static PyUFuncGenericFunction
-FUNC_ARRAY_NAME(rmatmul)[] = {
-    DOUBLE_rmatmul
-};
-
-static PyUFuncGenericFunction
-FUNC_ARRAY_NAME(norm)[] = {
-    DOUBLE_norm
+FUNC_ARRAY_NAME(alpha_beta)[] = {
+    DOUBLE_alpha_beta
 };
 
 /* info for creating ufunc object */
 GUFUNC_DESCRIPTOR_t gufunc_descriptors[] = {
-    {"matmul", "(m?,k),(k,n?)->(m?,n?)", matmul__doc__, 1, 2, 1,
-        FUNC_ARRAY_NAME(matmul), ufn_types_1_3},
-    {"rmatmul", "(k,n?),(m?,k)->(m?,n?)", rmatmul__doc__, 1, 2, 1,
-        FUNC_ARRAY_NAME(rmatmul), ufn_types_1_3},
-    {"norm", "(n)->()", norm__doc__, 1, 1, 1,
-        FUNC_ARRAY_NAME(norm), ufn_types_1_2}
+    {"alpha_beta", "(r,p,m,m),(r,m),(tm),(t)->(t,m),(t,m),(t)", alpha_beta__doc__,
+        1, 4, 3, FUNC_ARRAY_NAME(alpha_beta), ufn_types_1_7}
 };
 
 /*
@@ -456,7 +534,7 @@ GUFUNC_DESCRIPTOR_t gufunc_descriptors[] = {
 */
 
 /* Methods to add to module (none, we add ufuncs after creating them) */
-static PyMethodDef GUfuncs_BLAS_Methods[] = {
+static PyMethodDef Baum_Welch_Methods[] = {
     /* Sentinel */
     {NULL, NULL, 0, NULL}
 };
@@ -464,10 +542,10 @@ static PyMethodDef GUfuncs_BLAS_Methods[] = {
 /* arguments for module creation */
 static struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
-        "_gufuncs_blas",
+        "_baum_welch",
         NULL,
         -1,
-        GUfuncs_BLAS_Methods,
+        Baum_Welch_Methods,
         NULL,
         NULL,
         NULL,
@@ -475,7 +553,7 @@ static struct PyModuleDef moduledef = {
 };
 
 /* create module */
-PyObject *PyInit__gufuncs_blas(void)
+PyObject *PyInit__baum_welch(void)
 {
     PyObject *m;
 
@@ -489,11 +567,11 @@ PyObject *PyInit__gufuncs_blas(void)
     import_ufunc();
 
     /* Load the ufunc operators into the module's namespace */
-    int failure = addUfuncs(m, gufunc_descriptors, 3, gufuncs_blas_version);
+    int failure = addUfuncs(m, gufunc_descriptors, 1, baum_welch_version);
 
     if (PyErr_Occurred() || failure) {
         PyErr_SetString(PyExc_RuntimeError,
-                        "cannot load _gufuncs_blas module.");
+                        "cannot load _baum_welch module.");
         return NULL;
     }
 

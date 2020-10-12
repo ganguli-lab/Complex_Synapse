@@ -105,6 +105,13 @@ When number of ufunc inputs + outputs == 6 */
     INIT_OUTER_LOOP_5       \
     npy_intp s5 = *steps++;
 
+/* Declare and initialise loop variables:
+    s6 = stride along non-core dimension of sixth argument
+When number of ufunc inputs + outputs == 7 */
+#define INIT_OUTER_LOOP_7   \
+    INIT_OUTER_LOOP_6       \
+    npy_intp s6 = *steps++;
+
 #define BEGIN_OUTER_LOOP        \
     for (N_ = 0; N_ < dN; N_++) {
 
@@ -114,6 +121,7 @@ When number of ufunc inputs + outputs == 6 */
 #define BEGIN_OUTER_LOOP_4  BEGIN_OUTER_LOOP
 #define BEGIN_OUTER_LOOP_5  BEGIN_OUTER_LOOP
 #define BEGIN_OUTER_LOOP_6  BEGIN_OUTER_LOOP
+#define BEGIN_OUTER_LOOP_7  BEGIN_OUTER_LOOP
 
 /* End of loop over non-core dimension */
 #define END_OUTER_LOOP  }
@@ -153,6 +161,12 @@ When number of ufunc inputs + outputs == 6 */
 #define END_OUTER_LOOP_6  \
     args[5] += s5;        \
     END_OUTER_LOOP_5
+
+/* End of loop over non-core dimension
+When number of ufunc inputs + outputs == 7 */
+#define END_OUTER_LOOP_7  \
+    args[6] += s6;        \
+    END_OUTER_LOOP_6
 
 /*
 *****************************************************************************

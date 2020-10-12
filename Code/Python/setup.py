@@ -28,7 +28,7 @@ def in_src(name):
 
 
 # =========================================================================
-config = Configuration(package_name='numpy_linalg')
+config = Configuration(package_name='complex_synapse')
 
 inc_dirs = [get_python_inc()]
 if inc_dirs[0] != get_python_inc(plat_specific=1):
@@ -39,12 +39,12 @@ inc_dirs.append('src')
 lapack_info = get_sys_info('lapack_opt', 0)  # and {}
 npymath_info = get_misc_info("npymath")
 all_info = {k: lapack_info[k] + npymath_info[k] for k in lapack_info.keys()}
-rearrange = in_src('rearrange_data.c.src')
-module_loc = 'gufuncs.'
+rearrange = in_src('rearrange_data.c')
+MODULE_LOC = 'identify.'
 
 # =============================================================================
-config.add_extension(module_loc + '_baum_welch',
-                     sources=[in_src('baum_welch.c.src'), rearrange],
+config.add_extension(MODULE_LOC + '_baum_welch',
+                     sources=[in_src('baum_welch.c'), rearrange],
                      include_dirs=inc_dirs,
                      extra_info=all_info)
 # =============================================================================
