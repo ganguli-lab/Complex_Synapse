@@ -196,11 +196,11 @@ def _calc_alpha_beta_c(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
 
     Returns
     -------
-    alpha : la.lnarray, (T,E,M)
+    alpha : la.lnarray, (E,T,M)
         Normalised Baum-Welch forward variable
-    beta : la.lnarray, (T,E,M)
+    beta : la.lnarray, (E,T,M)
         Scaled Baum-Welch backward variable
-    eta : la.lnarray, (T,E)
+    eta : la.lnarray, (E,T)
         Norm of Baum-Welch forward variable
     """
     if (data.readouts >= model.nreadout).any():
@@ -276,6 +276,73 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
         initial = (alpha * beta).sum(tuple(range(len(nexpt) + 1)))
     else:
         initial = (alpha[0] * beta[0]).sum(tuple(range(len(nexpt))))
+
+    if normed:
+        plast /= plast.sum(axis=-1, keepdims=True)
+        initial /= initial.sum(axis=-1, keepdims=True)
+
+    return plast, initial
+
+
+def _calc_model_c(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
+                alpha: la.lnarray, beta: la.lnarray, eta: la.lnarray, *,
+                steady: bool = True, combine: bool = True, normed: bool = True,
+                ) -> Tuple[la.lnarray, la.lnarray]:
+    """One Baum-Welch/Rabiner-Juang update of the model
+
+    Parameters
+    ----------
+    updaters : la.lnarray, (T-1,E,M,M) float[0:1], Modified
+        Plasticity matrices multiplied by readout probability given 'to' state.
+    plast_type : la.lnarray, (T-1,E), int[0:P]
+        id of plasticity type after each time-step
+    readouts : ArrayLike, (E,T), int[0:R]
+        id of readout from synapse at each time-step
+    alpha : la.lnarray, (T,E,M) float[0:1]
+        Normalised Baum-Welch forward variable
+    beta : la.lnarray, (T,E,M) float
+        Scaled Baum-Welch backward variable
+    eta : la.lnarray, (T,E) float[1:]
+        Norm of Baum-Welch forward variable
+
+    Keyword only:
+
+    steady : bool, optional
+        Can we assume that `initial` is the steady-state?
+        If `True`, we can use all times to estimate `initial`.
+        If `False`, we can only use `t=0`. By default `True`.
+    combine: bool
+        Should we sum over experiments? By default `True`.
+    normed: ClassVar[bool] = True
+        Should we normed the result? By default `True`.
+    nplast : imt, optional
+        number of plasticity types, P. If `None` calculate from `plast_type`.
+        By default `True`.
+
+    Returns
+    -------
+    plast : array_like, (P,M,M), float[0:1]
+        new estimate of transition probability matrix.
+    initial : array_like, (M,) float[0:1]
+        new estimate of distribution of initial state.
+    """
+    if (data.readouts >= model.nreadout).any():
+        raise IndexError("data.readouts out of bounds")
+    if (data.plast_type >= model.nplast).any():
+        raise IndexError("data.plast_type out of bounsds")
+    data = data.move_t_axis(-1)
+    # (R,P,M,M),(R,M)
+    updaters, _ = model.updaters()
+
+    if steady:
+        pass
+    plast, initial = _bw.m_init(updaters, data.plast_type, data.readouts,
+                                alpha, beta, eta)
+    print('exited')
+
+    if combine:
+        plast = plast.sum(tuple(range(plast.ndim-3)))
+        initial = initial.sum(tuple(range(initial.ndim-1)))
 
     if normed:
         plast /= plast.sum(axis=-1, keepdims=True)

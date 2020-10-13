@@ -142,10 +142,11 @@ Then the joint likelihood of a trajectory and sequence observed synaptic weights
 %
 \begin{equation}\label{eq:trajlike}
 \begin{aligned}
-  \pr\cond{i[0,T], \w[0,T]}{\mu[0,T-1],\M} &= \pib_{i(0)} \, \Pib_{i(0)}(0) 
-        \prod_{t=0}^{T-1} \M^{\mu(t)}_{i(t)i(t+1)} \, \Pib_{i(t+1)}(t+1),\\
+  \pr\cond{i[0,T], \w[0,T]}{\mu[0,T-1],\M} &= \pib_{i(0)} \, \Pib_{i(0)}^{\w(0)} 
+        \prod_{t=0}^{T-1} \M^{\mu(t)}_{i(t)i(t+1)} \, \Pib_{i(t+1)}^{\w(t+1)},\\
   \text{where}\quad
-  \Pib_i(t) &= \delta_{\w_{i}\w(t)}
+  \Pib_i^{\w} &= \pr\cond{\w(t) = \w}{i(t) = i}
+    = \delta_{\w_{i}\w(t)}
 \end{aligned}
 \end{equation}
 %
@@ -172,11 +173,11 @@ where the numerator $N^\mu_{ij}$ and the forward/backward variables $\alpha$ and
   N^\nu_{jk} &= \sum_{t=0}^{T-1} \delta_{\mu(t)\nu} \, 
         \pr\cond{i[t,t+1]=(j,k),\w[0,T]}{\mu[0,T-1],\M} \\
      &= \sum_{t=1}^{T} \delta_{\mu(t)\nu} \, 
-        \alpha_j(t) \, \beta_k(t+1) \, \M^{\nu}_{jk} \, \Pib_k(t+1) ,\\
+        \alpha_j(t) \, \beta_k(t+1) \, \M^{\nu}_{jk} \, \Pib_k^{\w(t+1)} ,\\
   \alpha_j(t) &= \pr\cond{i(t)=j,\w[0,t]}{\mu[0,t-1],\M} \\
-     &= \sum_{i[0,t]} \pib_{i(0)}(0) \, \Pib_{i(0)}(0) \prod_{s=0}^{t-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib_{i(s+1)}(s+1) \,\delta_{i(t)j}, \\
+     &= \sum_{i[0,t]} \pib_{i(0)} \, \Pib_{i(0)}^{\w(0)} \prod_{s=0}^{t-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib_{i(s+1)}^{\w(s+1)} \,\delta_{i(t)j}, \\
   \beta_j(t) &= \pr\cond{\w[t+1,T]}{i(t)=j,\mu[t,T-1],\M} \\
-     &= \sum_{i[t,T]} \delta_{i(t)j} \prod_{s=t}^{T-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib_{i(s+1)}(s+1).
+     &= \sum_{i[t,T]} \delta_{i(t)j} \prod_{s=t}^{T-1} \M^{\mu(s)}_{i(s)i(s+1)} \, \Pib_{i(s+1)}^{\w(s+1)}.
 \end{aligned}
 \end{equation}
 %
@@ -205,8 +206,8 @@ These quantities have the interpretations:
 \begin{aligned}
   \tilde{\alpha}_j(t) &= \pr\cond{i(t)=j}{\w[0,t],\mu[0,t-1],\M}, \\
   \eta(t)\inv &= \pr\cond{\w(t)}{\w[0,t-1],\mu[0,t-1],\M}, \\
-  \brk{\prod_{s=0}^t \eta(s)}\inv &= \pr\cond{\w[0,t]}{\mu[0,t-1],\M}, \\
-  \brk{\prod_{s=t_0}^{t_1} \eta(s)}\inv &= 
+  \prod_{s=0}^t \eta(s)\inv &= \pr\cond{\w[0,t]}{\mu[0,t-1],\M}, \\
+  \prod_{s=t_0}^{t_1} \eta(s)\inv &= 
           \pr\cond{\w[t_0,t_1]}{\w[0,t_0-1],\mu[0,t_1-1],\M}.
 \end{aligned}
 \end{equation}
@@ -227,7 +228,7 @@ Then we can write
       \pr\cond{i[t,t+1]=(jk)}{\w[0,T],\mu[0,T-1],\M} \\
      &= \sum_{t=0}^{T-1} \delta_{\mu(t)\nu} \, 
       \tilde{\alpha}_j(t) \, \tilde{\beta}_k(t+1) \, \eta(t+1) \, 
-      \M^{\nu}_{jk} \, \Pib_k(t+1) ,\\
+      \M^{\nu}_{jk} \, \Pib_k^{\w(t+1)} ,\\
   \pdiff{\CL}{\M'^\mu_{ij}} &= \pr_{[0,T]}\cond{\w}{\mu,\M} \, 
       \frac{ \widetilde{N}^\mu_{ij} }{ \M'^\mu_{ij} } - \lambda^\mu_{i}, \\
   \pdiff{\CL}{\pib'_{i}} &= \pr_{[0,T]}\cond{\w}{\mu,\M} \, 

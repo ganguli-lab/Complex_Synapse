@@ -60,60 +60,86 @@ Copyright/licence info for that file:
 Macros for looping over non-core dimensions provided by numpy
 */
 
-/* Declare and initialise loop variables:
-    dN = length of non-core dimension
-    N_ = loop variable
-    s0 = stride along non-core dimension of first argument
-When number of ufunc inputs + outputs == 1 */
+/* Declare and initialise loop variables
+when number of ufunc inputs + outputs == 1:
+    dN = length of non-core dimension,
+    N_ = loop variable,
+    s0 = stride along non-core dimension of first argument.
+*/
 #define INIT_OUTER_LOOP_1         \
     npy_intp dN = *dimensions++;  \
     npy_intp N_;                  \
     npy_intp s0 = *steps++;
 
-/* Declare and initialise loop variables:
-    s1 = stride along non-core dimension of second argument
-When number of ufunc inputs + outputs == 2 */
+/* Declare and initialise loop variables
+when number of ufunc inputs + outputs == 2:
+    s1 = stride along non-core dimension of second argument.
+*/
 #define INIT_OUTER_LOOP_2   \
     INIT_OUTER_LOOP_1       \
     npy_intp s1 = *steps++;
 
-/* Declare and initialise loop variables:
-    s2 = stride along non-core dimension of third argument
-When number of ufunc inputs + outputs == 3 */
+/* Declare and initialise loop variables
+when number of ufunc inputs + outputs == 3:
+    s2 = stride along non-core dimension of third argument.
+*/
 #define INIT_OUTER_LOOP_3   \
     INIT_OUTER_LOOP_2       \
     npy_intp s2 = *steps++;
 
-/* Declare and initialise loop variables:
-    s3 = stride along non-core dimension of fourth argument
-When number of ufunc inputs + outputs == 4 */
+/* Declare and initialise loop variables
+when number of ufunc inputs + outputs == 4:
+    s3 = stride along non-core dimension of fourth argument.
+*/
 #define INIT_OUTER_LOOP_4   \
     INIT_OUTER_LOOP_3       \
     npy_intp s3 = *steps++;
 
-/* Declare and initialise loop variables:
-    s4 = stride along non-core dimension of fifth argument
-When number of ufunc inputs + outputs == 5 */
+/* Declare and initialise loop variables
+when number of ufunc inputs + outputs == 5:
+    s4 = stride along non-core dimension of fifth argument.
+*/
 #define INIT_OUTER_LOOP_5   \
     INIT_OUTER_LOOP_4       \
     npy_intp s4 = *steps++;
 
-/* Declare and initialise loop variables:
-    s5 = stride along non-core dimension of sixth argument
-When number of ufunc inputs + outputs == 6 */
+/* Declare and initialise loop variables
+when number of ufunc inputs + outputs == 6:
+    s5 = stride along non-core dimension of sixth argument.
+*/
 #define INIT_OUTER_LOOP_6   \
     INIT_OUTER_LOOP_5       \
     npy_intp s5 = *steps++;
 
-/* Declare and initialise loop variables:
-    s6 = stride along non-core dimension of sixth argument
-When number of ufunc inputs + outputs == 7 */
+/* Declare and initialise loop variables
+when number of ufunc inputs + outputs == 7:
+    s6 = stride along non-core dimension of seventh argument.
+*/
 #define INIT_OUTER_LOOP_7   \
     INIT_OUTER_LOOP_6       \
     npy_intp s6 = *steps++;
 
+/* Declare and initialise loop variables
+when number of ufunc inputs + outputs == 8:
+    s7 = stride along non-core dimension of eighth argument.
+*/
+#define INIT_OUTER_LOOP_8   \
+    INIT_OUTER_LOOP_7       \
+    npy_intp s7 = *steps++;
+
+/* Declare and initialise loop variables
+when number of ufunc inputs + outputs == 9:
+    s8 = stride along non-core dimension of ninth argument.
+*/
+#define INIT_OUTER_LOOP_9   \
+    INIT_OUTER_LOOP_8       \
+    npy_intp s8 = *steps++;
+
 #define BEGIN_OUTER_LOOP        \
     for (N_ = 0; N_ < dN; N_++) {
+
+/* End of loop over non-core dimension */
+#define END_OUTER_LOOP  }
 
 /* Start of loop over non-core dimension */
 #define BEGIN_OUTER_LOOP_2  BEGIN_OUTER_LOOP
@@ -122,51 +148,62 @@ When number of ufunc inputs + outputs == 7 */
 #define BEGIN_OUTER_LOOP_5  BEGIN_OUTER_LOOP
 #define BEGIN_OUTER_LOOP_6  BEGIN_OUTER_LOOP
 #define BEGIN_OUTER_LOOP_7  BEGIN_OUTER_LOOP
-
-/* End of loop over non-core dimension */
-#define END_OUTER_LOOP  }
+#define BEGIN_OUTER_LOOP_8  BEGIN_OUTER_LOOP
+#define BEGIN_OUTER_LOOP_9  BEGIN_OUTER_LOOP
 
 /* End of loop over non-core dimension
-When number of ufunc inputs + outputs == 1 */
+when number of ufunc inputs + outputs == 1. */
 #define END_OUTER_LOOP_1  \
     args[0] += s0;        \
     END_OUTER_LOOP
 
 /* End of loop over non-core dimension
-When number of ufunc inputs + outputs == 2 */
+when number of ufunc inputs + outputs == 2. */
 #define END_OUTER_LOOP_2  \
     args[1] += s1;        \
     END_OUTER_LOOP_1
 
 /* End of loop over non-core dimension
-When number of ufunc inputs + outputs == 3 */
+when number of ufunc inputs + outputs == 3. */
 #define END_OUTER_LOOP_3  \
     args[2] += s2;        \
     END_OUTER_LOOP_2
 
 /* End of loop over non-core dimension
-When number of ufunc inputs + outputs == 4 */
+when number of ufunc inputs + outputs == 4. */
 #define END_OUTER_LOOP_4  \
     args[3] += s3;        \
     END_OUTER_LOOP_3
 
 /* End of loop over non-core dimension
-When number of ufunc inputs + outputs == 5 */
+when number of ufunc inputs + outputs == 5. */
 #define END_OUTER_LOOP_5  \
     args[4] += s4;        \
     END_OUTER_LOOP_4
 
 /* End of loop over non-core dimension
-When number of ufunc inputs + outputs == 6 */
+when number of ufunc inputs + outputs == 6. */
 #define END_OUTER_LOOP_6  \
     args[5] += s5;        \
     END_OUTER_LOOP_5
 
 /* End of loop over non-core dimension
-When number of ufunc inputs + outputs == 7 */
+when number of ufunc inputs + outputs == 7. */
 #define END_OUTER_LOOP_7  \
     args[6] += s6;        \
     END_OUTER_LOOP_6
+
+/* End of loop over non-core dimension
+when number of ufunc inputs + outputs == 8. */
+#define END_OUTER_LOOP_8  \
+    args[6] += s7;        \
+    END_OUTER_LOOP_7
+
+/* End of loop over non-core dimension
+when number of ufunc inputs + outputs == 9. */
+#define END_OUTER_LOOP_9  \
+    args[6] += s8;        \
+    END_OUTER_LOOP_8
 
 /*
 *****************************************************************************
