@@ -15,8 +15,12 @@ import complex_synapse.synapse_base as _sb
 import complex_synapse.identify.plast_seq as _ps
 import complex_synapse.identify.synapse_id as _si
 import complex_synapse.identify.fit_synapse as _fs
-import complex_synapse.identify._baum_welch as _bw
-
+try:
+    import complex_synapse.identify._baum_welch as _bw
+except ImportError:
+    P_OR_C = True
+else:
+    P_OR_C = False
 # =============================================================================
 
 
@@ -37,7 +41,7 @@ def likelihood(model: _si.SynapseIdModel, data: _ps.PlasticitySequence
         `-log(P(readouts|model))`.
     """
     # _,_,(E,T)->()
-    return _sb.scalarise(np.log(_calc_bw_abe_obj(model, data)[2]).sum())
+    return _sb.scalarise(np.log(_obj_bw_abe(model, data)[2]).sum())
 
 
 def state_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence
@@ -57,7 +61,7 @@ def state_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence
         Current estimate of marginal occupation.
     """
     # (E,T,M),(E,T,M),_,
-    alpha, beta = _calc_bw_abe_obj(model, data)[:2]
+    alpha, beta = _obj_bw_abe(model, data)[:2]
     # (E,T,M)
     return alpha * beta
 
@@ -91,9 +95,9 @@ def model_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
     # (E,T-1),(E,T)
     expt = data.plast_type, data.readouts
     # (E,T,M),(E,T,M),(E,T),
-    bw_vars = _calc_bw_abe_c(jmp, initial, *expt)
+    bw_vars = _jmp_bw_abe_c(jmp, initial, *expt)
     # (P,M,M),(M,)
-    return _calc_model_c(jmp, *expt, bw_vars, steady=steady, combine=combine)
+    return _jmp_model_c(jmp, *expt, bw_vars, steady=steady, combine=combine)
 
 
 # =============================================================================
@@ -101,19 +105,33 @@ def model_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
 # =============================================================================
 
 
-def _get_updaters(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
-                  ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
-    """Get updater matrices for each time-step
+def _private():
+    """Hold docs for private functions - decoding names.
 
-    Parameters
-    ----------
+    suffix `p`: uses python loops, `c`: uses C-extension.
+
+    Parameters and Returns
+    ======================
+    obj
+    ---
     model : SynapseIdModel
         The model to update, modified in-place
     data : PlasticitySequence
         The data to use for the update
 
-    Returns
-    -------
+    jmp
+    ---
+    jumps : la.lnarray, (R,P,M,M)
+        Plasticity matrices multiplied by readout indicators of 'to' state.
+    starts : la.lnarray, (R,M)
+        Initial state distribution multiplied by readout indicators of state.
+    plast_type : ArrayLike, (E,T-1), int[0:P]
+        Id of plasticity type after each time-step.
+    readouts : ArrayLike, (E,T), int[0:R]
+        Id of readout from synapse at each time-step.
+
+    upd
+    ---
     updaters : la.lnarray, (E,T-1,M,M)
         Plasticity matrices multiplied by readout indicators of 'to' state,
         per experiment, per time.
@@ -122,39 +140,71 @@ def _get_updaters(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
         per experiment.
     plast_type : la.lnarray, (E,T-1), int[0:P]
         Id of plasticity type after each time-step.
+
+    abe
+    ---
+    bw_vars : Tuple[lnarray, lnarray, lnarray] (E,T,M),(E,T,M),(E,T) float
+        Baum-Welch forward/backward variables.
+
+        alpha : la.lnarray, (E,T,M) float[0:1]
+            Normalised Baum-Welch forward variable.
+        beta : la.lnarray, (E,T,M) float
+            Scaled Baum-Welch backward variable.
+        eta : la.lnarray, (E,T) float[1:]
+            Norm of Baum-Welch forward variable.
+
+    kwds
+    ----
+    steady : bool, optional
+        Can we assume that `initial` is the steady-state?
+        If `True`, we can use all times to estimate `initial`.
+        If `False`, we can only use `t=0`. By default `True`.
+    combine: bool
+        Should we sum over experiments? By default `True`.
+    normed: ClassVar[bool] = True
+        Should we normed the result? By default `True`.
+    nplast : int, optional [`_p` only]
+        Number of plasticity types, P. If `None` calculate from `plast_type`.
+        By default `True`.
+
+    model
+    -----
+    plast : array_like, (P,M,M), float[0:1]
+        New estimate of transition probability matrix.
+    initial : array_like, (M,) float[0:1]
+        New estimate of distribution of initial state.
     """
+
+
+def _obj_jmp(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
+             ) -> Tuple[la.lnarray, la.lnarray, la.lnarray, la.lnarray]:
+    """convert obj -> jmp"""
     data = data.move_t_axis(-1)
     # (R,P,M,M),(R,M)
-    updaters, initial = model.updaters()
-    # (E,T-1,M,M) - makes a copy :(
-    updaters = updaters[data.readouts[..., 1:], data.plast_type]
+    jumps, starts = model.updaters()
+    # err = la.gufuncs.make_errobj("GUfunc reported a floating point error")
+    return jumps, starts, data.plast_type, data.readouts
+
+
+def _jmp_upd(jumps: la.lnarray, starts: la.lnarray,
+             plast_type: la.lnarray, readouts: la.lnarray,
+             ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+    """convert jmp -> upd, updater matrices for each time-step"""
+    # (E,T-1,M,M)
+    updaters = jumps[readouts[..., 1:], plast_type]
     # (E,M)
-    initial = initial[data.readouts[..., 0]]
-    # (E,T-1,M,M),(E,M),(E,T-1),
-    return updaters, initial, data.plast_type
+    initial = starts[readouts[..., 0]]
+    # (E,T-1,M,M),(E,M),(E,T-1)
+    return updaters, initial, plast_type
 
 
-def _calc_bw_abe(updaters: la.lnarray, initial: la.lnarray
+def _drop_snd(*args):
+    """Drop the second argument"""
+    return args[:1] + args[2:]
+
+def _upd_bw_abe_p(updaters: la.lnarray, initial: la.lnarray
                  ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
     """Calculate BW forward/backward variables.
-
-    Parameters
-    ----------
-    updaters : la.lnarray, (E,T-1,M,M)
-        Plasticity matrices multiplied by readout indicators of 'to' state,
-        per experiment, per time.
-    initial : la.lnarray, (E,M)
-        Initial state distribution multiplied by readout indicators of state,
-        per experiment.
-
-    Returns
-    -------
-    alpha : la.lnarray, (E,T,M)
-        Normalised Baum-Welch forward variable.
-    beta : la.lnarray, (E,T,M)
-        Scaled Baum-Welch backward variable.
-    eta : la.lnarray, (E,T)
-        Norm of Baum-Welch forward variable.
     """
     # (E,T,M)
     siz = initial.shape[:-1] + (updaters.shape[-3] + 1,) + updaters.shape[-1:]
@@ -189,112 +239,11 @@ def _calc_bw_abe(updaters: la.lnarray, initial: la.lnarray
     return alpha.ur, beta.uc, eta.us
 
 
-def _calc_bw_abe_c(jumps: la.lnarray, initial: la.lnarray,
-                   plast_type: la.lnarray, readouts: la.lnarray,
-                   ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
-    """Calculate BW forward/backward variables (using C-extension).
-
-    Parameters
-    ----------
-    jumps : la.lnarray, (R,P,M,M)
-        Plasticity matrices multiplied by readout indicators of 'to' state.
-    initial : la.lnarray, (R,M)
-        Initial state distribution multiplied by readout indicators of state.
-    plast_type : ArrayLike, (E,T-1), int[0:P]
-        Id of plasticity type after each time-step.
-    readouts : ArrayLike, (E,T), int[0:R]
-        Id of readout from synapse at each time-step.
-
-    Returns
-    -------
-    alpha : la.lnarray, (E,T,M)
-        Normalised Baum-Welch forward variable.
-    beta : la.lnarray, (E,T,M)
-        Scaled Baum-Welch backward variable.
-    eta : la.lnarray, (E,T)
-        Norm of Baum-Welch forward variable.
-    """
-    if (readouts >= jumps.shape[-4]).any():
-        raise IndexError("readouts out of bounds")
-    if (plast_type >= jumps.shape[-3]).any():
-        raise IndexError("plast_type out of bounds")
-    return _bw.alpha_beta(jumps, initial, plast_type, readouts)
-
-
-def _calc_bw_abe_obj(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
-                     ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
-    """Calculate BW forward/backward variables (from objects using C-extension)
-
-    Parameters
-    ----------
-    model : SynapseIdModel
-        The model to update.
-    data : PlasticitySequence
-        The data to use for the update.
-
-    Returns
-    -------
-    alpha : la.lnarray, (E,T,M)
-        Normalised Baum-Welch forward variable.
-    beta : la.lnarray, (E,T,M)
-        Scaled Baum-Welch backward variable.
-    eta : la.lnarray, (E,T)
-        Norm of Baum-Welch forward variable.
-    """
-    if (data.readouts >= model.nreadout).any():
-        raise IndexError("data.readouts out of bounds")
-    if (data.plast_type >= model.nplast).any():
-        raise IndexError("data.plast_type out of bounds")
-    data = data.move_t_axis(-1)
-    # (R,P,M,M),(R,M)
-    jumps, initial = model.updaters()
-    # err = la.gufuncs.make_errobj("GUfunc reported a floating point error")
-    return _calc_bw_abe_c(jumps, initial, data.plast_type, data.readouts)
-
-
-def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
+def _upd_model_p(updaters: la.lnarray, plast_type: la.lnarray,
                 bw_vars: Tuple[la.lnarray, la.lnarray, la.lnarray], *,
                 steady: bool = True, combine: bool = True, normed: bool = True,
                 nplast: Optional[int] = None) -> Tuple[la.lnarray, la.lnarray]:
     """One Baum-Welch/Rabiner-Juang update of the model.
-
-    Parameters
-    ----------
-    updaters : la.lnarray, (E,T-1,M,M) float[0:1], *Modified*
-        Plasticity matrices multiplied by readout probability given 'to' state,
-        per experiment, per time.
-    plast_type : la.lnarray, (E,T-1), int[0:P]
-        Id of plasticity type after each time-step.
-    bw_vars : Tuple[lnarray, lnarray, lnarray] (E,T,M),(E,T,M),(E,T) float
-        Baum-Welch forward/backward variables.
-
-        alpha : la.lnarray, (E,T,M) float[0:1]
-            Normalised Baum-Welch forward variable.
-        beta : la.lnarray, (E,T,M) float
-            Scaled Baum-Welch backward variable.
-        eta : la.lnarray, (E,T) float[1:]
-            Norm of Baum-Welch forward variable.
-
-    Keyword only:
-
-    steady : bool, optional
-        Can we assume that `initial` is the steady-state?
-        If `True`, we can use all times to estimate `initial`.
-        If `False`, we can only use `t=0`. By default `True`.
-    combine: bool
-        Should we sum over experiments? By default `True`.
-    normed: ClassVar[bool] = True
-        Should we normed the result? By default `True`.
-    nplast : imt, optional
-        Number of plasticity types, P. If `None` calculate from `plast_type`.
-        By default `True`.
-
-    Returns
-    -------
-    plast : array_like, (P,M,M), float[0:1]
-        New estimate of transition probability matrix.
-    initial : array_like, (M,) float[0:1]
-        New estimate of distribution of initial state.
     """
     nplast = _ag.default(nplast, plast_type.max() + 1)
     if not combine:
@@ -304,7 +253,7 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
         # (E,M)
         initial = np.empty(axes + updaters.shape[-1:])
         for i in np.ndindex(*axes):
-            plast[i], initial[i] = _calc_model(
+            plast[i], initial[i] = _upd_model_p(
                 updaters[i], plast_type[i], [x[i] for x in bw_vars],
                 steady=steady, combine=False, normed=normed, nplast=nplast)
 
@@ -330,48 +279,24 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
     return plast, initial
 
 
-def _calc_model_c(
+def _jmp_bw_abe_c(jumps: la.lnarray, starts: la.lnarray,
+                  plast_type: la.lnarray, readouts: la.lnarray,
+                  ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+    """Calculate BW forward/backward variables (using C-extension).
+    """
+    if (readouts >= jumps.shape[-4]).any():
+        raise IndexError("readouts out of bounds")
+    if (plast_type >= jumps.shape[-3]).any():
+        raise IndexError("plast_type out of bounds")
+    return _bw.alpha_beta(jumps, starts, plast_type, readouts)
+
+
+def _jmp_model_c(
     jumps: la.lnarray, plast_type: la.lnarray, readouts: la.lnarray,
     bw_vars: Tuple[la.lnarray, la.lnarray, la.lnarray], *,
     steady: bool = True, combine: bool = True, normed: bool = True,
 ) -> Tuple[la.lnarray, la.lnarray]:
     """One Baum-Welch/Rabiner-Juang update of the model (using C-extension).
-
-    Parameters
-    ----------
-    jumps : la.lnarray, (R,P,M,M) float[0:1], Modified
-        Plasticity matrices multiplied by readout probability given 'to' state.
-    plast_type : la.lnarray, (E,T), int[0:P]
-        Id of plasticity type after each time-step.
-    readouts : ArrayLike, (E,T), int[0:R]
-        Id of readout from synapse at each time-step.
-    bw_vars : Tuple[lnarray, lnarray, lnarray] (E,T,M),(E,T,M),(E,T) float
-        Baum-Welch forward/backward variables.
-
-        alpha : la.lnarray, (E,T,M) float[0:1]
-            Normalised Baum-Welch forward variable.
-        beta : la.lnarray, (E,T,M) float
-            Scaled Baum-Welch backward variable.
-        eta : la.lnarray, (E,T) float[1:]
-            Norm of Baum-Welch forward variable.
-
-    Keyword only:
-
-    steady : bool, optional
-        Can we assume that `initial` is the steady-state?
-        If `True`, we can use all times to estimate `initial`.
-        If `False`, we can only use `t=0`. By default `True`.
-    combine: bool
-        Should we sum over experiments? By default `True`.
-    normed: ClassVar[bool] = True
-        Should we norm the result? By default `True`.
-
-    Returns
-    -------
-    plast : array_like, (P,M,M), float[0:1]
-        new estimate of transition probability matrix.
-    initial : array_like, (M,) float[0:1]
-        new estimate of distribution of initial state.
     """
     if (readouts >= jumps.shape[-4]).any():
         raise IndexError("data.readouts out of bounds")
@@ -397,9 +322,36 @@ def _calc_model_c(
     return plast, initial
 
 
-def _calc_model_obj(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
-                    bw_vars: Tuple[la.lnarray, la.lnarray, la.lnarray],
-                    **kwds) -> Tuple[la.lnarray, la.lnarray]:
+def _obj_bw_abe(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
+                ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+    """Calculate BW forward/backward variables (from objects using C-extension)
+
+    Parameters
+    ----------
+    model : SynapseIdModel
+        The model to update.
+    data : PlasticitySequence
+        The data to use for the update.
+
+    Returns
+    -------
+    alpha : la.lnarray, (E,T,M)
+        Normalised Baum-Welch forward variable.
+    beta : la.lnarray, (E,T,M)
+        Scaled Baum-Welch backward variable.
+    eta : la.lnarray, (E,T)
+        Norm of Baum-Welch forward variable.
+    """
+    jmp = _obj_jmp(model, data)
+    if P_OR_C:
+        upd = _jmp_upd(*jmp)
+        # drop plast_type
+        return _upd_bw_abe_p(*upd[:2])
+    return _jmp_bw_abe_c(*jmp)
+
+
+def _obj_abe_model(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
+                   **kwds) -> Tuple[la.lnarray, la.lnarray]:
     """One Baum-Welch/Rabiner-Juang update of the model,
     (from objects, using C-extension).
 
@@ -409,15 +361,6 @@ def _calc_model_obj(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
         The model to update.
     data : PlasticitySequence
         The data to use for the update.
-    bw_vars : Tuple[lnarray, lnarray, lnarray] (E,T,M),(E,T,M),(E,T) float
-        Baum-Welch forward/backward variables.
-
-        alpha : la.lnarray, (E,T,M) float[0:1]
-            Normalised Baum-Welch forward variable.
-        beta : la.lnarray, (E,T,M) float
-            Scaled Baum-Welch backward variable.
-        eta : la.lnarray, (E,T) float[1:]
-            Norm of Baum-Welch forward variable.
 
     Keyword only:
 
@@ -432,21 +375,35 @@ def _calc_model_obj(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
 
     Returns
     -------
-    plast : array_like, (P,M,M), float[0:1]
-        new estimate of transition probability matrix.
-    initial : array_like, (M,) float[0:1]
-        new estimate of distribution of initial state.
+    bw_vars : Tuple[lnarray, lnarray, lnarray] (E,T,M),(E,T,M),(E,T) float
+        Baum-Welch forward/backward variables.
+
+        alpha : la.lnarray, (E,T,M) float[0:1]
+            Normalised Baum-Welch forward variable.
+        beta : la.lnarray, (E,T,M) float
+            Scaled Baum-Welch backward variable.
+        eta : la.lnarray, (E,T) float[1:]
+            Norm of Baum-Welch forward variable.
+    model : Tuple[lnarray, lnarray] (P,M,M),(M,) float
+        Baum-Welch update.
+
+        plast : array_like, (P,M,M), float[0:1]
+            new estimate of transition probability matrix.
+        initial : array_like, (M,) float[0:1]
+            new estimate of distribution of initial state.
     """
-    if (data.readouts >= model.nreadout).any():
-        raise IndexError("data.readouts out of bounds")
-    if (data.plast_type >= model.nplast).any():
-        raise IndexError("data.plast_type out of bounsds")
-
-    data = data.move_t_axis(-1)
-    # (R,P,M,M),_
-    jmp, _ = model.updaters()
-
-    return _calc_model_c(jmp, data.plast_type, data.readouts, bw_vars, **kwds)
+    jmp = _obj_jmp(model, data)
+    if P_OR_C:
+        upd = _jmp_upd(*jmp)
+        # drop plast_types
+        abe = _upd_bw_abe_p(*upd[:2])
+        # drop initial
+        model = _upd_model_p(*_drop_snd(upd), abe, **kwds)
+    else:
+        abe = _jmp_bw_abe_c(*jmp)
+        # drop starts
+        model = _jmp_model_c(*_drop_snd(jmp), abe, **kwds)
+    return abe, model
 
 
 # =============================================================================
@@ -584,7 +541,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
         kwds.setdefault('opt', BaumWelchOptions())
         super().__init__(data, est, callback, **kwds)
         # (E,T,M),(E,T,M),(E,T)
-        self.alpha, self.beta, self.eta = _calc_bw_abe_obj(self.est, self.data)
+        self.alpha, self.beta, self.eta = _obj_bw_abe(self.est, self.data)
         self.info['nlike'] = _sb.scalarise(np.log(self.eta).sum())
 
     def update_info(self) -> None:
@@ -597,16 +554,11 @@ class BaumWelchFitter(_fs.SynapseFitter):
 
     def update_fit(self) -> None:
         """Perform a single update of the model."""
-        # (R,P,M,M),(R,M) - makes a copy :)
-        jmp, init = self.est.updaters()
-        # (E,T-1),(E,T)
-        data = self.data.plast_type, self.data.readouts
+        abe, est = _obj_abe_model(self.est, self.data, **self.opt.bw_opts())
         # (E,T,M),(E,T,M),(E,T)
-        bw_vars = _calc_bw_abe_c(jmp, init, *data)
-        self.alpha, self.beta, self.eta = bw_vars
+        self.alpha, self.beta, self.eta = abe
         # (P,M,M),(M,)
-        self.est.plast, self.est.initial = _calc_model_c(jmp, *data, bw_vars,
-                                                         **self.opt.bw_opts())
+        self.est.plast, self.est.initial = est
         if self.opt.normed:
             self.est.sort(group=True)
 
