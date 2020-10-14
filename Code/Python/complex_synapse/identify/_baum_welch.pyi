@@ -27,8 +27,8 @@ eta : la.lnarray, (T,)
     Norm of Baum-Welch forward variable.
 """
 
-m_init: ufunc
-m_init__doc__ = """One Baum-Welch/Rabiner-Juang update of the model
+plast_init: ufunc
+plast_init__doc__ = """One Baum-Welch/Rabiner-Juang update of the model
 
 Parameters
 -----------
@@ -48,5 +48,31 @@ Returns
 plast : array_like, (P,M,M), float[0:1]
     new estimate of transition probability matrix.
 initial : array_like, (M,) float[0:1]
-    new estimate of distribution of initial state.
+    new estimate of distribution of initial state,
+    not assumed to be the steady-state distribution.
+"""
+
+plast_steady: ufunc
+plast_steady__doc__ = """One Baum-Welch/Rabiner-Juang update of the model
+
+Parameters
+-----------
+updaters : la.lnarray, (R,P,M,M) float[0:1]
+    Plasticity matrices multiplied by readout probability given 'to' state.
+plast_type : la.lnarray, (T-1,E), int[0:P]
+    id of plasticity type after each time-step
+alpha : la.lnarray, (T,M) float[0:1]
+    Normalised Baum-Welch forward variable
+beta : la.lnarray, (T,M) float
+    Scaled Baum-Welch backward variable
+eta : la.lnarray, (T,) float[1:]
+    Norm of Baum-Welch forward variable
+
+Returns
+-------
+plast : array_like, (P,M,M), float[0:1]
+    new estimate of transition probability matrix.
+initial : array_like, (M,) float[0:1]
+    new estimate of distribution of initial state,
+    assumed to be the steady-state distribution.
 """

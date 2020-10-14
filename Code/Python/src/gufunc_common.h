@@ -196,13 +196,13 @@ when number of ufunc inputs + outputs == 7. */
 /* End of loop over non-core dimension
 when number of ufunc inputs + outputs == 8. */
 #define END_OUTER_LOOP_8  \
-    args[6] += s7;        \
+    args[7] += s7;        \
     END_OUTER_LOOP_7
 
 /* End of loop over non-core dimension
 when number of ufunc inputs + outputs == 9. */
 #define END_OUTER_LOOP_9  \
-    args[6] += s8;        \
+    args[8] += s8;        \
     END_OUTER_LOOP_8
 
 /*

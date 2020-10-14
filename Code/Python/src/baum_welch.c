@@ -76,9 +76,9 @@ PyDoc_STRVAR(alpha_beta__doc__,
 "    Norm of Baum-Welch forward variable.\n"
 );
 
-/* update_m_init_signature = "(r,p,m,m),(tm),(t),(t,m),(t,m),(t)->(p,m,m),(m)"; */
+/* m_init_signature = "(r,p,m,m),(tm),(t),(t,m),(t,m),(t)->(p,m,m),(m)"; */
 
-PyDoc_STRVAR(m_init__doc__,
+PyDoc_STRVAR(plast_init__doc__,
 /* "m_init(M, P, R, A, B, E: ndarray) -> (UM, US: ndarray)\n\n" */
 "One Baum-Welch/Rabiner-Juang update of the model\n"
 "\nParameters\n-----------\n"
@@ -96,7 +96,30 @@ PyDoc_STRVAR(m_init__doc__,
 "plast : array_like, (P,M,M), float[0:1]\n"
 "    new estimate of transition probability matrix.\n"
 "initial : array_like, (M,) float[0:1]\n"
-"    new estimate of distribution of initial state.\n"
+"    new estimate of distribution of initial state,\n"
+"    not assumed to be the steady-state distribution.\n"
+);
+
+PyDoc_STRVAR(plast_steady__doc__,
+/* "m_init(M, P, R, A, B, E: ndarray) -> (UM, US: ndarray)\n\n" */
+"One Baum-Welch/Rabiner-Juang update of the model\n"
+"\nParameters\n-----------\n"
+"updaters : la.lnarray, (R,P,M,M) float[0:1]\n"
+"    Plasticity matrices multiplied by readout probability given 'to' state.\n"
+"plast_type : la.lnarray, (T-1,E), int[0:P]\n"
+"    id of plasticity type after each time-step\n"
+"alpha : la.lnarray, (T,M) float[0:1]\n"
+"    Normalised Baum-Welch forward variable\n"
+"beta : la.lnarray, (T,M) float\n"
+"    Scaled Baum-Welch backward variable\n"
+"eta : la.lnarray, (T,) float[1:]\n"
+"    Norm of Baum-Welch forward variable\n"
+"\nReturns\n-------\n"
+"plast : array_like, (P,M,M), float[0:1]\n"
+"    new estimate of transition probability matrix.\n"
+"initial : array_like, (M,) float[0:1]\n"
+"    new estimate of distribution of initial state,\n"
+"    assumed to be the steady-state distribution.\n"
 );
 
 /*
@@ -111,14 +134,14 @@ FNAME(dcopy)(int *n, double *x, int *incx, double *y, int *incy);
 
 /* set vector x to constant */
 extern void
-FNAME(dlaset)(char trans[], int *m, int *n,
+FNAME(dlaset)(char uplo[], int *m, int *n,
             double *alpha, double *beta,
             double a[], int *lda);
 
 /* y -> a x + y */
-extern void
-FNAME(daxpy)(int *n, double *a, double x[], int *incx,
-            double y[], int *incy);
+// extern void
+// FNAME(daxpy)(int *n, double *a, double x[], int *incx,
+//             double y[], int *incy);
 
 /* x -> x / a */
 extern void
@@ -193,7 +216,7 @@ typedef struct gemv_params_struct
 
 /* Copy vector: X -> S */
 static NPY_INLINE void
-call_dcopy_x_i(GEMV_PARAMS_t *params)
+call_dcopy_x_s(GEMV_PARAMS_t *params)
 {
     BLAS(dcopy)(&params->M, params->S, &params->ISM, params->X, &params->IX);
 }
@@ -221,7 +244,7 @@ static NPY_INLINE void
 call_dasum_e_x(GEMV_PARAMS_t *params)
 {
     npy_double norm = BLAS(dasum)(&params->M, params->X, &params->IX);
-    *(npy_double *)(params->E) = norm;
+    *(fortran_doublereal *)(params->E) = norm;
 }
 
 /* Matrix vector product: X -> Z.X */
@@ -262,33 +285,39 @@ init_DOUBLE_alpha_beta(GEMV_PARAMS_t *params,
     safe_R = R_in;
     ldz = fortran_int_max(M, 1);
 
-    mem_buff = malloc(1
-                      + safe_R * safe_M * sizeof(fortran_doublereal)
-                      + safe_R * safe_P * safe_M * safe_M * sizeof(fortran_doublereal)
-                      + safe_M * sizeof(fortran_doublereal)
-                      + safe_M * sizeof(fortran_doublereal)
-                      );
+    size_t Espace, Xspace, Yspace, ZZspace, SSspace, Zspace, Sspace;
+
+    Espace = sizeof(fortran_doublereal);
+    Xspace = safe_M * Espace;
+    Yspace = Xspace;
+    Sspace = Xspace;
+    Zspace = safe_M * Xspace;
+    ZZspace = safe_R * safe_P * Zspace;
+    SSspace = safe_R * Sspace;
+
+    mem_buff = malloc(Espace + Xspace + Yspace + ZZspace + SSspace);
     if (!mem_buff) {
         goto error;
     }
-    a = mem_buff + 1;  /* S at start of buffer */
-    b = a + safe_R * safe_M * sizeof(fortran_doublereal);  /* Z after space for S */
-    c = b + safe_R * safe_P * safe_M * safe_M * sizeof(fortran_doublereal);  /*X after space for Z*/
-    d = c + safe_M * sizeof(fortran_doublereal);  /* Y after space for X */
+    /* E at start of buffer */
+    a = mem_buff + Espace;  /* X after space for E */
+    b = a + Xspace;  /* Y after space for X */
+    c = b + Yspace;  /* ZZ after space for Y */
+    d = c + ZZspace;  /* SS after space for ZZ */
 
     params->TRANSZ = 'N';
     params->A = &d_one;  /* Y -> A*Z.X + B*Y, need A=1, B=0 */
     params->B = &d_zero;
     params->E = mem_buff;
-    params->S = a;
-    params->SS = a;
-    params->Z = b;
-    params->ZZ = b;
-    params->X = c;
-    params->Y = d;
-    params->IP = safe_M * safe_M * sizeof(fortran_doublereal);
-    params->IR = safe_P * (params->IP);
-    params->ISR = safe_M * sizeof(fortran_doublereal);
+    params->X = a;
+    params->Y = b;
+    params->ZZ = c;
+    params->SS = d;
+    params->Z = c;
+    params->S = d;
+    params->IP = Zspace;
+    params->IR = safe_P * Zspace;
+    params->ISR = Sspace;
     params->M = M;
     params->P = P;
     params->R = R;
@@ -323,7 +352,7 @@ release_DOUBLE_alpha_beta(GEMV_PARAMS_t *params)
 *************************************/
 
 static NPY_INLINE int
-choose_updater_n(GEMV_PARAMS_t *params, npy_int P_in, npy_int R_in)
+choose_updater_in_n(GEMV_PARAMS_t *params, npy_int P_in, npy_int R_in)
 {
     if (P_in < (npy_int)(params->P) && R_in < (npy_int)(params->R))
     {
@@ -339,11 +368,11 @@ choose_updater_n(GEMV_PARAMS_t *params, npy_int P_in, npy_int R_in)
 }
 
 static NPY_INLINE int
-choose_updater(GEMV_PARAMS_t *params, const char *plasttype, const char *readout)
+choose_updater_in(GEMV_PARAMS_t *params, const char *plasttype, const char *readout)
 {
     npy_int P_in = *(npy_int *)plasttype;
     npy_int R_in = *(npy_int *)readout;
-    return choose_updater_n(params, P_in, R_in);
+    return choose_updater_in_n(params, P_in, R_in);
 }
 
 static NPY_INLINE int
@@ -374,7 +403,7 @@ choose_init(GEMV_PARAMS_t *params, const char *readout)
 
 /* copy initial, updaters into struct for fortran */
 static void
-linearize_updaters(const char **args, npy_intp *dimensions, npy_intp *steps,
+linearize_updater_init(const char **args, npy_intp *dimensions, npy_intp *steps,
                    GEMV_PARAMS_t *params, const LINEARIZE_DATA_t *lin_data)
 {
     const LINEARIZE_DATA_t *u_in = lin_data++;
@@ -394,7 +423,7 @@ linearize_updaters(const char **args, npy_intp *dimensions, npy_intp *steps,
 
         for (cnt_p = 0; cnt_p < dimensions[1]; cnt_p++)
         {
-            choose_updater_n(params, cnt_p, cnt_r);
+            choose_updater_in_n(params, cnt_p, cnt_r);
             linearize_DOUBLE_matrix(params->Z, ip_updatep, u_in);
             ip_updatep += steps[0];
         }
@@ -483,7 +512,7 @@ INIT_OUTER_LOOP_7
         /* Copy updaters, initials, assume no broadcasting */
         npy_intp rsteps[] = {stride_u_p, stride_u_r, stride_s_r};
         LINEARIZE_DATA_t lin_data[] = {u_in, s_in};
-        linearize_updaters(args, dimensions, rsteps, &params, lin_data);
+        linearize_updater_init(args, dimensions, rsteps, &params, lin_data);
         // printf("updaters linearized\n");
 
         BEGIN_OUTER_LOOP
@@ -501,7 +530,7 @@ INIT_OUTER_LOOP_7
                 { break; }
 
             /* set first alpha to init */
-            call_dcopy_x_i(&params);
+            call_dcopy_x_s(&params);
             /* normalise, copy out alpha, eta */
             norm_alpha(op_alpha, op_eta, &params, &a_out);
             /* eta(0) is 1/eta from here */
@@ -513,7 +542,7 @@ INIT_OUTER_LOOP_7
                 op_alpha += stride_a_t;
                 op_eta += stride_e_t;
 
-                error_occurred = choose_updater(&params, ip_plast, ip_reado);
+                error_occurred = choose_updater_in(&params, ip_plast, ip_reado);
                 if (error_occurred)
                     { break; }
 
@@ -546,7 +575,7 @@ INIT_OUTER_LOOP_7
                 op_beta -= stride_b_t;
                 op_eta -= stride_e_t;
 
-                choose_updater(&params, ip_plast, ip_reado);
+                choose_updater_in(&params, ip_plast, ip_reado);
                 /* backward step */
                 call_dgemv_x_z_x(&params);
                 /* copy out, scale beta, invert eta */
@@ -575,22 +604,21 @@ INIT_OUTER_LOOP_7
 /* to hold arguments for BLAS _gemm */
 typedef struct gbmv_params_struct
 {
-  void *A; /* A is scalar of base type */
-  void *B; /* B is scalar of base type */
-  void *E; /* E is scalar of base type */
-  void *X; /* X is (M) of base type */
-  void *Y; /* Y is (M) of base type */
-  void *Z; /* Z is (M,M) of base type */
-  void *ZZ;  /* ZZ is (R,P,M,M) of base type */
-  void *UZ;  /* UZ is (M,M) of base type */
-  void *UZZ; /* UZZ is (R,P,M,M) of base type */
-  void *UUZ; /* UUZ is (P,M,M) of base type */
-  void *US;  /* US is (M) of base type */
+  void *A; /* A is scalar of double */
+  void *B; /* B is scalar of double */
+  void *E; /* E is scalar of double */
+  void *X; /* X is (M) of double */
+  void *Y; /* Y is (M) of double */
+  void *ZZ;  /* ZZ is (R,P,M,M) of double, (M,M,P,R) in fortran */
+  void *Z; /* Z is (M,M) of double */
+  void *ZTMP; /* ZTMP is (R,P,M,M) of double, (M,M,P,R) in fortran */
+  void *UZZ; /* UZZ is (P,M,M) of double, (M,M,P) in fortran */
+  void *UZ;  /* UZ is (M,M) of double */
+  void *US;  /* US is (M) of double */
 
   /* strides for choosing */
   size_t IP;
   size_t IR;
-  size_t ISR;
   /* for fortran functions */
   fortran_int K;
   fortran_int M;
@@ -610,19 +638,19 @@ typedef struct gbmv_params_struct
 * Calling BLAS functions drscl, dasum, dgemv       *
 ****************************************************/
 
-/* Clear US, UZZ, UUZ -> 0 */
+/* Clear US, ZTMP, UZZ -> 0 */
 static NPY_INLINE void
 call_dlaset_u_zero(GBMV_PARAMS_t *params)
 {
     LAPACK(dlaset)(&char_N, &params->M, &params->ISM,  /* N=1 */
                     params->B, params->B, params->US, &params->LDZ);  /* alpha=beta=0 */
     LAPACK(dlaset)(&char_N, &params->M, &params->RPM,  /* N=RPM */
-                    params->B, params->B, params->UZZ, &params->LDZ);  /* alpha=beta=0 */
+                    params->B, params->B, params->ZTMP, &params->LDZ);  /* alpha=beta=0 */
     LAPACK(dlaset)(&char_N, &params->M, &params->PM,  /* N=PM */
-                    params->B, params->B, params->UUZ, &params->LDZ);  /* alpha=beta=0 */
+                    params->B, params->B, params->UZZ, &params->LDZ);  /* alpha=beta=0 */
 }
 
-/* Ranx one update: W -> E X.Y^T */
+/* Ranx one update: UZ -> E X.Y^T */
 static NPY_INLINE void
 call_dger_uz_x_y(GBMV_PARAMS_t *params)
 {
@@ -643,16 +671,16 @@ call_dgbmv_us_x_y(GBMV_PARAMS_t *params)
             params->A, params->US, &params->ISM);
 }
 
-/* Multiply and add: UUZ -> UZ + Z o UZ
+/* Multiply and add: UZZ -> UZZ + Z o UZ
 
-To achieve this, vectorise UUZ,Z,UZ, and Z->diag(Z)
-Then it is UUZ -> UUZ + diag(Z).UZ
+To achieve this, vectorise UZZ,Z,UZ, and Z->diag(Z)
+Then it is UZZ -> UZZ + diag(Z).UZ
 */
 call_dgbmv_uuz_z_uz(GBMV_PARAMS_t *params)
 {
     LAPACK(dgbmv)(&char_N, &params->PMM, &params->PMM, &params->K, &params->K,
             params->A, params->Z, &params->ISM, params->UZ, &params->IX,
-            params->A, params->UUZ, &params->IY);
+            params->A, params->UZZ, &params->IY);
 }
 
 /********************************************************************
@@ -680,23 +708,27 @@ init_DOUBLE_m_init(GBMV_PARAMS_t *params,
     safe_R = R_in;
     ldz = fortran_int_max(M, 1);
 
-    mem_buff = malloc(1
-                      + safe_M * sizeof(fortran_doublereal)
-                      + safe_M * sizeof(fortran_doublereal)
-                      + safe_P * safe_M * safe_M * sizeof(fortran_doublereal)
-                      + safe_R * safe_P * safe_M * safe_M * sizeof(fortran_doublereal)
-                      + safe_M * sizeof(fortran_doublereal)
-                      + safe_R * safe_P * safe_M * safe_M * sizeof(fortran_doublereal)
-                      );
+    size_t Espace, Xspace, Yspace, ZZspace, ZTMPspace, UZZspace, USspace, Zspace;
+
+    Espace = sizeof(fortran_doublereal);
+    Xspace = safe_M * Espace;
+    Yspace = Xspace;
+    USspace = Xspace;
+    Zspace = safe_M * Xspace;
+    UZZspace = safe_P * Zspace;
+    ZZspace = safe_R * UZZspace;
+    ZTMPspace = ZZspace;
+
+    mem_buff = malloc(Espace + Xspace + Yspace + ZZspace + ZTMPspace + UZZspace + USspace);
     if (!mem_buff) {
         goto error;
     }
-    a = mem_buff + 1;  /* X at start of buffer */
-    b = a + safe_M * sizeof(fortran_doublereal);  /* Y after space for X */
-    c = b + safe_M * sizeof(fortran_doublereal);  /* UUZ after space for Y */
-    d = c + safe_P * safe_M * safe_M * sizeof(fortran_doublereal);  /* Z after space for UUZ */
-    e = d + safe_R * safe_P * safe_M * safe_M * sizeof(fortran_doublereal);  /* US after space for Z */
-    f = e + safe_M * sizeof(fortran_doublereal);  /* UZ after space for US */
+    a = mem_buff + Espace;  /* E at start of buffer, X after space for E */
+    b = a + Xspace;  /* Y after space for X */
+    c = b + Yspace;  /* ZZ after space for Y */
+    d = c + ZZspace;  /* ZTMP after space for ZZ */
+    e = d + ZTMPspace;  /* UZZ after space for ZTMP */
+    f = e + UZZspace;  /* US after space for UZZ */
 
     params->TRANSZ = 'N';
     params->A = &d_one;  /* Y -> A*Z.X + B*Y, need A=1, B=0 */
@@ -704,15 +736,14 @@ init_DOUBLE_m_init(GBMV_PARAMS_t *params,
     params->E = mem_buff;
     params->X = a;
     params->Y = b;
-    params->UUZ = c;
-    params->Z = d;
-    params->ZZ = d;
-    params->US = e;
-    params->UZ = f;
-    params->UZZ = f;
-    params->IP = safe_M * safe_M * sizeof(fortran_doublereal);
-    params->IR = safe_P * (params->IP);
-    params->ISR = safe_M * sizeof(fortran_doublereal);
+    params->ZZ = c;
+    params->ZTMP = d;
+    params->UZZ = e;
+    params->US = f;
+    params->Z = c;
+    params->UZ = d;
+    params->IP = Zspace;
+    params->IR = UZZspace;
     params->K = 0;
     params->M = M;
     params->P = P;
@@ -751,7 +782,7 @@ release_DOUBLE_m_init(GBMV_PARAMS_t *params)
 *************************************/
 
 static NPY_INLINE int
-choose_updaters_n(GBMV_PARAMS_t *params, npy_int P_in, npy_int R_in)
+choose_updater_inout_n(GBMV_PARAMS_t *params, npy_int P_in, npy_int R_in)
 {
     if (P_in < (npy_int)(params->P) && R_in < (npy_int)(params->R))
     {
@@ -759,7 +790,7 @@ choose_updaters_n(GBMV_PARAMS_t *params, npy_int P_in, npy_int R_in)
         size_t shift = (size_t)P_in * params->IP + (size_t)R_in * params->IR;
         a = params->ZZ;
         params->Z = a + shift;
-        a = params->UZZ;
+        a = params->ZTMP;
         params->UZ = a + shift;
         return 0;
     } else {
@@ -770,26 +801,25 @@ choose_updaters_n(GBMV_PARAMS_t *params, npy_int P_in, npy_int R_in)
 }
 
 static NPY_INLINE int
-choose_updaters(GBMV_PARAMS_t *params, const char *plasttype, const char *readout)
+choose_updater_inout(GBMV_PARAMS_t *params, const char *plasttype, const char *readout)
 {
     npy_int P_in = *(npy_int *)plasttype;
     npy_int R_in = *(npy_int *)readout;
-    return choose_updaters_n(params, P_in, R_in);
+    return choose_updater_inout_n(params, P_in, R_in);
 }
 
 static NPY_INLINE int
-choose_updater_out(GBMV_PARAMS_t *params, npy_int P_in)
+choose_updater_out_n(GBMV_PARAMS_t *params, npy_int P_in)
 {
     // npy_int P_in = *(npy_int *)plasttype;
     if (P_in < (npy_int)(params->P))
     {
         npy_uint8 *a;
-        a = params->UUZ;
+        a = params->UZZ;
         params->UZ = a + (size_t)P_in * params->IP;
         return 0;
     } else {
-        // printf("[P_in: %d, P_max: %d. %d\n", P_in, params->P, P_in < params->P);
-        // printf(" R_in: %d, R_max: %d. %d]\n", R_in, params->R, R_in < params->R);
+        // printf("[P_in: %d, P_max: %d. %d]\n", P_in, params->P, P_in < params->P);
         return 1;
     }
 }
@@ -815,7 +845,7 @@ linearize_updater(const char *arg, npy_intp *dimensions, npy_intp *steps,
 
         for (cnt_p = 0; cnt_p < dimensions[1]; cnt_p++)
         {
-            choose_updaters_n(params, cnt_p, cnt_r);
+            choose_updater_inout_n(params, cnt_p, cnt_r);
             linearize_DOUBLE_matrix(params->Z, ip_updatep, lin_data);
             ip_updatep += steps[1];
         }
@@ -825,18 +855,18 @@ linearize_updater(const char *arg, npy_intp *dimensions, npy_intp *steps,
 
 /* copy initial, updaters from struct for numpy */
 static void
-delinearize_updaters(char *arg, npy_intp *dimensions, npy_intp step,
+delinearize_plast(char *arg, npy_intp *dimensions, npy_intp step,
                    GBMV_PARAMS_t *params, const LINEARIZE_DATA_t *lin_data)
 {
-    char *op_update = arg;  //  out-ptr: updater, plast types
-    npy_int cnt_r, cnt_p = 0;
+    char *op_trans = arg;  //  out-ptr: updater, plast types
+    npy_int cnt_r, cnt_p;
     npy_uint8 *a;
 
     /* Gather updaters */
     // printf("Gather r\n");
     for (cnt_r = 0; cnt_r < dimensions[0]; cnt_r++)
     {
-        choose_updaters_n(params, cnt_p, cnt_r);
+        choose_updater_inout_n(params, 0, cnt_r);
         call_dgbmv_uuz_z_uz(params);
     }
 
@@ -844,9 +874,9 @@ delinearize_updaters(char *arg, npy_intp *dimensions, npy_intp step,
     // printf("copy m\n");
     for (cnt_p = 0; cnt_p < dimensions[1]; cnt_p++)
     {
-        choose_updater_out(params, cnt_p);
-        delinearize_DOUBLE_matrix(op_update, params->UZ, lin_data);
-        op_update += step;
+        choose_updater_out_n(params, cnt_p);
+        delinearize_DOUBLE_matrix(op_trans, params->UZ, lin_data);
+        op_trans += step;
     }
     // printf("copy init\n");
 }
@@ -854,8 +884,7 @@ delinearize_updaters(char *arg, npy_intp *dimensions, npy_intp step,
 /* update_m_init_signature = "(r,p,m,m),(tm),(t),(t,m),(t,m),(t)->(p,m,m),(m)"; */
 
 static void
-DOUBLE_m_init(char **args, npy_intp *dimensions, npy_intp *steps,
-              void *NPY_UNUSED(func))
+DOUBLE_m_init(char **args, npy_intp *dimensions, npy_intp *steps, npy_intp steady)
 {
 INIT_OUTER_LOOP_8
 
@@ -890,7 +919,7 @@ INIT_OUTER_LOOP_8
     }
 
     /* allocate buffer */
-    printf("allocate memory\n");
+    // printf("allocate memory\n");
     if (error_occurred == 0 &&
         init_DOUBLE_m_init(&params, len_m, len_p, len_r))
     {
@@ -915,7 +944,7 @@ INIT_OUTER_LOOP_8
             const char *ip_alpha = args[3];  //  in-ptr: alpha
             const char *ip_beta = args[4];   //  in-ptr: beta
             const char *ip_eta = args[5];    //  in-ptr: eta
-            char *op_update = args[6];    //  out-ptr: M
+            char *op_plast = args[6];    //  out-ptr: M
             char *op_initial = args[7];   //  out-ptr: init
 
             call_dlaset_u_zero(&params);
@@ -932,10 +961,10 @@ INIT_OUTER_LOOP_8
                 // printf("copy b\n");
                 linearize_DOUBLE_vec(params.Y, ip_beta, &b_in);
                 // printf("copy e\n");
-                *(npy_double *)(params.E) = *(npy_double *)ip_eta;
+                *(fortran_doublereal *)(params.E) = *(npy_double *)ip_eta;
 
                 // printf("choose updaters\n");
-                error_occurred = choose_updaters(&params, ip_plast, ip_reado);
+                error_occurred = choose_updater_inout(&params, ip_plast, ip_reado);
                 if (error_occurred)
                     { break; }
                 // printf("calc coeffs\n");
@@ -948,24 +977,46 @@ INIT_OUTER_LOOP_8
 
                 // printf("calc init\n");
                 /* if steady-state */
-                call_dgbmv_us_x_y(&params);
+                if (steady)
+                {
+                    call_dgbmv_us_x_y(&params);
+                }
+
             }
             if (error_occurred)
                 { break; }
             // printf("end t loop\n");
 
-            delinearize_updaters(op_update, dimensions, stride_uu_p, &params, &u_out);
+            delinearize_plast(op_plast, dimensions, stride_uu_p, &params, &u_out);
             delinearize_DOUBLE_vec(op_initial, params.US, &s_out);
             // printf("copied out\n");
         END_OUTER_LOOP_8
-        printf("end outer loop\n");
+        // printf("end outer loop\n");
         /* deallocate buffer */
         release_DOUBLE_m_init(&params);
-        printf("memory freed\n");
+        // printf("memory freed\n");
     }
     set_fp_invalid_or_clear(error_occurred);
 }
 
+/* update_m_init_signature = "(r,p,m,m),(tm),(t),(t,m),(t,m),(t)->(p,m,m),(m)"; */
+
+static void
+DOUBLE_plast_init(char **args, npy_intp *dimensions, npy_intp *steps,
+              void *NPY_UNUSED(func))
+{
+    DOUBLE_m_init(args, dimensions, steps, 0);
+}
+
+
+/* update_m_init_signature = "(r,p,m,m),(tm),(t),(t,m),(t,m),(t)->(p,m,m),(m)"; */
+
+static void
+DOUBLE_plast_steady(char **args, npy_intp *dimensions, npy_intp *steps,
+              void *NPY_UNUSED(func))
+{
+    DOUBLE_m_init(args, dimensions, steps, 1);
+}
 
 /*
 *****************************************************************************
@@ -986,16 +1037,22 @@ alpha_beta_funcs[] = {
     DOUBLE_alpha_beta
 };
 static PyUFuncGenericFunction
-m_init_funcs[] = {
-    DOUBLE_m_init
+plast_init_funcs[] = {
+    DOUBLE_plast_init
+};
+static PyUFuncGenericFunction
+plast_steady_funcs[] = {
+    DOUBLE_plast_steady
 };
 
 /* info for creating ufunc object */
 GUFUNC_DESCRIPTOR_t gufunc_descriptors[] = {
     {"alpha_beta", "(r,p,m,m),(r,m),(tm),(t)->(t,m),(t,m),(t)", alpha_beta__doc__,
         1, 4, 3, alpha_beta_funcs, ufn_types_1_7},
-    {"m_init", "(r,p,m,m),(tm),(t),(t,m),(t,m),(t)->(p,m,m),(m)", m_init__doc__,
-        1, 6, 2, m_init_funcs, ufn_types_1_8}
+    {"plast_init", "(r,p,m,m),(tm),(t),(t,m),(t,m),(t)->(p,m,m),(m)", plast_init__doc__,
+        1, 6, 2, plast_init_funcs, ufn_types_1_8},
+    {"plast_steady", "(r,p,m,m),(tm),(t),(t,m),(t,m),(t)->(p,m,m),(m)", plast_steady__doc__,
+        1, 6, 2, plast_steady_funcs, ufn_types_1_8},
 };
 
 /*
@@ -1038,7 +1095,7 @@ PyObject *PyInit__baum_welch(void)
     import_ufunc();
 
     /* Load the ufunc operators into the module's namespace */
-    int failure = addUfuncs(m, gufunc_descriptors, 2, baum_welch_version);
+    int failure = addUfuncs(m, gufunc_descriptors, 3, baum_welch_version);
 
     if (PyErr_Occurred() || failure) {
         PyErr_SetString(PyExc_RuntimeError,

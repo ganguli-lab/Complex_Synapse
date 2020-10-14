@@ -177,9 +177,44 @@ def _calc_alpha_beta(updaters: la.lnarray, initial: la.lnarray
     return alpha.ur, beta.uc, eta.us
 
 
+def _calc_alpha_beta_obj(model: _si.SynapseIdModel,
+                         data: _ps.PlasticitySequence,
+                         ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+    """Calculate BW forward/backward variables.
+
+    Parameters
+    ----------
+    model : SynapseIdModel
+        The model to update, modified in-place
+    data : PlasticitySequence
+        The data to use for the update
+    plast_type : ArrayLike, (E,T-1), int[0:P]
+        id of plasticity type after each time-step
+    readouts : ArrayLike, (E,T), int[0:R]
+        id of readout from synapse at each time-step
+
+    Returns
+    -------
+    alpha : la.lnarray, (E,T,M)
+        Normalised Baum-Welch forward variable
+    beta : la.lnarray, (E,T,M)
+        Scaled Baum-Welch backward variable
+    eta : la.lnarray, (E,T)
+        Norm of Baum-Welch forward variable
+    """
+    if (data.readouts >= model.nreadout).any():
+        raise IndexError("data.readouts out of bounds")
+    if (data.plast_type >= model.nplast).any():
+        raise IndexError("data.plast_type out of bounds")
+    data = data.move_t_axis(-1)
+    # (R,P,M,M),(R,M)
+    updaters, initial = model.updaters()
+    # err = la.gufuncs.make_errobj("GUfunc reported a floating point error")
+    return _calc_alpha_beta_c(updaters, initial, data.plast_type, data.readouts)
 
 
-def _calc_alpha_beta_c(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
+def _calc_alpha_beta_c(updaters: la.lnarray, initial: la.lnarray,
+                       plast_type: la.lnarray, readouts: la.lnarray,
                        ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
     """Calculate BW forward/backward variables.
 
@@ -203,15 +238,12 @@ def _calc_alpha_beta_c(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
     eta : la.lnarray, (E,T)
         Norm of Baum-Welch forward variable
     """
-    if (data.readouts >= model.nreadout).any():
-        raise IndexError("data.readouts out of bounds")
-    if (data.plast_type >= model.nplast).any():
-        raise IndexError("data.plast_type out of bounds")
-    data = data.move_t_axis(-1)
-    # (R,P,M,M),(R,M)
-    updaters, initial = model.updaters()
+    if (readouts >= updaters.shape[-4]).any():
+        raise IndexError("readouts out of bounds")
+    if (plast_type >= updaters.shape[-3]).any():
+        raise IndexError("plast_type out of bounds")
     # err = la.gufuncs.make_errobj("GUfunc reported a floating point error")
-    return _bw.alpha_beta(updaters, initial, data.plast_type, data.readouts)
+    return _bw.alpha_beta(updaters, initial, plast_type, readouts)
 
 
 def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
@@ -254,7 +286,7 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
     initial : array_like, (M,) float[0:1]
         new estimate of distribution of initial state.
     """
-    nplast = _ag.default_eval(nplast, plast_type.max)
+    nplast = _ag.default(nplast, plast_type.max() + 1)
     nexpt = plast_type.shape[1:]
     if not combine:
         # (E,P,M,M)
@@ -272,10 +304,13 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
     # (P,M,M)
     plast = la.array([updaters[plast_type == i].sum(0) for i in range(nplast)])
     # (M,)
+    nexpt = len(nexpt)
     if steady:
-        initial = (alpha * beta).sum(tuple(range(len(nexpt) + 1)))
+        axes = tuple(range(nexpt + 1))
+        initial = (alpha * beta).sum(axes)
     else:
-        initial = (alpha[0] * beta[0]).sum(tuple(range(len(nexpt))))
+        axes = tuple(range(nexpt))
+        initial = (alpha[0] * beta[0]).sum(axes)
 
     if normed:
         plast /= plast.sum(axis=-1, keepdims=True)
@@ -284,20 +319,17 @@ def _calc_model(updaters: la.lnarray, plast_type: la.lnarray,
     return plast, initial
 
 
-def _calc_model_c(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
-                alpha: la.lnarray, beta: la.lnarray, eta: la.lnarray, *,
-                steady: bool = True, combine: bool = True, normed: bool = True,
-                ) -> Tuple[la.lnarray, la.lnarray]:
+def _calc_model_obj(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
+                    alpha: la.lnarray, beta: la.lnarray, eta: la.lnarray,
+                    **kwds) -> Tuple[la.lnarray, la.lnarray]:
     """One Baum-Welch/Rabiner-Juang update of the model
 
     Parameters
     ----------
-    updaters : la.lnarray, (T-1,E,M,M) float[0:1], Modified
-        Plasticity matrices multiplied by readout probability given 'to' state.
-    plast_type : la.lnarray, (T-1,E), int[0:P]
-        id of plasticity type after each time-step
-    readouts : ArrayLike, (E,T), int[0:R]
-        id of readout from synapse at each time-step
+    model : SynapseIdModel
+        The model to update, modified in-place
+    data : PlasticitySequence
+        The data to use for the update
     alpha : la.lnarray, (T,E,M) float[0:1]
         Normalised Baum-Welch forward variable
     beta : la.lnarray, (T,E,M) float
@@ -330,19 +362,75 @@ def _calc_model_c(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
         raise IndexError("data.readouts out of bounds")
     if (data.plast_type >= model.nplast).any():
         raise IndexError("data.plast_type out of bounsds")
+
     data = data.move_t_axis(-1)
     # (R,P,M,M),(R,M)
     updaters, _ = model.updaters()
 
+    return _calc_model_c(updaters, data.plast_type, data.readouts,
+                         alpha, beta, eta, **kwds)
+
+
+def _calc_model_c(
+    updaters: la.lnarray, plast_type: la.lnarray, readouts: la.lnarray,
+    alpha: la.lnarray, beta: la.lnarray, eta: la.lnarray, *,
+    steady: bool = True, combine: bool = True, normed: bool = True,
+) -> Tuple[la.lnarray, la.lnarray]:
+    """One Baum-Welch/Rabiner-Juang update of the model
+
+    Parameters
+    ----------
+    updaters : la.lnarray, (R,P,M,M) float[0:1], Modified
+        Plasticity matrices multiplied by readout probability given 'to' state.
+    plast_type : la.lnarray, (E,T), int[0:P]
+        id of plasticity type after each time-step
+    readouts : ArrayLike, (E,T), int[0:R]
+        id of readout from synapse at each time-step
+    alpha : la.lnarray, (E,T,M) float[0:1]
+        Normalised Baum-Welch forward variable
+    beta : la.lnarray, (E,T,M) float
+        Scaled Baum-Welch backward variable
+    eta : la.lnarray, (E,T) float[1:]
+        Norm of Baum-Welch forward variable
+
+    Keyword only:
+
+    steady : bool, optional
+        Can we assume that `initial` is the steady-state?
+        If `True`, we can use all times to estimate `initial`.
+        If `False`, we can only use `t=0`. By default `True`.
+    combine: bool
+        Should we sum over experiments? By default `True`.
+    normed: ClassVar[bool] = True
+        Should we norm the result? By default `True`.
+    nplast : imt, optional
+        number of plasticity types, P. If `None` calculate from `plast_type`.
+        By default `True`.
+
+    Returns
+    -------
+    plast : array_like, (P,M,M), float[0:1]
+        new estimate of transition probability matrix.
+    initial : array_like, (M,) float[0:1]
+        new estimate of distribution of initial state.
+    """
+    if (readouts >= updaters.shape[-4]).any():
+        raise IndexError("data.readouts out of bounds")
+    if (plast_type >= updaters.shape[-3]).any():
+        raise IndexError("data.plast_type out of bounsds")
+
+    nexpt = eta.ndim - 1
+    args = (updaters, plast_type, readouts, alpha, beta, eta)
+
     if steady:
-        pass
-    plast, initial = _bw.m_init(updaters, data.plast_type, data.readouts,
-                                alpha, beta, eta)
-    print('exited')
+        plast, initial = _bw.plast_steady(*args)
+    else:
+        plast, initial = _bw.plast_init(*args)
+    # print('exited')
 
     if combine:
-        plast = plast.sum(tuple(range(plast.ndim-3)))
-        initial = initial.sum(tuple(range(initial.ndim-1)))
+        plast = plast.sum(tuple(range(nexpt)))
+        initial = initial.sum(tuple(range(nexpt)))
 
     if normed:
         plast /= plast.sum(axis=-1, keepdims=True)

@@ -31,15 +31,17 @@ sim = true_model.simulate(400, 20)
 fit_model = idfy.SynapseIdModel.rand(6, binary=True)
 fit_model.normalise()
 # %%
-with time_with(subsec=True):
-    a, b, e = idfy.baum_welch._calc_alpha_beta_c(fit_model, sim)
-    p, init = idfy.baum_welch._calc_model_c(fit_model, sim, a, b, e)
-with time_with(subsec=True):
+with time_with(subsec=True, absolute=False):
+    update, initial = fit_model.updaters()
+    sim_data = sim.move_t_axis(-1).plast_type, sim.move_t_axis(-1).readouts
+    a, b, e = idfy.baum_welch._calc_alpha_beta_c(update, initial, *sim_data)
+    p, init = idfy.baum_welch._calc_model_c(update, *sim_data, a, b, e)
+with time_with(subsec=True, absolute=False):
     update, initial, plast_type = idfy.baum_welch._get_updaters(fit_model, sim)
     aa, bb, ee = idfy.baum_welch._calc_alpha_beta(update, initial)
-    # pp, iinit = idfy.baum_welch._calc_model(update, plast_type, aa, bb, ee)
+    pp, iinit = idfy.baum_welch._calc_model(update, plast_type, aa, bb, ee)
 print(compare(a, aa))
-# print(np.abs(p - pp).max()[()])
+print(np.abs(p - pp).max()[()])
 # %%
 if __name__ != "__main__":
     # %%
