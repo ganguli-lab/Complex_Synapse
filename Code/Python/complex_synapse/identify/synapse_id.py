@@ -112,9 +112,9 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
 
         Parameters
         ----------
-        source : Union[int, Tuple[int, ...]]
+        source : int|Tuple[int, ...]
             Position of axis/axes to move
-        destination : Union[int, Tuple[int, ...]]
+        destination : int|Tuple[int, ...]
             New position of axis/axes
 
         Returns
@@ -213,8 +213,9 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
         per_param[np.isclose(0, mine)] = 0.
         return _sb.scalarise(per_param.sum(-1))
 
-    def simulate(self, ntime: Optional[int] = None,
+    def simulate(self,
                  nexpt: Union[None, int, Sequence[int]] = None,
+                 ntime: Optional[int] = None,
                  plast_seq: Optional[np.ndarray] = None,
                  rng: np.random.Generator = _bld.RNG,
                  ) -> _ps.SimPlasticitySequence:
@@ -224,18 +225,18 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
 
         Parameters
         ----------
-        ntime : Optional[int], optional
-            Numper of time-steps, T, by default None
-        nexpt : Union[None, int, Sequence[int]], optional
-            Number of experiments, E, by default None
-        plast_seq : Optional[np.ndarray], optional, (T,E)
-            Sequence of plasticity types, by default None
+        ntime : int|None, optional
+            Numper of time-steps, T, by default `None->1`.
+        nexpt : None|int|Sequence[int], optional
+            Number of experiments, E, by default `None->()`.
+        plast_seq : np.ndarray|None, optional, (E,T-1)
+            Sequence of plasticity types, by default `None`->random.
         rng : np.random.Generator, optional
-            random number generator, by default: builders.RNG
+            random number generator, by default `builders.RNG`.
 
         Returns
         -------
-        simulation : SimPlasticitySequence, (T,E)
+        simulation : SimPlasticitySequence, (E,T)
             The result of the simulation
         """
         # only simulate a single model
@@ -248,7 +249,7 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
                                    size=(ntime - 1,) + nexpt)
         else:
             # (T-1,E)
-            plast_seq = la.asarray(plast_seq)
+            plast_seq = la.asarray(plast_seq).moveaxis(-1, 0)
             nexpt = plast_seq.shape[1:]
             ntime = plast_seq.shape[0] + 1
 
@@ -270,7 +271,8 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
             states[i+1] = state_ch[(plt, states[i], i) + expt_ind]
         # (T,E)
         readouts = self.readout[states]
-        return _ps.SimPlasticitySequence(plast_seq, readouts, states, t_axis=0)
+        sim = _ps.SimPlasticitySequence(plast_seq, readouts, states, t_axis=0)
+        return sim.move_t_axis(-1)
 
     def plot(self, axs: Sequence[_ps.ImHandle],
              graph: Optional[MultiDiGraph] = None, **kwds) -> List[_ps.Image]:
@@ -278,7 +280,7 @@ class SynapseIdModel(_sb.SynapseDiscreteTime):
 
         Parameters
         ----------
-        axs : Sequence[Image or Axes], (P+2)
+        axs : Sequence[Image|Axes], (P+2)
             Axes to plot on, or Images to update with new data, in order
             `[graph, initial, plast_1, ..., plast_P]`.
 

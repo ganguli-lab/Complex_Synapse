@@ -21,27 +21,27 @@ mpt.rc_fonts('sans-serif')
 # logging.captureWarnings(True)
 
 def compare(x: la.lnarray, y: la.lnarray):
-    return np.abs(x.swapaxes(0, 1) - y).max()[()]
+    return np.abs(x - y).max()[()]
 
 # %%
 opt = idfy.BaumWelchOptions(disp_step=10, verbosity=2 + 6 + 9)
 true_model = idfy.SynapseIdModel.build(cs.builders.build_serial, 6, jmp=0.7)
 # %%
-sim = true_model.simulate(400, 20)
+sim = true_model.simulate(20, 400)
 fit_model = idfy.SynapseIdModel.rand(6, binary=True)
 fit_model.normalise()
 # %%
 with time_with(subsec=True, absolute=False):
     update, initial = fit_model.updaters()
     sim_data = sim.move_t_axis(-1).plast_type, sim.move_t_axis(-1).readouts
-    a, b, e = idfy.baum_welch._calc_alpha_beta_c(update, initial, *sim_data)
-    p, init = idfy.baum_welch._calc_model_c(update, *sim_data, a, b, e)
+    a, b, e = idfy.baum_welch._calc_bw_abe_c(update, initial, *sim_data)
+    p, init = idfy.baum_welch._calc_model_c(update, *sim_data, (a, b, e))
 with time_with(subsec=True, absolute=False):
     update, initial, plast_type = idfy.baum_welch._get_updaters(fit_model, sim)
-    aa, bb, ee = idfy.baum_welch._calc_alpha_beta(update, initial)
-    pp, iinit = idfy.baum_welch._calc_model(update, plast_type, aa, bb, ee)
+    aa, bb, ee = idfy.baum_welch._calc_bw_abe(update, initial)
+    pp, iinit = idfy.baum_welch._calc_model(update, plast_type, (aa, bb, ee))
 print(compare(a, aa))
-print(np.abs(p - pp).max()[()])
+print(compare(p, pp))
 # %%
 if __name__ != "__main__":
     # %%
@@ -56,7 +56,7 @@ if __name__ != "__main__":
     with la.load('test_fit.npz') as saved_file:
         saved = {**saved_file}
     # %%
-    vid = idfy.FitterPlots(np.s_[:100, 0], transpose=False)
+    vid = idfy.FitterPlots(np.s_[0, :100], transpose=False)
     old_fit = idfy.GroundedFitterReplay(saved, callback=vid, opt=opt)
     # opt.max_it = 10
     # %%

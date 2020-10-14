@@ -455,7 +455,7 @@ class SynapseFitter(abc.ABC):
 
         Returns
         -------
-        data : lnarray, (T[,E],M) float[0:1] or (T[,E]) int[0:M]
+        data : lnarray, ([E,]T,M) float[0:1] or ([E,]T) int[0:M]
             Estimate of state occupation
         """
 
