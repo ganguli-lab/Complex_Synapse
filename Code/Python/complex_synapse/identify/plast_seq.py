@@ -22,9 +22,9 @@ class PlasticitySequence:
 
     Parameters (and attributes)
     ---------------------------
-    plast_type : ArrayLike, (T-1,E), int[0:P]
+    plast_type : ArrayLike, (E,T-1), int[0:P]
         id of plasticity type after each time-step
-    readouts : ArrayLike, (T,E), int[0:R]
+    readouts : ArrayLike, (E,T), int[0:R]
         id of readout from synapse at each time-step
     t_axis : int
         Which axis is the time axis?
@@ -50,14 +50,14 @@ class PlasticitySequence:
     t_axis: int
 
     def __init__(self, plast_type: _sb.ArrayLike, readouts: _sb.ArrayLike,
-                 t_axis: int = 0) -> None:
+                 t_axis: int = -1) -> None:
         """The results of an experiment
 
         Parameters
         ----------
-        plast_type : np.ndarray, (T-1,E), int[0:P]
+        plast_type : np.ndarray, (E,T-1), int[0:P]
             id of plasticity type after each time-step
-        readouts : np.ndarray, (T,E), int[0:R]
+        readouts : np.ndarray, (E,T), int[0:R]
             id of readout from synapse at each time-step
         """
         self.plast_type = la.asanyarray(plast_type)
@@ -112,9 +112,9 @@ class PlasticitySequence:
 
         Parameters
         ----------
-        source : Union[int, Tuple[int, ...]]
+        source : int|Tuple[int, ...]
             Position of axis/axes to move
-        destination : Union[int, Tuple[int, ...]]
+        destination : int|Tuple[int, ...]
             New position of axis/axes
 
         Returns
@@ -199,7 +199,7 @@ class PlasticitySequence:
 
         Parameters
         ----------
-        hnds : Sequence[Union[Image, Axes]], (2,)
+        hnds : Sequence[Image|Axes], (2,)
             Axes to plot on, or Image objects to update with new data
 
         Returns
@@ -226,11 +226,11 @@ class SimPlasticitySequence(PlasticitySequence):
 
     Parameters (and attributes)
     ---------------------------
-    plast_type : ArrayLike, (T-1,E), int[0:P]
+    plast_type : ArrayLike, (E,T-1), int[0:P]
         id of plasticity type after each time-step
-    readouts : ArrayLike, (T,E), int[0:R]
+    readouts : ArrayLike, (E,T), int[0:R]
         id of readout from synapse at each time-step
-    states : ArrayLike, (T,E), int[0:M]
+    states : ArrayLike, (E,T), int[0:M]
         which state it is in at each time-step
     t_axis : int
         Which axis is the time axis?
@@ -257,11 +257,11 @@ class SimPlasticitySequence(PlasticitySequence):
 
         Parameters
         ----------
-        plast_type : ArrayLike, (T-1,E), int[0:P]
+        plast_type : np.ndarray, (E,T-1), int[0:P]
             id of plasticity type after each time-step
-        readouts : ArrayLike, (T,E), int[0:R]
+        readouts : np.ndarray, (E,T), int[0:R]
             id of readout from synapse at each time-step
-        states : ArrayLike, (T,E), int[0:M]
+        states : ArrayLike, (E,T), int[0:M]
             which state it is in at each time-step
         """
         super().__init__(plast_type, readouts, t_axis=t_axis)
@@ -288,9 +288,9 @@ class SimPlasticitySequence(PlasticitySequence):
 
         Parameters
         ----------
-        source : Union[int, Tuple[int, ...]]
+        source : int|Tuple[int, ...]
             Position of axis/axes to move
-        destination : Union[int, Tuple[int, ...]]
+        destination : int|Tuple[int, ...]
             New position of axis/axes
 
         Returns
@@ -323,7 +323,7 @@ class SimPlasticitySequence(PlasticitySequence):
 
         Parameters
         ----------
-        hnds : Sequence[Union[Image, Axes]], (3,)
+        hnds : Sequence[Image|Axes], (3,)
             Axes to plot on, or Image/Lines to update with new data
 
         Returns
