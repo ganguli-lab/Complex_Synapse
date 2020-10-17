@@ -3,12 +3,11 @@
 """
 from __future__ import annotations
 
-from typing import Dict, Optional, Tuple, Union
+from typing import Dict, Tuple, Union
 
 import numpy as np
 
 import numpy_linalg as la
-import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.iter_tricks as _it
 
 import complex_synapse.synapse_base as _sb
@@ -41,11 +40,11 @@ def likelihood(model: _si.SynapseIdModel, data: _ps.PlasticitySequence
         `-log(P(readouts|model))`.
     """
     # _,_,(E,T)->()
-    return _sb.scalarise(np.log(_obj_bw_abe(model, data)[2]).sum())
+    return _sb.scalarise(np.log(_get_bw_abe(model, data)[2]).sum())
 
 
 def state_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence
-              ) -> la.lnarray:
+              ) -> Array:
     """Marginal probability of state occupation at each time.
 
     Parameters
@@ -57,17 +56,17 @@ def state_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence
 
     Returns
     -------
-    state_probs : la.lnarray, (E,T,M)
+    state_probs : lnarray, (E,T,M)
         Current estimate of marginal occupation.
     """
     # (E,T,M),(E,T,M),_,
-    alpha, beta = _obj_bw_abe(model, data)[:2]
+    alpha, beta = _get_bw_abe(model, data)[:2]
     # (E,T,M)
     return alpha * beta
 
 
 def model_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
-              steady: bool = True, combine: bool = True) -> la.lnarray:
+              steady: bool = True, combine: bool = True) -> Arrays2:
     """New, unnormalised estimate of the model.
 
     Parameters
@@ -90,14 +89,8 @@ def model_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
     initial : array_like, (M,) float[0:1]
         new estimate of distribution of initial state (unnormalised).
     """
-    # (R,P,M,M),(R,M) - makes a copy :)
-    jmp, initial = model.updaters()
-    # (E,T-1),(E,T)
-    expt = data.plast_type, data.readouts
-    # (E,T,M),(E,T,M),(E,T),
-    bw_vars = _jmp_bw_abe_c(jmp, initial, *expt)
     # (P,M,M),(M,)
-    return _jmp_model_c(jmp, *expt, bw_vars, steady=steady, combine=combine)
+    return _get_bw_abe_model(model, data, steady=steady, combine=combine)[1]
 
 
 # =============================================================================
@@ -105,10 +98,13 @@ def model_est(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
 # =============================================================================
 
 
-def _private():
+def _private() -> None:
     """Hold docs for private functions - decoding names.
 
-    suffix `p`: uses python loops, `c`: uses C-extension.
+    Suffix `p`: uses python loops, `c`: uses C-extension.
+    A function called, e.g., `_abc_xyz` takes the arguments listed under `abc`
+    below, and returns the tuple `xyz`. With the exception of `obj`, these sets
+    of parameters should be passed as tuples, without unpacking.
 
     Parameters and Returns
     ======================
@@ -121,36 +117,36 @@ def _private():
 
     jmp
     ---
-    jumps : la.lnarray, (R,P,M,M)
+    jumps : lnarray, (R,P,M,M)
         Plasticity matrices multiplied by readout indicators of 'to' state.
-    starts : la.lnarray, (R,M)
+    starts : lnarray, (R,M)
         Initial state distribution multiplied by readout indicators of state.
     plast_type : ArrayLike, (E,T-1), int[0:P]
-        Id of plasticity type after each time-step.
+        ID of plasticity type after each time-step.
     readouts : ArrayLike, (E,T), int[0:R]
-        Id of readout from synapse at each time-step.
+        ID of readout from synapse at each time-step.
 
     upd
     ---
-    updaters : la.lnarray, (E,T-1,M,M)
+    updaters : lnarray, (E,T-1,M,M)
         Plasticity matrices multiplied by readout indicators of 'to' state,
         per experiment, per time.
-    initial : la.lnarray, (E,M)
+    initial : lnarray, (E,M)
         Initial state distribution multiplied by readout indicators of state,
         per experiment.
-    plast_type : la.lnarray, (E,T-1), int[0:P]
-        Id of plasticity type after each time-step.
+    plast_type : lnarray, (E,T-1), int[0:P]
+        ID of plasticity type after each time-step.
 
     abe
     ---
     bw_vars : Tuple[lnarray, lnarray, lnarray] (E,T,M),(E,T,M),(E,T) float
         Baum-Welch forward/backward variables.
 
-        alpha : la.lnarray, (E,T,M) float[0:1]
+        alpha : lnarray, (E,T,M) float[0:1]
             Normalised Baum-Welch forward variable.
-        beta : la.lnarray, (E,T,M) float
+        beta : lnarray, (E,T,M) float
             Scaled Baum-Welch backward variable.
-        eta : la.lnarray, (E,T) float[1:]
+        eta : lnarray, (E,T) float[1:]
             Norm of Baum-Welch forward variable.
 
     kwds
@@ -176,8 +172,7 @@ def _private():
     """
 
 
-def _obj_jmp(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
-             ) -> Tuple[la.lnarray, la.lnarray, la.lnarray, la.lnarray]:
+def _obj_jmp(model: _si.SynapseIdModel, data: _ps.PlasticitySequence) -> Arrays4:
     """convert obj -> jmp"""
     data = data.move_t_axis(-1)
     # (R,P,M,M),(R,M)
@@ -186,10 +181,9 @@ def _obj_jmp(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
     return jumps, starts, data.plast_type, data.readouts
 
 
-def _jmp_upd(jumps: la.lnarray, starts: la.lnarray,
-             plast_type: la.lnarray, readouts: la.lnarray,
-             ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+def _jmp_upd(jmp: Arrays4) -> Arrays3:
     """convert jmp -> upd, updater matrices for each time-step"""
+    jumps, starts, plast_type, readouts = jmp
     # (E,T-1,M,M)
     updaters = jumps[readouts[..., 1:], plast_type]
     # (E,M)
@@ -198,14 +192,16 @@ def _jmp_upd(jumps: la.lnarray, starts: la.lnarray,
     return updaters, initial, plast_type
 
 
-def _drop_snd(*args):
-    """Drop the second argument"""
+def _drop_snd(args: Arrays) -> Arrays:
+    """Drop the second argument (index 1)"""
     return args[:1] + args[2:]
 
-def _upd_bw_abe_p(updaters: la.lnarray, initial: la.lnarray
-                 ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+
+def _upd_calc_abe_p(upd: Arrays3) -> Arrays3:
     """Calculate BW forward/backward variables.
     """
+    # drop plast_types
+    updaters, initial = upd[:2]
     # (E,T,M)
     siz = initial.shape[:-1] + (updaters.shape[-3] + 1,) + updaters.shape[-1:]
     # (E,T,1,M),(E,T,M,1),(E,T,1,1),
@@ -239,27 +235,26 @@ def _upd_bw_abe_p(updaters: la.lnarray, initial: la.lnarray
     return alpha.ur, beta.uc, eta.us
 
 
-def _upd_model_p(updaters: la.lnarray, plast_type: la.lnarray,
-                bw_vars: Tuple[la.lnarray, la.lnarray, la.lnarray], *,
-                steady: bool = True, combine: bool = True, normed: bool = True,
-                nplast: Optional[int] = None) -> Tuple[la.lnarray, la.lnarray]:
+def _upd_abe_calc_model_p(upd: Arrays3, abe: Arrays3, **kwds) -> Arrays2:
     """One Baum-Welch/Rabiner-Juang update of the model.
     """
-    nplast = _ag.default(nplast, plast_type.max() + 1)
-    if not combine:
+    # drop initial
+    updaters, plast_type = _drop_snd(upd)
+    nplast = kwds.setdefault('nplast', plast_type.max() + 1)
+    if not kwds.pop('combine', True):
         axes = plast_type.shape[:-1]
         # (E,P,M,M)
         plast = np.empty(axes + updaters.shape[-3:])
         # (E,M)
         initial = np.empty(axes + updaters.shape[-1:])
         for i in np.ndindex(*axes):
-            plast[i], initial[i] = _upd_model_p(
-                updaters[i], plast_type[i], [x[i] for x in bw_vars],
-                steady=steady, combine=False, normed=normed, nplast=nplast)
+            plast[i], initial[i] = _upd_abe_calc_model_p(
+                [x[i] for x in upd], [y[i] for y in abe],
+                combine=False, nplast=nplast, **kwds)
 
     axis = plast_type.ndim - 1
     # (E,T,M),(E,T,M),(E,T) -> (T,E,M),(T,E,M),(T,E)
-    alpha, beta, eta = [x.moveaxis(axis, 0) for x in bw_vars]
+    alpha, beta, eta = [x.moveaxis(axis, 0) for x in abe]
     # (E,T-1,M,M)
     updaters *= (alpha.c[:-1] * (beta.r * eta.s)[1:]).moveaxis(0, axis)
     # (P,M,M)
@@ -267,64 +262,60 @@ def _upd_model_p(updaters: la.lnarray, plast_type: la.lnarray,
 
     axes = tuple(range(plast_type.ndim))
     # (M,)
-    if steady:
+    if kwds.pop('steady', True):
         initial = (alpha * beta).sum(axes)
     else:
         initial = (alpha[0] * beta[0]).sum(axes[:-1])
 
-    if normed:
+    if kwds.pop('normed', True):
         plast /= plast.sum(axis=-1, keepdims=True)
         initial /= initial.sum(axis=-1, keepdims=True)
 
     return plast, initial
 
 
-def _jmp_bw_abe_c(jumps: la.lnarray, starts: la.lnarray,
-                  plast_type: la.lnarray, readouts: la.lnarray,
-                  ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
+def _jmp_calc_abe_c(jmp: Arrays4) -> Arrays3:
     """Calculate BW forward/backward variables (using C-extension).
     """
-    if (readouts >= jumps.shape[-4]).any():
+    jumps, starts, plast_type, readouts = jmp
+    if (readouts >= starts.shape[-2]).any():
         raise IndexError("readouts out of bounds")
     if (plast_type >= jumps.shape[-3]).any():
         raise IndexError("plast_type out of bounds")
-    return _bw.alpha_beta(jumps, starts, plast_type, readouts)
+    return _bw.alpha_beta(*jmp)
 
 
-def _jmp_model_c(
-    jumps: la.lnarray, plast_type: la.lnarray, readouts: la.lnarray,
-    bw_vars: Tuple[la.lnarray, la.lnarray, la.lnarray], *,
-    steady: bool = True, combine: bool = True, normed: bool = True,
-) -> Tuple[la.lnarray, la.lnarray]:
+def _jmp_abe_calc_model_c(jmp: Arrays4, abe: Arrays3, **kwds) -> Arrays2:
     """One Baum-Welch/Rabiner-Juang update of the model (using C-extension).
     """
+    # drop starts
+    jumps, plast_type, readouts = _drop_snd(jmp)
     if (readouts >= jumps.shape[-4]).any():
         raise IndexError("data.readouts out of bounds")
     if (plast_type >= jumps.shape[-3]).any():
         raise IndexError("data.plast_type out of bounsds")
 
-    nexpt = bw_vars[2].ndim - 1  # eta
-    args = (jumps, plast_type, readouts) + bw_vars
+    nexpt = abe[2].ndim - 1  # eta
 
-    if steady:
-        plast, initial = _bw.plast_steady(*args)
+    if kwds.pop('steady', True):
+        plast, initial = _bw.plast_steady(*jmp, *abe)
     else:
-        plast, initial = _bw.plast_init(*args)
+        plast, initial = _bw.plast_init(*jmp, *abe)
 
-    if combine:
+    if kwds.pop('combine', True):
         plast = plast.sum(tuple(range(nexpt)))
         initial = initial.sum(tuple(range(nexpt)))
 
-    if normed:
+    if kwds.pop('normed', True):
         plast /= plast.sum(axis=-1, keepdims=True)
         initial /= initial.sum(axis=-1, keepdims=True)
 
     return plast, initial
 
 
-def _obj_bw_abe(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
-                ) -> Tuple[la.lnarray, la.lnarray, la.lnarray]:
-    """Calculate BW forward/backward variables (from objects using C-extension)
+def _get_bw_abe(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
+                ) -> Arrays3:
+    """Calculate BW forward/backward variables
 
     Parameters
     ----------
@@ -335,25 +326,24 @@ def _obj_bw_abe(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
 
     Returns
     -------
-    alpha : la.lnarray, (E,T,M)
+    alpha : lnarray, (E,T,M)
         Normalised Baum-Welch forward variable.
-    beta : la.lnarray, (E,T,M)
+    beta : lnarray, (E,T,M)
         Scaled Baum-Welch backward variable.
-    eta : la.lnarray, (E,T)
+    eta : lnarray, (E,T)
         Norm of Baum-Welch forward variable.
     """
     jmp = _obj_jmp(model, data)
     if P_OR_C:
-        upd = _jmp_upd(*jmp)
+        upd = _jmp_upd(jmp)
         # drop plast_type
-        return _upd_bw_abe_p(*upd[:2])
-    return _jmp_bw_abe_c(*jmp)
+        return _upd_calc_abe_p(upd[:2])
+    return _jmp_calc_abe_c(jmp)
 
 
-def _obj_abe_model(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
-                   **kwds) -> Tuple[la.lnarray, la.lnarray]:
+def _get_bw_abe_model(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
+                      **kwds) -> Tuple[Arrays3, Arrays2]:
     """One Baum-Welch/Rabiner-Juang update of the model,
-    (from objects, using C-extension).
 
     Parameters
     ----------
@@ -378,11 +368,11 @@ def _obj_abe_model(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
     bw_vars : Tuple[lnarray, lnarray, lnarray] (E,T,M),(E,T,M),(E,T) float
         Baum-Welch forward/backward variables.
 
-        alpha : la.lnarray, (E,T,M) float[0:1]
+        alpha : lnarray, (E,T,M) float[0:1]
             Normalised Baum-Welch forward variable.
-        beta : la.lnarray, (E,T,M) float
+        beta : lnarray, (E,T,M) float
             Scaled Baum-Welch backward variable.
-        eta : la.lnarray, (E,T) float[1:]
+        eta : lnarray, (E,T) float[1:]
             Norm of Baum-Welch forward variable.
     model : Tuple[lnarray, lnarray] (P,M,M),(M,) float
         Baum-Welch update.
@@ -394,15 +384,12 @@ def _obj_abe_model(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
     """
     jmp = _obj_jmp(model, data)
     if P_OR_C:
-        upd = _jmp_upd(*jmp)
-        # drop plast_types
-        abe = _upd_bw_abe_p(*upd[:2])
-        # drop initial
-        model = _upd_model_p(*_drop_snd(upd), abe, **kwds)
+        upd = _jmp_upd(jmp)
+        abe = _upd_calc_abe_p(upd)
+        model = _upd_abe_calc_model_p(upd, abe, **kwds)
     else:
-        abe = _jmp_bw_abe_c(*jmp)
-        # drop starts
-        model = _jmp_model_c(*_drop_snd(jmp), abe, **kwds)
+        abe = _jmp_calc_abe_c(jmp)
+        model = _jmp_abe_calc_model_c(jmp, abe, **kwds)
     return abe, model
 
 
@@ -501,7 +488,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
 
     Attributes
     ----------
-    alpha, beta, eta : la.lnarray (E,T,M),(E,T,M),(E,T) float
+    alpha, beta, eta : lnarray (E,T,M),(E,T,M),(E,T) float
         Normalised Baum-Welch forward/backward variables and the normalisers.
     opt : BaumWelchOptions
         Optins for BW update.
@@ -527,11 +514,11 @@ class BaumWelchFitter(_fs.SynapseFitter):
     """
     # Baum-Welch forward/backward variables
     # (E,T,M)
-    alpha: la.lnarray
+    alpha: Array
     # (E,T,M)
-    beta: la.lnarray
+    beta: Array
     # (E,T)
-    eta: la.lnarray
+    eta: Array
     # BW update options
     opt: BaumWelchOptions
 
@@ -541,7 +528,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
         kwds.setdefault('opt', BaumWelchOptions())
         super().__init__(data, est, callback, **kwds)
         # (E,T,M),(E,T,M),(E,T)
-        self.alpha, self.beta, self.eta = _obj_bw_abe(self.est, self.data)
+        self.alpha, self.beta, self.eta = _get_bw_abe(self.est, self.data)
         self.info['nlike'] = _sb.scalarise(np.log(self.eta).sum())
 
     def update_info(self) -> None:
@@ -554,7 +541,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
 
     def update_fit(self) -> None:
         """Perform a single update of the model."""
-        abe, est = _obj_abe_model(self.est, self.data, **self.opt.bw_opts())
+        abe, est = _get_bw_abe_model(self.est, self.data, **self.opt.bw_opts())
         # (E,T,M),(E,T,M),(E,T)
         self.alpha, self.beta, self.eta = abe
         # (P,M,M),(M,)
@@ -562,7 +549,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
         if self.opt.normed:
             self.est.sort(group=True)
 
-    def est_occ(self, ind: _ps.Inds) -> la.lnarray:
+    def est_occ(self, ind: _ps.Inds) -> Array:
         """Current estimate of state occupation.
 
         Parameters
@@ -599,7 +586,7 @@ class GroundedBWFitter(_fs.GroundedFitter, BaumWelchFitter):
 
     Attributes
     ----------
-    alpha, beta, eta : la.lnarray
+    alpha, beta, eta : lnarray
         Normalised Baum-Welch forward/backward variables and the normalisers.
     opt : BaumWelchOptions
         Options for BW update.
@@ -651,3 +638,13 @@ class GroundedBWFitter(_fs.GroundedFitter, BaumWelchFitter):
         """
         super().update_info()
         self.info['true_dlike'] = self.info['nlike'] - self.info['true_like']
+
+
+# =============================================================================
+# Aliases for hinting
+# =============================================================================
+Array = la.lnarray
+Arrays = Tuple[Array, ...]
+Arrays2 = Tuple[Array, Array]
+Arrays3 = Tuple[Array, Array, Array]
+Arrays4 = Tuple[Array, Array, Array, Array]

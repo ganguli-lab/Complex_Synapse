@@ -34,12 +34,12 @@ fit_model.normalise()
 with time_with(subsec=True, absolute=False):
     update, initial = fit_model.updaters()
     sim_data = sim.move_t_axis(-1).plast_type, sim.move_t_axis(-1).readouts
-    a, b, e = idfy.baum_welch._jmp_bw_abe_c(update, initial, *sim_data)
-    p, init = idfy.baum_welch._jmp_model_c(update, *sim_data, (a, b, e))
+    a, b, e = idfy.baum_welch._jmp_calc_abe_c(update, initial, *sim_data)
+    p, init = idfy.baum_welch._jmp_abe_calc_model_c(update, *sim_data, (a, b, e))
 with time_with(subsec=True, absolute=False):
     update, initial, plast_type = idfy.baum_welch._obj_upd(fit_model, sim)
-    aa, bb, ee = idfy.baum_welch._upd_bw_abe_p(update, initial)
-    pp, iinit = idfy.baum_welch._upd_model(update, plast_type, (aa, bb, ee))
+    aa, bb, ee = idfy.baum_welch._upd_calc_abe_p(update, initial)
+    pp, iinit = idfy.baum_welch._upd_abe_calc_model_p(update, plast_type, (aa, bb, ee))
 print(compare(a, aa))
 print(compare(p, pp))
 # %%
