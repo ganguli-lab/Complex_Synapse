@@ -16,8 +16,32 @@
 % **** -----------------------------------------------------------
 \documentclass[12pt]{article}
 %Preamble:
+\usepackage[T1]{fontenc}
 \usepackage{a4wide}
-\input{sl_preamble.tex}
+\usepackage{stix}
+% Preamble:
+%\usepackage{a4wide}
+%\usepackage{ams} for finding documentation only
+\usepackage[centertags]{amsmath}
+% \usepackage{amssymb}
+\usepackage{xcolor}
+\usepackage[sort&compress,numbers]{natbib}
+\usepackage{ifpdf}
+%
+\ifpdf
+ \usepackage[pdftex,bookmarks,bookmarksopen,pdfstartview=FitH,bookmarksnumbered]{hyperref}
+\else
+ \usepackage[hypertex]{hyperref}
+\fi
+% ----------------------------------------------------------------
+\vfuzz2pt % Don't report over-full v-boxes if over-edge is small
+\hfuzz2pt % Don't report over-full h-boxes if over-edge is small
+% ----------------------------------------------------------------
+\def\Snospace~{\S{}}
+\renewcommand{\sectionautorefname}{\Snospace}
+\renewcommand{\subsectionautorefname}{\Snospace}
+\renewcommand{\subsubsectionautorefname}{\Snospace}
+\usepackage{cleveref}
 \usepackage{mathtools}
 %
 % >> Only for drafts! <<
@@ -135,6 +159,8 @@
 
 \section{Framework}\label{sec:framework}
 
+%--------------------------------------------------------------------------------
+
 \subsection{Recognition memory}\label{sec:recog}
 
 
@@ -195,6 +221,7 @@ If we only know average time, $\tau$, a natural choice for this distribution is
 %
 Different parts of the brain, that store memories for different timescales, could be characterised by different values of $\tau$.
 
+%--------------------------------------------------------------------------------
 
 \subsection{Signal-to-noise ratio}\label{sec:snr}
 
@@ -266,7 +293,7 @@ If the elements of $\synid$ take values $\pm1$ with probability $f\potdep$,
 To compute this quantity, we will need to discuss how we model individual synapses.
 
 
-
+%--------------------------------------------------------------------------------
 
 \subsection{Markov models of synapses}\label{sec:markovsynapse}
 
@@ -318,16 +345,18 @@ mariginalising over states at earlier times, is
   \pr(t_n) = \pr(t_0)  \M\pot \M\dep \M\dep \M\pot \M\dep \M\pot \M\pot \M\dep \ldots \M\pot .
 \end{equation}
 %
-If the probability of a given plasticity event being potentiating/depressing is $f\potdep$, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
+If the probability of a given plasticity event being potentiating or depressing is $f\pot$ or $f\dep$ respectively, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
 
 In computing the expectation in \eqref{eq:overlapone} the plasticity event that occurs at $t=0$ is fixed, but all of the previous and subsequent events are marginalised over.
 If we marginalise over the types (potentiating/depressing) of these other events (conditioned on the number of events) we find
 %
 \begin{multline}\label{eq:plastseqtypes}
-  \pr(t_n) = \pr(t_0) (f\pot\M\pot+f\dep\M\dep)  \ldots (f\pot\M\pot+f\dep\M\dep) \\
-    \M\potdep (f\pot\M\pot+f\dep\M\dep) \ldots (f\pot\M\pot+f\dep\M\dep),
+  \pr(t_n) = \pr(t_0) (f\pot\M\pot+f\dep\M\dep)  \ldots \\
+    \ldots (f\pot\M\pot+f\dep\M\dep) 
+    \M\potdep (f\pot\M\pot+f\dep\M\dep) \ldots \\
+    \ldots (f\pot\M\pot+f\dep\M\dep),
 \end{multline}
-%
+% 
 where the factor of $\M\potdep$ is the event at $t=0$.
 If we expand out all of the parenthetical factors, we will get a sum of terms of the form \eqref{eq:plastseq} weighted by their probabilities.
 
@@ -439,9 +468,11 @@ If we wish to use the off-diagonal elements of $\frg$ and $\enc$ as the degrees 
 %
 
 
-
+%================================================================================
 
 \section{Laplace transform}\label{sec:laplace}
+
+%--------------------------------------------------------------------------------
 
 \subsection{Fundamental matrix \etc}\label{sec:lfund}
 
@@ -520,7 +551,7 @@ It will be more convenient to use the quantities
 Arranging the states in order of decreasing $\etw_i(s)$ is the same as the order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
 The $\etw_i(s)$ can still be used when $\w$ takes more than two values.
 
-
+%--------------------------------------------------------------------------------
 
 \subsection{Laplace transform of SNR curve}\label{sec:laplaceSNR}
 
@@ -582,7 +613,7 @@ are:
 \end{equation}
 %
 The first choice leaves \( \shift{\enc} = \enc \), so it only affects the \(\etw\) piece of \cref{eq:larea}.
-The second choice does not leave \(\enc\) invariant (in fact \( \shift{\enc}(s) = \enc + (f\pot - d\dep) (\onev \eq - \I) \)), but because \( \eq (\onev \eq - \I) = 0 \) the shift does not make any contribution to \cref{eq:larea}.
+The second choice does not leave \(\enc\) invariant (in fact \( \shift{\enc}(s) = \enc + (f\pot - f\dep) (\onev \eq - \I) \)), but because \( \eq (\onev \eq - \I) = 0 \) the shift does not make any contribution to \cref{eq:larea}.
 Either way:
 %
 \begin{equation}\label{eq:lareashift}
@@ -609,6 +640,8 @@ In analogy with the case $s=0$, we define
       = \eq \mathbf{a}(s).
 \end{equation}
 %
+
+%--------------------------------------------------------------------------------
 
 \subsection{Derivatives}\label{sec:lderiv}
 
@@ -655,9 +688,49 @@ Then we can write the Hessian as
 %
 This is useful in numerical maximisation.
 
+%================================================================================
+
 \section{Upper bounds}\label{sec:upperbnds}
 
+Now to study the SNR as a function of  time, it helps to consider some variables that are more directly related to the time dependance than the matrix elements. 
+So we introduce an eigenvector decomposition for $-\frg$:
+%
+\begin{equation}\label{eq:eigendecomp}
+  \frg = - \sum_a q_a \evr^a \evl^a,
+  \quad
+  \evl^a \evr^b = \delta_{ab},
+  \quad
+  \frg \evr^a = -q_a \evr^a,
+  \quad
+  \evl^a \frg = -q_a \evl^a.
+\end{equation}
+%
+Then we can write
+%
+\begin{equation}\label{eq:snreig}
+  \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-rt/\tau_a},
+  \qquad
+  \snrb(\tau) = \sqrt{N}\sum_a \frac{\CI_a}{1+r\tau/\tau_a},
+\end{equation}
+%
+where
+%
+\begin{equation}\label{eq:snrcoeffs}
+  \CI_a = (\eq \enc \evr^a) (\evl^a \w),
+  \qquad
+  \tau_a = \frac{1}{q_a}.
+\end{equation}
+%
+Now the question is what are the allowed values of \( (\CI_a, \tau_a) \)?
+We have to translate the constraints of \cref{eq:constri} into constraints on the eigenmode variables.
+Each constraint we find will be a necessary condition for the existence of a set of Markov processes \( \M_{ij}^\nu \) that result in \( (\CI_a, \tau_a) \).
+We can imagine the notion of a complete set of constraints: constraints that, when combined, are also sufficient for the existence of a \( \M_{ij}^\nu \).
+But finding such a set seems intractable for now.
+Most likely there are a large number of such constraints, but if we can find a few of them they will provide us with some limits on the space of possible memory curves.
+These limits may not be tight - there may not be models that can reach these limits, but they will imply a forbidden region in the space of memory curves.
 
+
+%--------------------------------------------------------------------------------
 
 \subsection{Initial SNR}\label{sec:initial}
 
@@ -675,6 +748,8 @@ As shown in \cite{Lahiri2013synapse}, this satisfies the inequality
 \end{equation}
 %
 The model that saturates this bound is (equivalent to) a two-state model with deterministic transitions and $f\potdep=\frac{1}{2}$.
+
+%--------------------------------------------------------------------------------
 
 \subsection{Area bound}\label{sec:area}
 
@@ -695,35 +770,167 @@ The model that saturates this bound is one of serial topology with $\eq$ concent
 
 
 
-\subsection{Envelope}\label{sec:envelope}
+%-------Section------------------------------------------------------------------
 
-Now we introduce an eigenvector decomposition for $-\frg$:
+\subsection{Square-root bound}\label{sec:sqrt}
+
+\newcommand{\aav}[1]{\mathopen{}\left\lAngle #1 \right\rAngle\mathclose{}}
+\newcommand{\nnrm}[1]{\mathopen{}\left\Vvert #1 \right\Vvert\mathclose{}}
+
+This proof follows that of \cite{Lawler1988cheeger}.
+We can define two inner-products that will be of use.
+The first is the usual inner product of two vectors (or functions on state space in the continuum case) using the steady state distribution as the measure:
 %
-\begin{equation}\label{eq:eigendecomp}
-  \frg = - \sum_a q_a \evr^a \evl^a,
-  \quad
-  \evl^a \evr^b = \delta_{ab},
-  \quad
-  \frg \evr^a = -q_a \evr^a,
-  \quad
-  \evl^a \frg = -q_a \evl^a.
+\begin{equation}\label{eq:innereq}
+  \av{\mathbf{u}, \mathbf{v}} = \sum_i \eq_i u_i^\ast v_i ,
+  \qquad
+  \nrm{\mathbf{v}} = \sqrt{\av{\mathbf{v}, \mathbf{v}}} .
 \end{equation}
 %
-Then we can write
+The second is an inner product of rank 2 tensors (functions of pairs of points on state space) using the steady-state flux as the measure:
 %
-\begin{equation}\label{eqsnreig}
+\begin{equation}\label{eq:innerflux}
+  \aav{\mathbf{F}, \mathbf{G}} = \sum_{i \neq j} \F_{ij} F_{ij}^\ast G_{ij} ,
+  \qquad
+  \nnrm{\mathbf{F}} = \sqrt{\aav{\mathbf{F}, \mathbf{F}}}.
+\end{equation}
+%
+The omission of the diagonal terms leaves only non-negative terms.
+
+When the process satisfies detailed balance, \ie \(\F_{ij}\) is symmetric, we can relate these inner products to quantities of interest.
+
+We can write
+%
+\begin{equation*}
+  \av{\mathbf{u}, -\MM\mathbf{v}} = \sum_{i \neq j} \eq_i u_i^\ast \MM_{ij} (v_i - v_j),
+\end{equation*}
+%
+under detailed balance, we can symmetrize
+%
+\begin{equation*}
+  \av{\mathbf{u}, -\MM \mathbf{v}} 
+      = \frac{1}{2}\sum_{i \neq j} \F_{ij} (u_i^\ast - u_j^\ast) (v_i - v_j) 
+      = \frac{1}{2} \aav{\boldsymbol{\Delta}\mathbf{u}, \boldsymbol{\Delta}\mathbf{v}}.
+\end{equation*}
+%
+
+The eigenvalue spectrum of \(\MM\) is closely related to its numerical range:
+%
+\begin{equation}\label{eq:numrange}
+  \mathcal{W}(-\MM; \mathcal{V}) 
+    = \set{\frac{\av{\mathbf{u}, -\MM \mathbf{u}}}{\av{\mathbf{u}, \mathbf{u}}}}
+          {\mathbf{u} \in \mathcal{V}} 
+    = \set{\frac{\nnrm{\boldsymbol{\Delta}\mathbf{u}}^2}{2\nrm{\mathbf{u}}^2}}
+          {\mathbf{u} \in \mathcal{V}} .
+\end{equation}
+%
+When \(\MM\) satisfies detailed balance (more generally when it commutes with its time reverse), the numerical range is the convex hull of the eigenvalues.
+
+The other quantity of interest in \cref{eq:snrcoeffs} is the amplitude of the eigenmodes.
+In analogy, we define the following functional (for real \(\mathbf{u}\))
+%
+\begin{equation*}
+  \CI(\mathbf{u}) = \frac{(\eq \enc \mathbf{u}) (\mathbf{u}^\dag \w)}{\mathbf{u}^\dag \mathbf{u}}
+      = \frac{\sum_{i \neq j} \eq_i \enc_{ij} (u_j - u_i) \sum_k \eq_k u_k \w_k} 
+             {\sum_{l} \eq_l u_l^2} .
+\end{equation*}
+%
+Following \cite{Lawler1988cheeger}, we can write
+%
+\begin{equation*}
+  u_j - u_i = \intd[_{u_i}^{u_j}]{\alpha} 
+      = \intd[_{-\infty}^{\infty}]{\alpha} 
+        \brk{\vartheta(u_j - \alpha) \vartheta(\alpha - u_i) 
+           - \vartheta(u_i - \alpha) \vartheta(\alpha - u_j)} ,
+\end{equation*}
+%
+where \(\vartheta\) is the Heaviside step-function.
+Then 
+%
+\begin{equation*}
+  \begin{aligned}[t]
+  r \eq \enc \mathbf{u} &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
+        \F\pot_{\CA_\alpha \CA_\alpha^c} - \F\dep_{\CA_\alpha \CA_\alpha^c} 
+      - \F\pot_{\CA_\alpha^c \CA_\alpha} + \F\dep_{\CA_\alpha^c \CA_\alpha} }
+    \\
+    &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
+        \F_{\CA_\alpha \CA_\alpha^c} + \F_{\CA_\alpha^c \CA_\alpha} 
+        - 2\F\dep_{\CA_\alpha \CA_\alpha^c} - 2\F\pot_{\CA_\alpha^c \CA_\alpha} }
+  \end{aligned}
+  %
+  \quad \text{where} \quad
+  %
+  \begin{aligned}[t]
+    \CA_\alpha &= \set{i}{u_i < \alpha} 
+    , \\
+    \F^\nu_{\CA \CB} &= r f^\nu \sum_{\substack{i \in \CA \\ j \in \CB}} 
+                        \prn{\M^\nu_{ij} - \delta_{ij}}
+    .
+  \end{aligned}
+\end{equation*}
+%
+In exactly the same way as the proof of \cref{eq:initbnd}, we can argue that the two terms with the negative signs are indeed non-positive as they do not involve the negative diagonal elements of~\( \F_{ij}^\nu \).
+Therefore the other terms provide an upper bound.
+%
+\begin{equation*}
+\begin{aligned}
+  r \nrm{\mathbf{u}}^2 \CI(\mathbf{u}) 
+      &\leq \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
+        \F_{\CA_\alpha \CA_\alpha^c} + \F_{\CA_\alpha^c \CA_\alpha} } 
+        \av{\mathbf{u}, \w}
+  \\  &= \intd[_{-\infty}^{\infty}]{\alpha} \sum_{i \neq j} \F_{ij} \brk{
+            \vartheta(u_j - \alpha) \vartheta(\alpha - u_i) 
+          + \vartheta(u_i - \alpha) \vartheta(\alpha - u_j)
+        } \av{\mathbf{u}, \w}
+  \\  &= \sum_{i \neq j} \F_{ij} \abs{u_j - u_i} \av{\mathbf{u}, \w}
+  \\  &= \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem} \av{\mathbf{u}, \w} .
+\end{aligned}
+\end{equation*}
+%
+Now we can apply the Cauchy-Schwartz inequality to both factors to find
+%
+\begin{equation*}
+  r \CI(\mathbf{u}) \leq \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem} 
+                          \nrm{\mathbf{u}} \nrm{\w}.
+\end{equation*}
+%
+We also have \( \nrm{\w}^2 = \sum_i \eq_i \w_i^2 = 1 \).
+Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eq_i \MM_{ij} \leq r \sum_i \eq_i = r\).
+Then, remembering \cref{eq:numrange},
+%
+\begin{equation}\label{eq:sqrtnumrange}
+  \sqrt{r} \CI(\mathbf{u}) \leq \sqrt{2\mathcal{W}(-\MM, \mathbf{u})}.
+\end{equation}
+%
+Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvectors, we find a bound on the eigenmodes:
+%
+\begin{equation}\label{eq:sqrtbound}
+  \text{assuming} \quad 
+  \eq_i \MM_{ij} = \eq_j \MM_{ji},
+  \qquad \text{we have} \quad
+  \CI_a \sqrt{\tau_a} \leq \sqrt{2}.
+\end{equation}
+%
+
+%--------------------------------------------------------------------------------
+
+\subsection{Envelope}\label{sec:envelope}
+
+Recall the eigenmode description of the memory curve from \cref{eq:snreig}
+%
+\begin{equation*}
   \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-rt/\tau_a},
   \qquad
   \snrb(\tau) = \sqrt{N}\sum_a \frac{\CI_a}{1+r\tau/\tau_a},
-\end{equation}
+\end{equation*}
 %
 where
 %
-\begin{equation}\label{eq:snrcoeffs}
+\begin{equation*}
   \CI_a = (\eq \ench \evr^a) (\evl^a \w),
   \qquad
   \tau_a = \frac{1}{q_a}.
-\end{equation}
+\end{equation*}
 %
 From \eqref{eq:areabnd} and \eqref{eq:initbnd}, we see that they are subject to the constraints
 %
@@ -788,7 +995,7 @@ This envelope is shown in \autoref{fig:envproven}.
 \end{figure}
 
 
-
+%================================================================================
 
 \section{Finite time}\label{sec:finite}
 
@@ -1088,7 +1295,7 @@ We see that most of the large discrepancies occur where the problem is numerical
   See the video for the full set of models.}\label{fig:envvid}
 \end{figure}
 
-
+%================================================================================
 
 \section{Nearly uniform serial models}\label{sec:serial}
 
@@ -1122,6 +1329,7 @@ All of these calculations will be performed at $f\potdep=\frac{1}{2}$, so the de
 We will work in units such that $r=1$ temporarily, only restoring $r$ at the end.
 We study models with \(m\) strong and \(m\) weak states for a total of  \(M = 2 m\).
 
+%--------------------------------------------------------------------------------
 
 \subsection{Uniform serial model}\label{sec:serial_uniform}
 
@@ -1269,7 +1477,7 @@ For $s\gtrsim 1.36423$, we set $M=2$ to find
 This does not match up with \eqref{eq:unienvapprox} at the boundary of the two regions, as this is outside the regime of validity of that approximation.
 However, it does match up with the full formula, \eqref{eq:unienv} at the boundary.
 
-
+%--------------------------------------------------------------------------------
 
 \subsection{Shortened serial model}\label{sec:serial_shorten}
 
@@ -1426,7 +1634,7 @@ If these were really the models that maximised $A(s)$, the region of validity fo
 In fact there are overlaps, as seen in \cref{fig:shorten}\ref{fig:short_ratio} for \(M=6\) and higher.
 This is related to the fact that \autoref{fig:envvid} and the video shows that the optimal models do not shorten by one state at a time, but several outgoing transition probabilities are reduced at once.
 
-
+%--------------------------------------------------------------------------------
 
 \subsection{Sticky serial model}\label{sec:serial_sticky}
 
@@ -1549,7 +1757,7 @@ and the Laplace transform is
 \end{equation}
 %
 
-
+%--------------------------------------------------------------------------------
 
 \subsection{Heuristic envelope}\label{sec:heuristicenv}
 
@@ -1610,7 +1818,7 @@ This is plotted in \autoref{fig:heuristicenv}.
   Analytic expressions from \cref{eq:henvapprox} are only valid to the right of each region.}\label{fig:heuristicenv}
 \end{figure}
 
-
+%================================================================================
 
 \section{Conclusions}\label{sec:conclusions}
 
