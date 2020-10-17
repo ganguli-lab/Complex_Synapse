@@ -103,3 +103,4 @@ target/
 *.code-workspace
 *.npz
 */.vscode
+*.pdb
