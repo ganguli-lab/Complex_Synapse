@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Creating figures for Examples
 """
 import typing as ty

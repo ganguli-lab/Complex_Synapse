@@ -100,7 +100,7 @@ def constraint_vals(plast: np.ndarray) -> la.lnarray:
     """
     npl, nst = plast.shape[-3:-1]
     coeffs = la.ones((npl, nst, nst))
-    coeffs[:, np.diag_indices(nst)] = 0
+    coeffs[np.s_[:,] + np.diag_indices(nst)] = 0
     return (coeffs * plast).sum(-1)
 
 
@@ -194,7 +194,7 @@ def build_generic(func: MatFunc, nst: int, npl: int = 2, binary: bool = False,
     fix_scale = kwds.pop('fix_scale', False)
     plast = la.asarray(func(nst, npl, **kwds))
     if fix_scale:
-        plast /= constraint_vals(plast).max()
+        plast /= max(1, constraint_vals(plast).max())
     weight = binary_weights(nst) if binary else linear_weights(nst)
     signal = la.linspace(1, -1, npl)
     return {'plast': plast, 'weight': weight, 'signal': signal}

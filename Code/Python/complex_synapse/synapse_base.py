@@ -282,14 +282,20 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin, ABC):
         fundi = self.zinv(rowv=rowv)
         return rowv @ fundi.inv
 
+    def time_rev(self) -> SynapseBase:
+        """Swap plast with time rev"""
+        plast = _ma.adjoint(self.plast, self.peq())
+        _ma.stochastify_c(plast)
+        return self.copy(plast=np.flip(plast, -3))
+
     # -------------------------------------------------------------------------
     # Factory methods
     # -------------------------------------------------------------------------
 
     @classmethod
-    def build(cls, builder: Callable[..., Dict[str, la.lnarray]],
+    def build(cls: Type[Syn], builder: Callable[..., Dict[str, la.lnarray]],
               nst: int, frac: ArrayLike = 0.5,
-              extra_args=(), **kwargs) -> SynapseBase:
+              extra_args=(), **kwargs) -> Syn:
         """Build model from function.
 
         Parameters
@@ -312,7 +318,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin, ABC):
         return cls(**builder(nst, *extra_args, **kwargs), frac=frac)
 
     @classmethod
-    def zero(cls, *args, **kwargs) -> SynapseBase:
+    def zero(cls: Type[Syn], *args, **kwargs) -> Syn:
         """Zero model
 
         Synapse model with all transition rates set to zero
@@ -340,7 +346,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin, ABC):
         return cls.build(_bld.build_zero, *args, **kwargs)
 
     @classmethod
-    def empty(cls, *args, **kwargs) -> SynapseBase:
+    def empty(cls: Type[Syn], *args, **kwargs) -> Syn:
         """Empty model
 
         Synapse model with all transition rates uninitialised.
@@ -368,7 +374,7 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin, ABC):
         return cls.build(_bld.build_empty, *args, **kwargs)
 
     @classmethod
-    def rand(cls, nst, *args, **kwargs) -> SynapseBase:
+    def rand(cls: Type[Syn], nst, *args, **kwargs) -> Syn:
         """Random model
 
         Synapse model with random transition matrices
@@ -645,7 +651,7 @@ class SynapseParam(SynapseBase):
         return self.topology.directed(which, **kwds)
 
     @classmethod
-    def from_params(cls, params: np.ndarray, *args, **kwds) -> SynapseParam:
+    def from_params(cls: Type[Syn], params: np.ndarray, *args, **kwds) -> Syn:
         """Builds SynapseOpt object from independent parameters
 
         Parameters
@@ -688,7 +694,7 @@ class SynapseParam(SynapseBase):
         return obj
 
     @classmethod
-    def rand(cls, nst: Optional[int], *args, **kwds) -> SynapseParam:
+    def rand(cls: Type[Syn], nst: Optional[int], *args, **kwds) -> Syn:
         """Random model
 
         Synapse model with random transition matrices
@@ -736,10 +742,32 @@ class SynapseParam(SynapseBase):
         kwds.update(nst=nst, topology=topology)
         params = rng.random(npar)
         if not topology.constrained:
-            cnstr = (constraint_coeff(npl, nst) @ params).max()
+            cnstr = (cls.constraint_coeff(npl, nst) @ params).max()
             if cnstr > 1:
                 params /= cnstr
         return cls.from_params(params, *args, **kwds)
+
+    @staticmethod
+    def constraint_coeff(npl: int, nst: int) -> la.lnarray:
+        """Coefficient matrix for upper bound on off-diagonal row sums.
+
+        Parameters
+        ----------
+        npl : int
+            Number of types of plasticity
+        nst: int
+            Number of states.
+
+        Returns
+        -------
+        coeffs : la.lnarray (2*nst, 2*nst(nst-1))
+            matrix of coefficients s.t ``coeffs @ params <= 1``.
+        """
+        rows, cols = la.arange(npl*nst), la.arange(nst-1)
+        cols = cols + rows.c * (nst-1)
+        coeffs = la.zeros((npl*nst, npl*nst*(nst-1)))
+        coeffs[rows.c, cols] = 1
+        return coeffs
 
 
 # =============================================================================

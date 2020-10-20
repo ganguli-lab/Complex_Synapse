@@ -443,6 +443,7 @@ class OptimProblem:
         """Create a model"""
         if self.x_init is None:
             self.model = _so.SynapseOptModel.rand(**self.opts.model_opts)
+            self.x_init = self.model.get_params()
         else:
             self.model = _so.SynapseOptModel.from_params(
                 self.x_init, **self.opts.model_opts)
@@ -561,7 +562,7 @@ def constraint_coeff(model: _so.SynapseOptModel) -> la.lnarray:
         matrix of coefficients s.t ``coeffs @ params <= 1``.
     """
     npl, nst = model.nplast, model.nstate
-    return _sb.constraint_coeff(npl, nst)
+    return type(model).constraint_coeff(npl, nst)
 
 
 def conv_constraint(constraint: Constraint) -> List[Dict[str, Any]]:
@@ -573,6 +574,15 @@ def conv_constraint(constraint: Constraint) -> List[Dict[str, Any]]:
     slsqp_lb = {'type': 'ineq', 'args': ()}
     slsqp_ub = slsqp_lb.copy()
     if isinstance(constraint, sco.LinearConstraint):
+        if not (np.isscalar(constraint.lb) and np.isscalar(constraint.ub)):
+            coeffs = np.atleast_2d(constraint.A)
+            lbs = _cn.repeatify(constraint.lb)
+            ubs = _cn.repeatify(constraint.ub)
+            lins = []
+            for cff, lbb, ubb in zip(coeffs, lbs, ubs):
+                constr = sco.LinearConstraint(cff, lbb, ubb)
+                lins.extend(conv_constraint(constr))
+            return lins
         slsqp_lb['fun'] = lambda x: constraint.A @ x - constraint.lb
         slsqp_ub['fun'] = lambda x: constraint.ub - constraint.A @ x
         slsqp_lb['jac'] = lambda x: constraint.A

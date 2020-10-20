@@ -12,7 +12,7 @@ import numpy as np
 import numpy_linalg as la
 import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.numpy_tricks.markov as _ma
-from sl_py_tools.graph_tricks import MultiDiGraph, param_to_graph
+from sl_py_tools.graph_tricks import MultiDiGraph
 
 import complex_synapse.builders as _bld
 import complex_synapse.synapse_base as _sb
@@ -164,6 +164,24 @@ class SynapseModel(_sb.SynapseContinuousTime):
         eta = - self.zinv(rate).inv @ self.weight.c
         return eta - eta.t
 
+    def spectrum(self) -> Tuple[la.lnarray, la.lnarray]:
+        """Timescales and coefficients of eigenmodes.
+
+        Returns
+        -------
+        taua : la.larray
+            Decay timescales of eigenmodes.
+        inita : la.lnarray
+            Initial SNR from eigenmodes.
+        """
+        qas, evs = np.linalg.eig(-self.markov())
+        mask = la.ones_like(qas, dtype=bool)
+        mask.put(qas.real.argmin(), False)
+        taua = 1. / qas[mask]
+        inita = self.peq() @ self.enc() @ evs[:, mask]
+        inita *= (evs.inv @ self.weight)[mask]
+        return taua, inita
+
     def to_graph(self, graph: Optional[MultiDiGraph] = None, **kwds
                  ) -> MultiDiGraph:
         """Create/modify a directed graph from a parameterised synapse model.
@@ -232,23 +250,6 @@ class SynapseMemoryModel(SynapseModel):
     # -------------------------------------------------------------------------
     # Memory curves
     # -------------------------------------------------------------------------
-
-    def spectrum(self) -> Tuple[la.lnarray, la.lnarray]:
-        """Timescales and coefficients of eigenmodes.
-
-        Returns
-        -------
-        taua : la.larray
-            Decay timescales of eigenmodes.
-        inita : la.lnarray
-            Initial SNR from eigenmodes.
-        """
-        qas, evs = np.linalg.eig(-self.markov())
-        mask = la.ones_like(qas, dtype=bool).put(qas.real.argmin(), False)
-        taua = 1. / qas[mask]
-        inita = self.peq() @ self.enc() @ evs[:, mask]
-        inita *= (evs.inv @ self.weight)[mask]
-        return taua, inita
 
     def snr(self, time: _sb.ArrayLike) -> la.lnarray:
         """Memory SNR as a function of recall time (memory curve).
