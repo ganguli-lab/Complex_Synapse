@@ -677,9 +677,13 @@ def first_good(prob: OptimProblem) -> sco.OptimizeResult:
     """First solution that satisfies constraints"""
     res = sco.OptimizeResult()
     for _ in _it.dcount('tries', prob.opts.max_tries):
-        res = sco.minimize(**prob.for_scipy())
-        if prob.verify_solution(res):
-            break
+        try:
+            res = sco.minimize(**prob.for_scipy())
+        except np.linalg.LinAlgError:
+            pass
+        else:
+            if prob.verify_solution(res):
+                break
         prob.update_init()
     return res
 

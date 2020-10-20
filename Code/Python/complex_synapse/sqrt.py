@@ -125,7 +125,7 @@ def valid(params: la.lnarray, frac: float = 0.5) -> bool:
 def get_valid(nst: int, frac: float = 0.5, rng: np.random.Generator = bld.RNG):
     """Get a valid set of parameter values"""
     params = rng.random(nst**2 - 1) * 2 / nst**2
-    for _ in _it.dcount('tries', 100, disp_step=10):
+    for _ in _it.undcount('tries', 100, disp_step=10):
         if valid(params, frac):
             return params
         params = rng.random(nst**2 - 1) * 2 / nst**2
@@ -174,7 +174,8 @@ class SynapseSqrt(sb.SynapseParam, sm.SynapseModel):
         grad -= dq_ab[..., ind, :] @ i_by_q[:, ind]
         grad -= i_by_q[ind, ind] * dq_ab[..., ind, ind] / 2
         grad += di_ab[..., ind, ind]
-        return - grad.ravel()[:-1] / np.sqrt(2 * qas[ind])
+        grad = grad.ravel()
+        return - (grad[:-1] - grad[-1]) / np.sqrt(2 * qas[ind])
 
     def _eig(self) -> Tuple[la.lnarray, ...]:
         """Do eigen-decomp, etc"""
@@ -183,8 +184,9 @@ class SynapseSqrt(sb.SynapseParam, sm.SynapseModel):
         self._changed = False
         self._ind = None
         frac = self.frac[0]
-        evals, evc = sla.eigh(-self._flux, np.diagflat(self._peq))
-        evals, evc = la.asarray(evals), la.asarray(evc)
+        evals, evc = sla.eigh(la.eye(self.nstate) - self._flux,
+                              np.diagflat(self._peq))
+        evals, evc = la.asarray(evals) - 1, la.asarray(evc)
         uda_w = 2 * frac * evc.T @ (self.weight * self._peq)
         init_ab = uda_w.c * ((self._pneq - self._peq) @ evc)
         dq_mn_ab = evc[:, None, :, None] * evc[:, None] * frac
@@ -353,7 +355,7 @@ def normal_problem(model: SynapseSqrt, rate: Optional[float],
 
     con_coeff, lbs = constraint(model.nstate, model.frac[0])
     # con_coeff = la.ones(model.nstate**2 - 1)
-    bounds = sco.Bounds(1e-3, np.inf, **opts.lin())
+    bounds = sco.Bounds(1e-5, np.inf, **opts.lin())
     diag = [sco.LinearConstraint(con_coeff, lbs, np.inf, **opts.lin())]
     # diag.append(balance_cons(model, opts))
     if opts.cond_lim:
@@ -368,14 +370,19 @@ def optim_sqrt(nst: int, prob: Optional[OptimProblem] = None,
     """
     kwds.setdefault('repeats', 10)
     kwds.setdefault('nst', nst)
+    step = kwds.pop('disp_step', 1)
     if prob is None:
         prob = OptimProblem(**kwds)
     res = cso.optimise.first_good(prob)
-    for _ in _it.dcount('repeats', prob.opts.repeats, disp_step=1):
+    for _ in _it.dcount('repeats', prob.opts.repeats, disp_step=step):
         prob.update_init()
-        new_res = sco.minimize(**prob.for_scipy())
-        if prob.verify_solution(new_res) and new_res.fun < res.fun:
-            res = new_res
+        try:
+            new_res = sco.minimize(**prob.for_scipy())
+        except np.linalg.LinAlgError:
+            pass
+        else:
+            if prob.verify_solution(new_res) and new_res.fun < res.fun:
+                res = new_res
     if not prob.verify_solution(res):
         res.fun = np.nan
     return res
