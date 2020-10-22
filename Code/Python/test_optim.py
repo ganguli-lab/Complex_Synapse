@@ -42,9 +42,9 @@ grplot = gp.GraphPlots(graph, opts=gopt)
 import numpy as np
 import complex_synapse.sqrt as csq
 np.set_printoptions(precision=3, suppress=True)
-res = csq.optim_sqrt(4, repeats=100, disp_step=10)
+res = csq.optim_sqrt(4, repeats=100, disp_step=10, binary=True)
 res
 # %%
-res = csq.optim_sqrt(8, repeats=100, disp_step=10)
+res = csq.optim_sqrt(6, repeats=100, disp_step=10, binary=True)
 res
 # %%

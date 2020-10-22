@@ -18,94 +18,115 @@
 %Preamble:
 \usepackage[T1]{fontenc}
 \usepackage{a4wide}
-\usepackage{stix}
-% Preamble:
-%\usepackage{a4wide}
-%\usepackage{ams} for finding documentation only
-\usepackage[centertags]{amsmath}
-% \usepackage{amssymb}
-\usepackage{xcolor}
-\usepackage[sort&compress,numbers]{natbib}
-\usepackage{ifpdf}
-%
-\ifpdf
- \usepackage[pdftex,bookmarks,bookmarksopen,pdfstartview=FitH,bookmarksnumbered]{hyperref}
-\else
- \usepackage[hypertex]{hyperref}
-\fi
-% ----------------------------------------------------------------
-\vfuzz2pt % Don't report over-full v-boxes if over-edge is small
-\hfuzz2pt % Don't report over-full h-boxes if over-edge is small
-% ----------------------------------------------------------------
+\usepackage[tables,graphics,draft]{sl-preamble}
+% \usepackage{stix}
+%\usepackage{amsldoc} for finding documentation only
 \def\Snospace~{\S{}}
 \renewcommand{\sectionautorefname}{\Snospace}
 \renewcommand{\subsectionautorefname}{\Snospace}
 \renewcommand{\subsubsectionautorefname}{\Snospace}
-\usepackage{cleveref}
-\usepackage{mathtools}
 %
-% >> Only for drafts! <<
-\usepackage[notref,notcite]{showkeys}
-%
-\input{sl_graphics_preamble.tex}
 \graphicspath{{Figures/}}
 %
 % ----------------------------------------------------------------
 %\numberwithin{equation}{section}
-%\renewcommand{\baselinestretch}{1.5}
-% ----------------------------------------------------------------
-% New commands etc.
-\input{sl_definitions.tex}
-\input{sl_symbols.tex}
+%================================================================================
+\makeatletter
+\DeclareFontEncoding{LS2}{}{\noaccents@}
+\makeatother
+
+\DeclareFontSubstitution{LS2}{stix}{m}{n}
+\DeclareSymbolFont{xlargesymbols}{LS2}{stixex}{m}{n}
+\DeclareMathDelimiter{\lAngle}{\mathopen}{xlargesymbols}{"EC}{xlargesymbols}{"12}
+\DeclareMathDelimiter{\rAngle}{\mathclose}{xlargesymbols}{"ED}{largesymbols}{"13}
+\DeclareMathDelimiter{\lVvert}{\mathopen}{xlargesymbols}{"F2}{xlargesymbols}{"F5}
+\DeclareMathDelimiter{\rVvert}{\mathclose}{xlargesymbols}{"F2}{xlargesymbols}{"F5}
+
+\newcommand{\aav}[1]{\mathopen{}\left\lAngle #1 \right\rAngle\mathclose{}}
+\newcommand{\nnrm}[1]{\mathopen{}\left\lVvert #1 \right\rVvert\mathclose{}}
+%================================================================================
+%
+\usepackage{adjustbox}
+\newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
+\newcommand{\alignmid}[1]{\adjustbox{valign=c}{#1}}
+%
+\usepackage{paralist}
+\newenvironment{myenuma}{\begin{inparaenum}[(a)]}{\end{inparaenum}}
+\newenvironment{myenumi}{\begin{inparaenum}[i)]}{\end{inparaenum}}
+\newenvironment{myenumA}{\begin{inparaenum}[\bfseries A.]}{\end{inparaenum}}
+\newenvironment{myenumI}{\begin{inparaenum}[\bfseries I.]}{\end{inparaenum}}
+\newenvironment{myenumr}{\begin{inparaenum}[1.]}{\end{inparaenum}}
+%for nested lists, \ref only produces innermost item:  (hacky)
+\makeatletter % for internal macros with @
+\renewcommand\p@enumii{}
+\makeatother
+%
+%================================================================================
 %matrices
 %vec of ones
 \newcommand{\onev}{\mathbf{e}}
 %mat of ones
 \newcommand{\onem}{\mathbf{E}}
 %Markov matrix
-\newcommand{\MM}{\mathbf{Q}}
+\newcommand{\MMm}{Q}
+\newcommand{\MM}{\mathbf{\MMm}}
 %prob distribution
-\newcommand{\pr}{\mathbf{p}}
+\newcommand{\prm}{p}
+\newcommand{\pr}{\mathbf{\prm}}
 %equilibrium distribution
-\newcommand{\eq}{\pib}
+\newcommand{\eqm}{\pi}
+\newcommand{\eq}{\boldsymbol{\eqm}}
 %equilibrium metric
-\newcommand{\Eq}{\boldsymbol{\Pi}}
+\newcommand{\Eqm}{\Pi}
+\newcommand{\Eq}{\boldsymbol{\Eqm}}
 %first passage times
-\newcommand{\fpt}{\mathbf{T}}
+\newcommand{\fptm}{T}
+\newcommand{\fpt}{\mathbf{\fptm}}
 %off-diag first passage times
+\newcommand{\fptbm}{\overline{\fptm}}
 \newcommand{\fptb}{\overline{\fpt}}
 %fundamental matrix
-\newcommand{\fund}{\mathbf{Z}}
+\newcommand{\fundm}{Z}
+\newcommand{\fund}{\mathbf{\fundm}}
 %other symbols
 \newcommand{\Pb}{\mathbf{P}}
-\newcommand{\D}{\mathbf{D}}
 \newcommand{\pib}{\boldsymbol{\pi}}
-\newcommand{\arow}{\boldsymbol{\xi}}
-\newcommand{\Lb}{\boldsymbol{\Lambda}}
-\newcommand{\lb}{\boldsymbol{\lambda}}
+\newcommand{\arowm}{\xi}
+\newcommand{\arow}{\boldsymbol{\arowm}}
+\newcommand{\Lbm}{\Lambda}
+\newcommand{\Lb}{\boldsymbol{\Lbm}}
+\newcommand{\lbm}{\lambda}
+\newcommand{\lb}{\boldsymbol{\lbm}}
+\newcommand{\etwm}{\eta^w}
 \newcommand{\etw}{\boldsymbol{\eta}^w}
-\newcommand{\thb}{\boldsymbol{\theta}}
-\newcommand{\omb}{\boldsymbol{\omega}}
-\newcommand{\alb}{\boldsymbol{\alpha}}
+\newcommand{\thbm}{\theta}
+\newcommand{\thb}{\boldsymbol{\thbm}}
+\newcommand{\ombm}{\omega}
+\newcommand{\omb}{\boldsymbol{\ombm}}
+\newcommand{\albm}{\alpha}
+\newcommand{\alb}{\boldsymbol{\albm}}
 %synapse models
-\newcommand{\w}{\mathbf{w}}
-\newcommand{\W}{\mathbf{W}}
-\newcommand{\M}{\mathbf{M}}
-\newcommand{\enc}{\mathbf{K}}
+\newcommand{\wm}{w}
+\newcommand{\w}{\mathbf{\wm}}
+\newcommand{\Wm}{W}
+\newcommand{\W}{\mathbf{\Wm}}
+\newcommand{\MMdm}{M}
+\newcommand{\MMd}{\mathbf{\MMdm}}
+\newcommand{\encm}{K}
+\newcommand{\enc}{\mathbf{\encm}}
+\newcommand{\frgm}{\Wm^{\mathrm{F}}}
 \newcommand{\frg}{\W^{\mathrm{F}}}
-\newcommand{\F}{\boldsymbol{\Phi}}
+\newcommand{\Fm}{\Phi}
+\newcommand{\F}{\boldsymbol{\Fm}}
+%eigenvectors
+\newcommand{\evrm}{u}
+\newcommand{\evr}{\mathbf{\evrm}}
+\newcommand{\evlm}{\eta}
+\newcommand{\evl}{\boldsymbol{\evlm}}
 %superscripts
 \newcommand{\pot}{^{\text{pot}}}
 \newcommand{\dep}{^{\text{dep}}}
 \newcommand{\potdep}{^{\text{pot/dep}}}
-%with activity indep processes
-\renewcommand{\hom}{\mathbf{H}}
-\newcommand{\Mh}{\widetilde{\M}}
-\newcommand{\frgh}{\widetilde{\W}^{\mathrm{F}}}
-\newcommand{\ench}{\widetilde{\enc}}
-%eigenvectors
-\newcommand{\evr}{\mathbf{u}}
-\newcommand{\evl}{\boldsymbol{\eta}}
 %snr curves etc
 \newcommand{\syn}{\vec{w}}
 \newcommand{\synid}{\syn_\text{id}}
@@ -115,16 +136,15 @@
 \DeclareMathOperator{\nnr}{NNR}
 \newcommand{\snrb}{\overline{\snr}}
 \DeclareMathOperator{\env}{Env}
-\newcommand{\rh}{\hat{r}}
-\newcommand{\CA}{\mathcal{A}}
-\newcommand{\CB}{\mathcal{B}}
+% \newcommand{\CA}{\mathcal{A}}
+% \newcommand{\CB}{\mathcal{B}}
 %avoid double superscripts
 \renewcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}}
 % shifted process
 \newcommand{\shift}[1]{\widehat{#1}}
 
 % ----------------------------------------------------------------
-\input{sl_theorems_preamble.tex}
+% \input{sl_theorems_preamble.tex}
 % ----------------------------------------------------------------
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -302,9 +322,9 @@ The synaptic weight depends deterministically on the state, given by the $M$-ele
 We denote the probability distribution across these states by the row vector $\pr(t)$.
 We denote a column vector of ones by $\onev$, so the normalisation condition is $\pr(t) \, \onev=1$.
 
-When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices $\M^xn  $ whose $i,j$ elements are the transition probabilities from state $i$ to state $j$, 
+When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices $\MMd^\nu$ whose $i,j$ elements are the transition probabilities from state $i$ to state $j$, 
 and \(\nu \) labels the diffrerent types of plasticity event.
-Potentiating events have \(\nu=\)pot, depressing events have \(\nu=\)dep.
+Potentiating events have \(\nu=\) pot, depressing events have \(\nu=\) dep.
 We also use the notation
 %
 \begin{equation*}
@@ -315,24 +335,24 @@ We also use the notation
     \end{cases}
 \end{equation*}
 %
-The matrices $\M^\nu$ are transition matrices of discrete time Markov processes.
+The matrices $\MMd^\nu$ are transition matrices of discrete time Markov processes.
 Their elements must satisfy the following constraints
 %
 \begin{equation}\label{eq:constr}
-  \M^\nu_{ij} \geq 0 
+  \MMdm^\nu_{ij} \geq 0 
     \quad \forall \; \nu, i, j, \qquad
-  \sum_j \M^\nu_{ij} = 1
+  \sum_j \MMdm^\nu_{ij} = 1
     \quad \forall \; \nu, i.
 \end{equation}
 %
-The upper bounds $\M^\nu_{ij} \leq 1$ follow automatically from these.
+The upper bounds $\MMdm^\nu_{ij} \leq 1$ follow automatically from these.
 
 If we treat the off diagonal elements as the independent degrees of freedom, with the off diagonal elements determined by the row sum constraints (second column of \eqref{eq:constr}), the constraints are
 %
 \begin{equation}\label{eq:constri}
-  \M^\nu_{i j} \geq 0
+  \MMdm^\nu_{i j} \geq 0
     \quad \forall \; \nu, i, j : i \neq j, \qquad
-  \sum_{j : j\neq i} \M^\nu_{ij} \leq 1
+  \sum_{j : j\neq i} \MMdm^\nu_{ij} \leq 1
     \quad \forall \; \nu, i.
 \end{equation}
 %
@@ -342,7 +362,7 @@ Given a sequence of plasticity events at times $t_1,t_2,t_3,\ldots$, the probabi
 mariginalising over states at earlier times, is
 %
 \begin{equation}\label{eq:plastseq}
-  \pr(t_n) = \pr(t_0)  \M\pot \M\dep \M\dep \M\pot \M\dep \M\pot \M\pot \M\dep \ldots \M\pot .
+  \pr(t_n) = \pr(t_0)  \MMd \pot \MMd \dep \MMd \dep \MMd \pot \MMd \dep \MMd \pot \MMd \pot \MMd \dep \ldots \MMd \pot .
 \end{equation}
 %
 If the probability of a given plasticity event being potentiating or depressing is $f\pot$ or $f\dep$ respectively, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
@@ -351,19 +371,19 @@ In computing the expectation in \eqref{eq:overlapone} the plasticity event that 
 If we marginalise over the types (potentiating/depressing) of these other events (conditioned on the number of events) we find
 %
 \begin{multline}\label{eq:plastseqtypes}
-  \pr(t_n) = \pr(t_0) (f\pot\M\pot+f\dep\M\dep)  \ldots \\
-    \ldots (f\pot\M\pot+f\dep\M\dep) 
-    \M\potdep (f\pot\M\pot+f\dep\M\dep) \ldots \\
-    \ldots (f\pot\M\pot+f\dep\M\dep),
+  \pr(t_n) = \pr(t_0) (f\pot \MMd \pot + f\dep \MMd \dep)  \ldots \\
+    \ldots (f\pot \MMd \pot + f\dep \MMd \dep) 
+     \MMd \potdep (f\pot \MMd \pot + f\dep \MMd \dep) \ldots \\
+    \ldots (f\pot \MMd \pot + f\dep \MMd \dep),
 \end{multline}
 % 
-where the factor of $\M\potdep$ is the event at $t=0$.
+where the factor of $ \MMd \potdep$ is the event at $t=0$.
 If we expand out all of the parenthetical factors, we will get a sum of terms of the form \eqref{eq:plastseq} weighted by their probabilities.
 
-If $t_0 \ll 0$, the effect of the large number of earlier events will be to put the synapse in the steady state distribution, $\eq$, of the stochastic process $(f\pot\M\pot+f\dep\M\dep)$:
+If $t_0 \ll 0$, the effect of the large number of earlier events will be to put the synapse in the steady state distribution, $\eq$, of the stochastic process $(f\pot \MMd \pot+f\dep \MMd \dep)$:
 %
 \begin{equation}\label{eq:plastseqeq}
-  \pr(t_n) = \eq \M\potdep (f\pot\M\pot+f\dep\M\dep)^n,
+  \pr(t_n) = \eq  \MMd \potdep (f\pot \MMd \pot+f\dep \MMd \dep)^n,
 \end{equation}
 %
 where $n$ is the number of plasticity events that took place.
@@ -374,8 +394,8 @@ If we marginalise over $n$ as well
 \begin{equation}\label{eq:plastseqav}
 \begin{aligned}
   P(\text{state}=i,t \mid \text{pot/dep},0)
-    &= \sum_n \frac{(rt)^n}{n!} \e^{-rt} \eq \M\potdep (f\pot\M\pot+f\dep\M\dep)^n \\
-    &= \brk{ \eq \M\potdep\, \e^{rt(f\pot\M\pot+f\dep\M\dep-\I) } }_i,
+    &= \sum_n \frac{(rt)^n}{n!} \e^{-rt} \eq  \MMd \potdep (f\pot \MMd \pot+f\dep \MMd \dep)^n \\
+    &= \brk{ \eq  \MMd \potdep\, \e^{rt(f\pot \MMd \pot+f\dep \MMd \dep-\I) } }_i,
 \end{aligned}
 \end{equation}
 %
@@ -384,8 +404,8 @@ where $\eq$ is the steady state distribution of the continuous time transition m
 \begin{equation}\label{eq:eq}
   \eq\frg = 0,
   \qquad\text{where}\quad
-  \frg = \sum_\nu f^\nu \M^\nu - \I
-    = f\pot\M\pot + f\dep\M\dep - \I.
+  \frg = \sum_\nu f^\nu \MMd^\nu - \I
+    = f\pot \MMd \pot + f\dep \MMd \dep - \I.
 \end{equation}
 %
 
@@ -395,8 +415,8 @@ This results in
 %
 \begin{equation}\label{eq:overlapwt}
 \begin{aligned}
-  \av{\synid^1 \syn^1(t)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \e^{rt\frg} \w, \\
-  \av{\synid^1 \syn^1(\infty)} &= \eq (f\pot\M\pot-f\dep\M\dep)\, \onev\eq \w \\
+  \av{\synid^1 \syn^1(t)} &= \eq (f\pot \MMd \pot-f\dep \MMd \dep)\, \e^{rt\frg} \w, \\
+  \av{\synid^1 \syn^1(\infty)} &= \eq (f\pot \MMd \pot-f\dep \MMd \dep)\, \onev\eq \w \\
          &= \eq (f\pot\onev-f\dep\onev)\, \eq \w \\
          &=  (f\pot-f\dep)\, \eq \w \\
          &=  (f\pot-f\dep)\, \eq \e^{rt\frg} \w .
@@ -410,48 +430,48 @@ Combining these allows us to write the numerator of \eqref{eq:SNRdef} as
   \av{\synid \cdt \syn(t)} - \av{\synid \cdt \syn(\infty)}
     &= N \eq \enc \, \e^{rt \frg} \w , \\
     \text{where} \qquad
-  \enc &= \sum_\nu (-1)^\nu f^\nu (\M^\nu - \I)
-    = f\pot(\M\pot-\I)-f\dep(\M\dep-\I)
+  \enc &= \sum_\nu (-1)^\nu f^\nu (\MMd^\nu - \I)
+    = f\pot(\MMd \pot-\I)-f\dep(\MMd \dep-\I)
 \end{aligned}
 \end{equation}
 %
 Combining with \eqref{eq:noise} gives
 %
 \begin{equation}\label{eq:SNRcurveExact}
-  \SNR(t) = \frac{\sqrt{N} \eq \enc\,\e^{rt\frg}\w}
-                 {\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
+  \SNR(t) = \frac{\sqrt{N} \eq \enc\,\e^{rt \frg}\w}
+                 {\sqrt{1-(f\pot-f\dep)^2(\eq \w)^2}}.
 \end{equation}
 %
 The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with $f\pot=f\dep$ or $\eq_+=\eq_-$.
 We can perform the maximisation in two steps.
-First maximise the numerator at fixed $\eq\w$.
+First maximise the numerator at fixed $\eq \w$.
 Then maximise the ratio \wrt $\eq\w$.
 This will allow us to ignore the denominator until the very end.
 
 
-We can then treat the off-diagonal elements of $\M^\nu$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
+We can then treat the off-diagonal elements of $\MMd^\nu$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
 The diagonal elements are determined by setting the row sums to 1.
 We then have
 %
 \begin{equation}\label{eq:derivpd}
-  \pdiff{\M^\mu_{ij}}{\M^\nu_{mn}} 
+  \pdiff{\MMdm^\mu_{ij}}{\MMdm^\nu_{mn}} 
       = \delta_{\mu\nu}\, \delta_{im}(\delta_{jn}-\delta_{jm}),
 \end{equation}
 %
 It will also be convenient to define the differential operators
 %
 \begin{equation}\label{eq:pertfe}
-  \pdiff{}{\frg_{ij}} = \frac{1}{2f\pot} \pdiff{}{\M\pot_{ij}} + \frac{1}{2f\dep} \pdiff{}{\M\dep_{ij}},
+  \pdiff{}{\frgm_{ij}} = \frac{1}{2f\pot} \pdiff{}{\MMdm \pot_{ij}} + \frac{1}{2f\dep} \pdiff{}{\MMd \dep_{ij}},
   \qquad
-  \pdiff{}{\enc_{ij}} = \frac{1}{2f\pot} \pdiff{}{\M\pot_{ij}} - \frac{1}{2f\dep} \pdiff{}{\M\dep_{ij}},
+  \pdiff{}{\encm_{ij}} = \frac{1}{2f\pot} \pdiff{}{\MMdm \pot_{ij}} - \frac{1}{2f\dep} \pdiff{}{\MMdm \dep_{ij}},
 \end{equation}
 %
 these satisfy
 %
 \begin{equation}\label{eq:derivfe}
-  \pdiff{\frg_{ij}}{\frg_{mn}} = \pdiff{\enc_{ij}}{\enc_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
+  \pdiff{\frgm_{ij}}{\frgm_{mn}} = \pdiff{\encm_{ij}}{\encm_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
   \qquad
-  \pdiff{\frg_{ij}}{\enc_{mn}} = \pdiff{\enc_{ij}}{\frg_{mn}} = 0.
+  \pdiff{\frgm_{ij}}{\encm_{mn}} = \pdiff{\encm_{ij}}{\frgm_{mn}} = 0.
 \end{equation}
 %
 
@@ -459,10 +479,10 @@ If we wish to use the off-diagonal elements of $\frg$ and $\enc$ as the degrees 
 %
 \begin{equation}\label{eq:constrfe}
 \begin{aligned}
-  \frg_{i \neq j}   &\geq \abs{ \enc_{i \neq j} }, &\qquad
-  \sum_{j\neq i}\frg_{ij} + (-1)^\mu \enc_{ij}  &\leq f^\mu, \\
-  \sum_j \frg_{ij} &=0, &
-  \sum_j \enc_{ij} &=0.
+  \frgm_{i \neq j}   &\geq \abs{ \encm_{i \neq j} }, &\qquad
+  \sum_{j\neq i}\frgm_{ij} + (-1)^\mu \encm_{ij}  &\leq f^\mu, \\
+  \sum_j \frgm_{ij} &=0, &
+  \sum_j \encm_{ij} &=0.
 \end{aligned}
 \end{equation}
 %
@@ -494,17 +514,17 @@ Suppose we have some row vector $\mathbf{a}$ such that $\mathbf{a}\onev=0$.
 Then $\mathbf{a}\fund(s)$ is independent of $\arow$:
 %
 \begin{equation}\label{eq:alfund}
-  \pdiff{(\mathbf{a}\fund(s))_i}{\arow_k} = -(\mathbf{a}\fund(s)\onev) \fund_{ki}(s)
-      = -\frac{\tau_0}{1+s\tau_0} (\mathbf{a}\onev) \fund_{ki}(s) = 0.
+  \pdiff{(\mathbf{a}\fund(s))_i}{\arowm_k} = -(\mathbf{a}\fund(s)\onev) \fundm_{ki}(s)
+      = -\frac{\tau_0}{1+s\tau_0} (\mathbf{a}\onev) \fundm_{ki}(s) = 0.
 \end{equation}
 %
 
 Then we also define
 %
 \begin{equation}\label{eq:lfptb}
-  \fptb(s) = (\onem \fund\dg(s)-\fund(s))\D,
+  \fptb(s) = (\onem \fund\dg(s)-\fund(s))\Eq\inv,
   \qquad
-  \fptb_{ij}(s) = \frac{\fund_{jj}(s)-\fund_{ij}(s)}{\eq_j}.
+  \fptbm_{ij}(s) = \frac{\fundm_{jj}(s)-\fundm_{ij}(s)}{\eqm_j}.
 \end{equation}
 %
 This reduces to the mean first-passage time matrix at $s=0$. 
@@ -524,32 +544,32 @@ This is a valid continuous-time Markov process.
 Its fundamental matrix is given by \cref{eq:lfund} with \( \arow_0 = \arow + s \eq \).
 
 This means that the \( \fptb(s) \) have all the same properties as in the case $s=0$.
-I particular, we see that the quantity
+In particular, we see that the quantity
 %
 \begin{equation}\label{eq:lkemeny}
-  \eta(s) = \sum_j \fptb_{ij}(s)\eq_j
+  \eta(s) = \sum_j \fptbm_{ij}(s) \eqm_j
 \end{equation}
 %
 is independent of the starting state $i$, but now $\eta(s) = \tr\fund(s) - \frac{\tau_0}{1 + s \tau_0}$.
 We can then define
 %
 \begin{equation}\label{eq:lpmixtime}
-  \eta^{\pm}_i(s) = \sum_j \fptb_{ij}(s) \eq_j \prn{\frac{1 \pm \w_j}{2}} 
-      =  \sum_{j\in \pm} \fptb_{ij}(s) \eq_j.
+  \eta^{\pm}_i(s) = \sum_j \fptbm_{ij}(s) \eqm_j \prn{\frac{1 \pm \wm_j}{2}} 
+      =  \sum_{j\in \pm} \fptbm_{ij}(s) \eqm_j.
 \end{equation}
 %
 We can arrange the states in order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
 It will be more convenient to use the quantities
 %
 \begin{equation}\label{eq:lwpmixtime}
-  \etw_i(s) = \sum_j \fptb_{ij}(s)\eq_j \w_j
+  \etwm_i(s) = \sum_j \fptbm_{ij}(s)\eqm_j \wm_j
     = \eta^+_i(s) - \eta^-_i(s) 
     = 2\eta^+_i(s) - \eta(s) 
     = \eta(s) - 2\eta^-_i(s) .
 \end{equation}
 %
-Arranging the states in order of decreasing $\etw_i(s)$ is the same as the order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
-The $\etw_i(s)$ can still be used when $\w$ takes more than two values.
+Arranging the states in order of decreasing $\etwm_i(s)$ is the same as the order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
+The $\etwm_i(s)$ can still be used when $\w$ takes more than two values.
 
 %--------------------------------------------------------------------------------
 
@@ -592,50 +612,50 @@ Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s)
 \begin{equation}\label{eq:larea}
 \begin{aligned}
   \hat{A}(s) = A(s) \sqrt{\frac{{{1-(f\pot-f\dep)^2(\eq\w)^2}}}{N}}  &=  \eq \enc \fund(s) \w \\
-    &= \sum_{ijk} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)} \eq_k \w_k \\
-    &= \sum_{ij}  \eq_i \enc_{ij} (\etw_{i}(s) - \etw_{j}(s)).
+    &= \sum_{ijk} \eqm_i \encm_{ij} \prn{\fptbm_{ik}(s)-\fptbm_{jk}(s)} \eqm_k \wm_k \\
+    &= \sum_{ij}  \eqm_i \encm_{ij} (\etwm_{i}(s) - \etwm_{j}(s)).
 \end{aligned}
 \end{equation}
 %
 Note that $A(0)=A$, the area, and $\lim_{s\to\infty} \brc{sA(s)} = \SNR(0)$, the initial SNR.
 
 We can also express this in terms of the shifted process in \cref{eq:larea}.
-We can choose how to distribute the shift across \(\M\pot\) and \(\M\dep\).
+We can choose how to distribute the shift across \(\MMd \pot\) and \(\MMd \dep\).
 Two choices from a continuum%
-\footnote{We could choose \( \shift{\M}^\nu(s) = \M^\nu + \frac{s g^\nu}{r f^\nu} (\onev \eq - \I) \), for any \(g^\nu \) with \( \sum_\nu g^\nu = 1 \).
+\footnote{We could choose \( \shift{\MMd}^\nu(s) = \MMd^\nu + \frac{s g^\nu}{r f^\nu} (\onev \eq - \I) \), for any \(g^\nu \) with \( \sum_\nu g^\nu = 1 \).
 The two possibilities in \cref{eq:lshiftpd} come from \(g^\nu = \frac{1}{2}\) and \(g^\nu = f^\nu\) respectively.}
 are:
 %
 \begin{equation}\label{eq:lshiftpd}
-  \shift{\M}^\nu(s) = \M^\nu + \frac{s}{2 r f^\nu} (\onev \eq - \I)
+  \shift{\MMd}^\nu(s) = \MMd^\nu + \frac{s}{2 r f^\nu} (\onev \eq - \I)
   \qquad \text{or} \qquad
-  \shift{\M}^\nu(s) = \M^\nu + \frac{s}{r} (\onev \eq - \I).
+  \shift{\MMd}^\nu(s) = \MMd^\nu + \frac{s}{r} (\onev \eq - \I).
 \end{equation}
 %
 The first choice leaves \( \shift{\enc} = \enc \), so it only affects the \(\etw\) piece of \cref{eq:larea}.
-The second choice does not leave \(\enc\) invariant (in fact \( \shift{\enc}(s) = \enc + (f\pot - f\dep) (\onev \eq - \I) \)), but because \( \eq (\onev \eq - \I) = 0 \) the shift does not make any contribution to \cref{eq:larea}.
+The second choice does not leave \(\enc\) invariant (in fact \( \shift{\enc}(s) = \enc + \frac{s}{r} (f\pot - f\dep) (\onev \eq - \I) \)), but because \( \eq (\onev \eq - \I) = 0 \) the shift does not make any contribution to \cref{eq:larea}.
 Either way:
 %
 \begin{equation}\label{eq:lareashift}
-  \hat{A}\prn{s; \M^\nu} = \hat{A}\prn{0; \shift{\M}^\nu(s)}.
+  \hat{A}\prn{s; \MMd^\nu} = \hat{A}\prn{0; \shift{\MMd}^\nu(s)}.
 \end{equation}
 %
 In other words, the laplace transform of the SNR is the area under the SNR for the shifted process.
 
 Note that while \cref{eq:lshift} produces a valid continuous-time Markov process, \cref{eq:lshiftpd} does not always produce valid discrete-time Markov processes, as the diagonal elements can become negative.
-However, \(r (\shift{\M}^\nu - \I)\) is a valid continuous-time Markov process.
+However, \(r (\shift{\MMd}^\nu - \I)\) is a valid continuous-time Markov process.
 
 In analogy with the case $s=0$, we define
 %
 \begin{equation}\label{eq:lareacoeffs}
   \begin{aligned}
-    \mathbf{c}_k(s) &= \sum_{ij} \eq_i \enc_{ij} \prn{\fptb_{ik}(s)-\fptb_{jk}(s)}, \\
-    \mathbf{a}_j(s) &= \sum_{k} \enc_{jk} (\etw_{j}(s) - \etw_{k}(s)), \\
-    \thb_i(s) &= \sum_j \fptb_{ij}(0)\, \eq_j \mathbf{a}_j(s), \\
+    {c}_k(s) &= \sum_{ij} \eqm_i \encm_{ij} \prn{\fptbm_{ik}(s)-\fptbm_{jk}(s)}, \\
+    {a}_j(s) &= \sum_{k} \encm_{jk} (\etwm_{j}(s) - \etwm_{k}(s)), \\
+    \thbm_i(s) &= \sum_j \fptbm_{ij}(0)\, \eqm_j {a}_j(s), \\
   \end{aligned}
     \implies
     \hat{A}(s) 
-      = \sum_k \eq_k \mathbf{c}_k(s) \w_k
+      = \sum_k \eqm_k {c}_k(s) \wm_k
       % = \mathbf{c}^\dag(s) \w
       = \eq \mathbf{a}(s).
 \end{equation}
@@ -648,9 +668,9 @@ In analogy with the case $s=0$, we define
 Using the same approach as the area bound in \cite{Lahiri2013synapse} we find that the derivatives are
 %
 \begin{equation}\label{eq:lAdiff}
-  \pdiff{\hat{A}(s)}{\M^\mu_{mn}}
-     = f^\mu \eq_m \prn{ r \brk{\thb_m(s) - \thb_n(s)}
-     +\prn{r \mathbf{c}_m(s) + (-1)^\mu} \brk{\etw_m(s) - \etw_n(s)} }.
+  \pdiff{\hat{A}(s)}{\MMdm^\mu_{mn}}
+     = f^\mu \eqm_m \prn{ r \brk{\thbm_m(s) - \thbm_n(s)}
+     +\prn{r {c}_m(s) + (-1)^\mu} \brk{\etwm_m(s) - \etwm_n(s)} }.
 \end{equation}
 %
 The term with $\Theta(s)$ comes from differentiating $\eq$, the term with $c(s)$ comes from differentiating $\etw(s)$ and the term with $\pm1$ comes from differentiating $\enc$ in \eqref{eq:larea}.
@@ -662,27 +682,27 @@ Then we denote
 %
 \begin{equation}\label{eq:hessparts}
 \begin{alignedat}{3}
-    R_{ijkl} = \smash{\pdiff{^2 \hat{A}}{\frg_{ij} \circ \partial \frg_{kl}}} 
+    R_{ijkl} = \smash{\pdiff{^2 \hat{A}}{\frgm_{ij} \circ \partial \frgm_{kl}}} 
     &= \
-    &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\thb_k(s) - \thb_l(s)} \\
-    &&&+ \eq_i \brc{\mathbf{X}_{ik}(s) - \mathbf{X}_{jk}(s)} 
-          \brc{\etw_k(s) - \etw_l(s)} \\
-    &&&+ \eq_i \mathbf{c}_i(s) \brc{\fund_{ik}(s) - \fund_{jk}(s)} 
-          \brc{\etw_k(s) - \etw_l(s)},  \\
-  S_{ijkl} = \smash{\pdiff{^2 \hat{A}}{\frg_{ij} \partial \enc_{kl}} }
+    &&\eqm_i \brc{\fundm_{ik}(0) - \fundm_{jk}(0)} \brc{\thbm_k(s) - \thbm_l(s)} \\
+    &&&+ \eqm_i \brc{{X}_{ik}(s) - {X}_{jk}(s)} 
+          \brc{\etwm_k(s) - \etwm_l(s)} \\
+    &&&+ \eqm_i {c}_i(s) \brc{\fundm_{ik}(s) - \fundm_{jk}(s)} 
+          \brc{\etwm_k(s) - \etwm_l(s)},  \\
+  S_{ijkl} = \smash{\pdiff{^2 \hat{A}}{\frgm_{ij} \partial \encm_{kl}} }
   &= \
-    &&\eq_i \brc{\fund_{ik}(0) - \fund_{jk}(0)} \brc{\etw_k(s) - \etw_l(s)} \\
-    &&&+ \eq_k \brc{\fund_{ki}(s) - \fund_{li}(s)} \brc{\etw_i(s) - \etw_j(s)},
+    &&\eqm_i \brc{\fundm_{ik}(0) - \fundm_{jk}(0)} \brc{\etwm_k(s) - \etwm_l(s)} \\
+    &&&+ \eqm_k \brc{\fundm_{ki}(s) - \fundm_{li}(s)} \brc{\etwm_i(s) - \etwm_j(s)},
 \end{alignedat}
 \end{equation}
 %
-where \(R\) contains only those terms where \( \frg_{ij} \) precedes \( \frg_{kl} \) in the matrix products from the expression for \( \hat{A} \) in \cref{eq:larea}.
+where \(R\) contains only those terms where \( \frgm_{ij} \) precedes \( \frgm_{kl} \) in the matrix products from the expression for \( \hat{A} \) in \cref{eq:larea}.
 The other terms sum to \(R\trans\).
 
 Then we can write the Hessian as
 %
 \begin{equation}\label{eq:hessian}
-  \pdiff{^2\hat{A}(s)}{\M^\mu_{ij} \partial\M^\nu_{kl}} =
+  \pdiff{^2\hat{A}(s)}{\MMdm^\mu_{ij} \partial \MMdm^\nu_{kl}} =
      f^\mu f^\nu [R + R\trans + (-1)^\mu S\trans + (-1)^\nu S]_{ijkl}.
 \end{equation}
 %
@@ -723,8 +743,8 @@ where
 %
 Now the question is what are the allowed values of \( (\CI_a, \tau_a) \)?
 We have to translate the constraints of \cref{eq:constri} into constraints on the eigenmode variables.
-Each constraint we find will be a necessary condition for the existence of a set of Markov processes \( \M_{ij}^\nu \) that result in \( (\CI_a, \tau_a) \).
-We can imagine the notion of a complete set of constraints: constraints that, when combined, are also sufficient for the existence of a \( \M_{ij}^\nu \).
+Each constraint we find will be a necessary condition for the existence of a set of Markov processes \( \MMdm_{ij}^\nu \) that result in \( (\CI_a, \tau_a) \).
+We can imagine the notion of a complete set of constraints: constraints that, when combined, are also sufficient for the existence of a \( \MMdm_{ij}^\nu \).
 But finding such a set seems intractable for now.
 Most likely there are a large number of such constraints, but if we can find a few of them they will provide us with some limits on the space of possible memory curves.
 These limits may not be tight - there may not be models that can reach these limits, but they will imply a forbidden region in the space of memory curves.
@@ -737,7 +757,8 @@ These limits may not be tight - there may not be models that can reach these lim
 The initial SNR is:
 %
 \begin{equation}\label{eq:initdef}
-  \snr(0) = \snrb(0) = \lim_{s\to\infty} sA(s).
+  \snr(0) = \snrb(0) = \lim_{s\to\infty} sA(s)
+      = \sqrt{N} \sum_a \CI_a.
 \end{equation}
 %
 
@@ -756,7 +777,8 @@ The model that saturates this bound is (equivalent to) a two-state model with de
 The area under the SNR curve is:
 %
 \begin{equation}\label{eq:areadef}
-  \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) = A(0).
+  \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) 
+      = A(0) = \sqrt{N} \sum_a \CI_a \tau_a.
 \end{equation}
 %
 
@@ -774,15 +796,15 @@ The model that saturates this bound is one of serial topology with $\eq$ concent
 
 \subsection{Square-root bound}\label{sec:sqrt}
 
-\newcommand{\aav}[1]{\mathopen{}\left\lAngle #1 \right\rAngle\mathclose{}}
-\newcommand{\nnrm}[1]{\mathopen{}\left\Vvert #1 \right\Vvert\mathclose{}}
+% \newcommand{\aav}[1]{\mathopen{}\left\lAngle #1 \right\rAngle\mathclose{}}
+% \newcommand{\nnrm}[1]{\mathopen{}\left\Vvert #1 \right\Vvert\mathclose{}}
 
 This proof follows that of \cite{Lawler1988cheeger}.
 We can define two inner-products that will be of use.
 The first is the usual inner product of two vectors (or functions on state space in the continuum case) using the steady state distribution as the measure:
 %
 \begin{equation}\label{eq:innereq}
-  \av{\mathbf{u}, \mathbf{v}} = \sum_i \eq_i u_i^\ast v_i ,
+  \av{\mathbf{u}, \mathbf{v}} = \sum_i \eqm_i u_i^\ast v_i ,
   \qquad
   \nrm{\mathbf{v}} = \sqrt{\av{\mathbf{v}, \mathbf{v}}} .
 \end{equation}
@@ -790,26 +812,26 @@ The first is the usual inner product of two vectors (or functions on state space
 The second is an inner product of rank 2 tensors (functions of pairs of points on state space) using the steady-state flux as the measure:
 %
 \begin{equation}\label{eq:innerflux}
-  \aav{\mathbf{F}, \mathbf{G}} = \sum_{i \neq j} \F_{ij} F_{ij}^\ast G_{ij} ,
+  \aav{\mathbf{F}, \mathbf{G}} = \sum_{i \neq j} \Fm_{ij} F_{ij}^\ast G_{ij} ,
   \qquad
   \nnrm{\mathbf{F}} = \sqrt{\aav{\mathbf{F}, \mathbf{F}}}.
 \end{equation}
 %
 The omission of the diagonal terms leaves only non-negative terms.
 
-When the process satisfies detailed balance, \ie \(\F_{ij}\) is symmetric, we can relate these inner products to quantities of interest.
+When the process satisfies detailed balance, \ie \(\Fm_{ij}\) is symmetric, we can relate these inner products to quantities of interest.
 
 We can write
 %
 \begin{equation*}
-  \av{\mathbf{u}, -\MM\mathbf{v}} = \sum_{i \neq j} \eq_i u_i^\ast \MM_{ij} (v_i - v_j),
+  \av{\mathbf{u}, -\MM\mathbf{v}} = \sum_{i \neq j} \eqm_i u_i^\ast \MMm_{ij} (v_i - v_j),
 \end{equation*}
 %
 under detailed balance, we can symmetrize
 %
 \begin{equation*}
   \av{\mathbf{u}, -\MM \mathbf{v}} 
-      = \frac{1}{2}\sum_{i \neq j} \F_{ij} (u_i^\ast - u_j^\ast) (v_i - v_j) 
+      = \frac{1}{2}\sum_{i \neq j} \Fm_{ij} (u_i^\ast - u_j^\ast) (v_i - v_j) 
       = \frac{1}{2} \aav{\boldsymbol{\Delta}\mathbf{u}, \boldsymbol{\Delta}\mathbf{v}}.
 \end{equation*}
 %
@@ -831,8 +853,8 @@ In analogy, we define the following functional (for real \(\mathbf{u}\))
 %
 \begin{equation*}
   \CI(\mathbf{u}) = \frac{(\eq \enc \mathbf{u}) (\mathbf{u}^\dag \w)}{\mathbf{u}^\dag \mathbf{u}}
-      = \frac{\sum_{i \neq j} \eq_i \enc_{ij} (u_j - u_i) \sum_k \eq_k u_k \w_k} 
-             {\sum_{l} \eq_l u_l^2} .
+      = \frac{\sum_{i \neq j} \eqm_i \encm_{ij} (u_j - u_i) \sum_k \eqm_k u_k \wm_k} 
+             {\sum_{l} \eqm_l u_l^2} .
 \end{equation*}
 %
 Following \cite{Lawler1988cheeger}, we can write
@@ -850,67 +872,69 @@ Then
 \begin{equation*}
   \begin{aligned}[t]
   r \eq \enc \mathbf{u} &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
-        \F\pot_{\CA_\alpha \CA_\alpha^c} - \F\dep_{\CA_\alpha \CA_\alpha^c} 
-      - \F\pot_{\CA_\alpha^c \CA_\alpha} + \F\dep_{\CA_\alpha^c \CA_\alpha} }
+        \Fm\pot_{\CA_\alpha \CA_\alpha^c} - \Fm\dep_{\CA_\alpha \CA_\alpha^c} 
+      - \Fm\pot_{\CA_\alpha^c \CA_\alpha} + \Fm\dep_{\CA_\alpha^c \CA_\alpha} }
+  %
+  \; \text{where} 
     \\
     &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
-        \F_{\CA_\alpha \CA_\alpha^c} + \F_{\CA_\alpha^c \CA_\alpha} 
-        - 2\F\dep_{\CA_\alpha \CA_\alpha^c} - 2\F\pot_{\CA_\alpha^c \CA_\alpha} }
+        \Fm_{\CA_\alpha \CA_\alpha^c} + \Fm_{\CA_\alpha^c \CA_\alpha} 
+        - 2\Fm\dep_{\CA_\alpha \CA_\alpha^c} - 2\Fm\pot_{\CA_\alpha^c \CA_\alpha} } ,
   \end{aligned}
   %
-  \quad \text{where} \quad
-  %
   \begin{aligned}[t]
-    \CA_\alpha &= \set{i}{u_i < \alpha} 
-    , \\
+    \CA_\alpha &= \set{i}{u_i < \alpha} , 
+    \\
     \F^\nu_{\CA \CB} &= r f^\nu \sum_{\substack{i \in \CA \\ j \in \CB}} 
-                        \prn{\M^\nu_{ij} - \delta_{ij}}
-    .
+                        \eqm_i \prn{\MMdm^\nu_{ij} - \delta_{ij}} .
   \end{aligned}
 \end{equation*}
 %
-In exactly the same way as the proof of \cref{eq:initbnd}, we can argue that the two terms with the negative signs are indeed non-positive as they do not involve the negative diagonal elements of~\( \F_{ij}^\nu \).
-Therefore the other terms provide an upper bound.
+In exactly the same way as the proof of \cref{eq:initbnd}, we can argue that the two terms with the negative signs are indeed non-positive as they do not involve the negative diagonal elements of~\( \Fm_{ij}^\nu \).
+Therefore the other terms provide an upper bound:
 %
 \begin{equation*}
 \begin{aligned}
   r \nrm{\mathbf{u}}^2 \CI(\mathbf{u}) 
-      &\leq \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
-        \F_{\CA_\alpha \CA_\alpha^c} + \F_{\CA_\alpha^c \CA_\alpha} } 
-        \av{\mathbf{u}, \w}
-  \\  &= \intd[_{-\infty}^{\infty}]{\alpha} \sum_{i \neq j} \F_{ij} \brk{
+      &\leq \av{\mathbf{u}, \w} \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
+        \Fm_{\CA_\alpha \CA_\alpha^c} + \Fm_{\CA_\alpha^c \CA_\alpha} } 
+  \\  &= \av{\mathbf{u}, \w} \intd[_{-\infty}^{\infty}]{\alpha} \sum_{i \neq j} \Fm_{ij} \brk{
             \vartheta(u_j - \alpha) \vartheta(\alpha - u_i) 
           + \vartheta(u_i - \alpha) \vartheta(\alpha - u_j)
-        } \av{\mathbf{u}, \w}
-  \\  &= \sum_{i \neq j} \F_{ij} \abs{u_j - u_i} \av{\mathbf{u}, \w}
-  \\  &= \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem} \av{\mathbf{u}, \w} .
+        }
+  \\  &= \av{\mathbf{u}, \w} \sum_{i \neq j} \Fm_{ij} \abs{u_j - u_i}
+  \\  &= \av{\mathbf{u}, \w} \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem}.
 \end{aligned}
 \end{equation*}
 %
 Now we can apply the Cauchy-Schwartz inequality to both factors to find
 %
 \begin{equation*}
-  r \CI(\mathbf{u}) \leq \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem} 
-                          \nrm{\mathbf{u}} \nrm{\w}.
+  r \nrm{\mathbf{u}}^2 \CI(\mathbf{u}) \leq \nrm{\mathbf{u}} \nrm{\w} 
+      \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem} .
 \end{equation*}
 %
-We also have \( \nrm{\w}^2 = \sum_i \eq_i \w_i^2 = 1 \).
-Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eq_i \MM_{ij} \leq r \sum_i \eq_i = r\).
+We also have \( \nrm{\w}^2 = \sum_i \eqm_i \wm_i^2 = 1 \).
+Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eqm_i \MMm_{ij} \leq r \sum_i \eqm_i = r\).
 Then, remembering \cref{eq:numrange},
 %
 \begin{equation}\label{eq:sqrtnumrange}
-  \sqrt{r} \CI(\mathbf{u}) \leq \sqrt{2\mathcal{W}(-\MM, \mathbf{u})}.
+  \CI(\mathbf{u}) \leq \sqrt{\frac{2\av{\mathbf{u}, -\MM \mathbf{u}}}{r\av{\mathbf{u}, \mathbf{u}}}}
+      = \sqrt{2\mathcal{W}(-\frg;\mathbf{u})}.
 \end{equation}
 %
 Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvectors, we find a bound on the eigenmodes:
 %
 \begin{equation}\label{eq:sqrtbound}
   \text{assuming} \quad 
-  \eq_i \MM_{ij} = \eq_j \MM_{ji},
+  \eqm_i \frgm_{ij} = \eqm_j \frgm_{ji},
   \qquad \text{we have} \quad
   \CI_a \sqrt{\tau_a} \leq \sqrt{2}.
 \end{equation}
 %
+Numerical maximisation of the quantity above produces the same result as in \cref{sec:initial}:
+the two-state model with deterministic transitions.
+This model has \( \CI_1 = \tau_1 = 1 \), suggestint that there's a factor of 2 looseness in this bound.
 
 %--------------------------------------------------------------------------------
 
@@ -919,15 +943,15 @@ Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvecto
 Recall the eigenmode description of the memory curve from \cref{eq:snreig}
 %
 \begin{equation*}
-  \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-rt/\tau_a},
+  \snr(t) = \sqrt{N} \sum_a \CI_a \e^{-rt/\tau_a},
   \qquad
-  \snrb(\tau) = \sqrt{N}\sum_a \frac{\CI_a}{1+r\tau/\tau_a},
+  \snrb(\tau) = \sqrt{N} \sum_a \frac{\CI_a}{1+r\tau/\tau_a},
 \end{equation*}
 %
 where
 %
 \begin{equation*}
-  \CI_a = (\eq \ench \evr^a) (\evl^a \w),
+  \CI_a = (\eq \enc \evr^a) (\evl^a \w),
   \qquad
   \tau_a = \frac{1}{q_a}.
 \end{equation*}
@@ -994,6 +1018,41 @@ This envelope is shown in \autoref{fig:envproven}.
   The dashed lines indicate the initial SNR bound, \eqref{eq:initbnd}, and the area bound, \eqref{eq:areabnd}, from \cite{Lahiri2013synapse}.}\label{fig:envproven}
 \end{figure}
 
+    \newcolumntype{B}{R@{\,}C@{\,}L}
+% \(
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{BACCCCCC}
+\toprule
+  \multicolumn{5}{c}{Conditions} & \CI_a & \tau_a 
+    & \mu_\CI & \mu_a & \mu_\CA 
+    & \snrb(\tau) \\
+\midrule
+  0 &\leq r \tau &\leq 2 & M &\geq 3 & 1 & 2 
+    & \frac{4 - 2r \tau}{[2 + r \tau]^2} & \frac{2\sqrt{2}r\tau}{[2 + r \tau]^2} & 0 
+    & \frac{2 \sqrt{N}}{2 + r \tau} 
+  \\
+  2 &< r \tau &< \frac{(M-1)^2}{2} & M &> 3 & \sqrt{\frac{2}{\tau}} & \tau 
+    & 0 & \frac{1}{2\sqrt{r \tau}} & 0 
+    & \sqrt{\frac{N}{2 r \tau}} 
+  \\ \addlinespace[0.2ex]
+  \frac{(M-1)^2}{2} &\leq r \tau & & M &\geq 3 & \frac{2}{M-1} & \frac{(M-1)^2}{2} 
+    & 0 & \frac{\sqrt{2}(M-1)^3}{[(M-1)^2 + 2r \tau]^2} 
+    & \frac{4r \tau - 2(M-1)^2}{[(M-1)^2 + 2r \tau]^2} 
+    & \frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau} 
+  \\
+  &-& & M &\leq 3 & 1 & M - 1 
+    & \frac{(M-1)^2}{(M-1) + r \tau} %- \frac{\mu_a \sqrt{M-1}}{2} 
+    & 0 & \frac{r \tau}{[(M-1) + r \tau]^2} %- \frac{\mu_a}{2 \sqrt{M-1}} 
+    & \frac{\sqrt{N} (M-1)}{(M-1) + r \tau} 
+  \\
+\bottomrule
+\end{tabular}
+\end{center}
+\caption{The envelope under different conditions. The range of \(\tau\) for the second row does not exist for \(M = 3\), in which case any of the other rows can be used.}
+\label{tab:env}
+\end{table}
+% \)
 
 %================================================================================
 
@@ -1008,9 +1067,9 @@ Consider the Lagrangian
 %
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
-  \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\etw_i(s) - \etw_j(s))
-        +\sum_{\nu i j} \prn{ f^\nu \mu^\nu_{ij} \M^\nu_{ij} }
-        &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i \w_i },
+  \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i(s) - \etwm_j(s))
+        +\sum_{\nu i j} \prn{ f^\nu \mu^\nu_{ij} \MMdm^\nu_{ij} }
+        &+ \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
 %
@@ -1018,7 +1077,7 @@ where $\Delta\pr$ is the constant value we are holding $\eq\w$ at.
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTfinite}
-  \pdiff{\CL}{\M^\nu_{ij}} = 0, \quad
+  \pdiff{\CL}{\MMdm^\nu_{ij}} = 0, \quad
   \mu^\nu_{ij} \geq 0, \quad
   \pdiff{\CL}{\mu^\nu_{ij}} \geq 0, \quad
   \mu^\nu_{ij}\pdiff{\CL}{\mu^\nu_{ij}} = 0, \quad
@@ -1031,11 +1090,11 @@ The derivatives, for $m \neq n$ are
 %
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
-  \frac{1}{f^\nu} \pdiff{\CL}{\Mh^\nu_{mn}} = & \,
-    \eq_m \prn{ \brk{\thb_m(s) - \thb_n(s)}
-     + \prn{\mathbf{c}_m(s) + (-1)^\nu} \brk{\etw_m(s) - \etw_n(s)} } \\
+  \frac{1}{f^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
+    \eqm_m \prn{ \brk{\thbm_m(s) - \thbm_n(s)}
+     + \prn{\mathbf{c}_m(s) + (-1)^\nu} \brk{\etwm_m(s) - \etwm_n(s)} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
-     + \lambda \eq_m (\etw_{m}(0)-\etw_{n}(0)) 
+     + \lambda \eqm_m (\etwm_{m}(0)-\etwm_{n}(0)) 
     = 0.
 \end{aligned}
 \end{equation}
@@ -1043,30 +1102,30 @@ The derivatives, for $m \neq n$ are
 We can solve for the KKT multipliers by noting that
 %
 \begin{equation*}
-  \mu^\nu_{ij} \M^\nu_{ij} = 0,
+  \mu^\nu_{ij} \MMdm^\nu_{ij} = 0,
   \qquad \text{and} \qquad
-  \sum_{j: j \neq i} \mu^\nu_{ii} \M^\nu_{ij} 
-      = \mu^\nu_{ii} (1 - \M^\nu_{ii}) = \mu^\nu_{ii}.
+  \sum_{j: j \neq i} \mu^\nu_{ii} \MMdm^\nu_{ij} 
+      = \mu^\nu_{ii} (1 - \MMdm^\nu_{ii}) = \mu^\nu_{ii}.
 \end{equation*}
 %
 Then, with some new vectors defined:
 %
 \begin{equation}\label{eq:kktsol}
 \begin{aligned}
-  \mu^\nu_{mm} &= - \eq_m \prn{ \alb^\nu_m(s) 
-    + \lambda \omb^\nu_i(0) 
-    + \prn{\mathbf{c}_m(s) + (-1)^\nu} \omb^\nu_m(s)
+  \mu^\nu_{mm} &= - \eqm_m \prn{ \albm^\nu_m(s) 
+    + \lambda \ombm^\nu_i(0) 
+    + \prn{{c}_m(s) + (-1)^\nu} \ombm^\nu_m(s)
     }, \\
-  \mu^\nu_{mn} &= \eq_m \big( 
-      \brk{ \thb_n(s) - \thb_m(s) - \alb^\nu_m(s) }
-    + \lambda \brk{ \etw_n(0) - \etw_m(0) - \omb^\nu_m(0) } 
-  \\ &\phantom{= \eq_m \big( }
-    + \brk{\mathbf{c}_m(s) + (-1)^\nu} 
-        \brk{ \etw_n(s) - \etw_m(s) - \omb^\nu_m(s) }
+  \mu^\nu_{mn} &= \eqm_m \big( 
+      \brk{ \thbm_n(s) - \thbm_m(s) - \albm^\nu_m(s) }
+    + \lambda \brk{ \etwm_n(0) - \etwm_m(0) - \ombm^\nu_m(0) } 
+  \\ &\phantom{= \eqm_m \big( }
+    + \brk{{c}_m(s) + (-1)^\nu} 
+        \brk{ \etwm_n(s) - \etwm_m(s) - \ombm^\nu_m(s) }
      \big), \\
   &\text{where} \quad 
-  \boldsymbol{\alpha}^\nu(s) = (\M^\nu - \I) \thb(s), \qquad
-  \boldsymbol{\omega}^\nu(s) = (\M^\nu - \I) \etw(s).
+  \alb^\nu(s) = (\MMd^\nu - \I) \thb(s), \qquad
+  \omb^\nu(s) = (\MMd^\nu - \I) \etw(s).
 \end{aligned}
 \end{equation}
 %
@@ -1101,13 +1160,13 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
 Define the scale transformation:
 %
 \begin{equation}\label{eq:scale}
-  \zeta * \M \equiv \zeta \M + (1-\zeta)\I .
+  \zeta * \MMd \equiv \zeta \MMd + (1-\zeta)\I .
 \end{equation}
 %
 The Laplace transform has the following scaling property
 %
 \begin{equation}\label{eq:laplacescale}
-  \hat{A} \prn{\zeta s;\zeta * \M^\nu} = \hat{A} \prn{s; \M^\nu}.
+  \hat{A} \prn{\zeta s;\zeta * \MMd^\nu} = \hat{A} \prn{s; \MMd^\nu}.
 \end{equation}
 %
 At $s = 0$, it is scale invariant.
@@ -1118,21 +1177,21 @@ We can't do that for $s > 0$.
 The corresponding symmetry here is scaling the shifted process from \cref{eq:lshiftpd}, which amounts to
 %
 \begin{equation}\label{eq:shiftscale}
-  \zeta {\circledast}_{s} \M 
-      \equiv \zeta \M
+  \zeta {\circledast}_{s} \MMd 
+      \equiv \zeta \MMd
       + (1 - \zeta) \brk{(1 + s)\I - s \onev \eq} .
 \end{equation}
 %
 Then we have
 %
 \begin{equation}\label{eq:lshiftscale}
-  \hat{A} \prn{s; \M^\nu} 
-    = \hat{A} \prn{0, \shift{\M}^\nu(s)}
-    = \hat{A} \prn{0, \zeta * \shift{\M}^\nu(s)}
-    = \hat{A} \prn{s, \zeta \circledast_s \M^\nu}.
+  \hat{A} \prn{s; \MMd^\nu} 
+    = \hat{A} \prn{0, \shift{\MMd}^\nu(s)}
+    = \hat{A} \prn{0, \zeta * \shift{\MMd}^\nu(s)}
+    = \hat{A} \prn{s, \zeta \circledast_s \MMd^\nu}.
 \end{equation}
 %
-The problem here is that the lower bound, \(\M^\nu_{ij} \geq 0\), 
+The problem here is that the lower bound, \(\MMdm^\nu_{ij} \geq 0\), 
 is not invariant under this transformation, unlike the \(s = 0\) case.
 Using this transformation to fix the upper bound can break the lower bound.
 
@@ -1142,32 +1201,32 @@ The conditions are
 %
 \begin{equation*}
 \begin{alignedat}{5}
-  [\zeta \circledast \M^\nu]_{ij}  
-    &= \zeta \M^\nu_{ij} - (1-\zeta) s \eq_j 
+  [\zeta \circledast \MMd^\nu]_{ij}  
+    &= \zeta \MMdm^\nu_{ij} - (1-\zeta) s \eqm_j 
     &&\geq 0 &
   \quad &\implies \quad &
-  \zeta &\geq \frac{s \eq_j}{\M^\nu_{ij} + s \eq_j} &
+  \zeta &\geq \frac{s \eqm_j}{\MMdm^\nu_{ij} + s \eqm_j} &
     &\forall \nu, i, j : i \neq j , \\
-  \sum_{j : i \neq j} [\zeta \circledast \M^\nu]_{ij} 
-    &= \zeta \lb^\nu_i - (1-\zeta) s (1-\eq_i) 
+  \sum_{j : i \neq j} [\zeta \circledast \MMd^\nu]_{ij} 
+    &= \zeta \lbm^\nu_i - (1-\zeta) s (1-\eqm_i) 
     &&\leq 1 &
   &\implies &
-  \zeta &\leq \frac{1 + s (1-\eq_i)}{\lb^\nu_i + s (1-\eq_i)} &
+  \zeta &\leq \frac{1 + s (1-\eqm_i)}{\lbm^\nu_i + s (1-\eqm_i)} &
     \quad &\forall \nu, i ,
 \end{alignedat}
 \end{equation*}
 %
-where \(\lb^\nu_i \equiv \sum_{j : i \neq j} \M^\nu_{ij}\) is the inverse mean  lifetime of state \(i\).
+where \(\lbm^\nu_i \equiv \sum_{j : i \neq j} \MMdm^\nu_{ij}\) is the inverse mean  lifetime of state \(i\).
 The model is fixable if it is possible to find a \(\zeta\) that satisfies all of the above conditions:
 %
 \begin{equation}\label{eq:fixable}
-  \frac{s \eq_j}{\M^\nu_{ij} + s \eq_j} \leq \frac{1 + s (1-\eq_k)}{\lb^\mu_k + s (1-\eq_k)}
+  \frac{s \eqm_j}{\MMdm^\nu_{ij} + s \eqm_j} \leq \frac{1 + s (1-\eqm_k)}{\lbm^\mu_k + s (1-\eqm_k)}
   \quad \implies \quad
-  \frac{\lb^\mu_k - 1}{1 + s (1-\eq_k)} \leq \frac{\M^\nu_{ij}}{s \eq_j} 
+  \frac{\lbm^\mu_k - 1}{1 + s (1-\eqm_k)} \leq \frac{\MMdm^\nu_{ij}}{s \eqm_j} 
   \quad \forall \mu, \nu, i, j, k : i \neq j.
 \end{equation}
 %
-Note that when \(\M^\nu_{ij} = 0\) for some \(i,j \), this condition reduces to \(\lb^\mu_k \leq 1\), the original diagonal constraint.
+Note that when \(\MMdm^\nu_{ij} = 0\) for some \(i,j \), this condition reduces to \(\lbm^\mu_k \leq 1\), the original diagonal constraint.
 Thus, relaxing the constraints from ``the model is valid'' to ``the model is fixable'' doesn't help us prove anything about the topology.
 
 
@@ -1176,25 +1235,25 @@ Thus, relaxing the constraints from ``the model is valid'' to ``the model is fix
 \subsection{Shifted problem}\label{sec:lshift}
 
 The relation of the Laplace transform to the shifted process from \cref{eq:lshiftpd,eq:lareashift} suggests an alternative approach: 
-treat the off-diagonal components of \(\shift{\M}^\nu \) as the degrees of freedom and maximise the area instead.
-The constraints on \(\shift{\M}^\nu_{ij}\) are different from \cref{eq:constri}:
+treat the off-diagonal components of \(\shift{\MMd}^\nu \) as the degrees of freedom and maximise the area instead.
+The constraints on \(\shift{\MMdm}^\nu_{ij}\) are different from \cref{eq:constri}:
 %
 \begin{equation}\label{eq:lshiftconstr}
-  \shift{\M}^\nu_{ij} \geq s \eq_j,
+  \shift{\MMdm}^\nu_{ij} \geq s \eqm_j,
     \quad \forall \; \nu, i, j : i \neq j, \qquad
-  \sum_{j: j \neq i} \shift{\M}^\nu_{ij} \leq 1 + s (1 - \eq_i).
+  \sum_{j: j \neq i} \shift{\MMdm}^\nu_{ij} \leq 1 + s (1 - \eqm_i).
     \quad \forall \; \nu, i.
 \end{equation}
 %
-The diagonal elements are still given by \( \shift{\M}^\nu_{ii} = 1 - \sum_{j: j \neq i} \shift{\M}^\nu_{ij} \), but now they are allowed to be negative so long as \(\M^\nu_{ii} \geq - s (1 - \eq_i)\).
+The diagonal elements are still given by \( \shift{\MMdm}^\nu_{ii} = 1 - \sum_{j: j \neq i} \shift{\MMdm}^\nu_{ij} \), but now they are allowed to be negative so long as \(\shift{\MMdm}^\nu_{ii} \geq - s (1 - \eqm_i)\).
 
 The Lagrangian we should consider is
 %
 \begin{equation}\label{eq:lshiftlagrangian}
 \begin{aligned}
-  \CL =&\, \sum_{ij} \eq_i \enc_{ij} (\etw_i - \etw_j)
-        +\sum_{\nu i j}  f^\nu \mu^\nu_{ij}\prn{\M^\nu_{ij} -  s (\eq_j - \delta_{ij}) }
-        &+ \lambda \prn{ \Delta\pr - \sum_i \eq_i \w_i },
+  \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i - \etwm_j)
+        +\sum_{\nu i j}  f^\nu \mu^\nu_{ij}\prn{\MMdm^\nu_{ij} -  s (\eqm_j - \delta_{ij}) }
+        &+ \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
 %
@@ -1207,11 +1266,11 @@ The derivatives, for $m \neq n$ are
 %
 \begin{equation}\label{eq:lshiftderivs}
 \begin{aligned}
-  \frac{1}{f^\nu} \pdiff{\CL}{\Mh^\nu_{mn}} = & \,
-    \eq_m \prn{ \brk{\thb_m - \thb_n}
-     + \prn{\mathbf{c}_m + (-1)^\nu + \lambda} \brk{\etw_m - \etw_n} } \\
+  \frac{1}{f^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
+    \eqm_m \prn{ \brk{\thbm_m - \thbm_n}
+     + \prn{{c}_m + (-1)^\nu + \lambda} \brk{\etwm_m - \etwm_n} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
-     - \sum_{ij} \mu^\nu_{ij} s f^\nu \eq_m (\fptb_{mj} - \fptb_{nj}) \eq_j
+     - \sum_{ij} \mu^\nu_{ij} s f^\nu \eqm_m (\fptbm_{mj} - \fptbm_{nj}) \eqm_j
     = 0.
 \end{aligned}
 \end{equation}
@@ -1222,33 +1281,33 @@ We can absorb the new terms by defining
 \begin{aligned}
   \shift{\thb}^\nu(s) = \thb(0) - s f^\nu \fptb(0) \Eq (\boldsymbol{\mu}^\nu)\trans \onev,
   \qquad
-  \shift{\alb}^\nu(s) &= (\M^\nu + (s - 1) \I - s \onev \eq) \shift{\thb}^\nu(s),
+  \shift{\alb}^\nu(s) &= (\MMd^\nu + (s - 1) \I - s \onev \eq) \shift{\thb}^\nu(s),
   \\
-  \shift{\omb}^\nu(s) &= (\M^\nu + (s - 1) \I - s \onev \eq) \etw(0).
+  \shift{\omb}^\nu(s) &= (\MMd^\nu + (s - 1) \I - s \onev \eq) \etw(0).
 \end{aligned}
 \end{equation*}
 %
 We note that
 %
 \begin{equation*}
-  \mu^\nu_{ij} (\M^\nu_{ij} - s \eq_j) = 0,
+  \mu^\nu_{ij} (\MMdm^\nu_{ij} - s \eqm_j) = 0,
   \qquad \text{and} \qquad
-  \sum_{j: j \neq i} \mu^\nu_{ii} (\M^\nu_{ij} - s \eq_j)
-      = \mu^\nu_{ii} (1 - \M^\nu_{ii} - s (1 - \eq_i)) = \mu^\nu_{ii},
+  \sum_{j: j \neq i} \mu^\nu_{ii} (\MMdm^\nu_{ij} - s \eqm_j)
+      = \mu^\nu_{ii} (1 - \MMdm^\nu_{ii} - s (1 - \eqm_i)) = \mu^\nu_{ii},
 \end{equation*}
 %
 then we can ``solve'' for the KKT multipliers:
 %
 \begin{equation}\label{eq:lshiftsol}
 \begin{aligned}
-  \mu^\nu_{mm} &= - \eq_m \prn{ \shift{\alb}^\nu_m(s) 
-    + \brk{ \mathbf{c}_m + (-1)^\nu + \lambda } \shift{\omb}^\nu_m(s)
+  \mu^\nu_{mm} &= - \eqm_m \prn{ \shift{\albm}^\nu_m(s) 
+    + \brk{ {c}_m + (-1)^\nu + \lambda } \shift{\ombm}^\nu_m(s)
     }, \\
-  \mu^\nu_{mn} &= \eq_m \prn{ 
-      \brk{ \shift{\thb}^\nu_n(s) - \shift{\thb}^\nu_m(s) - \shift{\alb}^\nu_m(s) }
-  % \\ & \phantom{= - \eq_m \big( } 
-    + \brk{ \mathbf{c}_m + (-1)^\nu + \lambda } 
-        \brk{ \etw_n - \etw_m - \shift{\omb}^\nu_m(s) }
+  \mu^\nu_{mn} &= \eqm_m \prn{ 
+      \brk{ \shift{\thbm}^\nu_n(s) - \shift{\thbm}^\nu_m(s) - \shift{\albm}^\nu_m(s) }
+  % \\ & \phantom{= - \eqm_m \big( } 
+    + \brk{ {c}_m + (-1)^\nu + \lambda } 
+        \brk{ \etwm_n - \etwm_m - \shift{\ombm}^\nu_m(s) }
      }, \\
 \end{aligned}
 \end{equation}
@@ -1335,19 +1394,19 @@ We study models with \(m\) strong and \(m\) weak states for a total of  \(M = 2 
 
 
 Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_uniform}.
-Looking at \eqref{eq:larea}, the only thing we need is differences in $\etw_i(s)$.
+Looking at \eqref{eq:larea}, the only thing we need is differences in $\etwm_i(s)$.
 In fact, given that the only nonzero elements of $\enc$ are
 %
 \begin{equation}\label{eq:unienc}
-  \enc_{ii+1}=\frac{1}{2} \quad\text{for}\quad i<2m,
+  \encm_{ii+1}=\frac{1}{2} \quad\text{for}\quad i<2m,
   \qquad
-  \enc_{ii-1}=-\frac{1}{2} \quad\text{for}\quad i>1,
+  \encm_{ii-1}=-\frac{1}{2} \quad\text{for}\quad i>1,
 \end{equation}
 %
-and $\eq_i = \frac{1}{2m}$, we have
+and $\eqm_i = \frac{1}{2m}$, we have
 %
 \begin{equation}\label{eq:uniareaeta}
-  \hat{A}(s) = \frac{\etw_1(s) - \etw_{2m}(s)}{2m}.
+  \hat{A}(s) = \frac{\etwm_1(s) - \etwm_{2m}(s)}{2m}.
 \end{equation}
 %
 
@@ -1357,7 +1416,7 @@ Note that
   \etw(s) = \text{const.} - \fund(s)\w.
 \end{equation}
 %
-As we are only interested in differences of the $\etw_i(s)$, we can drop the constant.
+As we are only interested in differences of the $\etwm_i(s)$, we can drop the constant.
 Then
 %
 \begin{equation}\label{eq:etarecur}
@@ -1367,9 +1426,9 @@ Then
 We can then write
 %
 \begin{equation}\label{eq:detarecur}
-  \etw(s) = -\frac{(\pib\etw(s))\onev+\w}{s} + \delta\eta(s),
+  \etw(s) = -\frac{(\pib\etw(s))\onev+\w}{s} + \delta \boldsymbol{\eta}(s),
   \qquad
-  (\frg-s\I)\delta\eta(s) = \frac{\frg\w}{s}.
+  (\frg-s\I)\delta \boldsymbol{\eta}(s) = \frac{\frg\w}{s}.
 \end{equation}
 %
 As we are only interested in differences, we can drop any terms proportional to $\onev$ in $\etw(s)$.
@@ -1424,7 +1483,7 @@ with $B$ and $C$ determined by the boundary conditions provided by the last two 
 This can be used to compute the Laplace transform
 %
 \begin{equation}\label{eq:unilaplace}
-  A(s) = \frac{\etw_1(s)}{m}
+  A(s) = \frac{\etwm_1(s)}{m}
    = \frac{1}{m}\prn{\frac{1}{s}+B+C}
    = \frac{2\sinh^2\prn{\frac{m \beta}{2}}}{m s \cosh\prn{m \beta}}
    = \frac{2 S\prn{m \beta}}{M s \prn{S\prn{m \beta} + 1}}.
@@ -1489,27 +1548,27 @@ The following elements of $\enc$ and $\eq$ differ from \eqref{eq:unienc}:
 %
 \begin{equation}\label{eq:shortenenc}
   \begin{aligned}
-  \enc_{2m-1,2m} = -\enc_{2,1} &= \frac{(1-\varepsilon)}{2},
+  \encm_{2m-1,2m} = -\encm_{2,1} &= \frac{(1-\varepsilon)}{2},
   &\qquad
-  \eq_1 = \eq_M &= \frac{(1-\varepsilon)}{2(m-\varepsilon)},
+  \eqm_1 = \eqm_M &= \frac{(1-\varepsilon)}{2(m-\varepsilon)},
   \\ &&
-  \eq_i &=  \frac{1}{2(m-\varepsilon)}
-  \quad\text{for}\quad 1<i<M2m.
+  \eqm_i &=  \frac{1}{2(m-\varepsilon)}
+  \quad\text{for}\quad 1<i<2m.
   \end{aligned}
 \end{equation}
 %
 This means that the Laplace transform is given by
 %
 \begin{equation}\label{eq:shortenareaeta}
-  \hat{A}(s) = \frac{(1-\varepsilon)(\etw_1(s)-\etw_{2m}(s)) 
-                      + \varepsilon(\etw_2(s)-\etw_{2m-1}(s))}
+  \hat{A}(s) = \frac{(1-\varepsilon)(\etwm_1(s)-\etwm_{2m}(s)) 
+                      + \varepsilon(\etwm_2(s)-\etwm_{2m-1}(s))}
                     {2(m-\varepsilon)}
-       = \frac{2(1-\varepsilon) \etw_1(s) + 2\varepsilon\,\etw_2(s)}
+       = \frac{2(1-\varepsilon) \etwm_1(s) + 2\varepsilon\,\etwm_2(s)}
               {2(m-\varepsilon)}.
 \end{equation}
 %
 
-The $\etw_i(s)$ take the same general form \eqref{eq:detagensol} except for $i=1$, and with different coefficients due to the different boundary conditions
+The $\etwm_i(s)$ take the same general form \eqref{eq:detagensol} except for $i=1$, and with different coefficients due to the different boundary conditions
 %
 \begin{equation}\label{eq:detabndshorten}
 \begin{aligned}
@@ -1645,11 +1704,11 @@ The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
 %
 \begin{equation}\label{eq:stickyenc}
   \begin{aligned}
-  \enc_{1,2} = -\enc_{2m,2m-1} &= \frac{1-\varepsilon}{2},
+  \encm_{1,2} = -\encm_{2m,2m-1} &= \frac{1-\varepsilon}{2},
   &\quad
-  \eq_1 = \eq_{2m} &= \frac{1}{2(m-(m-1)\varepsilon)},
+  \eqm_1 = \eqm_{2m} &= \frac{1}{2(m-(m-1)\varepsilon)},
   \\ &&
-  \eq_i &=  \frac{1-\varepsilon}{2(m-(m-1)\varepsilon)}
+  \eqm_i &=  \frac{1-\varepsilon}{2(m-(m-1)\varepsilon)}
   \quad\text{for}\quad 1<i<2m.
   \end{aligned}
 \end{equation}
@@ -1657,13 +1716,13 @@ The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
 This means that the Laplace transform is given by
 %
 \begin{equation}\label{eq:stickyareaeta}
-  \hat{A}(s) = \frac{(1-\varepsilon)(\etw_1(s)-\etw_M(s))}
+  \hat{A}(s) = \frac{(1-\varepsilon)(\etwm_1(s)-\etwm_M(s))}
                     {2(m-(m-1)\varepsilon)}
-       = \frac{2(1-\varepsilon)\, \etw_1(s)}{2(m-(m-1)\varepsilon)}.
+       = \frac{2(1-\varepsilon)\, \etwm_1(s)}{2(m-(m-1)\varepsilon)}.
 \end{equation}
 %
 
-The $\etw_i(s)$ take the same general form \eqref{eq:detagensol}, but with different coefficients due to the different boundary conditions
+The $\etwm_i(s)$ take the same general form \eqref{eq:detagensol}, but with different coefficients due to the different boundary conditions
 %
 \begin{equation}\label{eq:detabndsticky}
 \begin{aligned}

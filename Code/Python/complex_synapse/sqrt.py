@@ -138,10 +138,10 @@ def get_valid(nst: int, frac: float = 0.5, rng: np.random.Generator = bld.RNG):
 class SynapseSqrt(sb.SynapseParam, sm.SynapseModel):
     """class for testing sqrt bound"""
     _param: la.lnarray
-    _ind: Optional[int]
     _peq: la.lnarray
     _pneq: la.lnarray
     _flux: la.lnarray
+    _ind: Optional[int]
     _changed: bool
     _saved: Tuple[la.lnarray, ...]
 
@@ -149,8 +149,12 @@ class SynapseSqrt(sb.SynapseParam, sm.SynapseModel):
     def __init__(self, *args, **kwds) -> None:
         super().__init__(*args, **kwds)
         self._param = la.zeros((self.nstate, self.nstate))
+        self._flux = la.zeros((self.nstate, self.nstate))
+        self._peq = la.zeros(self.nstate)
+        self._pneq = la.zeros(self.nstate)
         self._ind = None
         self._changed = True
+        self._saved = (la.array(0), la.array(0), la.array(0))
 
     def biggest(self) -> float:
         """max(I_a * sqrt(t_a / 2))"""
@@ -167,13 +171,13 @@ class SynapseSqrt(sb.SynapseParam, sm.SynapseModel):
         if self._ind is None:
             self.biggest()
         ind = self._ind
-        qas, init_ab, dq_ab, di_ab = self._eig()
+        qas, init_ab, dq_ab, di_aa = self._eig()
         i_by_q = init_ab / (qas.c - qas)
         i_by_q[np.diag_indices(qas.size)] = np.diagonal(init_ab) / qas
         grad = dq_ab[..., ind] @ i_by_q[ind, :]
         grad -= dq_ab[..., ind, :] @ i_by_q[:, ind]
-        grad -= i_by_q[ind, ind] * dq_ab[..., ind, ind] / 2
-        grad += di_ab[..., ind, ind]
+        grad -= dq_ab[..., ind, ind] * i_by_q[ind, ind] / 2
+        grad += di_aa[..., ind]
         grad = grad.ravel()
         return - (grad[:-1] - grad[-1]) / np.sqrt(2 * qas[ind])
 
@@ -184,17 +188,17 @@ class SynapseSqrt(sb.SynapseParam, sm.SynapseModel):
         self._changed = False
         self._ind = None
         frac = self.frac[0]
-        evals, evc = sla.eigh(la.eye(self.nstate) - self._flux,
+        evals, evc = sla.eigh(-self._flux,
                               np.diagflat(self._peq))
-        evals, evc = la.asarray(evals) - 1, la.asarray(evc)
+        evals, evc = la.asarray(evals), la.asarray(evc)
         uda_w = 2 * frac * evc.T @ (self.weight * self._peq)
         init_ab = uda_w.c * ((self._pneq - self._peq) @ evc)
         dq_mn_ab = evc[:, None, :, None] * evc[:, None] * frac
         dq_mn_ab += evc[:, :, None] * evc[:, None, None] * frac
         dq_mn_ab += evc[:, None, :, None] * evc[:, None, None] * (evals - frac)
         dq_mn_ab -= evc[:, :, None] * evc[:, None] * frac
-        di_mn_ab = uda_w.c * (evc[:, None] - evc[:, None, None])
-        self._saved = (evals, init_ab, dq_mn_ab, di_mn_ab)
+        di_mn_aa = uda_w * (evc - evc[:, None])
+        self._saved = (evals, init_ab, dq_mn_ab, di_mn_aa)
         return self._saved
 
     def symmetrise(self) -> None:
@@ -374,6 +378,8 @@ def optim_sqrt(nst: int, prob: Optional[OptimProblem] = None,
     if prob is None:
         prob = OptimProblem(**kwds)
     res = cso.optimise.first_good(prob)
+    if not prob.verify_solution(res):
+        res.fun = 0
     for _ in _it.dcount('repeats', prob.opts.repeats, disp_step=step):
         prob.update_init()
         try:
@@ -383,6 +389,6 @@ def optim_sqrt(nst: int, prob: Optional[OptimProblem] = None,
         else:
             if prob.verify_solution(new_res) and new_res.fun < res.fun:
                 res = new_res
-    if not prob.verify_solution(res):
-        res.fun = np.nan
+    # if not prob.verify_solution(res):
+    #     res.fun = np.nan
     return res

@@ -488,6 +488,8 @@ class OptimProblem:
         """Verify that solution satisfies constraints"""
         # maxcv = constr_violation(prob, result)
         # return maxcv < prob.get('tol', 1e-3)
+        if not np.isfinite(result.fun):
+            return False
         itol = self.opts.extra.get('tol', 1e-3)
         maxcv = getattr(result, 'constr_violation', None)
         if maxcv is not None:
@@ -697,6 +699,8 @@ def optim_laplace(rate: float, prob: Optional[OptimProblem] = None,
     else:
         prob.update_rate(rate)
     res = first_good(prob)
+    if not prob.verify_solution(res):
+        res.fun = 0
     for _ in _it.dcount('repeats', prob.opts.repeats, disp_step=1):
         prob.update_init()
         new_res = sco.minimize(**prob.for_scipy())
