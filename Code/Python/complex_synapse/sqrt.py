@@ -132,6 +132,18 @@ def get_valid(nst: int, frac: float = 0.5, rng: np.random.Generator = bld.RNG):
     return params
 
 
+def get_serial(nst: int, frac: float = 0.5, rng: np.random.Generator = bld.RNG
+               ) -> la.lnarray:
+    """Get a valid set of parameter values"""
+    serial = np.diagflat(la.full(nst-1, 1/nst), 1).ravel()[:-1]
+    params = (rng.random(nst**2 - 1) - 0.5) * 2 / nst**2
+    for _ in _it.undcount('tries', 100, disp_step=10):
+        if valid(params + serial, frac):
+            return params + serial
+        params = (rng.random(nst**2 - 1) - 0.5) * 2 / nst**2
+    return serial
+
+
 # =============================================================================
 
 
@@ -245,9 +257,13 @@ class SynapseSqrt(sb.SynapseParam, sm.SynapseModel):
         # inherit docstring
         kwargs['npar'] = nst**2 - 1
         kwargs['nst'] = nst
+        serial = kwargs.pop('serialish', False)
         rng = kwargs.pop('rng', bld.RNG)
         frac = kwargs.get('frac', 0.5)
-        params = get_valid(nst, frac, rng)
+        if serial:
+            params = get_serial(nst, frac, rng)
+        else:
+            params = get_valid(nst, frac, rng)
         return super().from_params(params, *args, **kwargs)
         # return super().rand(nst, *args, **kwargs)
 
@@ -328,11 +344,16 @@ class OptimProblem(cso.OptimProblem):
             self.model = SynapseSqrt.from_params(
                 self.x_init, **self.opts.model_opts)
 
-    def update_init(self, value: Optional[la.lnarray] = None) -> None:
+    def update_init(self, value: Optional[la.lnarray] = None,
+                    serialish: bool = False) -> None:
         """Change initial guess"""
         if value is None:
-            self.x_init = get_valid(self.model.nstate, self.model.frac[0],
-                                    self.opts.model_opts.rng)
+            if serialish:
+                self.x_init = get_serial(self.model.nstate, self.model.frac[0],
+                                         self.opts.model_opts.rng)
+            else:
+                self.x_init = get_valid(self.model.nstate, self.model.frac[0],
+                                        self.opts.model_opts.rng)
         else:
             self.x_init = value
 
@@ -374,6 +395,7 @@ def optim_sqrt(nst: int, prob: Optional[OptimProblem] = None,
     """
     kwds.setdefault('repeats', 10)
     kwds.setdefault('nst', nst)
+    serialish = kwds.pop('serialish', False)
     step = kwds.pop('disp_step', 1)
     if prob is None:
         prob = OptimProblem(**kwds)
@@ -381,7 +403,7 @@ def optim_sqrt(nst: int, prob: Optional[OptimProblem] = None,
     if not prob.verify_solution(res):
         res.fun = 0
     for _ in _it.dcount('repeats', prob.opts.repeats, disp_step=step):
-        prob.update_init()
+        prob.update_init(serialish=serialish)
         try:
             new_res = sco.minimize(**prob.for_scipy())
         except np.linalg.LinAlgError:

@@ -16,7 +16,8 @@ import sl_py_tools.matplotlib_tricks as mpt
 from sl_py_tools.time_tricks import time_with
 np.set_printoptions(precision=2, suppress=True)
 mpt.rc_colours()
-mpt.rc_fonts('sans-serif')
+mpt.rc_fonts('serif')
+# csp.main(False, True)
 # %%
 m = cs.SynapseMemoryModel.rand(nst=10, npl=2)
 # print(m.peq_min_fun(0.1))
@@ -28,6 +29,8 @@ with time_with():
         maker=cso.normal_problem, method='SLSQP')
 # %%
 nst, sss, opts, envs, mods = csp.load_data()
+# %%
+fig = csp.heuristic_plot(nst, sss, envs[0], mods[1])
 # %%
 obj = cso.video.EnvelopeFig(sss, envs[1], mods[1])
 obj.update(40)
@@ -45,6 +48,6 @@ np.set_printoptions(precision=3, suppress=True)
 res = csq.optim_sqrt(4, repeats=100, disp_step=10, binary=True)
 res
 # %%
-res = csq.optim_sqrt(6, repeats=100, disp_step=10, binary=True)
+res = csq.optim_sqrt(6, repeats=100, disp_step=10, binary=True, serialish=True)
 res
 # %%

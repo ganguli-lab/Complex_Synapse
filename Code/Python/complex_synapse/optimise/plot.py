@@ -2,6 +2,7 @@
 """
 from __future__ import annotations
 import typing as ty
+from typing import Sequence
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -157,7 +158,7 @@ def all_data(nst: int, sss: Array, **opts) -> ty.Tuple[Arrays, Arrays]:
 # =============================================================================
 
 
-def mem_plot(sss: Array, **mem: ty.Dict[str, Array]) -> ty.Tuple[Figure, Axes]:
+def mem_plot(sss: Array, **mem: ty.Dict[str, Array]) -> ty.Tuple[Figure, Axes, Line]:
     """Plot memory curves
 
     Parameters
@@ -175,11 +176,12 @@ def mem_plot(sss: Array, **mem: ty.Dict[str, Array]) -> ty.Tuple[Figure, Axes]:
         Axes containing plots.
     """
     fig, axs = plt.subplots()
+    lns = []
     for label, mem in mem.items():
-        axs.loglog(1/sss, mem * sss, label=label)
+        lns.extend(axs.loglog(1/sss, mem * sss, label=label))
     axs.set_xlabel(r"Time, $r\tau$")
     axs.set_ylabel("SNR")
-    return fig, axs
+    return fig, axs, lns
 
 
 
@@ -204,7 +206,7 @@ def theory_plot(nst: int, sss: Array) -> Figure:
         The figure object containing the plot.
     """
     env_th = cso.proven_envelope_laplace(sss, nst)
-    fig, axs = mem_plot(sss, theory=env_th)
+    fig, axs, _ = mem_plot(sss, theory=env_th)
     t_pts = np.array([1e-1, 0.9e1, 1.1e1, 1e4])
     axs.loglog(t_pts[:2], np.ones(2), 'k:')
     axs.loglog(t_pts[-2:], (nst-1) / t_pts[-2:], 'k:')
@@ -219,6 +221,52 @@ def theory_plot(nst: int, sss: Array) -> Figure:
     axs.text(1/sss[ind], env_th[ind] * sss[ind],
              r"$\frac{\sqrt{N}(M-1)}{r\tau + (M-1)}$", fontsize=24,
              ha='right', va='top')
+    mplt.clean_axes(axs)
+    return fig
+
+
+def equilibrium_plot(nst: int, sss: Array) -> Figure:
+    """Theoretical envelope plot
+
+    Parameters
+    ----------
+    nst : int
+        Number of states
+    sss : Array (T,)
+        Rate parameter of Laplace transform of SNR curve
+
+    Returns
+    -------
+    fig : Figure
+        The figure object containing the plot.
+    """
+    env_th = cso.proven_envelope_laplace(sss, nst)
+    env_eq = cso.equlibrium_envelope_laplace(sss, nst)
+    fig, axs, lns = mem_plot(sss, **{"general": env_th, "det. bal.": env_eq})
+    lns[0].set_ls(":")
+    lns[1].set_c(lns[0].get_c())
+    # t_pts = np.array([1e-1, 0.9e1, 1.1e1, 1e4])
+    # axs.loglog(t_pts[:2], np.ones(2), 'k:')
+    # axs.loglog(t_pts[-2:], (nst-1) / t_pts[-2:], 'k:')
+    axs.set_xlim(1e-1, 1e3)
+    ylim = axs.set_ylim(1e-2, 3)
+    s_two, s_sticky = 0.5, 2 / (nst-1)**2
+    _annotate_axis(axs, nst, ylim[0], [s_two, s_sticky],
+                ["2", r"\frac{(M-1)^2}{2}"])
+
+    ind = 40
+    axs.text(1/sss[ind], env_eq[ind] * sss[ind],
+             r"$\frac{2\sqrt{N}}{2+r\tau}$", fontsize=20,
+             ha='right', va='top')
+    ind = 30
+    axs.text(1/sss[ind], env_eq[ind] * sss[ind],
+             r"$\sqrt{\frac{N}{2r\tau}}$", fontsize=20,
+             ha='right', va='top')
+    ind = 20
+    axs.text(1/sss[ind], env_eq[ind] * sss[ind],
+             r"$\frac{2\sqrt{N}(M-1)}{(M-1)^2 + 2r\tau}$", fontsize=20,
+             ha='left', va='bottom')
+    axs.legend(loc="upper right")
     mplt.clean_axes(axs)
     return fig
 
@@ -251,8 +299,14 @@ def optim_plot(nst: int, sss: Array, env_gen: Array, env_srl: Array) -> Figure:
         The figure object containing the plot.
     """
     env_th = cso.proven_envelope_laplace(sss, nst)
-    fig, axs = mem_plot(sss, theory=env_th, **{'numeric: general': env_gen,
-                                               'numeric: serial': env_srl})
+    env_eq = cso.equlibrium_envelope_laplace(sss, nst)
+    fig, axs, lns = mem_plot(sss, **{"theory: general": env_th,
+                                     "conjecture: det. bal.": env_eq,
+                                     'numeric: general': env_gen,
+                                     'numeric: serial': env_srl})
+    lns[0].set_ls(":")
+    lns[2].set_c(lns[1].get_c())
+    lns[1].set_c(lns[0].get_c())
     axs.set_xlim(1/sss[-1], 1/sss[0])
     axs.legend(loc="lower left")
     mplt.clean_axes(axs)
@@ -283,7 +337,7 @@ def shift_plot(sss: Array, env_gen: Array, env_shf: Array) -> Figure:
     fig : Figure
         The figure object containing the plot.
     """
-    fig, axs = mem_plot(sss, normal=env_gen, shifted=env_shf)
+    fig, axs, _ = mem_plot(sss, normal=env_gen, shifted=env_shf)
     axs.set_xlim(1/sss[-1], 1/sss[0])
     axs.legend(loc="lower left")
     mplt.clean_axes(axs)
@@ -318,7 +372,7 @@ def heuristic_plot(nst: int, sss: Array, env_gen: Array, models_srl: Array,
     kwds.setdefault('model_inds', (43, 25, 9))
     kwds.setdefault('model_above', (0, 0, 0))
     kwds.setdefault('model_siz', (2.3, 1.7))
-    kwds.setdefault('note_inds', (43, 25, 9))
+    kwds.setdefault('note_inds', (43, 30, 9))
     kwds.setdefault('note_above', (1, 1, 1))
     kwds.setdefault('legend_loc', "upper right")
     kwds.setdefault('legendfontscale', 0.8)
@@ -326,14 +380,20 @@ def heuristic_plot(nst: int, sss: Array, env_gen: Array, models_srl: Array,
     ax_opts = mplt.AxesOptions(kwds)
 
     env_th = cso.proven_envelope_laplace(sss, nst)
+    env_eq = cso.equlibrium_envelope_laplace(sss, nst)
     env_heu = cso.heuristic_envelope_laplace(sss, nst)
+    envs = {"theory": env_th, "det. bal.": env_eq}
 
-    fig, axs = mem_plot(sss, theory=env_th, numeric=env_gen, heuristic=env_heu)
+    fig, axs, lns = mem_plot(sss, **envs, numeric=env_gen, heuristic=env_heu)
+    lns[0].set_ls(":")
+    lns[2].set_c(lns[1].get_c())
+    lns[1].set_c(lns[0].get_c())
     axs.set_xlim(1/sss[-1], 1e4)
     ylim = axs.set_ylim(2e-3, 1.1)
 
     _annotate_curves(axs, 1/sss, env_heu * sss, models_srl, **kwds)
-    _annotate_axis(axs, nst, ylim[0])
+    _annotate_axis(axs, nst, ylim[0], [sh.s_star(2), sh.s_star(nst)],
+                   ["0.73", "0.22M^2"])
 
     axs.legend(loc=kwds['legend_loc'], edgecolor=axs.get_facecolor())
     mplt.clean_axes(axs, **ax_opts)
@@ -358,18 +418,19 @@ def _annotate_curves(axs: mpl.axes.Axes, time: Array, env: Array,
         axs.text(time[ind], env[ind-1], note, **txt_opt, **args[above])
 
 
-def _annotate_axis(axs: mpl.axes.Axes, nst: int, y_0: float) -> None:
+def _annotate_axis(axs: mpl.axes.Axes, nst: int, y_0: float,
+                   rates: Sequence[float], labels: Sequence[str]) -> None:
     """Add text and graphs along time axis
     """
-    t_two = 1 / sh.s_star(2)
-    t_sticky = 1 / sh.s_star(nst)
+    t_two = 1 / rates[0]
+    t_sticky = 1 / rates[1]
     txt_opt = {'ha': 'center', 'va': 'bottom', 'size': 16}
 
     axs.axvline(x=t_two, color='k', linestyle=':')
     axs.axvline(x=t_sticky, color='k', linestyle=':')
 
-    axs.text(t_two, y_0, r"$r\tau = 0.73$", **txt_opt)
-    axs.text(t_sticky, y_0 * 1.1, r"$r\tau = 0.22M^2$", **txt_opt)
+    axs.text(t_two, y_0, r"$r\tau = {}$".format(labels[0]), **txt_opt)
+    axs.text(t_sticky, y_0 * 1.1, r"$r\tau = {}$".format(labels[1]), **txt_opt)
 
 
 def add_graph(axs: mpl.axes.Axes, bounds: ty.Sequence[float], model: Array,
@@ -403,7 +464,7 @@ def add_graph(axs: mpl.axes.Axes, bounds: ty.Sequence[float], model: Array,
     bounds = logify(bounds, axs, hal, val)
     kwds.setdefault('edges.mut_scale', 0.1 * scale)
     kwds.setdefault('edges.mult', 2 * scale)
-    kwds.setdefault('nodes.mult', 150 * scale**2)
+    kwds.setdefault('nodes.mult', 100 * scale**2)
     opts = gp.GraphOptions(kwds)
 
     axin = axs.inset_axes(bounds, transform=axs.transData, frame_on=False)
@@ -657,16 +718,18 @@ def load_data(fname: str = 'optim') -> ty.Tuple[int, Array, OptDict,
 def main(save_npz: bool, save_pdf: bool):
     """Execute polt creation & saving
     """
-    nst = 10
-    sss = la.geomspace(1e-4, 10, 50)
-    opts = {'repeats': 10, 'method': 'SLSQP'}
-    # (gen, srl, shf, th), (gen, srl, shf)
-    envs, mods = all_data(nst, sss, **opts)
-
     if save_npz:
+        nst = 10
+        sss = la.geomspace(1e-4, 10, 50)
+        opts = {'repeats': 10, 'method': 'SLSQP'}
+        # (gen, srl, shf), (gen, srl, shf)
+        envs, mods = all_data(nst, sss, **opts)
         save_data('optim', sss, opts, envs, mods)
+    else:
+        nst, sss, opts, envs, mods = load_data('optim')
 
     fig_th = theory_plot(nst, sss)
+    fig_eq = equilibrium_plot(nst, sss)
     fig_num = optim_plot(nst, sss, envs[0], envs[1])
     fig_shift = shift_plot(sss, envs[0], envs[2])
     fig_cond = cond_plot(sss, mods[2], envs[2], envs[0])
@@ -674,6 +737,7 @@ def main(save_npz: bool, save_pdf: bool):
 
     if save_pdf:
         fig_th.savefig("../../Notes/Figures/LenvProven.pdf")
+        fig_eq.savefig("../../Notes/Figures/LenvConj.pdf")
         fig_num.savefig("../../Notes/Figures/LenvNum.pdf")
         fig_shift.savefig("../../Notes/Figures/LenvShift.pdf")
         fig_cond.savefig("../../Notes/Figures/shift_cond.pdf")
@@ -692,7 +756,7 @@ _ALGN = {'left': 0, 'center': 0.5, 'centre': 0.5, 'right': 1,
 Array = la.lnarray
 Arrays = ty.Tuple[Array, ...]
 OptDict = ty.Dict[str, ty.Any]
-Figure, Axes = mpl.figure.Figure, mpl.axes.Axes
+Figure, Axes, Line = mpl.figure.Figure, mpl.axes.Axes, mpl.lines.Line2D
 
 # =============================================================================
 if __name__ == "__main__":

@@ -681,6 +681,7 @@ class SynapseParam(SynapseBase):
         synobj
             SynapseParamModel instance
         """
+        kwds.pop('rng', None)
         topology = kwds.pop('topology', _ma.TopologyOptions())
         topology.pop_my_args(kwds)
         npl = kwds.setdefault('npl', topology.npl)

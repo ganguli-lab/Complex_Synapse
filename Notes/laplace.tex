@@ -890,28 +890,33 @@ Then
   \end{aligned}
 \end{equation*}
 %
+Note that the first two terms of the integrand are of the form \( \Fm_{\CA \CB} = \Fm_{\CA \CB}\pot + \Fm_{\CA \CB}\dep \).
 In exactly the same way as the proof of \cref{eq:initbnd}, we can argue that the two terms with the negative signs are indeed non-positive as they do not involve the negative diagonal elements of~\( \Fm_{ij}^\nu \).
 Therefore the other terms provide an upper bound:
 %
 \begin{equation*}
 \begin{aligned}
-  r \nrm{\mathbf{u}}^2 \CI(\mathbf{u}) 
-      &\leq \av{\mathbf{u}, \w} \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
+  \CI(\mathbf{u}) 
+      &\leq \frac{\av{\mathbf{u},\w}}{r \nrm{\mathbf{u}}^2} 
+        \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
         \Fm_{\CA_\alpha \CA_\alpha^c} + \Fm_{\CA_\alpha^c \CA_\alpha} } 
-  \\  &= \av{\mathbf{u}, \w} \intd[_{-\infty}^{\infty}]{\alpha} \sum_{i \neq j} \Fm_{ij} \brk{
+  \\  &= \frac{\av{\mathbf{u},\w}}{r \nrm{\mathbf{u}}^2} 
+        \intd[_{-\infty}^{\infty}]{\alpha} \sum_{i \neq j} \Fm_{ij} \brk{
             \vartheta(u_j - \alpha) \vartheta(\alpha - u_i) 
           + \vartheta(u_i - \alpha) \vartheta(\alpha - u_j)
         }
-  \\  &= \av{\mathbf{u}, \w} \sum_{i \neq j} \Fm_{ij} \abs{u_j - u_i}
-  \\  &= \av{\mathbf{u}, \w} \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem}.
+  \\  &= \frac{\av{\mathbf{u},\w}}{r \nrm{\mathbf{u}}^2} 
+      \sum_{i \neq j} \Fm_{ij} \abs{u_j - u_i}
+  \\  &= \frac{\av{\mathbf{u},\w} \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem}}
+              {r \nrm{\mathbf{u}}^2}.
 \end{aligned}
 \end{equation*}
 %
 Now we can apply the Cauchy-Schwartz inequality to both factors to find
 %
 \begin{equation*}
-  r \nrm{\mathbf{u}}^2 \CI(\mathbf{u}) \leq \nrm{\mathbf{u}} \nrm{\w} 
-      \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem} .
+  \CI(\mathbf{u}) \leq \frac{\nrm{\w} \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem}}
+                            {r \nrm{\mathbf{u}}} .
 \end{equation*}
 %
 We also have \( \nrm{\w}^2 = \sum_i \eqm_i \wm_i^2 = 1 \).
@@ -934,7 +939,37 @@ Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvecto
 %
 Numerical maximisation of the quantity above produces the same result as in \cref{sec:initial}:
 the two-state model with deterministic transitions.
-This model has \( \CI_1 = \tau_1 = 1 \), suggestint that there's a factor of 2 looseness in this bound.
+This model has \(\CI_1 = \tau_1 = 1\), suggesting that there's a factor of 2 looseness in this bound.
+
+We can look at the various inequalities used in this derivation to see which models could saturate them:
+%
+\begin{equation*}
+\begin{aligned}
+  \Fm_{\CA_\alpha \CA_\alpha^c}\dep + \Fm_{\CA_\alpha^c \CA_\alpha}\pot &\geq 0 , &
+  \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem} 
+                        &\leq \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem} , &
+  \av{\mathbf{u},\w} &\leq \nrm{\mathbf{u}} \nrm{\w} , &
+  \sum_{j: j \neq i} \frg_{ij} &\leq 1.
+\end{aligned}
+\end{equation*}
+%
+To saturate the first inequality it helps to arrange the states in order of increasing \(u_i\).
+For any \(\alpha\), the sets \(\CA_\alpha\) and \(\CA_\alpha^c\) will be the states to the left and right of \(u = \alpha\) respectively.
+We see that the inequality is saturated iff \(\W \pot \) contains rightwards transitions only and \(\W \dep \) only contains leftwards transitions only.
+
+The second inequality is saturated iff \(\abs{\boldsymbol{\Delta}\mathbf{u}} \propto \onem \), but this need only hold for pairs of states for which \(\Fm_{ij} \neq 0\).
+This can be achieved if \(u_i\) varies linearly with \(i\), and only nearest neighbour transitions are allowed
+(we are allowed states that are degenerate if they are not connected by any nonzero transitions).
+This almost forces the serial topology on us (if we can argue that degenerate states have the same outgoing transition rates, they would be lumpable).
+
+The third inequality is saturated iff \(\mathbf{u} \propto \w\).
+This contradicts the requirements of the previous paragraph unless \(M=2\).
+
+The fourth inequality can only be saturated if the outgoing potentitation rates and depression rates separately sum to one for each state.
+This does force degenerate states to be lumpable, and we are left with a serial topology with deterministic transitions.
+However, this cannot be done for the two end states without violating the requirements for saturating one of the other inequalities.
+
+So we see that all four inequalities cannot be simultaneously saturated, and the bound must be loose.
 
 %--------------------------------------------------------------------------------
 
@@ -1005,15 +1040,54 @@ Finding more constraints would lower it.
 Clearly there have to be more constraints, as \eqref{eq:envsol} indicates that this would be achieved by the same model at all times.
 This model would have to saturate both the initial SNR bound \eqref{eq:initbnd} and the area bound \eqref{eq:areabnd}, whereas we saw that they were achieved by different models, which perform well at short/long timescales respectively.
 
-This envelope is shown in \autoref{fig:envproven}.
+This envelope is shown in \cref{fig:envproven}\ref{fig:provengen}.
+
+If we know that the optimal model for any timescale satisfies detailed balance, we have one more constraint, \cref{eq:sqrtbound}.
+Then the Lagrangian reads
+%
+\begin{equation}\label{eq:envDBlagrangian}
+  \CL = \sum_a \frac{\CI_a}{1+r\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} 
+      + \sum_a \mu_a \prn{\sqrt{2} - \CI_a \sqrt{\tau_a}} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
+\end{equation}
+%
+The solution to \cref{eq:envKTcond} takes different forms for different ranges of \(\tau\) and \(M\),
+as described in \cref{tab:env}.
+The resulting envelope is (for \(M > 3\))
+%
+\begin{equation}\label{eq:envDB}
+  \snrb(\tau) \leq 
+  \left\{ 
+  \begin{alignedat}{3}
+    &\frac{2 \sqrt{N}}{2 + r \tau}
+      , &
+      0 &\leq r \tau &&\leq 2
+      , \\
+    &\sqrt{\frac{N}{2 r \tau}}
+      , &
+      2 &< r \tau &&< \frac{(M-1)^2}{2}
+      , \\
+    &\frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau}
+      , &\qquad
+      \frac{(M-1)^2}{2} &\leq r \tau 
+      .
+  \end{alignedat}
+  \right.
+\end{equation}
+%
+This envelope is shown in \cref{fig:envproven}\ref{fig:provendetbal}.
+For \(M \leq 3\), \cref{eq:env} still applies.
 
 
 \begin{figure}[tb]
   \centering
   % Requires \usepackage{graphicx}
-  \includegraphics[width=0.8\linewidth]{LenvProven.pdf}
+  \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.4\linewidth]{LenvProven.pdf}}\label{fig:provengen}
+  \item\aligntop{\includegraphics[width=0.4\linewidth]{LenvConj.pdf}}\label{fig:provendetbal}
+  \end{myenuma}
   \caption[Proven envelope for the signal-to-noise ratio]
-  {The memory curve envelope that we can prove, \eqref{eq:env}.
+  {\ref{fig:provengen} The memory curve envelope that we can prove, \cref{eq:env}.
+  \ref{fig:provendetbal} Conjectured memory curve envelope when we assume the optimal models satisfy detailed balance, \cref{eq:envDB}.
   The number of synapses $N=10^4$ and the number of states $M=12$.
   The dashed lines indicate the initial SNR bound, \eqref{eq:initbnd}, and the area bound, \eqref{eq:areabnd}, from \cite{Lahiri2013synapse}.}\label{fig:envproven}
 \end{figure}
@@ -1026,30 +1100,33 @@ This envelope is shown in \autoref{fig:envproven}.
 \toprule
   \multicolumn{5}{c}{Conditions} & \CI_a & \tau_a 
     & \mu_\CI & \mu_a & \mu_\CA 
-    & \snrb(\tau) \\
+    % & \snrb(\tau) 
+  \\
 \midrule
   0 &\leq r \tau &\leq 2 & M &\geq 3 & 1 & 2 
     & \frac{4 - 2r \tau}{[2 + r \tau]^2} & \frac{2\sqrt{2}r\tau}{[2 + r \tau]^2} & 0 
-    & \frac{2 \sqrt{N}}{2 + r \tau} 
+    % & \frac{2 \sqrt{N}}{2 + r \tau} 
   \\
   2 &< r \tau &< \frac{(M-1)^2}{2} & M &> 3 & \sqrt{\frac{2}{\tau}} & \tau 
     & 0 & \frac{1}{2\sqrt{r \tau}} & 0 
-    & \sqrt{\frac{N}{2 r \tau}} 
+    % & \sqrt{\frac{N}{2 r \tau}} 
   \\ \addlinespace[0.2ex]
   \frac{(M-1)^2}{2} &\leq r \tau & & M &\geq 3 & \frac{2}{M-1} & \frac{(M-1)^2}{2} 
     & 0 & \frac{\sqrt{2}(M-1)^3}{[(M-1)^2 + 2r \tau]^2} 
     & \frac{4r \tau - 2(M-1)^2}{[(M-1)^2 + 2r \tau]^2} 
-    & \frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau} 
+    % & \frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau} 
   \\
   &-& & M &\leq 3 & 1 & M - 1 
     & \frac{(M-1)^2}{(M-1) + r \tau} %- \frac{\mu_a \sqrt{M-1}}{2} 
     & 0 & \frac{r \tau}{[(M-1) + r \tau]^2} %- \frac{\mu_a}{2 \sqrt{M-1}} 
-    & \frac{\sqrt{N} (M-1)}{(M-1) + r \tau} 
+    % & \frac{\sqrt{N} (M-1)}{(M-1) + r \tau} 
   \\
 \bottomrule
 \end{tabular}
 \end{center}
-\caption{The envelope under different conditions. The range of \(\tau\) for the second row does not exist for \(M = 3\), in which case any of the other rows can be used.}
+\caption{The solution to the maximum SNR \cref{eq:envKTcond} for the Lagrangian in \cref{eq:envDBlagrangian}, under different conditions. 
+The resulting envelope is \cref{eq:envDB}.
+The range of \(\tau\) for the second row does not exist for \(M = 3\), in which case any of the other rows can be used.}
 \label{tab:env}
 \end{table}
 % \)
@@ -1139,6 +1216,10 @@ We see that restricting to the serial topology does not make the performance any
 In fact, it slightly improves the performance, but this can be ascribed to the numerical optimisation problem being easier.
 Assuming that the optimiser did find the global maximum, this provides evidence for our conjecture that the model that maximises the Laplace transform must have the serial topology.
 
+Note that models with the serial topology must satisfy detailed balance.
+Therefore, this conjecture implies that the square-root bound of \cref{sec:sqrt} applies, implying the stricter envelope of \cref{eq:envDB}.
+In \cref{fig:envnum}, we can see that this envelope is close to tight, being off by a constant factor.
+
 
 \begin{figure}[tb]
   \centering
@@ -1149,7 +1230,7 @@ Assuming that the optimiser did find the global maximum, this provides evidence 
   \Cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} are solved numericallly with $f\potdep=\frac{1}{2}$, the number of synapses $N=1$ and the number of states $M=10$.
   The orange line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
   The green line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
-  The blue line indicates the proven envelope, \eqref{eq:env}.}\label{fig:envnum}
+  The dotted blue line indicates the proven envelope, \cref{eq:env} and the solid blue line is the conjectured envelope assuming detailed balance, see \cref{eq:envDB}.}\label{fig:envnum}
 \end{figure}
 
 
@@ -1339,12 +1420,18 @@ We see that most of the large discrepancies occur where the problem is numerical
   \centering
   % Requires \usepackage{graphicx}
   \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv07.eps}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv13.eps}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv21.eps}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv27.eps}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv36.eps}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv51.eps}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=7]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=13]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=21]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=27]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=36]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=50]{envelope.pdf}}
+  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv07.eps}}
+  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv13.eps}}
+  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv21.eps}}
+  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv27.eps}}
+  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv36.eps}}
+  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv51.eps}}
   \end{myenuma}
   \caption[Optimal models]{The models that constitute the numeric envelope in \autoref{fig:envnum}.
   The plot to the left of each frame indicates the memory curve of the model shown to the right in blue, with the numeric envelope for models with the serial topology in red and the proven envelope, \eqref{eq:env}, in green.

@@ -788,14 +788,14 @@ def check_cond_range(rates: np.ndarray, models: np.ndarray,
 
 
 def proven_envelope_laplace(rate: Data, nst: int) -> Data:
-    """Theoretical envelope for Laplace transform
+    """Theoretical envelope for Laplace transform.
 
     Parameters
     ----------
-    rates : Number or ndarray
-        Rate parameter of Laplace transform
+    rates : Number|ndarray
+        Rate parameter of Laplace transform.
     nst : int
-        Number of states
+        Number of states.
 
     Returns
     -------
@@ -805,15 +805,40 @@ def proven_envelope_laplace(rate: Data, nst: int) -> Data:
     return (nst - 1) / (rate * (nst - 1) + 1)
 
 
-def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
-    """Heuristic envelope for Laplace transform
+def equlibrium_envelope_laplace(rate: Data, nst: int) -> Data:
+    """Theoretical envelope for Laplace transform assuming detailed balance.
 
     Parameters
     ----------
-    rate : Number or ndarray
-        Rate parameter of Laplace transform
+    rates : Number|ndarray
+        Rate parameter of Laplace transform.
     nst : int
-        Number of states
+        Number of states.
+
+    Returns
+    -------
+    envelope : Data
+        Putative maximum A(s) for all models.
+    """
+    if nst < 3:
+        return (nst - 1) / (rate * (nst - 1) + 1)
+    s_two, s_sticky = 0.5, 2 / (nst-1)**2
+    i_a = np.sqrt(s_sticky/s_two)
+    env = 0.5 / np.sqrt(s_two * rate)
+    env = np.where(rate > s_two, 1 / (rate + s_two), env)
+    env = np.where(rate < s_sticky, i_a / (rate + s_sticky), env)
+    return env
+
+
+def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
+    """Heuristic envelope for Laplace transform.
+
+    Parameters
+    ----------
+    rate : Number|ndarray
+        Rate parameter of Laplace transform.
+    nst : int
+        Number of states.
 
     Returns
     -------
