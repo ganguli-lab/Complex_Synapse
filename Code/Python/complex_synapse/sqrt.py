@@ -341,8 +341,8 @@ class OptimProblem(cso.OptimProblem):
         if self.x_init is None:
             self.model = SynapseSqrt.rand(**self.opts.model_opts)
         else:
-            self.model = SynapseSqrt.from_params(
-                self.x_init, **self.opts.model_opts)
+            self.model = SynapseSqrt.from_params(self.x_init,
+                                                 **self.opts.model_opts)
 
     def update_init(self, value: Optional[la.lnarray] = None,
                     serialish: bool = False) -> None:

@@ -707,16 +707,14 @@ def load_data(fname: str = 'optim') -> ty.Tuple[int, Array, OptDict,
         nst = saved['nstate'][()]
         sss = saved['s']
         options = saved['options'][()]
-        envs = tuple(saved[x] for x in ['envelope_gen', 'envelope_srl',
-                                        'envelope_shf'])
-        mods = tuple(saved[x] for x in ['models_gen', 'models_srl',
-                                        'models_shf'])
+        envs = tuple(saved['envelope_' + x] for x in ['gen', 'srl', 'shf'])
+        mods = tuple(saved['models_' + x] for x in ['gen', 'srl', 'shf'])
     return nst, sss, options, envs, mods
 
 
 # =============================================================================
 def main(save_npz: bool, save_pdf: bool):
-    """Execute polt creation & saving
+    """Execute plot creation & saving
     """
     if save_npz:
         nst = 10

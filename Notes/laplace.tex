@@ -963,11 +963,11 @@ This can be achieved if \(u_i\) varies linearly with \(i\), and only nearest nei
 This almost forces the serial topology on us (if we can argue that degenerate states have the same outgoing transition rates, they would be lumpable).
 
 The third inequality is saturated iff \(\mathbf{u} \propto \w\).
-This contradicts the requirements of the previous paragraph unless \(M=2\).
+This contradicts the requirements of the previous paragraph unless \(M=2\), or if it is a multistate model rather than serial.
 
-The fourth inequality can only be saturated if the outgoing potentitation rates and depression rates separately sum to one for each state.
+The fourth inequality can only be saturated if, for each state, the outgoing potentitation rates and depression rates separately sum to one.
 This does force degenerate states to be lumpable, and we are left with a serial topology with deterministic transitions.
-However, this cannot be done for the two end states without violating the requirements for saturating one of the other inequalities.
+However, this cannot be done for the two end states without violating the requirements for saturating the first inequality.
 
 So we see that all four inequalities cannot be simultaneously saturated, and the bound must be loose.
 
@@ -1024,8 +1024,8 @@ These are solved by
   \CI_1 = 1, \qquad
   \CI_{a>1} = 0, \qquad
   \tau_1 = M-1, \\
-  \mu_\CI = \frac{(M-1)^2}{(r\tau + (M-1))^2}, \qquad
-  \mu_\CA = \frac{r\tau}{(r\tau+(M-1))^2}. \qquad
+  \mu_\CI = \frac{(M-1)^2}{[r\tau + (M-1)]^2}, \qquad
+  \mu_\CA = \frac{r\tau}{[r\tau+(M-1)]^2}. \qquad
 \end{gathered}
 \end{equation}
 %
@@ -1040,7 +1040,7 @@ Finding more constraints would lower it.
 Clearly there have to be more constraints, as \eqref{eq:envsol} indicates that this would be achieved by the same model at all times.
 This model would have to saturate both the initial SNR bound \eqref{eq:initbnd} and the area bound \eqref{eq:areabnd}, whereas we saw that they were achieved by different models, which perform well at short/long timescales respectively.
 
-This envelope is shown in \cref{fig:envproven}\ref{fig:provengen}.
+This envelope is shown in \cref{fig:envproven}(\ref{fig:provengen}).
 
 If we know that the optimal model for any timescale satisfies detailed balance, we have one more constraint, \cref{eq:sqrtbound}.
 Then the Lagrangian reads
@@ -1051,7 +1051,7 @@ Then the Lagrangian reads
 \end{equation}
 %
 The solution to \cref{eq:envKTcond} takes different forms for different ranges of \(\tau\) and \(M\),
-as described in \cref{tab:env}.
+as described in \cref{tab:envDB}.
 The resulting envelope is (for \(M > 3\))
 %
 \begin{equation}\label{eq:envDB}
@@ -1074,7 +1074,7 @@ The resulting envelope is (for \(M > 3\))
   \right.
 \end{equation}
 %
-This envelope is shown in \cref{fig:envproven}\ref{fig:provendetbal}.
+This envelope is shown in \cref{fig:envproven}(\ref{fig:provendetbal}).
 For \(M \leq 3\), \cref{eq:env} still applies.
 
 
@@ -1086,48 +1086,48 @@ For \(M \leq 3\), \cref{eq:env} still applies.
   \item\aligntop{\includegraphics[width=0.4\linewidth]{LenvConj.pdf}}\label{fig:provendetbal}
   \end{myenuma}
   \caption[Proven envelope for the signal-to-noise ratio]
-  {\ref{fig:provengen} The memory curve envelope that we can prove, \cref{eq:env}.
-  \ref{fig:provendetbal} Conjectured memory curve envelope when we assume the optimal models satisfy detailed balance, \cref{eq:envDB}.
-  The number of synapses $N=10^4$ and the number of states $M=12$.
+  {(\ref{fig:provengen}) The memory curve envelope that we can prove, \cref{eq:env}.
+  (\ref{fig:provendetbal}) Conjectured memory curve envelope when we assume the optimal models satisfy detailed balance, \cref{eq:envDB}.
+  The number of synapses $N=1$ and the number of states $M=10$.
   The dashed lines indicate the initial SNR bound, \eqref{eq:initbnd}, and the area bound, \eqref{eq:areabnd}, from \cite{Lahiri2013synapse}.}\label{fig:envproven}
 \end{figure}
 
-    \newcolumntype{B}{R@{\,}C@{\,}L}
+\newcolumntype{B}{R@{\,}C@{\,}L}
 % \(
-\begin{table}[ht]
-\begin{center}
-\begin{tabular}{BACCCCCC}
-\toprule
-  \multicolumn{5}{c}{Conditions} & \CI_a & \tau_a 
-    & \mu_\CI & \mu_a & \mu_\CA 
-    % & \snrb(\tau) 
-  \\
-\midrule
-  0 &\leq r \tau &\leq 2 & M &\geq 3 & 1 & 2 
-    & \frac{4 - 2r \tau}{[2 + r \tau]^2} & \frac{2\sqrt{2}r\tau}{[2 + r \tau]^2} & 0 
-    % & \frac{2 \sqrt{N}}{2 + r \tau} 
-  \\
-  2 &< r \tau &< \frac{(M-1)^2}{2} & M &> 3 & \sqrt{\frac{2}{\tau}} & \tau 
-    & 0 & \frac{1}{2\sqrt{r \tau}} & 0 
-    % & \sqrt{\frac{N}{2 r \tau}} 
-  \\ \addlinespace[0.2ex]
-  \frac{(M-1)^2}{2} &\leq r \tau & & M &\geq 3 & \frac{2}{M-1} & \frac{(M-1)^2}{2} 
-    & 0 & \frac{\sqrt{2}(M-1)^3}{[(M-1)^2 + 2r \tau]^2} 
-    & \frac{4r \tau - 2(M-1)^2}{[(M-1)^2 + 2r \tau]^2} 
-    % & \frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau} 
-  \\
-  &-& & M &\leq 3 & 1 & M - 1 
-    & \frac{(M-1)^2}{(M-1) + r \tau} %- \frac{\mu_a \sqrt{M-1}}{2} 
-    & 0 & \frac{r \tau}{[(M-1) + r \tau]^2} %- \frac{\mu_a}{2 \sqrt{M-1}} 
-    % & \frac{\sqrt{N} (M-1)}{(M-1) + r \tau} 
-  \\
-\bottomrule
-\end{tabular}
-\end{center}
+\begin{table}[tb]
+  \begin{center}
+  \begin{tabular}{BACCCCCC}
+    \toprule
+      \multicolumn{5}{c}{Domain of validity} & \CI_a & \tau_a 
+        & \mu_\CI & \mu_a & \mu_\CA 
+        % & \snrb(\tau) 
+      \\
+    \midrule
+      0 &\leq r \tau &\leq 2 & M &\geq 3 & 1 & 2 
+        & \frac{4 - 2r \tau}{[2 + r \tau]^2} & \frac{2\sqrt{2}r\tau}{[2 + r \tau]^2} & 0 
+        % & \frac{2 \sqrt{N}}{2 + r \tau} 
+      \\
+      2 &< r \tau &< \frac{(M-1)^2}{2} & M &> 3 & \sqrt{\frac{2}{\tau}} & \tau 
+        & 0 & \frac{1}{2\sqrt{r \tau}} & 0 
+        % & \sqrt{\frac{N}{2 r \tau}} 
+      \\ \addlinespace[0.2ex]
+      \frac{(M-1)^2}{2} &\leq r \tau & & M &\geq 3 & \frac{2}{M-1} & \frac{(M-1)^2}{2} 
+        & 0 & \frac{\sqrt{2}(M-1)^3}{[(M-1)^2 + 2r \tau]^2} 
+        & \frac{4r \tau - 2(M-1)^2}{[(M-1)^2 + 2r \tau]^2} 
+        % & \frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau} 
+      \\
+      &-& & M &\leq 3 & 1 & M - 1 
+        & \frac{(M-1)^2}{[(M-1) + r \tau]^2} %- \frac{\mu_a \sqrt{\tau_a}}{2} 
+        & 0 & \frac{r \tau}{[(M-1) + r \tau]^2} %- \frac{\mu_a}{2 \sqrt{\tau_a}} 
+        % & \frac{\sqrt{N} (M-1)}{(M-1) + r \tau} 
+      \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
 \caption{The solution to the maximum SNR \cref{eq:envKTcond} for the Lagrangian in \cref{eq:envDBlagrangian}, under different conditions. 
 The resulting envelope is \cref{eq:envDB}.
 The range of \(\tau\) for the second row does not exist for \(M = 3\), in which case any of the other rows can be used.}
-\label{tab:env}
+\label{tab:envDB}
 \end{table}
 % \)
 
@@ -1190,7 +1190,7 @@ Then, with some new vectors defined:
 \begin{equation}\label{eq:kktsol}
 \begin{aligned}
   \mu^\nu_{mm} &= - \eqm_m \prn{ \albm^\nu_m(s) 
-    + \lambda \ombm^\nu_i(0) 
+    + \lambda \ombm^\nu_m(0) 
     + \prn{{c}_m(s) + (-1)^\nu} \ombm^\nu_m(s)
     }, \\
   \mu^\nu_{mn} &= \eqm_m \big( 
@@ -1738,11 +1738,11 @@ Noting the scale of the y-axis, we see that \cref{eq:unienv,eq:unienvapprox} do 
 \end{center}
 \end{figure}
 
-We can maximise this \wrt $\varepsilon$.
+We can maximise this \wrt $\varepsilon$, which yields
 %
 \begin{equation}\label{eq:shortopt}
   (\varepsilon - f_m)^2 = (m - f_m)(g_m - f_m),
-  \qquad
+  \quad \implies \quad
   \hat{A}(s) = \frac{\Delta f_{m}}
       {s \Delta g_{m} \brk{\sqrt{\abs{m - f_m}} - \sqrt{\abs{g_m - f_m}}}^2}.
 \end{equation}
@@ -1752,12 +1752,13 @@ We can find the boundary of the region of applicability by asking at what value 
 \begin{equation}\label{eq:shortenvalid}
 \begin{aligned}
   \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\mathrlap{\varepsilon=0}} \propto &\,
-    m(2s+1) \brk{S(m\beta) - S((m-1)\beta)} - S(m\beta) [S(m\beta) + 1]
+    m \zeta \brk{S(m\beta) - S((m-1)\beta)} - S(m\beta) [S(m\beta) + 1]
       = 0,\\
   \left.\pdiff{\hat{A}(s)}{\varepsilon}\right|_{\mathrlap{\varepsilon=1}} \propto &\,
-    (m-1)\brk{S(m\beta) - S((m-1)\beta)} - (2s+1) S((m-1)\beta) [S((m-1)\beta) + 1]
+    (m-1)\brk{S(m\beta) - S((m-1)\beta)} - \zeta S((m-1)\beta) [S((m-1)\beta) + 1]
       = 0,\\
     &\text{where}\quad
+    \zeta = 2s + 1, \qquad
     s = S(\beta) = 2 \sinh^2(\beta/2),
 \end{aligned}
 \end{equation}
@@ -1842,15 +1843,14 @@ which leads to the Laplace transform
 \begin{center}
   \includegraphics[width=0.4\linewidth]{sticky_opt.pdf}
 \caption[Signal-to-noise ratio for optimal sticky models]
-{Signal-to-noise ratio for optimal sticky models, \cref{eq:stickyenc} optimised over \(\varepsilon\) for \(M=10\), in blue.
-  The orange line is the SNR for the optimised shortened models, \cref{eq:shortenenc} with \(M=10\).
+{Signal-to-noise ratio for optimal sticky models, \cref{eq:stickyopt} for \(M=10\), in blue.
+  The orange line is the SNR for the optimised shortened models, \cref{eq:shortopt} with \(M=10\).
   The grey line is our theoretical envelope from \cref{eq:env}.
   \label{fig:sticky}}
 \end{center}
 \end{figure}
 
 We can maximise this \wrt $\varepsilon$.
-This results in a complicated quadratic equation for $\varepsilon$ with an even worse solution that we will not reproduce here.
 We define
 %
 \begin{equation*}
@@ -1867,12 +1867,18 @@ We define
                     {s \Delta m \Delta g_m (\mu - \varepsilon) (g_m - \varepsilon)}.
 \end{equation*}
 %
-The minimum is at the solution of
+The maximum is at the solution of
 %
-\begin{equation*}
+\begin{multline}\label{eq:stickyopt}
+% \begin{aligned}
   \brk{(1 + f_m -  g_m - \mu)\varepsilon - f_m + \mu g_m}^2 
-    = (\mu - 1) (g_m - 1) (\mu - f_m) (g_m - f_m).
-\end{equation*}
+    = (\mu - 1) (g_m - 1) (f_m - \mu) (f_m - g_m) , \\
+  \implies \qquad
+  \hat{A}(s) = \frac{\Delta f_m}{s \Delta m \Delta g_m}
+                \brk{\frac{\sqrt{(f_m - \mu)(f_m - g_m)} + \sqrt{(\mu - 1)(g_m - 1)}}
+                          {\sqrt{(f_m - g_m)(g_m - 1)} + \sqrt{(f_m - \mu)(\mu - 1)}}}^2.
+% \end{aligned}
+\end{multline}
 %
 The result is plotted in \cref{fig:sticky}.
 
