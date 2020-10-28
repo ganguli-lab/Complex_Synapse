@@ -184,20 +184,20 @@
 \subsection{Recognition memory}\label{sec:recog}
 
 
-We will be trying to store patterns in a set od $N$ synaptic weights, $\syn$.
+We will be trying to store patterns in a set od \(N\) synaptic weights, \(\syn\).
 Every time we try to store a pattern, these synapses are subjected to a plasticity event where each synapse is either potentiated or depressed, depending on the pattern.
 we will assume that these patterns are spatially and temporally independent.
 
 At some time, suppose we wish to determine if a given pattern is one of those that we previously attempted to store.
 We wish to answer this question by looking at the synaptic weights directly (ideal observer).
-For that given pattern there will be an ideal set of synaptic weights, $\synid$, where those synapses that were supposed to be potentiated are maximised and those that were supposed to be depressed are minimised.
-Suppose that the given pattern was actually seen at time 0 and we are observing the synapses at time $t$.
-The actual set of synaptic weights we see, $\syn(t)$, will be a vector of random variables that differs from $\synid$ due to the stochasticity of the pattern encoding and all of the other (uncorrelated) pattern that are stored after it.
-As $t\to\infty$, the synaptic weights will become independent of the patter stored at $t=0$.
-Thus, the vector of random variables $\syn(\infty)$ also describes the synaptic weights under the null hypothesis -- if that given pattern had never been stored.
+For that given pattern there will be an ideal set of synaptic weights, \(\synid\), where those synapses that were supposed to be potentiated are maximised and those that were supposed to be depressed are minimised.
+Suppose that the given pattern was actually seen at time 0 and we are observing the synapses at time \(t\).
+The actual set of synaptic weights we see, \(\syn(t)\), will be a vector of random variables that differs from \(\synid\) due to the stochasticity of the pattern encoding and all of the other (uncorrelated) pattern that are stored after it.
+As \(t\to\infty\), the synaptic weights will become independent of the patter stored at \(t=0\).
+Thus, the vector of random variables \(\syn(\infty)\) also describes the synaptic weights under the null hypothesis -- if that given pattern had never been stored.
 
-We can test if the pattern had been previously stored by computing $\synid\cdt\syn$ and comparing it to some threshold~\cite{Sommer1998retrieval}.
-For large $N$, this quantity will have a Gausssian distribution.
+We can test if the pattern had been previously stored by computing \(\synid\cdt\syn\) and comparing it to some threshold~\cite{Sommer1998retrieval}.
+For large \(N\), this quantity will have a Gausssian distribution.
 There will be a ROC curve as a function of this threshold:
 %
 \begin{equation}\label{eq:ROC}
@@ -211,9 +211,9 @@ There will be a ROC curve as a function of this threshold:
 \end{equation}
 %
 and TPR/FPR are the true/false positive rates.
-When the signal-to-noise ratio, $\snr$ is larger than $\Phi_c\inv(\operatorname{FPR})$, it is beneficial to decrease the noise-to-noise ratio, NNR.
+When the signal-to-noise ratio, \(\snr\) is larger than \(\Phi_c\inv(\operatorname{FPR})\), it is beneficial to decrease the noise-to-noise ratio, NNR.
 In the other case, it is beneficial to increase it.
-The expectations and variances are over the probability distribution of the synaptic states given the sequence of plasticity events, the probability distribution of the sequence of plasticity events themselves and the probability distribution of the pattern we are testing, $\synid$.
+The expectations and variances are over the probability distribution of the synaptic states given the sequence of plasticity events, the probability distribution of the sequence of plasticity events themselves and the probability distribution of the pattern we are testing, \(\synid\).
 
 There are other measures of memory one could consider, \eg asymptotic error exponents.
 For the Neyman-Pearson approach to hypothesis testing, the error exponent is the KL divergence:
@@ -232,14 +232,14 @@ For Bayesian hypothesis testing, the error exponent is the Chernoff distance:
 %
 
 The formulae above assumed that we know the time between storage and recognition.
-We should also compute the expectations and variances over probability distribution of the recall time, $t$, as well.
-If we only know average time, $\tau$, a natural choice for this distribution is
+We should also compute the expectations and variances over probability distribution of the recall time, \(t\), as well.
+If we only know average time, \(\tau\), a natural choice for this distribution is
 %
 \begin{equation}\label{eq:recogtime}
   P(t\vert\tau) = \frac{\e^{-t/\tau}}{\tau}.
 \end{equation}
 %
-Different parts of the brain, that store memories for different timescales, could be characterised by different values of $\tau$.
+Different parts of the brain, that store memories for different timescales, could be characterised by different values of \(\tau\).
 
 %--------------------------------------------------------------------------------
 
@@ -247,7 +247,7 @@ Different parts of the brain, that store memories for different timescales, coul
 
 We will model the synapses as having two possible synaptic weights.
 As we are looking at the information contained in the synaptic weights, rather than modelling the readout via electrical activity of the neurons, what values the synaptic weights actually take is irrelevant.
-It will be convenient to call these two values $\pm1$.
+It will be convenient to call these two values \(\pm1\).
 
 
 As discussed in \autoref{sec:recog}, the signal-to-noise ratio is given by
@@ -257,7 +257,7 @@ As discussed in \autoref{sec:recog}, the signal-to-noise ratio is given by
      {\sqrt{\var(\synid\cdt\syn(\infty))}},
 \end{equation}
 %
-Where the averages and variances are over the probability distribution of the synaptic states given the sequence of plasticity events, the probability distribution of the sequence of plasticity events themselves and the probability distribution of the pattern we are testing, $\synid$.
+Where the averages and variances are over the probability distribution of the synaptic states given the sequence of plasticity events, the probability distribution of the sequence of plasticity events themselves and the probability distribution of the pattern we are testing, \(\synid\).
 If we also average over the time between storage and recognition, we have
 %
 \begin{equation}\label{eq:snrb}
@@ -265,7 +265,7 @@ If we also average over the time between storage and recognition, we have
    = \frac{1}{\tau} \intd[_0^\infty]{t} \e^{-t/\tau} \snr(t),
 \end{equation}
 %
-This is similar to the average SNR up to time $\tau$, but with the hard cut-off replaced with a smooth exponential.
+This is similar to the average SNR up to time \(\tau\), but with the hard cut-off replaced with a smooth exponential.
 This can be expressed in terms of he Laplace transform of the SNR curve in \eqref{eq:SNRdef}:
 %
 \begin{equation}\label{eq:laplacedef}
@@ -294,8 +294,8 @@ First, let's look at the variances, remembering that the states and plasticity e
 \end{aligned}
 \end{equation}
 %
-where we used $\syn^\alpha=\pm1$.
-We can compute $\var(\synid\cdt\syn(\infty))$ by taking $t\to\infty$.
+where we used \(\syn^\alpha=\pm1\).
+We can compute \(\var(\synid\cdt\syn(\infty))\) by taking \(t\to\infty\).
 
 For the numerator, we can write
 %
@@ -304,7 +304,7 @@ For the numerator, we can write
    = N \av{\synid^1\syn^1(t)},
 \end{equation}
 %
-If the elements of $\synid$ take values $\pm1$ with probability $f\potdep$,
+If the elements of \(\synid\) take values \(\pm1\) with probability \(f\potdep\),
 %
 \begin{equation}\label{eq:overlapone}
   \av{\synid^1\syn^1(t)} = f\pot \av{\syn^1(t)}_{\text{pot},t=0} - f\dep \av{\syn^1(t)}_{\text{dep},t=0}
@@ -317,12 +317,12 @@ To compute this quantity, we will need to discuss how we model individual synaps
 
 \subsection{Markov models of synapses}\label{sec:markovsynapse}
 
-We model a synapse as having $M$ internal states.
-The synaptic weight depends deterministically on the state, given by the $M$-element column vector $\w$.
-We denote the probability distribution across these states by the row vector $\pr(t)$.
-We denote a column vector of ones by $\onev$, so the normalisation condition is $\pr(t) \, \onev=1$.
+We model a synapse as having \(M\) internal states.
+The synaptic weight depends deterministically on the state, given by the \(M\)-element column vector \(\w\).
+We denote the probability distribution across these states by the row vector \(\pr(t)\).
+We denote a column vector of ones by \(\onev\), so the normalisation condition is \(\pr(t) \, \onev=1\).
 
-When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices $\MMd^\nu$ whose $i,j$ elements are the transition probabilities from state $i$ to state $j$, 
+When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices \(\MMd^\nu\) whose \(i,j\) elements are the transition probabilities from state \(i\) to state \(j\), 
 and \(\nu \) labels the diffrerent types of plasticity event.
 Potentiating events have \(\nu=\) pot, depressing events have \(\nu=\) dep.
 We also use the notation
@@ -335,7 +335,7 @@ We also use the notation
     \end{cases}
 \end{equation*}
 %
-The matrices $\MMd^\nu$ are transition matrices of discrete time Markov processes.
+The matrices \(\MMd^\nu\) are transition matrices of discrete time Markov processes.
 Their elements must satisfy the following constraints
 %
 \begin{equation}\label{eq:constr}
@@ -345,7 +345,7 @@ Their elements must satisfy the following constraints
     \quad \forall \; \nu, i.
 \end{equation}
 %
-The upper bounds $\MMdm^\nu_{ij} \leq 1$ follow automatically from these.
+The upper bounds \(\MMdm^\nu_{ij} \leq 1\) follow automatically from these.
 
 If we treat the off diagonal elements as the independent degrees of freedom, with the off diagonal elements determined by the row sum constraints (second column of \eqref{eq:constr}), the constraints are
 %
@@ -358,16 +358,16 @@ If we treat the off diagonal elements as the independent degrees of freedom, wit
 %
 The second of these will be referred to as the ``diagonal'' constraint.
 
-Given a sequence of plasticity events at times $t_1,t_2,t_3,\ldots$, the probability distribution across the internal states at time $t_n$, 
+Given a sequence of plasticity events at times \(t_1,t_2,t_3,\ldots\), the probability distribution across the internal states at time \(t_n\), 
 mariginalising over states at earlier times, is
 %
 \begin{equation}\label{eq:plastseq}
   \pr(t_n) = \pr(t_0)  \MMd \pot \MMd \dep \MMd \dep \MMd \pot \MMd \dep \MMd \pot \MMd \pot \MMd \dep \ldots \MMd \pot .
 \end{equation}
 %
-If the probability of a given plasticity event being potentiating or depressing is $f\pot$ or $f\dep$ respectively, the probability of the sequence above (conditioned on the number of events) is given by $f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot$.
+If the probability of a given plasticity event being potentiating or depressing is \(f\pot\) or \(f\dep\) respectively, the probability of the sequence above (conditioned on the number of events) is given by \(f\pot f\dep f\dep f\pot f\dep f\pot f\pot f\dep \ldots f\pot\).
 
-In computing the expectation in \eqref{eq:overlapone} the plasticity event that occurs at $t=0$ is fixed, but all of the previous and subsequent events are marginalised over.
+In computing the expectation in \eqref{eq:overlapone} the plasticity event that occurs at \(t=0\) is fixed, but all of the previous and subsequent events are marginalised over.
 If we marginalise over the types (potentiating/depressing) of these other events (conditioned on the number of events) we find
 %
 \begin{multline}\label{eq:plastseqtypes}
@@ -377,19 +377,19 @@ If we marginalise over the types (potentiating/depressing) of these other events
     \ldots (f\pot \MMd \pot + f\dep \MMd \dep),
 \end{multline}
 % 
-where the factor of $ \MMd \potdep$ is the event at $t=0$.
+where the factor of \( \MMd \potdep\) is the event at \(t=0\).
 If we expand out all of the parenthetical factors, we will get a sum of terms of the form \eqref{eq:plastseq} weighted by their probabilities.
 
-If $t_0 \ll 0$, the effect of the large number of earlier events will be to put the synapse in the steady state distribution, $\eq$, of the stochastic process $(f\pot \MMd \pot+f\dep \MMd \dep)$:
+If \(t_0 \ll 0\), the effect of the large number of earlier events will be to put the synapse in the steady state distribution, \(\eq\), of the stochastic process \((f\pot \MMd \pot+f\dep \MMd \dep)\):
 %
 \begin{equation}\label{eq:plastseqeq}
   \pr(t_n) = \eq  \MMd \potdep (f\pot \MMd \pot+f\dep \MMd \dep)^n,
 \end{equation}
 %
-where $n$ is the number of plasticity events that took place.
+where \(n\) is the number of plasticity events that took place.
 
-If the plasticity events occur at Poisson rate $r$, the probability of $n$ events occurring in time $t$ is given by a Poisson distribution with mean $rt$.
-If we marginalise over $n$ as well
+If the plasticity events occur at Poisson rate \(r\), the probability of \(n\) events occurring in time \(t\) is given by a Poisson distribution with mean \(rt\).
+If we marginalise over \(n\) as well
 %
 \begin{equation}\label{eq:plastseqav}
 \begin{aligned}
@@ -399,7 +399,7 @@ If we marginalise over $n$ as well
 \end{aligned}
 \end{equation}
 %
-where $\eq$ is the steady state distribution of the continuous time transition matrix that appears in the exponential:
+where \(\eq\) is the steady state distribution of the continuous time transition matrix that appears in the exponential:
 %
 \begin{equation}\label{eq:eq}
   \eq\frg = 0,
@@ -442,14 +442,14 @@ Combining with \eqref{eq:noise} gives
                  {\sqrt{1-(f\pot-f\dep)^2(\eq \w)^2}}.
 \end{equation}
 %
-The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with $f\pot=f\dep$ or $\eq_+=\eq_-$.
+The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with \(f\pot=f\dep\) or \(\eq_+=\eq_-\).
 We can perform the maximisation in two steps.
-First maximise the numerator at fixed $\eq \w$.
-Then maximise the ratio \wrt $\eq\w$.
+First maximise the numerator at fixed \(\eq \w\).
+Then maximise the ratio \wrt \(\eq\w\).
 This will allow us to ignore the denominator until the very end.
 
 
-We can then treat the off-diagonal elements of $\MMd^\nu$ as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
+We can then treat the off-diagonal elements of \(\MMd^\nu\) as the independent degrees of freedom, subject to these constraints, when maximising the SNR.
 The diagonal elements are determined by setting the row sums to 1.
 We then have
 %
@@ -475,7 +475,7 @@ these satisfy
 \end{equation}
 %
 
-If we wish to use the off-diagonal elements of $\frg$ and $\enc$ as the degrees of freedom, the constraints are
+If we wish to use the off-diagonal elements of \(\frg\) and \(\enc\) as the degrees of freedom, the constraints are
 %
 \begin{equation}\label{eq:constrfe}
 \begin{aligned}
@@ -502,16 +502,16 @@ In analogy to the generalised fundamental matrix of a Markov chain \cite{Kemeny1
   \fund(s) = (s \I + \onev \arow -\MM)\inv,
 \end{equation}
 %
-where $\arow$ is an arbitrary row vector satisfying $\arow \onev = \frac{1}{\tau_0} \neq 0$.
-This reduces to the fundamental matrix at $s=0$.
-We can see that $\onev$ is an eigenvector:
+where \(\arow\) is an arbitrary row vector satisfying \(\arow \onev = \frac{1}{\tau_0} \neq 0\).
+This reduces to the fundamental matrix at \(s=0\).
+We can see that \(\onev\) is an eigenvector:
 %
 \begin{equation}\label{eq:lfundrowsum}
   \fund(s)\onev = \frac{\tau_0}{1+s\tau_0}\onev.
 \end{equation}
 %
-Suppose we have some row vector $\mathbf{a}$ such that $\mathbf{a}\onev=0$.
-Then $\mathbf{a}\fund(s)$ is independent of $\arow$:
+Suppose we have some row vector \(\mathbf{a}\) such that \(\mathbf{a}\onev=0\).
+Then \(\mathbf{a}\fund(s)\) is independent of \(\arow\):
 %
 \begin{equation}\label{eq:alfund}
   \pdiff{(\mathbf{a}\fund(s))_i}{\arowm_k} = -(\mathbf{a}\fund(s)\onev) \fundm_{ki}(s)
@@ -527,7 +527,7 @@ Then we also define
   \fptbm_{ij}(s) = \frac{\fundm_{jj}(s)-\fundm_{ij}(s)}{\eqm_j}.
 \end{equation}
 %
-This reduces to the mean first-passage time matrix at $s=0$. 
+This reduces to the mean first-passage time matrix at \(s=0\). 
 
 At other values of \(s\) can they be interpreted as the mean first-passage times of a different process?
 In order to have \cref{eq:lfund} as its fundamental matrix, the extra bit must draw probability from each state at a rate \(s\).
@@ -543,14 +543,14 @@ This other stochastic process is
 This is a valid continuous-time Markov process.
 Its fundamental matrix is given by \cref{eq:lfund} with \( \arow_0 = \arow + s \eq \).
 
-This means that the \( \fptb(s) \) have all the same properties as in the case $s=0$.
+This means that the \( \fptb(s) \) have all the same properties as in the case \(s=0\).
 In particular, we see that the quantity
 %
 \begin{equation}\label{eq:lkemeny}
   \eta(s) = \sum_j \fptbm_{ij}(s) \eqm_j
 \end{equation}
 %
-is independent of the starting state $i$, but now $\eta(s) = \tr\fund(s) - \frac{\tau_0}{1 + s \tau_0}$.
+is independent of the starting state \(i\), but now \(\eta(s) = \tr\fund(s) - \frac{\tau_0}{1 + s \tau_0}\).
 We can then define
 %
 \begin{equation}\label{eq:lpmixtime}
@@ -558,7 +558,7 @@ We can then define
       =  \sum_{j\in \pm} \fptbm_{ij}(s) \eqm_j.
 \end{equation}
 %
-We can arrange the states in order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
+We can arrange the states in order of decreasing \(\eta^{+}_i(s)\) or increasing \(\eta^{-}_i(s)\).
 It will be more convenient to use the quantities
 %
 \begin{equation}\label{eq:lwpmixtime}
@@ -568,8 +568,8 @@ It will be more convenient to use the quantities
     = \eta(s) - 2\eta^-_i(s) .
 \end{equation}
 %
-Arranging the states in order of decreasing $\etwm_i(s)$ is the same as the order of decreasing $\eta^{+}_i(s)$ or increasing $\eta^{-}_i(s)$.
-The $\etwm_i(s)$ can still be used when $\w$ takes more than two values.
+Arranging the states in order of decreasing \(\etwm_i(s)\) is the same as the order of decreasing \(\eta^{+}_i(s)\) or increasing \(\eta^{-}_i(s)\).
+The \(\etwm_i(s)\) can still be used when \(\w\) takes more than two values.
 
 %--------------------------------------------------------------------------------
 
@@ -581,19 +581,19 @@ Consider the Laplace transform of the evolution operator:
   \mathbf{G}(s) = \intd[_0^{\infty}]{t} \e^{(\MM-s) t}.
 \end{equation}
 %
-For $\Re s>0$, we have
+For \(\Re s>0\), we have
 %
 \begin{equation}\label{eq:levolcalc}
   (s-\MM)\mathbf{G}(s) = \intd[_0^{\infty}]{t} (s-\MM)\e^{(\MM-s) t} = \brk{-\e^{(\MM-s) t}}_0^{\infty} = \I.
 \end{equation}
 %
-As $(s-\MM)$ is invertible for $\Re s>0$, because the real part of all eigenvalues of $\MM$ are nonpositive, we have
+As \((s-\MM)\) is invertible for \(\Re s>0\), because the real part of all eigenvalues of \(\MM\) are nonpositive, we have
 %
 \begin{equation}\label{eq:levolres}
   \mathbf{G}(s) = (s-\MM)\inv.
 \end{equation}
 %
-For $s=0$, we can avoid problems by replacing $\mathbf{G}(s) \to \fund(s)$.
+For \(s=0\), we can avoid problems by replacing \(\mathbf{G}(s) \to \fund(s)\).
 
 Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurveExact}
 %
@@ -606,8 +606,8 @@ Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurveExact}
 \end{aligned}
 \end{equation}
 %
-This expression is ill-behaved at $s=0$.
-Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s) \to \fund(s)$, as $\enc\onev=0$.
+This expression is ill-behaved at \(s=0\).
+Thanks to \eqref{eq:alfund}, we can solve this by the replacement \(\mathbf{G}(s) \to \fund(s)\), as \(\enc\onev=0\).
 %
 \begin{equation}\label{eq:larea}
 \begin{aligned}
@@ -617,7 +617,7 @@ Thanks to \eqref{eq:alfund}, we can solve this by the replacement $\mathbf{G}(s)
 \end{aligned}
 \end{equation}
 %
-Note that $A(0)=A$, the area, and $\lim_{s\to\infty} \brc{sA(s)} = \SNR(0)$, the initial SNR.
+Note that \(A(0)=A\), the area, and \(\lim_{s\to\infty} \brc{sA(s)} = \SNR(0)\), the initial SNR.
 
 We can also express this in terms of the shifted process in \cref{eq:larea}.
 We can choose how to distribute the shift across \(\MMd \pot\) and \(\MMd \dep\).
@@ -645,7 +645,7 @@ In other words, the laplace transform of the SNR is the area under the SNR for t
 Note that while \cref{eq:lshift} produces a valid continuous-time Markov process, \cref{eq:lshiftpd} does not always produce valid discrete-time Markov processes, as the diagonal elements can become negative.
 However, \(r (\shift{\MMd}^\nu - \I)\) is a valid continuous-time Markov process.
 
-In analogy with the case $s=0$, we define
+In analogy with the case \(s=0\), we define
 %
 \begin{equation}\label{eq:lareacoeffs}
   \begin{aligned}
@@ -673,11 +673,11 @@ Using the same approach as the area bound in \cite{Lahiri2013synapse} we find th
      +\prn{r {c}_m(s) + (-1)^\mu} \brk{\etwm_m(s) - \etwm_n(s)} }.
 \end{equation}
 %
-The term with $\Theta(s)$ comes from differentiating $\eq$, the term with $c(s)$ comes from differentiating $\etw(s)$ and the term with $\pm1$ comes from differentiating $\enc$ in \eqref{eq:larea}.
+The term with \(\thb(s)\) comes from differentiating \(\eq\), the term with \(c(s)\) comes from differentiating \(\etw(s)\) and the term with \((-1)^\mu\) comes from differentiating \(\enc\) in \eqref{eq:larea}.
 
 To write down the Hessian, we will first define some notation.
-We define the matrix $\mathbf{X}(s) = \fund(0) \enc \fund(s)$.
-Given a four-index array $H_{ijkl}$, we define $H\trans_{ijkl} = H_{klij}$.
+We define the matrix \(\mathbf{X}(s) = \fund(0) \enc \fund(s)\).
+Given a four-index array \(H_{ijkl}\), we define \(H\trans_{ijkl} = H_{klij}\).
 Then we denote
 %
 \begin{equation}\label{eq:hessparts}
@@ -713,7 +713,7 @@ This is useful in numerical maximisation.
 \section{Upper bounds}\label{sec:upperbnds}
 
 Now to study the SNR as a function of  time, it helps to consider some variables that are more directly related to the time dependance than the matrix elements. 
-So we introduce an eigenvector decomposition for $-\frg$:
+So we introduce an eigenvector decomposition for \(-\frg\):
 %
 \begin{equation}\label{eq:eigendecomp}
   \frg = - \sum_a q_a \evr^a \evl^a,
@@ -741,6 +741,10 @@ where
   \tau_a = \frac{1}{q_a}.
 \end{equation}
 %
+We have ignored thedenominator of \cref{eq:SNRcurveExact} for now.
+This will not have any effect on the results: it will not change the location of the maxima, which are at \( f\pot - f\dep = \eq \w = 0 \).
+We will confine such discussion to the footnotes.
+
 Now the question is what are the allowed values of \( (\CI_a, \tau_a) \)?
 We have to translate the constraints of \cref{eq:constri} into constraints on the eigenmode variables.
 Each constraint we find will be a necessary condition for the existence of a set of Markov processes \( \MMdm_{ij}^\nu \) that result in \( (\CI_a, \tau_a) \).
@@ -761,14 +765,90 @@ The initial SNR is:
       = \sqrt{N} \sum_a \CI_a.
 \end{equation}
 %
+We can write the initial SNR as
+%
+\begin{equation*}
+  \frac{\SNR(0)}{\sqrt{N}} = \CI = \eq \enc \w.
+\end{equation*}
+%
+First, we define two sets of states: \( + = \set{i}{\wm_i = 1} \) and \( - = \set{i}{\wm_i = - 1} \), and the fluxes \( \Fm^\nu_{\CA \CB} = r f^\nu \displaystyle\sum_{\mathclap{i \in \CA, j \in \CB}} \eqm_i \prn{\MMdm^\nu_{ij} - \delta_{ij}} \).
+Then we can write
+%
+\begin{equation*}
+\begin{aligned}
+  r\CI &= \Fm\pot_{++} + \Fm\pot_{-+} - \Fm\dep_{++} - \Fm\dep_{-+} - \Fm\pot_{+-} - \Fm\pot_{--} + \Fm\dep_{+-} + \Fm\dep_{--} \\
+      &= 2\prn{\Fm\pot_{-+} - \Fm\dep_{-+} - \Fm\pot_{+-} + \Fm\dep_{+-}} \\
+      &= 2\prn{\Fm_{-+} + \Fm_{+-}} - 4\prn{\Fm\pot_{+-} + \Fm\dep_{-+}} \\
+      &= 4\prn{\Fm_{-+} - \Fm\pot_{+-} - \Fm\dep_{-+}}, \\
+\end{aligned}
+\end{equation*}
+%
+where we used \( \Fm^\nu_{\CA+} + \Fm^\nu_{\CA-} = 0 \) to derive the second line, \( \Fm_{\CA\CB} = \Fm\pot_{\CA\CB} + \Fm\dep_{\CA\CB} \) to derive the third and additionally \( \Fm_{+\CA} + \Fm_{-\CA} = 0 \) to derive the fourth.
 
-As shown in \cite{Lahiri2013synapse}, this satisfies the inequality
+The last two terms are guaranteed to be negative, as the diagonal parts of \(\MMd \potdep - \I\) cannot contribute.
+Therefore
+%
+\begin{equation}\label{eq:initfluxineq}
+  \SNR(0) \leq \frac{4\sqrt{N}\Fm_{-+}}{r}.
+\end{equation}
+%
+This inequality is saturated if potentiation never takes it from a \(+\) state to a \(-\) state and depression never takes it from a \(-\) state to a \(+\) state.
+
+The flux will be maximised if potentiation is guaranteed to take it to a \(+\) state and depression is guaranteed to take it to a \(-\) state:
+%
+\begin{equation*}
+  \sum_{j \in +} \MMd \pot_{ij} = 1 \quad \forall\, i \in -,
+  \qquad
+  \sum_{j \in -} \MMd \dep_{ij} = 1 \quad \forall\, i \in +.
+\end{equation*}
+%
+This implies that the process is lumpable to a two state system (see \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}):
+%
+\begin{multline}\label{eq:binarylump}
+%\begin{aligned}
+  \MMd \pot = \begin{pmatrix}
+                0 & 1 \\
+                0 & 1 \\
+              \end{pmatrix}
+  ,\quad
+  \MMd \dep = \begin{pmatrix}
+                1 & 0 \\
+                1 & 0 \\
+              \end{pmatrix}
+  ,\quad
+  \w = \begin{pmatrix}
+           -1 \\
+           1 \\
+         \end{pmatrix}
+  ,\\ \implies\quad
+  \frg = \begin{pmatrix}
+           -f\pot & f\pot \\
+           f\dep & -f\dep \\
+         \end{pmatrix}
+  ,\quad
+  \eq = \begin{pmatrix}
+           f\dep & f\pot \\
+         \end{pmatrix}
+  ,
+\end{multline}s
+%
+which leads to the initial SNR
+\footnote{Note that including the dropped factors in \cref{eq:SNRcurveExact} would only change this to
+\(\SNR(0) \leq \frac{\sqrt{N} (4f^+f^-)}{\sqrt{1 - (f\pot - f\dep)^4}}\),
+which is also maximised at \(f\potdep = \frac{1}{2}\) and would therefore have no effect on what follows.}
+%
+\begin{equation}\label{eq:binarySNR}
+  \SNR(0) \leq \sqrt{N} (4 f\pot f\dep) .
+\end{equation}
+%
+This is maximised at \(f\pot = f\dep = \frac{1}{2}\),
+leading to the inequality firt shown in \cite{Lahiri2013synapse}:
 %
 \begin{equation}\label{eq:initbnd}
   \snr(0) \leq \sqrt{N},
 \end{equation}
 %
-The model that saturates this bound is (equivalent to) a two-state model with deterministic transitions and $f\potdep=\frac{1}{2}$.
+The model that saturates this bound is (equivalent to) a two-state model with deterministic transitions and \(f\potdep=\frac{1}{2}\).
 
 %--------------------------------------------------------------------------------
 
@@ -781,6 +861,60 @@ The area under the SNR curve is:
       = A(0) = \sqrt{N} \sum_a \CI_a \tau_a.
 \end{equation}
 %
+To maximise this quantity, consider the Lagrangian
+%
+\begin{equation}\label{eq:arealagrangian}
+\begin{aligned}
+  \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i(0) - \etwm_j(0))
+        +\sum_{\nu i j} \prn{ \mu^\nu_{ij} \MMdm^\nu_{ij} }
+        &+ \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
+\end{aligned}
+\end{equation}
+%
+where \(\Delta\pr\) is the constant value we are holding \(\eq\w\) at.
+The Karush-Kuhn-Tucker necessary conditions for a maximum are
+%
+\begin{equation}\label{eq:KTarea}
+  \pdiff{\CL}{\MMdm^\nu_{ij}} = 0, \quad
+  \mu^\nu_{ij} \geq 0, \quad
+  \pdiff{\CL}{\mu^\nu_{ij}} \geq 0, \quad
+  \mu^\nu_{ij}\pdiff{\CL}{\mu^\nu_{ij}} = 0, \quad
+  \pdiff{\CL}{\lambda} = 0.
+\end{equation}
+%
+From \cref{eq:lAdiff}, the derivatives for \(m \neq n\) are
+%
+\begin{equation}\label{eq:areaderivs}
+\begin{aligned}
+  \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
+    f^\nu \eqm_m \prn{ \brk{\thbm_m(0) - \thbm_n(0)}
+     + \prn{\mathbf{c}_m(0) + (-1)^\nu} \brk{\etwm_m(0) - \etwm_n(0)} } \\
+     &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
+     + \lambda f^\nu \eqm_m (\etwm_{m}(0)-\etwm_{n}(0)) 
+    = 0.
+\end{aligned}
+\end{equation}
+%
+See \cref{eq:lareacoeffs} for the definitions of these quantities.
+
+The area (and \(\Delta\pr\)) is invariant under the scale transformation
+%
+\begin{equation}\label{eq:scale}
+  \zeta * \MMd \equiv \zeta \MMd + (1-\zeta)\I .
+\end{equation}
+%
+It follows that
+%
+\begin{equation*}
+  \sum_{\nu, m \neq n} \MMdm^\nu_{mn} \pdiff{\CL}{\MMdm^\nu_{mn}} = - \sum_{\nu, m} \mu^\nu_{mm} = 0 .
+\end{equation*}
+%
+As the KKT multipliers are nonnegative, this implies that all the diagonal KKT multipliers vanish and we can ignore the diagonal constraints.
+
+Another way of seeing this is to note that all but the diagonal constraints in \cref{eq:constri} are invariant under \cref{eq:scale}.
+This means that if we have a set of parameters that satisfy the off-diagonal constraints, it can always be scaled so that it meets the diagonal constraints.
+Therefore, we can ignore the diagonal constraints whilst maximising the area and fix them afterwards by  scaling.
+
 
 As shown in \cite{Lahiri2013synapse}, this satisfies the inequality
 %
@@ -788,7 +922,7 @@ As shown in \cite{Lahiri2013synapse}, this satisfies the inequality
   A(0) \leq \frac{\sqrt{N}(M-1)}{r}.
 \end{equation}
 %
-The model that saturates this bound is one of serial topology with $\eq$ concentrated symmetrically at the two end states.
+The model that saturates this bound is one of serial topology with \(\eq\) concentrated symmetrically at the two end states.
 
 
 
@@ -885,7 +1019,7 @@ Then
   \begin{aligned}[t]
     \CA_\alpha &= \set{i}{u_i < \alpha} , 
     \\
-    \F^\nu_{\CA \CB} &= r f^\nu \sum_{\substack{i \in \CA \\ j \in \CB}} 
+    \Fm^\nu_{\CA \CB} &= r f^\nu \sum_{\substack{i \in \CA \\ j \in \CB}} 
                         \eqm_i \prn{\MMdm^\nu_{ij} - \delta_{ij}} .
   \end{aligned}
 \end{equation*}
@@ -999,7 +1133,7 @@ From \eqref{eq:areabnd} and \eqref{eq:initbnd}, we see that they are subject to 
   \sum_a \CI_a \leq 1.
 \end{equation}
 %
-No doubt there are many other constraints that these quantities must satisfy, but we can see what these ones imply for the $\snrb(\tau)$ by maximising it subject to these constraints.
+No doubt there are many other constraints that these quantities must satisfy, but we can see what these ones imply for the \(\snrb(\tau)\) by maximising it subject to these constraints.
 
 Consider the Lagrangian
 %
@@ -1088,7 +1222,7 @@ For \(M \leq 3\), \cref{eq:env} still applies.
   \caption[Proven envelope for the signal-to-noise ratio]
   {(\ref{fig:provengen}) The memory curve envelope that we can prove, \cref{eq:env}.
   (\ref{fig:provendetbal}) Conjectured memory curve envelope when we assume the optimal models satisfy detailed balance, \cref{eq:envDB}.
-  The number of synapses $N=1$ and the number of states $M=10$.
+  The number of synapses \(N=1\) and the number of states \(M=10\).
   The dashed lines indicate the initial SNR bound, \eqref{eq:initbnd}, and the area bound, \eqref{eq:areabnd}, from \cite{Lahiri2013synapse}.}\label{fig:envproven}
 \end{figure}
 
@@ -1135,9 +1269,9 @@ The range of \(\tau\) for the second row does not exist for \(M = 3\), in which 
 
 \section{Finite time}\label{sec:finite}
 
-Now we'll maximise $\snrb(\tau)$ for some fixed $\tau$, subject to the constraints \eqref{eq:constr}.
-First, we will maximise the numerator of \eqref{eq:lsnr} holding $\eq\w$ fixed.
-We can maximise the ration \wrt $\eq\w$ later.
+Now we'll maximise \(\snrb(\tau)\) for some fixed \(\tau\), subject to the constraints \eqref{eq:constr}.
+First, we will maximise the numerator of \eqref{eq:lsnr} holding \(\eq\w\) fixed.
+We can maximise the ration \wrt \(\eq\w\) later.
 From this point on, we work in units where \(r = 1\).
 
 Consider the Lagrangian
@@ -1150,7 +1284,7 @@ Consider the Lagrangian
 \end{aligned}
 \end{equation}
 %
-where $\Delta\pr$ is the constant value we are holding $\eq\w$ at.
+where \(\Delta\pr\) is the constant value we are holding \(\eq\w\) at.
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTfinite}
@@ -1163,7 +1297,7 @@ The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 We have scaled the KKT multipliers by \(f^\nu\) for later convenience.
 
-The derivatives, for $m \neq n$ are
+The derivatives, for \(m \neq n\) are
 %
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
@@ -1207,7 +1341,7 @@ Then, with some new vectors defined:
 \end{equation}
 %
 
-The expressions in \cref{eq:finitederivs} have the same form as for $s=0$, which allowed us to argue that the model with maximal area must have the serial topology, \cite{Lahiri2013synapse}.
+The expressions in \cref{eq:finitederivs} have the same form as for \(s=0\), which allowed us to argue that the model with maximal area must have the serial topology, \cite{Lahiri2013synapse}.
 The one missing ingredient is the scale invariance.
 
 However, we do have numerical evidence that the model that maximises the Laplace transform does have the serial topology.
@@ -1227,7 +1361,7 @@ In \cref{fig:envnum}, we can see that this envelope is close to tight, being off
   \includegraphics[width=0.8\linewidth]{LenvNum.pdf}\\
   \caption[Numerical envelope for the signal-to-noise ratio]
   {Numerical envelope for the signal-to-noise ratio, \eqref{eq:snrb}. 
-  \Cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} are solved numericallly with $f\potdep=\frac{1}{2}$, the number of synapses $N=1$ and the number of states $M=10$.
+  \Cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} are solved numericallly with \(f\potdep=\frac{1}{2}\), the number of synapses \(N=1\) and the number of states \(M=10\).
   The orange line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
   The green line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
   The dotted blue line indicates the proven envelope, \cref{eq:env} and the solid blue line is the conjectured envelope assuming detailed balance, see \cref{eq:envDB}.}\label{fig:envnum}
@@ -1238,22 +1372,16 @@ In \cref{fig:envnum}, we can see that this envelope is close to tight, being off
 
 \subsection{Scale invariance}\label{sec:scale}
 
-Define the scale transformation:
-%
-\begin{equation}\label{eq:scale}
-  \zeta * \MMd \equiv \zeta \MMd + (1-\zeta)\I .
-\end{equation}
-%
-The Laplace transform has the following scaling property
+Under the transformation from \cref{eq:scale}, the Laplace transform has the following scaling property
 %
 \begin{equation}\label{eq:laplacescale}
   \hat{A} \prn{\zeta s;\zeta * \MMd^\nu} = \hat{A} \prn{s; \MMd^\nu}.
 \end{equation}
 %
-At $s = 0$, it is scale invariant.
+At \(s = 0\), it is scale invariant.
 This means that we can take a pair of matrices that violates the ``diagonal'' constraints (second inequality of \eqref{eq:constri}) and use the scale transform \eqref{eq:scale} to construct a pair of matrices that satisfy the ``diagonal'' constraints and have the same area.
 This allowed us to ignore the diagonal constraints.
-We can't do that for $s > 0$.
+We can't do that for \(s > 0\).
 
 The corresponding symmetry here is scaling the shifted process from \cref{eq:lshiftpd}, which amounts to
 %
@@ -1343,7 +1471,7 @@ where all of the first-passage times are evaluated at \(s = 0\).
 In \cref{fig:shifted} we show the result of solving this problem with numerical optimisation.
 We see essentially the same results as the original problem, \cref{eq:finitelagrangian,fig:envnum}, as expected.
 
-The derivatives, for $m \neq n$ are
+The derivatives, for \(m \neq n\) are
 %
 \begin{equation}\label{eq:lshiftderivs}
 \begin{aligned}
@@ -1455,7 +1583,7 @@ We see that most of the large discrepancies occur where the problem is numerical
   \end{myenuma}
   \caption[Heuristic optimal models]{Heuristics for models that maximise memory curve.
   All unlabelled arrowshave transition probabilities equal to 1.
-  At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with $M$ states.
+  At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with \(M\) states.
   At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model.
   At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
   Once this reaches zero, we discard the old end state and work on the new end state.} \label{fig:heuristicmodels}
@@ -1464,15 +1592,15 @@ We see that most of the large discrepancies occur where the problem is numerical
 
 Looking at them models that were found by numerical maximisation in \autoref{fig:envvid} (see the video for the full set of models), suggests we look at the particular set of models, shown in \autoref{fig:heuristicmodels}.
 
-At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with $M$ states.
-At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as $\tau\to\infty$.
+At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with \(M\) states.
+At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as \(\tau \to \infty\).
 At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
 Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state (as one can see from \autoref{fig:envvid} and the video, this is not quite true, but it is close enough to true to get a reasonable approximation to the envelope).
-Once the length has been reduced to $M=2$, the model is not shortened any further and the two-state model with deterministic transitions maximises the memory curve for all earlier times.
+Once the length has been reduced to \(M=2\), the model is not shortened any further and the two-state model with deterministic transitions maximises the memory curve for all earlier times.
 
 These models' Laplace transforms can be computed analytically, as we will see below, leading to a heuristic envelope.
-All of these calculations will be performed at $f\potdep=\frac{1}{2}$, so the denominator will play no role.
-We will work in units such that $r=1$ temporarily, only restoring $r$ at the end.
+All of these calculations will be performed at \(f\potdep=\frac{1}{2}\), so the denominator will play no role.
+We will work in units such that \(r=1\) temporarily, only restoring \(r\) at the end.
 We study models with \(m\) strong and \(m\) weak states for a total of  \(M = 2 m\).
 
 %--------------------------------------------------------------------------------
@@ -1481,8 +1609,8 @@ We study models with \(m\) strong and \(m\) weak states for a total of  \(M = 2 
 
 
 Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_uniform}.
-Looking at \eqref{eq:larea}, the only thing we need is differences in $\etwm_i(s)$.
-In fact, given that the only nonzero elements of $\enc$ are
+Looking at \eqref{eq:larea}, the only thing we need is differences in \(\etwm_i(s)\).
+In fact, given that the only nonzero elements of \(\enc\) are
 %
 \begin{equation}\label{eq:unienc}
   \encm_{ii+1}=\frac{1}{2} \quad\text{for}\quad i<2m,
@@ -1490,7 +1618,7 @@ In fact, given that the only nonzero elements of $\enc$ are
   \encm_{ii-1}=-\frac{1}{2} \quad\text{for}\quad i>1,
 \end{equation}
 %
-and $\eqm_i = \frac{1}{2m}$, we have
+and \(\eqm_i = \frac{1}{2m}\), we have
 %
 \begin{equation}\label{eq:uniareaeta}
   \hat{A}(s) = \frac{\etwm_1(s) - \etwm_{2m}(s)}{2m}.
@@ -1503,7 +1631,7 @@ Note that
   \etw(s) = \text{const.} - \fund(s)\w.
 \end{equation}
 %
-As we are only interested in differences of the $\etwm_i(s)$, we can drop the constant.
+As we are only interested in differences of the \(\etwm_i(s)\), we can drop the constant.
 Then
 %
 \begin{equation}\label{eq:etarecur}
@@ -1518,9 +1646,9 @@ We can then write
   (\frg-s\I)\delta \boldsymbol{\eta}(s) = \frac{\frg\w}{s}.
 \end{equation}
 %
-As we are only interested in differences, we can drop any terms proportional to $\onev$ in $\etw(s)$.
+As we are only interested in differences, we can drop any terms proportional to \(\onev\) in \(\etw(s)\).
 
-The $i$'th row of this equation reads
+The \(i\)'th row of this equation reads
 %
 \begin{equation}\label{eq:detarow}
   \frac{\delta\eta_{i+1}+\delta\eta_{i-1}}{2} - (s+1)\delta\eta_i = 0,
@@ -1537,7 +1665,7 @@ with the following exceptions
 \end{aligned}
 \end{equation}
 %
-These equations are invariant under $\delta\eta_{2m+1-i} \to -\delta\eta_i$, so these two must be equal.
+These equations are invariant under \(\delta\eta_{2m+1-i} \to -\delta\eta_i\), so these two must be equal.
 Then we have
 %
 \begin{equation}\label{eq:detahalf}
@@ -1559,7 +1687,7 @@ The first of these equations is solved by
     = \cosh (\beta) - 1,
 \end{equation}
 %
-with $B$ and $C$ determined by the boundary conditions provided by the last two equations of \eqref{eq:detahalf}:
+with \(B\) and \(C\) determined by the boundary conditions provided by the last two equations of \eqref{eq:detahalf}:
 %
 \begin{equation}\label{eq:unicoeffs}
   B = -\frac{1}{s(1 + \e^{-\beta}) \cosh \prn{m \beta}},
@@ -1577,8 +1705,8 @@ This can be used to compute the Laplace transform
 \end{equation}
 %
 
-In reality, $M$ can only take even integer values.
-However, one can find a heuristic approximation to the envelope by maximising \wrt $M$.
+In reality, \(M\) can only take even integer values.
+However, one can find a heuristic approximation to the envelope by maximising \wrt \(M\).
 We find that
 %
 \begin{multline}\label{eq:unienv}
@@ -1600,13 +1728,13 @@ This is only valid for
   2\sinh^2 \frac{y_*}{M} \leq s \leq 2\sinh^2 \frac{y_*}{2}.
 \end{equation}
 %
-When $M \gg 2$, the validity region is approximately
+When \(M \gg 2\), the validity region is approximately
 %
 \begin{equation}\label{eq:univalidapprox}
   \frac{4.53327}{M^2} \lesssim s \lesssim 1.36423.
 \end{equation}
 %
-When $s \sim \CO(M^{-2}) \ll 1$, we have \(\beta \approx \pm \sqrt{2s}\) and the heuristic envelope is approximately
+When \(s \sim \CO(M^{-2}) \ll 1\), we have \(\beta \approx \pm \sqrt{2s}\) and the heuristic envelope is approximately
 %
 \begin{equation}\label{eq:unienvapprox}
   \hat{A}_*(s) \approx \frac{ 0.54203 }{ \sqrt{s} }.
@@ -1614,7 +1742,7 @@ When $s \sim \CO(M^{-2}) \ll 1$, we have \(\beta \approx \pm \sqrt{2s}\) and the
 %
 We will lok at a more accurate interpolation between different \(M\) in the \hyperref[sec:serial_shorten]{next section}.
 
-For $s\gtrsim 1.36423$, we set $M=2$ to find
+For \(s\gtrsim 1.36423\), we set \(M=2\) to find
 %
 \begin{equation}\label{eq:binaryenv}
   \hat{A}(s) = \frac{1}{1+s}.
@@ -1631,7 +1759,7 @@ However, it does match up with the full formula, \eqref{eq:unienv} at the bounda
 Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_shorten}.
 We proceed in the same manner as in \autoref{sec:serial_uniform}, with the following differences.
 
-The following elements of $\enc$ and $\eq$ differ from \eqref{eq:unienc}:
+The following elements of \(\enc\) and \(\eq\) differ from \eqref{eq:unienc}:
 %
 \begin{equation}\label{eq:shortenenc}
   \begin{aligned}
@@ -1655,7 +1783,7 @@ This means that the Laplace transform is given by
 \end{equation}
 %
 
-The $\etwm_i(s)$ take the same general form \eqref{eq:detagensol} except for $i=1$, and with different coefficients due to the different boundary conditions
+The \(\etwm_i(s)\) take the same general form \eqref{eq:detagensol} except for \(i=1\), and with different coefficients due to the different boundary conditions
 %
 \begin{equation}\label{eq:detabndshorten}
 \begin{aligned}
@@ -1689,7 +1817,7 @@ Which gives the following Laplace transform
             [(1-\varepsilon)[S(m\beta) + 1] + \varepsilon(2s+1)[S((m-1)\beta) + 1]] }.
 \end{equation}
 %
-This interpolates between \eqref{eq:unilaplace} at $\varepsilon=0$ and the same expression for $m-1$ at $\varepsilon=1$.
+This interpolates between \eqref{eq:unilaplace} at \(\varepsilon=0\) and the same expression for \(m-1\) at \(\varepsilon=1\).
 
 This expression breaks down for \(M = 2\), as there are no \( 2 \leq i \leq m \) when \(m = 1\).
 In that case, 
@@ -1738,7 +1866,7 @@ Noting the scale of the y-axis, we see that \cref{eq:unienv,eq:unienvapprox} do 
 \end{center}
 \end{figure}
 
-We can maximise this \wrt $\varepsilon$, which yields
+We can maximise this \wrt \(\varepsilon\), which yields
 %
 \begin{equation}\label{eq:shortopt}
   (\varepsilon - f_m)^2 = (m - f_m)(g_m - f_m),
@@ -1747,7 +1875,7 @@ We can maximise this \wrt $\varepsilon$, which yields
       {s \Delta g_{m} \brk{\sqrt{\abs{m - f_m}} - \sqrt{\abs{g_m - f_m}}}^2}.
 \end{equation}
 %
-We can find the boundary of the region of applicability by asking at what value of $s$ is the optimal value of $\varepsilon=0$ or $1$?
+We can find the boundary of the region of applicability by asking at what value of \(s\) is the optimal value of \(\varepsilon=0\) or \(1\)?
 %
 \begin{equation}\label{eq:shortenvalid}
 \begin{aligned}
@@ -1763,7 +1891,7 @@ We can find the boundary of the region of applicability by asking at what value 
 \end{aligned}
 \end{equation}
 %
-with the $\varepsilon=0$ case providing the lower boundary and $\varepsilon=1$ providing the upper boundary.
+with the \(\varepsilon=0\) case providing the lower boundary and \(\varepsilon=1\) providing the upper boundary.
 For lower \(s\), \(\varepsilon = 0\) is the optimum. 
 For higher \(s\), \(\varepsilon = 1\) is the optimum, which is eqivalent to \(\varepsilon = 0\) with \(M-2\) states.
 This is depicted by the dotted lines in \cref{fig:shorten}\ref{fig:short_ratio}.
@@ -1777,7 +1905,7 @@ This is depicted by the dotted lines in \cref{fig:shorten}\ref{fig:short_ratio}.
 %
 so \(\varepsilon=0\) is always the maximum.
 
-If these were really the models that maximised $A(s)$, the region of validity for $M$ would not overlap with that for $M-2$.
+If these were really the models that maximised \(A(s)\), the region of validity for \(M\) would not overlap with that for \(M-2\).
 In fact there are overlaps, as seen in \cref{fig:shorten}\ref{fig:short_ratio} for \(M=6\) and higher.
 This is related to the fact that \autoref{fig:envvid} and the video shows that the optimal models do not shorten by one state at a time, but several outgoing transition probabilities are reduced at once.
 
@@ -1788,7 +1916,7 @@ This is related to the fact that \autoref{fig:envvid} and the video shows that t
 Here we will look at the model in \autoref{fig:heuristicmodels}\ref{fig:serial_sticky}.
 We proceed in the same manner as in \autoref{sec:serial_uniform}, with the following differences.
 
-The following elements of $\enc$ and $\eq$ are differ from \eqref{eq:unienc}:
+The following elements of \(\enc\) and \(\eq\) are differ from \eqref{eq:unienc}:
 %
 \begin{equation}\label{eq:stickyenc}
   \begin{aligned}
@@ -1810,7 +1938,7 @@ This means that the Laplace transform is given by
 \end{equation}
 %
 
-The $\etwm_i(s)$ take the same general form \eqref{eq:detagensol}, but with different coefficients due to the different boundary conditions
+The \(\etwm_i(s)\) take the same general form \eqref{eq:detagensol}, but with different coefficients due to the different boundary conditions
 %
 \begin{equation}\label{eq:detabndsticky}
 \begin{aligned}
@@ -1850,7 +1978,7 @@ which leads to the Laplace transform
 \end{center}
 \end{figure}
 
-We can maximise this \wrt $\varepsilon$.
+We can maximise this \wrt \(\varepsilon\).
 We define
 %
 \begin{equation*}
@@ -1882,7 +2010,7 @@ The maximum is at the solution of
 %
 The result is plotted in \cref{fig:sticky}.
 
-We can find the boundary of the region of applicability by asking: at what value of $s$ is the optimal value of $\varepsilon=0$?
+We can find the boundary of the region of applicability by asking: at what value of \(s\) is the optimal value of \(\varepsilon=0\)?
 %
 \begin{equation}\label{eq:stickyvalid}
 \begin{aligned}
@@ -1892,11 +2020,11 @@ We can find the boundary of the region of applicability by asking: at what value
 \end{aligned}
 \end{equation}
 %
-The ``sticky'' models are optimal at values of $s$ smaller than this.
-This is not quite the same as the lower boundary of the region \cref{eq:shortenvalid}, or its approximate version \cref{eq:univalid}, so there is a gap between them where the uniform model with $M$ states is optimal.
-The width of this gap is insignificant for larger $M$, as seen in \cref{fig:sticky}.
+The ``sticky'' models are optimal at values of \(s\) smaller than this.
+This is not quite the same as the lower boundary of the region \cref{eq:shortenvalid}, or its approximate version \cref{eq:univalid}, so there is a gap between them where the uniform model with \(M\) states is optimal.
+The width of this gap is insignificant for larger \(M\), as seen in \cref{fig:sticky}.
 
-For small $s \ll M^{-2}$, it is given by
+For small \(s \ll M^{-2}\), it is given by
 %
 \begin{equation}\label{eq:stickyeps}
   \varepsilon = 1 - \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},
@@ -1917,7 +2045,7 @@ and the Laplace transform is
 We can obtain a good approximation to the envelope by combining the results \autoref{sec:serial_uniform} and \autoref{sec:serial_sticky}, ignoring the complications of \autoref{sec:serial_shorten}.
 We will also ignore the small gap between the regions of validity, \eqref{eq:univalid} and \eqref{eq:stickyvalid}.
 
-We will phrase it in terms of $\snrb(\tau)$, reintroducing $r$:
+We will phrase it in terms of \(\snrb(\tau)\), reintroducing \(r\):
 %
 \begin{equation}\label{eq:envunits}
   \snrb(\tau) = \frac{ \sqrt{N} \hat{A}\prn{\frac{1}{r\tau}} }{ r\tau },
@@ -1942,7 +2070,7 @@ Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylapl
 \right.
 \end{equation}
 %
-For $M \gg 1$, and $r\tau$ much greater than the lower bound of each region, we can approximate this as
+For \(M \gg 1\), and \(r\tau\) much greater than the lower bound of each region, we can approximate this as
 %
 \begin{equation}\label{eq:henvapprox}
   \snrb(\tau) \approx \left\{
@@ -1982,19 +2110,19 @@ Second, the set of priorities faced by evolution would have been longer than jus
 Nevertheless, the qualitative message of our findings should be more robust to reality:
 %
 \begin{itemize}
-  \item \emph{Short} timescale $\to$ \emph{intermediate} timescales: transition topology goes from \\ short and wide $\to$ long and thin.
-  \item \emph{Intermediate} timescale $\to$ \emph{long} timescales: transition probabilities go from \\ strong and deterministic $\to$ weak and stochastic.
+  \item \emph{Short} timescale \(\to\) \emph{intermediate} timescales: transition topology goes from \\ short and wide \(\to\) long and thin.
+  \item \emph{Intermediate} timescale \(\to\) \emph{long} timescales: transition probabilities go from \\ strong and deterministic \(\to\) weak and stochastic.
 \end{itemize}
 %
 This is what we expect to find in the different brain regions that store memories for different timescales.
 
-The transition between the two regimes is set by the maximum number of states, $M$ (we can't set the number of states to be exactly $M$, as bigger models can always mimic smaller models).
+The transition between the two regimes is set by the maximum number of states, \(M\) (we can't set the number of states to be exactly \(M\), as bigger models can always mimic smaller models).
 So, if we want to lengthen the timescale at which a synapse is optimal, we start by adding extra states, using the topology mechanism.
 When we run out of states, we switch to the stochasticity mechanism and make the end states sticky.
 The stochasticity mechanism is only used when we no longer have the option of using the topology mechanism.
 It is always better to add more states, if allowed, than to make transitions stochastic.
 
-We can get some insight into why this is by considering a serial model with $M$ states and all transition topologies equal to $q$.
+We can get some insight into why this is by considering a serial model with \(M\) states and all transition topologies equal to \(q\).
 %
 \begin{equation*}
 \begin{aligned}
@@ -2007,11 +2135,11 @@ We can get some insight into why this is by considering a serial model with $M$ 
 \end{aligned}
 \end{equation*}
 %
-The initial SNR scales as described because it is related to the equilibrium probability flux between the weak and strong states, and the equilibrium distribution is uniform over $M$ states.
-The lifetime scales as described because $rq$ sets the timescale for transitions, and for diffusion distance ($M$) scales as the square root of time.
+The initial SNR scales as described because it is related to the equilibrium probability flux between the weak and strong states, and the equilibrium distribution is uniform over \(M\) states.
+The lifetime scales as described because \(rq\) sets the timescale for transitions, and for diffusion distance (\(M\)) scales as the square root of time.
 
-If we want to lengthen the lifetime with a fixed hit on initial SNR, we get a larger increase by increasing $M$ than by decreasing $q$.
-If we want to lengthen the lifetime by a fixed amount, we take a smaller hit on initial SNR by increasing $M$ than by decreasing $q$.
+If we want to lengthen the lifetime with a fixed hit on initial SNR, we get a larger increase by increasing \(M\) than by decreasing \(q\).
+If we want to lengthen the lifetime by a fixed amount, we take a smaller hit on initial SNR by increasing \(M\) than by decreasing \(q\).
 Thus, we always get more bang for our buck using the topology mechanism than the stochasticity mechanism.
 
 
