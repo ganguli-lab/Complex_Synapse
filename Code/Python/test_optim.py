@@ -29,10 +29,11 @@ with time_with():
         maker=cso.normal_problem, method='SLSQP')
 # %%
 nst, sss, opts, envs, mods = csp.load_data()
+nsyn = 1e4
 # %%
-fig = csp.heuristic_plot(nst, sss, envs[0], mods[1])
+fig = csp.heuristic_plot(nst, sss, envs[1], mods[1], nsyn)
 # %%
-obj = cso.video.EnvelopeFig(sss, envs[1], mods[1])
+obj = cso.video.EnvelopeFig(sss, envs[1], mods[1], nsyn)
 obj.update(40)
 # %%
 serial = cs.optimise.SynapseOptModel.rand(

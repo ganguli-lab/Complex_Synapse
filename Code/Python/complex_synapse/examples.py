@@ -17,7 +17,7 @@ np.set_printoptions(precision=3, suppress=False, linewidth=90)
 mplt.rc_fonts()
 mplt.rc_colours()
 
-def ser_casc_data(nst: int, jmp: float, time: la.lnarray
+def ser_casc_data(nst: int, jmp: float, time: la.lnarray, nsyn: float = 1
                   ) -> ty.Tuple[la.lnarray, la.lnarray, la.lnarray]:
     """Data for example plot
 
@@ -29,6 +29,8 @@ def ser_casc_data(nst: int, jmp: float, time: la.lnarray
         Model parameter
     time : la.lnarray
         Vector of times to evaluate SNR
+    nsyn : float, optional
+        Number of synapses, by default 1.
 
     Returns
     -------
@@ -42,17 +44,17 @@ def ser_casc_data(nst: int, jmp: float, time: la.lnarray
     nst = ag.default(nst, 10)
     time = ag.default(time, 1 / la.geomspace(1e-4, 10, 50))
     jmp = ag.default(jmp, 0.7)
+    prefactor = np.sqrt(nsyn)
 
     serial = cs.SynapseMemoryModel.build(cs.builders.build_serial,
                                          nst, jmp=jmp)
     cascade = cs.SynapseMemoryModel.build(cs.builders.build_cascade,
                                           nst, jmp=jmp)
 
-
     serial_snr = serial.snr_exp_ave(time)
     cascade_snr = cascade.snr_exp_ave(time)
 
-    return time, serial_snr, cascade_snr
+    return time, prefactor * serial_snr, prefactor * cascade_snr
 
 
 def ser_casc_plot(time: la.lnarray, serial_snr: la.lnarray,
@@ -80,7 +82,7 @@ def ser_casc_plot(time: la.lnarray, serial_snr: la.lnarray,
 
 
 if __name__ == "__main__":
-    j, n, t = 0.7, 10, 1 / la.geomspace(1e-4, 10, 50)
-    t, snr_serial, snr_cascade = ser_casc_data(n, j, t)
-    fig_sc = ser_casc_plot(t, snr_serial, snr_cascade)
+    jump, nstate, num, times = 0.7, 10, 1e4, 1 / la.geomspace(1e-4, 10, 50)
+    times, snr_serial, snr_cascade = ser_casc_data(nstate, jump, times, num)
+    fig_sc = ser_casc_plot(times, snr_serial, snr_cascade)
     fig_sc.savefig("../../Notes/Figures/serial_vs_cascade.pdf")

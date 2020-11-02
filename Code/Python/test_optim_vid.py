@@ -14,7 +14,7 @@ mpt.rc_fonts('sans-serif')
 fmt = 'pdf'
 # -----------------------------------------------------------------------------
 nst, sss, opts, envs, mods = cso.plot.load_data()
-vid = cso.video.EnvelopeFig(sss, envs[1], mods[1], vmax=0.5)
+vid = cso.video.EnvelopeFig(sss, envs[1], mods[1], nsyn=1e4, vmax=0.5)
 ani = cso.video.animate(vid)
 disp = dt.FormattedTempDisplay("frame: {:2d}/{:2d}")
 folder = Path('~/Documents/videos/envelope').expanduser()

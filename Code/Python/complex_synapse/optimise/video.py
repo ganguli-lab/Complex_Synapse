@@ -384,6 +384,8 @@ class ModelPlots:
         Bar charts of transition rates under [potentiation, depression].
     graph : GraphPlots
         Plot of graph describing the model.
+    nsyn : float, optional
+        Number of synapses, by default 1.
     """
     lnh: mpl.lines.Line2D
     vln: mpl.lines.Line2D
@@ -392,23 +394,13 @@ class ModelPlots:
     brp: mpl.container.BarContainer
     brd: mpl.container.BarContainer
     graph: GraphPlots
+    _pref: float
 
     def __init__(self, lns: Sequence[mpl.lines.Line2D],
                  imh: mpl.image.AxesImage,
-                 brs: List[mpl.container.BarContainer],
-                 graph: GraphPlots) -> None:
+                 brs: Sequence[mpl.container.BarContainer],
+                 graph: GraphPlots, **kwds) -> None:
         """The plots associated with a model.
-
-        Parameters
-        ----------
-        lns : Sequence[mpl.lines.Line2D]
-            The plots for [model's memory curve, time at which it's optimal].
-        imh : mpl.image.AxesImage
-            Heatmap of equilibrium distribution.
-        brs : List[mpl.container.BarContainer]
-            Bar charts of transition rates under [potentiation, depression].
-        graph : GraphPlots
-            Plot of graph describing the model.
         """
         self.lnh = lns[0]
         self.vln = lns[1]
@@ -416,6 +408,7 @@ class ModelPlots:
         self.brp = brs[0]
         self.brd = brs[1]
         self.graph = graph
+        self._pref = np.sqrt(kwds.get('nsyn', 1))
 
     def update_snr(self, snr: la.lnarray, tau: float):
         """Update model's SNR plot.
@@ -427,7 +420,7 @@ class ModelPlots:
         tau : float
             Time at which this model is optimal.
         """
-        self.lnh.set_ydata(snr)
+        self.lnh.set_ydata(self._pref * snr)
         self.vln.set_xdata([tau, tau])
 
     def update_eqp(self, eqp: la.lnarray):
@@ -506,10 +499,11 @@ class ModelPlots:
         obj : ModelPlots
             Object holding the plot objects associated with `model`.
         """
+        kwds.setdefault('nsyn', 1)
         opt: VideoOptions = kwds.pop('opt', VideoOptions())
         opt.pop_my_args(kwds)
 
-        snr = serial_snr(model, time)
+        snr = np.sqrt(kwds['nsyn']) * serial_snr(model, time)
         eqp = serial_eqp(model)
         pot_dep = trim_params(model)
         bnds = np.arange(-0.5, len(pot_dep[0])+1)
@@ -543,6 +537,8 @@ class EnvelopeFig:
         Parameters of serial models that form envelope, in the order
         mat_01, mat_12, ..., mat_n-2,n-1,
         mat_10, mat_21, ..., mat_n-1,n-2.
+    nsyn : float, optional
+        Number of synapses, by default 1.
     Other keywords passed to `VideoOptions`.
     """
     time: la.lnarray
@@ -554,27 +550,16 @@ class EnvelopeFig:
     opt: VideoOptions
 
     def __init__(self, rate: la.lnarray, env_num: la.lnarray,
-                 models: la.lnarray, **kwds) -> None:
+                 models: la.lnarray, nsyn: float = 1, **kwds) -> None:
         """Data and figure objects for an envelope plot.
-
-        Parameters
-        ----------
-        rate : la.lnarray (T,)
-            Rate parameter of Laplace transform (stored as `time = 1/rate`)
-        env_num : la.lnarray (T,)
-            Numerical Laplacian envelope (stored as exponential running
-            average, `env_num -> env_num * rate`)
-        models : la.lnarray (T,2M-2)
-            Parameters of serial models that form envelope, in the order
-            mat_01, mat_12, ..., mat_n-2,n-1,
-            mat_10, mat_21, ..., mat_n-1,n-2.
         """
         self.opt = kwds.pop('opt', VideoOptions())
         self.opt.pop_my_args(kwds)
+        pref = np.sqrt(nsyn)
         self.models = models
         self.time = 1 / rate
-        self.env_num = env_num * rate
-        self.env_th = proven_envelope_laplace(rate, self.nstate) * rate
+        self.env_num = env_num * rate * pref
+        self.env_th = proven_envelope_laplace(rate, self.nstate) * rate * pref
         if self.time[0] > self.time[-1]:
             self.flip()
 
@@ -584,7 +569,8 @@ class EnvelopeFig:
         axs[0].loglog(self.time, self.env_num, label=self.opt.txt.env[1])
 
         self.model_plots = ModelPlots.from_data(axs, self.time, self.models[0],
-                                                self.time[0], opt=self.opt)
+                                                self.time[0], nsyn=nsyn,
+                                                opt=self.opt)
 
         _format_axes_snr(axs[0], self.opt)
         _format_axes_eqp(axs[1:3], self.model_plots.imh, self.nstate, self.opt)

@@ -19,6 +19,7 @@ import sl_py_tools.graph_tricks as gt
 import complex_synapse.builders as bld
 import complex_synapse.optimise.optimise as cso
 import complex_synapse.optimise.shorten as sh
+import complex_synapse.synapse_mem as sm
 
 np.set_printoptions(precision=3, suppress=False, linewidth=90)
 mplt.rc_fonts()
@@ -158,13 +159,16 @@ def all_data(nst: int, sss: Array, **opts) -> ty.Tuple[Arrays, Arrays]:
 # =============================================================================
 
 
-def mem_plot(sss: Array, **mem: ty.Dict[str, Array]) -> ty.Tuple[Figure, Axes, Line]:
+def mem_plot(sss: Array, nsyn: float = 1, **mem: Array
+             ) -> ty.Tuple[Figure, Axes, Line]:
     """Plot memory curves
 
     Parameters
     ----------
     sss : Array
         1/time
+    nsyn : float, optional
+        Number of synapses, by default 1.
     mem : Dict[str, Array]
         Laplace transforms of memory curves to plot, keyed by plot label
 
@@ -175,14 +179,56 @@ def mem_plot(sss: Array, **mem: ty.Dict[str, Array]) -> ty.Tuple[Figure, Axes, L
     axs : mpl.axes.Axes
         Axes containing plots.
     """
+    pref = np.sqrt(nsyn)
     fig, axs = plt.subplots()
     lns = []
     for label, mem in mem.items():
-        lns.extend(axs.loglog(1/sss, mem * sss, label=label))
+        lns.extend(axs.loglog(1/sss, mem * sss * pref, label=label))
     axs.set_xlabel(r"Time, $r\tau$")
     axs.set_ylabel("SNR")
     return fig, axs, lns
 
+
+# =============================================================================
+# Examples
+# =============================================================================
+
+
+def ser_casc_plot(nst: int, jmp: float, sss: la.lnarray, nsyn: float = 1
+                  ) -> mpl.figure.Figure:
+    """Example plot
+
+    Parameters
+    ----------
+    nst : int
+        Number of states
+    jmp : float
+        Model parameter
+    time : la.lnarray
+        Vector of times to evaluate SNR
+    nsyn : float, optional
+        Number of synapses, by default 1.
+
+    Returns
+    -------
+    fig : Figure
+        The figure object containing the plot.
+    """
+    nst = ag.default(nst, 10)
+    sss = ag.default(sss, la.geomspace(1e-4, 10, 50))
+    jmp = ag.default(jmp, 0.7)
+
+    serial = sm.SynapseMemoryModel.build(bld.build_serial, nst, jmp=jmp)
+    cascade = sm.SynapseMemoryModel.build(bld.build_cascade, nst, jmp=jmp)
+
+    serial_snr = serial.snr_laplace(sss)
+    cascade_snr = cascade.snr_laplace(sss)
+
+    fig, axs, _ = mem_plot(sss, nsyn, serial=serial_snr, cascade=cascade_snr)
+    axs.set_xlim(1e-1, 1e4)
+    axs.legend(loc="lower left")
+    mplt.clean_axes(axs)
+    return fig
 
 
 # =============================================================================
@@ -190,7 +236,7 @@ def mem_plot(sss: Array, **mem: ty.Dict[str, Array]) -> ty.Tuple[Figure, Axes, L
 # =============================================================================
 
 
-def theory_plot(nst: int, sss: Array) -> Figure:
+def theory_plot(nst: int, sss: Array, nsyn: float = 1) -> Figure:
     """Theoretical envelope plot
 
     Parameters
@@ -206,7 +252,7 @@ def theory_plot(nst: int, sss: Array) -> Figure:
         The figure object containing the plot.
     """
     env_th = cso.proven_envelope_laplace(sss, nst)
-    fig, axs, _ = mem_plot(sss, theory=env_th)
+    fig, axs, _ = mem_plot(sss, nsyn, theory=env_th)
     t_pts = np.array([1e-1, 0.9e1, 1.1e1, 1e4])
     axs.loglog(t_pts[:2], np.ones(2), 'k:')
     axs.loglog(t_pts[-2:], (nst-1) / t_pts[-2:], 'k:')
@@ -225,7 +271,7 @@ def theory_plot(nst: int, sss: Array) -> Figure:
     return fig
 
 
-def equilibrium_plot(nst: int, sss: Array) -> Figure:
+def equilibrium_plot(nst: int, sss: Array, nsyn: float = 1) -> Figure:
     """Theoretical envelope plot
 
     Parameters
@@ -234,6 +280,8 @@ def equilibrium_plot(nst: int, sss: Array) -> Figure:
         Number of states
     sss : Array (T,)
         Rate parameter of Laplace transform of SNR curve
+    nsyn : float, optional
+        Number of synapses, by default 1.
 
     Returns
     -------
@@ -242,7 +290,8 @@ def equilibrium_plot(nst: int, sss: Array) -> Figure:
     """
     env_th = cso.proven_envelope_laplace(sss, nst)
     env_eq = cso.equlibrium_envelope_laplace(sss, nst)
-    fig, axs, lns = mem_plot(sss, **{"general": env_th, "det. bal.": env_eq})
+    fig, axs, lns = mem_plot(sss, nsyn, **{"general": env_th,
+                                           "det. bal.": env_eq})
     lns[0].set_ls(":")
     lns[1].set_c(lns[0].get_c())
     # t_pts = np.array([1e-1, 0.9e1, 1.1e1, 1e4])
@@ -276,7 +325,8 @@ def equilibrium_plot(nst: int, sss: Array) -> Figure:
 # =============================================================================
 
 
-def optim_plot(nst: int, sss: Array, env_gen: Array, env_srl: Array) -> Figure:
+def optim_plot(nst: int, sss: Array, env_gen: Array, env_srl: Array,
+               nsyn: float = 1) -> Figure:
     """Optimisation plot.
 
     Comparison of theoretical envelope and numerical optimisation over models
@@ -292,6 +342,8 @@ def optim_plot(nst: int, sss: Array, env_gen: Array, env_srl: Array) -> Figure:
         Envelope for arbitrary topologies.
     env_srl : Array (T,)
         Envelope for serial topologies only.
+    nsyn : float, optional
+        Number of synapses, by default 1.
 
     Returns
     -------
@@ -300,10 +352,10 @@ def optim_plot(nst: int, sss: Array, env_gen: Array, env_srl: Array) -> Figure:
     """
     env_th = cso.proven_envelope_laplace(sss, nst)
     env_eq = cso.equlibrium_envelope_laplace(sss, nst)
-    fig, axs, lns = mem_plot(sss, **{"theory: general": env_th,
-                                     "conjecture: det. bal.": env_eq,
-                                     'numeric: general': env_gen,
-                                     'numeric: serial': env_srl})
+    fig, axs, lns = mem_plot(sss, nsyn, **{"theory: general": env_th,
+                                           "conjecture: det. bal.": env_eq,
+                                           'numeric: general': env_gen,
+                                           'numeric: serial': env_srl})
     lns[0].set_ls(":")
     lns[2].set_c(lns[1].get_c())
     lns[1].set_c(lns[0].get_c())
@@ -318,7 +370,8 @@ def optim_plot(nst: int, sss: Array, env_gen: Array, env_srl: Array) -> Figure:
 # =============================================================================
 
 
-def shift_plot(sss: Array, env_gen: Array, env_shf: Array) -> Figure:
+def shift_plot(sss: Array, env_gen: Array, env_shf: Array, nsyn: float = 1
+               ) -> Figure:
     """Shifted optimisation plot.
 
     Comparison of numerical optimisation of the normal and shifted problems.
@@ -331,13 +384,15 @@ def shift_plot(sss: Array, env_gen: Array, env_shf: Array) -> Figure:
         Envelope from normal problem.
     env_shf : Array (T,)
         Envelope from shifted problem.
+    nsyn : float, optional
+        Number of synapses, by default 1.
 
     Returns
     -------
     fig : Figure
         The figure object containing the plot.
     """
-    fig, axs, _ = mem_plot(sss, normal=env_gen, shifted=env_shf)
+    fig, axs, _ = mem_plot(sss, nsyn, normal=env_gen, shifted=env_shf)
     axs.set_xlim(1/sss[-1], 1/sss[0])
     axs.legend(loc="lower left")
     mplt.clean_axes(axs)
@@ -349,8 +404,8 @@ def shift_plot(sss: Array, env_gen: Array, env_shf: Array) -> Figure:
 # =============================================================================
 
 
-def heuristic_plot(nst: int, sss: Array, env_gen: Array, models_srl: Array,
-                   **kwds) -> Figure:
+def heuristic_plot(nst: int, sss: Array, env_srl: Array, models_srl: Array,
+                   nsyn: float = 1, **kwds) -> Figure:
     """Heuristic envelope plot
 
     Parameters
@@ -359,10 +414,12 @@ def heuristic_plot(nst: int, sss: Array, env_gen: Array, models_srl: Array,
         Number of states
     sss : Array (T,)
         Rate parameter of Laplace transform of SNR curve
-    env_gen : Array (T,)
+    env_srl : Array (T,)
         Numeric envelope.
     models_srl : Arrays (3,)(T,2(M-1))
         Parameters of the serial models that achieve the envelope.
+    nsyn : float, optional
+        Number of synapses, by default 1.
 
     Returns
     -------
@@ -384,7 +441,8 @@ def heuristic_plot(nst: int, sss: Array, env_gen: Array, models_srl: Array,
     env_heu = cso.heuristic_envelope_laplace(sss, nst)
     envs = {"theory": env_th, "det. bal.": env_eq}
 
-    fig, axs, lns = mem_plot(sss, **envs, numeric=env_gen, heuristic=env_heu)
+    fig, axs, lns = mem_plot(sss, nsyn, **envs, numeric=env_srl,
+                             heuristic=env_heu)
     lns[0].set_ls(":")
     lns[2].set_c(lns[1].get_c())
     lns[1].set_c(lns[0].get_c())
@@ -656,7 +714,7 @@ def cond_plot(sss: Array, models_shf: Array, env_shf: Array, env_gen: Array
 
 
 def save_data(fname: str, sss: Array, options: OptDict,
-              envs: Arrays, models: Arrays):
+              envs: Arrays, models: Arrays) -> None:
     """Save generated data
 
     Parameters
@@ -713,7 +771,7 @@ def load_data(fname: str = 'optim') -> ty.Tuple[int, Array, OptDict,
 
 
 # =============================================================================
-def main(save_npz: bool, save_pdf: bool):
+def main(save_npz: bool, save_pdf: bool, nsyn: float = 1):
     """Execute plot creation & saving
     """
     if save_npz:
@@ -725,15 +783,18 @@ def main(save_npz: bool, save_pdf: bool):
         save_data('optim', sss, opts, envs, mods)
     else:
         nst, sss, opts, envs, mods = load_data('optim')
+    jmp = 0.7
 
-    fig_th = theory_plot(nst, sss)
-    fig_eq = equilibrium_plot(nst, sss)
-    fig_num = optim_plot(nst, sss, envs[0], envs[1])
-    fig_shift = shift_plot(sss, envs[0], envs[2])
-    fig_cond = cond_plot(sss, mods[2], envs[2], envs[0])
-    fig_heuristic = heuristic_plot(nst, sss, envs[0], mods[1])
+    fig_sc = ser_casc_plot(nst, jmp, sss, nsyn)
+    fig_th = theory_plot(nst, sss, nsyn)
+    fig_eq = equilibrium_plot(nst, sss, nsyn)
+    fig_num = optim_plot(nst, sss, envs[0], envs[1], nsyn)
+    fig_shift = shift_plot(sss, envs[0], envs[2], nsyn)
+    fig_cond = cond_plot(sss, mods[2], envs[2], envs[0], nsyn)
+    fig_heuristic = heuristic_plot(nst, sss, envs[1], mods[1], nsyn)
 
     if save_pdf:
+        fig_sc.savefig("../../Notes/Figures/serial_vs_cascade.pdf")
         fig_th.savefig("../../Notes/Figures/LenvProven.pdf")
         fig_eq.savefig("../../Notes/Figures/LenvConj.pdf")
         fig_num.savefig("../../Notes/Figures/LenvNum.pdf")
@@ -758,4 +819,4 @@ Figure, Axes, Line = mpl.figure.Figure, mpl.axes.Axes, mpl.lines.Line2D
 
 # =============================================================================
 if __name__ == "__main__":
-    main(False, False)
+    main(False, False, 1e4)
