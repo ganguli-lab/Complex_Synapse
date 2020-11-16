@@ -660,6 +660,7 @@ In analogy with the case \(s=0\), we define
       = \eq \mathbf{a}(s).
 \end{equation}
 %
+If we regard the \(\wm_k\) as optimisable parameters (limited to the range \( [-1,1] \) \wlg),s the optimal choice is clearly \( \wm_k = \sgn(c_k) \).
 
 %--------------------------------------------------------------------------------
 
@@ -830,7 +831,7 @@ This implies that the process is lumpable to a two state system (see \cite{kemen
            f\dep & f\pot \\
          \end{pmatrix}
   ,
-\end{multline}s
+\end{multline}
 %
 which leads to the initial SNR%
 \footnote{Note that including the dropped factors in \cref{eq:SNRcurveExact} would only change this to
@@ -858,7 +859,7 @@ The area under the SNR curve is:
 %
 \begin{equation}\label{eq:areadef}
   \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) 
-      = A(0) = \sqrt{N} \sum_a \CI_a \tau_a.
+      = A(0) = \sqrt{N} \CA = \sqrt{N} \sum_a \CI_a \tau_a.
 \end{equation}
 %
 To maximise this quantity, consider the Lagrangian
@@ -916,7 +917,262 @@ This means that if we have a set of parameters that satisfy the off-diagonal con
 Therefore, we can ignore the diagonal constraints whilst maximising the area and fix them afterwards by  scaling.
 
 
-As shown in \cite{Lahiri2013synapse}, this satisfies the inequality
+\subsubsection{Perturbations}\label{sec:areapert}
+
+\paragraph{Triangularity:}\label{sec:triangular}
+
+Consider
+%
+\begin{equation}\label{eq:shiftqderiv}
+  \pdiff{\CL}{\enc_{mn}} =
+  \frac{1}{2f\pot} \pdiff{\CL}{\MMdm\pot_{mn}} - \frac{1}{2f\pot} \pdiff{\CL}{\MMdm\dep_{mn}}
+   = \frac{1}{2}(\mu\pot_{mn} - \mu\dep_{mn}) + \eqm_m (\etwm_m - \etwm_n)
+   = 0.
+\end{equation}
+%
+This corresponds to the shift
+%
+\begin{equation}\label{eq:shiftq}
+  \MMdm\pot_{ij} \to \MMdm\pot_{ij} + \frac{\epsilon_{ij}}{2f\pot},
+  \qquad
+  \MMdm\dep_{ij} \to \MMdm\dep_{ij} - \frac{\epsilon_{ij}}{2f\dep},
+  \qquad
+  \sum_j \epsilon_{ij} = 0,
+\end{equation}
+%
+which leaves $\frg$ unchanged, and therefore $\eq$, $\fptb$ and $\etw$ as well.
+
+Assume $\etwm_m > \etwm_n$. Then
+%
+\begin{equation}\label{eq:lowertriangular}
+ \mu\pot_{mn} - \mu\dep_{mn} < 0
+ \qquad\implies\qquad
+ \mu\dep_{mn} > 0
+ \qquad\implies\qquad
+ \MMdm\dep_{mn} = 0.
+\end{equation}
+%
+Similarly, if $\etwm_m < \etwm_n$, then
+%
+\begin{equation}\label{eq:uppertriangular}
+ \mu\pot_{mn} - \mu\dep_{mn} > 0
+ \qquad\implies\qquad
+ \mu\pot_{mn} >0
+ \qquad\implies\qquad
+ \MMdm\pot_{mn}=0.
+\end{equation}
+%
+Thus, if we arrange the states in order of decreasing $\etw$, $\MMd\pot$ is upper-triangular and $\MMd\dep$ is lower triangular.
+
+We have ignored the possibility that $\eqm_m = 0$, as this would imply that $\fptbm_{im} = \infty$, which would in turn imply that the Markov process is not ergodic.
+
+
+\paragraph{Increasing \texorpdfstring{$c_k$}{c(k)}:}\label{sec:areacoeffincr}
+
+Consider the following combinations of derivatives:
+%
+\begin{equation}\label{eq:areacoeffincrderiv}
+    \Delta^\nu_{mn} \equiv
+      \frac{1}{\eqm_m} \pdiff{}{\MMdm^\nu_{mn}}
+      + \frac{1}{\eqm_n} \pdiff{}{\MMdm^\nu_{nm}}, 
+\end{equation}
+%
+Note that they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \cref{sec:triangular} about this being satisfied for ergodic chains).
+
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+%
+\begin{equation}\label{eq:sareacoeffincrprob}
+  \Delta^\nu_{mn} \eqm_i = 0,
+\end{equation}
+%
+which makes it possible to integrate the perturbation:
+%
+\begin{equation}\label{eq:areacoeffincrfinite}
+  \MMd^\nu \to \MMd^\nu + \Eq\inv \boldsymbol{\epsilon},
+  \qquad
+  \begin{aligned}
+  \boldsymbol{\epsilon} &= \boldsymbol{\epsilon}\trans,
+  \\
+  \boldsymbol{\epsilon} \onev &= 0.
+  \end{aligned}
+\end{equation}
+%
+But more interestingly:
+%
+\begin{equation}\label{eq:areacoeffincr}
+    \Delta^\nu_{mn}\CL =
+      \frac{\mu^\nu_{mn}}{\eqm_m} + \frac{\mu^\nu_{nm}}{\eqm_n}
+      + r \prn{c_m - c_n}\prn{\etwm_m - \etwm_n} = 0,
+\end{equation}
+%
+where $c_k$ were defined in \cref{eq:lareacoeffs}, with \(s = 0\).
+
+Using the non-negativity of the Kuhn-Tucker multipliers, $\mu^\nu_{ij}$, \cref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\etwm_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\etwm_k$ are degenerate, we can choose their order to ensure this).
+
+Note that, according to \cref{sec:triangular}, either $\MMdm\pot_{mn}$ or $\MMdm\dep_{mn}$ will be zero at the maximum, therefore we can expect one of the $\mu^\nu_{mn}$ to be non-zero.
+This would rule out degeneracy of the $c_k$ or $\etwm_k$.
+Looking at \cref{eq:shiftqderiv} closely, the only way both $\mu^\nu_{mn}$ could be zero is if $\etwm_m = \etwm_n$ or $\eqm_m = \eqm_n = 0$.
+
+
+\paragraph{Shortcuts:}\label{sec:shortcuts}
+
+Now consider the following combinations of derivatives for $(n - m)(-1)^\nu > 1$:
+%
+\begin{equation}\label{eq:shortcutderiv}
+  \widetilde{\Delta}^\nu_{mn} \equiv
+    \brk{ \sum_{k=m}^{n \mp 1} \frac{1}{\eqm_{k}} \pdiff{}{\MMdm^\nu_{k,k \pm 1}} }
+    - \frac{1}{\eq_m} \pdiff{}{\MMdm^\nu_{mn}},
+  \qquad \pm = (-1)^\nu.
+\end{equation}
+%
+Once again, they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \cref{sec:triangular} about this being satisfied for ergodic chains).
+
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+%
+\begin{equation}\label{eq:shortcutprob}
+  \widetilde{\Delta}^\nu_{g,m} \eqm_i = 0,
+\end{equation}
+%
+which makes it possible to integrate the perturbation:
+%
+\begin{equation}\label{eq:shortcutfinite}
+  \MMd^\nu \to \MMd^\nu + \Eq\inv \boldsymbol{\epsilon}^{\nu mn},
+  \qquad
+  \begin{alignedat}[t]{3}
+    &\prn{{\epsilon}^{\nu mn}}_{mn}
+      &&= -\epsilon,\\
+    &\prn{{\epsilon}^{\nu mn}}_{k,k\pm1}
+      &&= \epsilon
+      &\;&\forall\, k \in [m,n),\\
+    &\prn{{\epsilon}^{\nu mn)}}_{kk}
+      &&= -\epsilon
+      &&\forall\, k \in (m,n).
+  \end{alignedat}
+\end{equation}
+%
+But more interestingly for our purposes:
+%
+\begin{equation}\label{eq:shortcutarea}
+    \widetilde{\Delta}^\nu_{mn}\CL =
+      \brk{ \sum_{k=m}^{n\mp1} \frac{\mu^\nu_{k,k\pm1}}{\eqm_k}
+      - \frac{\mu^\nu_{m,n}}{\eq_m}}
+      + rf^\nu \sum_{k=m}^{n\mp1} \prn{\etwm_{k} - \etwm_{k\pm1}} \prn{c_k - c_m},
+\end{equation}
+%
+
+If we put the states in order of decreasing $\etwm_k$, the results of the \cref{sec:areacoeffincr} tell us that the $c_k$ are non-decreasing.
+This implies that the last term of the final expression in \eqref{eq:shortcutarea} is non-negative.
+If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu^\nu_{mn} > 0$, which in turn implies that $\MMdm^\nu_{mn}=0$.
+This would tell us that the process with the maximal area has to have a serial topology.
+
+
+\paragraph{Summary:}\label{sec:pertsummary}
+
+Using the Kuhn-Tucker formalism, we have shown that,
+with the states arranged in order of non-increasing $\etwm_i$:
+%
+\begin{itemize}
+  \item There can be no ergodic maximum for which $\MMd\pot$ contains backwards transitions or $\MMd\dep$ contains forwards transitions.
+  \item There can be no ergodic maximum with the $c_k$ decreasing.
+  \item The $c_k$ may only be degenerate at an ergodic maximum if the corresponding $\etwm_k$ are also degenerate.
+  \item If the $c_k$ increase and the $\etwm_i$ decrease, there can be no ergodic maximum with shortcuts.
+\end{itemize}
+%
+These were shown by finding allowed perturbations that increase the area.
+
+This leaves two possibilities for the maximum area Markov chain.
+Either there is no degeneracy and no shortcuts, which implies the serial topology that we'll discuss in \cref{sec:serialarea}, or there is some degeneracy, which would allow shortcuts provided that they do not bypass an entire degenerate set (see \cref{eq:shortcutarea}).
+
+Degeneracy tends to be very delicate. 
+It is usually hard to arrange without some symmetry relating degenerate states. 
+Such a symmetry would imply lumpability (see \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}). 
+The lumped chain would not have any shortcuts, as an entire degenerate set cannot be bypassed. 
+As this lumped chain has the same area (see \cite{Lahiri2013synapse}), we would need only consider the serial topology.
+
+\subsubsection{Serial topology}\label{sec:serialarea}
+
+The serial topology is defined by (see \cite{Leibold2008serial,Ben-DayanRubin2007sparse}):
+%
+\begin{equation}\label{eq:serialdef}
+  \MMdm\pot_{ij} = q\pot_i \delta_{i+1,j},
+  \qquad
+  \MMdm\dep_{ij} = q\dep_j \delta_{i,j+1},
+  \qquad \text{for}\quad i \neq j
+\end{equation}
+%
+It saturates various inequalities:
+%
+\begin{equation}\label{eq:serialineq}
+  \begin{aligned}
+    \fptbm_{ik} - \fptbm_{jk} &=
+      \begin{cases}
+        \fptbm_{ij},  &\text{if}\quad i \leq j \leq k \quad\text{or}\quad i \geq j \geq k,\\
+        -\fptbm_{ji}, &\text{if}\quad j \leq i \leq k \quad\text{or}\quad j \geq i \geq k,\\
+      \end{cases} \\
+    r\eqm_i \frgm_{ij} \prn{\fptbm_{ij}+\fptbm_{ji}} &= 1 \quad\text{if}\quad i=j\pm1,
+  \end{aligned}
+\end{equation}
+%
+and it satisfies detailed balance (a.k.a.\ reversibility):
+%
+\begin{equation}\label{eq:multistateprob}
+  f\pot q\pot_i \eqm_i = f\dep q\dep_i \eqm_{i+1},
+\end{equation}
+%
+which means we can always choose the transition rates, $q^\nu_i$, to give any desired equilibrium probabilities, $\eqm_i$.
+
+This allows us to calculate the $c_k$'s:
+%
+\begin{equation}\label{eq:serialareacoeff}
+\begin{aligned}
+  c_k &= \sum_{i<k} \fptbm_{i,i+1} \prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i}
+    %\\&
+    - \sum_{i\geq k} \fptbm_{i+1,i} \prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i}
+  ,\\
+  c_{k+1} - c_k &= \prn{\fptbm_{k,k+1} + \fptbm_{k+1,k}} \prn{\eqm_{k} \frgm_{k,k+1} + \eqm_{k+1} \frgm_{k+1,k}}
+    =%\\=&\,
+    \frac{2}{r},\\
+  \sum_k c_k \eqm_k &= \sum_{ij} \eqm_i \encm_{ij} (\eta-\eta) = 0,\\
+%  \implies c_k =&\, \frac{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j}{f^+f^-},
+  \implies c_k &= \frac{2}{r} \prn{k - \sum_j j\eqm_j},
+\end{aligned}
+\end{equation}
+%
+where we used \cref{eq:serialineq} to derive the first two equations respectively and \cref{eq:lkemeny} to derive the third. 
+This allows us to write the area as
+%
+\begin{equation}\label{eq:serialarea}
+ % A = 2\sqrt{N} \sum_k \brk{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j} \eq_k \w_k.
+  \CA = \frac{2}{r} \sum_k \brk{k - \sum_j j\eq_j} \eqm_k \wm_k
+    = \frac{2}{r} \sum_k \abs{k - \sum_j j\eq_j} \eqm_k ,
+\end{equation}
+%
+where we used $\wm_k=\sgn(c_k)$, as discussed after \cref{eq:lareacoeffs}.
+
+First let us maximise \cref{eq:serialarea} at fixed $\eqm_\pm = \sum_k \eqm_k \prn{\frac{1\pm\wm_k}{2}}$.
+Clearly this will happen when we put all of the probability at the ends: $\eqm_1=\eqm_-$ and $\eqm_n=\eqm_+$ are the only non-zero $\eqm_k$.
+This gives an area of
+\footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eq_+\eq_-)/r\sqrt{1 - (f\pot-f\dep)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
+%
+\begin{equation}\label{eq:serialextarea}
+  \CA \leq \frac{(M-1)}{r}\prn{4\eqm_+\eqm_-}.
+\end{equation}
+%
+This is maximised at \(\eqm_+=\eqm_-= \frac{1}{2}\):
+%
+\begin{equation}\label{eq:maxarea}
+  \CA \leq \frac{(M-1)}{r}.
+\end{equation}
+%
+Note that the markov process that achieves this is not ergodic, the two states at each end are absorbing. 
+This is similar to the results found numerically in \cite{Barrett2008discrete} in a slightly different situation.
+
+
+
+
+
+
+This leaves us with the result, first shown in \cite{Lahiri2013synapse}, that
 %
 \begin{equation}\label{eq:areabnd}
   A(0) \leq \frac{\sqrt{N}(M-1)}{r}.
@@ -1073,7 +1329,7 @@ Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvecto
 %
 Numerical maximisation of the quantity above produces the same result as in \cref{sec:initial}:
 the two-state model with deterministic transitions.
-This model has \(\CI_1 = \tau_1 = 1\), suggesting that there's a factor of 2 looseness in this bound.
+This model has \(\CI_1 = \tau_1 = 1\), suggesting that there's a factor of \(\sqrt{2}\) looseness in this bound.
 
 We can look at the various inequalities used in this derivation to see which models could saturate them:
 %
@@ -1562,7 +1818,9 @@ We see that most of the large discrepancies occur where the problem is numerical
   % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv51.eps}}
   \end{myenuma}
   \caption[Optimal models]{The models that constitute the numeric envelope in \autoref{fig:envnum}.
-  The plot to the left of each frame indicates the memory curve of the model shown to the right in blue, with the numeric envelope for models with the serial topology in red and the proven envelope, \eqref{eq:env}, in green.
+  The plot to the left of each frame indicates the memory curve of the model shown to the right in green, with the numeric envelope for models with the serial topology in orange and the proven envelope, \eqref{eq:env}, in blue.
+  Above the left plot we have a graphical display of the model, described with more detail to the right.
+  The area of each node is proportional to the steady state probability in that state and the thickness of the red and blue edges are proportional to the transition probabilities under potentiation and depression.
   The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
   The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
   The heat map in the centre right of each frame indicates the equilibrium probability distribution for each state.
