@@ -100,8 +100,14 @@ class ModelOptions(_opt.Options):
         if None in {self.nst, self.npar}:
             raise TypeError("Must specify one of [nst, npar]")
 
+    @property
+    def frac(self) -> la.lnarray:
+        """Probability of each plasticity type.
+        """
+        return self._frac
 
-    def set_frac(self, value: Optional[_sb.ArrayLike]) -> None:
+    @frac.setter
+    def frac(self, value: Optional[_sb.ArrayLike]) -> None:
         """Set the probability of each plasticity type.
 
         Does nothing if `value` is `None`. Adds an element to the end if
@@ -112,7 +118,14 @@ class ModelOptions(_opt.Options):
         self._frac = _sb.append_frac(value, self.topology.npl)
         self._frac = _sb.trim_frac(self._frac, self.topology.npl)
 
-    def set_npl(self, value: Optional[int]) -> None:
+    @property
+    def npl(self) -> int:
+        """Number of plasticity types
+        """
+        return self._frac.shape[-1]
+
+    @npl.setter
+    def npl(self, value: Optional[int]) -> None:
         """Set the number of plasticity types.
 
         Does nothing if `value` is `None`. Removes end elements of `frac`
@@ -120,14 +133,21 @@ class ModelOptions(_opt.Options):
         """
         if value is None:
             return
-        self.topology.set_npl(value)
+        self.topology.npl = value
         if value <= self.npl:
             self._frac = _sb.trim_frac(self._frac, value)
             return
         extra = la.zeros(self._frac.shape[:-1] + (value - self.npl,))
         self._frac = np.concatenate((self._frac, extra), axis=-1)
 
-    def set_nst(self, value: Optional[int]) -> None:
+    @property
+    def nst(self) -> int:
+        """Number of states
+        """
+        return self._nst
+
+    @nst.setter
+    def nst(self, value: Optional[int]) -> None:
         """Set the number of states.
 
         Does nothing if `value` is `None`.
@@ -137,7 +157,14 @@ class ModelOptions(_opt.Options):
         self._nst = value
         self._npar = self.npl * _mp.num_param(value, **self.topology)
 
-    def set_npar(self, value: Optional[int]) -> None:
+    @property
+    def npar(self) -> int:
+        """Number of parameters
+        """
+        return self._npar
+
+    @npar.setter
+    def npar(self, value: Optional[int]) -> None:
         """Set the number of states.
 
         Does nothing if `value` is `None`.
@@ -146,30 +173,6 @@ class ModelOptions(_opt.Options):
             return
         self._npar = value
         self._nst = _mp.num_state(value // self.npl, **self.topology)
-
-    @property
-    def frac(self) -> la.lnarray:
-        """Probability of each plasticity type.
-        """
-        return self._frac
-
-    @property
-    def npl(self) -> int:
-        """Number of plasticity types
-        """
-        return self._frac.shape[-1]
-
-    @property
-    def nst(self) -> int:
-        """Number of states
-        """
-        return self._nst
-
-    @property
-    def npar(self) -> int:
-        """Number of parameters
-        """
-        return self._npar
 
 # =============================================================================
 # Class for specifying optimiser options
@@ -244,7 +247,14 @@ class ProblemOptions(_opt.Options):
         # could add _diff_rel_step=None, finite_diff_jac_sparsity=None
         return {'keep_feasible': self.keep_feasible}
 
-    def set_hess(self, value: Optional[bool]) -> None:
+    @property
+    def hess(self) -> bool:
+        """Do we use the hessian?
+        """
+        return self._hess
+
+    @hess.setter
+    def hess(self, value: Optional[bool]) -> None:
         """Choose whether to use the hessian.
 
         Does nothing if `value` is `None`.
@@ -255,7 +265,14 @@ class ProblemOptions(_opt.Options):
         if value:
             self.inv = True
 
-    def set_cond_lim(self, value: Optional[bool]) -> None:
+    @property
+    def cond_lim(self) -> bool:
+        """Do we use a condition number constraint?
+        """
+        return self._cond_lim
+
+    @cond_lim.setter
+    def cond_lim(self, value: Optional[bool]) -> None:
         """Choose whether to use a condition number constraint.
 
         Does nothing if `value` is `None`.
@@ -264,18 +281,6 @@ class ProblemOptions(_opt.Options):
             return
         self._cond_lim = value
         self.cond = not value
-
-    @property
-    def hess(self) -> bool:
-        """Do we use the hessian?
-        """
-        return self._hess
-
-    @property
-    def cond_lim(self) -> bool:
-        """Do we use a condition number constraint?
-        """
-        return self._cond_lim
 
 
 class OptimOptions(_opt.MasterOptions, fallback='extra'):
@@ -351,7 +356,25 @@ class OptimOptions(_opt.MasterOptions, fallback='extra'):
         """
         return self._maker(model, rate, self.problem_opts)
 
-    def set_method(self, value: Optional[str]) -> None:
+    def set_maker(self, value: Optional[Maker]) -> None:
+        """Choose the function that creates the problem.
+
+        Does nothing if `value` is `None`.
+        """
+        if value is None:
+            return
+        self._maker = value
+        if value is shifted_problem:
+            self.problem_opts.hess = False
+
+    @property
+    def method(self) -> str:
+        """Method to use in `scipy.optimize.minimize`.
+        """
+        return self._method
+
+    @method.setter
+    def method(self, value: Optional[str]) -> None:
         """Choose method to use in `scipy.optimize.minimize`.
 
         Does nothing if `value` is `None`.
@@ -363,23 +386,6 @@ class OptimOptions(_opt.MasterOptions, fallback='extra'):
         self._method = value
         if value == 'SLSQP':
             self.problem_opts.inv = True
-
-    def set_maker(self, value: Optional[Maker]) -> None:
-        """Choose the function that creates the problem.
-
-        Does nothing if `value` is `None`.
-        """
-        if value is None:
-            return
-        self._maker = value
-        if value is shifted_problem:
-            self.problem_opts.set_hess(False)
-
-    @property
-    def method(self) -> str:
-        """Method to use in `scipy.optimize.minimize`.
-        """
-        return self._method
 
 
 # =============================================================================

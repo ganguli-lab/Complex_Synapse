@@ -91,32 +91,33 @@ class VideoLabels(op.Options):
         """Labels for a model's heatmaps."""
         return cn.listify(self.model[ind]) + self.plast[0], self.plast[1]
 
-    def set_transpose(self, transpose: Optional[bool]) -> None:
+    @property
+    def transpose(self) -> bool:
+        """Do we swap rows and columns?"""
+        return bool(self.plast_type[1])
+
+    @transpose.setter
+    def transpose(self, value: Optional[bool]) -> None:
         """Put the time-axis label on the lowest/leftmost of the data axes.
 
         Also adds/removes linebreaks from axes titles.
         Does nothing if `transpose` is `None`.
 
-        It is usually better to use `VideoOptions.set_transpose` in the parent
-        object instead of calling this function directly.
+        It is better to set `VideoOptions.transpose` in the parent
+        object instead of setting this property directly.
         """
-        if transpose is None or transpose == self.transpose:
+        if value is None or value == self.transpose:
             return
         # label = self.plast_type[1] + self.readout[1] + self.state[1]
         # labels = (label, "", "") if transpose else ("", "", label)
         # self.plast_type[1], self.readout[1], self.state[1] = labels
-        label = self.state[1] if transpose else ""
+        label = self.state[1] if value else ""
         self.plast_type[1], self.readout[1] = label, label
 
-        swap = (" ", "\n") if transpose else ("\n", " ")
+        swap = (" ", "\n") if value else ("\n", " ")
         self.plast_type[0] = self.plast_type[0].replace(*swap)
         self.readout[0] = self.readout[0].replace(*swap)
         self.state[0] = self.state[0].replace(*swap)
-
-    @property
-    def transpose(self) -> bool:
-        """Do we swap rows and columns?"""
-        return bool(self.plast_type[1])
 
 
 # pylint: disable=too-many-ancestors
@@ -235,19 +236,42 @@ class VideoLayout(op.Options):
         gsiz, kwargs = tuple(map(len, ratios)), dict(zip(keys, ratios))
         return fsiz, gsiz, kwargs
 
-    def set_transpose(self, transpose: Optional[bool]) -> None:
+    def set_fitter(self, fitter: Optional[fs.SynapseFitter]) -> None:
+        """Set `npl`, `ground` and `verbose` from a `SynapseFitter`.
+
+        Does nothing if `fitter` is `None`.
+        """
+        if fitter is None:
+            return
+        self.npl = fitter.est.nplast
+        self.ground = isinstance(fitter, fs.GroundedFitter)
+        self.verbosity = fitter.opt.disp_each
+
+    @property
+    def transpose(self) -> bool:
+        """Do we swap rows and columns?"""
+        return self._transpose
+
+    @transpose.setter
+    def transpose(self, transpose: Optional[bool]) -> None:
         """Choose whether to swap rows and columns.
 
         Does nothing if `transpose` is `None`.
 
-        It is better to use `VideoOptions.set_transpose` in the parent
-        object instead of calling this function directly.
+        It is better to set `VideoOptions.transpose` in the parent
+        object instead of setting this property directly.
         """
         if transpose is None:
             return
         self._transpose = transpose
 
-    def set_ground(self, ground: Optional[bool]) -> None:
+    @property
+    def ground(self) -> bool:
+        """Do we have axes for a ground truth model?"""
+        return bool(self.drows[0])
+
+    @ground.setter
+    def ground(self, ground: Optional[bool]) -> None:
         """Include axes for ground truth model?
 
         Does nothing if `ground` is `None`.
@@ -258,7 +282,13 @@ class VideoLayout(op.Options):
         if change:
             self.drows = tuple(x + change for x in self.drows)
 
-    def set_npl(self, npl: Optional[int]) -> None:
+    @property
+    def npl(self) -> int:
+        """How many plasticity types are there?"""
+        return len(self.mcols) - 3
+
+    @npl.setter
+    def npl(self, npl: Optional[int]) -> None:
         """Set the number of plasticity types.
 
         Does nothing if `npl` is `None`.
@@ -268,7 +298,14 @@ class VideoLayout(op.Options):
         if len(self.mcols) - 3 != npl:
             self.mcols = self.mcols[:3] + tuple(self.mcols[3] + np.arange(npl))
 
-    def set_verbosity(self, verbose: Optional[int]) -> None:
+    @property
+    def verbosity(self) -> int:
+        """Do we display verbose information?
+        """
+        return self._verbosity
+
+    @verbosity.setter
+    def verbosity(self, verbose: Optional[int]) -> None:
         """Choose whether to display verbose information.
 
         Does nothing if `verbose` is `None`.
@@ -276,38 +313,6 @@ class VideoLayout(op.Options):
         if verbose is None:
             return
         self._verbosity = verbose
-
-    def set_fitter(self, fitter: Optional[fs.SynapseFitter]) -> None:
-        """Set `npl`, `ground` and `verbose` from a `SynapseFitter`.
-
-        Does nothing if `fitter` is `None`.
-        """
-        if fitter is None:
-            return
-        self.set_npl(fitter.est.nplast)
-        self.set_ground(isinstance(fitter, fs.GroundedFitter))
-        self.set_verbosity(fitter.opt.disp_each)
-
-    @property
-    def transpose(self) -> bool:
-        """Do we swap rows and columns?"""
-        return self._transpose
-
-    @property
-    def ground(self) -> bool:
-        """Do we have axes for a ground truth model?"""
-        return bool(self.drows[0])
-
-    @property
-    def npl(self) -> int:
-        """How many plasticity types are there?"""
-        return len(self.mcols) - 3
-
-    @property
-    def verbosity(self) -> int:
-        """Do we display verbose information?
-        """
-        return self._verbosity
 
 
 # pylint: disable=too-many-ancestors
@@ -385,20 +390,6 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
 
         super().__init__(*args, **kwds)
 
-    def set_transpose(self, transpose: Optional[bool]) -> None:
-        """Choose whether to swap rows and columns.
-
-        Does nothing if `transpose` is `None`.
-        """
-        if transpose is None:
-            return
-        # self.ax_opt['trn'] = transpose
-        self.image['trn'] = transpose
-        self.txt.set_transpose(transpose)
-        self.layout.set_transpose(transpose)
-        sep = (1.0, 0.0) if transpose else (0.0, 1.0)
-        self.graph.set_layout(gp.linear_layout, sep=sep)
-
     @property
     def transpose(self) -> bool:
         """Transpose the layout of the video?"""
@@ -407,7 +398,14 @@ class VideoOptions(op.MasterOptions, fallback='im_opt'):
     @transpose.setter
     def transpose(self, value: bool) -> None:
         """Transpose the layout of the video?"""
-        self.set_transpose(value)
+        if value is None:
+            return
+        # self.ax_opt['trn'] = transpose
+        self.image['trn'] = value
+        self.txt.transpose = value
+        self.layout.transpose = value
+        sep = (1.0, 0.0) if value else (0.0, 1.0)
+        self.graph.set_layout(gp.linear_layout, sep=sep)
 # pylint: enable=too-many-ancestors
 
 

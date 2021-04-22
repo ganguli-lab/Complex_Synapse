@@ -1121,19 +1121,18 @@ and it satisfies detailed balance (a.k.a.\ reversibility):
 %
 which means we can always choose the transition rates, $q^\nu_i$, to give any desired equilibrium probabilities, $\eqm_i$.
 
-This allows us to calculate the $c_k$'s:
+This allows us to calculate the $c_k$'s from \cref{eq:lareacoeffs}:
 %
 \begin{equation}\label{eq:serialareacoeff}
 \begin{aligned}
-  c_k &= \sum_{i<k} \fptbm_{i,i+1} \prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i}
+  c_k &= \sum_{i<k} \prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i,i+1}
     %\\&
-    - \sum_{i\geq k} \fptbm_{i+1,i} \prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i}
+    - \sum_{i\geq k} \prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i+1,i}
   ,\\
-  c_{k+1} - c_k &= \prn{\fptbm_{k,k+1} + \fptbm_{k+1,k}} \prn{\eqm_{k} \frgm_{k,k+1} + \eqm_{k+1} \frgm_{k+1,k}}
-    =%\\=&\,
-    \frac{2}{r},\\
+  c_{k+1} - c_k &= \prn{\eqm_{k} \frgm_{k,k+1} + \eqm_{k+1} \frgm_{k+1,k}}
+                    \prn{\fptbm_{k,k+1} + \fptbm_{k+1,k}}
+    = \frac{2}{r},\\
   \sum_k c_k \eqm_k &= \sum_{ij} \eqm_i \encm_{ij} (\eta-\eta) = 0,\\
-%  \implies c_k =&\, \frac{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j}{f^+f^-},
   \implies c_k &= \frac{2}{r} \prn{k - \sum_j j\eqm_j},
 \end{aligned}
 \end{equation}
@@ -1810,12 +1809,6 @@ We see that most of the large discrepancies occur where the problem is numerical
   \item\aligntop{\includegraphics[width=0.45\linewidth,page=27]{envelope.pdf}}
   \item\aligntop{\includegraphics[width=0.45\linewidth,page=36]{envelope.pdf}}
   \item\aligntop{\includegraphics[width=0.45\linewidth,page=50]{envelope.pdf}}
-  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv07.eps}}
-  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv13.eps}}
-  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv21.eps}}
-  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv27.eps}}
-  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv36.eps}}
-  % \item\aligntop{\includegraphics[width=0.45\linewidth]{Lenv51.eps}}
   \end{myenuma}
   \caption[Optimal models]{The models that constitute the numeric envelope in \autoref{fig:envnum}.
   The plot to the left of each frame indicates the memory curve of the model shown to the right in green, with the numeric envelope for models with the serial topology in orange and the proven envelope, \eqref{eq:env}, in blue.

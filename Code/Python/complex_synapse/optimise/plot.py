@@ -257,7 +257,7 @@ def theory_plot(nst: int, sss: Array, nsyn: float = 1) -> Figure:
     axs.loglog(t_pts[:2], np.ones(2), 'k:')
     axs.loglog(t_pts[-2:], (nst-1) / t_pts[-2:], 'k:')
     axs.set_xlim(1e-1, 1e3)
-    axs.set_ylim(1e-2, 3)
+    axs.set_ylim(1e-2 * np.sqrt(nsyn), 3 * np.sqrt(nsyn))
     ind = 30
     axs.text(t_pts[1]/2, 1.1, r"$\sqrt{N}$", fontsize=18,
              ha='right', va='bottom')
@@ -298,7 +298,7 @@ def equilibrium_plot(nst: int, sss: Array, nsyn: float = 1) -> Figure:
     # axs.loglog(t_pts[:2], np.ones(2), 'k:')
     # axs.loglog(t_pts[-2:], (nst-1) / t_pts[-2:], 'k:')
     axs.set_xlim(1e-1, 1e3)
-    ylim = axs.set_ylim(1e-2, 3)
+    ylim = axs.set_ylim(1e-2 * np.sqrt(nsyn), 3 * np.sqrt(nsyn))
     s_two, s_sticky = 0.5, 2 / (nst-1)**2
     _annotate_axis(axs, nst, ylim[0], [s_two, s_sticky],
                 ["2", r"\frac{(M-1)^2}{2}"])
@@ -447,7 +447,7 @@ def heuristic_plot(nst: int, sss: Array, env_srl: Array, models_srl: Array,
     lns[2].set_c(lns[1].get_c())
     lns[1].set_c(lns[0].get_c())
     axs.set_xlim(1/sss[-1], 1e4)
-    ylim = axs.set_ylim(2e-3, 1.1)
+    ylim = axs.set_ylim(2e-3 * np.sqrt(nsyn), 1.1 * np.sqrt(nsyn))
 
     _annotate_curves(axs, 1/sss, env_heu * sss, models_srl, **kwds)
     _annotate_axis(axs, nst, ylim[0], [sh.s_star(2), sh.s_star(nst)],
