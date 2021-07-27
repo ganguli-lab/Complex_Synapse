@@ -46,9 +46,9 @@
 \newcommand{\nnrm}[1]{\mathopen{}\left\lVvert #1 \right\rVvert\mathclose{}}
 %================================================================================
 %
-\usepackage{adjustbox}
-\newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
-\newcommand{\alignmid}[1]{\adjustbox{valign=c}{#1}}
+% \usepackage{adjustbox}
+% \newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
+% \newcommand{\alignmid}[1]{\adjustbox{valign=c}{#1}}
 %
 \usepackage{paralist}
 \newenvironment{myenuma}{\begin{inparaenum}[(a)]}{\end{inparaenum}}
@@ -419,11 +419,12 @@ This results in
   \av{\synid^1 \syn^1(\infty)} &= \eq (f\pot \MMd \pot-f\dep \MMd \dep)\, \onev\eq \w \\
          &= \eq (f\pot\onev-f\dep\onev)\, \eq \w \\
          &=  (f\pot-f\dep)\, \eq \w \\
-         &=  (f\pot-f\dep)\, \eq \e^{rt\frg} \w .
+         &=  \Delta f\, \eq \e^{rt\frg} \w ,
 \end{aligned}
 \end{equation}
 %
-Combining these allows us to write the numerator of \eqref{eq:SNRdef} as
+where \(\Delta f = f\pot - f\dep \).
+Combining the expressions in \cref{eq:overlapwt} allows us to write the numerator of \cref{eq:SNRdef} as
 %
 \begin{equation}\label{eq:signal}
 \begin{aligned}
@@ -439,7 +440,7 @@ Combining with \eqref{eq:noise} gives
 %
 \begin{equation}\label{eq:SNRcurveExact}
   \SNR(t) = \frac{\sqrt{N} \eq \enc\,\e^{rt \frg}\w}
-                 {\sqrt{1-(f\pot-f\dep)^2(\eq \w)^2}}.
+                 {\sqrt{1-(\Delta f)^2(\eq \w)^2}}.
 \end{equation}
 %
 The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with \(f\pot=f\dep\) or \(\eq_+=\eq_-\).
@@ -504,10 +505,15 @@ In analogy to the generalised fundamental matrix of a Markov chain \cite{Kemeny1
 %
 where \(\arow\) is an arbitrary row vector satisfying \(\arow \onev = \frac{1}{\tau_0} \neq 0\).
 This reduces to the fundamental matrix at \(s=0\).
-We can see that \(\onev\) is an eigenvector:
+We can see that it obeys similar identities, including that \(\onev\) is an eigenvector:
 %
 \begin{equation}\label{eq:lfundrowsum}
-  \fund(s)\onev = \frac{\tau_0}{1+s\tau_0}\onev.
+\begin{aligned}
+  \fund(s) \onev &= \frac{\tau_0}{1+s\tau_0}\onev, \qquad &
+  \MM \fund(s) &= (\onev \eq - \I)(\I - s \fund), \\ 
+  \arow \fund(s) &= \eq (\I - s \fund),  &
+  \fund(s) \MM &= (\I - s \fund)(\tau_0 \onev \arow - \I).
+\end{aligned}
 \end{equation}
 %
 Suppose we have some row vector \(\mathbf{a}\) such that \(\mathbf{a}\onev=0\).
@@ -541,7 +547,7 @@ This other stochastic process is
 \end{equation}
 %
 This is a valid continuous-time Markov process.
-Its fundamental matrix is given by \cref{eq:lfund} with \( \arow_0 = \arow + s \eq \).
+Its fundamental matrix is given by \cref{eq:lfund} with \( \arow(s) = \arow + s \eq \) (although this last change is unnecessary).
 
 This means that the \( \fptb(s) \) have all the same properties as in the case \(s=0\).
 In particular, we see that the quantity
@@ -601,8 +607,8 @@ Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurveExact}
 \begin{aligned}
   A(s) = \intd[_0^{\infty}]{t} \e^{-st}\SNR(t) 
    &= \intd[_0^{\infty}]{t} \frac{ \sqrt{N} \eq \enc \e^{(r\frg-s)t} \w }
-                                { \sqrt{1-(f\pot-f\dep)^2(\eq\w)^2} } \\
-   &= \frac{\sqrt{N} \eq \enc \prn{s \I - r\frg}\inv \w }{\sqrt{1-(f\pot-f\dep)^2(\eq\w)^2}}.
+                                { \sqrt{1-(\Delta f)^2(\eq\w)^2} } \\
+   &= \frac{\sqrt{N} \eq \enc \prn{s \I - r\frg}\inv \w }{\sqrt{1-(\Delta f)^2(\eq\w)^2}}.
 \end{aligned}
 \end{equation}
 %
@@ -611,7 +617,7 @@ Thanks to \eqref{eq:alfund}, we can solve this by the replacement \(\mathbf{G}(s
 %
 \begin{equation}\label{eq:larea}
 \begin{aligned}
-  \hat{A}(s) = A(s) \sqrt{\frac{{{1-(f\pot-f\dep)^2(\eq\w)^2}}}{N}}  &=  \eq \enc \fund(s) \w \\
+  \hat{A}(s) = A(s) \sqrt{\frac{{{1-(\Delta f)^2(\eq\w)^2}}}{N}}  &=  \eq \enc \fund(s) \w \\
     &= \sum_{ijk} \eqm_i \encm_{ij} \prn{\fptbm_{ik}(s)-\fptbm_{jk}(s)} \eqm_k \wm_k \\
     &= \sum_{ij}  \eqm_i \encm_{ij} (\etwm_{i}(s) - \etwm_{j}(s)).
 \end{aligned}
@@ -1151,7 +1157,7 @@ where we used $\wm_k=\sgn(c_k)$, as discussed after \cref{eq:lareacoeffs}.
 First let us maximise \cref{eq:serialarea} at fixed $\eqm_\pm = \sum_k \eqm_k \prn{\frac{1\pm\wm_k}{2}}$.
 Clearly this will happen when we put all of the probability at the ends: $\eqm_1=\eqm_-$ and $\eqm_n=\eqm_+$ are the only non-zero $\eqm_k$.
 This gives an area of
-\footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eq_+\eq_-)/r\sqrt{1 - (f\pot-f\dep)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
+\footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eq_+\eq_-)/r\sqrt{1 - (\Delta f)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
 %
 \begin{equation}\label{eq:serialextarea}
   \CA \leq \frac{(M-1)}{r}\prn{4\eqm_+\eqm_-}.
@@ -1734,7 +1740,7 @@ The derivatives, for \(m \neq n\) are
     \eqm_m \prn{ \brk{\thbm_m - \thbm_n}
      + \prn{{c}_m + (-1)^\nu + \lambda} \brk{\etwm_m - \etwm_n} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
-     - \sum_{ij} \mu^\nu_{ij} s f^\nu \eqm_m (\fptbm_{mj} - \fptbm_{nj}) \eqm_j
+     - \sum_{\mu ij} \mu^\mu_{ij} s f^\mu \eqm_m (\fptbm_{mj} - \fptbm_{nj}) \eqm_j
     = 0.
 \end{aligned}
 \end{equation}
