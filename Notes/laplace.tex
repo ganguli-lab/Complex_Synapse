@@ -18,8 +18,8 @@
 %Preamble:
 \usepackage[T1]{fontenc}
 \usepackage{a4wide}
-\usepackage[tables,graphics,draft]{sl-preamble}
-% \usepackage{stix}
+% \usepackage{stix2}
+\usepackage[tables,graphics,draft,panels=paralist]{sl-preamble}
 %\usepackage{amsldoc} for finding documentation only
 \def\Snospace~{\S{}}
 \renewcommand{\sectionautorefname}{\Snospace}
@@ -31,35 +31,35 @@
 % ----------------------------------------------------------------
 %\numberwithin{equation}{section}
 %================================================================================
-\makeatletter
-\DeclareFontEncoding{LS2}{}{\noaccents@}
-\makeatother
+% \makeatletter
+% \DeclareFontEncoding{LS2}{}{\noaccents@}
+% \makeatother
 
-\DeclareFontSubstitution{LS2}{stix}{m}{n}
-\DeclareSymbolFont{xlargesymbols}{LS2}{stixex}{m}{n}
-\DeclareMathDelimiter{\lAngle}{\mathopen}{xlargesymbols}{"EC}{xlargesymbols}{"12}
-\DeclareMathDelimiter{\rAngle}{\mathclose}{xlargesymbols}{"ED}{largesymbols}{"13}
-\DeclareMathDelimiter{\lVvert}{\mathopen}{xlargesymbols}{"F2}{xlargesymbols}{"F5}
-\DeclareMathDelimiter{\rVvert}{\mathclose}{xlargesymbols}{"F2}{xlargesymbols}{"F5}
+% \DeclareFontSubstitution{LS2}{stix}{m}{n}
+% \DeclareSymbolFont{xlargesymbols}{LS2}{stixex}{m}{n}
+% \DeclareMathDelimiter{\lAngle}{\mathopen}{xlargesymbols}{"EC}{xlargesymbols}{"12}
+% \DeclareMathDelimiter{\rAngle}{\mathclose}{xlargesymbols}{"ED}{largesymbols}{"13}
+% \DeclareMathDelimiter{\lVvert}{\mathopen}{xlargesymbols}{"F2}{xlargesymbols}{"F5}
+% \DeclareMathDelimiter{\rVvert}{\mathclose}{xlargesymbols}{"F2}{xlargesymbols}{"F5}
 
-\newcommand{\aav}[1]{\mathopen{}\left\lAngle #1 \right\rAngle\mathclose{}}
-\newcommand{\nnrm}[1]{\mathopen{}\left\lVvert #1 \right\rVvert\mathclose{}}
+\newcommand{\aav}[1]{\mathopen{}\left\llangle #1 \right\rrangle\mathclose{}}
+\newcommand{\nnrm}[1]{\mathopen{}\left\lWavy #1 \right\rWavy\mathclose{}}
 %================================================================================
 %
-\usepackage{adjustbox}
-\newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
-\newcommand{\alignmid}[1]{\adjustbox{valign=c}{#1}}
-%
-\usepackage{paralist}
-\newenvironment{myenuma}{\begin{inparaenum}[(a)]}{\end{inparaenum}}
-\newenvironment{myenumi}{\begin{inparaenum}[i)]}{\end{inparaenum}}
-\newenvironment{myenumA}{\begin{inparaenum}[\bfseries A.]}{\end{inparaenum}}
-\newenvironment{myenumI}{\begin{inparaenum}[\bfseries I.]}{\end{inparaenum}}
-\newenvironment{myenumr}{\begin{inparaenum}[1.]}{\end{inparaenum}}
-%for nested lists, \ref only produces innermost item:  (hacky)
-\makeatletter % for internal macros with @
-\renewcommand\p@enumii{}
-\makeatother
+% \usepackage{adjustbox}
+% \newcommand{\aligntop}[1]{\adjustbox{valign=t}{#1}}
+% \newcommand{\alignmid}[1]{\adjustbox{valign=c}{#1}}
+% %
+% \usepackage{paralist}
+% \newenvironment{myenuma}{\begin{inparaenum}[(a)]}{\end{inparaenum}}
+% \newenvironment{myenumi}{\begin{inparaenum}[i)]}{\end{inparaenum}}
+% \newenvironment{myenumA}{\begin{inparaenum}[\bfseries A.]}{\end{inparaenum}}
+% \newenvironment{myenumI}{\begin{inparaenum}[\bfseries I.]}{\end{inparaenum}}
+% \newenvironment{myenumr}{\begin{inparaenum}[1.]}{\end{inparaenum}}
+% %for nested lists, \ref only produces innermost item:  (hacky)
+% \makeatletter % for internal macros with @
+% \renewcommand\p@enumii{}
+% \makeatother
 %
 %================================================================================
 %matrices
@@ -1526,7 +1526,7 @@ The range of \(\tau\) for the second row does not exist for \(M = 3\), in which 
 
 Now we'll maximise \(\snrb(\tau)\) for some fixed \(\tau\), subject to the constraints \eqref{eq:constr}.
 First, we will maximise the numerator of \eqref{eq:lsnr} holding \(\eq\w\) fixed.
-We can maximise the ration \wrt \(\eq\w\) later.
+We can maximise the ratio \wrt \(\eq\w\) later.
 From this point on, we work in units where \(r = 1\).
 
 Consider the Lagrangian
