@@ -210,7 +210,7 @@ class SynapseModel(_sb.SynapseContinuousTime):
     @contextmanager
     def shifted(self, rate: _sb.ArrayLike, rowv: Optional[_sb.ArrayLike] = None
                 ) -> None:
-        """Move rate parametr of Laplace transform to plast
+        """Move rate parameter of Laplace transform to plast
         """
         rowv = self.peq() if rowv is None else rowv
         # convert to lnarray, add singletons to broadcast with plast

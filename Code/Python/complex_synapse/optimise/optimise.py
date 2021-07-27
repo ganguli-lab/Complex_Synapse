@@ -90,12 +90,12 @@ class ModelOptions(_opt.Options):
         Returns
         -------
         done : bool
-            True if `nst` and `npr` both have vaalues.
+            True if `nst` and `npr` both have values.
 
         Raises
         ------
         TypeError
-            If `nst` and `npar` are bith `None`
+            If `nst` and `npar` are both `None`
         """
         if None in {self.nst, self.npar}:
             raise TypeError("Must specify one of [nst, npar]")
@@ -191,7 +191,7 @@ class ProblemOptions(_opt.Options):
     keep_feasible : bool
         Ensure constraints are kept at intermediate steps? By default `False`.
     inv : bool
-        Store inverses of fundamental matrices? This will be set `True` by
+        Store inverted fundamental matrices? This will be set `True` by
         other options when needed, so there is no need to set it manually.
     cond : bool
         Include condition number when checking if model is well behaved? This
@@ -215,7 +215,7 @@ class ProblemOptions(_opt.Options):
     keep_feasible: bool
     # Include condition number when checking if model is well behaved?
     cond: bool
-    # Store inverses of fundamental matrices?
+    # Store inverted fundamental matrices?
     inv: bool
     # Use Hessian of loss function/constraints?
     _hess: bool
@@ -338,9 +338,36 @@ class OptimOptions(_opt.MasterOptions, fallback='extra'):
         self._maker = normal_problem
         super().__init__(*args, **kwds)
 
+    @property
+    def shifted(self) -> bool:
+        """Is it a shifted problem?
+
+        Returns
+        -------
+        shifted : bool
+            Is problem maker `shifted_problem`?
+        """
+        return self._maker is shifted_problem
+
+    @shifted.setter
+    def shifted(self, value: Optional[bool]):
+        """Is it a shifted problem?
+
+        Parameters
+        ----------
+        value : bool
+            Should the problem maker be `shifted_problem`?
+        """
+        if value is None:
+            return
+        if value:
+            self._maker = shifted_problem
+        else:
+            self._maker = normal_problem
+
     def maker(self, model: _so.SynapseOptModel, rate: Optional[Number]
               ) -> Problem:
-        """Call the `Maker` unction
+        """Call the `Maker` function
 
         Parameters
         ----------
@@ -658,6 +685,94 @@ def shifted_problem(model: _so.SynapseOptModel, rate: float,
 
 
 # =============================================================================
+# Karush-Kuhn-Tucker multipliers
+# =============================================================================
+
+
+def _grad_to_kkt(grad: np.ndarray, model: _sb.SynapseParam) -> np.ndarray:
+    """Fix diagonals of kkt from gradient wrt off-diagonal elements.
+
+    Parameters
+    ----------
+    grad : np.ndarray (...,2n(n-1))
+        Gradient of loss function wrt off-diagonal elements.
+    model : SynapseParam (2,n,n)
+        Model with transition rates.
+
+    Returns
+    -------
+    kkt : np.ndarray (...,2,n,n)
+        grad with diagonals `-rowsum(plast*grad)`, subtracted from row.
+    """
+    kkt = _ma.params.params_to_mat(grad, **model.topology.directed())
+    kkt[..., np.diag_indices(model.nstate, 2)] = 0
+    kkt_diag = -(model.plast * kkt).sum(axis=-1, keepdims=True)
+    kkt += kkt_diag
+    return kkt
+
+
+def _all_kkt_normal(prob: OptimProblem) -> np.ndarray:
+    """Calculate Karush-Kuhn-Tucker multiplier for every element.
+
+    Parameters
+    ----------
+    prob : OptimProblem
+        The problem.
+
+    Returns
+    -------
+    kkt : np.ndarray (2,n,n)
+        KKT multipliers.
+    """
+    model = prob.model
+    grad = prob.fns[1](model.get_params())
+    return _grad_to_kkt(grad, model)
+
+
+def _all_kkt_shifted(prob: OptimProblem) -> np.ndarray:
+    """Calculate Karush-Kuhn-Tucker multiplier for every element.
+
+    Parameters
+    ----------
+    prob : OptimProblem
+        The problem.
+
+    Returns
+    -------
+    kkt : np.ndarray (2,n,n)
+        KKT multipliers.
+    """
+    model = prob.model
+    constr = conv_constraint(prob.constraints[0])[0]
+    # (2,n,n) -> (2*n**2,)
+    rhs = _all_kkt_normal(prob).ravel()
+    # (2n**2,2n(n-1))
+    cjac = constr['jac'](model.get_params())
+    # (2n**2,2,n,n) -> (2n**2,2n**2)
+    cfs = _grad_to_kkt(cjac, model).ravelaxes(-3).T
+    return la.solve(cfs, rhs).reshape(model.nplast, model.nstate, model.nstate)
+
+
+def kkt_multipliers(prob: OptimProblem) -> np.ndarray:
+    """Calculate Karush-Kuhn-Tucker multiplier for every element.
+
+    Parameters
+    ----------
+    prob : OptimProblem
+        The solved problem.
+
+    Returns
+    -------
+    kkt : np.ndarray (2,n,n)
+        KKT multipliers
+    """
+    if prob.opts.shifted:
+        return _all_kkt_shifted(prob)
+    return _all_kkt_normal(prob)
+
+
+
+# =============================================================================
 # Optimisation helper functions
 # =============================================================================
 
@@ -864,9 +979,10 @@ def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
 # =============================================================================
 # Type hints
 # =============================================================================
-Data = TypeVar('Data', Number, np.ndarray)
+Data = TypeVar('Data', Number, np.ndarray, float)
 Func = Callable[[np.ndarray], Data]
-Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint, _opt.StrDict]
+Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint,
+                   _opt.StrDict[Any]]
 Problem = Tuple[Func[float], Func[np.ndarray], Func[np.ndarray],
                 Optional[sco.Bounds], List[Constraint]]
 Maker = Callable[[_so.SynapseOptModel, Optional[float], ProblemOptions],

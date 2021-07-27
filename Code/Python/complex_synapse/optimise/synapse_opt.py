@@ -370,7 +370,7 @@ class SynapseOptModel(_sm.SynapseModel, _sb.SynapseParam):
         return self.nplast * self.nstate**2
 
     def peq_min_fun(self, rate: Number, **kwds) -> la.lnarray:
-        """Gradient of lower bound of shifted Laplace problem.
+        """Lower bound of shifted Laplace problem.
 
         Parameters
         ----------
@@ -381,8 +381,14 @@ class SynapseOptModel(_sm.SynapseModel, _sb.SynapseParam):
 
         Returns
         -------
-        func : la.lnarray (2n**2,)
-            Value of ``W - s * e @ peq``.
+        lower : la.lnarray (2n**2,)
+            Value of ``W + I - (s/2f) * (e @ peq - I)``.
+            Must be >= 0.
+
+        Notes
+        -----
+        lower[m,i,j] = C_mij = M_mij - (s/2f_m) (p_j - d_ij)
+        Index [m,i,j] flattened
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return -np.ones(self.nshift)
@@ -405,8 +411,14 @@ class SynapseOptModel(_sm.SynapseModel, _sb.SynapseParam):
 
         Returns
         -------
-        grad : la.lnarray (2n**2,2n(n-1),)
-            Gradient of ``func`` with respect to parameters.
+        grad : la.lnarray (2n**2,2n(n-1))
+            Gradient of ``peq_min_fun`` with respect to parameters.
+
+        Notes
+        -----
+        C_mij = M_mij - (s/2f_m) (p_j - d_ij)
+        grad[m,i,j,n,k,l] = dC_mij / dW_nkl
+        Indices [m,i,j], [n,k,l] flattened (k!=l)
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return -_bld.RNG.random((self.nshift, self.nparam,))
@@ -414,20 +426,19 @@ class SynapseOptModel(_sm.SynapseModel, _sb.SynapseParam):
         kwds['inv'] = True
         rows, _, mats = self._derivs(None, **kwds)
         peq, fund = rows[0], mats[0]
-        # (n,1,n,n)
-        grad = np.moveaxis(_diagsub(- rate/2 * peq[None, :].s * fund), -1, -4)
-        # (2,1,n,2,n,n)
+        # (n,1,n,n): (j,n,k,l) = dp_j/dW_kl = p_k (Z_lj - Z_kj)
+        grad = _diagsub(np.moveaxis(- rate/2 * peq[None, :].s * fund, -1, -4))
+        # (2,1,n,2,n,n): (m,i,j,n,k,l) = -(sf_n/2f_m) dp_j/dW_kl
         grad = grad * (self.frac / self.frac.c).expand_dims((1, 2, 4, 5))
-        # (2,n,n,2,n,n)
+        # (2,n,n,2,n,n): (m,i,j,n,k,l) = d_mn d_ik (d_jl - d_jk)
         shape = ((self.nplast,) + (self.nstate,) * 2) * 2
-        gradd = _diagsub(la.eye(self.nplast * self.nstate**2).reshape(shape))
-        # (2n**2,2,n,n)
+        gradd = _diagsub(la.eye(self.nshift).reshape(shape))
+        # (2n**2,2,n,n): (mij,n,k,l) = dC_mij/dW_nkl
         grad = (gradd + grad).ravelaxes(0, -3)
-        # (2n**2,2,n(n-1))
+        # (2n**2,2,n(n-1)): (mij,n,kl) = dC_mij/dW_nkl
         grad = mp.mat_to_params(grad, **self.directed(daxis=-3))
-        # (2n**2,2n(n-1))
+        # (2n**2,2n(n-1)): (mij,nkl) = dC_mij/dW_nkl
         return grad.ravelaxes(-2)
-        # # (2n**2,n(n-1)), (2n**2,n(n-1))
 
     def peq_min_hess(self, rate: Number, lag: np.ndarray,
                      **kwds) -> la.lnarray:
@@ -444,6 +455,12 @@ class SynapseOptModel(_sm.SynapseModel, _sb.SynapseParam):
         -------
         hess : la.lnarray (2n(n-1),2n(n-1))
             Hessian of ``peq_min_fun(rate) @ lag`` with respect to parameters.
+
+        Notes
+        -----
+        C_mij = M_mij - (s/2f_m) (p_j - d_ij)
+        hess[m,i,j,n,k,l] = sum_pqr lag_pqr ddC_pqr / dW_mij dW_nkl
+        Indices [m,i,j], [n,k,l] flattened (i!=j,k!=l)
         """
         if not _sm.well_behaved(self, rate, kwds.pop('cond', True)):
             return _bld.RNG.random((self.nparam,) * 2)
@@ -460,8 +477,9 @@ class SynapseOptModel(_sm.SynapseModel, _sb.SynapseParam):
         # (n,n,n,n,2n**2) @ (2n**2,) -> (n,n,n,n)
         hess = hess.ravelaxes(-3) @ lag
         hess = _dbl_diagsub(hess).sum(0)
-        # (2,n,n,2,n,n)
+        # (2,1,1,2,1,1)
         fmfn = _sb.insert_axes(self.frac, 5) * self.frac.s
+        # (n,n,1,n,n) * (2,1,1,2,1,1) -> (2,n,n,2,n,n)
         hess = hess.expand_dims(-3) * fmfn
         # (2,n(n-1),2,n(n-1))
         hess = mp.mat_to_params(hess, **self.directed(
@@ -483,6 +501,7 @@ class SynapseOptModel(_sm.SynapseModel, _sb.SynapseParam):
         -------
         func : la.lnarray (2,) or (1,)
             Value of ``[CondThresh - cond(Z)] / CondThresh``.
+            Must be >= 0.
         """
         if not _sm.well_behaved(self, rate, False):
             nout = 1 if rate is None else 2
