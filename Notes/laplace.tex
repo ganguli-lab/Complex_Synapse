@@ -1066,6 +1066,87 @@ despite the lack of scale invariance.
 
 %-------Section------------------------------------------------------------------
 
+\subsubsection{Triangularity}\label{sec:parttriangular}
+
+Suppose we have two states, \(i\) and \(j\), with \( \etwm_i > \etwm_j \).
+Consider the following perturbation (see also \cref{fig:triangle_s}(\ref{fig:triangle_pert})):
+%
+\begin{equation}\label{eq:pertKupdn}
+\begin{aligned}
+  2 \brk{\pdiff{\CL}{\encm_{mj}} - \pdiff{\CL}{\encm_{mi}}}
+  &= \frac{1}{f\pot} \brk{\pdiff{\CL}{\MMdm\pot_{mj}} - \pdiff{\CL}{\MMdm\pot_{mi}}} -
+  \frac{1}{f\dep} \brk{\pdiff{\CL}{\MMdm\dep_{mj}} - \pdiff{\CL}{\MMdm\dep_{mi}}} \\ 
+    &= 2 \eqm_m (\etwm_i - \etwm_j) 
+    + \mu\pot_{mj} - \mu\pot_{mi} - \mu\dep_{mj} + \mu\dep_{mi}.
+\end{aligned}
+\end{equation}
+%
+Because \( \etwm_i > \etwm_j \), we must have \( \mu\pot_{mi} + \mu\dep_{mj} > 0 \).
+So \( \MMdm\pot_{mi} > 0 \) would imply that \( \MMdm\dep_{mj} = 0 \) and vice versa.
+These two possibilities are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_left},\ref{fig:triangle_right}).
+
+Let us arrange the states left to right in order of decreasing \(\etw\), so that \(i\) is to the left of \(j\).
+For the unconstrained transitions \( \MMdm\pot_{mj} \) and \( \MMdm\dep_{mi} \) the potentiating transition goes to the \emph{right} of the depressing transition.
+For the other transitions \( \MMdm\pot_{mi} \) and \( \MMdm\dep_{mj} \) the potentiating transition goes to the \emph{left} of the depressing transition, and they cannot both be nonzero.
+
+This logic can be applied to any pair of states with different values of \(\etw\).
+Therefore, when starting from the same state, no potentiating transition can go to the left of any depressing transition, and no depressing transition can go to the right of any potentiating transition.
+
+For any state \(m\), there is a state \(n\) such that all potentiating transitions go to equal or smaller values of \(\etw\) all depressing transitions go to equal or greater values.
+%
+\begin{equation}\label{eq:separator}
+  \forall\ m, \;\; \exists\ n : 
+  \begin{cases}
+    \etwm_i > \etwm_n &\implies \MMdm\pot_{mi} = 0, \\
+    \etwm_i < \etwm_n &\implies \MMdm\dep_{mi} = 0.
+  \end{cases}
+\end{equation}
+%
+We have not yet ruled the possibility that both \( \MMdm\pot_{mn} \) and \( \MMdm\dep_{mn} \) are nonzero.
+The remaining allowed transitions from \(m\) are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_allowed}).
+If one of those transitions is zero, there will be two states with the property above: the targets of right-most depressing and left-most potentiating transitions.
+
+Consider the perturbation
+%
+\begin{equation}\label{eq:pertK}
+  \frac{1}{f\pot} \pdiff{\CL}{\MMdm\pot_{mn}} -
+  \frac{1}{f\dep} \pdiff{\CL}{\MMdm\dep_{mn}} =
+    2 \eqm_m (\etwm_m - \etwm_n) 
+    + \mu\pot_{mn} - \mu\pot_{mm} - \mu\dep_{mn} + \mu\dep_{mm}.
+\end{equation}
+%
+If we assume that both \( \MMdm\pot_{mn} \) and \( \MMdm\dep_{mn} \) are nonzero, we find that \( \mu\pot_{mm} - \mu\dep_{mm} = 2 \eqm_m (\etwm_m - \etwm_n) \).
+Therefore \( \etwm_m > \etwm_n \implies \MMdm\pot_{mm} = 0 \) and \( \etwm_m < \etwm_n \implies \MMdm\dep_{mm} = 0 \).
+It is also possible that both of the diagonal elements are zero.
+
+
+\begin{figure}[ht]
+\begin{center}
+\begin{myenuma}
+  \item \label{fig:triangle_pert} \aligntop{%
+  \includegraphics[width=0.28\linewidth]{pert_triangle.svg}}
+  \item \label{fig:triangle_left} \aligntop{%
+  \includegraphics[width=0.28\linewidth]{left_triangle.svg}}
+  \item \label{fig:triangle_right} \aligntop{%
+  \includegraphics[width=0.28\linewidth]{right_triangle.svg}}
+  \\[1em]
+  \item \label{fig:triangle_allowed} \aligntop{%
+  \includegraphics[width=0.4\linewidth]{allowed_triangle.svg}}
+  \item \label{fig:triangle_spacing} \aligntop{%
+  \includegraphics[width=0.4\linewidth]{spacing_triangle.svg}}
+\end{myenuma}
+\caption[Triangularising perturbation]{Triangularising perturbation.
+(\ref*{fig:triangle_pert}) The type of perturbation considered in \cref{eq:pertKupdn}.
+(\ref*{fig:triangle_left},\ref*{fig:triangle_right}) Possible end-points of this perturbation. 
+(\ref*{fig:triangle_allowed}) The not-as-yet ruled out transitions when states are sorted so that \(\etw\) decreases to the right, with \(\etwm_m\) unconstrained (as yet).
+(\ref*{fig:triangle_spacing}) The consequences of \cref{eq:oneexit,eq:doubleexit,eq:twoexits,eq:twodoubleexits,eq:nonexit} in the \( (\dgnm_{m,l},-\etwm_l) \)-plane, with \(i\) a state with a nonzero depressing transition from \(m\), \(j\) a state with a nonzero potentiating transition, \(n\) a state with both depressing and potentiating transitions and \(k\) a state with no nonzero transitions from \(m\).
+The positions of \(m\) and \(k\) are not yet constrained, other than being in the upper quadrant \wrt \(n\).
+\label{fig:triangle_s}}
+\end{center}
+\end{figure}
+
+%================================================================================
+
 \subsubsection{Number of exits}\label{sec:exit}
 
 Let us define the following
@@ -1100,7 +1181,7 @@ If both \(\nu\) have nonzero rates from \(m\) to \(n\):
 \end{equation}
 %
 
-Suppose there are two states, \(i,j\), with nonzer transitions from \(m\) for one \(\nu\).
+Suppose there are two states, \(i,j\), with nonzero transitions from \(m\) for one \(\nu\).
 Both must statisfy \cref{eq:oneexit} for the same \(\mu^\nu_{mm}\), so
 %
 \begin{equation}\label{eq:twoexits}
@@ -1129,82 +1210,16 @@ If both \(\nu\) have nonzero rates from \(m\) to \(i\) and \(j\):
   \etwm_i = \etwm_j.
 \end{equation}
 %
+The consequences of these inequalities are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_spacing}).
+We see that \(n\) must be a global minimum of \(\dgn_m\), and if there are multiple transitions of a single type (potentiating or depressing) the targets are constrained to lie on a single line.
+Even if there is no state \(n\) that is the target of both potentiating and depressing transitions, there will be two lines at \(45^\circ \) passing through any targets of potentiating/depressing transitions that demarcate the forbidden zone.
+
 Both \cref{eq:twoexits,eq:twodoubleexits} require degeneracy.
 The physicist's intuition states that degeneracy is fragile and requires a symmetry to protect it.
 Such a symmetry would imply that the states are lumpable.
 This would imply that, after lumping all lumpable states together, the situation in \cref{eq:twoexits} is impossible and \cref{eq:twodoubleexits} is even more impossible.
 
 %-------Section------------------------------------------------------------------
-
-\subsubsection{Triangularity}\label{sec:parttriangular}
-
-Suppose we have two states, \(i\) and \(j\), with \( \etwm_i > \etwm_j \).
-Consider the following perturbation:
-%
-\begin{equation}\label{eq:pertKupdn}
-\begin{aligned}
-  2 \brk{\pdiff{\CL}{\encm_{mj}} - \pdiff{\CL}{\encm_{mi}}}
-  &= \frac{1}{f\pot} \brk{\pdiff{\CL}{\MMdm\pot_{mj}} - \pdiff{\CL}{\MMdm\pot_{mi}}} -
-  \frac{1}{f\dep} \brk{\pdiff{\CL}{\MMdm\dep_{mj}} - \pdiff{\CL}{\MMdm\dep_{mi}}} \\ 
-    &= 2 \eqm_m (\etwm_i - \etwm_j) 
-    + \mu\pot_{mj} - \mu\pot_{mi} - \mu\dep_{mj} + \mu\dep_{mi}.
-\end{aligned}
-\end{equation}
-%
-Because \( \etwm_i > \etwm_j \), we must have \( \mu\pot_{mi} + \mu\dep_{mj} > 0 \).
-So \( \MMdm\pot_{mi} > 0 \) would imply that \( \MMdm\dep_{mj} = 0 \) and vice versa.
-Let us arrange the states left to right in order of decreasing \(\etw\), so that \(i\) is to the left of \(j\).
-For the unconstrained transitions \( \MMdm\pot_{mj} \) and \( \MMdm\dep_{mi} \) the potentiating transition goes to the \emph{right} of the depressing transition.
-For the other transitions \( \MMdm\pot_{mi} \) and \( \MMdm\dep_{mj} \) the potentiating transition goes to the \emph{left} of the depressing transition, and they cannot both be nonzero.
-
-This logic can be applied to any pair of states with different values of \(\etw\).
-Therefore, when starting from the same state, no potentiating transition can go to the left of any depressing transition, and no depressing transition can go to the right of any potentiating transition.
-
-For any state \(m\), there is a state \(n\) such that all potentiating transitions go to equal or smaller values of \(\etw\) all depressing transitions go to equal or greater values.
-%
-\begin{equation}\label{eq:separator}
-  \forall\ m, \;\; \exists\ n : 
-  \begin{cases}
-    \etwm_i > \etwm_n &\implies \MMdm\pot_{mi} = 0, \\
-    \etwm_i < \etwm_n &\implies \MMdm\dep_{mi} = 0.
-  \end{cases}
-\end{equation}
-%
-We have not yet ruled the possibility that both \( \MMdm\pot_{mn} \) and \( \MMdm\dep_{mn} \) are nonzero.
-
-Consider the perturbation
-%
-\begin{equation}\label{eq:pertK}
-  \frac{1}{f\pot} \pdiff{\CL}{\MMdm\pot_{mn}} -
-  \frac{1}{f\dep} \pdiff{\CL}{\MMdm\dep_{mn}} =
-    2 \eqm_m (\etwm_m - \etwm_n) 
-    + \mu\pot_{mn} - \mu\pot_{mm} - \mu\dep_{mn} + \mu\dep_{mm}.
-\end{equation}
-%
-If we assume that both \( \MMdm\pot_{mn} \) and \( \MMdm\dep_{mn} \) are nonzero, we find that \( \mu\pot_{mm} - \mu\dep_{mm} = 2 \eqm_m (\etwm_m - \etwm_n) \).
-Therefore \( \etwm_m > \etwm_n \implies \MMdm\pot_{mm} = 0 \) and \( \etwm_m < \etwm_n \implies \MMdm\dep_{mm} = 0 \).
-It is also possible that both of the diagonal elements are zero.
-
-
-\begin{figure}[ht]
-\begin{center}
-\begin{myenuma}
-  \item \label{fig:triangle_pert} \aligntop{%
-  \includegraphics[width=0.28\linewidth]{pert_triangle.svg}}
-  \item \label{fig:triangle_left} \aligntop{%
-  \includegraphics[width=0.28\linewidth]{left_triangle.svg}}
-  \item \label{fig:triangle_right} \aligntop{%
-  \includegraphics[width=0.28\linewidth]{right_triangle.svg}}
-  \\
-  \item \label{fig:triangle_allowed} \aligntop{%
-  \includegraphics[width=0.4\linewidth]{allowed_triangle.svg}}
-\end{myenuma}
-\caption[Triangularising perturbation]{Triangularising perturbation.
-\label{fig:triangle_s}}
-\end{center}
-\end{figure}
-
-%================================================================================
 
 \section{Upper bounds}\label{sec:upperbnds}
 
