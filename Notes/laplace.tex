@@ -811,19 +811,22 @@ If we note that we can write \( \MMd^\nu - \I = \prn{\frg + (-1)^\nu \enc} / 2f^
 %
 \begin{equation}\label{eq:diagKKT}
 \begin{gathered}
-  \alb^\nu(s) = \frac{\delta \mathbf{a}(s) + (-1)^\nu \enc \thb(s)}{2f^\nu},
+  \alb^\nu(s) = \frac{\delta \mathbf{a}(s) + (-1)^\nu \enc \thb(s)}
+                     {2f^\nu},
   \qquad 
-  \omb^\nu(s) = \frac{\delta \w + s \delta \etw(s) - (-1)^\nu \mathbf{a}(s)}{2 f^\nu}, \\
+  \omb^\nu(s) = \frac{\delta \w + s \delta \etw(s) - (-1)^\nu \mathbf{a}(s)}
+                     {2 f^\nu}, \\
 \begin{aligned}
-  \mu^\nu_{mm} &= - \frac{\eqm_m}{2f^\nu} 
+  \mu^\nu_{mm} &= \frac{\eqm_m}{2f^\nu} 
     \left[ 
-      c_m(s) (\delta \wm_m + s \delta \etwm_m(s)) - \hat{A}(s)
-      + \lambda \delta w_m
-      \right. \\ &\phantom{= - \frac{\eqm_m}{2f^\nu} []}\left.
+      \hat{A}(s) - c_m(s) (\delta \wm_m + s \delta \etwm_m(s))
+      - \lambda \delta w_m
+    \right. \\ &\phantom{= \frac{\eqm_m}{2f^\nu} }
+    \left.
       + (-1)^\nu \prn{ 
-        [\encm \thbm(s)]_m - c_m(s) a_m(s)
-        + \delta \wm_m + s \delta \etwm_m(s)
-        - \lambda a_m(0)
+        c_m(s) a_m(s) - [\encm \thbm(s)]_m
+        - \delta \wm_m - s \delta \etwm_m(s)
+        + \lambda a_m(0)
       }
     \right], \\
 \end{aligned}
@@ -878,8 +881,8 @@ The corresponding symmetry here is scaling the shifted process from \cref{eq:lsh
 %
 \begin{equation}\label{eq:shiftscale}
   \zeta {\circledast}_{s} \MMd 
-      \equiv \zeta \MMd
-      + (1 - \zeta) \brk{(1 + s)\I - s \onev \eq} .
+      \equiv (1 - \zeta) \MMd
+      + \zeta \brk{(1 + s)\I - s \onev \eq} .
 \end{equation}
 %
 Then we have
@@ -1102,8 +1105,8 @@ For any state \(m\), there is a state \(n\) such that all potentiating transitio
   \end{cases}
 \end{equation}
 %
-We have not yet ruled the possibility that both \( \MMdm\pot_{mn} \) and \( \MMdm\dep_{mn} \) are nonzero.
 The remaining allowed transitions from \(m\) are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_allowed}).
+Note that we have not yet ruled the possibility that both \( \MMdm\pot_{mn} \) and \( \MMdm\dep_{mn} \) are nonzero.
 If one of those transitions is zero, there will be two states with the property above: the targets of right-most depressing and left-most potentiating transitions.
 
 Consider the perturbation
@@ -1136,7 +1139,7 @@ It is also possible that both of the diagonal elements are zero.
   \includegraphics[width=0.4\linewidth]{spacing_triangle.svg}}
 \end{myenuma}
 \caption[Triangularising perturbation]{Triangularising perturbation.
-(\ref*{fig:triangle_pert}) The type of perturbation considered in \cref{eq:pertKupdn}.
+(\ref*{fig:triangle_pert}) The type of perturbation considered in \cref{eq:pertKupdn}, indicating which transitions have their rates increased/decreased.
 (\ref*{fig:triangle_left},\ref*{fig:triangle_right}) Possible end-points of this perturbation. 
 (\ref*{fig:triangle_allowed}) The not-as-yet ruled out transitions when states are sorted so that \(\etw\) decreases to the right, with \(\etwm_m\) unconstrained (as yet).
 (\ref*{fig:triangle_spacing}) The consequences of \cref{eq:oneexit,eq:doubleexit,eq:twoexits,eq:twodoubleexits,eq:nonexit} in the \( (\dgnm_{m,l},-\etwm_l) \)-plane, with \(i\) a state with a nonzero depressing transition from \(m\), \(j\) a state with a nonzero potentiating transition, \(n\) a state with both depressing and potentiating transitions and \(k\) a state with no nonzero transitions from \(m\).
@@ -1160,6 +1163,25 @@ Let us define the following
 \end{equation}
 %
 They should be thought of as collections of vectors rather than matrices.
+We can also write \cref{eq:diagKKT} as
+%
+\begin{equation}\label{eq:diagKKTz}
+\begin{aligned}
+  \mu^\nu_{mm} &= \frac{\eqm_m}{2f^\nu} 
+    \left[ 
+      \hat{A}(s) - c_m(s) (\delta \wm_m + s \delta \etwm_m(s))
+      - \lambda \delta w_m
+    \right. \\ &\phantom{= \frac{\eqm_m}{2f^\nu} }
+    \left.
+      - (-1)^\nu \prn{ 
+        [\encm \dgnm(s)]_m
+        + \delta \wm_m + s \delta \etwm_m(s)
+        - \lambda a_m(0)
+      }
+    \right], \\
+\end{aligned}
+\end{equation}
+%
 
 Suppose that a state \(n\) has a nonzero transition rate from state \(m\) for one \(\nu\).
 Then \(\mu^\nu_{mn} = 0\) and:
@@ -1214,10 +1236,12 @@ The consequences of these inequalities are depicted in \cref{fig:triangle_s}(\re
 We see that \(n\) must be a global minimum of \(\dgn_m\), and if there are multiple transitions of a single type (potentiating or depressing) the targets are constrained to lie on a single line.
 Even if there is no state \(n\) that is the target of both potentiating and depressing transitions, there will be two lines at \(45^\circ \) passing through any targets of potentiating/depressing transitions that demarcate the forbidden zone.
 
-Both \cref{eq:twoexits,eq:twodoubleexits} require degeneracy.
+Both of \cref{eq:twoexits,eq:twodoubleexits} require degeneracy.
 The physicist's intuition states that degeneracy is fragile and requires a symmetry to protect it.
 Such a symmetry would imply that the states are lumpable.
 This would imply that, after lumping all lumpable states together, the situation in \cref{eq:twoexits} is impossible and \cref{eq:twodoubleexits} is even more impossible.
+If this intuition holds, we expect that \cref{fig:triangle_s}(\ref{fig:triangle_spacing}) would have at most one state on each of the two diagonal lines.
+Either there would be one state like \(n\), or there would be one state like \(i\) and one state like \(j\). 
 
 %-------Section------------------------------------------------------------------
 
@@ -1411,7 +1435,7 @@ See \cref{eq:lareacoeffs} for the definitions of these quantities.
 The area (and \(\Delta\pr\)) is invariant under the scale transformation
 %
 \begin{equation}\label{eq:scale}
-  \zeta * \MMd \equiv \zeta \MMd + (1-\zeta)\I .
+  \zeta * \MMd \equiv (1-\zeta) \MMd + \zeta \I .
 \end{equation}
 %
 It follows that
