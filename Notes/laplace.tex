@@ -140,8 +140,8 @@
 \DeclareMathOperator{\env}{Env}
 % \newcommand{\CA}{\mathcal{A}}
 % \newcommand{\CB}{\mathcal{B}}
-%avoid double superscripts
-\renewcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}}
+% %avoid double superscripts
+% \renewcommand{\pdiff}[2]{\frac{\partial #1}{\partial #2}}
 % shifted process
 \newcommand{\shift}[1]{\widehat{#1}}
 
@@ -411,8 +411,6 @@ where \(\eq\) is the steady state distribution of the continuous time transition
 \end{equation}
 %
 
-
-
 This results in
 %
 \begin{equation}\label{eq:overlapwt}
@@ -448,7 +446,7 @@ Combining with \eqref{eq:noise} gives
 The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with \(f\pot=f\dep\) or \(\eq_+=\eq_-\).
 We can perform the maximisation in two steps.
 First maximise the numerator at fixed \(\eq \w\).
-Then maximise the ratio \wrt \(\eq\w\).
+Then maximise the ratio \wrt \(\Delta \pr = \eq\w\).
 This will allow us to ignore the denominator until the very end.
 
 
@@ -464,7 +462,7 @@ We then have
 It will also be convenient to define the differential operators
 %
 \begin{equation}\label{eq:pertfe}
-  \pdiff{}{\frgm_{ij}} = \frac{1}{2f\pot} \pdiff{}{\MMdm \pot_{ij}} + \frac{1}{2f\dep} \pdiff{}{\MMd \dep_{ij}},
+  \pdiff{}{\frgm_{ij}} = \frac{1}{2f\pot} \pdiff{}{\MMdm \pot_{ij}} + \frac{1}{2f\dep} \pdiff{}{\MMdm \dep_{ij}},
   \qquad
   \pdiff{}{\encm_{ij}} = \frac{1}{2f\pot} \pdiff{}{\MMdm \pot_{ij}} - \frac{1}{2f\dep} \pdiff{}{\MMdm \dep_{ij}},
 \end{equation}
@@ -483,7 +481,7 @@ If we wish to use the off-diagonal elements of \(\frg\) and \(\enc\) as the degr
 \begin{equation}\label{eq:constrfe}
 \begin{aligned}
   \frgm_{i \neq j}   &\geq \abs{ \encm_{i \neq j} }, &\qquad
-  \sum_{j\neq i}\frgm_{ij} + (-1)^\mu \encm_{ij}  &\leq f^\mu, \\
+  \sum_{j\neq i}\frgm_{ij} + (-1)^\mu \encm_{ij}  &\leq 2f^\mu, \\
   \sum_j \frgm_{ij} &=0, &
   \sum_j \encm_{ij} &=0.
 \end{aligned}
@@ -556,10 +554,10 @@ We could rewrite \cref{eq:lfundrowsum} as
 %
 \begin{equation}\label{eq:lshiftrowsum}
 \begin{aligned}
-  \fund(s) \onev &= {\shift{\tau}_0}\onev, \qquad &
+  \fund(s) \onev &= \shift{\tau}_0 \onev, \qquad &
   \shift{\MM}(s) \fund(s) &= \onev \eq - \I, \\ 
   \shift{\arow} \fund(s) &= \eq,  &
-  \fund(s) \shift{\MM}(s) &= \shift{\tau} \onev \shift{\arow} - \I.
+  \fund(s) \shift{\MM}(s) &= \shift{\tau}_0 \onev \shift{\arow} - \I.
 \end{aligned}
 \end{equation}
 %
@@ -573,7 +571,7 @@ In particular, we see that the quantity
   \eta(s) = \sum_j \fptbm_{ij}(s) \eqm_j
 \end{equation}
 %
-is independent of the starting state \(i\), but now \(\eta(s) = \tr\fund(s) - \frac{\tau_0}{1 + s \tau_0}\).
+is independent of the starting state \(i\), but now \(\eta(s) = \tr\fund(s) - \shift{\tau}_0 \).
 We can then define
 %
 \begin{equation}\label{eq:lpmixtime}
@@ -646,6 +644,7 @@ We can also express this in terms of the shifted process in \cref{eq:larea}.
 We can choose how to distribute the shift across \(\MMd \pot\) and \(\MMd \dep\).
 Two choices from a continuum%
 \footnote{We could choose \( \shift{\MMd}^\nu(s) = \MMd^\nu + \frac{s g^\nu}{r f^\nu} (\onev \eq - \I) \), for any \(g^\nu \) with \( \sum_\nu g^\nu = 1 \).
+It shifts \(\frg\) correctly and also shifts \( \shift{\enc}(s) = \enc + \frac{s}{r} \Delta g (\onev \eq - \I) \).
 The two possibilities in \cref{eq:lshiftpd} come from \(g^\nu = \frac{1}{2}\) and \(g^\nu = f^\nu\) respectively.}
 are:
 %
@@ -656,7 +655,7 @@ are:
 \end{equation}
 %
 The first choice leaves \( \shift{\enc} = \enc \), so it only affects the \(\etw\) piece of \cref{eq:larea}.
-The second choice does not leave \(\enc\) invariant (in fact \( \shift{\enc}(s) = \enc + \frac{s}{r} (f\pot - f\dep) (\onev \eq - \I) \)), but because \( \eq (\onev \eq - \I) = 0 \) the shift does not make any contribution to \cref{eq:larea}.
+The second choice does not leave \(\enc\) invariant (in fact \( \shift{\enc}(s) = \enc + \frac{s}{r} \Delta f (\onev \eq - \I) \)), but because \( \eq (\onev \eq - \I) = 0 \) the shift does not make any contribution to \cref{eq:larea}.
 Either way:
 %
 \begin{equation}\label{eq:lareashift}
@@ -676,8 +675,8 @@ In analogy with the case \(s=0\) in \cite{Lahiri2013synapse}, we define
 %
 \begin{equation}\label{eq:lareacoeffs}
   \begin{aligned}
-    {c}_k(s) &= \sum_{ij} \eqm_i \encm_{ij} \prn{\fptbm_{ik}(s)-\fptbm_{jk}(s)}, \\
-    {a}_j(s) &= \sum_{k} \encm_{jk} (\etwm_{j}(s) - \etwm_{k}(s)), \\
+    {c}_k(s) &= r\sum_{ij} \eqm_i \encm_{ij} \prn{\fptbm_{ik}(s)-\fptbm_{jk}(s)}, \\
+    {a}_j(s) &= r\sum_{k} \encm_{jk} (\etwm_{j}(s) - \etwm_{k}(s)), \\
     \thbm_i(s) &= \sum_j \fptbm_{ij}(0)\, \eqm_j {a}_j(s), \\
   \end{aligned}
     \implies
@@ -693,41 +692,43 @@ Using the same approach as the area bound in \cite{Lahiri2013synapse} we find th
 %
 \begin{equation}\label{eq:lAdiff}
   \pdiff{\hat{A}(s)}{\MMdm^\mu_{mn}}
-     = f^\mu \eqm_m \prn{ r \brk{\thbm_m(s) - \thbm_n(s)}
-     +\prn{r {c}_m(s) + (-1)^\mu} \brk{\etwm_m(s) - \etwm_n(s)} }.
+     = f^\mu \eqm_m \prn{ \brk{\thbm_m(s) - \thbm_n(s)}
+     +\prn{{c}_m(s) + (-1)^\mu} \brk{\etwm_m(s) - \etwm_n(s)} }.
 \end{equation}
 %
 The term with \(\thb(s)\) comes from differentiating \(\eq\), the term with \(c(s)\) comes from differentiating \(\etw(s)\) and the term with \((-1)^\mu\) comes from differentiating \(\enc\) in \eqref{eq:larea}.
 
 To write down the Hessian, we will first define some notation.
-We define the matrix \(\mathbf{X}(s) = \fund(0) \enc \fund(s)\).
+We define the matrix \(\mathbf{X}(s) = r\fund(0) \enc \fund(s)\).
 Given a four-index array \(H_{ijkl}\), we define \(H\trans_{ijkl} = H_{klij}\).
 Then we denote
 %
 \begin{equation}\label{eq:hessparts}
-\begin{alignedat}{3}
-    R_{ijkl} = \smash{\pdiff{^2 \hat{A}}{\frgm_{ij} \circ \partial \frgm_{kl}}} 
-    &= \
-    &&\eqm_i \brc{\fundm_{ik}(0) - \fundm_{jk}(0)} \brc{\thbm_k(s) - \thbm_l(s)} \\
-    &&&+ \eqm_i \brc{{X}_{ik}(s) - {X}_{jk}(s)} 
+\begin{alignedat}{2}
+    R_{ijkl} &= \smash{\pdiff{\hat{A}}{\frgm_{ij} \circ ; \frgm_{kl}}} &
+    &=
+    \eqm_i \brc{\fundm_{ik}(0) - \fundm_{jk}(0)} \brc{\thbm_k(s) - \thbm_l(s)} \\
+    &&&\hphantom{=} {}
+    + \eqm_i \brc{{X}_{ik}(s) - {X}_{jk}(s)} 
           \brc{\etwm_k(s) - \etwm_l(s)} \\
-    &&&+ \eqm_i {c}_i(s) \brc{\fundm_{ik}(s) - \fundm_{jk}(s)} 
+    &&& \hphantom{=} {}
+    + \eqm_i {c}_i(s) \brc{\fundm_{ik}(s) - \fundm_{jk}(s)} 
           \brc{\etwm_k(s) - \etwm_l(s)},  \\
-  S_{ijkl} = \smash{\pdiff{^2 \hat{A}}{\frgm_{ij} \partial \encm_{kl}} }
-  &= \
-    &&\eqm_i \brc{\fundm_{ik}(0) - \fundm_{jk}(0)} \brc{\etwm_k(s) - \etwm_l(s)} \\
-    &&&+ \eqm_k \brc{\fundm_{ki}(s) - \fundm_{li}(s)} \brc{\etwm_i(s) - \etwm_j(s)},
+  S_{ijkl} &= \smash{\pdiff{\hat{A}}{\encm_{ij} ; \frgm_{kl}} } &
+  &= \eqm_k \brc{\fundm_{ki}(0) - \fundm_{li}(0)} \brc{\etwm_i(s) - \etwm_j(s)} \\
+    &&& \hphantom{=} {}
+    + \eqm_i \brc{\fundm_{ik}(s) - \fundm_{jk}(s)} \brc{\etwm_k(s) - \etwm_l(s)},
 \end{alignedat}
 \end{equation}
 %
 where \(R\) contains only those terms where \( \frgm_{ij} \) precedes \( \frgm_{kl} \) in the matrix products from the expression for \( \hat{A} \) in \cref{eq:larea}.
-The other terms sum to \(R\trans\).
+The missing terms sum to \(R\trans\).
 
 Then we can write the Hessian as
 %
 \begin{equation}\label{eq:hessian}
   \pdiff{^2\hat{A}(s)}{\MMdm^\mu_{ij} \partial \MMdm^\nu_{kl}} =
-     f^\mu f^\nu [R + R\trans + (-1)^\mu S\trans + (-1)^\nu S]_{ijkl}.
+     f^\mu f^\nu [R + R\trans + (-1)^\mu S + (-1)^\nu S\trans]_{ijkl}.
 \end{equation}
 %
 This is useful in numerical maximisation.
@@ -770,7 +771,7 @@ The derivatives, for \(m \neq n\) are
 \begin{aligned}
   \frac{1}{f^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
     \eqm_m \prn{ \brk{\thbm_m(s) - \thbm_n(s)}
-     + \prn{\mathbf{c}_m(s) + (-1)^\nu} \brk{\etwm_m(s) - \etwm_n(s)} } \\
+     + \prn{c_m(s) + (-1)^\nu} \brk{\etwm_m(s) - \etwm_n(s)} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
      + \lambda \eqm_m (\etwm_{m}(0)-\etwm_{n}(0)) 
     = 0.
@@ -834,7 +835,7 @@ If we note that we can write \( \MMd^\nu - \I = \prn{\frg + (-1)^\nu \enc} / 2f^
 %
 where \(\delta\) indicates mean subtraction and \(\eq \mathbf{a}(s) = \hat{A}(s)\).
 
-The expressions in \cref{eq:finitederivs} have the same form as for \(s=0\), which allowed us to argue that the model with maximal area must have the serial topology, \cite{Lahiri2013synapse}.
+The expressions in \cref{eq:finitederivs} have the same form as for \(s=0\), which allowed us to argue that the model with maximal area must have the serial topology in \cref{sec:areapert} and \cite{Lahiri2013synapse}.
 The one missing ingredient is the scale invariance.
 
 However, we do have numerical evidence that the model that maximises the Laplace transform does have the serial topology.
@@ -857,40 +858,24 @@ The models found numerically are described in \cref{fig:envvid}.
 \end{figure}
 
 
-\begin{figure}[tbp]
-  \centering
-  % Requires \usepackage{graphicx}
-  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=7]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=13]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=21]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=27]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=36]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=50]{envelope.pdf}}
-  \end{myenuma}
-  \caption[Optimal models]{The models that constitute the numeric envelope in \cref{fig:envnum}.
-  The plot to the left of each frame indicates the memory curve of the model shown to the right in green, with the numeric envelope for models with the serial topology in orange and the proven envelope, \eqref{eq:env}, in blue.
-  Above the left plot we have a graphical display of the model, described with more detail to the right.
-  The area of each node is proportional to the steady state probability in that state and the thickness of the red and blue edges are proportional to the transition probabilities under potentiation and depression.
-  The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
-  The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
-  The heat map in the centre right of each frame indicates the equilibrium probability distribution for each state.
-  See the video for the full set of models.}\label{fig:envvid}
-\end{figure}
-
-
 %-------Section------------------------------------------------------------------
 
 \subsection{Scale invariance}\label{sec:scale}
 
-Under the transformation from \cref{eq:scale}, the Laplace transform has the following scaling property
+Under the scale transformation
+%
+\begin{equation}\label{eq:scale}
+  \zeta * \MMd \equiv (1-\zeta) \MMd + \zeta \I ,
+\end{equation}
+%
+the Laplace transform has the following scaling property
 %
 \begin{equation}\label{eq:laplacescale}
   \hat{A} \prn{\zeta s;\zeta * \MMd^\nu} = \hat{A} \prn{s; \MMd^\nu}.
 \end{equation}
 %
 At \(s = 0\), it is scale invariant.
-This means that we can take a pair of matrices that violates the ``diagonal'' constraints (second inequality of \eqref{eq:constri}) and use the scale transform \eqref{eq:scale} to construct a pair of matrices that satisfy the ``diagonal'' constraints and have the same area.
+This means that in \cite{Lahiri2013synapse} we could take a pair of matrices that violates the ``diagonal'' constraints (second inequality of \eqref{eq:constri}) and use the scale transform \eqref{eq:scale} to construct a pair of matrices that satisfy the ``diagonal'' constraints and have the same area.
 This allowed us to ignore the diagonal constraints.
 We can't do that for \(s > 0\).
 
@@ -1150,35 +1135,15 @@ The positions of \(m\) and \(k\) are not yet constrained, other than being in th
 
 Let us define the following
 %
-\begin{equation}\label{eq:degenerate}
-  \dgn_{m} = \thb + c_m \etw,
-  \quad
-  \dgn^\nu_m = \dgn_m + (-1)^\nu \etw,
-  \quad \implies \;
+\begin{multline}\label{eq:degenerate}
+  \dgn_{m}(s) = \thb(s) + c_m \etw(s) + \lambda \etw(0),
+  \qquad
+  \dgn^\nu_m(s) = \dgn_m(s) + (-1)^\nu \etw(s), \\
+  \implies \quad
   \frac{1}{f^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n}) + \mu^\nu_{mn} - \mu^\nu_{mm}.
-\end{equation}
+\end{multline}
 %
 They should be thought of as collections of vectors rather than matrices.
-We can also write \cref{eq:diagKKT} as
-%
-\begin{equation}\label{eq:diagKKTz}
-\begin{aligned}
-  \mu^\nu_{mm} &= \frac{\eqm_m}{2f^\nu} 
-    \left[ 
-      \hat{A}
-      - (c_m + (-1)^\nu) (\delta \wm_m + s \delta \etwm_m)
-      - \lambda \delta w_m
-    % \right. \\ &\hphantom{= \frac{\eqm_m}{2f^\nu} }
-    % \left.
-      - (-1)^\nu \prn{ 
-        [\encm \dgnm_m]_m
-        - \lambda a_m(0)
-      }
-    \right],
-\end{aligned}
-\end{equation}
-%
-with all quantities evaluated at \(s\) unless labelled otherwise.
 
 Suppose that a state \(n\) has a nonzero transition rate from state \(m\) for one \(\nu\).
 Then \(\mu^\nu_{mn} = 0\) and:
@@ -1196,7 +1161,7 @@ If both \(\nu\) have nonzero rates from \(m\) to \(n\):
 \begin{equation}\label{eq:doubleexit}
   \MMdm\pot_{mn}, \MMdm\dep_{mn} > 0
   \qquad \implies \qquad
-  \dgnm_{m,m} - \dgnm_{m,n} \geq\abs{\etwm_m - \etwm_n}.
+  \dgnm_{m,m} - \dgnm_{m,n} \geq \abs{\etwm_m - \etwm_n}.
 \end{equation}
 %
 
@@ -1233,12 +1198,155 @@ The consequences of these inequalities are depicted in \cref{fig:triangle_s}(\re
 We see that \(n\) must be a global minimum of \(\dgn_m\), and if there are multiple transitions of a single type (potentiating or depressing) the targets are constrained to lie on a single line.
 Even if there is no state \(n\) that is the target of both potentiating and depressing transitions, there will be two lines at \(45^\circ \) passing through any targets of potentiating/depressing transitions that demarcate the forbidden zone.
 
-Both of \cref{eq:twoexits,eq:twodoubleexits} require degeneracy.
+We use \(m*\) to label the intersection of the two diagonal lines in \cref{fig:triangle_s}(\ref{fig:triangle_spacing}), wether or not there is a state there.
+It can be defined for each \(m\), provided that it has at least one outgoing transition for each plasticity type, via
+%
+\begin{equation*}
+\begin{lgathered}  
+  \dgnm\pot_{m*} = \dgnm\pot_{m,j} = \min_k \dgnm\pot_{m,k},
+  \qquad
+  \dgnm\dep_{m*} = \dgnm\dep_{m,i} = \min_k \dgnm\dep_{m,k},
+  \\
+  \text{and also} \quad
+  \dgnm_{m*} = \frac{1}{2} \prn{\dgnm\pot_{m*} + \dgnm\dep_{m*}},
+  \quad
+  \etwm_{m*} = \frac{1}{2} \prn{\dgnm\pot_{m*} - \dgnm\dep_{m*}},
+  \quad
+  \thbm_{m*} = \dgnm_{m*} - c_m \etwm_{m*}.
+\end{lgathered}
+\end{equation*}
+%
+As shown in \cref{eq:twoexits}, this produces the same point regardless of which states \(i\) and \(j\) we use, 
+so long as there is a nonzero depressing/potentiating transition from \(m\) to that state.
+The KKT multipliers are related to these quantities by
+%
+\begin{equation}\label{eq:KKTz}
+  \mu^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m*}),
+  \qquad
+  \mu^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m*}).
+\end{equation}
+%
+
+Both of \cref{eq:twoexits,eq:twodoubleexits} require degeneracy -- 
+those two situations would require \(\dgn^\nu_m\) to have degenerate minima.
 The physicist's intuition states that degeneracy is fragile and requires a symmetry to protect it.
 Such a symmetry would imply that the states are lumpable.
 This would imply that, after lumping all lumpable states together, the situation in \cref{eq:twoexits} is impossible and \cref{eq:twodoubleexits} is even more impossible.
 If this intuition holds, we expect that \cref{fig:triangle_s}(\ref{fig:triangle_spacing}) would have at most one state on each of the two diagonal lines.
-Either there would be one state like \(n\), or there would be one state like \(i\) and one state like \(j\). 
+Either there would be one state like \(n\), or there would be one state like \(i\) and one state like \(j\), and the first of these possibilities is rather implausible.
+
+%-------Section------------------------------------------------------------------
+
+\subsubsection{Diagonal constraints}\label{sec:diagKKT}
+
+We can write \cref{eq:diagKKT} as
+%
+\begin{equation*}
+\begin{aligned}
+  \mu^\nu_{mm} &= \frac{\eqm_m}{2f^\nu} 
+    \left[ 
+      \hat{A}
+      - (c_m + (-1)^\nu) (\delta \wm_m + s \delta \etwm_m)
+      - \lambda \delta w_m
+    % \right. \\ &\hphantom{= \frac{\eqm_m}{2f^\nu} }
+    % \left.
+      - (-1)^\nu [\encm \dgnm_m]_m
+    \right],
+\end{aligned}
+\end{equation*}
+%
+with all quantities evaluated at \(s\) unless labelled otherwise.
+
+From \cref{eq:oneexit,eq:twoexits} we see that
+%
+\begin{equation*}
+\begin{gathered}
+  \begin{aligned}
+    \MMdm^\nu_{mi} &> 0 &
+    \quad &\implies \quad &
+    \dgnm^\nu_{m,i} &= \dgnm^\nu_{m*}
+    \\
+    \sum_{k \neq m} \MMdm^\nu_{mk} &< 1 &
+    &\implies &
+    \dgnm^\nu_{m,m} &= \dgnm^\nu_{m*},
+    % \quad \forall \ i : \MMdm^\nu_{mi} > 0,
+  \end{aligned}
+  \\
+  \begin{aligned}
+    \implies \quad
+    [(\MMd^\nu - \I) \dgn_m]_m
+      &= \sum_k (\MMdm^\nu_{mk} - \delta_{mk}) \dgnm_{m,k}
+      = \sum_k (\MMdm^\nu_{mk} - \delta_{mk}) 
+        (\dgnm^\nu_{m,k} - (-1)^\nu \etwm_k) \\
+      &= \sum_{k \neq m} \MMdm^\nu_{mk} 
+        (\dgnm^\nu_{m,k} - \dgnm^\nu_{m,m}) 
+        - (-1)^\nu [(\MMd^\nu - \I) \etw]_m \\
+      &= (\dgnm^\nu_{m*} - \dgnm^\nu_{m,m}) 
+        \sum_{k \neq m} \MMdm^\nu_{mk}
+        - (-1)^\nu [(\MMd^\nu - \I) \etw]_m \\
+      &= (\dgnm^\nu_{m*} - \dgnm^\nu_{m,m}) 
+        - (-1)^\nu [(\MMd^\nu - \I) \etw]_m \\
+      &= (\dgnm_{m*} - \dgnm_{m,m}) 
+        + (-1)^\nu \prn{
+          (\etwm_{m*} - \etwm_m)
+          - [(\MMd^\nu - \I) \etw]_m
+        },
+  \end{aligned}
+\end{gathered}
+\end{equation*}
+%
+where we used the fact that \( (\dgnm^\nu_{m*} - \dgnm^\nu_{m,m}) \) is only nonzero when \( \sum_{k \neq m} \MMdm^\nu_{mk} = 1 \).
+Therefore
+%
+\begin{equation*}
+\begin{aligned}
+  [\enc \dgn_m]_m
+    &= \sum_{\nu} (-1)^\nu f^\nu 
+      (\dgnm_{m*} - \dgnm_{m,m}) 
+      + \sum_{\nu} f^\nu \prn{
+        (\etwm_{m*} - \etwm_m)
+        - [(\MMd^\nu - \I) \etw]_m
+      } \\
+    &= \Delta f (\dgnm_{m*} - \dgnm_{m,m}) 
+      + (\etwm_{m*} - \etwm_m)
+      - [\frg \etw]_m \\
+    &= \Delta f (\dgnm_{m*} - \dgnm_{m,m}) 
+      + (\etwm_{m*} - \etwm_m)
+      - (\delta w_m + s \delta \etwm_m).
+\end{aligned}
+\end{equation*}
+%
+Then we can also write \cref{eq:diagKKT} as
+%
+\begin{equation}\label{eq:diagKKTz}
+\begin{aligned}
+  \mu^\nu_{mm} &= \frac{\eqm_m}{2f^\nu} 
+    \left[ 
+      \hat{A}
+      - c_m (\delta \wm_m + s \delta \etwm_m)
+      - \lambda \delta w_m
+    % \right. \\ &\hphantom{= \frac{\eqm_m}{2f^\nu} }
+    % \left.
+      + (-1)^\nu \prn{ 
+        \Delta f (\dgnm_{m,m} - \dgnm_{m*}) 
+        + (\etwm_m - \etwm_{m*})
+      }
+    \right],
+\end{aligned}
+\end{equation}
+%
+again with all quantities evaluated at \(s\) unless labelled otherwise.
+
+\Cref{eq:KKTz} provides another expression for \(\mu^\nu_{mm}\).
+That expression will agree with \cref{eq:diagKKTz} provided that
+%
+\begin{equation}\label{eq:diagAgree}
+    \hat{A} - c_m (\delta \wm_m + s \delta \etwm_m)
+      - \lambda \delta w_m 
+      = (\dgnm_{m,m} - \dgnm_{m*}) 
+        + \Delta f (\etwm_m - \etwm_{m*}).
+\end{equation}
+% 
 
 %-------Section------------------------------------------------------------------
 
@@ -1429,16 +1537,17 @@ From \cref{eq:lAdiff}, the derivatives for \(m \neq n\) are
 %
 See \cref{eq:lareacoeffs} for the definitions of these quantities.
 
-The area (and \(\Delta\pr\)) is invariant under the scale transformation
+The area and \(\Delta\pr\) are invariant under the scale transformation \cref{eq:scale}
 %
-\begin{equation}\label{eq:scale}
+\begin{equation*}%\label{eq:scale}
   \zeta * \MMd \equiv (1-\zeta) \MMd + \zeta \I .
-\end{equation}
+\end{equation*}
 %
 It follows that
 %
 \begin{equation*}
-  \sum_{\nu, m \neq n} \MMdm^\nu_{mn} \pdiff{\CL}{\MMdm^\nu_{mn}} = - \sum_{\nu, m} \mu^\nu_{mm} = 0 .
+  \sum_{\nu, m \neq n} \MMdm^\nu_{mn} \pdiff{\CL}{\MMdm^\nu_{mn}} 
+    = - \sum_{\nu, m} \mu^\nu_{mm} = 0 .
 \end{equation*}
 %
 As the KKT multipliers are nonnegative, this implies that all the diagonal KKT multipliers vanish and we can ignore the diagonal constraints.
@@ -1685,7 +1794,7 @@ This gives an area of
 \footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eq_+\eq_-)/r\sqrt{1 - (\Delta f)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
 %
 \begin{equation}\label{eq:serialextarea}
-  \CA \leq \frac{(M-1)}{r}\prn{4\eqm_+\eqm_-}.
+  \CA \leq \frac{(M-1)}{r}\prn{4\eqm_+\eqm_-} = \frac{(M-1)}{r}\prn{1 - (\eqm_+ - \eqm_-)^2}.
 \end{equation}
 %
 This is maximised at \(\eqm_+=\eqm_-= \frac{1}{2}\):
@@ -2064,12 +2173,39 @@ We can see that this conjectured envelope is close to tight, being off by a cons
   \includegraphics[width=0.8\linewidth]{LenvNum.pdf}\\
   \caption[Numerical and theoretical envelopes for the signal-to-noise ratio]
   {Numerical  and theoretical envelopes  for the signal-to-noise ratio, \eqref{eq:snrb}. 
-  As in \cref{fig:envnum}, \cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} are solved numerically with \(f\potdep=\frac{1}{2}\), the number of synapses \(N=1\) and the number of states \(M=10\).
-  The orange line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
-  The green line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
-  The dotted blue line indicates the proven envelope, \cref{eq:env} and the solid blue line is the conjectured envelope assuming detailed balance, see \cref{eq:envDB}.}\label{fig:envnumth}
+  As in \cref{fig:envnum}, \cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} 
+  are solved numerically with \(f\potdep=\frac{1}{2}\), 
+  the number of synapses \(N=1\) and the number of states \(M=10\).
+  The orange line indicates the maximum memory curve over the space of all matrices 
+  satisfying the constraints \eqref{eq:constr}.
+  The green line indicates maximum over models with the serial topology, 
+  \ie potentiation only moves up one state and depression only moves down one state.
+  The dotted blue line indicates the proven envelope, 
+  \cref{eq:env} and the solid blue line is the conjectured envelope assuming detailed balance, 
+  see \cref{eq:envDB}.}\label{fig:envnumth}
 \end{figure}
 
+\begin{figure}[tbp]
+  \centering
+  % Requires \usepackage{graphicx}
+  \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=7]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=13]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=21]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=27]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=36]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=50]{envelope.pdf}}
+  \end{myenuma}
+  \caption[Optimal models]{The models that constitute the numeric envelope in \cref{fig:envnum}.
+  The plot to the left of each frame indicates the memory curve of the model shown to the right in green, with the numeric envelope for models with the serial topology in orange and the proven envelope, \eqref{eq:env}, in blue.
+  Above the left plot we have a graphical display of the model, described with more detail to the right.
+  The area of each node is proportional to the steady state probability in that state and the thickness of the red and blue edges are proportional to the transition probabilities under potentiation and depression.
+  The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
+  The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
+  The heat map in the centre right of each frame indicates the equilibrium probability distribution for each state.
+  See the video for the full set of models.}\label{fig:envvid}
+\end{figure}
+\
 
 %================================================================================
 
@@ -2086,19 +2222,20 @@ We can see that this conjectured envelope is close to tight, being off by a cons
   \caption[Heuristic optimal models]{Heuristics for models that maximise memory curve.
   All unlabelled arrowshave transition probabilities equal to 1.
   At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with \(M\) states.
-  At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model.
+  At later times the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model.
   At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
-  Once this reaches zero, we discard the old end state and work on the new end state.} \label{fig:heuristicmodels}
+  Once this reaches zero we discard the old end state and work on the new end state.
+  } \label{fig:heuristicmodels}
 \end{figure}
 
 
-Looking at them models that were found by numerical maximisation in \cref{fig:envvid} (see the video for the full set of models), suggests we look at the particular set of models, shown in \cref{fig:heuristicmodels}.
+Looking at them models that were found by numerical maximisation in \cref{fig:envvid} (see the video for the full set of models) suggests we look at the particular set of models shown in \cref{fig:heuristicmodels}.
 
-At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with \(M\) states.
-At later times, the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as \(\tau \to \infty\).
-At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
-Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state (as one can see from \cref{fig:envvid} and the video, this is not quite true, but it is close enough to true to get a reasonable approximation to the envelope).
-Once the length has been reduced to \(M=2\), the model is not shortened any further and the two-state model with deterministic transitions maximises the memory curve for all earlier times.
+At one particular time the model is (\ref{fig:serial_uniform}) the uniform serial model with \(M\) states.
+At later times the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as \(\tau \to \infty\).
+At earlier times the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
+Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state (as one can see from \cref{fig:envvid} and the video this is not quite true, but it is close enough to true to get a reasonable approximation to the envelope).
+Once the length has been reduced to \(M=2\) the model is not shortened any further and the two-state model with deterministic transitions maximises the memory curve for all earlier times.
 
 These models' Laplace transforms can be computed analytically, as we will see below, leading to a heuristic envelope.
 All of these calculations will be performed at \(f\potdep=\frac{1}{2}\), so the denominator will play no role.
@@ -2108,7 +2245,6 @@ We study models with \(m\) strong and \(m\) weak states for a total of  \(M = 2 
 %--------------------------------------------------------------------------------
 
 \subsection{Uniform serial model}\label{sec:serial_uniform}
-
 
 Here we will look at the model in \cref{fig:heuristicmodels}\ref{fig:serial_uniform}.
 Looking at \eqref{eq:larea}, the only thing we need is differences in \(\etwm_i(s)\).
@@ -2137,15 +2273,15 @@ As we are only interested in differences of the \(\etwm_i(s)\), we can drop the 
 Then
 %
 \begin{equation}\label{eq:etarecur}
-  -(s\I + \onev\pib - \frg)\etw(s) = \w.
+  -(s\I + \ onev \arow - \frg)\etw(s) = \w.
 \end{equation}
 %
 We can then write
 %
 \begin{equation}\label{eq:detarecur}
-  \etw(s) = -\frac{(\pib\etw(s))\onev+\w}{s} + \delta \boldsymbol{\eta}(s),
+  \etw(s) = -\frac{(\arow \etw(s)) \onev + \w}{s} + \delta \etw(s),
   \qquad
-  (\frg-s\I)\delta \boldsymbol{\eta}(s) = \frac{\frg\w}{s}.
+  (\frg - s\I) \delta \etw(s) = \frac{\frg \w}{s}.
 \end{equation}
 %
 As we are only interested in differences, we can drop any terms proportional to \(\onev\) in \(\etw(s)\).
