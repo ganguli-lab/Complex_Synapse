@@ -406,8 +406,8 @@ where \(\eq\) is the steady state distribution of the continuous time transition
 \begin{equation}\label{eq:eq}
   \eq\frg = 0,
   \qquad\text{where}\quad
-  \frg = \sum_\nu f^\nu \MMd^\nu - \I
-    = f\pot \MMd \pot + f\dep \MMd \dep - \I.
+  \frg = \sum_\nu r f^\nu (\MMd^\nu - \I)
+    = r f\pot \MMd \pot + r f\dep \MMd \dep - r \I.
 \end{equation}
 %
 
@@ -415,11 +415,11 @@ This results in
 %
 \begin{equation}\label{eq:overlapwt}
 \begin{aligned}
-  \av{\synid^1 \syn^1(t)} &= \eq (f\pot \MMd \pot-f\dep \MMd \dep)\, \e^{rt\frg} \w, \\
+  \av{\synid^1 \syn^1(t)} &= \eq (f\pot \MMd \pot-f\dep \MMd \dep)\, \e^{t\frg} \w, \\
   \av{\synid^1 \syn^1(\infty)} &= \eq (f\pot \MMd \pot-f\dep \MMd \dep)\, \onev\eq \w \\
          &= \eq (f\pot\onev-f\dep\onev)\, \eq \w \\
          &=  (f\pot-f\dep)\, \eq \w \\
-         &=  \Delta f\, \eq \e^{rt\frg} \w ,
+         &=  \Delta f\, \eq \e^{t\frg} \w ,
 \end{aligned}
 \end{equation}
 %
@@ -429,18 +429,18 @@ Combining the expressions in \cref{eq:overlapwt} allows us to write the numerato
 \begin{equation}\label{eq:signal}
 \begin{aligned}
   \av{\synid \cdt \syn(t)} - \av{\synid \cdt \syn(\infty)}
-    &= N \eq \enc \, \e^{rt \frg} \w , \\
+    &= \frac{N}{r} \eq \enc \, \e^{t \frg} \w , \\
     \text{where} \qquad
-  \enc &= \sum_\nu (-1)^\nu f^\nu (\MMd^\nu - \I)
-    = f\pot(\MMd \pot-\I)-f\dep(\MMd \dep-\I)
+  \enc &= \sum_\nu (-1)^\nu r f^\nu (\MMd^\nu - \I)
+    = r f\pot \MMd\pot - r f\dep \MMd\dep - r \Delta f \I.
 \end{aligned}
 \end{equation}
 %
 Combining with \eqref{eq:noise} gives
 %
 \begin{equation}\label{eq:SNRcurveExact}
-  \SNR(t) = \frac{\sqrt{N} \eq \enc\,\e^{rt \frg}\w}
-                 {\sqrt{1-(\Delta f)^2(\eq \w)^2}}.
+  \SNR(t) = \frac{\sqrt{N} \eq \enc\,\e^{t \frg}\w}
+                 {r \sqrt{1-(\Delta f)^2(\eq \w)^2}}.
 \end{equation}
 %
 The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with \(f\pot=f\dep\) or \(\eq_+=\eq_-\).
@@ -462,9 +462,9 @@ We then have
 It will also be convenient to define the differential operators
 %
 \begin{equation}\label{eq:pertfe}
-  \pdiff{}{\frgm_{ij}} = \frac{1}{2f\pot} \pdiff{}{\MMdm \pot_{ij}} + \frac{1}{2f\dep} \pdiff{}{\MMdm \dep_{ij}},
+  \pdiff{}{\frgm_{ij}} = \frac{1}{2rf\pot} \pdiff{}{\MMdm \pot_{ij}} + \frac{1}{2rf\dep} \pdiff{}{\MMdm \dep_{ij}},
   \qquad
-  \pdiff{}{\encm_{ij}} = \frac{1}{2f\pot} \pdiff{}{\MMdm \pot_{ij}} - \frac{1}{2f\dep} \pdiff{}{\MMdm \dep_{ij}},
+  \pdiff{}{\encm_{ij}} = \frac{1}{2rf\pot} \pdiff{}{\MMdm \pot_{ij}} - \frac{1}{2rf\dep} \pdiff{}{\MMdm \dep_{ij}},
 \end{equation}
 %
 these satisfy
@@ -481,7 +481,7 @@ If we wish to use the off-diagonal elements of \(\frg\) and \(\enc\) as the degr
 \begin{equation}\label{eq:constrfe}
 \begin{aligned}
   \frgm_{i \neq j}   &\geq \abs{ \encm_{i \neq j} }, &\qquad
-  \sum_{j\neq i}\frgm_{ij} + (-1)^\mu \encm_{ij}  &\leq 2f^\mu, \\
+  \sum_{j\neq i}\frgm_{ij} + (-1)^\mu \encm_{ij}  &\leq 2rf^\mu, \\
   \sum_j \frgm_{ij} &=0, &
   \sum_j \encm_{ij} &=0.
 \end{aligned}
@@ -621,9 +621,9 @@ Now consider the Laplace transform of the SNR curve \eqref{eq:SNRcurveExact}
 \begin{equation}\label{eq:lsnr}
 \begin{aligned}
   A(s) = \intd[_0^{\infty}]{t} \e^{-st}\SNR(t) 
-   &= \intd[_0^{\infty}]{t} \frac{ \sqrt{N} \eq \enc \e^{(r\frg-s)t} \w }
-                                { \sqrt{1-(\Delta f)^2(\eq\w)^2} } \\
-   &= \frac{\sqrt{N} \eq \enc \prn{s \I - r\frg}\inv \w }{\sqrt{1-(\Delta f)^2(\eq\w)^2}}.
+   &= \intd[_0^{\infty}]{t} \frac{ \sqrt{N} \eq \enc \e^{(\frg-s)t} \w }
+                                { r\sqrt{1-(\Delta f)^2(\eq\w)^2} } \\
+   &= \frac{\sqrt{N} \eq \enc \prn{s \I - \frg}\inv \w }{r\sqrt{1-(\Delta f)^2(\eq\w)^2}}.
 \end{aligned}
 \end{equation}
 %
@@ -632,7 +632,7 @@ Thanks to \eqref{eq:alfund}, we can solve this by the replacement \(\mathbf{G}(s
 %
 \begin{equation}\label{eq:larea}
 \begin{aligned}
-  \hat{A}(s) = A(s) \sqrt{\frac{{{1-(\Delta f)^2(\eq\w)^2}}}{N}}  &=  \eq \enc \fund(s) \w \\
+  \hat{A}(s) = r A(s) \sqrt{\frac{{{1-(\Delta f)^2(\eq\w)^2}}}{N}}  &=  \eq \enc \fund(s) \w \\
     &= \sum_{ijk} \eqm_i \encm_{ij} \prn{\fptbm_{ik}(s)-\fptbm_{jk}(s)} \eqm_k \wm_k \\
     &= \sum_{ij}  \eqm_i \encm_{ij} (\etwm_{i}(s) - \etwm_{j}(s)).
 \end{aligned}
@@ -675,8 +675,8 @@ In analogy with the case \(s=0\) in \cite{Lahiri2013synapse}, we define
 %
 \begin{equation}\label{eq:lareacoeffs}
   \begin{aligned}
-    {c}_k(s) &= r\sum_{ij} \eqm_i \encm_{ij} \prn{\fptbm_{ik}(s)-\fptbm_{jk}(s)}, \\
-    {a}_j(s) &= r\sum_{k} \encm_{jk} (\etwm_{j}(s) - \etwm_{k}(s)), \\
+    {c}_k(s) &= \sum_{ij} \eqm_i \encm_{ij} \prn{\fptbm_{ik}(s)-\fptbm_{jk}(s)}, \\
+    {a}_j(s) &= \sum_{k} \encm_{jk} (\etwm_{j}(s) - \etwm_{k}(s)), \\
     \thbm_i(s) &= \sum_j \fptbm_{ij}(0)\, \eqm_j {a}_j(s), \\
   \end{aligned}
     \implies
@@ -692,14 +692,14 @@ Using the same approach as the area bound in \cite{Lahiri2013synapse} we find th
 %
 \begin{equation}\label{eq:lAdiff}
   \pdiff{\hat{A}(s)}{\MMdm^\mu_{mn}}
-     = f^\mu \eqm_m \prn{ \brk{\thbm_m(s) - \thbm_n(s)}
+     = rf^\mu \eqm_m \prn{ \brk{\thbm_m(s) - \thbm_n(s)}
      +\prn{{c}_m(s) + (-1)^\mu} \brk{\etwm_m(s) - \etwm_n(s)} }.
 \end{equation}
 %
 The term with \(\thb(s)\) comes from differentiating \(\eq\), the term with \(c(s)\) comes from differentiating \(\etw(s)\) and the term with \((-1)^\mu\) comes from differentiating \(\enc\) in \eqref{eq:larea}.
 
 To write down the Hessian, we will first define some notation.
-We define the matrix \(\mathbf{X}(s) = r\fund(0) \enc \fund(s)\).
+We define the matrix \(\mathbf{X}(s) = \fund(0) \enc \fund(s)\).
 Given a four-index array \(H_{ijkl}\), we define \(H\trans_{ijkl} = H_{klij}\).
 Then we denote
 %
@@ -728,7 +728,7 @@ Then we can write the Hessian as
 %
 \begin{equation}\label{eq:hessian}
   \pdiff{^2\hat{A}(s)}{\MMdm^\mu_{ij} \partial \MMdm^\nu_{kl}} =
-     f^\mu f^\nu [R + R\trans + (-1)^\mu S + (-1)^\nu S\trans]_{ijkl}.
+     r^2 f^\mu f^\nu [R + R\trans + (-1)^\mu S + (-1)^\nu S\trans]_{ijkl}.
 \end{equation}
 %
 This is useful in numerical maximisation.
@@ -747,7 +747,7 @@ Consider the Lagrangian
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i(s) - \etwm_j(s))
-        +\sum_{\nu i j} { f^\nu \mu^\nu_{ij} \MMdm^\nu_{ij} }
+        +\sum_{\nu i j} { r f^\nu \mu^\nu_{ij} \MMdm^\nu_{ij} }
         + \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
@@ -763,13 +763,13 @@ The Karush-Kuhn-Tucker necessary conditions for a maximum are
   \pdiff{\CL}{\lambda} = 0.
 \end{equation}
 %
-We have scaled the KKT multipliers by \(f^\nu\) for later convenience.
+We have scaled the KKT multipliers by \(r f^\nu\) for later convenience.
 
 The derivatives, for \(m \neq n\) are
 %
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
-  \frac{1}{f^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
+  \frac{1}{rf^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
     \eqm_m \prn{ \brk{\thbm_m(s) - \thbm_n(s)}
      + \prn{c_m(s) + (-1)^\nu} \brk{\etwm_m(s) - \etwm_n(s)} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
@@ -808,17 +808,17 @@ Then, with some new vectors defined:
 \end{aligned}
 \end{equation}
 %
-If we note that we can write \( \MMd^\nu - \I = \prn{\frg + (-1)^\nu \enc} / 2f^\nu \), we find that
+If we note that we can write \( \MMd^\nu - \I = \prn{\frg + (-1)^\nu \enc} / 2rf^\nu \), we find that
 %
 \begin{equation}\label{eq:diagKKT}
 \begin{aligned}
   \alb^\nu(s) &= \frac{\delta\mathbf{a}(s) + (-1)^\nu \enc \thb(s)}
-                     {2f^\nu},
+                     {2rf^\nu},
   \qquad 
   \omb^\nu(s) = \frac{\delta\w + s \delta\etw(s) - (-1)^\nu \mathbf{a}(s)}
-                     {2 f^\nu}, 
+                     {2rf^\nu}, 
   \\
-  \mu^\nu_{mm} &= \frac{\eqm_m}{2f^\nu} 
+  \mu^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
     \left[ 
       \hat{A}(s) - c_m(s) (\delta\wm_m + s \delta\etwm_m(s))
       - \lambda \delta w_m
@@ -957,7 +957,7 @@ The Lagrangian we should consider is
 \begin{equation}\label{eq:lshiftlagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i - \etwm_j)
-        +\sum_{\nu i j}  f^\nu \mu^\nu_{ij}\prn{\MMdm^\nu_{ij} -  s (\eqm_j - \delta_{ij}) }
+        +\sum_{\nu i j} r f^\nu \mu^\nu_{ij}\prn{\MMdm^\nu_{ij} -  s (\eqm_j - \delta_{ij}) }
         &+ \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
@@ -971,7 +971,7 @@ The derivatives, for \(m \neq n\) are
 %
 \begin{equation}\label{eq:lshiftderivs}
 \begin{aligned}
-  \frac{1}{f^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
+  \frac{1}{r f^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
     \eqm_m \prn{ \brk{\thbm_m - \thbm_n}
      + \prn{{c}_m + (-1)^\nu + \lambda} \brk{\etwm_m - \etwm_n} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
@@ -1058,8 +1058,8 @@ Consider the following perturbation (see also \cref{fig:triangle_s}(\ref{fig:tri
 \begin{equation}\label{eq:pertKupdn}
 \begin{aligned}
   2 \brk{\pdiff{\CL}{\encm_{mj}} - \pdiff{\CL}{\encm_{mi}}}
-  &= \frac{1}{f\pot} \brk{\pdiff{\CL}{\MMdm\pot_{mj}} - \pdiff{\CL}{\MMdm\pot_{mi}}} -
-  \frac{1}{f\dep} \brk{\pdiff{\CL}{\MMdm\dep_{mj}} - \pdiff{\CL}{\MMdm\dep_{mi}}} \\ 
+  &= \frac{1}{rf\pot} \brk{\pdiff{\CL}{\MMdm\pot_{mj}} - \pdiff{\CL}{\MMdm\pot_{mi}}} -
+  \frac{1}{rf\dep} \brk{\pdiff{\CL}{\MMdm\dep_{mj}} - \pdiff{\CL}{\MMdm\dep_{mi}}} \\ 
     &= 2 \eqm_m (\etwm_i - \etwm_j) 
     + \mu\pot_{mj} - \mu\pot_{mi} - \mu\dep_{mj} + \mu\dep_{mi}.
 \end{aligned}
@@ -1089,12 +1089,13 @@ For any state \(m\), there is a state \(n\) such that all potentiating transitio
 The remaining allowed transitions from \(m\) are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_allowed}).
 Note that we have not yet ruled the possibility that both \( \MMdm\pot_{mn} \) and \( \MMdm\dep_{mn} \) are nonzero.
 If one of those transitions is zero, there will be two states with the property above: the targets of right-most depressing and left-most potentiating transitions.
+Note that we have not yet proved anything about where \(\etwm_m\) lies with respect to any of the others.
 
 Consider the perturbation
 %
 \begin{equation}\label{eq:pertK}
-  \frac{1}{f\pot} \pdiff{\CL}{\MMdm\pot_{mn}} -
-  \frac{1}{f\dep} \pdiff{\CL}{\MMdm\dep_{mn}} =
+  \frac{1}{rf\pot} \pdiff{\CL}{\MMdm\pot_{mn}} -
+  \frac{1}{rf\dep} \pdiff{\CL}{\MMdm\dep_{mn}} =
     2 \eqm_m (\etwm_m - \etwm_n) 
     + \mu\pot_{mn} - \mu\pot_{mm} - \mu\dep_{mn} + \mu\dep_{mm}.
 \end{equation}
@@ -1140,7 +1141,7 @@ Let us define the following
   \qquad
   \dgn^\nu_m(s) = \dgn_m(s) + (-1)^\nu \etw(s), \\
   \implies \quad
-  \frac{1}{f^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n}) + \mu^\nu_{mn} - \mu^\nu_{mm}.
+  \frac{1}{rf^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n}) + \mu^\nu_{mn} - \mu^\nu_{mm}.
 \end{multline}
 %
 They should be thought of as collections of vectors rather than matrices.
@@ -1243,7 +1244,7 @@ We can write \cref{eq:diagKKT} as
 %
 \begin{equation*}
 \begin{aligned}
-  \mu^\nu_{mm} &= \frac{\eqm_m}{2f^\nu} 
+  \mu^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
     \left[ 
       \hat{A}
       - (c_m + (-1)^\nu) (\delta \wm_m + s \delta \etwm_m)
@@ -1301,17 +1302,17 @@ Therefore
 \begin{equation*}
 \begin{aligned}
   [\enc \dgn_m]_m
-    &= \sum_{\nu} (-1)^\nu f^\nu 
+    &= \sum_{\nu} (-1)^\nu rf^\nu 
       (\dgnm_{m*} - \dgnm_{m,m}) 
       + \sum_{\nu} f^\nu \prn{
         (\etwm_{m*} - \etwm_m)
         - [(\MMd^\nu - \I) \etw]_m
       } \\
-    &= \Delta f (\dgnm_{m*} - \dgnm_{m,m}) 
-      + (\etwm_{m*} - \etwm_m)
-      - [\frg \etw]_m \\
-    &= \Delta f (\dgnm_{m*} - \dgnm_{m,m}) 
-      + (\etwm_{m*} - \etwm_m)
+    &= r\Delta f (\dgnm_{m*} - \dgnm_{m,m}) 
+      + r(\etwm_{m*} - \etwm_m)
+      - r[\frg \etw]_m \\
+    &= r\Delta f (\dgnm_{m*} - \dgnm_{m,m}) 
+      + r(\etwm_{m*} - \etwm_m)
       - (\delta w_m + s \delta \etwm_m).
 \end{aligned}
 \end{equation*}
@@ -1320,7 +1321,7 @@ Then we can also write \cref{eq:diagKKT} as
 %
 \begin{equation}\label{eq:diagKKTz}
 \begin{aligned}
-  \mu^\nu_{mm} &= \frac{\eqm_m}{2f^\nu} 
+  \mu^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
     \left[ 
       \hat{A}
       - c_m (\delta \wm_m + s \delta \etwm_m)
@@ -1368,9 +1369,9 @@ So we introduce an eigenvector decomposition for \(-\frg\):
 Then we can write
 %
 \begin{equation}\label{eq:snreig}
-  \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-rt/\tau_a},
+  \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-t/\tau_a},
   \qquad
-  \snrb(\tau) = \sqrt{N}\sum_a \frac{\CI_a}{1+r\tau/\tau_a},
+  \snrb(\tau) = \sqrt{N}\sum_a \frac{\CI_a}{1+\tau/\tau_a},
 \end{equation}
 %
 where
@@ -1749,7 +1750,7 @@ It saturates various inequalities:
         \fptbm_{ij},  &\text{if}\quad i \leq j \leq k \quad\text{or}\quad i \geq j \geq k,\\
         -\fptbm_{ji}, &\text{if}\quad j \leq i \leq k \quad\text{or}\quad j \geq i \geq k,\\
       \end{cases} \\
-    r\eqm_i \frgm_{ij} \prn{\fptbm_{ij}+\fptbm_{ji}} &= 1 \quad\text{if}\quad i=j\pm1,
+    \eqm_i \frgm_{ij} \prn{\fptbm_{ij}+\fptbm_{ji}} &= 1 \quad\text{if}\quad i=j\pm1,
   \end{aligned}
 \end{equation}
 %
@@ -1765,15 +1766,15 @@ This allows us to calculate the $c_k$'s from \cref{eq:lareacoeffs}:
 %
 \begin{equation}\label{eq:serialareacoeff}
 \begin{aligned}
-  c_k &= \sum_{i<k} \prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i,i+1}
+  c_k &= \sum_{i<k} r\prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i,i+1}
     %\\&
-    - \sum_{i\geq k} \prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i+1,i}
+    - \sum_{i\geq k} r\prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i+1,i}
   ,\\
-  c_{k+1} - c_k &= \prn{\eqm_{k} \frgm_{k,k+1} + \eqm_{k+1} \frgm_{k+1,k}}
+  c_{k+1} - c_k &= r\prn{\eqm_{k} \frgm_{k,k+1} + \eqm_{k+1} \frgm_{k+1,k}}
                     \prn{\fptbm_{k,k+1} + \fptbm_{k+1,k}}
-    = \frac{2}{r},\\
+    = 2,\\
   \sum_k c_k \eqm_k &= \sum_{ij} \eqm_i \encm_{ij} (\eta-\eta) = 0,\\
-  \implies c_k &= \frac{2}{r} \prn{k - \sum_j j\eqm_j},
+  \implies c_k &= 2 \prn{k - \sum_j j\eqm_j},
 \end{aligned}
 \end{equation}
 %
@@ -1794,13 +1795,13 @@ This gives an area of
 \footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eq_+\eq_-)/r\sqrt{1 - (\Delta f)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
 %
 \begin{equation}\label{eq:serialextarea}
-  \CA \leq \frac{(M-1)}{r}\prn{4\eqm_+\eqm_-} = \frac{(M-1)}{r}\prn{1 - (\eqm_+ - \eqm_-)^2}.
+  \CA \leq (M-1) \prn{4\eqm_+\eqm_-} = (M-1)\prn{1 - (\eqm_+ - \eqm_-)^2}.
 \end{equation}
 %
 This is maximised at \(\eqm_+=\eqm_-= \frac{1}{2}\):
 %
 \begin{equation}\label{eq:maxarea}
-  \CA \leq \frac{(M-1)}{r}.
+  \CA \leq (M-1).
 \end{equation}
 %
 Note that the markov process that achieves this is not ergodic, the two states at each end are absorbing. 
@@ -2007,9 +2008,9 @@ So we see that all four inequalities cannot be simultaneously saturated, and the
 Recall the eigenmode description of the memory curve from \cref{eq:snreig}
 %
 \begin{equation*}
-  \snr(t) = \sqrt{N} \sum_a \CI_a \e^{-rt/\tau_a},
+  \snr(t) = \sqrt{N} \sum_a \CI_a \e^{-t/\tau_a},
   \qquad
-  \snrb(\tau) = \sqrt{N} \sum_a \frac{\CI_a}{1+r\tau/\tau_a},
+  \snrb(\tau) = \sqrt{N} \sum_a \frac{\CI_a}{1+\tau/\tau_a},
 \end{equation*}
 %
 where
@@ -2580,8 +2581,12 @@ The \(\etwm_i(s)\) take the same general form \eqref{eq:detagensol}, but with di
 %
 \begin{equation}\label{eq:detabndsticky}
 \begin{aligned}
-  \frac{\varepsilon\delta\eta_2}{2} - \prn{s+\frac{1-\varepsilon}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{m} &= \frac{1}{s}.
+  \frac{1 - \varepsilon}{2} \delta \eta_2 
+    - \prn{s+\frac{1-\varepsilon}{2}} \delta \eta_1 
+    &= 0, \\
+  \frac{\delta \eta_{m-1}}{2} 
+    - \prn{s+\frac{3}{2}} \delta \eta_{m} 
+    &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
 %
