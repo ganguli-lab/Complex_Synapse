@@ -410,6 +410,14 @@ where \(\eq\) is the steady state distribution of the continuous time transition
     = r f\pot \MMd \pot + r f\dep \MMd \dep - r \I.
 \end{equation}
 %
+It will be useful to introduce continuous time Markov processes corresponding to \(\MMd^\nu \):
+%
+\begin{equation*}
+  \W^\nu = r f^\nu (\MMd^\nu - \I),
+  \qquad
+  \frg = \sum_{\nu} \W^\nu.
+\end{equation*}
+%
 
 This results in
 %
@@ -431,7 +439,7 @@ Combining the expressions in \cref{eq:overlapwt} allows us to write the numerato
   \av{\synid \cdt \syn(t)} - \av{\synid \cdt \syn(\infty)}
     &= \frac{N}{r} \eq \enc \, \e^{t \frg} \w , \\
     \text{where} \qquad
-  \enc &= \sum_\nu (-1)^\nu r f^\nu (\MMd^\nu - \I)
+  \enc &= \sum_\nu (-1)^\nu \W^\nu
     = r f\pot \MMd\pot - r f\dep \MMd\dep - r \Delta f \I.
 \end{aligned}
 \end{equation}
@@ -443,7 +451,7 @@ Combining with \eqref{eq:noise} gives
                  {r \sqrt{1-(\Delta f)^2(\eq \w)^2}}.
 \end{equation}
 %
-The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with \(f\pot=f\dep\) or \(\eq_+=\eq_-\).
+The denominator will not play any role in what follows, as the models that maximize the various measures of memory performance all have some sort of balance between potentiation and depression, either with \(f\pot=f\dep\) or \(\eqm_+=\eqm_-\).
 We can perform the maximisation in two steps.
 First maximise the numerator at fixed \(\eq \w\).
 Then maximise the ratio \wrt \(\Delta \pr = \eq\w\).
@@ -459,6 +467,25 @@ We then have
       = \delta_{\mu\nu}\, \delta_{im}(\delta_{jn}-\delta_{jm}),
 \end{equation}
 %
+It will sometimes be more convenient to use the off-diagonal elements of \(\W^\nu \) as the independent degrees of freedom.
+Then
+%
+\begin{equation}\label{eq:wdof}
+\begin{gathered}
+  \Wm^\nu_{i j} \geq 0
+    \quad \forall \; \nu, i, j : i \neq j, \qquad
+  \sum_{j : j\neq i} \Wm^\nu_{ij} \leq r f^\nu
+    \quad \forall \; \nu, i, \qquad
+  \Wm^\nu_{ii} = - \sum_{j : j\neq i} \Wm^\nu_{ij}, \\
+  \pdiff{}{\Wm^\nu_{ij}} = \frac{1}{rf^\nu} \pdiff{}{\MMdm^\nu_{ij}} 
+    \quad \forall \; \nu, i, j : i \neq j, \qquad
+  \pdiff{\Wm^\mu_{ij}}{\Wm^\nu_{mn}} 
+      = \delta_{\mu\nu}\, \delta_{im}(\delta_{jn}-\delta_{jm}).
+\end{gathered}
+\end{equation}
+%
+Replacing \(\MMd\) with \(\W\) makes dimensional analysis easier and absorbs factors of \(f^\nu\) in several places.
+
 It will also be convenient to define the differential operators
 %
 \begin{equation}\label{eq:pertfe}
@@ -467,7 +494,7 @@ It will also be convenient to define the differential operators
   \pdiff{}{\encm_{ij}} = \frac{1}{2rf\pot} \pdiff{}{\MMdm \pot_{ij}} - \frac{1}{2rf\dep} \pdiff{}{\MMdm \dep_{ij}},
 \end{equation}
 %
-these satisfy
+which satisfy
 %
 \begin{equation}\label{eq:derivfe}
   \pdiff{\frgm_{ij}}{\frgm_{mn}} = \pdiff{\encm_{ij}}{\encm_{mn}} = \delta_{im}(\delta_{jn}-\delta_{jm}),
@@ -476,17 +503,17 @@ these satisfy
 \end{equation}
 %
 
-If we wish to use the off-diagonal elements of \(\frg\) and \(\enc\) as the degrees of freedom, the constraints are
-%
-\begin{equation}\label{eq:constrfe}
-\begin{aligned}
-  \frgm_{i \neq j}   &\geq \abs{ \encm_{i \neq j} }, &\qquad
-  \sum_{j\neq i}\frgm_{ij} + (-1)^\mu \encm_{ij}  &\leq 2rf^\mu, \\
-  \sum_j \frgm_{ij} &=0, &
-  \sum_j \encm_{ij} &=0.
-\end{aligned}
-\end{equation}
-%
+% If we wish to use the off-diagonal elements of \(\frg\) and \(\enc\) as the degrees of freedom, the constraints are
+% %
+% \begin{equation}\label{eq:constrfe}
+% \begin{aligned}
+%   \frgm_{i \neq j}   &\geq \abs{ \encm_{i \neq j} }, &\qquad
+%   \sum_{j\neq i}\frgm_{ij} + (-1)^\mu \encm_{ij}  &\leq 2rf^\mu, \\
+%   \sum_j \frgm_{ij} &=0, &
+%   \sum_j \encm_{ij} &=0.
+% \end{aligned}
+% \end{equation}
+% %
 
 
 %================================================================================
@@ -641,31 +668,31 @@ Thanks to \eqref{eq:alfund}, we can solve this by the replacement \(\mathbf{G}(s
 Note that \(A(0)=A\), the area, and \(\lim_{s\to\infty} \brc{sA(s)} = \SNR(0)\), the initial SNR.
 
 We can also express this in terms of the shifted process in \cref{eq:larea}.
-We can choose how to distribute the shift across \(\MMd \pot\) and \(\MMd \dep\).
+We can choose how to distribute the shift across \(\W \pot\) and \(\W \dep\).
 Two choices from a continuum%
-\footnote{We could choose \( \shift{\MMd}^\nu(s) = \MMd^\nu + \frac{s g^\nu}{r f^\nu} (\onev \eq - \I) \), for any \(g^\nu \) with \( \sum_\nu g^\nu = 1 \).
-It shifts \(\frg\) correctly and also shifts \( \shift{\enc}(s) = \enc + \frac{s}{r} \Delta g (\onev \eq - \I) \).
+\footnote{We could choose \( \shift{\W}^\nu(s) = \W^\nu + s g^\nu (\onev \eq - \I) \), for any \(g^\nu \) with \( \sum_\nu g^\nu = 1 \).
+It shifts \(\frg\) correctly and also shifts \( \shift{\enc}(s) = \enc + s \Delta g (\onev \eq - \I) \).
 The two possibilities in \cref{eq:lshiftpd} come from \(g^\nu = \frac{1}{2}\) and \(g^\nu = f^\nu\) respectively.}
 are:
 %
 \begin{equation}\label{eq:lshiftpd}
-  \shift{\MMd}^\nu(s) = \MMd^\nu + \frac{s}{2 r f^\nu} (\onev \eq - \I)
+  \shift{\W}^\nu(s) = \W^\nu + \frac{s}{2} (\onev \eq - \I)
   \qquad \text{or} \qquad
-  \shift{\MMd}^\nu(s) = \MMd^\nu + \frac{s}{r} (\onev \eq - \I).
+  \shift{\W}^\nu(s) = \W^\nu + s f^\nu (\onev \eq - \I).
 \end{equation}
 %
 The first choice leaves \( \shift{\enc} = \enc \), so it only affects the \(\etw\) piece of \cref{eq:larea}.
-The second choice does not leave \(\enc\) invariant (in fact \( \shift{\enc}(s) = \enc + \frac{s}{r} \Delta f (\onev \eq - \I) \)), but because \( \eq (\onev \eq - \I) = 0 \) the shift does not make any contribution to \cref{eq:larea}.
+The second choice does not leave \(\enc\) invariant (in fact \( \shift{\enc}(s) = \enc + s \Delta f (\onev \eq - \I) \)), but because \( \eq (\onev \eq - \I) = 0 \) the shift does not make any contribution to \cref{eq:larea}.
 Either way:
 %
 \begin{equation}\label{eq:lareashift}
-  \hat{A}\prn{s; \MMd^\nu} = \hat{A}\prn{0; \shift{\MMd}^\nu(s)}.
+  \hat{A}\prn{s; \W^\nu} = \hat{A}\prn{0; \shift{\W}^\nu(s)}.
 \end{equation}
 %
 In other words, the laplace transform of the SNR is the area under the SNR for the shifted process.
 
-Note that while \cref{eq:lshift} produces a valid continuous-time Markov process, \cref{eq:lshiftpd} does not always produce valid discrete-time Markov processes, as the diagonal elements can become negative.
-However, \(r (\shift{\MMd}^\nu - \I)\) is a valid continuous-time Markov process.
+Note that while \cref{eq:lshift} produces a valid continuous-time Markov process, \cref{eq:lshiftpd} does not always produce valid discrete-time Markov processes, \( \shift{\MMd}^\nu = \frac{\shift{\W}^\nu}{rf^\nu} + \I \), as the diagonal elements can become negative.
+However, \(\shift{\W}^\nu \) is a valid continuous-time Markov process.
 
 %--------------------------------------------------------------------------------
 
@@ -740,14 +767,14 @@ This is useful in numerical maximisation.
 Now we'll maximise \(\snrb(\tau)\) for some fixed \(\tau\), subject to the constraints \eqref{eq:constr}.
 First, we will maximise the numerator of \eqref{eq:lsnr} holding \(\eq\w\) fixed.
 We can maximise the ratio \wrt \(\eq\w\) later.
-From this point on, we work in units where \(r = 1\).
+% From this point on, we work in units where \(r = 1\).
 
 Consider the Lagrangian
 %
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i(s) - \etwm_j(s))
-        +\sum_{\nu i j} { r f^\nu \mu^\nu_{ij} \MMdm^\nu_{ij} }
+        +\sum_{\nu i j} \mu^\nu_{ij} \prn{ \Wm^\nu_{ij} + r f^\nu \delta_{ij} }
         + \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
@@ -756,7 +783,7 @@ where \(\Delta\pr\) is the constant value we are holding \(\eq\w\) at.
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTfinite}
-  \pdiff{\CL}{\MMdm^\nu_{ij}} = 0, \quad
+  \pdiff{\CL}{\Wm^\nu_{ij}} = 0, \quad
   \mu^\nu_{ij} \geq 0, \quad
   \pdiff{\CL}{\mu^\nu_{ij}} \geq 0, \quad
   \mu^\nu_{ij}\pdiff{\CL}{\mu^\nu_{ij}} = 0, \quad
@@ -769,7 +796,7 @@ The derivatives, for \(m \neq n\) are
 %
 \begin{equation}\label{eq:finitederivs}
 \begin{aligned}
-  \frac{1}{rf^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
+  \pdiff{\CL}{\Wm^\nu_{mn}} = & \,
     \eqm_m \prn{ \brk{\thbm_m(s) - \thbm_n(s)}
      + \prn{c_m(s) + (-1)^\nu} \brk{\etwm_m(s) - \etwm_n(s)} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
@@ -781,10 +808,10 @@ The derivatives, for \(m \neq n\) are
 We can solve for the KKT multipliers by noting that
 %
 \begin{equation*}
-  \mu^\nu_{ij} \MMdm^\nu_{ij} = 0,
+  \mu^\nu_{ij} \Wm^\nu_{ij} = 0,
   \qquad \text{and} \qquad
-  \sum_{j: j \neq i} \mu^\nu_{ii} \MMdm^\nu_{ij} 
-      = \mu^\nu_{ii} (1 - \MMdm^\nu_{ii}) = \mu^\nu_{ii}.
+  \sum_{j: j \neq i} \mu^\nu_{ii} \Wm^\nu_{ij} 
+      = \mu^\nu_{ii} ( - \Wm^\nu_{ii}) = r f^\nu \mu^\nu_{ii}.
 \end{equation*}
 %
 Then, with some new vectors defined:
@@ -803,12 +830,12 @@ Then, with some new vectors defined:
         \brk{ \etwm_n(s) - \etwm_m(s) - \ombm^\nu_m(s) }
      \big), \\
   \text{where} \quad 
-  \alb^\nu(s) &= (\MMd^\nu - \I) \thb(s), \qquad
-  \omb^\nu(s) = (\MMd^\nu - \I) \etw(s).
+  \alb^\nu(s) &= \frac{\W^\nu \thb(s)}{rf^\nu}, \qquad
+  \omb^\nu(s) = \frac{\W^\nu \etw(s)}{rf^\nu}.
 \end{aligned}
 \end{equation}
 %
-If we note that we can write \( \MMd^\nu - \I = \prn{\frg + (-1)^\nu \enc} / 2rf^\nu \), we find that
+If we note that we can write \( \W^\nu = \prn{\frg + (-1)^\nu \enc} / 2 \), we find that
 %
 \begin{equation}\label{eq:diagKKT}
 \begin{aligned}
@@ -862,41 +889,41 @@ The models found numerically are described in \cref{fig:envvid}.
 
 \subsection{Scale invariance}\label{sec:scale}
 
-Under the scale transformation
-%
-\begin{equation}\label{eq:scale}
-  \zeta * \MMd \equiv (1-\zeta) \MMd + \zeta \I ,
-\end{equation}
-%
-the Laplace transform has the following scaling property
+% Under the scale transformation
+% %
+% \begin{equation}\label{eq:scale}
+%   \zeta * \MMd \equiv (1-\zeta) \MMd + \zeta \I ,
+% \end{equation}
+% %
+The Laplace transform has the following scaling property
 %
 \begin{equation}\label{eq:laplacescale}
-  \hat{A} \prn{\zeta s;\zeta * \MMd^\nu} = \hat{A} \prn{s; \MMd^\nu}.
+  \hat{A} \prn{\zeta s;\zeta \W^\nu} = \hat{A} \prn{s; \W^\nu}.
 \end{equation}
 %
 At \(s = 0\), it is scale invariant.
-This means that in \cite{Lahiri2013synapse} we could take a pair of matrices that violates the ``diagonal'' constraints (second inequality of \eqref{eq:constri}) and use the scale transform \eqref{eq:scale} to construct a pair of matrices that satisfy the ``diagonal'' constraints and have the same area.
+This means that in \cite{Lahiri2013synapse} we could take a pair of matrices that violates the ``diagonal'' constraints (second inequality of \cref{eq:constri}) and use the scale transform to construct a pair of matrices that satisfy the ``diagonal'' constraints and have the same area.
 This allowed us to ignore the diagonal constraints.
 We can't do that for \(s > 0\).
 
 The corresponding symmetry here is scaling the shifted process from \cref{eq:lshiftpd}, which amounts to
 %
 \begin{equation}\label{eq:shiftscale}
-  \zeta {\circledast}_{s} \MMd 
-      \equiv (1 - \zeta) \MMd
-      + \zeta \brk{(1 + s)\I - s \onev \eq} .
+  \zeta {\circledast}_{s} \W^\nu
+      \equiv \zeta \W^\nu
+      + (1 - \zeta) s f^\nu \brk{\I - \onev \eq} .
 \end{equation}
 %
 Then we have
 %
 \begin{equation}\label{eq:lshiftscale}
-  \hat{A} \prn{s; \MMd^\nu} 
-    = \hat{A} \prn{0, \shift{\MMd}^\nu(s)}
-    = \hat{A} \prn{0, \zeta * \shift{\MMd}^\nu(s)}
-    = \hat{A} \prn{s, \zeta \circledast_s \MMd^\nu}.
+  \hat{A} \prn{s; \W^\nu} 
+    = \hat{A} \prn{0, \shift{\W}^\nu(s)}
+    = \hat{A} \prn{0, \zeta \shift{\W}^\nu(s)}
+    = \hat{A} \prn{s, \zeta \circledast_s \W^\nu}.
 \end{equation}
 %
-The problem here is that the lower bound, \(\MMdm^\nu_{ij} \geq 0\), 
+The problem here is that the lower bound, \(\Wm^\nu_{ij} \geq 0\), 
 is not invariant under this transformation, unlike the \(s = 0\) case.
 Using this transformation to fix the upper bound can break the lower bound.
 
@@ -906,32 +933,32 @@ The conditions are
 %
 \begin{equation*}
 \begin{alignedat}{5}
-  [\zeta \circledast \MMd^\nu]_{ij}  
-    &= \zeta \MMdm^\nu_{ij} - (1-\zeta) s \eqm_j 
+  [\zeta \circledast \W^\nu]_{ij}  
+    &= \zeta \Wm^\nu_{ij} - (1-\zeta) s f^\nu \eqm_j 
     &&\geq 0 &
-  \quad &\implies \quad &
-  \zeta &\geq \frac{s \eqm_j}{\MMdm^\nu_{ij} + s \eqm_j} &
+  \;\; &\implies \;\; &
+  \zeta &\geq \frac{s \eqm_j}{\Wm^\nu_{ij} /  f^\nu + s \eqm_j} &
     &\forall \nu, i, j : i \neq j , \\
-  \sum_{j : i \neq j} [\zeta \circledast \MMd^\nu]_{ij} 
-    &= \zeta \lbm^\nu_i - (1-\zeta) s (1-\eqm_i) 
-    &&\leq 1 &
+  \sum_{j : i \neq j} [\zeta \circledast \W^\nu]_{ij} 
+    &= \zeta \lbm^\nu_i - (1-\zeta) s f^\nu (1-\eqm_i) 
+    &&\leq r f^\nu &
   &\implies &
-  \zeta &\leq \frac{1 + s (1-\eqm_i)}{\lbm^\nu_i + s (1-\eqm_i)} &
+  \zeta &\leq \frac{r + s (1-\eqm_i)}{\lbm^\nu_i / f^\nu + s (1-\eqm_i)} &
     \quad &\forall \nu, i ,
 \end{alignedat}
 \end{equation*}
 %
-where \(\lbm^\nu_i \equiv \sum_{j : i \neq j} \MMdm^\nu_{ij}\) is the inverse mean  lifetime of state \(i\).
+where \(\lbm^\nu_i \equiv \sum_{j : i \neq j} \Wm^\nu_{ij}\) is the inverse mean  lifetime of state \(i\).
 The model is fixable if it is possible to find a \(\zeta\) that satisfies all of the above conditions:
 %
 \begin{equation}\label{eq:fixable}
-  \frac{s \eqm_j}{\MMdm^\nu_{ij} + s \eqm_j} \leq \frac{1 + s (1-\eqm_k)}{\lbm^\mu_k + s (1-\eqm_k)}
+  \frac{s \eqm_j}{\Wm^\nu_{ij} / f^\nu + s \eqm_j} \leq \frac{r + s (1-\eqm_k)}{\lbm^\mu_k / f^\nu + s (1-\eqm_k)}
   \quad \implies \quad
-  \frac{\lbm^\mu_k - 1}{1 + s (1-\eqm_k)} \leq \frac{\MMdm^\nu_{ij}}{s \eqm_j} 
+  \frac{\lbm^\mu_k - r f^\nu}{r + s (1-\eqm_k)} \leq \frac{\Wm^\nu_{ij}}{s \eqm_j} 
   \quad \forall \mu, \nu, i, j, k : i \neq j.
 \end{equation}
 %
-Note that when \(\MMdm^\nu_{ij} = 0\) for some \(i,j \), this condition reduces to \(\lbm^\mu_k \leq 1\), the original diagonal constraint.
+Note that when \(\Wm^\nu_{ij} = 0\) for some \(i,j \), this condition reduces to \(\lbm^\mu_k \leq r f^\nu\), the original diagonal constraint.
 Thus, relaxing the constraints from ``the model is valid'' to ``the model is fixable'' doesn't help us prove anything about the topology.
 
 
@@ -940,24 +967,24 @@ Thus, relaxing the constraints from ``the model is valid'' to ``the model is fix
 \subsection{Shifted problem}\label{sec:lshift}
 
 The relation of the Laplace transform to the shifted process from \cref{eq:lshiftpd,eq:lareashift} suggests an alternative approach: 
-treat the off-diagonal components of \(\shift{\MMd}^\nu \) as the degrees of freedom and maximise the area instead.
-The constraints on \(\shift{\MMdm}^\nu_{ij}\) are different from \cref{eq:constri}:
+treat the off-diagonal components of \(\shift{\W}^\nu \) as the degrees of freedom and maximise the area instead.
+The constraints on \(\shift{\Wm}^\nu_{ij}\) are different from \cref{eq:constri}:
 %
 \begin{equation}\label{eq:lshiftconstr}
-  \shift{\MMdm}^\nu_{ij} \geq s \eqm_j,
+  \shift{\Wm}^\nu_{ij} \geq s f^\nu \eqm_j,
     \quad \forall \; \nu, i, j : i \neq j, \qquad
-  \sum_{j: j \neq i} \shift{\MMdm}^\nu_{ij} \leq 1 + s (1 - \eqm_i).
+  \sum_{j: j \neq i} \shift{\Wm}^\nu_{ij} \leq r f^\nu + s f^\nu (1 - \eqm_i).
     \quad \forall \; \nu, i.
 \end{equation}
 %
-The diagonal elements are still given by \( \shift{\MMdm}^\nu_{ii} = 1 - \sum_{j: j \neq i} \shift{\MMdm}^\nu_{ij} \), but now they are allowed to be negative so long as \(\shift{\MMdm}^\nu_{ii} \geq - s (1 - \eqm_i)\).
+The diagonal elements are still given by \( \shift{\Wm}^\nu_{ii} = - \sum_{j: j \neq i} \shift{\Wm}^\nu_{ij} \), but now they are be below \(-r f^\nu \) so long as \(\shift{\Wm}^\nu_{ii} \geq -r f^\nu - s f^\nu (1 - \eqm_i)\).
 
 The Lagrangian we should consider is
 %
 \begin{equation}\label{eq:lshiftlagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i - \etwm_j)
-        +\sum_{\nu i j} r f^\nu \mu^\nu_{ij}\prn{\MMdm^\nu_{ij} -  s (\eqm_j - \delta_{ij}) }
+        +\sum_{\nu i j} \mu^\nu_{ij}\prn{\Wm^\nu_{ij} + f^\nu (r + s) \delta_{ij} -  s f^\nu \eqm_j }
         &+ \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
@@ -971,7 +998,7 @@ The derivatives, for \(m \neq n\) are
 %
 \begin{equation}\label{eq:lshiftderivs}
 \begin{aligned}
-  \frac{1}{r f^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
+  \pdiff{\CL}{\Wm^\nu_{mn}} = & \,
     \eqm_m \prn{ \brk{\thbm_m - \thbm_n}
      + \prn{{c}_m + (-1)^\nu + \lambda} \brk{\etwm_m - \etwm_n} } \\
      &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
@@ -986,19 +1013,19 @@ We can absorb the new terms by defining
 \begin{aligned}
   \shift{\thb}^\nu(s) = \thb(0) - s f^\nu \fptb(0) \Eq (\boldsymbol{\mu}^\nu)\trans \onev,
   \qquad
-  \shift{\alb}^\nu(s) &= (\MMd^\nu + (s - 1) \I - s \onev \eq) \shift{\thb}^\nu(s),
+  \shift{\alb}^\nu(s) &= (\W^\nu + (s - 1) \I - s \onev \eq) \shift{\thb}^\nu(s),
   \\
-  \shift{\omb}^\nu(s) &= (\MMd^\nu + (s - 1) \I - s \onev \eq) \etw(0).
+  \shift{\omb}^\nu(s) &= (\W^\nu + (s - 1) \I - s \onev \eq) \etw(0).
 \end{aligned}
 \end{equation*}
 %
 We note that
 %
 \begin{equation*}
-  \mu^\nu_{ij} (\MMdm^\nu_{ij} - s \eqm_j) = 0,
+  \mu^\nu_{ij} (\Wm^\nu_{ij} - s \eqm_j) = 0,
   \qquad \text{and} \qquad
-  \sum_{j: j \neq i} \mu^\nu_{ii} (\MMdm^\nu_{ij} - s \eqm_j)
-      = \mu^\nu_{ii} (1 - \MMdm^\nu_{ii} - s (1 - \eqm_i)) = \mu^\nu_{ii},
+  \sum_{j: j \neq i} \mu^\nu_{ii} (\Wm^\nu_{ij} - s \eqm_j)
+      = \mu^\nu_{ii} (1 - \Wm^\nu_{ii} - s (1 - \eqm_i)) = \mu^\nu_{ii},
 \end{equation*}
 %
 then we can ``solve'' for the KKT multipliers:
@@ -1017,7 +1044,7 @@ then we can ``solve'' for the KKT multipliers:
 \end{aligned}
 \end{equation}
 %
-although there are KKT multipliers hiding in \(\shift{\thb}^\nu(s)\) and \(\shift{\alb}^\nu(s)\).
+although there are KKT multipliers hiding in \(\shift{\thb}^\nu(s)\) and \(\shift{\alb}^\nu(s)\), so these expressions are not explicit.
 
 While this problem involves the scale invariant quantity \(\hat{A}(0)\), neither the upper nor lower bounds in \cref{eq:lshiftconstr} are invariant.
 We then run into the same problems in proving our serial-topology hypothesis.
@@ -1058,20 +1085,20 @@ Consider the following perturbation (see also \cref{fig:triangle_s}(\ref{fig:tri
 \begin{equation}\label{eq:pertKupdn}
 \begin{aligned}
   2 \brk{\pdiff{\CL}{\encm_{mj}} - \pdiff{\CL}{\encm_{mi}}}
-  &= \frac{1}{rf\pot} \brk{\pdiff{\CL}{\MMdm\pot_{mj}} - \pdiff{\CL}{\MMdm\pot_{mi}}} -
-  \frac{1}{rf\dep} \brk{\pdiff{\CL}{\MMdm\dep_{mj}} - \pdiff{\CL}{\MMdm\dep_{mi}}} \\ 
+  &= \pdiff{\CL}{\Wm\pot_{mj}} - \pdiff{\CL}{\Wm\pot_{mi}} -
+  \pdiff{\CL}{\Wm\dep_{mj}} + \pdiff{\CL}{\Wm\dep_{mi}} \\ 
     &= 2 \eqm_m (\etwm_i - \etwm_j) 
     + \mu\pot_{mj} - \mu\pot_{mi} - \mu\dep_{mj} + \mu\dep_{mi}.
 \end{aligned}
 \end{equation}
 %
 Because \( \etwm_i > \etwm_j \), we must have \( \mu\pot_{mi} + \mu\dep_{mj} > 0 \).
-So \( \MMdm\pot_{mi} > 0 \) would imply that \( \MMdm\dep_{mj} = 0 \) and vice versa.
+So \( \Wm\pot_{mi} > 0 \) would imply that \( \Wm\dep_{mj} = 0 \) and vice versa.
 These two possibilities are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_left},\ref{fig:triangle_right}).
 
 Let us arrange the states left to right in order of decreasing \(\etw\), so that \(i\) is to the left of \(j\).
-For the unconstrained transitions \( \MMdm\pot_{mj} \) and \( \MMdm\dep_{mi} \) the potentiating transition goes to the \emph{right} of the depressing transition.
-For the other transitions \( \MMdm\pot_{mi} \) and \( \MMdm\dep_{mj} \) the potentiating transition goes to the \emph{left} of the depressing transition, and they cannot both be nonzero.
+For the unconstrained transitions \( \Wm\pot_{mj} \) and \( \Wm\dep_{mi} \) the potentiating transition goes to the \emph{right} of the depressing transition.
+For the other transitions \( \Wm\pot_{mi} \) and \( \Wm\dep_{mj} \) the potentiating transition goes to the \emph{left} of the depressing transition, and they cannot both be nonzero.
 
 This logic can be applied to any pair of states with different values of \(\etw\).
 Therefore, when starting from the same state, no potentiating transition can go to the left of any depressing transition, and no depressing transition can go to the right of any potentiating transition.
@@ -1081,28 +1108,28 @@ For any state \(m\), there is a state \(n\) such that all potentiating transitio
 \begin{equation}\label{eq:separator}
   \forall\ m, \;\; \exists\ n : 
   \begin{cases}
-    \etwm_i > \etwm_n &\implies \MMdm\pot_{mi} = 0, \\
-    \etwm_i < \etwm_n &\implies \MMdm\dep_{mi} = 0.
+    \etwm_i > \etwm_n &\implies \Wm\pot_{mi} = 0, \\
+    \etwm_i < \etwm_n &\implies \Wm\dep_{mi} = 0.
   \end{cases}
 \end{equation}
 %
 The remaining allowed transitions from \(m\) are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_allowed}).
-Note that we have not yet ruled the possibility that both \( \MMdm\pot_{mn} \) and \( \MMdm\dep_{mn} \) are nonzero.
+Note that we have not yet ruled the possibility that both \( \Wm\pot_{mn} \) and \( \Wm\dep_{mn} \) are nonzero.
 If one of those transitions is zero, there will be two states with the property above: the targets of right-most depressing and left-most potentiating transitions.
 Note that we have not yet proved anything about where \(\etwm_m\) lies with respect to any of the others.
 
 Consider the perturbation
 %
 \begin{equation}\label{eq:pertK}
-  \frac{1}{rf\pot} \pdiff{\CL}{\MMdm\pot_{mn}} -
-  \frac{1}{rf\dep} \pdiff{\CL}{\MMdm\dep_{mn}} =
+  \pdiff{\CL}{\Wm\pot_{mn}} -
+  \pdiff{\CL}{\Wm\dep_{mn}} =
     2 \eqm_m (\etwm_m - \etwm_n) 
     + \mu\pot_{mn} - \mu\pot_{mm} - \mu\dep_{mn} + \mu\dep_{mm}.
 \end{equation}
 %
-If we assume that both \( \MMdm\pot_{mn} \) and \( \MMdm\dep_{mn} \) are nonzero, we find that \( \mu\pot_{mm} - \mu\dep_{mm} = 2 \eqm_m (\etwm_m - \etwm_n) \).
-Therefore \( \etwm_m > \etwm_n \implies \MMdm\pot_{mm} = 0 \) and \( \etwm_m < \etwm_n \implies \MMdm\dep_{mm} = 0 \).
-It is also possible that both of the diagonal elements are zero.
+If we assume that both \( \Wm\pot_{mn} \) and \( \Wm\dep_{mn} \) are nonzero, we find that \( \mu\pot_{mm} - \mu\dep_{mm} = 2 \eqm_m (\etwm_m - \etwm_n) \).
+Therefore \( \etwm_m > \etwm_n \implies \Wm\pot_{mm} = -rf\pot \) and \( \etwm_m < \etwm_n \implies \Wm\dep_{mm} = -rf\dep \).
+It is also possible that both of the diagonal constraints are saturated.
 
 
 \begin{figure}[ht]
@@ -1136,31 +1163,37 @@ The positions of \(m\) and \(k\) are not yet constrained, other than being in th
 
 Let us define the following
 %
-\begin{multline}\label{eq:degenerate}
-  \dgn_{m}(s) = \thb(s) + c_m \etw(s) + \lambda \etw(0),
-  \qquad
-  \dgn^\nu_m(s) = \dgn_m(s) + (-1)^\nu \etw(s), \\
+\begin{equation}\label{eq:degenerate}
+\begin{aligned}
+    \dgn_{m}(s) &= \thb(s) + c_m \etw(s) + \lambda \etw(0), \\
+    \qquad
+    \dgn^\nu_m(s) &= \dgn_m(s) + (-1)^\nu \etw(s),   
+\end{aligned}
   \implies \quad
-  \frac{1}{rf^\nu} \pdiff{\CL}{\MMdm^\nu_{mn}} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n}) + \mu^\nu_{mn} - \mu^\nu_{mm}.
-\end{multline}
+  \pdiff{\CL}{\Wm^\nu_{mn}} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n}) + \mu^\nu_{mn} - \mu^\nu_{mm}.
+\end{equation}
 %
-They should be thought of as collections of vectors rather than matrices.
+They should be thought of as collections of vectors rather than matrices, with the first \(m\) a label rather than an index.
 
 Suppose that a state \(n\) has a nonzero transition rate from state \(m\) for one \(\nu\).
 Then \(\mu^\nu_{mn} = 0\) and:
 %
 \begin{equation}\label{eq:oneexit}
-  \MMdm^\nu_{mn} > 0
+\begin{aligned}
+  \Wm^\nu_{mn} > 0
   \quad \implies \quad
   \mu^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n})
   \quad \implies \quad
-  \dgnm_{m,m} - \dgnm_{m,n} \geq - (-1)^\nu (\etwm_m - \etwm_n).
+  \dgnm^\nu_{m,m} &\geq \dgnm^\nu_{m,n} \\
+  \text{or} \quad
+  \dgnm_{m,m} - \dgnm_{m,n} &\geq - (-1)^\nu (\etwm_m - \etwm_n).
+\end{aligned}
 \end{equation}
 %
 If both \(\nu\) have nonzero rates from \(m\) to \(n\):
 %
 \begin{equation}\label{eq:doubleexit}
-  \MMdm\pot_{mn}, \MMdm\dep_{mn} > 0
+  \Wm\pot_{mn}, \Wm\dep_{mn} > 0
   \qquad \implies \qquad
   \dgnm_{m,m} - \dgnm_{m,n} \geq \abs{\etwm_m - \etwm_n}.
 \end{equation}
@@ -1170,25 +1203,31 @@ Suppose there are two states, \(i,j\), with nonzero transitions from \(m\) for o
 Both must statisfy \cref{eq:oneexit} for the same \(\mu^\nu_{mm}\), so
 %
 \begin{equation}\label{eq:twoexits}
-  \MMdm^\nu_{mi}, \MMdm^\nu_{mj} > 0
+  \Wm^\nu_{mi}, \Wm^\nu_{mj} > 0
   \qquad \implies \qquad
+  \dgnm^\mu_{m,i} = \dgnm^\nu_{m,j}
+  \quad \text{or}\quad
   \dgnm_{m,i} - \dgnm_{m,j} = - (-1)^\nu (\etwm_i - \etwm_j).
 \end{equation}
 %
-Furthermore, for a state \(k\) with zero transition rate from \(m\) for the same \(\nu\):
+Furthermore, for another state \(k\) with zero transition rate from \(m\) for the same \(\nu\):
 %
 \begin{equation}\label{eq:nonexit}
-  \MMdm^\nu_{mi} > 0, \MMdm^\nu_{mk} = 0 
+\begin{aligned}
+  \Wm^\nu_{mi} > 0, \Wm^\nu_{mk} = 0 
   \;\;\; \implies \;\;\;
   \mu^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m,i})
   \;\; \implies \;\;
-  \dgnm_{m,k} - \dgnm_{m,i} \geq - (-1)^\nu (\etwm_k - \etwm_i).
+  \dgnm^\nu_{m,k} &\geq \dgnm^\nu_{m,i} \\
+  \text{or}\quad
+  \dgnm_{m,k} - \dgnm_{m,i} &\geq - (-1)^\nu (\etwm_k - \etwm_i).
+\end{aligned}
 \end{equation}
 %
 If both \(\nu\) have nonzero rates from \(m\) to \(i\) and \(j\):
 %
 \begin{equation}\label{eq:twodoubleexits}
-  \MMdm\pot_{mi}, \MMdm\dep_{mi}, \MMdm\pot_{mj}, \MMdm\dep_{mj} > 0
+  \Wm\pot_{mi}, \Wm\dep_{mi}, \Wm\pot_{mj}, \Wm\dep_{mj} > 0
   \qquad \implies \qquad
   \dgnm_{m,i} = \dgnm_{m,j} 
   \quad \text{and} \quad
@@ -1263,40 +1302,39 @@ From \cref{eq:oneexit,eq:twoexits} we see that
 \begin{equation*}
 \begin{gathered}
   \begin{aligned}
-    \MMdm^\nu_{mi} &> 0 &
+    \W^\nu_{mi} &> 0 &
     \quad &\implies \quad &
     \dgnm^\nu_{m,i} &= \dgnm^\nu_{m*}
     \\
-    \sum_{k \neq m} \MMdm^\nu_{mk} &< 1 &
+    \sum_{k \neq m} \W^\nu_{mk} &< r f^\nu &
     &\implies &
     \dgnm^\nu_{m,m} &= \dgnm^\nu_{m*},
-    % \quad \forall \ i : \MMdm^\nu_{mi} > 0,
   \end{aligned}
   \\
   \begin{aligned}
     \implies \quad
-    [(\MMd^\nu - \I) \dgn_m]_m
-      &= \sum_k (\MMdm^\nu_{mk} - \delta_{mk}) \dgnm_{m,k}
-      = \sum_k (\MMdm^\nu_{mk} - \delta_{mk}) 
+    [\W^\nu \dgn_m]_m
+      &= \sum_k \Wm^\nu_{mk}  \dgnm_{m,k}
+      = \sum_k \Wm^\nu_{mk}
         (\dgnm^\nu_{m,k} - (-1)^\nu \etwm_k) \\
-      &= \sum_{k \neq m} \MMdm^\nu_{mk} 
+      &= \sum_{k \neq m} \Wm^\nu_{mk} 
         (\dgnm^\nu_{m,k} - \dgnm^\nu_{m,m}) 
-        - (-1)^\nu [(\MMd^\nu - \I) \etw]_m \\
+        - (-1)^\nu [\W^\nu \etw]_m \\
       &= (\dgnm^\nu_{m*} - \dgnm^\nu_{m,m}) 
-        \sum_{k \neq m} \MMdm^\nu_{mk}
-        - (-1)^\nu [(\MMd^\nu - \I) \etw]_m \\
-      &= (\dgnm^\nu_{m*} - \dgnm^\nu_{m,m}) 
-        - (-1)^\nu [(\MMd^\nu - \I) \etw]_m \\
-      &= (\dgnm_{m*} - \dgnm_{m,m}) 
+        \sum_{k \neq m} \Wm^\nu_{mk}
+        - (-1)^\nu [\W^\nu \etw]_m \\
+      &= r f^\nu (\dgnm^\nu_{m*} - \dgnm^\nu_{m,m}) 
+        - (-1)^\nu [\W^\nu \etw]_m \\
+      &= r f^\nu (\dgnm_{m*} - \dgnm_{m,m}) 
         + (-1)^\nu \prn{
-          (\etwm_{m*} - \etwm_m)
-          - [(\MMd^\nu - \I) \etw]_m
+          r f^\nu (\etwm_{m*} - \etwm_m)
+          - [\W^\nu \etw]_m
         },
   \end{aligned}
 \end{gathered}
 \end{equation*}
 %
-where we used the fact that \( (\dgnm^\nu_{m*} - \dgnm^\nu_{m,m}) \) is only nonzero when \( \sum_{k \neq m} \MMdm^\nu_{mk} = 1 \).
+where we used the fact that \( (\dgnm^\nu_{m*} - \dgnm^\nu_{m,m}) \) is only nonzero when \( \sum_{k \neq m} \Wm^\nu_{mk} = rf^\nu \).
 Therefore
 %
 \begin{equation*}
@@ -1304,13 +1342,13 @@ Therefore
   [\enc \dgn_m]_m
     &= \sum_{\nu} (-1)^\nu rf^\nu 
       (\dgnm_{m*} - \dgnm_{m,m}) 
-      + \sum_{\nu} f^\nu \prn{
-        (\etwm_{m*} - \etwm_m)
-        - [(\MMd^\nu - \I) \etw]_m
+      + \sum_{\nu} \prn{
+        r f^\nu (\etwm_{m*} - \etwm_m)
+        -  [\W^\nu \etw]_m
       } \\
     &= r\Delta f (\dgnm_{m*} - \dgnm_{m,m}) 
       + r(\etwm_{m*} - \etwm_m)
-      - r[\frg \etw]_m \\
+      - [\frg \etw]_m \\
     &= r\Delta f (\dgnm_{m*} - \dgnm_{m,m}) 
       + r(\etwm_{m*} - \etwm_m)
       - (\delta w_m + s \delta \etwm_m).
@@ -1351,6 +1389,12 @@ That expression will agree with \cref{eq:diagKKTz} provided that
 
 %-------Section------------------------------------------------------------------
 
+\subsection{Scaling with a floating cutoff}\label{sec:cutoff}
+
+
+
+%-------Section------------------------------------------------------------------
+
 \section{Upper bounds}\label{sec:upperbnds}
 
 Now to study the SNR as a function of  time, it helps to consider some variables that are more directly related to the time dependance than the matrix elements. 
@@ -1377,14 +1421,15 @@ Then we can write
 where
 %
 \begin{equation}\label{eq:snrcoeffs}
-  \CI_a = (\eq \enc \evr^a) (\evl^a \w),
+  \CI_a = \frac{(\eq \enc \evr^a) (\evl^a \w)}{r},
   \qquad
   \tau_a = \frac{1}{q_a}.
 \end{equation}
 %
 We have ignored the denominator of \cref{eq:SNRcurveExact} for now.
-This will not have any effect on the results: it will not change the location of the maxima, which are at \( f\pot - f\dep = \eq \w = 0 \).
+This will not have any effect on the results: it will not change the location of the maxima, which are at \( \Delta f = \eq \w = 0 \).
 We will confine such discussion to the footnotes.
+We will also work in units where \(r = 1\) until the very end.
 
 Now the question is what are the allowed values of \( (\CI_a, \tau_a) \)?
 We have to translate the constraints of \cref{eq:constri} into constraints on the eigenmode variables.
@@ -1409,15 +1454,15 @@ The initial SNR is:
 We can write the initial SNR as
 %
 \begin{equation*}
-  \frac{\SNR(0)}{\sqrt{N}} = \CI = \eq \enc \w.
+  \frac{\SNR(0)}{\sqrt{N}} = \CI = \frac{\eq \enc \w}{r}.
 \end{equation*}
 %
-First, we define two sets of states: \( + = \set{i}{\wm_i = 1} \) and \( - = \set{i}{\wm_i = - 1} \), and the fluxes \( \Fm^\nu_{\CA \CB} = r f^\nu \displaystyle\sum_{\mathclap{i \in \CA, j \in \CB}} \eqm_i \prn{\MMdm^\nu_{ij} - \delta_{ij}} \).
+First, we define two sets of states: \( + = \set{i}{\wm_i = 1} \) and \( - = \set{i}{\wm_i = - 1} \), and the fluxes \( \Fm^\nu_{\CA \CB} = \displaystyle\sum_{\mathclap{i \in \CA, j \in \CB}} \eqm_i \Wm^\nu_{ij} \).
 Then we can write
 %
 \begin{equation*}
 \begin{aligned}
-  r\CI &= \Fm\pot_{++} + \Fm\pot_{-+} - \Fm\dep_{++} - \Fm\dep_{-+} - \Fm\pot_{+-} - \Fm\pot_{--} + \Fm\dep_{+-} + \Fm\dep_{--} \\
+  \CI &= \Fm\pot_{++} + \Fm\pot_{-+} - \Fm\dep_{++} - \Fm\dep_{-+} - \Fm\pot_{+-} - \Fm\pot_{--} + \Fm\dep_{+-} + \Fm\dep_{--} \\
       &= 2\prn{\Fm\pot_{-+} - \Fm\dep_{-+} - \Fm\pot_{+-} + \Fm\dep_{+-}} \\
       &= 2\prn{\Fm_{-+} + \Fm_{+-}} - 4\prn{\Fm\pot_{+-} + \Fm\dep_{-+}} \\
       &= 4\prn{\Fm_{-+} - \Fm\pot_{+-} - \Fm\dep_{-+}}, \\
@@ -1426,7 +1471,7 @@ Then we can write
 %
 where we used \( \Fm^\nu_{\CA+} + \Fm^\nu_{\CA-} = 0 \) to derive the second line, \( \Fm_{\CA\CB} = \Fm\pot_{\CA\CB} + \Fm\dep_{\CA\CB} \) to derive the third and additionally \( \Fm_{+\CA} + \Fm_{-\CA} = 0 \) to derive the fourth.
 
-The last two terms are guaranteed to be negative, as the diagonal parts of \(\MMd \potdep - \I\) cannot contribute.
+The last two terms are guaranteed to be negative, as the diagonal parts of \(\W^\nu \) cannot contribute.
 Therefore
 %
 \begin{equation}\label{eq:initfluxineq}
@@ -1462,10 +1507,10 @@ This implies that the process is lumpable to a two state system (see \cite{kemen
            1 \\
          \end{pmatrix}
   ,\\ \implies\quad
-  \frg = \begin{pmatrix}
-           -f\pot & f\pot \\
-           f\dep & -f\dep \\
-         \end{pmatrix}
+  \frg = r\begin{pmatrix}
+            -f\pot & f\pot \\
+            f\dep & -f\dep \\
+          \end{pmatrix}
   ,\quad
   \eq = \begin{pmatrix}
            f\dep & f\pot \\
@@ -1538,11 +1583,11 @@ From \cref{eq:lAdiff}, the derivatives for \(m \neq n\) are
 %
 See \cref{eq:lareacoeffs} for the definitions of these quantities.
 
-The area and \(\Delta\pr\) are invariant under the scale transformation \cref{eq:scale}
+The area and \(\Delta\pr\) are invariant under the scale transformation %\cref{eq:scale}
 %
-\begin{equation*}%\label{eq:scale}
+\begin{equation}\label{eq:scale}
   \zeta * \MMd \equiv (1-\zeta) \MMd + \zeta \I .
-\end{equation*}
+\end{equation}
 %
 It follows that
 %
@@ -1662,7 +1707,7 @@ Now consider the following combinations of derivatives for $(n - m)(-1)^\nu > 1$
 \begin{equation}\label{eq:shortcutderiv}
   \widetilde{\Delta}^\nu_{mn} \equiv
     \brk{ \sum_{k=m}^{n \mp 1} \frac{1}{\eqm_{k}} \pdiff{}{\MMdm^\nu_{k,k \pm 1}} }
-    - \frac{1}{\eq_m} \pdiff{}{\MMdm^\nu_{mn}},
+    - \frac{1}{\eqm_m} \pdiff{}{\MMdm^\nu_{mn}},
   \qquad \pm = (-1)^\nu.
 \end{equation}
 %
@@ -1696,7 +1741,7 @@ But more interestingly for our purposes:
 \begin{equation}\label{eq:shortcutarea}
     \widetilde{\Delta}^\nu_{mn}\CL =
       \brk{ \sum_{k=m}^{n\mp1} \frac{\mu^\nu_{k,k\pm1}}{\eqm_k}
-      - \frac{\mu^\nu_{m,n}}{\eq_m}}
+      - \frac{\mu^\nu_{m,n}}{\eqm_m}}
       + rf^\nu \sum_{k=m}^{n\mp1} \prn{\etwm_{k} - \etwm_{k\pm1}} \prn{c_k - c_m},
 \end{equation}
 %
@@ -1770,7 +1815,7 @@ This allows us to calculate the $c_k$'s from \cref{eq:lareacoeffs}:
     %\\&
     - \sum_{i\geq k} r\prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i+1,i}
   ,\\
-  c_{k+1} - c_k &= r\prn{\eqm_{k} \frgm_{k,k+1} + \eqm_{k+1} \frgm_{k+1,k}}
+  c_{k+1} - c_k &= \prn{\eqm_{k} \frgm_{k,k+1} + \eqm_{k+1} \frgm_{k+1,k}}
                     \prn{\fptbm_{k,k+1} + \fptbm_{k+1,k}}
     = 2,\\
   \sum_k c_k \eqm_k &= \sum_{ij} \eqm_i \encm_{ij} (\eta-\eta) = 0,\\
@@ -1782,9 +1827,9 @@ where we used \cref{eq:serialineq} to derive the first two equations respectivel
 This allows us to write the area as
 %
 \begin{equation}\label{eq:serialarea}
- % A = 2\sqrt{N} \sum_k \brk{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eq_j} \eq_k \w_k.
-  \CA = \frac{2}{r} \sum_k \brk{k - \sum_j j\eq_j} \eqm_k \wm_k
-    = \frac{2}{r} \sum_k \abs{k - \sum_j j\eq_j} \eqm_k ,
+ % A = 2\sqrt{N} \sum_k \brk{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eqm_j} \eqm_k \w_k.
+  \CA = {2} \sum_k \brk{k - \sum_j j\eqm_j} \eqm_k \wm_k
+    = {2} \sum_k \abs{k - \sum_j j\eqm_j} \eqm_k ,
 \end{equation}
 %
 where we used $\wm_k=\sgn(c_k)$, as discussed after \cref{eq:lareacoeffs}.
@@ -1792,7 +1837,7 @@ where we used $\wm_k=\sgn(c_k)$, as discussed after \cref{eq:lareacoeffs}.
 First let us maximise \cref{eq:serialarea} at fixed $\eqm_\pm = \sum_k \eqm_k \prn{\frac{1\pm\wm_k}{2}}$.
 Clearly this will happen when we put all of the probability at the ends: $\eqm_1=\eqm_-$ and $\eqm_n=\eqm_+$ are the only non-zero $\eqm_k$.
 This gives an area of
-\footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eq_+\eq_-)/r\sqrt{1 - (\Delta f)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
+\footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eqm_+\eqm_-)/r\sqrt{1 - (\Delta f)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
 %
 \begin{equation}\label{eq:serialextarea}
   \CA \leq (M-1) \prn{4\eqm_+\eqm_-} = (M-1)\prn{1 - (\eqm_+ - \eqm_-)^2}.
@@ -1901,7 +1946,7 @@ Then
 %
 \begin{equation*}
   \begin{aligned}[t]
-  r \eq \enc \mathbf{u} &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
+  \eq \enc \mathbf{u} &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
         \Fm\pot_{\CA_\alpha \CA_\alpha^c} - \Fm\dep_{\CA_\alpha \CA_\alpha^c} 
       - \Fm\pot_{\CA_\alpha^c \CA_\alpha} + \Fm\dep_{\CA_\alpha^c \CA_\alpha} }
   %
@@ -1915,8 +1960,8 @@ Then
   \begin{aligned}[t]
     \CA_\alpha &= \set{i}{u_i < \alpha} , 
     \\
-    \Fm^\nu_{\CA \CB} &= r f^\nu \sum_{\substack{i \in \CA \\ j \in \CB}} 
-                        \eqm_i \prn{\MMdm^\nu_{ij} - \delta_{ij}} .
+    \Fm^\nu_{\CA \CB} &= \sum_{\substack{i \in \CA \\ j \in \CB}} 
+                        \eqm_i \Wm^\nu_{ij} .
   \end{aligned}
 \end{equation*}
 %
@@ -1927,18 +1972,18 @@ Therefore the other terms provide an upper bound:
 \begin{equation*}
 \begin{aligned}
   \CI(\mathbf{u}) 
-      &\leq \frac{\av{\mathbf{u},\w}}{r \nrm{\mathbf{u}}^2} 
+      &\leq \frac{\av{\mathbf{u},\w}}{\nrm{\mathbf{u}}^2} 
         \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
         \Fm_{\CA_\alpha \CA_\alpha^c} + \Fm_{\CA_\alpha^c \CA_\alpha} } 
-  \\  &= \frac{\av{\mathbf{u},\w}}{r \nrm{\mathbf{u}}^2} 
+  \\  &= \frac{\av{\mathbf{u},\w}}{\nrm{\mathbf{u}}^2} 
         \intd[_{-\infty}^{\infty}]{\alpha} \sum_{i \neq j} \Fm_{ij} \brk{
             \vartheta(u_j - \alpha) \vartheta(\alpha - u_i) 
           + \vartheta(u_i - \alpha) \vartheta(\alpha - u_j)
         }
-  \\  &= \frac{\av{\mathbf{u},\w}}{r \nrm{\mathbf{u}}^2} 
+  \\  &= \frac{\av{\mathbf{u},\w}}{\nrm{\mathbf{u}}^2} 
       \sum_{i \neq j} \Fm_{ij} \abs{u_j - u_i}
   \\  &= \frac{\av{\mathbf{u},\w} \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem}}
-              {r \nrm{\mathbf{u}}^2}.
+              {\nrm{\mathbf{u}}^2}.
 \end{aligned}
 \end{equation*}
 %
@@ -1946,15 +1991,15 @@ Now we can apply the Cauchy-Schwartz inequality to both factors to find
 %
 \begin{equation*}
   \CI(\mathbf{u}) \leq \frac{\nrm{\w} \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem}}
-                            {r \nrm{\mathbf{u}}} .
+                            {\nrm{\mathbf{u}}} .
 \end{equation*}
 %
 We also have \( \nrm{\w}^2 = \sum_i \eqm_i \wm_i^2 = 1 \).
-Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eqm_i \MMm_{ij} \leq r \sum_i \eqm_i = r\).
+Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eqm_i \MMm_{ij} \leq r \sum_i \eqm_i = r\) (which is 1 in our units!).
 Then, remembering \cref{eq:numrange},
 %
 \begin{equation}\label{eq:sqrtnumrange}
-  \CI(\mathbf{u}) \leq \sqrt{\frac{2\av{\mathbf{u}, -\MM \mathbf{u}}}{r\av{\mathbf{u}, \mathbf{u}}}}
+  \CI(\mathbf{u}) \leq \sqrt{\frac{2\av{\mathbf{u}, -\MM \mathbf{u}}}{\av{\mathbf{u}, \mathbf{u}}}}
       = \sqrt{2\mathcal{W}(-\frg;\mathbf{u})}.
 \end{equation}
 %
@@ -1964,7 +2009,7 @@ Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvecto
   \text{assuming} \quad 
   \eqm_i \frgm_{ij} = \eqm_j \frgm_{ji},
   \qquad \text{we have} \quad
-  \CI_a \sqrt{\tau_a} \leq \sqrt{2}.
+  \CI_a \sqrt{r\tau_a} \leq \sqrt{2}.
 \end{equation}
 %
 Numerical maximisation of the quantity above produces the same result as in \cref{sec:initial}:
@@ -2034,7 +2079,7 @@ No doubt there are many other constraints that these quantities must satisfy, bu
 Consider the Lagrangian
 %
 \begin{equation}\label{eq:envlagrangian}
-  \CL = \sum_a \frac{\CI_a}{1+r\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
+  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
 \end{equation}
 %
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
@@ -2076,7 +2121,7 @@ If we know that the optimal model for any timescale satisfies detailed balance, 
 Then the Lagrangian reads
 %
 \begin{equation}\label{eq:envDBlagrangian}
-  \CL = \sum_a \frac{\CI_a}{1+r\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} 
+  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} 
       + \sum_a \mu_a \prn{\sqrt{2} - \CI_a \sqrt{\tau_a}} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
 \end{equation}
 %
@@ -2134,20 +2179,20 @@ For \(M \leq 3\), \cref{eq:env} still applies.
         % & \snrb(\tau) 
       \\
     \midrule
-      0 &\leq r \tau &\leq 2 & M &\geq 3 & 1 & 2 
+      0 &\leq r \tau &\leq 2 & M &\geq 3 & 1 & 2/r 
         & \frac{4 - 2r \tau}{[2 + r \tau]^2} & \frac{2\sqrt{2}r\tau}{[2 + r \tau]^2} & 0 
         % & \frac{2 \sqrt{N}}{2 + r \tau} 
       \\
-      2 &< r \tau &< \frac{(M-1)^2}{2} & M &> 3 & \sqrt{\frac{2}{\tau}} & \tau 
+      2 &< r \tau &< \frac{(M-1)^2}{2} & M &> 3 & \sqrt{\frac{2}{r\tau}} & \tau 
         & 0 & \frac{1}{2\sqrt{r \tau}} & 0 
         % & \sqrt{\frac{N}{2 r \tau}} 
       \\ \addlinespace[0.2ex]
-      \frac{(M-1)^2}{2} &\leq r \tau & & M &\geq 3 & \frac{2}{M-1} & \frac{(M-1)^2}{2} 
+      \frac{(M-1)^2}{2} &\leq r \tau & & M &\geq 3 & \frac{2}{M-1} & \frac{(M-1)^2}{2r} 
         & 0 & \frac{\sqrt{2}(M-1)^3}{[(M-1)^2 + 2r \tau]^2} 
         & \frac{4r \tau - 2(M-1)^2}{[(M-1)^2 + 2r \tau]^2} 
         % & \frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau} 
       \\
-      &-& & M &\leq 3 & 1 & M - 1 
+      &-& & M &\leq 3 & 1 & \frac{M - 1}{r} 
         & \frac{(M-1)^2}{[(M-1) + r \tau]^2} %- \frac{\mu_a \sqrt{\tau_a}}{2} 
         & 0 & \frac{r \tau}{[(M-1) + r \tau]^2} %- \frac{\mu_a}{2 \sqrt{\tau_a}} 
         % & \frac{\sqrt{N} (M-1)}{(M-1) + r \tau} 
@@ -2538,8 +2583,7 @@ This is depicted by the dotted lines in \cref{fig:shorten}\ref{fig:short_ratio}.
 \(M=2\) is a special case:
 %
 \begin{equation*}
-  \hat{A}(s) = \frac{(\alpha-1)^2}
-                    {[2(\alpha^2-\alpha+1) - (1-\varepsilon) (\alpha-1)^2]s},
+  \hat{A}(s) = \frac{1}{1 + (1+\epsilon)s},
 \end{equation*}
 %
 so \(\varepsilon=0\) is always the maximum.
@@ -2729,6 +2773,7 @@ For \(M \gg 1\), and \(r\tau\) much greater than the lower bound of each region,
 \end{equation}
 %
 This is plotted in \cref{fig:heuristicenv}.
+It should be compared to \cref{eq:env,eq:envDB}.
 
 
 
