@@ -762,6 +762,867 @@ This is useful in numerical maximisation.
 
 %================================================================================
 
+\section{Upper bounds}\label{sec:upperbnds}
+
+Now to study the SNR as a function of  time, it helps to consider some variables that are more directly related to the time dependance than the matrix elements. 
+So we introduce an eigenvector decomposition for \(-\frg\):
+%
+\begin{equation}\label{eq:eigendecomp}
+  \frg = - \sum_a q_a \evr^a \evl^a,
+  \quad
+  \evl^a \evr^b = \delta_{ab},
+  \quad
+  \frg \evr^a = -q_a \evr^a,
+  \quad
+  \evl^a \frg = -q_a \evl^a.
+\end{equation}
+%
+Then we can write
+%
+\begin{equation}\label{eq:snreig}
+  \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-t/\tau_a},
+  \qquad
+  \snrb(\tau) = \sqrt{N}\sum_a \frac{\CI_a}{1+\tau/\tau_a},
+\end{equation}
+%
+where
+%
+\begin{equation}\label{eq:snrcoeffs}
+  \CI_a = \frac{(\eq \enc \evr^a) (\evl^a \w)}{r},
+  \qquad
+  \tau_a = \frac{1}{q_a}.
+\end{equation}
+%
+We have ignored the denominator of \cref{eq:SNRcurveExact} for now.
+This will not have any effect on the results: it will not change the location of the maxima, which are at \( \Delta f = \eq \w = 0 \).
+We will confine such discussion to the footnotes.
+
+Now the question is what are the allowed values of \( (\CI_a, \tau_a) \)?
+We have to translate the constraints of \cref{eq:constri} into constraints on the eigenmode variables.
+Each constraint we find will be a necessary condition for the existence of a set of Markov processes \( \MMdm_{ij}^\nu \) that result in \( (\CI_a, \tau_a) \).
+We can imagine the notion of a complete set of constraints: constraints that, when combined, are also sufficient for the existence of a \( \MMdm_{ij}^\nu \).
+But finding such a set seems intractable for now.
+Most likely there are a large number of such constraints, but if we can find a few of them they will provide us with some limits on the space of possible memory curves.
+These limits may not be tight - there may not be models that can reach these limits, but they will imply a forbidden region in the space of memory curves.
+
+
+%--------------------------------------------------------------------------------
+
+\subsection{Initial SNR}\label{sec:initial}
+
+The initial SNR is:
+%
+\begin{equation}\label{eq:initdef}
+  \snr(0) = \snrb(0) = \lim_{s\to\infty} sA(s)
+      = \sqrt{N} \sum_a \CI_a.
+\end{equation}
+%
+We can write the initial SNR as
+%
+\begin{equation*}
+  \frac{\SNR(0)}{\sqrt{N}} = \CI = \frac{\eq \enc \w}{r}.
+\end{equation*}
+%
+First, we define two sets of states: \( + = \set{i}{\wm_i = 1} \) and \( - = \set{i}{\wm_i = - 1} \), and the fluxes \( \Fm^\nu_{\CA \CB} = \displaystyle\sum_{\mathclap{i \in \CA, j \in \CB}} \eqm_i \Wm^\nu_{ij} \).
+Then we can write
+%
+\begin{equation*}
+\begin{aligned}
+  \CI &= \Fm\pot_{++} + \Fm\pot_{-+} - \Fm\dep_{++} - \Fm\dep_{-+} - \Fm\pot_{+-} - \Fm\pot_{--} + \Fm\dep_{+-} + \Fm\dep_{--} \\
+      &= 2\prn{\Fm\pot_{-+} - \Fm\dep_{-+} - \Fm\pot_{+-} + \Fm\dep_{+-}} \\
+      &= 2\prn{\Fm_{-+} + \Fm_{+-}} - 4\prn{\Fm\pot_{+-} + \Fm\dep_{-+}} \\
+      &= 4\prn{\Fm_{-+} - \Fm\pot_{+-} - \Fm\dep_{-+}}, \\
+\end{aligned}
+\end{equation*}
+%
+where we used \( \Fm^\nu_{\CA+} + \Fm^\nu_{\CA-} = 0 \) to derive the second line, \( \Fm_{\CA\CB} = \Fm\pot_{\CA\CB} + \Fm\dep_{\CA\CB} \) to derive the third and additionally \( \Fm_{+\CA} + \Fm_{-\CA} = 0 \) to derive the fourth.
+
+The last two terms are guaranteed to be negative, as the diagonal parts of \(\W^\nu \) cannot contribute.
+Therefore
+%
+\begin{equation}\label{eq:initfluxineq}
+  \SNR(0) \leq \frac{4\sqrt{N}\Fm_{-+}}{r}.
+\end{equation}
+%
+This inequality is saturated if potentiation never takes it from a \(+\) state to a \(-\) state and depression never takes it from a \(-\) state to a \(+\) state.
+
+The flux will be maximised if potentiation is guaranteed to take it to a \(+\) state and depression is guaranteed to take it to a \(-\) state:
+%
+\begin{equation*}
+  \sum_{j \in +} \MMd \pot_{ij} = 1 \quad \forall\, i \in -,
+  \qquad
+  \sum_{j \in -} \MMd \dep_{ij} = 1 \quad \forall\, i \in +.
+\end{equation*}
+%
+This implies that the process is lumpable to a two state system (see \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}):
+%
+\begin{multline}\label{eq:binarylump}
+%\begin{aligned}
+  \MMd \pot = \begin{pmatrix}
+                0 & 1 \\
+                0 & 1 \\
+              \end{pmatrix}
+  ,\quad
+  \MMd \dep = \begin{pmatrix}
+                1 & 0 \\
+                1 & 0 \\
+              \end{pmatrix}
+  ,\quad
+  \w = \begin{pmatrix}
+           -1 \\
+           1 \\
+         \end{pmatrix}
+  ,\\ \implies\quad
+  \frg = r\begin{pmatrix}
+            -f\pot & f\pot \\
+            f\dep & -f\dep \\
+          \end{pmatrix}
+  ,\quad
+  \eq = \begin{pmatrix}
+           f\dep & f\pot \\
+         \end{pmatrix}
+  ,
+\end{multline}
+%
+which leads to the initial SNR%
+\footnote{Note that including the dropped factors in \cref{eq:SNRcurveExact} would only change this to
+\(\SNR(0) \leq \frac{\sqrt{N} (4f^+f^-)}{\sqrt{1 - (f\pot - f\dep)^4}}\),
+which is also maximised at \(f\potdep = \frac{1}{2}\) and would therefore have no effect on what follows.}
+%
+\begin{equation}\label{eq:binarySNR}
+  \SNR(0) \leq \sqrt{N} (4 f\pot f\dep) .
+\end{equation}
+%
+This is maximised at \(f\pot = f\dep = \frac{1}{2}\),
+leading to the inequality (first shown in \cite{Lahiri2013synapse}):
+%
+\begin{equation}\label{eq:initbnd}
+  \snr(0) \leq \sqrt{N},
+\end{equation}
+%
+The model that saturates this bound is (equivalent to) a two-state model with deterministic transitions and \(f\potdep=\frac{1}{2}\).
+
+%--------------------------------------------------------------------------------
+
+\subsection{Area bound}\label{sec:area}
+
+The area under the SNR curve is:
+%
+\begin{equation}\label{eq:areadef}
+  \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) 
+      = A(0) = \frac{\sqrt{N}}{r} \CA = \sqrt{N} \sum_a \CI_a \tau_a.
+\end{equation}
+%
+To maximise this quantity, consider the Lagrangian
+%
+\begin{equation}\label{eq:arealagrangian}
+\begin{aligned}
+  \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i(0) - \etwm_j(0))
+        +\sum_{\nu i j} \prn{ \mu^\nu_{ij} \MMdm^\nu_{ij} }
+        &+ \lambda \prn{ \Delta p - \sum_i \eqm_i \wm_i },
+\end{aligned}
+\end{equation}
+%
+where \(\Delta p\) is the constant value we are holding \(\eq\w\) at.
+The Karush-Kuhn-Tucker necessary conditions for a maximum are
+%
+\begin{equation}\label{eq:KTarea}
+  \pdiff{\CL}{\MMdm^\nu_{ij}} = 0, \quad
+  \mu^\nu_{ij} \geq 0, \quad
+  \pdiff{\CL}{\mu^\nu_{ij}} \geq 0, \quad
+  \mu^\nu_{ij}\pdiff{\CL}{\mu^\nu_{ij}} = 0, \quad
+  \pdiff{\CL}{\lambda} = 0.
+\end{equation}
+%
+From \cref{eq:lAdiff}, the derivatives for \(m \neq n\) are
+%
+\begin{equation}\label{eq:areaderivs}
+\begin{aligned}
+  \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
+    r f^\nu \eqm_m \prn{ \brk{\thbm_m(0) - \thbm_n(0)}
+     + \prn{c_m(0) + (-1)^\nu} \brk{\etwm_m(0) - \etwm_n(0)} } \\
+     &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
+     + \lambda r f^\nu \eqm_m (\etwm_{m}(0)-\etwm_{n}(0)) 
+    = 0.
+\end{aligned}
+\end{equation}
+%
+See \cref{eq:lareacoeffs} for the definitions of these quantities.
+
+The area and \(\Delta p\) are invariant under the scale transformation %\cref{eq:scale}
+%
+\begin{equation}\label{eq:scale}
+  \zeta * \MMd \equiv (1-\zeta) \MMd + \zeta \I .
+\end{equation}
+%
+It follows that
+%
+\begin{equation*}
+  \sum_{\nu, m \neq n} \MMdm^\nu_{mn} \pdiff{\CL}{\MMdm^\nu_{mn}} 
+    = - \sum_{\nu, m} \mu^\nu_{mm} = 0 .
+\end{equation*}
+%
+As the KKT multipliers are nonnegative, this implies that all the diagonal KKT multipliers vanish and we can ignore the diagonal constraints.
+
+Another way of seeing this is to note that all but the diagonal constraints in \cref{eq:constri} are invariant under \cref{eq:scale}.
+This means that if we have a set of parameters that satisfy the off-diagonal constraints, it can always be scaled so that it meets the diagonal constraints.
+Therefore, we can ignore the diagonal constraints whilst maximising the area and fix them afterwards by  scaling.
+
+
+\subsubsection{Perturbations}\label{sec:areapert}
+
+\paragraph{Triangularity:}\label{sec:triangular}
+
+Consider
+%
+\begin{equation}\label{eq:shiftqderiv}
+  2r\pdiff{\CL}{\encm_{mn}} =
+  \frac{1}{f\pot} \pdiff{\CL}{\MMdm\pot_{mn}} - \frac{1}{f\pot} \pdiff{\CL}{\MMdm\dep_{mn}}
+   = \mu\pot_{mn} - \mu\dep_{mn} + 2\eqm_m (\etwm_m - \etwm_n)
+   = 0.
+\end{equation}
+%
+This corresponds to the shift
+%
+\begin{equation}\label{eq:shiftq}
+  \MMdm\pot_{ij} \to \MMdm\pot_{ij} + \frac{\epsilon_{ij}}{f\pot},
+  \qquad
+  \MMdm\dep_{ij} \to \MMdm\dep_{ij} - \frac{\epsilon_{ij}}{f\dep},
+  \qquad
+  \sum_j \epsilon_{ij} = 0,
+\end{equation}
+%
+which leaves $\frg$ unchanged, and therefore $\eq$, $\fptb$ and $\etw$ as well.
+
+Assume $\etwm_m > \etwm_n$. Then
+%
+\begin{equation}\label{eq:lowertriangular}
+ \mu\pot_{mn} - \mu\dep_{mn} < 0
+ \qquad\implies\qquad
+ \mu\dep_{mn} > 0
+ \qquad\implies\qquad
+ \MMdm\dep_{mn} = 0.
+\end{equation}
+%
+Similarly, if $\etwm_m < \etwm_n$, then
+%
+\begin{equation}\label{eq:uppertriangular}
+ \mu\pot_{mn} - \mu\dep_{mn} > 0
+ \qquad\implies\qquad
+ \mu\pot_{mn} >0
+ \qquad\implies\qquad
+ \MMdm\pot_{mn}=0.
+\end{equation}
+%
+Thus, if we arrange the states in order of decreasing $\etw$, $\MMd\pot$ is upper-triangular and $\MMd\dep$ is lower triangular.
+
+We have ignored the possibility that $\eqm_m = 0$, as this would imply that $\fptbm_{im} = \infty$, which would in turn imply that the Markov process is not ergodic.
+
+
+\paragraph{Increasing \texorpdfstring{$c_k$}{c(k)}:}\label{sec:areacoeffincr}
+
+Consider the following combinations of derivatives:
+%
+\begin{equation}\label{eq:areacoeffincrderiv}
+    \Delta^\nu_{mn} \equiv
+      \frac{1}{\eqm_m} \pdiff{}{\MMdm^\nu_{mn}}
+      + \frac{1}{\eqm_n} \pdiff{}{\MMdm^\nu_{nm}}, 
+\end{equation}
+%
+Note that they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \cref{sec:triangular} about this being satisfied for ergodic chains).
+
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+%
+\begin{equation}\label{eq:sareacoeffincrprob}
+  \Delta^\nu_{mn} \eqm_i = 0,
+\end{equation}
+%
+which makes it possible to integrate the perturbation:
+%
+\begin{equation}\label{eq:areacoeffincrfinite}
+  \MMd^\nu \to \MMd^\nu + \Eq\inv \boldsymbol{\epsilon},
+  \qquad
+  \begin{aligned}
+  \boldsymbol{\epsilon} &= \boldsymbol{\epsilon}\trans,
+  \\
+  \boldsymbol{\epsilon} \onev &= 0.
+  \end{aligned}
+\end{equation}
+%
+But more interestingly:
+%
+\begin{equation}\label{eq:areacoeffincr}
+    \Delta^\nu_{mn}\CL =
+      \frac{\mu^\nu_{mn}}{\eqm_m} + \frac{\mu^\nu_{nm}}{\eqm_n}
+      + r \prn{c_m - c_n}\prn{\etwm_m - \etwm_n} = 0,
+\end{equation}
+%
+where $c_k$ were defined in \cref{eq:lareacoeffs}, with \(s = 0\).
+
+Using the non-negativity of the Kuhn-Tucker multipliers, $\mu^\nu_{ij}$, \cref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\etwm_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\etwm_k$ are degenerate, we can choose their order to ensure this).
+
+Note that, according to \cref{sec:triangular}, either $\MMdm\pot_{mn}$ or $\MMdm\dep_{mn}$ will be zero at the maximum, therefore we can expect one of the $\mu^\nu_{mn}$ to be non-zero.
+This would rule out degeneracy of the $c_k$ or $\etwm_k$.
+Looking at \cref{eq:shiftqderiv} closely, the only way both $\mu^\nu_{mn}$ could be zero is if $\etwm_m = \etwm_n$ or $\eqm_m = \eqm_n = 0$.
+
+
+\paragraph{Shortcuts:}\label{sec:shortcuts}
+
+Now consider the following combinations of derivatives for $(-1)^\nu (n - m) > 1$:
+%
+\begin{equation}\label{eq:shortcutderiv}
+  \widetilde{\Delta}^\nu_{mn} \equiv
+    \brk{ \sum_{k=m}^{n \mp 1} \frac{1}{\eqm_{k}} \pdiff{}{\MMdm^\nu_{k,k \pm 1}} }
+    - \frac{1}{\eqm_m} \pdiff{}{\MMdm^\nu_{mn}},
+  \qquad \pm = (-1)^\nu.
+\end{equation}
+%
+Once again, they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \cref{sec:triangular} about this being satisfied for ergodic chains).
+
+One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
+%
+\begin{equation}\label{eq:shortcutprob}
+  \widetilde{\Delta}^\nu_{g,m} \eqm_i = 0,
+\end{equation}
+%
+which makes it possible to integrate the perturbation:
+%
+\begin{equation}\label{eq:shortcutfinite}
+  \MMd^\nu \to \MMd^\nu + \Eq\inv \boldsymbol{\epsilon}^{\nu mn},
+  \qquad
+  \begin{alignedat}[t]{3}
+    &\prn{{\epsilon}^{\nu mn}}_{mn}
+      &&= -\epsilon,\\
+    &\prn{{\epsilon}^{\nu mn}}_{k,k\pm1}
+      &&= \epsilon
+      &\;&\forall\, k \in [m,n),\\
+    &\prn{{\epsilon}^{\nu mn)}}_{kk}
+      &&= -\epsilon
+      &&\forall\, k \in (m,n).
+  \end{alignedat}
+\end{equation}
+%
+But more interestingly for our purposes:
+%
+\begin{equation}\label{eq:shortcutarea}
+    \widetilde{\Delta}^\nu_{mn}\CL =
+      \brk{ \sum_{k=m}^{n\mp1} \frac{\mu^\nu_{k,k\pm1}}{\eqm_k}
+      - \frac{\mu^\nu_{m,n}}{\eqm_m}}
+      + rf^\nu \sum_{k=m}^{n\mp1} \prn{\etwm_{k} - \etwm_{k\pm1}} \prn{c_k - c_m},
+\end{equation}
+%
+
+If we put the states in order of decreasing $\etwm_k$, the results of the \cref{sec:areacoeffincr} tell us that the $c_k$ are non-decreasing.
+This implies that the last term of the final expression in \eqref{eq:shortcutarea} is non-negative.
+If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu^\nu_{mn} > 0$, which in turn implies that $\MMdm^\nu_{mn}=0$.
+This would tell us that the process with the maximal area has to have a serial topology.
+
+
+\paragraph{Summary:}\label{sec:pertsummary}
+
+Using the Kuhn-Tucker formalism, we have shown that,
+with the states arranged in order of non-increasing $\etwm_i$:
+%
+\begin{itemize}
+  \item There can be no ergodic maximum for which $\MMd\pot$ contains backwards transitions or $\MMd\dep$ contains forwards transitions.
+  \item There can be no ergodic maximum with the $c_k$ decreasing.
+  \item The $c_k$ may only be degenerate at an ergodic maximum if the corresponding $\etwm_k$ are also degenerate.
+  \item If the $c_k$ increase and the $\etwm_i$ decrease, there can be no ergodic maximum with shortcuts.
+\end{itemize}
+%
+These were shown by finding allowed perturbations that increase the area.
+
+This leaves two possibilities for the maximum area Markov chain.
+Either there is no degeneracy and no shortcuts, which implies the serial topology that we'll discuss in \cref{sec:serialarea}, or there is some degeneracy, which would allow shortcuts provided that they do not bypass an entire degenerate set (see \cref{eq:shortcutarea}).
+
+Degeneracy tends to be very delicate. 
+It is usually hard to arrange without some symmetry relating degenerate states. 
+Such a symmetry would imply lumpability (see \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}). 
+The lumped chain would not have any shortcuts, as an entire degenerate set cannot be bypassed. 
+As this lumped chain has the same area (see \cite{Lahiri2013synapse}), we would need only consider the serial topology.
+
+\subsubsection{Serial topology}\label{sec:serialarea}
+
+The serial topology is defined by (see \cite{Leibold2008serial,Ben-DayanRubin2007sparse}):
+%
+\begin{equation}\label{eq:serialdef}
+  \MMdm\pot_{ij} = q\pot_i \delta_{i+1,j},
+  \qquad
+  \MMdm\dep_{ij} = q\dep_j \delta_{i,j+1},
+  \qquad \text{for}\quad i \neq j
+\end{equation}
+%
+It saturates various inequalities:
+%
+\begin{equation}\label{eq:serialineq}
+  \begin{aligned}
+    \fptbm_{ik} - \fptbm_{jk} &=
+      \begin{cases}
+        \fptbm_{ij},  &\text{if}\quad i \leq j \leq k \quad\text{or}\quad i \geq j \geq k,\\
+        -\fptbm_{ji}, &\text{if}\quad j \leq i \leq k \quad\text{or}\quad j \geq i \geq k,\\
+      \end{cases} \\
+    \eqm_i \frgm_{ij} \prn{\fptbm_{ij}+\fptbm_{ji}} &= 1 \quad\text{if}\quad i=j\pm1,
+  \end{aligned}
+\end{equation}
+%
+and it satisfies detailed balance (a.k.a.\ reversibility):
+%
+\begin{equation}\label{eq:multistateprob}
+  f\pot q\pot_i \eqm_i = f\dep q\dep_i \eqm_{i+1},
+\end{equation}
+%
+which means we can always choose the transition rates, $q^\nu_i$, to give any desired equilibrium probabilities, $\eqm_i$.
+
+This allows us to calculate the $c_k$'s from \cref{eq:lareacoeffs}:
+%
+\begin{equation}\label{eq:serialareacoeff}
+\begin{aligned}
+  c_k &= \sum_{i<k} r\prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i,i+1}
+    %\\&
+    - \sum_{i\geq k} r\prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i+1,i}
+  ,\\
+  c_{k+1} - c_k &= \prn{\eqm_{k} \frgm_{k,k+1} + \eqm_{k+1} \frgm_{k+1,k}}
+                    \prn{\fptbm_{k,k+1} + \fptbm_{k+1,k}}
+    = 2,\\
+  \sum_k c_k \eqm_k &= \sum_{ij} \eqm_i \encm_{ij} (\eta-\eta) = 0,\\
+  \implies c_k &= 2 \prn{k - \sum_j j\eqm_j},
+\end{aligned}
+\end{equation}
+%
+where we used \cref{eq:serialineq} to derive the first two equations respectively and \cref{eq:lkemeny} to derive the third. 
+This allows us to write the area as
+%
+\begin{equation}\label{eq:serialarea}
+ % A = 2\sqrt{N} \sum_k \brk{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eqm_j} \eqm_k \w_k.
+  \CA = {2} \sum_k \brk{k - \sum_j j\eqm_j} \eqm_k \wm_k
+    = {2} \sum_k \abs{k - \sum_j j\eqm_j} \eqm_k ,
+\end{equation}
+%
+where we used $\wm_k=\sgn(c_k)$, as discussed after \cref{eq:lareacoeffs}.
+
+First let us maximise \cref{eq:serialarea} at fixed $\eqm_\pm = \sum_k \eqm_k \prn{\frac{1\pm\wm_k}{2}}$.
+Clearly this will happen when we put all of the probability at the ends: $\eqm_1=\eqm_-$ and $\eqm_n=\eqm_+$ are the only non-zero $\eqm_k$.
+This gives an area of
+\footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eqm_+\eqm_-)/r\sqrt{1 - (\Delta f)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
+%
+\begin{equation}\label{eq:serialextarea}
+  \CA \leq (M-1) \prn{4\eqm_+\eqm_-} = (M-1)\prn{1 - (\eqm_+ - \eqm_-)^2}.
+\end{equation}
+%
+This is maximised at \(\eqm_+=\eqm_-= \frac{1}{2}\):
+%
+\begin{equation}\label{eq:maxarea}
+  \CA \leq (M-1).
+\end{equation}
+%
+Note that the markov process that achieves this is not ergodic, the two states at each end are absorbing. 
+This is similar to the results found numerically in \cite{Barrett2008discrete} in a slightly different situation.
+
+
+
+
+
+
+This leaves us with the result, first shown in \cite{Lahiri2013synapse}, that
+%
+\begin{equation}\label{eq:areabnd}
+  A(0) \leq \frac{\sqrt{N}(M-1)}{r}.
+\end{equation}
+%
+The model that saturates this bound is one of serial topology with \(\eq\) concentrated symmetrically at the two end states.
+
+
+
+%-------Section------------------------------------------------------------------
+
+\subsection{Square-root bound}\label{sec:sqrt}
+
+% \newcommand{\aav}[1]{\mathopen{}\left\lAngle #1 \right\rAngle\mathclose{}}
+% \newcommand{\nnrm}[1]{\mathopen{}\left\Vvert #1 \right\Vvert\mathclose{}}
+
+This proof follows that of \cite{Lawler1988cheeger}.
+We can define two inner-products that will be of use.
+The first is the usual inner product of two vectors (or functions on state space in the continuum case) using the steady state distribution as the measure:
+%
+\begin{equation}\label{eq:innereq}
+  \av{\mathbf{u}, \mathbf{v}} = \sum_i \eqm_i u_i^\ast v_i ,
+  \qquad
+  \nrm{\mathbf{v}} = \sqrt{\av{\mathbf{v}, \mathbf{v}}} .
+\end{equation}
+%
+The second is an inner product of rank 2 tensors (functions of pairs of points on state space) using the steady-state flux as the measure:
+%
+\begin{equation}\label{eq:innerflux}
+  \aav{\mathbf{F}, \mathbf{G}} = \sum_{i \neq j} \Fm_{ij} F_{ij}^\ast G_{ij} ,
+  \qquad
+  \nnrm{\mathbf{F}} = \sqrt{\aav{\mathbf{F}, \mathbf{F}}}.
+\end{equation}
+%
+The omission of the diagonal terms leaves only non-negative terms.
+
+When the process satisfies detailed balance, \ie \(\Fm_{ij}\) is symmetric, we can relate these inner products to quantities of interest.
+
+We can write
+%
+\begin{equation*}
+  \av{\mathbf{u}, -\MM\mathbf{v}} = \sum_{i \neq j} \eqm_i u_i^\ast \MMm_{ij} (v_i - v_j),
+\end{equation*}
+%
+under detailed balance, we can symmetrize
+%
+\begin{equation*}
+  \av{\mathbf{u}, -\MM \mathbf{v}} 
+      = \frac{1}{2}\sum_{i \neq j} \Fm_{ij} (u_i^\ast - u_j^\ast) (v_i - v_j) 
+      = \frac{1}{2} \aav{\boldsymbol{\Delta}\mathbf{u}, \boldsymbol{\Delta}\mathbf{v}}.
+\end{equation*}
+%
+
+The eigenvalue spectrum of \(\MM\) is closely related to its numerical range:
+%
+\begin{equation}\label{eq:numrange}
+  \mathcal{W}(-\MM; \mathcal{V}) 
+    = \set{\frac{\av{\mathbf{u}, -\MM \mathbf{u}}}{\av{\mathbf{u}, \mathbf{u}}}}
+          {\mathbf{u} \in \mathcal{V}} 
+    = \set{\frac{\nnrm{\boldsymbol{\Delta}\mathbf{u}}^2}{2\nrm{\mathbf{u}}^2}}
+          {\mathbf{u} \in \mathcal{V}} .
+\end{equation}
+%
+When \(\MM\) satisfies detailed balance (more generally when it commutes with its time reverse), the numerical range is the convex hull of the eigenvalues.
+
+The other quantity of interest in \cref{eq:snrcoeffs} is the amplitude of the eigenmodes.
+In analogy, we define the following functional (for real \(\mathbf{u}\))
+%
+\begin{equation*}
+  \CI(\mathbf{u}) = \frac{(\eq \enc \mathbf{u}) (\mathbf{u}^\dag \w)}{r\mathbf{u}^\dag \mathbf{u}}
+      = \frac{\sum_{i \neq j} \eqm_i \encm_{ij} (u_j - u_i) \sum_k \eqm_k u_k \wm_k} 
+             {r\sum_{l} \eqm_l u_l^2} .
+\end{equation*}
+%
+Following \cite{Lawler1988cheeger}, we can write
+%
+\begin{equation*}
+  u_j - u_i = \intd[_{u_i}^{u_j}]{\alpha} 
+      = \intd[_{-\infty}^{\infty}]{\alpha} 
+        \brk{\vartheta(u_j - \alpha) \vartheta(\alpha - u_i) 
+           - \vartheta(u_i - \alpha) \vartheta(\alpha - u_j)} ,
+\end{equation*}
+%
+where \(\vartheta\) is the Heaviside step-function.
+Then 
+%
+\begin{equation*}
+  \begin{aligned}[t]
+  \eq \enc \mathbf{u} &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
+        \Fm\pot_{\CA_\alpha \CA_\alpha^c} - \Fm\dep_{\CA_\alpha \CA_\alpha^c} 
+      - \Fm\pot_{\CA_\alpha^c \CA_\alpha} + \Fm\dep_{\CA_\alpha^c \CA_\alpha} }
+  %
+  \; \text{where} 
+    \\
+    &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
+        \Fm_{\CA_\alpha \CA_\alpha^c} + \Fm_{\CA_\alpha^c \CA_\alpha} 
+        - 2\Fm\dep_{\CA_\alpha \CA_\alpha^c} - 2\Fm\pot_{\CA_\alpha^c \CA_\alpha} } ,
+  \end{aligned}
+  %
+  \begin{aligned}[t]
+    \CA_\alpha &= \set{i}{u_i < \alpha} , 
+    \\
+    \Fm^\nu_{\CA \CB} &= \sum_{\substack{i \in \CA \\ j \in \CB}} 
+                        \eqm_i \Wm^\nu_{ij} .
+  \end{aligned}
+\end{equation*}
+%
+Note that the first two terms of the integrand are of the form \( \Fm_{\CA \CB} = \Fm_{\CA \CB}\pot + \Fm_{\CA \CB}\dep \).
+In exactly the same way as the proof of \cref{eq:initbnd}, we can argue that the two terms with the negative signs are indeed non-positive as they do not involve the negative diagonal elements of~\( \Fm_{ij}^\nu \).
+Therefore the other terms provide an upper bound:
+%
+\begin{equation*}
+\begin{aligned}
+  \CI(\mathbf{u}) 
+      &\leq \frac{\av{\mathbf{u},\w}}{r\nrm{\mathbf{u}}^2} 
+        \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
+        \Fm_{\CA_\alpha \CA_\alpha^c} + \Fm_{\CA_\alpha^c \CA_\alpha} } 
+  \\  &= \frac{\av{\mathbf{u},\w}}{r\nrm{\mathbf{u}}^2} 
+        \intd[_{-\infty}^{\infty}]{\alpha} \sum_{i \neq j} \Fm_{ij} \brk{
+            \vartheta(u_j - \alpha) \vartheta(\alpha - u_i) 
+          + \vartheta(u_i - \alpha) \vartheta(\alpha - u_j)
+        }
+  \\  &= \frac{\av{\mathbf{u},\w}}{r\nrm{\mathbf{u}}^2} 
+      \sum_{i \neq j} \Fm_{ij} \abs{u_j - u_i}
+  \\  &= \frac{\av{\mathbf{u},\w} \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem}}
+              {r\nrm{\mathbf{u}}^2}.
+\end{aligned}
+\end{equation*}
+%
+Now we can apply the Cauchy-Schwartz inequality to both factors to find
+%
+\begin{equation*}
+  \CI(\mathbf{u}) \leq \frac{\nrm{\w} \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem}}
+                            {r\nrm{\mathbf{u}}} .
+\end{equation*}
+%
+We also have \( \nrm{\w}^2 = \sum_i \eqm_i \wm_i^2 = 1 \).
+Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eqm_i \MMm_{ij} \leq r \sum_i \eqm_i = r\).
+Then, remembering \cref{eq:numrange},
+%
+\begin{equation}\label{eq:sqrtnumrange}
+  \CI(\mathbf{u}) \leq \sqrt{\frac{2\av{\mathbf{u}, -\MM \mathbf{u}}}{r\av{\mathbf{u}, \mathbf{u}}}}
+      = \sqrt{2\mathcal{W}(-\frg;\mathbf{u})/r}.
+\end{equation}
+%
+Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvectors, we find a bound on the eigenmodes:
+%
+\begin{equation}\label{eq:sqrtbound}
+  \text{assuming} \quad 
+  \eqm_i \frgm_{ij} = \eqm_j \frgm_{ji},
+  \qquad \text{we have} \quad
+  \CI_a \sqrt{r\tau_a} \leq \sqrt{2}.
+\end{equation}
+%
+bNumerical maximisation of the quantity above produces the same result as in \cref{sec:initial}:
+the two-state model with deterministic transitions.
+This model has \(\CI_1 = \tau_1 = 1\), suggesting that there's a factor of \(\sqrt{2}\) looseness in this bound.
+
+We can look at the various inequalities used in this derivation to see which models could saturate them:
+%
+\begin{equation*}
+\begin{aligned}
+  \Fm_{\CA_\alpha \CA_\alpha^c}\dep + \Fm_{\CA_\alpha^c \CA_\alpha}\pot &\geq 0 , &
+  \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem} 
+                        &\leq \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem} , &
+  \av{\mathbf{u},\w} &\leq \nrm{\mathbf{u}} \nrm{\w} , &
+  \sum_{j: j \neq i} \frg_{ij} &\leq r.
+\end{aligned}
+\end{equation*}
+%
+To saturate the first inequality it helps to arrange the states in order of increasing \(u_i\).
+For any \(\alpha\), the sets \(\CA_\alpha\) and \(\CA_\alpha^c\) will be the states to the left and right of \(u = \alpha\) respectively.
+We see that the inequality is saturated iff \(\W \pot \) contains rightwards transitions only and \(\W \dep \) only contains leftwards transitions only.
+
+The second inequality is saturated iff \(\abs{\boldsymbol{\Delta}\mathbf{u}} \propto \onem \), but this need only hold for pairs of states for which \(\Fm_{ij} \neq 0\).
+This can be achieved if \(u_i\) varies linearly with \(i\), and only nearest neighbour transitions are allowed
+(we are allowed states that are degenerate if they are not connected by any nonzero transitions).
+This almost forces the serial topology on us (if we can argue that degenerate states have the same outgoing transition rates, they would be lumpable).
+
+The third inequality is saturated iff \(\mathbf{u} \propto \w\).
+This contradicts the requirements of the previous paragraph unless \(M=2\), or if it is a multistate model rather than serial.
+
+The fourth inequality can only be saturated if, for each state, the outgoing potentitation rates and depression rates separately sum to one.
+This does force degenerate states to be lumpable, and we are left with a serial topology with deterministic transitions.
+However, this cannot be done for the two end states without violating the requirements for saturating the first inequality.
+
+So we see that all four inequalities cannot be simultaneously saturated, and the bound must be loose.
+
+%--------------------------------------------------------------------------------
+
+\subsection{Envelope}\label{sec:envelope}
+
+Recall the eigenmode description of the memory curve from \cref{eq:snreig}
+%
+\begin{equation*}
+  \snr(t) = \sqrt{N} \sum_a \CI_a \e^{-t/\tau_a},
+  \qquad
+  \snrb(\tau) = \sqrt{N} \sum_a \frac{\CI_a}{1+\tau/\tau_a},
+\end{equation*}
+%
+where
+%
+\begin{equation*}
+  \CI_a = \frac{(\eq \enc \evr^a) (\evl^a \w)}{r},
+  \qquad
+  \tau_a = \frac{1}{q_a}.
+\end{equation*}
+%
+In this section we will work in units where \(r = 1\) until the very end.
+
+From \eqref{eq:areabnd} and \eqref{eq:initbnd}, we see that they are subject to the constraints
+%
+\begin{equation}\label{eq:coeffconstr}
+  \sum_a \CI_a \tau_a \leq M-1,
+  \qquad
+  \sum_a \CI_a \leq 1.
+\end{equation}
+%
+No doubt there are many other constraints that these quantities must satisfy, but we can see what these ones imply for the \(\snrb(\tau)\) by maximising it subject to these constraints.
+
+Consider the Lagrangian
+%
+\begin{equation}\label{eq:envlagrangian}
+  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
+\end{equation}
+%
+The Karush-Kuhn-Tucker necessary conditions for a maximum are
+%
+\begin{equation}\label{eq:envKTcond}
+  \pdiff{\CL}{\CI_a} = 0, \qquad
+  \pdiff{\CL}{\tau_a} = 0, \qquad
+  \mu_\alpha \geq 0, \qquad
+  \pdiff{\CL}{\mu_\alpha} \geq 0, \qquad
+  \mu_\alpha\pdiff{\CL}{\mu_\alpha} = 0.
+\end{equation}
+%
+These are solved by
+%
+\begin{equation}\label{eq:envsol}
+\begin{gathered}
+  \CI_1 = 1, \qquad
+  \CI_{a>1} = 0, \qquad
+  \tau_1 = M-1, \\
+  \mu_\CI = \frac{(M-1)^2}{[r\tau + (M-1)]^2}, \qquad
+  \mu_\CA = \frac{r\tau}{[r\tau+(M-1)]^2}. \qquad
+\end{gathered}
+\end{equation}
+%
+This leads to the envelope
+%
+\begin{equation}\label{eq:env}
+  \snrb(\tau) \leq \frac{\sqrt{N}(M-1)}{r\tau + (M-1)}.
+\end{equation}
+%
+This is the envelope (``memory frontier'') that we can prove.
+Finding more constraints would lower it.
+Clearly there have to be more constraints, as \eqref{eq:envsol} indicates that this would be achieved by the same model at all times.
+This model would have to saturate both the initial SNR bound \eqref{eq:initbnd} and the area bound \eqref{eq:areabnd}, whereas we saw that they were achieved by different models, which perform well at short/long timescales respectively.
+
+This envelope is shown in \cref{fig:envproven}(\ref{fig:provengen}).
+
+If we know that the optimal model for any timescale satisfies detailed balance, we have one more constraint, \cref{eq:sqrtbound}.
+Then the Lagrangian reads
+%
+\begin{equation}\label{eq:envDBlagrangian}
+  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} 
+      + \sum_a \mu_a \prn{\sqrt{2} - \CI_a \sqrt{\tau_a}} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
+\end{equation}
+%
+The solution to \cref{eq:envKTcond} takes different forms for different ranges of \(\tau\) and \(M\),
+as described in \cref{tab:envDB}.
+The resulting envelope is (for \(M > 3\))
+%
+\begin{equation}\label{eq:envDB}
+  \snrb(\tau) \leq 
+  \left\{ 
+  \begin{alignedat}{3}
+    &\frac{2 \sqrt{N}}{2 + r \tau}
+      , &
+      0 &\leq r \tau &&\leq 2
+      , \\
+    &\sqrt{\frac{N}{2 r \tau}}
+      , &
+      2 &< r \tau &&< \frac{(M-1)^2}{2}
+      , \\
+    &\frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau}
+      , &\qquad
+      \frac{(M-1)^2}{2} &\leq r \tau 
+      .
+  \end{alignedat}
+  \right.
+\end{equation}
+%
+This envelope is shown in \cref{fig:envproven}(\ref{fig:provendetbal}).
+For \(M \leq 3\), \cref{eq:env} still applies.
+
+
+\begin{figure}[tb]
+  \centering
+  % Requires \usepackage{graphicx}
+  \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.4\linewidth]{LenvProven.pdf}}\label{fig:provengen}
+  \item\aligntop{\includegraphics[width=0.4\linewidth]{LenvConj.pdf}}\label{fig:provendetbal}
+  \end{myenuma}
+  \caption[Proven and conjectured envelopes for the signal-to-noise ratio]
+  {Proven and conjectured envelopes for the signal-to-noise ratio.
+  (\ref{fig:provengen}) The memory curve envelope that we can prove, \cref{eq:env}.
+  (\ref{fig:provendetbal}) Conjectured memory curve envelope when we assume the optimal models satisfy detailed balance, \cref{eq:envDB}.
+  The number of synapses \(N=1\) and the number of states \(M=10\).
+  The dashed lines indicate the initial SNR bound, \eqref{eq:initbnd}, and the area bound, \eqref{eq:areabnd}, from \cite{Lahiri2013synapse}.}\label{fig:envproven}
+\end{figure}
+
+\newcolumntype{B}{R@{\,}C@{\,}L}
+% \(
+\begin{table}[tb]
+  \begin{center}
+  \begin{tabular}{BACCCCCC}
+    \toprule
+      \multicolumn{5}{c}{Domain of validity} & \CI_a & \tau_a 
+        & \mu_\CI & \mu_a & \mu_\CA 
+        % & \snrb(\tau) 
+      \\
+    \midrule
+      0 &\leq r \tau &\leq 2 & M &\geq 3 & 1 & 2/r 
+        & \frac{4 - 2r \tau}{[2 + r \tau]^2} & \frac{2\sqrt{2}r\tau}{[2 + r \tau]^2} & 0 
+        % & \frac{2 \sqrt{N}}{2 + r \tau} 
+      \\
+      2 &< r \tau &< \frac{(M-1)^2}{2} & M &> 3 & \sqrt{\frac{2}{r\tau}} & \tau 
+        & 0 & \frac{1}{2\sqrt{r \tau}} & 0 
+        % & \sqrt{\frac{N}{2 r \tau}} 
+      \\ \addlinespace[0.2ex]
+      \frac{(M-1)^2}{2} &\leq r \tau & & M &\geq 3 & \frac{2}{M-1} & \frac{(M-1)^2}{2r} 
+        & 0 & \frac{\sqrt{2}(M-1)^3}{[(M-1)^2 + 2r \tau]^2} 
+        & \frac{4r \tau - 2(M-1)^2}{[(M-1)^2 + 2r \tau]^2} 
+        % & \frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau} 
+      \\
+      &-& & M &\leq 3 & 1 & \frac{M - 1}{r} 
+        & \frac{(M-1)^2}{[(M-1) + r \tau]^2} %- \frac{\mu_a \sqrt{\tau_a}}{2} 
+        & 0 & \frac{r \tau}{[(M-1) + r \tau]^2} %- \frac{\mu_a}{2 \sqrt{\tau_a}} 
+        % & \frac{\sqrt{N} (M-1)}{(M-1) + r \tau} 
+      \\
+    \bottomrule
+  \end{tabular}
+  \end{center}
+\caption{The solution to the maximum SNR \cref{eq:envKTcond} for the Lagrangian in \cref{eq:envDBlagrangian}, under different conditions. 
+The resulting envelope is \cref{eq:envDB}.
+The range of \(\tau\) for the second row does not exist for \(M = 3\), in which case any of the other rows can be used.}
+\label{tab:envDB}
+\end{table}
+% \)
+
+Note that models with the serial topology must satisfy detailed balance.
+Therefore, the conjecture from \cref{sec:finite} implies that the square-root bound of \cref{sec:sqrt} applies, implying the stricter envelope of \cref{eq:envDB}.
+In \cref{fig:envnum} we compare these theoretical envelopes with the numerical maximisation from \cref{fig:envnum}.
+We can see that this conjectured envelope is close to tight, being off by a constant factor.
+
+
+\begin{figure}[tb]
+  \centering
+  % Requires \usepackage{graphicx}
+  \includegraphics[width=0.8\linewidth]{LenvNum.pdf}\\
+  \caption[Numerical and theoretical envelopes for the signal-to-noise ratio]
+  {Numerical  and theoretical envelopes  for the signal-to-noise ratio, \eqref{eq:snrb}. 
+  As in \cref{fig:envnum}, \cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} 
+  are solved numerically with \(f\potdep=\frac{1}{2}\), 
+  the number of synapses \(N=1\) and the number of states \(M=10\).
+  The orange line indicates the maximum memory curve over the space of all matrices 
+  satisfying the constraints \eqref{eq:constr}.
+  The green line indicates maximum over models with the serial topology, 
+  \ie potentiation only moves up one state and depression only moves down one state.
+  The dotted blue line indicates the proven envelope, 
+  \cref{eq:env} and the solid blue line is the conjectured envelope assuming detailed balance, 
+  see \cref{eq:envDB}.}\label{fig:envnumth}
+\end{figure}
+
+\begin{figure}[tbp]
+  \centering
+  % Requires \usepackage{graphicx}
+  \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=7]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=13]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=21]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=27]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=36]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=50]{envelope.pdf}}
+  \end{myenuma}
+  \caption[Optimal models]{The models that constitute the numeric envelope in \cref{fig:envnum}.
+  The plot to the left of each frame indicates the memory curve of the model shown to the right in green, with the numeric envelope for models with the serial topology in orange and the proven envelope, \eqref{eq:env}, in blue.
+  Above the left plot we have a graphical display of the model, described with more detail to the right.
+  The area of each node is proportional to the steady state probability in that state and the thickness of the red and blue edges are proportional to the transition probabilities under potentiation and depression.
+  The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
+  The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
+  The heat map in the centre right of each frame indicates the equilibrium probability distribution for each state.
+  See the video for the full set of models.}\label{fig:envvid}
+\end{figure}
+\
+
+%================================================================================
+
 \section{Finite time topology}\label{sec:finite}
 
 Now we'll maximise \(\snrb(\tau)\) for some fixed \(\tau\), subject to the constraints \eqref{eq:constr}.
@@ -769,17 +1630,18 @@ First, we will maximise the numerator of \eqref{eq:lsnr} holding \(\eq\w\) fixed
 We can maximise the ratio \wrt \(\eq\w\) later.
 % From this point on, we work in units where \(r = 1\).
 
+For this section we will treatthe off-diagonal components of \(\W^\nu\) as the independent degrees of freedom, as in \cref{eq:wdof}, rather than the \(\MMd^\nu\).
 Consider the Lagrangian
 %
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i(s) - \etwm_j(s))
         +\sum_{\nu i j} \mu^\nu_{ij} \prn{ \Wm^\nu_{ij} + r f^\nu \delta_{ij} }
-        + \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
+        + \lambda \prn{ \Delta p - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
 %
-where \(\Delta\pr\) is the constant value we are holding \(\eq\w\) at.
+where \(\Delta p\) is the constant value we are holding \(\eq\w\) at.
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTfinite}
@@ -790,7 +1652,7 @@ The Karush-Kuhn-Tucker necessary conditions for a maximum are
   \pdiff{\CL}{\lambda} = 0.
 \end{equation}
 %
-We have scaled the KKT multipliers by \(r f^\nu\) for later convenience.
+% We have scaled the KKT multipliers by \(r f^\nu\) for later convenience.
 
 The derivatives, for \(m \neq n\) are
 %
@@ -977,7 +1839,7 @@ The constraints on \(\shift{\Wm}^\nu_{ij}\) are different from \cref{eq:constri}
     \quad \forall \; \nu, i.
 \end{equation}
 %
-The diagonal elements are still given by \( \shift{\Wm}^\nu_{ii} = - \sum_{j: j \neq i} \shift{\Wm}^\nu_{ij} \), but now they are be below \(-r f^\nu \) so long as \(\shift{\Wm}^\nu_{ii} \geq -r f^\nu - s f^\nu (1 - \eqm_i)\).
+The diagonal elements are still given by \( \shift{\Wm}^\nu_{ii} = - \sum_{j: j \neq i} \shift{\Wm}^\nu_{ij} \), but now they can be below \(-r f^\nu \) so long as \(\shift{\Wm}^\nu_{ii} \geq -r f^\nu - s f^\nu (1 - \eqm_i)\).
 
 The Lagrangian we should consider is
 %
@@ -985,7 +1847,7 @@ The Lagrangian we should consider is
 \begin{aligned}
   \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i - \etwm_j)
         +\sum_{\nu i j} \mu^\nu_{ij}\prn{\Wm^\nu_{ij} + f^\nu (r + s) \delta_{ij} -  s f^\nu \eqm_j }
-        &+ \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
+        &+ \lambda \prn{ \Delta p - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
 %
@@ -1394,866 +2256,6 @@ That expression will agree with \cref{eq:diagKKTz} provided that
 
 
 %-------Section------------------------------------------------------------------
-
-\section{Upper bounds}\label{sec:upperbnds}
-
-Now to study the SNR as a function of  time, it helps to consider some variables that are more directly related to the time dependance than the matrix elements. 
-So we introduce an eigenvector decomposition for \(-\frg\):
-%
-\begin{equation}\label{eq:eigendecomp}
-  \frg = - \sum_a q_a \evr^a \evl^a,
-  \quad
-  \evl^a \evr^b = \delta_{ab},
-  \quad
-  \frg \evr^a = -q_a \evr^a,
-  \quad
-  \evl^a \frg = -q_a \evl^a.
-\end{equation}
-%
-Then we can write
-%
-\begin{equation}\label{eq:snreig}
-  \snr(t) = \sqrt{N}\sum_a \CI_a \e^{-t/\tau_a},
-  \qquad
-  \snrb(\tau) = \sqrt{N}\sum_a \frac{\CI_a}{1+\tau/\tau_a},
-\end{equation}
-%
-where
-%
-\begin{equation}\label{eq:snrcoeffs}
-  \CI_a = \frac{(\eq \enc \evr^a) (\evl^a \w)}{r},
-  \qquad
-  \tau_a = \frac{1}{q_a}.
-\end{equation}
-%
-We have ignored the denominator of \cref{eq:SNRcurveExact} for now.
-This will not have any effect on the results: it will not change the location of the maxima, which are at \( \Delta f = \eq \w = 0 \).
-We will confine such discussion to the footnotes.
-We will also work in units where \(r = 1\) until the very end.
-
-Now the question is what are the allowed values of \( (\CI_a, \tau_a) \)?
-We have to translate the constraints of \cref{eq:constri} into constraints on the eigenmode variables.
-Each constraint we find will be a necessary condition for the existence of a set of Markov processes \( \MMdm_{ij}^\nu \) that result in \( (\CI_a, \tau_a) \).
-We can imagine the notion of a complete set of constraints: constraints that, when combined, are also sufficient for the existence of a \( \MMdm_{ij}^\nu \).
-But finding such a set seems intractable for now.
-Most likely there are a large number of such constraints, but if we can find a few of them they will provide us with some limits on the space of possible memory curves.
-These limits may not be tight - there may not be models that can reach these limits, but they will imply a forbidden region in the space of memory curves.
-
-
-%--------------------------------------------------------------------------------
-
-\subsection{Initial SNR}\label{sec:initial}
-
-The initial SNR is:
-%
-\begin{equation}\label{eq:initdef}
-  \snr(0) = \snrb(0) = \lim_{s\to\infty} sA(s)
-      = \sqrt{N} \sum_a \CI_a.
-\end{equation}
-%
-We can write the initial SNR as
-%
-\begin{equation*}
-  \frac{\SNR(0)}{\sqrt{N}} = \CI = \frac{\eq \enc \w}{r}.
-\end{equation*}
-%
-First, we define two sets of states: \( + = \set{i}{\wm_i = 1} \) and \( - = \set{i}{\wm_i = - 1} \), and the fluxes \( \Fm^\nu_{\CA \CB} = \displaystyle\sum_{\mathclap{i \in \CA, j \in \CB}} \eqm_i \Wm^\nu_{ij} \).
-Then we can write
-%
-\begin{equation*}
-\begin{aligned}
-  \CI &= \Fm\pot_{++} + \Fm\pot_{-+} - \Fm\dep_{++} - \Fm\dep_{-+} - \Fm\pot_{+-} - \Fm\pot_{--} + \Fm\dep_{+-} + \Fm\dep_{--} \\
-      &= 2\prn{\Fm\pot_{-+} - \Fm\dep_{-+} - \Fm\pot_{+-} + \Fm\dep_{+-}} \\
-      &= 2\prn{\Fm_{-+} + \Fm_{+-}} - 4\prn{\Fm\pot_{+-} + \Fm\dep_{-+}} \\
-      &= 4\prn{\Fm_{-+} - \Fm\pot_{+-} - \Fm\dep_{-+}}, \\
-\end{aligned}
-\end{equation*}
-%
-where we used \( \Fm^\nu_{\CA+} + \Fm^\nu_{\CA-} = 0 \) to derive the second line, \( \Fm_{\CA\CB} = \Fm\pot_{\CA\CB} + \Fm\dep_{\CA\CB} \) to derive the third and additionally \( \Fm_{+\CA} + \Fm_{-\CA} = 0 \) to derive the fourth.
-
-The last two terms are guaranteed to be negative, as the diagonal parts of \(\W^\nu \) cannot contribute.
-Therefore
-%
-\begin{equation}\label{eq:initfluxineq}
-  \SNR(0) \leq \frac{4\sqrt{N}\Fm_{-+}}{r}.
-\end{equation}
-%
-This inequality is saturated if potentiation never takes it from a \(+\) state to a \(-\) state and depression never takes it from a \(-\) state to a \(+\) state.
-
-The flux will be maximised if potentiation is guaranteed to take it to a \(+\) state and depression is guaranteed to take it to a \(-\) state:
-%
-\begin{equation*}
-  \sum_{j \in +} \MMd \pot_{ij} = 1 \quad \forall\, i \in -,
-  \qquad
-  \sum_{j \in -} \MMd \dep_{ij} = 1 \quad \forall\, i \in +.
-\end{equation*}
-%
-This implies that the process is lumpable to a two state system (see \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}):
-%
-\begin{multline}\label{eq:binarylump}
-%\begin{aligned}
-  \MMd \pot = \begin{pmatrix}
-                0 & 1 \\
-                0 & 1 \\
-              \end{pmatrix}
-  ,\quad
-  \MMd \dep = \begin{pmatrix}
-                1 & 0 \\
-                1 & 0 \\
-              \end{pmatrix}
-  ,\quad
-  \w = \begin{pmatrix}
-           -1 \\
-           1 \\
-         \end{pmatrix}
-  ,\\ \implies\quad
-  \frg = r\begin{pmatrix}
-            -f\pot & f\pot \\
-            f\dep & -f\dep \\
-          \end{pmatrix}
-  ,\quad
-  \eq = \begin{pmatrix}
-           f\dep & f\pot \\
-         \end{pmatrix}
-  ,
-\end{multline}
-%
-which leads to the initial SNR%
-\footnote{Note that including the dropped factors in \cref{eq:SNRcurveExact} would only change this to
-\(\SNR(0) \leq \frac{\sqrt{N} (4f^+f^-)}{\sqrt{1 - (f\pot - f\dep)^4}}\),
-which is also maximised at \(f\potdep = \frac{1}{2}\) and would therefore have no effect on what follows.}
-%
-\begin{equation}\label{eq:binarySNR}
-  \SNR(0) \leq \sqrt{N} (4 f\pot f\dep) .
-\end{equation}
-%
-This is maximised at \(f\pot = f\dep = \frac{1}{2}\),
-leading to the inequality (first shown in \cite{Lahiri2013synapse}):
-%
-\begin{equation}\label{eq:initbnd}
-  \snr(0) \leq \sqrt{N},
-\end{equation}
-%
-The model that saturates this bound is (equivalent to) a two-state model with deterministic transitions and \(f\potdep=\frac{1}{2}\).
-
-%--------------------------------------------------------------------------------
-
-\subsection{Area bound}\label{sec:area}
-
-The area under the SNR curve is:
-%
-\begin{equation}\label{eq:areadef}
-  \intd[_0^\infty]{t} \snr(t) = \lim_{\tau\to\infty} \tau \snrb(\tau) 
-      = A(0) = \sqrt{N} \CA = \sqrt{N} \sum_a \CI_a \tau_a.
-\end{equation}
-%
-To maximise this quantity, consider the Lagrangian
-%
-\begin{equation}\label{eq:arealagrangian}
-\begin{aligned}
-  \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i(0) - \etwm_j(0))
-        +\sum_{\nu i j} \prn{ \mu^\nu_{ij} \MMdm^\nu_{ij} }
-        &+ \lambda \prn{ \Delta\pr - \sum_i \eqm_i \wm_i },
-\end{aligned}
-\end{equation}
-%
-where \(\Delta\pr\) is the constant value we are holding \(\eq\w\) at.
-The Karush-Kuhn-Tucker necessary conditions for a maximum are
-%
-\begin{equation}\label{eq:KTarea}
-  \pdiff{\CL}{\MMdm^\nu_{ij}} = 0, \quad
-  \mu^\nu_{ij} \geq 0, \quad
-  \pdiff{\CL}{\mu^\nu_{ij}} \geq 0, \quad
-  \mu^\nu_{ij}\pdiff{\CL}{\mu^\nu_{ij}} = 0, \quad
-  \pdiff{\CL}{\lambda} = 0.
-\end{equation}
-%
-From \cref{eq:lAdiff}, the derivatives for \(m \neq n\) are
-%
-\begin{equation}\label{eq:areaderivs}
-\begin{aligned}
-  \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
-    f^\nu \eqm_m \prn{ \brk{\thbm_m(0) - \thbm_n(0)}
-     + \prn{\mathbf{c}_m(0) + (-1)^\nu} \brk{\etwm_m(0) - \etwm_n(0)} } \\
-     &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
-     + \lambda f^\nu \eqm_m (\etwm_{m}(0)-\etwm_{n}(0)) 
-    = 0.
-\end{aligned}
-\end{equation}
-%
-See \cref{eq:lareacoeffs} for the definitions of these quantities.
-
-The area and \(\Delta\pr\) are invariant under the scale transformation %\cref{eq:scale}
-%
-\begin{equation}\label{eq:scale}
-  \zeta * \MMd \equiv (1-\zeta) \MMd + \zeta \I .
-\end{equation}
-%
-It follows that
-%
-\begin{equation*}
-  \sum_{\nu, m \neq n} \MMdm^\nu_{mn} \pdiff{\CL}{\MMdm^\nu_{mn}} 
-    = - \sum_{\nu, m} \mu^\nu_{mm} = 0 .
-\end{equation*}
-%
-As the KKT multipliers are nonnegative, this implies that all the diagonal KKT multipliers vanish and we can ignore the diagonal constraints.
-
-Another way of seeing this is to note that all but the diagonal constraints in \cref{eq:constri} are invariant under \cref{eq:scale}.
-This means that if we have a set of parameters that satisfy the off-diagonal constraints, it can always be scaled so that it meets the diagonal constraints.
-Therefore, we can ignore the diagonal constraints whilst maximising the area and fix them afterwards by  scaling.
-
-
-\subsubsection{Perturbations}\label{sec:areapert}
-
-\paragraph{Triangularity:}\label{sec:triangular}
-
-Consider
-%
-\begin{equation}\label{eq:shiftqderiv}
-  \pdiff{\CL}{\enc_{mn}} =
-  \frac{1}{2f\pot} \pdiff{\CL}{\MMdm\pot_{mn}} - \frac{1}{2f\pot} \pdiff{\CL}{\MMdm\dep_{mn}}
-   = \frac{1}{2}(\mu\pot_{mn} - \mu\dep_{mn}) + \eqm_m (\etwm_m - \etwm_n)
-   = 0.
-\end{equation}
-%
-This corresponds to the shift
-%
-\begin{equation}\label{eq:shiftq}
-  \MMdm\pot_{ij} \to \MMdm\pot_{ij} + \frac{\epsilon_{ij}}{2f\pot},
-  \qquad
-  \MMdm\dep_{ij} \to \MMdm\dep_{ij} - \frac{\epsilon_{ij}}{2f\dep},
-  \qquad
-  \sum_j \epsilon_{ij} = 0,
-\end{equation}
-%
-which leaves $\frg$ unchanged, and therefore $\eq$, $\fptb$ and $\etw$ as well.
-
-Assume $\etwm_m > \etwm_n$. Then
-%
-\begin{equation}\label{eq:lowertriangular}
- \mu\pot_{mn} - \mu\dep_{mn} < 0
- \qquad\implies\qquad
- \mu\dep_{mn} > 0
- \qquad\implies\qquad
- \MMdm\dep_{mn} = 0.
-\end{equation}
-%
-Similarly, if $\etwm_m < \etwm_n$, then
-%
-\begin{equation}\label{eq:uppertriangular}
- \mu\pot_{mn} - \mu\dep_{mn} > 0
- \qquad\implies\qquad
- \mu\pot_{mn} >0
- \qquad\implies\qquad
- \MMdm\pot_{mn}=0.
-\end{equation}
-%
-Thus, if we arrange the states in order of decreasing $\etw$, $\MMd\pot$ is upper-triangular and $\MMd\dep$ is lower triangular.
-
-We have ignored the possibility that $\eqm_m = 0$, as this would imply that $\fptbm_{im} = \infty$, which would in turn imply that the Markov process is not ergodic.
-
-
-\paragraph{Increasing \texorpdfstring{$c_k$}{c(k)}:}\label{sec:areacoeffincr}
-
-Consider the following combinations of derivatives:
-%
-\begin{equation}\label{eq:areacoeffincrderiv}
-    \Delta^\nu_{mn} \equiv
-      \frac{1}{\eqm_m} \pdiff{}{\MMdm^\nu_{mn}}
-      + \frac{1}{\eqm_n} \pdiff{}{\MMdm^\nu_{nm}}, 
-\end{equation}
-%
-Note that they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \cref{sec:triangular} about this being satisfied for ergodic chains).
-
-One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
-%
-\begin{equation}\label{eq:sareacoeffincrprob}
-  \Delta^\nu_{mn} \eqm_i = 0,
-\end{equation}
-%
-which makes it possible to integrate the perturbation:
-%
-\begin{equation}\label{eq:areacoeffincrfinite}
-  \MMd^\nu \to \MMd^\nu + \Eq\inv \boldsymbol{\epsilon},
-  \qquad
-  \begin{aligned}
-  \boldsymbol{\epsilon} &= \boldsymbol{\epsilon}\trans,
-  \\
-  \boldsymbol{\epsilon} \onev &= 0.
-  \end{aligned}
-\end{equation}
-%
-But more interestingly:
-%
-\begin{equation}\label{eq:areacoeffincr}
-    \Delta^\nu_{mn}\CL =
-      \frac{\mu^\nu_{mn}}{\eqm_m} + \frac{\mu^\nu_{nm}}{\eqm_n}
-      + r \prn{c_m - c_n}\prn{\etwm_m - \etwm_n} = 0,
-\end{equation}
-%
-where $c_k$ were defined in \cref{eq:lareacoeffs}, with \(s = 0\).
-
-Using the non-negativity of the Kuhn-Tucker multipliers, $\mu^\nu_{ij}$, \cref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\etwm_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\etwm_k$ are degenerate, we can choose their order to ensure this).
-
-Note that, according to \cref{sec:triangular}, either $\MMdm\pot_{mn}$ or $\MMdm\dep_{mn}$ will be zero at the maximum, therefore we can expect one of the $\mu^\nu_{mn}$ to be non-zero.
-This would rule out degeneracy of the $c_k$ or $\etwm_k$.
-Looking at \cref{eq:shiftqderiv} closely, the only way both $\mu^\nu_{mn}$ could be zero is if $\etwm_m = \etwm_n$ or $\eqm_m = \eqm_n = 0$.
-
-
-\paragraph{Shortcuts:}\label{sec:shortcuts}
-
-Now consider the following combinations of derivatives for $(n - m)(-1)^\nu > 1$:
-%
-\begin{equation}\label{eq:shortcutderiv}
-  \widetilde{\Delta}^\nu_{mn} \equiv
-    \brk{ \sum_{k=m}^{n \mp 1} \frac{1}{\eqm_{k}} \pdiff{}{\MMdm^\nu_{k,k \pm 1}} }
-    - \frac{1}{\eqm_m} \pdiff{}{\MMdm^\nu_{mn}},
-  \qquad \pm = (-1)^\nu.
-\end{equation}
-%
-Once again, they are only well defined if all the states have non-zero equilibrium probabilities (see the comment in \cref{sec:triangular} about this being satisfied for ergodic chains).
-
-One can show that the equilibrium probabilities, $\eq$, are invariant under these operators:
-%
-\begin{equation}\label{eq:shortcutprob}
-  \widetilde{\Delta}^\nu_{g,m} \eqm_i = 0,
-\end{equation}
-%
-which makes it possible to integrate the perturbation:
-%
-\begin{equation}\label{eq:shortcutfinite}
-  \MMd^\nu \to \MMd^\nu + \Eq\inv \boldsymbol{\epsilon}^{\nu mn},
-  \qquad
-  \begin{alignedat}[t]{3}
-    &\prn{{\epsilon}^{\nu mn}}_{mn}
-      &&= -\epsilon,\\
-    &\prn{{\epsilon}^{\nu mn}}_{k,k\pm1}
-      &&= \epsilon
-      &\;&\forall\, k \in [m,n),\\
-    &\prn{{\epsilon}^{\nu mn)}}_{kk}
-      &&= -\epsilon
-      &&\forall\, k \in (m,n).
-  \end{alignedat}
-\end{equation}
-%
-But more interestingly for our purposes:
-%
-\begin{equation}\label{eq:shortcutarea}
-    \widetilde{\Delta}^\nu_{mn}\CL =
-      \brk{ \sum_{k=m}^{n\mp1} \frac{\mu^\nu_{k,k\pm1}}{\eqm_k}
-      - \frac{\mu^\nu_{m,n}}{\eqm_m}}
-      + rf^\nu \sum_{k=m}^{n\mp1} \prn{\etwm_{k} - \etwm_{k\pm1}} \prn{c_k - c_m},
-\end{equation}
-%
-
-If we put the states in order of decreasing $\etwm_k$, the results of the \cref{sec:areacoeffincr} tell us that the $c_k$ are non-decreasing.
-This implies that the last term of the final expression in \eqref{eq:shortcutarea} is non-negative.
-If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu^\nu_{mn} > 0$, which in turn implies that $\MMdm^\nu_{mn}=0$.
-This would tell us that the process with the maximal area has to have a serial topology.
-
-
-\paragraph{Summary:}\label{sec:pertsummary}
-
-Using the Kuhn-Tucker formalism, we have shown that,
-with the states arranged in order of non-increasing $\etwm_i$:
-%
-\begin{itemize}
-  \item There can be no ergodic maximum for which $\MMd\pot$ contains backwards transitions or $\MMd\dep$ contains forwards transitions.
-  \item There can be no ergodic maximum with the $c_k$ decreasing.
-  \item The $c_k$ may only be degenerate at an ergodic maximum if the corresponding $\etwm_k$ are also degenerate.
-  \item If the $c_k$ increase and the $\etwm_i$ decrease, there can be no ergodic maximum with shortcuts.
-\end{itemize}
-%
-These were shown by finding allowed perturbations that increase the area.
-
-This leaves two possibilities for the maximum area Markov chain.
-Either there is no degeneracy and no shortcuts, which implies the serial topology that we'll discuss in \cref{sec:serialarea}, or there is some degeneracy, which would allow shortcuts provided that they do not bypass an entire degenerate set (see \cref{eq:shortcutarea}).
-
-Degeneracy tends to be very delicate. 
-It is usually hard to arrange without some symmetry relating degenerate states. 
-Such a symmetry would imply lumpability (see \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}). 
-The lumped chain would not have any shortcuts, as an entire degenerate set cannot be bypassed. 
-As this lumped chain has the same area (see \cite{Lahiri2013synapse}), we would need only consider the serial topology.
-
-\subsubsection{Serial topology}\label{sec:serialarea}
-
-The serial topology is defined by (see \cite{Leibold2008serial,Ben-DayanRubin2007sparse}):
-%
-\begin{equation}\label{eq:serialdef}
-  \MMdm\pot_{ij} = q\pot_i \delta_{i+1,j},
-  \qquad
-  \MMdm\dep_{ij} = q\dep_j \delta_{i,j+1},
-  \qquad \text{for}\quad i \neq j
-\end{equation}
-%
-It saturates various inequalities:
-%
-\begin{equation}\label{eq:serialineq}
-  \begin{aligned}
-    \fptbm_{ik} - \fptbm_{jk} &=
-      \begin{cases}
-        \fptbm_{ij},  &\text{if}\quad i \leq j \leq k \quad\text{or}\quad i \geq j \geq k,\\
-        -\fptbm_{ji}, &\text{if}\quad j \leq i \leq k \quad\text{or}\quad j \geq i \geq k,\\
-      \end{cases} \\
-    \eqm_i \frgm_{ij} \prn{\fptbm_{ij}+\fptbm_{ji}} &= 1 \quad\text{if}\quad i=j\pm1,
-  \end{aligned}
-\end{equation}
-%
-and it satisfies detailed balance (a.k.a.\ reversibility):
-%
-\begin{equation}\label{eq:multistateprob}
-  f\pot q\pot_i \eqm_i = f\dep q\dep_i \eqm_{i+1},
-\end{equation}
-%
-which means we can always choose the transition rates, $q^\nu_i$, to give any desired equilibrium probabilities, $\eqm_i$.
-
-This allows us to calculate the $c_k$'s from \cref{eq:lareacoeffs}:
-%
-\begin{equation}\label{eq:serialareacoeff}
-\begin{aligned}
-  c_k &= \sum_{i<k} r\prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i,i+1}
-    %\\&
-    - \sum_{i\geq k} r\prn{\eqm_{i} f\pot q\pot_i + \eqm_{i+1} f\dep q\dep_i} \fptbm_{i+1,i}
-  ,\\
-  c_{k+1} - c_k &= \prn{\eqm_{k} \frgm_{k,k+1} + \eqm_{k+1} \frgm_{k+1,k}}
-                    \prn{\fptbm_{k,k+1} + \fptbm_{k+1,k}}
-    = 2,\\
-  \sum_k c_k \eqm_k &= \sum_{ij} \eqm_i \encm_{ij} (\eta-\eta) = 0,\\
-  \implies c_k &= 2 \prn{k - \sum_j j\eqm_j},
-\end{aligned}
-\end{equation}
-%
-where we used \cref{eq:serialineq} to derive the first two equations respectively and \cref{eq:lkemeny} to derive the third. 
-This allows us to write the area as
-%
-\begin{equation}\label{eq:serialarea}
- % A = 2\sqrt{N} \sum_k \brk{\prn{k-\frac{n+1}{2}} - \sum_j\prn{j-\frac{n+1}{2}}\eqm_j} \eqm_k \w_k.
-  \CA = {2} \sum_k \brk{k - \sum_j j\eqm_j} \eqm_k \wm_k
-    = {2} \sum_k \abs{k - \sum_j j\eqm_j} \eqm_k ,
-\end{equation}
-%
-where we used $\wm_k=\sgn(c_k)$, as discussed after \cref{eq:lareacoeffs}.
-
-First let us maximise \cref{eq:serialarea} at fixed $\eqm_\pm = \sum_k \eqm_k \prn{\frac{1\pm\wm_k}{2}}$.
-Clearly this will happen when we put all of the probability at the ends: $\eqm_1=\eqm_-$ and $\eqm_n=\eqm_+$ are the only non-zero $\eqm_k$.
-This gives an area of
-\footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eqm_+\eqm_-)/r\sqrt{1 - (\Delta f)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
-%
-\begin{equation}\label{eq:serialextarea}
-  \CA \leq (M-1) \prn{4\eqm_+\eqm_-} = (M-1)\prn{1 - (\eqm_+ - \eqm_-)^2}.
-\end{equation}
-%
-This is maximised at \(\eqm_+=\eqm_-= \frac{1}{2}\):
-%
-\begin{equation}\label{eq:maxarea}
-  \CA \leq (M-1).
-\end{equation}
-%
-Note that the markov process that achieves this is not ergodic, the two states at each end are absorbing. 
-This is similar to the results found numerically in \cite{Barrett2008discrete} in a slightly different situation.
-
-
-
-
-
-
-This leaves us with the result, first shown in \cite{Lahiri2013synapse}, that
-%
-\begin{equation}\label{eq:areabnd}
-  A(0) \leq \frac{\sqrt{N}(M-1)}{r}.
-\end{equation}
-%
-The model that saturates this bound is one of serial topology with \(\eq\) concentrated symmetrically at the two end states.
-
-
-
-%-------Section------------------------------------------------------------------
-
-\subsection{Square-root bound}\label{sec:sqrt}
-
-% \newcommand{\aav}[1]{\mathopen{}\left\lAngle #1 \right\rAngle\mathclose{}}
-% \newcommand{\nnrm}[1]{\mathopen{}\left\Vvert #1 \right\Vvert\mathclose{}}
-
-This proof follows that of \cite{Lawler1988cheeger}.
-We can define two inner-products that will be of use.
-The first is the usual inner product of two vectors (or functions on state space in the continuum case) using the steady state distribution as the measure:
-%
-\begin{equation}\label{eq:innereq}
-  \av{\mathbf{u}, \mathbf{v}} = \sum_i \eqm_i u_i^\ast v_i ,
-  \qquad
-  \nrm{\mathbf{v}} = \sqrt{\av{\mathbf{v}, \mathbf{v}}} .
-\end{equation}
-%
-The second is an inner product of rank 2 tensors (functions of pairs of points on state space) using the steady-state flux as the measure:
-%
-\begin{equation}\label{eq:innerflux}
-  \aav{\mathbf{F}, \mathbf{G}} = \sum_{i \neq j} \Fm_{ij} F_{ij}^\ast G_{ij} ,
-  \qquad
-  \nnrm{\mathbf{F}} = \sqrt{\aav{\mathbf{F}, \mathbf{F}}}.
-\end{equation}
-%
-The omission of the diagonal terms leaves only non-negative terms.
-
-When the process satisfies detailed balance, \ie \(\Fm_{ij}\) is symmetric, we can relate these inner products to quantities of interest.
-
-We can write
-%
-\begin{equation*}
-  \av{\mathbf{u}, -\MM\mathbf{v}} = \sum_{i \neq j} \eqm_i u_i^\ast \MMm_{ij} (v_i - v_j),
-\end{equation*}
-%
-under detailed balance, we can symmetrize
-%
-\begin{equation*}
-  \av{\mathbf{u}, -\MM \mathbf{v}} 
-      = \frac{1}{2}\sum_{i \neq j} \Fm_{ij} (u_i^\ast - u_j^\ast) (v_i - v_j) 
-      = \frac{1}{2} \aav{\boldsymbol{\Delta}\mathbf{u}, \boldsymbol{\Delta}\mathbf{v}}.
-\end{equation*}
-%
-
-The eigenvalue spectrum of \(\MM\) is closely related to its numerical range:
-%
-\begin{equation}\label{eq:numrange}
-  \mathcal{W}(-\MM; \mathcal{V}) 
-    = \set{\frac{\av{\mathbf{u}, -\MM \mathbf{u}}}{\av{\mathbf{u}, \mathbf{u}}}}
-          {\mathbf{u} \in \mathcal{V}} 
-    = \set{\frac{\nnrm{\boldsymbol{\Delta}\mathbf{u}}^2}{2\nrm{\mathbf{u}}^2}}
-          {\mathbf{u} \in \mathcal{V}} .
-\end{equation}
-%
-When \(\MM\) satisfies detailed balance (more generally when it commutes with its time reverse), the numerical range is the convex hull of the eigenvalues.
-
-The other quantity of interest in \cref{eq:snrcoeffs} is the amplitude of the eigenmodes.
-In analogy, we define the following functional (for real \(\mathbf{u}\))
-%
-\begin{equation*}
-  \CI(\mathbf{u}) = \frac{(\eq \enc \mathbf{u}) (\mathbf{u}^\dag \w)}{\mathbf{u}^\dag \mathbf{u}}
-      = \frac{\sum_{i \neq j} \eqm_i \encm_{ij} (u_j - u_i) \sum_k \eqm_k u_k \wm_k} 
-             {\sum_{l} \eqm_l u_l^2} .
-\end{equation*}
-%
-Following \cite{Lawler1988cheeger}, we can write
-%
-\begin{equation*}
-  u_j - u_i = \intd[_{u_i}^{u_j}]{\alpha} 
-      = \intd[_{-\infty}^{\infty}]{\alpha} 
-        \brk{\vartheta(u_j - \alpha) \vartheta(\alpha - u_i) 
-           - \vartheta(u_i - \alpha) \vartheta(\alpha - u_j)} ,
-\end{equation*}
-%
-where \(\vartheta\) is the Heaviside step-function.
-Then 
-%
-\begin{equation*}
-  \begin{aligned}[t]
-  \eq \enc \mathbf{u} &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
-        \Fm\pot_{\CA_\alpha \CA_\alpha^c} - \Fm\dep_{\CA_\alpha \CA_\alpha^c} 
-      - \Fm\pot_{\CA_\alpha^c \CA_\alpha} + \Fm\dep_{\CA_\alpha^c \CA_\alpha} }
-  %
-  \; \text{where} 
-    \\
-    &= \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
-        \Fm_{\CA_\alpha \CA_\alpha^c} + \Fm_{\CA_\alpha^c \CA_\alpha} 
-        - 2\Fm\dep_{\CA_\alpha \CA_\alpha^c} - 2\Fm\pot_{\CA_\alpha^c \CA_\alpha} } ,
-  \end{aligned}
-  %
-  \begin{aligned}[t]
-    \CA_\alpha &= \set{i}{u_i < \alpha} , 
-    \\
-    \Fm^\nu_{\CA \CB} &= \sum_{\substack{i \in \CA \\ j \in \CB}} 
-                        \eqm_i \Wm^\nu_{ij} .
-  \end{aligned}
-\end{equation*}
-%
-Note that the first two terms of the integrand are of the form \( \Fm_{\CA \CB} = \Fm_{\CA \CB}\pot + \Fm_{\CA \CB}\dep \).
-In exactly the same way as the proof of \cref{eq:initbnd}, we can argue that the two terms with the negative signs are indeed non-positive as they do not involve the negative diagonal elements of~\( \Fm_{ij}^\nu \).
-Therefore the other terms provide an upper bound:
-%
-\begin{equation*}
-\begin{aligned}
-  \CI(\mathbf{u}) 
-      &\leq \frac{\av{\mathbf{u},\w}}{\nrm{\mathbf{u}}^2} 
-        \intd[_{-\infty}^{\infty}]{\alpha}  \brk{
-        \Fm_{\CA_\alpha \CA_\alpha^c} + \Fm_{\CA_\alpha^c \CA_\alpha} } 
-  \\  &= \frac{\av{\mathbf{u},\w}}{\nrm{\mathbf{u}}^2} 
-        \intd[_{-\infty}^{\infty}]{\alpha} \sum_{i \neq j} \Fm_{ij} \brk{
-            \vartheta(u_j - \alpha) \vartheta(\alpha - u_i) 
-          + \vartheta(u_i - \alpha) \vartheta(\alpha - u_j)
-        }
-  \\  &= \frac{\av{\mathbf{u},\w}}{\nrm{\mathbf{u}}^2} 
-      \sum_{i \neq j} \Fm_{ij} \abs{u_j - u_i}
-  \\  &= \frac{\av{\mathbf{u},\w} \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem}}
-              {\nrm{\mathbf{u}}^2}.
-\end{aligned}
-\end{equation*}
-%
-Now we can apply the Cauchy-Schwartz inequality to both factors to find
-%
-\begin{equation*}
-  \CI(\mathbf{u}) \leq \frac{\nrm{\w} \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem}}
-                            {\nrm{\mathbf{u}}} .
-\end{equation*}
-%
-We also have \( \nrm{\w}^2 = \sum_i \eqm_i \wm_i^2 = 1 \).
-Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eqm_i \MMm_{ij} \leq r \sum_i \eqm_i = r\) (which is 1 in our units!).
-Then, remembering \cref{eq:numrange},
-%
-\begin{equation}\label{eq:sqrtnumrange}
-  \CI(\mathbf{u}) \leq \sqrt{\frac{2\av{\mathbf{u}, -\MM \mathbf{u}}}{\av{\mathbf{u}, \mathbf{u}}}}
-      = \sqrt{2\mathcal{W}(-\frg;\mathbf{u})}.
-\end{equation}
-%
-Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvectors, we find a bound on the eigenmodes:
-%
-\begin{equation}\label{eq:sqrtbound}
-  \text{assuming} \quad 
-  \eqm_i \frgm_{ij} = \eqm_j \frgm_{ji},
-  \qquad \text{we have} \quad
-  \CI_a \sqrt{r\tau_a} \leq \sqrt{2}.
-\end{equation}
-%
-Numerical maximisation of the quantity above produces the same result as in \cref{sec:initial}:
-the two-state model with deterministic transitions.
-This model has \(\CI_1 = \tau_1 = 1\), suggesting that there's a factor of \(\sqrt{2}\) looseness in this bound.
-
-We can look at the various inequalities used in this derivation to see which models could saturate them:
-%
-\begin{equation*}
-\begin{aligned}
-  \Fm_{\CA_\alpha \CA_\alpha^c}\dep + \Fm_{\CA_\alpha^c \CA_\alpha}\pot &\geq 0 , &
-  \aav{\abs{\boldsymbol{\Delta}\mathbf{u}}, \onem} 
-                        &\leq \nnrm{\boldsymbol{\Delta}\mathbf{u}} \nnrm{\onem} , &
-  \av{\mathbf{u},\w} &\leq \nrm{\mathbf{u}} \nrm{\w} , &
-  \sum_{j: j \neq i} \frg_{ij} &\leq 1.
-\end{aligned}
-\end{equation*}
-%
-To saturate the first inequality it helps to arrange the states in order of increasing \(u_i\).
-For any \(\alpha\), the sets \(\CA_\alpha\) and \(\CA_\alpha^c\) will be the states to the left and right of \(u = \alpha\) respectively.
-We see that the inequality is saturated iff \(\W \pot \) contains rightwards transitions only and \(\W \dep \) only contains leftwards transitions only.
-
-The second inequality is saturated iff \(\abs{\boldsymbol{\Delta}\mathbf{u}} \propto \onem \), but this need only hold for pairs of states for which \(\Fm_{ij} \neq 0\).
-This can be achieved if \(u_i\) varies linearly with \(i\), and only nearest neighbour transitions are allowed
-(we are allowed states that are degenerate if they are not connected by any nonzero transitions).
-This almost forces the serial topology on us (if we can argue that degenerate states have the same outgoing transition rates, they would be lumpable).
-
-The third inequality is saturated iff \(\mathbf{u} \propto \w\).
-This contradicts the requirements of the previous paragraph unless \(M=2\), or if it is a multistate model rather than serial.
-
-The fourth inequality can only be saturated if, for each state, the outgoing potentitation rates and depression rates separately sum to one.
-This does force degenerate states to be lumpable, and we are left with a serial topology with deterministic transitions.
-However, this cannot be done for the two end states without violating the requirements for saturating the first inequality.
-
-So we see that all four inequalities cannot be simultaneously saturated, and the bound must be loose.
-
-%--------------------------------------------------------------------------------
-
-\subsection{Envelope}\label{sec:envelope}
-
-Recall the eigenmode description of the memory curve from \cref{eq:snreig}
-%
-\begin{equation*}
-  \snr(t) = \sqrt{N} \sum_a \CI_a \e^{-t/\tau_a},
-  \qquad
-  \snrb(\tau) = \sqrt{N} \sum_a \frac{\CI_a}{1+\tau/\tau_a},
-\end{equation*}
-%
-where
-%
-\begin{equation*}
-  \CI_a = (\eq \enc \evr^a) (\evl^a \w),
-  \qquad
-  \tau_a = \frac{1}{q_a}.
-\end{equation*}
-%
-From \eqref{eq:areabnd} and \eqref{eq:initbnd}, we see that they are subject to the constraints
-%
-\begin{equation}\label{eq:coeffconstr}
-  \sum_a \CI_a \tau_a \leq M-1,
-  \qquad
-  \sum_a \CI_a \leq 1.
-\end{equation}
-%
-No doubt there are many other constraints that these quantities must satisfy, but we can see what these ones imply for the \(\snrb(\tau)\) by maximising it subject to these constraints.
-
-Consider the Lagrangian
-%
-\begin{equation}\label{eq:envlagrangian}
-  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
-\end{equation}
-%
-The Karush-Kuhn-Tucker necessary conditions for a maximum are
-%
-\begin{equation}\label{eq:envKTcond}
-  \pdiff{\CL}{\CI_a} = 0, \qquad
-  \pdiff{\CL}{\tau_a} = 0, \qquad
-  \mu_\alpha \geq 0, \qquad
-  \pdiff{\CL}{\mu_\alpha} \geq 0, \qquad
-  \mu_\alpha\pdiff{\CL}{\mu_\alpha} = 0.
-\end{equation}
-%
-These are solved by
-%
-\begin{equation}\label{eq:envsol}
-\begin{gathered}
-  \CI_1 = 1, \qquad
-  \CI_{a>1} = 0, \qquad
-  \tau_1 = M-1, \\
-  \mu_\CI = \frac{(M-1)^2}{[r\tau + (M-1)]^2}, \qquad
-  \mu_\CA = \frac{r\tau}{[r\tau+(M-1)]^2}. \qquad
-\end{gathered}
-\end{equation}
-%
-This leads to the envelope
-%
-\begin{equation}\label{eq:env}
-  \snrb(\tau) \leq \frac{\sqrt{N}(M-1)}{r\tau + (M-1)}.
-\end{equation}
-%
-This is the envelope (``memory frontier'') that we can prove.
-Finding more constraints would lower it.
-Clearly there have to be more constraints, as \eqref{eq:envsol} indicates that this would be achieved by the same model at all times.
-This model would have to saturate both the initial SNR bound \eqref{eq:initbnd} and the area bound \eqref{eq:areabnd}, whereas we saw that they were achieved by different models, which perform well at short/long timescales respectively.
-
-This envelope is shown in \cref{fig:envproven}(\ref{fig:provengen}).
-
-If we know that the optimal model for any timescale satisfies detailed balance, we have one more constraint, \cref{eq:sqrtbound}.
-Then the Lagrangian reads
-%
-\begin{equation}\label{eq:envDBlagrangian}
-  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} 
-      + \sum_a \mu_a \prn{\sqrt{2} - \CI_a \sqrt{\tau_a}} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
-\end{equation}
-%
-The solution to \cref{eq:envKTcond} takes different forms for different ranges of \(\tau\) and \(M\),
-as described in \cref{tab:envDB}.
-The resulting envelope is (for \(M > 3\))
-%
-\begin{equation}\label{eq:envDB}
-  \snrb(\tau) \leq 
-  \left\{ 
-  \begin{alignedat}{3}
-    &\frac{2 \sqrt{N}}{2 + r \tau}
-      , &
-      0 &\leq r \tau &&\leq 2
-      , \\
-    &\sqrt{\frac{N}{2 r \tau}}
-      , &
-      2 &< r \tau &&< \frac{(M-1)^2}{2}
-      , \\
-    &\frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau}
-      , &\qquad
-      \frac{(M-1)^2}{2} &\leq r \tau 
-      .
-  \end{alignedat}
-  \right.
-\end{equation}
-%
-This envelope is shown in \cref{fig:envproven}(\ref{fig:provendetbal}).
-For \(M \leq 3\), \cref{eq:env} still applies.
-
-
-\begin{figure}[tb]
-  \centering
-  % Requires \usepackage{graphicx}
-  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.4\linewidth]{LenvProven.pdf}}\label{fig:provengen}
-  \item\aligntop{\includegraphics[width=0.4\linewidth]{LenvConj.pdf}}\label{fig:provendetbal}
-  \end{myenuma}
-  \caption[Proven and conjectured envelopes for the signal-to-noise ratio]
-  {Proven and conjectured envelopes for the signal-to-noise ratio.
-  (\ref{fig:provengen}) The memory curve envelope that we can prove, \cref{eq:env}.
-  (\ref{fig:provendetbal}) Conjectured memory curve envelope when we assume the optimal models satisfy detailed balance, \cref{eq:envDB}.
-  The number of synapses \(N=1\) and the number of states \(M=10\).
-  The dashed lines indicate the initial SNR bound, \eqref{eq:initbnd}, and the area bound, \eqref{eq:areabnd}, from \cite{Lahiri2013synapse}.}\label{fig:envproven}
-\end{figure}
-
-\newcolumntype{B}{R@{\,}C@{\,}L}
-% \(
-\begin{table}[tb]
-  \begin{center}
-  \begin{tabular}{BACCCCCC}
-    \toprule
-      \multicolumn{5}{c}{Domain of validity} & \CI_a & \tau_a 
-        & \mu_\CI & \mu_a & \mu_\CA 
-        % & \snrb(\tau) 
-      \\
-    \midrule
-      0 &\leq r \tau &\leq 2 & M &\geq 3 & 1 & 2/r 
-        & \frac{4 - 2r \tau}{[2 + r \tau]^2} & \frac{2\sqrt{2}r\tau}{[2 + r \tau]^2} & 0 
-        % & \frac{2 \sqrt{N}}{2 + r \tau} 
-      \\
-      2 &< r \tau &< \frac{(M-1)^2}{2} & M &> 3 & \sqrt{\frac{2}{r\tau}} & \tau 
-        & 0 & \frac{1}{2\sqrt{r \tau}} & 0 
-        % & \sqrt{\frac{N}{2 r \tau}} 
-      \\ \addlinespace[0.2ex]
-      \frac{(M-1)^2}{2} &\leq r \tau & & M &\geq 3 & \frac{2}{M-1} & \frac{(M-1)^2}{2r} 
-        & 0 & \frac{\sqrt{2}(M-1)^3}{[(M-1)^2 + 2r \tau]^2} 
-        & \frac{4r \tau - 2(M-1)^2}{[(M-1)^2 + 2r \tau]^2} 
-        % & \frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau} 
-      \\
-      &-& & M &\leq 3 & 1 & \frac{M - 1}{r} 
-        & \frac{(M-1)^2}{[(M-1) + r \tau]^2} %- \frac{\mu_a \sqrt{\tau_a}}{2} 
-        & 0 & \frac{r \tau}{[(M-1) + r \tau]^2} %- \frac{\mu_a}{2 \sqrt{\tau_a}} 
-        % & \frac{\sqrt{N} (M-1)}{(M-1) + r \tau} 
-      \\
-    \bottomrule
-  \end{tabular}
-  \end{center}
-\caption{The solution to the maximum SNR \cref{eq:envKTcond} for the Lagrangian in \cref{eq:envDBlagrangian}, under different conditions. 
-The resulting envelope is \cref{eq:envDB}.
-The range of \(\tau\) for the second row does not exist for \(M = 3\), in which case any of the other rows can be used.}
-\label{tab:envDB}
-\end{table}
-% \)
-
-Note that models with the serial topology must satisfy detailed balance.
-Therefore, the conjecture from \cref{sec:finite} implies that the square-root bound of \cref{sec:sqrt} applies, implying the stricter envelope of \cref{eq:envDB}.
-In \cref{fig:envnum} we compare these theoretical envelopes with the numerical maximisation from \cref{fig:envnum}.
-We can see that this conjectured envelope is close to tight, being off by a constant factor.
-
-
-\begin{figure}[tb]
-  \centering
-  % Requires \usepackage{graphicx}
-  \includegraphics[width=0.8\linewidth]{LenvNum.pdf}\\
-  \caption[Numerical and theoretical envelopes for the signal-to-noise ratio]
-  {Numerical  and theoretical envelopes  for the signal-to-noise ratio, \eqref{eq:snrb}. 
-  As in \cref{fig:envnum}, \cref{eq:finitelagrangian,eq:KTfinite,eq:finitederivs} 
-  are solved numerically with \(f\potdep=\frac{1}{2}\), 
-  the number of synapses \(N=1\) and the number of states \(M=10\).
-  The orange line indicates the maximum memory curve over the space of all matrices 
-  satisfying the constraints \eqref{eq:constr}.
-  The green line indicates maximum over models with the serial topology, 
-  \ie potentiation only moves up one state and depression only moves down one state.
-  The dotted blue line indicates the proven envelope, 
-  \cref{eq:env} and the solid blue line is the conjectured envelope assuming detailed balance, 
-  see \cref{eq:envDB}.}\label{fig:envnumth}
-\end{figure}
-
-\begin{figure}[tbp]
-  \centering
-  % Requires \usepackage{graphicx}
-  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=7]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=13]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=21]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=27]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=36]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=50]{envelope.pdf}}
-  \end{myenuma}
-  \caption[Optimal models]{The models that constitute the numeric envelope in \cref{fig:envnum}.
-  The plot to the left of each frame indicates the memory curve of the model shown to the right in green, with the numeric envelope for models with the serial topology in orange and the proven envelope, \eqref{eq:env}, in blue.
-  Above the left plot we have a graphical display of the model, described with more detail to the right.
-  The area of each node is proportional to the steady state probability in that state and the thickness of the red and blue edges are proportional to the transition probabilities under potentiation and depression.
-  The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
-  The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
-  The heat map in the centre right of each frame indicates the equilibrium probability distribution for each state.
-  See the video for the full set of models.}\label{fig:envvid}
-\end{figure}
-\
-
-%================================================================================
 
 \section{Nearly uniform serial models}\label{sec:serial}
 
@@ -2783,7 +2785,7 @@ It should be compared to \cref{eq:env,eq:envDB}.
   \includegraphics[width=0.8\linewidth]{LenvHeuristic.pdf}\\
   \caption[Heuristic envelope for the signal-to-noise ratio]
   {Heuristic envelope  for the signal-to-noise ratio, \cref{eq:henv}.
-  Analytic expressions from \cref{eq:henvapprox} are only valid to the right of each region.}\label{fig:heuristicenv}
+  Analytic expressions from \cref{eq:henvapprox} describe the yellow curve and are only valid to the right of each region.}\label{fig:heuristicenv}
 \end{figure}
 
 %================================================================================
