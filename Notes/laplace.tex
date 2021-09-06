@@ -732,19 +732,20 @@ Then we denote
 %
 \begin{equation}\label{eq:hessparts}
 \begin{alignedat}{2}
-    R_{ijkl} &= \smash{\pdiff{\hat{A}}{\frgm_{ij} \circ ; \frgm_{kl}}} &
-    &=
-    \eqm_i \brc{\fundm_{ik}(0) - \fundm_{jk}(0)} \brc{\thbm_k(s) - \thbm_l(s)} \\
-    &&&\hphantom{=} {}
-    + \eqm_i \brc{{X}_{ik}(s) - {X}_{jk}(s)} 
+  R_{ijkl} &= \smash{\pdiff{\hat{A}}{\frgm_{ij} \circ ; \frgm_{kl}}} &
+  &=
+    - \eqm_i \brc{\fundm_{ik}(0) - \fundm_{jk}(0)} \brc{\thbm_k(s) - \thbm_l(s)} \\
+  &&&\hphantom{=} {}
+    - \eqm_i \brc{{X}_{ik}(s) - {X}_{jk}(s)} 
           \brc{\etwm_k(s) - \etwm_l(s)} \\
-    &&& \hphantom{=} {}
-    + \eqm_i {c}_i(s) \brc{\fundm_{ik}(s) - \fundm_{jk}(s)} 
+  &&& \hphantom{=} {}
+    - \eqm_i {c}_i(s) \brc{\fundm_{ik}(s) - \fundm_{jk}(s)} 
           \brc{\etwm_k(s) - \etwm_l(s)},  \\
   S_{ijkl} &= \smash{\pdiff{\hat{A}}{\encm_{ij} ; \frgm_{kl}} } &
-  &= \eqm_k \brc{\fundm_{ki}(0) - \fundm_{li}(0)} \brc{\etwm_i(s) - \etwm_j(s)} \\
-    &&& \hphantom{=} {}
-    + \eqm_i \brc{\fundm_{ik}(s) - \fundm_{jk}(s)} \brc{\etwm_k(s) - \etwm_l(s)},
+  &= 
+    - \eqm_k \brc{\fundm_{ki}(0) - \fundm_{li}(0)} \brc{\etwm_i(s) - \etwm_j(s)} \\
+  &&& \hphantom{=} {}
+    - \eqm_i \brc{\fundm_{ik}(s) - \fundm_{jk}(s)} \brc{\etwm_k(s) - \etwm_l(s)},
 \end{alignedat}
 \end{equation}
 %
@@ -2321,7 +2322,7 @@ As we are only interested in differences of the \(\etwm_i(s)\), we can drop the 
 Then
 %
 \begin{equation}\label{eq:etarecur}
-  -(s\I + \ onev \arow - \frg)\etw(s) = \w.
+  -(s\I + \onev \arow - \frg)\etw(s) = \w.
 \end{equation}
 %
 We can then write

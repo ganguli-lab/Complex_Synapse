@@ -261,12 +261,12 @@ class SynapseOptModel(_sm.SynapseModel, _sb.SynapseParam):
         rows, cols, mats = self._derivs(rate, **kwds)
 
         # (...,n,n,n,n)
-        hessww = (_outer3(rows[0], mats[0], cols[1])
-                  + _outer3(rows[0], mats[2], cols[0])
-                  + _outer3(rows[1], mats[1], cols[0])).sum(0)
+        hessww = -(_outer3(rows[0], mats[0], cols[1])
+                   + _outer3(rows[0], mats[2], cols[0])
+                   + _outer3(rows[1], mats[1], cols[0])).sum(0)
         # (2,...,n,n,n,n) - axis 0: h_wq, h_qw
-        hesswq = (_outer3(rows[0], mats[0], cols[0])
-                  + _trnsp4(_outer3(rows[0], mats[1], cols[0])))
+        hesswq = -(_outer3(rows[0], mats[0], cols[0])
+                   + _trnsp4(_outer3(rows[0], mats[1], cols[0])))
         # (...,1,n,n,1,n,n), (2,...,1,n,n,1,n,n)
         nax = (-6, -3)
         hessww, hesswq = hessww.expand_dims(nax), hesswq.expand_dims(nax)
@@ -314,13 +314,13 @@ class SynapseOptModel(_sm.SynapseModel, _sb.SynapseParam):
         # p Z theta V  -> (2,2,n,n) -> (n,n)
         # c Zs eta V   -> (2,2,n,n) -> (n,n)
         # p ZQZs eta V -> (2,2,n,n) -> (n,n)
-        h_ww = (_outer3p(rows[0], mats[0].inv, cols[1], vecm)
-                + _outer3p(rows[1], mats[1].inv, cols[0], vecm)
-                + _outer3p(rows[0], mats[2], cols[0], vecm)).sum((0, -3))
+        h_ww = -(_outer3p(rows[0], mats[0].inv, cols[1], vecm)
+                 + _outer3p(rows[1], mats[1].inv, cols[0], vecm)
+                 + _outer3p(rows[0], mats[2], cols[0], vecm)).sum((0, -3))
         # p Z eta V  -> (2,2,n,n) - h_wq, h_qw
         # p Zs eta V -> (2,2,n,n) - h_wq, h_qw
-        h_wqqw = (_outer3p(rows[0], mats[0].inv, cols[0], vecm)
-                  + _outer3p(rows[0], mats[1].inv, cols[0], vecm)[::-1])
+        h_wqqw = -(_outer3p(rows[0], mats[0].inv, cols[0], vecm)
+                   + _outer3p(rows[0], mats[1].inv, cols[0], vecm)[::-1])
         # ^axis -3: hess @ other.wp, hess @ other.wm
         # ^axis 0: hess_wq @ other.w_, hess_qw @ other.w_
         # (n,n)

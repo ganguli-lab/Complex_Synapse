@@ -531,8 +531,9 @@ class OptimProblem:
         if _fail_bnd(result.x, self.bounds, itol):
             return False
         for cons in self.constraints:
-            if _fail_cons(result.x, cons, itol):
-                return False
+            for constr in conv_constraint(cons):
+                if _fail_cons(result.x, constr, itol):
+                    return False
         return True
 
 
