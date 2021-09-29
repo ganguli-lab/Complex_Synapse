@@ -2,7 +2,7 @@
 """
 from __future__ import annotations
 import typing as ty
-from typing import Sequence
+from typing import Optional, Sequence
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -254,19 +254,26 @@ def theory_plot(nst: int, sss: Array, nsyn: float = 1) -> Figure:
     env_th = cso.proven_envelope_laplace(sss, nst)
     fig, axs, _ = mem_plot(sss, nsyn, theory=env_th)
     t_pts = np.array([1e-1, 0.9e1, 1.1e1, 1e4])
-    axs.loglog(t_pts[:2], np.ones(2), 'k:')
-    axs.loglog(t_pts[-2:], (nst-1) / t_pts[-2:], 'k:')
+    snr_pts = np.r_[np.ones(2), (nst-1) / t_pts[-2:]]
+    sqn = np.sqrt(nsyn)
+    snr_pts *= sqn
+    axs.loglog(t_pts[:2], snr_pts[:2], 'k:')
+    axs.loglog(t_pts[-2:], snr_pts[-2:], 'k:')
     axs.set_xlim(1e-1, 1e3)
-    axs.set_ylim(1e-2 * np.sqrt(nsyn), 3 * np.sqrt(nsyn))
-    ind = 30
-    axs.text(t_pts[1]/2, 1.1, r"$\sqrt{N}$", fontsize=18,
+    axs.set_ylim(1e-2 * sqn, 3 * sqn)
+
+    notes = (r"$\sqrt{N}$",
+             r"$\frac{\sqrt{N}(M-1)}{r\tau}$",
+             r"$\frac{\sqrt{N}(M-1)}{r\tau + (M-1)}$")
+
+    axs.text(t_pts[1] / 2, 1.1 * snr_pts[1], notes[0], fontsize=18,
              ha='right', va='bottom')
-    axs.text(t_pts[-2]*4, (nst-1) / (t_pts[-2] * 4),
-             r"$\frac{\sqrt{N}(M-1)}{r\tau}$", fontsize=20,
+    axs.text(t_pts[-2] * 4, snr_pts[-2] / 4, notes[1], fontsize=20,
              ha='left', va='bottom')
-    axs.text(1/sss[ind], env_th[ind] * sss[ind],
-             r"$\frac{\sqrt{N}(M-1)}{r\tau + (M-1)}$", fontsize=24,
-             ha='right', va='top')
+    # axs.text(1/sss[ind], sqn * env_th[ind] * sss[ind], notes[2], fontsize=24,
+    #          ha='right', va='top')
+    _annotate_curves(axs, 1/sss, sqn * env_th * sss, notes=notes[-1:],
+                     note_inds=[30], note_above=[0])
     mplt.clean_axes(axs)
     return fig
 
@@ -288,33 +295,29 @@ def equilibrium_plot(nst: int, sss: Array, nsyn: float = 1) -> Figure:
     fig : Figure
         The figure object containing the plot.
     """
+    gamma = 2
+    gam = r"\gamma "
+    notes = (gam,
+             r"\frac{(M-1)^2}{"+ gam + r"}",
+             r"$\frac{"+ gam + r"\sqrt{N}}{" + gam + r"+r\tau}$",
+             r"$\sqrt{\frac{" + gam + r"N}{4r\tau}}$",
+             r"$\frac{" + gam + r"\sqrt{N}(M-1)}{(M-1)^2+" + gam + r" r\tau}$")
+
     env_th = cso.proven_envelope_laplace(sss, nst)
     env_eq = cso.equlibrium_envelope_laplace(sss, nst)
     fig, axs, lns = mem_plot(sss, nsyn, **{"general": env_th,
                                            "det. bal.": env_eq})
+    s_two, s_sticky = 1 / gamma, gamma / (nst-1)**2
+    sqn = np.sqrt(nsyn)
+
+    axs.set_xlim(1e-1, 1e3)
+    ylim = axs.set_ylim(1e-2 * sqn, 3 * sqn)
     lns[0].set_ls(":")
     lns[1].set_c(lns[0].get_c())
-    # t_pts = np.array([1e-1, 0.9e1, 1.1e1, 1e4])
-    # axs.loglog(t_pts[:2], np.ones(2), 'k:')
-    # axs.loglog(t_pts[-2:], (nst-1) / t_pts[-2:], 'k:')
-    axs.set_xlim(1e-1, 1e3)
-    ylim = axs.set_ylim(1e-2 * np.sqrt(nsyn), 3 * np.sqrt(nsyn))
-    s_two, s_sticky = 0.5, 2 / (nst-1)**2
-    _annotate_axis(axs, nst, ylim[0], [s_two, s_sticky],
-                ["2", r"\frac{(M-1)^2}{2}"])
 
-    ind = 40
-    axs.text(1/sss[ind], env_eq[ind] * sss[ind],
-             r"$\frac{2\sqrt{N}}{2+r\tau}$", fontsize=20,
-             ha='right', va='top')
-    ind = 30
-    axs.text(1/sss[ind], env_eq[ind] * sss[ind],
-             r"$\sqrt{\frac{N}{2r\tau}}$", fontsize=20,
-             ha='right', va='top')
-    ind = 20
-    axs.text(1/sss[ind], env_eq[ind] * sss[ind],
-             r"$\frac{2\sqrt{N}(M-1)}{(M-1)^2 + 2r\tau}$", fontsize=20,
-             ha='left', va='bottom')
+    _annotate_axis(axs, nst, ylim[0], [s_two, s_sticky], notes[:2])
+    _annotate_curves(axs, 1 / sss, sqn * env_eq * sss, notes=notes[2:],
+                     note_inds=[40, 30, 20], note_above=[0, 0, 1])
     axs.legend(loc="upper right")
     mplt.clean_axes(axs)
     return fig
@@ -428,30 +431,36 @@ def heuristic_plot(nst: int, sss: Array, env_srl: Array, models_srl: Array,
     """
     kwds.setdefault('model_inds', (43, 25, 9))
     kwds.setdefault('model_above', (0, 0, 0))
-    kwds.setdefault('model_siz', (2.3, 1.7))
+    kwds.setdefault('model_siz', [2.3, 1.7])
     kwds.setdefault('note_inds', (43, 30, 9))
     kwds.setdefault('note_above', (1, 1, 1))
     kwds.setdefault('legend_loc', "upper right")
     kwds.setdefault('legendfontscale', 0.8)
     kwds.setdefault('legendbox', False)
     ax_opts = mplt.AxesOptions(kwds)
+    notes =  (
+        "0.73", "0.22M^2",
+        r"$\sqrt{N}$",
+        r"$\frac{\sqrt{N}(0.54)}{\sqrt{r\tau}}$",
+        r"$\frac{\sqrt{N}(M-1)}{r\tau}$",
+        )
 
     env_th = cso.proven_envelope_laplace(sss, nst)
     env_eq = cso.equlibrium_envelope_laplace(sss, nst)
-    env_heu = cso.heuristic_envelope_laplace(sss, nst)
+    env_hu = cso.heuristic_envelope_laplace(sss, nst)
     envs = {"theory": env_th, "det. bal.": env_eq}
 
     fig, axs, lns = mem_plot(sss, nsyn, **envs, numeric=env_srl,
-                             heuristic=env_heu)
+                             heuristic=env_hu)
     lns[0].set_ls(":")
     lns[2].set_c(lns[1].get_c())
     lns[1].set_c(lns[0].get_c())
     axs.set_xlim(1/sss[-1], 1e4)
-    ylim = axs.set_ylim(2e-3 * np.sqrt(nsyn), 1.1 * np.sqrt(nsyn))
+    sqn = np.sqrt(nsyn)
+    ylim = axs.set_ylim(2e-3 * sqn, 1.1 * sqn)
 
-    _annotate_curves(axs, 1/sss, env_heu * sss, models_srl, **kwds)
-    _annotate_axis(axs, nst, ylim[0], [sh.s_star(2), sh.s_star(nst)],
-                   ["0.73", "0.22M^2"])
+    _annotate_curves(axs, 1/sss, sqn*env_hu*sss, models_srl, notes[2:], **kwds)
+    _annotate_axis(axs, nst, ylim[0], [sh.s_star(2), sh.s_star(nst)], notes[:2])
 
     axs.legend(loc=kwds['legend_loc'], edgecolor=axs.get_facecolor())
     mplt.clean_axes(axs, **ax_opts)
@@ -459,7 +468,8 @@ def heuristic_plot(nst: int, sss: Array, env_srl: Array, models_srl: Array,
 
 
 def _annotate_curves(axs: mpl.axes.Axes, time: Array, env: Array,
-                     models: Array, **kwds) -> None:
+                     models: Optional[Array] = None,
+                     notes: Optional[Sequence[str]] = None, **kwds) -> None:
     """Add text and graphs along envelope
 
     Parameters
@@ -489,17 +499,21 @@ def _annotate_curves(axs: mpl.axes.Axes, time: Array, env: Array,
         Size of model drawings
     """
     args = ({'ha': 'right', 'va': 'top'}, {'ha': 'left', 'va': 'bottom'})
-    txt_opt = {'size': 24}
-    notes = (r"$\sqrt{N}$",
-             r"$\frac{\sqrt{N}(0.54)}{\sqrt{r\tau}}$",
-             r"$\frac{\sqrt{N}(M-1)}{r\tau}$")
+    txt_opt = {'size': kwds.pop('fontsize', 24)}
+    note_inds = kwds.pop('note_inds', None)
+    note_above = kwds.pop('note_above', None)
+    model_inds = kwds.pop('model_inds', None)
+    model_above = kwds.pop('model_above', None)
+    model_siz = kwds.pop('model_siz', [1, 1])
 
-    for ind, above in zip(kwds['model_inds'], kwds['model_above']):
-        add_graph(axs, [time[ind-1], env[ind], *kwds['model_siz']],
-                  models[ind], **args[above])
+    if models is not None:
+        for ind, above in zip(model_inds, model_above):
+            add_graph(axs, [time[ind], env[ind]] + model_siz, models[ind],
+                      **args[above])
 
-    for ind, above, note in zip(kwds['note_inds'], kwds['note_above'], notes):
-        axs.text(time[ind], env[ind-1], note, **txt_opt, **args[above])
+    if notes is not None:
+        for ind, above, note in zip(note_inds, note_above, notes):
+            axs.text(time[ind], env[ind-1], note, **txt_opt, **args[above])
 
 
 def _annotate_axis(axs: mpl.axes.Axes, nst: int, y_0: float,
@@ -840,7 +854,7 @@ def load_data(fname: str = 'optim') -> ty.Tuple[int, Array, OptDict,
 
 
 # =============================================================================
-def main(save_npz: bool, save_pdf: bool, nsyn: float = 1):
+def main(save_npz: bool, save_pdf: bool, nsyn: float = 1, **kwds):
     """Execute plot creation & saving
     """
     if save_npz:
@@ -853,23 +867,40 @@ def main(save_npz: bool, save_pdf: bool, nsyn: float = 1):
     else:
         nst, sss, opts, envs, mods = load_data('optim')
     jmp = 0.7
+    family = kwds.get('fontfamily', 'serif')
+    mplt.rc_fonts(family=family)
 
-    fig_sc = ser_casc_plot(nst, jmp, sss, nsyn)
-    fig_th = theory_plot(nst, sss, nsyn)
-    fig_eq = equilibrium_plot(nst, sss, nsyn)
-    fig_num = optim_plot(nst, sss, envs[0], envs[1], nsyn)
-    fig_shift = shift_plot(sss, envs[0], envs[2], nsyn)
-    fig_cond = cond_plot(sss, mods[2], envs[2], envs[0], nsyn)
-    fig_heuristic = heuristic_plot(nst, sss, envs[1], mods[1], nsyn)
+    if kwds.get('sc', True):
+        fig_sc = ser_casc_plot(nst, jmp, sss, nsyn)
+    if kwds.get('th', True):
+        fig_th = theory_plot(nst, sss, nsyn)
+    if kwds.get('eq', True):
+        fig_eq = equilibrium_plot(nst, sss, nsyn)
+    if kwds.get('num', True):
+        fig_num = optim_plot(nst, sss, envs[0], envs[1], nsyn)
+    if kwds.get('sh', True):
+        fig_shift = shift_plot(sss, envs[0], envs[2], nsyn)
+    if kwds.get('cond', True):
+        fig_cond = cond_plot(sss, mods[2], envs[2], envs[0])
+    if kwds.get('heu', True):
+        fig_heuristic = heuristic_plot(nst, sss, envs[1], mods[1], nsyn)
 
     if save_pdf:
-        fig_sc.savefig("../../Notes/Figures/serial_vs_cascade.pdf")
-        fig_th.savefig("../../Notes/Figures/LenvProven.pdf")
-        fig_eq.savefig("../../Notes/Figures/LenvConj.pdf")
-        fig_num.savefig("../../Notes/Figures/LenvNum.pdf")
-        fig_shift.savefig("../../Notes/Figures/LenvShift.pdf")
-        fig_cond.savefig("../../Notes/Figures/shift_cond.pdf")
-        fig_heuristic.savefig("../../Notes/Figures/LenvHeuristic.pdf")
+        pth = kwds.get('path', "../../Notes/Figures/")
+        if kwds.get('sc', True):
+            fig_sc.savefig(pth +"serial_vs_cascade.pdf")
+        if kwds.get('th', True):
+            fig_th.savefig(pth +"LenvProven.pdf")
+        if kwds.get('eq', True):
+            fig_eq.savefig(pth +"LenvConj.pdf")
+        if kwds.get('num', True):
+            fig_num.savefig(pth +"LenvNum.pdf")
+        if kwds.get('sh', True):
+            fig_shift.savefig(pth +"LenvShift.pdf")
+        if kwds.get('cond', True):
+            fig_cond.savefig(pth +"shift_cond.pdf")
+        if kwds.get('heu', True):
+            fig_heuristic.savefig(pth +"LenvHeuristic.pdf")
 
 
 # =============================================================================

@@ -13,7 +13,7 @@ import scipy.optimize as sco
 import numpy_linalg as la
 import sl_py_tools.containers as _cn
 # import sl_py_tools.dict_tricks as _dt
-import sl_py_tools.arg_tricks as _ag
+# import sl_py_tools.arg_tricks as _ag
 import sl_py_tools.iter_tricks as _it
 import sl_py_tools.numpy_tricks.markov as _ma
 import sl_py_tools.numpy_tricks.markov.params as _mp
@@ -466,8 +466,9 @@ class OptimProblem:
         self.fns = (None, None, None)
         self.bounds, self.constraints = None, []
         self._rate = kwds.pop('rate', None)
-        self.x_init = _ag.default_non_eval(kwds.pop('params', None),
-                                           la.asarray, None)
+        self.x_init = kwds.pop('params', None)
+        if self.x_init is not None:
+            self.x_init = la.asarray(self.x_init)
         self.opts = kwds.pop('opts', OptimOptions())
         self.opts.update(kwds)
         self._make_model()
@@ -927,7 +928,7 @@ def proven_envelope_laplace(rate: Data, nst: int) -> Data:
     return (nst - 1) / (rate * (nst - 1) + 1)
 
 
-def equlibrium_envelope_laplace(rate: Data, nst: int) -> Data:
+def equlibrium_envelope_laplace(rate: Data, nst: int, gam: float = 2.) -> Data:
     """Theoretical envelope for Laplace transform assuming detailed balance.
 
     Parameters
@@ -936,6 +937,8 @@ def equlibrium_envelope_laplace(rate: Data, nst: int) -> Data:
         Rate parameter of Laplace transform.
     nst : int
         Number of states.
+    gam : float, optional
+        Value to use in the square root bound, by default 2.
 
     Returns
     -------
@@ -944,8 +947,7 @@ def equlibrium_envelope_laplace(rate: Data, nst: int) -> Data:
     """
     if nst < 3:
         return (nst - 1) / (rate * (nst - 1) + 1)
-    s_two, s_sticky = 0.5, 2 / (nst-1)**2
-    i_a = np.sqrt(s_sticky/s_two)
+    s_two, s_sticky, i_a = 1./gam, gam/(nst-1)**2, gam/(nst-1)
     env = 0.5 / np.sqrt(s_two * rate)
     env = np.where(rate > s_two, 1 / (rate + s_two), env)
     env = np.where(rate < s_sticky, i_a / (rate + s_sticky), env)
