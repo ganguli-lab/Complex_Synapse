@@ -461,6 +461,32 @@ def heuristic_plot(nst: int, sss: Array, env_srl: Array, models_srl: Array,
 def _annotate_curves(axs: mpl.axes.Axes, time: Array, env: Array,
                      models: Array, **kwds) -> None:
     """Add text and graphs along envelope
+
+    Parameters
+    ----------
+    axs : mpl.axes.Axes
+        axes to annotate
+    time : Array
+        all x-values
+    env : Array
+        all y-values
+    models : Array|None, optional
+        Parameters of the models to draw, by default None -> don't annotate
+    notes : sequence[str]|None, optional
+        Text for each annotation, by default None -> don't annotate
+
+    Keywords
+    --------
+    *_inds : sequence[int]
+        Index of each point to annotate
+    *_above : sequence[int]
+        Should the annotation appear above the curve
+    note_*: sequence[str]
+        For the text annotations
+    model_*
+        For drawing the models
+    model_siz : list[float]
+        Size of model drawings
     """
     args = ({'ha': 'right', 'va': 'top'}, {'ha': 'left', 'va': 'bottom'})
     txt_opt = {'size': 24}
@@ -479,6 +505,19 @@ def _annotate_curves(axs: mpl.axes.Axes, time: Array, env: Array,
 def _annotate_axis(axs: mpl.axes.Axes, nst: int, y_0: float,
                    rates: Sequence[float], labels: Sequence[str]) -> None:
     """Add text and graphs along time axis
+
+    Parameters
+    ----------
+    axs : mpl.axes.Axes
+        Axes to annotate
+    nst : int
+        number of states
+    y_0 : float
+        Where bottom of text should be
+    rates : Sequence[float]
+        Horizontal position of centre
+    labels : Sequence[str]
+        values of `r\tau`
     """
     t_two = 1 / rates[0]
     t_sticky = 1 / rates[1]
@@ -561,12 +600,42 @@ def logify(bounds: ty.Sequence[float], axs: mpl.axes.Axes,
 
 
 def _logify(bounds: ty.Sequence[float], scale: str, align: str) -> Array:
-    """Adjust pair of bounds for log scales"""
+    """Adjust pair of bounds for log scales
+
+    Parameters
+    ----------
+    bounds : ty.Sequence[float]
+        `[left, width]` or `[bottom, height]`, where `width` and `height` are
+        multiplicative when the corresponding axis is logarithmic.
+    scale : str
+        Type of scale we are adjusting for, 'log', 'logit', etc.
+    align : str
+        Alignment, 'top', 'left', etc.
+
+    Returns
+    -------
+    Array
+        [description]
+    """
     return _BWD[scale](np.sort(np.cumsum(_align(_FWD[scale](bounds), align))))
 
 
 def _align(bounds: Array, align: str) -> Array:
-    """Set alignment, modifies in place and returns"""
+    """Set alignment, modifies in place and returns
+
+    Parameters
+    ----------
+    bounds : Array
+        `[left, width]` or `[bottom, height]`, where `width` and `height` are
+        multiplicative when the corresponding axis is logarithmic.
+    align : str
+        Alignment, 'top', 'left', etc.
+
+    Returns
+    -------
+    bounds : Array
+        The modified bounds.
+    """
     bounds[1] = abs(bounds[1])
     bounds[0] -= _ALGN[align] * bounds[1]
     return bounds

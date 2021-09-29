@@ -11,7 +11,7 @@ Values = TypeVar('Values', float, np.ndarray)
 # =============================================================================
 Y_STAR = _sco.root_scalar(lambda x: np.sinh(x) - np.tanh(x/2) - x,
                           bracket=(1, 2)).root
-A_STAR = 2 * np.sinh(Y_STAR / 2)**2 / (Y_STAR * np.cosh(Y_STAR))
+A_STAR = np.sinh(Y_STAR) / np.cosh(Y_STAR)**2
 
 
 # -------------------------------------
@@ -21,7 +21,7 @@ def alpha_to_s(alpha: Values) -> Values:
 
 
 def s_to_alpha(sval: Values) -> Tuple[Values, Values]:
-    """Convert s to alpha two possibilities, reciprocals"""
+    """Convert s to alpha, two possibilities, reciprocals"""
     sval = sval + 1
     disc = np.sqrt(sval**2 - 1)
     return sval - disc, sval + disc
@@ -112,18 +112,18 @@ def eps_stars(alpha: Values, num: int) -> Tuple[Values, Values]:
 def eps_star(alpha: Values, num: int) -> Values:
     """Optimal epsilon for shortened serial model"""
     epss = eps_stars(alpha, num)[0]
-    return np.minimum(np.maximum(epss, 0), 1)
+    return np.clip(epss, 0, 1)
 
 
 def eps_star_star(alpha: Values, num: int) -> Values:
     """Optimal epsilon for shortened serial model"""
     epss = eps_stars(alpha, num)[1]
-    return np.minimum(np.maximum(epss, 0), 1)
+    return np.clip(epss, 0, 1)
 
 
 # -------------------------------------
 def short_star(alphas: Values, num: int) -> Values:
-    """heuristic envelope from optimal epsilon"""
+    """Actual heuristic envelope from optimal epsilon"""
     if num == 2:
         svals = alpha_to_s(alphas)
         return 1 / (1 + svals)
@@ -132,7 +132,7 @@ def short_star(alphas: Values, num: int) -> Values:
 
 
 def short_star_s(svals: Values, num: int) -> Values:
-    """heuristic envelope from optimal epsilon"""
+    """Actual heuristic envelope from optimal epsilon"""
     if num == 2:
         return 1 / (1 + svals)
     alphas = s_to_alpha(svals)[0]
