@@ -125,6 +125,9 @@
 \newcommand{\evr}{\mathbf{\evrm}}
 \newcommand{\evlm}{\eta}
 \newcommand{\evl}{\boldsymbol{\evlm}}
+%KKT multipliers
+\newcommand{\kktm}{\mu}
+\newcommand{\kkt}{\boldsymbol{\kktm}}
 %superscripts
 \newcommand{\pot}{^{\text{pot}}}
 \newcommand{\dep}{^{\text{dep}}}
@@ -138,6 +141,7 @@
 \DeclareMathOperator{\nnr}{NNR}
 \newcommand{\snrb}{\overline{\snr}}
 \DeclareMathOperator{\env}{Env}
+\newcommand{\cnst}{\gamma}
 % \newcommand{\CA}{\mathcal{A}}
 % \newcommand{\CB}{\mathcal{B}}
 % %avoid double superscripts
@@ -919,7 +923,7 @@ To maximise this quantity, consider the Lagrangian
 \begin{equation}\label{eq:arealagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i(0) - \etwm_j(0))
-        +\sum_{\nu i j} \prn{ \mu^\nu_{ij} \MMdm^\nu_{ij} }
+        +\sum_{\nu i j} \prn{ \kktm^\nu_{ij} \MMdm^\nu_{ij} }
         &+ \lambda \prn{ \Delta p - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
@@ -929,9 +933,9 @@ The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTarea}
   \pdiff{\CL}{\MMdm^\nu_{ij}} = 0, \quad
-  \mu^\nu_{ij} \geq 0, \quad
-  \pdiff{\CL}{\mu^\nu_{ij}} \geq 0, \quad
-  \mu^\nu_{ij}\pdiff{\CL}{\mu^\nu_{ij}} = 0, \quad
+  \kktm^\nu_{ij} \geq 0, \quad
+  \pdiff{\CL}{\kktm^\nu_{ij}} \geq 0, \quad
+  \kktm^\nu_{ij}\pdiff{\CL}{\kktm^\nu_{ij}} = 0, \quad
   \pdiff{\CL}{\lambda} = 0.
 \end{equation}
 %
@@ -942,7 +946,7 @@ From \cref{eq:lAdiff}, the derivatives for \(m \neq n\) are
   \pdiff{\CL}{\MMdm^\nu_{mn}} = & \,
     r f^\nu \eqm_m \prn{ \brk{\thbm_m(0) - \thbm_n(0)}
      + \prn{c_m(0) + (-1)^\nu} \brk{\etwm_m(0) - \etwm_n(0)} } \\
-     &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
+     &+ \kktm^\nu_{mn} -  \kktm^\nu_{mm}
      + \lambda r f^\nu \eqm_m (\etwm_{m}(0)-\etwm_{n}(0)) 
     = 0.
 \end{aligned}
@@ -960,7 +964,7 @@ It follows that
 %
 \begin{equation*}
   \sum_{\nu, m \neq n} \MMdm^\nu_{mn} \pdiff{\CL}{\MMdm^\nu_{mn}} 
-    = - \sum_{\nu, m} \mu^\nu_{mm} = 0 .
+    = - \sum_{\nu, m} \kktm^\nu_{mm} = 0 .
 \end{equation*}
 %
 As the KKT multipliers are nonnegative, this implies that all the diagonal KKT multipliers vanish and we can ignore the diagonal constraints.
@@ -979,7 +983,7 @@ Consider
 \begin{equation}\label{eq:shiftqderiv}
   2r\pdiff{\CL}{\encm_{mn}} =
   \frac{1}{f\pot} \pdiff{\CL}{\MMdm\pot_{mn}} - \frac{1}{f\pot} \pdiff{\CL}{\MMdm\dep_{mn}}
-   = \mu\pot_{mn} - \mu\dep_{mn} + 2\eqm_m (\etwm_m - \etwm_n)
+   = \kktm\pot_{mn} - \kktm\dep_{mn} + 2\eqm_m (\etwm_m - \etwm_n)
    = 0.
 \end{equation}
 %
@@ -998,9 +1002,9 @@ which leaves $\frg$ unchanged, and therefore $\eq$, $\fptb$ and $\etw$ as well.
 Assume $\etwm_m > \etwm_n$. Then
 %
 \begin{equation}\label{eq:lowertriangular}
- \mu\pot_{mn} - \mu\dep_{mn} < 0
+ \kktm\pot_{mn} - \kktm\dep_{mn} < 0
  \qquad\implies\qquad
- \mu\dep_{mn} > 0
+ \kktm\dep_{mn} > 0
  \qquad\implies\qquad
  \MMdm\dep_{mn} = 0.
 \end{equation}
@@ -1008,9 +1012,9 @@ Assume $\etwm_m > \etwm_n$. Then
 Similarly, if $\etwm_m < \etwm_n$, then
 %
 \begin{equation}\label{eq:uppertriangular}
- \mu\pot_{mn} - \mu\dep_{mn} > 0
+ \kktm\pot_{mn} - \kktm\dep_{mn} > 0
  \qquad\implies\qquad
- \mu\pot_{mn} >0
+ \kktm\pot_{mn} >0
  \qquad\implies\qquad
  \MMdm\pot_{mn}=0.
 \end{equation}
@@ -1054,17 +1058,18 @@ But more interestingly:
 %
 \begin{equation}\label{eq:areacoeffincr}
     \Delta^\nu_{mn}\CL =
-      \frac{\mu^\nu_{mn}}{\eqm_m} + \frac{\mu^\nu_{nm}}{\eqm_n}
+      \frac{\kktm^\nu_{mn}}{\eqm_m} + \frac{\kktm^\nu_{nm}}{\eqm_n}
       + r \prn{c_m - c_n}\prn{\etwm_m - \etwm_n} = 0,
 \end{equation}
 %
 where $c_k$ were defined in \cref{eq:lareacoeffs}, with \(s = 0\).
 
-Using the non-negativity of the Kuhn-Tucker multipliers, $\mu^\nu_{ij}$, \cref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\etwm_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\etwm_k$ are degenerate, we can choose their order to ensure this).
+Using the non-negativity of the Kuhn-Tucker multipliers, $\kktm^\nu_{ij}$, \cref{eq:areacoeffincr} tells us that if we arrange the states in order of decreasing $\etwm_i$, the optimal process will have non-decreasing $c_k$ (if any of the $\etwm_k$ are degenerate, we can choose their order to ensure this).
 
-Note that, according to \cref{sec:triangular}, either $\MMdm\pot_{mn}$ or $\MMdm\dep_{mn}$ will be zero at the maximum, therefore we can expect one of the $\mu^\nu_{mn}$ to be non-zero.
+Note that, according to \cref{sec:triangular}, either $\MMdm\pot_{mn}$ or $\MMdm\dep_{mn}$ will be zero at the maximum, 
+therefore we can expect one of the $\kktm^\nu_{mn}$ to be non-zero.
 This would rule out degeneracy of the $c_k$ or $\etwm_k$.
-Looking at \cref{eq:shiftqderiv} closely, the only way both $\mu^\nu_{mn}$ could be zero is if $\etwm_m = \etwm_n$ or $\eqm_m = \eqm_n = 0$.
+Looking at \cref{eq:shiftqderiv} closely, the only way both $\kktm^\nu_{mn}$ could be zero is if $\etwm_m = \etwm_n$ or $\eqm_m = \eqm_n = 0$.
 
 
 \paragraph{Shortcuts:}\label{sec:shortcuts}
@@ -1107,15 +1112,15 @@ But more interestingly for our purposes:
 %
 \begin{equation}\label{eq:shortcutarea}
     \widetilde{\Delta}^\nu_{mn}\CL =
-      \brk{ \sum_{k=m}^{n\mp1} \frac{\mu^\nu_{k,k\pm1}}{\eqm_k}
-      - \frac{\mu^\nu_{m,n}}{\eqm_m}}
+      \brk{ \sum_{k=m}^{n\mp1} \frac{\kktm^\nu_{k,k\pm1}}{\eqm_k}
+      - \frac{\kktm^\nu_{m,n}}{\eqm_m}}
       + rf^\nu \sum_{k=m}^{n\mp1} \prn{\etwm_{k} - \etwm_{k\pm1}} \prn{c_k - c_m},
 \end{equation}
 %
 
 If we put the states in order of decreasing $\etwm_k$, the results of the \cref{sec:areacoeffincr} tell us that the $c_k$ are non-decreasing.
 This implies that the last term of the final expression in \eqref{eq:shortcutarea} is non-negative.
-If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\mu^\nu_{mn} > 0$, which in turn implies that $\MMdm^\nu_{mn}=0$.
+If it is non-zero (there would need to be a lot of degeneracy for it to be zero), this would imply that $\kktm^\nu_{mn} > 0$, which in turn implies that $\MMdm^\nu_{mn}=0$.
 This would tell us that the process with the maximal area has to have a serial topology.
 
 
@@ -1232,6 +1237,9 @@ This leaves us with the result, first shown in \cite{Lahiri2013synapse}, that
 %
 The model that saturates this bound is one of serial topology with \(\eq\) concentrated symmetrically at the two end states.
 
+Note that in the case of a model that is not of the serial topology, but is lumpable to one, 
+it will satisfy \cref{eq:areabnd} with a lower value of \(M\).
+Therefore the maximal area will come from a model with the full serial topology. 
 
 
 %-------Section------------------------------------------------------------------
@@ -1379,7 +1387,7 @@ Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvecto
   \CI_a \sqrt{r\tau_a} \leq \sqrt{2}.
 \end{equation}
 %
-bNumerical maximisation of the quantity above produces the same result as in \cref{sec:initial}:
+Numerical maximisation of the quantity above produces the same result as in \cref{sec:initial}:
 the two-state model with deterministic transitions.
 This model has \(\CI_1 = \tau_1 = 1\), suggesting that there's a factor of \(\sqrt{2}\) looseness in this bound.
 
@@ -1412,6 +1420,15 @@ This does force degenerate states to be lumpable, and we are left with a serial 
 However, this cannot be done for the two end states without violating the requirements for saturating the first inequality.
 
 So we see that all four inequalities cannot be simultaneously saturated, and the bound must be loose.
+Because we think that \cref{eq:sqrtbound} can be improved, we will rewrite it as
+%
+\begin{equation}\label{eq:gammabnd}
+  \CI_a \sqrt{r\tau_a} \leq \sqrt{\cnst}.
+\end{equation}
+% 
+We have shown that the smallest \(\cnst\) for which \cref{eq:gammabnd} is true is less than 2.
+Considering the two-state model with deterministic transitions, we see that \(\cnst\) is at least 1.
+Later, looking at uniform serial models in \cref{sec:heuristicenv} we will see near \cref{eq:henvapprox} that \(\gamma\) is at least 1.18.
 
 %--------------------------------------------------------------------------------
 
@@ -1448,7 +1465,7 @@ No doubt there are many other constraints that these quantities must satisfy, bu
 Consider the Lagrangian
 %
 \begin{equation}\label{eq:envlagrangian}
-  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
+  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \kktm_\CI \prn{1 - \sum_a \CI_a} + \kktm_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
 \end{equation}
 %
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
@@ -1456,9 +1473,9 @@ The Karush-Kuhn-Tucker necessary conditions for a maximum are
 \begin{equation}\label{eq:envKTcond}
   \pdiff{\CL}{\CI_a} = 0, \qquad
   \pdiff{\CL}{\tau_a} = 0, \qquad
-  \mu_\alpha \geq 0, \qquad
-  \pdiff{\CL}{\mu_\alpha} \geq 0, \qquad
-  \mu_\alpha\pdiff{\CL}{\mu_\alpha} = 0.
+  \kktm_\alpha \geq 0, \qquad
+  \pdiff{\CL}{\kktm_\alpha} \geq 0, \qquad
+  \kktm_\alpha\pdiff{\CL}{\kktm_\alpha} = 0.
 \end{equation}
 %
 These are solved by
@@ -1468,8 +1485,8 @@ These are solved by
   \CI_1 = 1, \qquad
   \CI_{a>1} = 0, \qquad
   \tau_1 = M-1, \\
-  \mu_\CI = \frac{(M-1)^2}{[r\tau + (M-1)]^2}, \qquad
-  \mu_\CA = \frac{r\tau}{[r\tau+(M-1)]^2}. \qquad
+  \kktm_\CI = \frac{(M-1)^2}{[r\tau + (M-1)]^2}, \qquad
+  \kktm_\CA = \frac{r\tau}{[r\tau+(M-1)]^2}. \qquad
 \end{gathered}
 \end{equation}
 %
@@ -1490,8 +1507,8 @@ If we know that the optimal model for any timescale satisfies detailed balance, 
 Then the Lagrangian reads
 %
 \begin{equation}\label{eq:envDBlagrangian}
-  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \mu_\CI \prn{1 - \sum_a \CI_a} 
-      + \sum_a \mu_a \prn{\sqrt{2} - \CI_a \sqrt{\tau_a}} + \mu_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
+  \CL = \sum_a \frac{\CI_a}{1+\tau/\tau_a} + \kktm_\CI \prn{1 - \sum_a \CI_a} 
+      + \sum_a \kktm_a \prn{\sqrt{\cnst} - \CI_a \sqrt{\tau_a}} + \kktm_\CA \prn{(M-1) - \sum_a \CI_a \tau_a}.
 \end{equation}
 %
 The solution to \cref{eq:envKTcond} takes different forms for different ranges of \(\tau\) and \(M\),
@@ -1502,17 +1519,17 @@ The resulting envelope is (for \(M > 3\))
   \snrb(\tau) \leq 
   \left\{ 
   \begin{alignedat}{3}
-    &\frac{2 \sqrt{N}}{2 + r \tau}
+    &\frac{\sqrt{N} \cnst}{\cnst + r \tau}
       , &
-      0 &\leq r \tau &&\leq 2
+      0 &\leq r \tau &&\leq \cnst
       , \\
-    &\sqrt{\frac{N}{2 r \tau}}
+    &\sqrt{\frac{N\cnst}{4 r \tau}}
       , &
-      2 &< r \tau &&< \frac{(M-1)^2}{2}
+      \cnst &< r \tau &&< \frac{(M-1)^2}{\cnst}
       , \\
-    &\frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau}
+    &\frac{\sqrt{N} \cnst (M-1)}{(M-1)^2 + \cnst r \tau}
       , &\qquad
-      \frac{(M-1)^2}{2} &\leq r \tau 
+      \frac{(M-1)^2}{\cnst} &\leq r \tau 
       .
   \end{alignedat}
   \right.
@@ -1544,26 +1561,26 @@ For \(M \leq 3\), \cref{eq:env} still applies.
   \begin{tabular}{BACCCCCC}
     \toprule
       \multicolumn{5}{c}{Domain of validity} & \CI_a & \tau_a 
-        & \mu_\CI & \mu_a & \mu_\CA 
+        & \kktm_\CI & \kktm_a & \kktm_\CA 
         % & \snrb(\tau) 
       \\
     \midrule
-      0 &\leq r \tau &\leq 2 & M &\geq 3 & 1 & 2/r 
-        & \frac{4 - 2r \tau}{[2 + r \tau]^2} & \frac{2\sqrt{2}r\tau}{[2 + r \tau]^2} & 0 
+      0 &\leq r \tau &\leq \cnst & M &\geq 3 & 1 & \cnst/r 
+        & \frac{\cnst(\cnst - r \tau)}{[\cnst + r \tau]^2} & \frac{2\sqrt{\cnst}r\tau}{[\cnst + r \tau]^2} & 0 
         % & \frac{2 \sqrt{N}}{2 + r \tau} 
       \\
-      2 &< r \tau &< \frac{(M-1)^2}{2} & M &> 3 & \sqrt{\frac{2}{r\tau}} & \tau 
+      \cnst &< r \tau &< \frac{(M-1)^2}{\cnst} & M &> 3 & \sqrt{\frac{\cnst}{r\tau}} & \tau 
         & 0 & \frac{1}{2\sqrt{r \tau}} & 0 
         % & \sqrt{\frac{N}{2 r \tau}} 
       \\ \addlinespace[0.2ex]
-      \frac{(M-1)^2}{2} &\leq r \tau & & M &\geq 3 & \frac{2}{M-1} & \frac{(M-1)^2}{2r} 
-        & 0 & \frac{\sqrt{2}(M-1)^3}{[(M-1)^2 + 2r \tau]^2} 
-        & \frac{4r \tau - 2(M-1)^2}{[(M-1)^2 + 2r \tau]^2} 
+      \frac{(M-1)^2}{\cnst} &\leq r \tau & & M &\geq 3 & \frac{\cnst}{M-1} & \frac{(M-1)^2}{\cnst r} 
+        & 0 & \frac{2 \sqrt{\cnst} (M-1)^3}{[(M-1)^2 + \cnst r \tau]^2} 
+        & \frac{\cnst (\cnst r \tau - (M-1)^2)}{[(M-1)^2 + 2r \tau]^2} 
         % & \frac{2 \sqrt{N} (M-1)}{(M-1)^2 + 2r \tau} 
       \\
       &-& & M &\leq 3 & 1 & \frac{M - 1}{r} 
-        & \frac{(M-1)^2}{[(M-1) + r \tau]^2} %- \frac{\mu_a \sqrt{\tau_a}}{2} 
-        & 0 & \frac{r \tau}{[(M-1) + r \tau]^2} %- \frac{\mu_a}{2 \sqrt{\tau_a}} 
+        & \frac{(M-1)^2}{[(M-1) + r \tau]^2} %- \frac{\kktm_a \sqrt{\tau_a}}{2} 
+        & 0 & \frac{r \tau}{[(M-1) + r \tau]^2} %- \frac{\kktm_a}{2 \sqrt{\tau_a}} 
         % & \frac{\sqrt{N} (M-1)}{(M-1) + r \tau} 
       \\
     \bottomrule
@@ -1631,13 +1648,13 @@ First, we will maximise the numerator of \eqref{eq:lsnr} holding \(\eq\w\) fixed
 We can maximise the ratio \wrt \(\eq\w\) later.
 % From this point on, we work in units where \(r = 1\).
 
-For this section we will treatthe off-diagonal components of \(\W^\nu\) as the independent degrees of freedom, as in \cref{eq:wdof}, rather than the \(\MMd^\nu\).
+For this section we will treat the off-diagonal components of \(\W^\nu\) as the independent degrees of freedom, as in \cref{eq:wdof}, rather than the \(\MMd^\nu\).
 Consider the Lagrangian
 %
 \begin{equation}\label{eq:finitelagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i(s) - \etwm_j(s))
-        +\sum_{\nu i j} \mu^\nu_{ij} \prn{ \Wm^\nu_{ij} + r f^\nu \delta_{ij} }
+        +\sum_{\nu i j} \kktm^\nu_{ij} \prn{ \Wm^\nu_{ij} + r f^\nu \delta_{ij} }
         + \lambda \prn{ \Delta p - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
@@ -1647,9 +1664,9 @@ The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTfinite}
   \pdiff{\CL}{\Wm^\nu_{ij}} = 0, \quad
-  \mu^\nu_{ij} \geq 0, \quad
-  \pdiff{\CL}{\mu^\nu_{ij}} \geq 0, \quad
-  \mu^\nu_{ij}\pdiff{\CL}{\mu^\nu_{ij}} = 0, \quad
+  \kktm^\nu_{ij} \geq 0, \quad
+  \pdiff{\CL}{\kktm^\nu_{ij}} \geq 0, \quad
+  \kktm^\nu_{ij}\pdiff{\CL}{\kktm^\nu_{ij}} = 0, \quad
   \pdiff{\CL}{\lambda} = 0.
 \end{equation}
 %
@@ -1662,7 +1679,7 @@ The derivatives, for \(m \neq n\) are
   \pdiff{\CL}{\Wm^\nu_{mn}} = & \,
     \eqm_m \prn{ \brk{\thbm_m(s) - \thbm_n(s)}
      + \prn{c_m(s) + (-1)^\nu} \brk{\etwm_m(s) - \etwm_n(s)} } \\
-     &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
+     &+ \kktm^\nu_{mn} -  \kktm^\nu_{mm}
      + \lambda \eqm_m (\etwm_{m}(0)-\etwm_{n}(0)) 
     = 0.
 \end{aligned}
@@ -1671,21 +1688,21 @@ The derivatives, for \(m \neq n\) are
 We can solve for the KKT multipliers by noting that
 %
 \begin{equation*}
-  \mu^\nu_{ij} \Wm^\nu_{ij} = 0,
+  \kktm^\nu_{ij} \Wm^\nu_{ij} = 0,
   \qquad \text{and} \qquad
-  \sum_{j: j \neq i} \mu^\nu_{ii} \Wm^\nu_{ij} 
-      = \mu^\nu_{ii} ( - \Wm^\nu_{ii}) = r f^\nu \mu^\nu_{ii}.
+  \sum_{j: j \neq i} \kktm^\nu_{ii} \Wm^\nu_{ij} 
+      = \kktm^\nu_{ii} ( - \Wm^\nu_{ii}) = r f^\nu \kktm^\nu_{ii}.
 \end{equation*}
 %
 Then, with some new vectors defined:
 %
 \begin{equation}\label{eq:kktsol}
 \begin{aligned}
-  \mu^\nu_{mm} &= - \eqm_m \prn{ \albm^\nu_m(s) 
+  \kktm^\nu_{mm} &= - \eqm_m \prn{ \albm^\nu_m(s) 
     + \lambda \ombm^\nu_m(0) 
     + \prn{{c}_m(s) + (-1)^\nu} \ombm^\nu_m(s)
     }, \\
-  \mu^\nu_{mn} &= \eqm_m \big( 
+  \kktm^\nu_{mn} &= \eqm_m \big( 
       \brk{ \thbm_n(s) - \thbm_m(s) - \albm^\nu_m(s) }
     + \lambda \brk{ \etwm_n(0) - \etwm_m(0) - \ombm^\nu_m(0) } 
   \\ &\hphantom{= \eqm_m \big( }
@@ -1708,7 +1725,7 @@ If we note that we can write \( \W^\nu = \prn{\frg + (-1)^\nu \enc} / 2 \), we f
   \omb^\nu(s) = \frac{\delta\w + s \delta\etw(s) - (-1)^\nu \mathbf{a}(s)}
                      {2rf^\nu}, 
   \\
-  \mu^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
+  \kktm^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
     \left[ 
       \hat{A}(s) - c_m(s) (\delta\wm_m + s \delta\etwm_m(s))
       - \lambda \delta w_m
@@ -1847,7 +1864,7 @@ The Lagrangian we should consider is
 \begin{equation}\label{eq:lshiftlagrangian}
 \begin{aligned}
   \CL =&\, \sum_{ij} \eqm_i \encm_{ij} (\etwm_i - \etwm_j)
-        +\sum_{\nu i j} \mu^\nu_{ij}\prn{\Wm^\nu_{ij} + f^\nu (r + s) \delta_{ij} -  s f^\nu \eqm_j }
+        +\sum_{\nu i j} \kktm^\nu_{ij}\prn{\Wm^\nu_{ij} + f^\nu (r + s) \delta_{ij} -  s f^\nu \eqm_j }
         &+ \lambda \prn{ \Delta p - \sum_i \eqm_i \wm_i },
 \end{aligned}
 \end{equation}
@@ -1864,8 +1881,8 @@ The derivatives, for \(m \neq n\) are
   \pdiff{\CL}{\Wm^\nu_{mn}} = & \,
     \eqm_m \prn{ \brk{\thbm_m - \thbm_n}
      + \prn{{c}_m + (-1)^\nu + \lambda} \brk{\etwm_m - \etwm_n} } \\
-     &+ \mu^\nu_{mn} -  \mu^\nu_{mm}
-     - \sum_{\mu ij} \mu^\mu_{ij} s f^\mu \eqm_m (\fptbm_{mj} - \fptbm_{nj}) \eqm_j
+     &+ \kktm^\nu_{mn} -  \kktm^\nu_{mm}
+     - \sum_{\mu ij} \kktm^\mu_{ij} s f^\mu \eqm_m (\fptbm_{mj} - \fptbm_{nj}) \eqm_j
     = 0.
 \end{aligned}
 \end{equation}
@@ -1874,7 +1891,7 @@ We can absorb the new terms by defining
 %
 \begin{equation*}
 \begin{aligned}
-  \shift{\thb}^\nu(s) = \thb(0) - s f^\nu \fptb(0) \Eq (\boldsymbol{\mu}^\nu)\trans \onev,
+  \shift{\thb}^\nu(s) = \thb(0) - s f^\nu \fptb(0) \Eq (\kkt^\nu)\trans \onev,
   \qquad
   \shift{\alb}^\nu(s) &= (\W^\nu + (s - 1) \I - s \onev \eq) \shift{\thb}^\nu(s),
   \\
@@ -1885,20 +1902,20 @@ We can absorb the new terms by defining
 We note that
 %
 \begin{equation*}
-  \mu^\nu_{ij} (\Wm^\nu_{ij} - s \eqm_j) = 0,
+  \kktm^\nu_{ij} (\Wm^\nu_{ij} - s \eqm_j) = 0,
   \qquad \text{and} \qquad
-  \sum_{j: j \neq i} \mu^\nu_{ii} (\Wm^\nu_{ij} - s \eqm_j)
-      = \mu^\nu_{ii} (1 - \Wm^\nu_{ii} - s (1 - \eqm_i)) = \mu^\nu_{ii},
+  \sum_{j: j \neq i} \kktm^\nu_{ii} (\Wm^\nu_{ij} - s \eqm_j)
+      = \kktm^\nu_{ii} (1 - \Wm^\nu_{ii} - s (1 - \eqm_i)) = \kktm^\nu_{ii},
 \end{equation*}
 %
 then we can ``solve'' for the KKT multipliers:
 %
 \begin{equation}\label{eq:lshiftsol}
 \begin{aligned}
-  \mu^\nu_{mm} &= - \eqm_m \prn{ \shift{\albm}^\nu_m(s) 
+  \kktm^\nu_{mm} &= - \eqm_m \prn{ \shift{\albm}^\nu_m(s) 
     + \brk{ {c}_m + (-1)^\nu + \lambda } \shift{\ombm}^\nu_m(s)
     }, \\
-  \mu^\nu_{mn} &= \eqm_m \prn{ 
+  \kktm^\nu_{mn} &= \eqm_m \prn{ 
       \brk{ \shift{\thbm}^\nu_n(s) - \shift{\thbm}^\nu_m(s) - \shift{\albm}^\nu_m(s) }
   % \\ & \hphantom{= - \eqm_m \big( } 
     + \brk{ {c}_m + (-1)^\nu + \lambda } 
@@ -1951,11 +1968,11 @@ Consider the following perturbation (see also \cref{fig:triangle_s}(\ref{fig:tri
   &= \pdiff{\CL}{\Wm\pot_{mj}} - \pdiff{\CL}{\Wm\pot_{mi}} -
   \pdiff{\CL}{\Wm\dep_{mj}} + \pdiff{\CL}{\Wm\dep_{mi}} \\ 
     &= 2 \eqm_m (\etwm_i - \etwm_j) 
-    + \mu\pot_{mj} - \mu\pot_{mi} - \mu\dep_{mj} + \mu\dep_{mi}.
+    + \kktm\pot_{mj} - \kktm\pot_{mi} - \kktm\dep_{mj} + \kktm\dep_{mi}.
 \end{aligned}
 \end{equation}
 %
-Because \( \etwm_i > \etwm_j \), we must have \( \mu\pot_{mi} + \mu\dep_{mj} > 0 \).
+Because \( \etwm_i > \etwm_j \), we must have \( \kktm\pot_{mi} + \kktm\dep_{mj} > 0 \).
 So \( \Wm\pot_{mi} > 0 \) would imply that \( \Wm\dep_{mj} = 0 \) and vice versa.
 These two possibilities are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_left},\ref{fig:triangle_right}).
 
@@ -1987,10 +2004,10 @@ Consider the perturbation
   \pdiff{\CL}{\Wm\pot_{mn}} -
   \pdiff{\CL}{\Wm\dep_{mn}} =
     2 \eqm_m (\etwm_m - \etwm_n) 
-    + \mu\pot_{mn} - \mu\pot_{mm} - \mu\dep_{mn} + \mu\dep_{mm}.
+    + \kktm\pot_{mn} - \kktm\pot_{mm} - \kktm\dep_{mn} + \kktm\dep_{mm}.
 \end{equation}
 %
-If we assume that both \( \Wm\pot_{mn} \) and \( \Wm\dep_{mn} \) are nonzero, we find that \( \mu\pot_{mm} - \mu\dep_{mm} = 2 \eqm_m (\etwm_m - \etwm_n) \).
+If we assume that both \( \Wm\pot_{mn} \) and \( \Wm\dep_{mn} \) are nonzero, we find that \( \kktm\pot_{mm} - \kktm\dep_{mm} = 2 \eqm_m (\etwm_m - \etwm_n) \).
 Therefore \( \etwm_m > \etwm_n \implies \Wm\pot_{mm} = -rf\pot \) and \( \etwm_m < \etwm_n \implies \Wm\dep_{mm} = -rf\dep \).
 It is also possible that both of the diagonal constraints are saturated.
 
@@ -2007,15 +2024,11 @@ It is also possible that both of the diagonal constraints are saturated.
   \\[1em]
   \item \label{fig:triangle_allowed} \aligntop{%
   \includegraphics[width=0.4\linewidth]{allowed_triangle.svg}}
-  \item \label{fig:triangle_spacing} \aligntop{%
-  \includegraphics[width=0.4\linewidth]{spacing_triangle.svg}}
 \end{myenuma}
 \caption[Triangularising perturbation]{Triangularising perturbation.
-(\ref*{fig:triangle_pert}) The type of perturbation considered in \cref{eq:pertKupdn}, indicating which transitions have their rates increased/decreased.
-(\ref*{fig:triangle_left},\ref*{fig:triangle_right}) Possible end-points of this perturbation. 
-(\ref*{fig:triangle_allowed}) The not-as-yet ruled out transitions when states are sorted so that \(\etw\) decreases to the right, with \(\etwm_m\) unconstrained (as yet).
-(\ref*{fig:triangle_spacing}) The consequences of \cref{eq:oneexit,eq:doubleexit,eq:twoexits,eq:twodoubleexits,eq:nonexit} in the \( (\dgnm_{m,l},-\etwm_l) \)-plane, with \(i\) a state with a nonzero depressing transition from \(m\), \(j\) a state with a nonzero potentiating transition, \(n\) a state with both depressing and potentiating transitions and \(k\) a state with no nonzero transitions from \(m\).
-The positions of \(m\) and \(k\) are not yet constrained, other than being in the upper quadrant \wrt \(n\).
+  (\ref*{fig:triangle_pert}) The type of perturbation considered in \cref{eq:pertKupdn}, indicating which transitions have their rates increased/decreased.
+  (\ref*{fig:triangle_left},\ref*{fig:triangle_right}) Possible end-points of this perturbation. 
+  (\ref*{fig:triangle_allowed}) The not-as-yet ruled out transitions when states are sorted so that \(\etw\) decreases to the right, with \(\etwm_m\) unconstrained (as yet).
 \label{fig:triangle_s}}
 \end{center}
 \end{figure}
@@ -2033,19 +2046,19 @@ Let us define the following
     \dgn^\nu_m(s) &= \dgn_m(s) + (-1)^\nu \etw(s),   
 \end{aligned}
   \implies \quad
-  \pdiff{\CL}{\Wm^\nu_{mn}} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n}) + \mu^\nu_{mn} - \mu^\nu_{mm}.
+  \pdiff{\CL}{\Wm^\nu_{mn}} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n}) + \kktm^\nu_{mn} - \kktm^\nu_{mm}.
 \end{equation}
 %
 They should be thought of as collections of vectors rather than matrices, with the first \(m\) a label rather than an index.
 
 Suppose that a state \(n\) has a nonzero transition rate from state \(m\) for one \(\nu\).
-Then \(\mu^\nu_{mn} = 0\) and:
+Then \(\kktm^\nu_{mn} = 0\) and:
 %
 \begin{equation}\label{eq:oneexit}
 \begin{aligned}
   \Wm^\nu_{mn} > 0
   \quad \implies \quad
-  \mu^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n})
+  \kktm^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n})
   \quad \implies \quad
   \dgnm^\nu_{m,m} &\geq \dgnm^\nu_{m,n} \\
   \text{or} \quad
@@ -2063,7 +2076,7 @@ If both \(\nu\) have nonzero rates from \(m\) to \(n\):
 %
 
 Suppose there are two states, \(i,j\), with nonzero transitions from \(m\) for one \(\nu\).
-Both must statisfy \cref{eq:oneexit} for the same \(\mu^\nu_{mm}\), so
+Both must statisfy \cref{eq:oneexit} for the same \(\kktm^\nu_{mm}\), so
 %
 \begin{equation}\label{eq:twoexits}
   \Wm^\nu_{mi}, \Wm^\nu_{mj} > 0
@@ -2079,7 +2092,7 @@ Furthermore, for another state \(k\) with zero transition rate from \(m\) for th
 \begin{aligned}
   \Wm^\nu_{mi} > 0, \Wm^\nu_{mk} = 0 
   \;\;\; \implies \;\;\;
-  \mu^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m,i})
+  \kktm^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m,i})
   \;\; \implies \;\;
   \dgnm^\nu_{m,k} &\geq \dgnm^\nu_{m,i} \\
   \text{or}\quad
@@ -2097,11 +2110,11 @@ If both \(\nu\) have nonzero rates from \(m\) to \(i\) and \(j\):
   \etwm_i = \etwm_j.
 \end{equation}
 %
-The consequences of these inequalities are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_spacing}).
+The consequences of these inequalities are depicted in \cref{fig:planes}(\ref{fig:triangle_spacing}).
 We see that \(n\) must be a global minimum of \(\dgn_m\), and if there are multiple transitions of a single type (potentiating or depressing) the targets are constrained to lie on a single line.
 Even if there is no state \(n\) that is the target of both potentiating and depressing transitions, there will be two lines at \(45^\circ \) passing through any targets of potentiating/depressing transitions that demarcate the forbidden zone.
 
-We use \(m*\) to label the intersection of the two diagonal lines in \cref{fig:triangle_s}(\ref{fig:triangle_spacing}), wether or not there is a state there.
+We use \(m*\) to label the intersection of the two diagonal lines in \cref{fig:planes}(\ref{fig:triangle_spacing}), wether or not there is a state there.
 It can be defined for each \(m\), provided that it has at least one outgoing transition for each plasticity type, via
 %
 \begin{equation*}
@@ -2124,9 +2137,9 @@ so long as there is a nonzero depressing/potentiating transition from \(m\) to t
 The KKT multipliers are related to these quantities by
 %
 \begin{equation}\label{eq:KKTz}
-  \mu^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m*}),
+  \kktm^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m*}),
   \qquad
-  \mu^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m*}).
+  \kktm^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m*}).
 \end{equation}
 %
 
@@ -2135,8 +2148,32 @@ those two situations would require \(\dgn^\nu_m\) to have degenerate minima.
 The physicist's intuition states that degeneracy is fragile and requires a symmetry to protect it.
 Such a symmetry would imply that the states are lumpable.
 This would imply that, after lumping all lumpable states together, the situation in \cref{eq:twoexits} is impossible and \cref{eq:twodoubleexits} is even more impossible.
-If this intuition holds, we expect that \cref{fig:triangle_s}(\ref{fig:triangle_spacing}) would have at most one state on each of the two diagonal lines.
+If this intuition holds, we expect that \cref{fig:planes}(\ref{fig:triangle_spacing}) would have at most one state on each of the two diagonal lines.
 Either there would be one state like \(n\), or there would be one state like \(i\) and one state like \(j\), and the first of these possibilities is rather implausible.
+
+\begin{figure}[ht]
+\begin{center}
+\begin{myenuma}
+  \item \label{fig:triangle_spacing} \aligntop{ \hspace{-2em}%
+  \includegraphics[width=0.4\linewidth]{spacing_triangle.svg}}
+  \hspace{0.2em}
+  \item \label{fig:scaling_plane}\aligntop{ \hspace{-1em}%
+  \includegraphics[width=0.4\linewidth]{scaling_plane.svg}}
+\end{myenuma}
+\caption[Depicting constraints on topology]{Depicting constraints on topology.
+(\ref*{fig:triangle_spacing}) The consequences of \cref{eq:oneexit,eq:doubleexit,eq:twoexits,eq:twodoubleexits,eq:nonexit} in the \( (\dgnm_{m,l},-\etwm_l) \)-plane, 
+  with \(i\) a state with a nonzero depressing transition from \(m\), 
+  \(j\) a state with a nonzero potentiating transition, 
+  \(n\) a state with both depressing and potentiating transitions 
+  and \(k\) a state with no nonzero transitions from \(m\).
+  The positions of \(m\) and \(k\) are not yet constrained, other than being in the upper quadrant \wrt \(n\).
+(\ref*{fig:scaling_plane}) Scaling of optimal models in the \((s,r)\)-plane.
+  Optimal models on grey ``rays'' are related by scaling, and therefore have the same topology.
+  The line at \(r = r_0\) is where we need the solutions.
+  The line at \(s = \epsilon\) is where we can determine the topology.
+\label{fig:planes}}
+\end{center}
+\end{figure}
 
 %-------Section------------------------------------------------------------------
 
@@ -2146,7 +2183,7 @@ We can write \cref{eq:diagKKT} as
 %
 \begin{equation*}
 \begin{aligned}
-  \mu^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
+  \kktm^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
     \left[ 
       \hat{A}
       - (c_m + (-1)^\nu) (\delta \wm_m + s \delta \etwm_m)
@@ -2222,7 +2259,7 @@ Then we can also write \cref{eq:diagKKT} as
 %
 \begin{equation}\label{eq:diagKKTz}
 \begin{aligned}
-  \mu^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
+  \kktm^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
     \left[ 
       \hat{A}
       - c_m (\delta \wm_m + s \delta \etwm_m)
@@ -2239,7 +2276,7 @@ Then we can also write \cref{eq:diagKKT} as
 %
 again with all quantities evaluated at \(s\) unless labelled otherwise.
 
-\Cref{eq:KKTz} provides another expression for \(\mu^\nu_{mm}\).
+\Cref{eq:KKTz} provides another expression for \(\kktm^\nu_{mm}\).
 That expression will agree with \cref{eq:diagKKTz} provided that
 %
 \begin{equation}\label{eq:diagAgree}
@@ -2254,7 +2291,79 @@ That expression will agree with \cref{eq:diagKKTz} provided that
 
 \subsection{Scaling with a floating cutoff}\label{sec:cutoff}
 
+We have seen that invariance under the scale transformation \(\W \to \lambda\W \) is broken in two places: adding \(s\I \) in \cref{eq:lfund} and the upper bound on transition probabilities in \cref{eq:wdof}.
+It is helpful to describe the broken symmetry by assigning scaling properties to the parameters.
+To do that we need to create a parameter for the upper bound in \cref{eq:wdof}.
 
+If we look at \cref{eq:finitelagrangian}, this parameter would appear in the \(r f^\nu \delta_{ij}\) term.
+Furthermore, when we phrase the problem in terms of \(\W^\nu \) rather than \(\MMd^\nu \), this is the only place where \(r\) appears.
+Therefore we can absorb this parameter into \(r\) -- we will call the original value \(r_0\).
+
+We have the following invariances:
+%
+\begin{equation*}
+  A(\lambda s, \lambda \W) = A(s, \W),
+  \qquad
+  \CL(\lambda s, \lambda r, \lambda \W, \lambda\inv \kkt) = \CL(s, r, \W, \kkt).
+\end{equation*}
+%
+or in differential form:
+%
+\begin{equation*}
+  s \pdiff{A}{s} + \sum_{\nu i j} \Wm^\nu_{ij} \pdiff{A}{\Wm^\nu_{ij}} = 0,
+  \qquad
+  s \pdiff{\CL}{s} + r \pdiff{\CL}{r} 
+    + \sum_{\nu i j} \brk{\Wm^\nu_{ij} \pdiff{\CL}{\Wm^\nu_{ij}} 
+                      - \kktm^\nu_{ij} \pdiff{\CL}{\kktm^\nu_{ij}}} = 0.
+\end{equation*}
+%
+
+If we denote the solution to the maximisation problem by \(\W^\ast(s,r), \kkt^\ast(s,r)\), we have
+%
+\begin{equation}\label{eq:optmodelscale}
+\begin{aligned}
+  \W^\ast(\lambda s, \lambda r) &= \lambda \W^\ast(s,r), &
+  \qquad \text{or} \qquad
+  s \pdiff{\W^\ast}{s} + r \pdiff{\W^\ast}{r} &= \W^\ast, \\
+  \kkt^\ast(\lambda s, \lambda r) &= \lambda\inv \kkt^\ast(s,r), &
+  s \pdiff{\kkt^\ast}{s} + r \pdiff{\kkt^\ast}{r} &= -\kkt^\ast.
+\end{aligned}
+\end{equation}
+%
+We can also denote the envelope by
+%
+\begin{equation*}
+  A^\ast(s,r) = A(s, \W^\ast(s,r))
+  \qquad \implies \qquad
+\begin{aligned}[t]
+  A^\ast(\lambda s, \lambda r) &= A^\ast(s,r), \\
+  s \pdiff{A^\ast}{s} + r \pdiff{A^\ast}{r} &= 0. \\
+\end{aligned}
+\end{equation*}
+%
+This means that the topology of the optimal model and the envelope are fixed along any of the ``rays'' of constant \(r/s\) in the \((s,r)\)-plane, as depicted in \cref{fig:planes}(\ref{fig:scaling_plane}). 
+The transition probabilities of the optimal model obey a simple scaling relation along any such ray.
+
+Note from \cref{fig:planes}(\ref{fig:scaling_plane}) that the line we are interested in is the horizontal line, \(r = r_0\).
+This line intersects every ray except \(r = 0\).
+The same is true of any horizontal line of constant \(r \neq 0\).
+Any vertical line of constant \(s \neq 0\) will also intersect every ray except \(s = 0\).
+
+From \cref{sec:serialarea}, we know the optimal models at \(s = 0\) (There is still an ambiguity concering the scale, but it makes sense to choose to saturate the diagonal constraints in \cref{eq:wdof} so that \cref{eq:optmodelscale} holds).
+At \(r = 0\) there is only one allowed model: \(\W = \mathbf{0}\).
+
+Therefore we will find the full range of optimal topologies if we look at any horizontal or vertical line.
+Given that we know the optimal models at \(s = 0\), we should be able to determine the topology of the optimal models at infinitesimal \(s = \epsilon\).
+More precisely:
+%
+\begin{equation}\label{eq:scaleopt}
+  A^\ast\prn{s, r_0} = A^\ast\prn{\epsilon, \frac{r_0 \epsilon}{s}},
+  \quad
+  \W^\ast\prn{s, r_0} = \prnfrac{s}{\epsilon} \W^\ast\prn{\epsilon, \frac{r_0 \epsilon}{s}},
+  \quad
+  \kkt^\ast\prn{s, r_0} = \prnfrac{\epsilon}{s} \kkt^\ast\prn{\epsilon, \frac{r_0 \epsilon}{s}}.
+\end{equation}
+%
 
 %-------Section------------------------------------------------------------------
 
@@ -2269,7 +2378,7 @@ That expression will agree with \cref{eq:diagKKTz} provided that
     \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_shorten.svg}}\label{fig:serial_shorten}
   \end{myenuma}
   \caption[Heuristic optimal models]{Heuristics for models that maximise memory curve.
-  All unlabelled arrowshave transition probabilities equal to 1.
+  All unlabelled arrows have transition probabilities equal to 1.
   At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with \(M\) states.
   At later times the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model.
   At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
@@ -2401,12 +2510,15 @@ We find that
   \quad
   s = 2\sinh^2\frac{y_*}{M_*},
   \qquad
-  \hat{A}_*(s) = \prn{\frac{ 2\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \frac{\abs{\beta}}{s},
+  \hat{A}_*(s) = \prn{\frac{ \sinh y_* }{ \cosh^2 y_* }} 
+      \frac{\abs{\beta(s)}}{s},
   \\ \text{where}\quad
-  y_* = \tanh \frac{y_*}{2} \cosh y_* \approx 1.50553.
+  y_* = \tanh \frac{y_*}{2} \cosh y_* \approx 1.50553,
   \qquad
 \end{multline}
 %
+and \(\beta(s)\) is given by the second formula of \cref{eq:detagensol}.
+
 This is only valid for
 %
 \begin{equation}\label{eq:univalid}
@@ -2680,8 +2792,8 @@ We define
   \Delta g_m(\beta) &= \Delta f_m(\beta) + 1 , &
   g_m(\beta) &= \frac{S(m\beta) + 1}{\Delta g_m(\beta)}, \\
 \end{aligned}
- \; \implies \quad
- \hat{A}(s) = \frac{\Delta f_m (1 - \varepsilon) (f_m - \varepsilon)}
+  \; \implies \quad
+  \hat{A}(s) = \frac{\Delta f_m (1 - \varepsilon) (f_m - \varepsilon)}
                     {s \Delta m \Delta g_m (\mu - \varepsilon) (g_m - \varepsilon)}.
 \end{equation*}
 %
@@ -2693,8 +2805,10 @@ The maximum is at the solution of
     = (\mu - 1) (g_m - 1) (f_m - \mu) (f_m - g_m) , \\
   \implies \qquad
   \hat{A}(s) = \frac{\Delta f_m}{s \Delta m \Delta g_m}
-                \brk{\frac{\sqrt{(f_m - \mu)(f_m - g_m)} + \sqrt{(\mu - 1)(g_m - 1)}}
-                          {\sqrt{(f_m - g_m)(g_m - 1)} + \sqrt{(f_m - \mu)(\mu - 1)}}}^2.
+      \brk{\frac{\sqrt{(f_m - \mu)(f_m - g_m)} 
+                  + \sqrt{(\mu - 1)(g_m - 1)}}
+                {\sqrt{(f_m - g_m)(g_m - 1)} 
+                  + \sqrt{(f_m - \mu)(\mu - 1)}}}^2.
 % \end{aligned}
 \end{multline}
 %
@@ -2717,7 +2831,8 @@ The width of this gap is insignificant for larger \(M\), as seen in \cref{fig:st
 For small \(s \ll M^{-2}\), it is given by
 %
 \begin{equation}\label{eq:stickyeps}
-  \varepsilon = 1 - \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},
+  \varepsilon = 1 - \frac{ 2(M-1)\sqrt{s} }{\sqrt{M(M-2)}} 
+    \prn{ 1 + \sqrt{\frac{(M-2)^3s}{M}} + \CO(M^2s)},
 \end{equation}
 %
 and the Laplace transform is
@@ -2743,7 +2858,7 @@ We will phrase it in terms of \(\snrb(\tau)\), reintroducing \(r\):
   \beta(\tau) = \sinh\inv \!\!\sqrt{1/2r\tau}.
 \end{equation}
 %
-Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylaplace}, using the notation \( \Delta_{M,\varepsilon}[T(M, \beta)] = T(M, \beta) - \varepsilon T(M-2, \beta) \)., we find
+Then, combining \cref{eq:binaryenv,eq:unienv,eq:stickylaplace}, using the notation \( \Delta_{\varepsilon}[T(M)] = T(M) - \varepsilon T(M-2) \) for any function \(T(M)\), we find
 %
 \begin{equation}\label{eq:henv}
   \snrb(\tau) = \left\{
@@ -2753,14 +2868,17 @@ Then, combining \eqref{eq:binaryenv}, \eqref{eq:unienv} and \eqref{eq:stickylapl
   & \sqrt{N}\prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \beta(\tau), &
   \tfrac{1}{2\sinh^2 \frac{y_*}{2}} \leq & r\tau \leq \tfrac{1}{2\sinh^2 \frac{y_*}{M}} , \\
   & \max_{\varepsilon \in [0,1]} \brc{
-      \frac{2\sqrt{N}(1-\varepsilon)\, \Delta_{M,\varepsilon}\! \brk{S\prn{\tfrac{M\beta}{2}}}}
-      {\Delta_{M,\varepsilon}[M]\, \Delta_{M,\varepsilon}\! \brk{S\prn{\tfrac{M\beta}{2}} + 1} } }, &
-  \tfrac{1}{2\sinh^2 \frac{y_*}{M}} \leq & r\tau .
+      \frac{2\sqrt{N}(1-\varepsilon) \Delta_{\varepsilon}\brk{S\prn{\tfrac{M\beta}{2}}}}
+      {\Delta_{\varepsilon}\brk{M} \Delta_{\varepsilon}\brk{S\prn{\tfrac{M\beta}{2}} + 1} } 
+      }, &
+  \tfrac{1}{2\sinh^2 \frac{y_*}{M}} \leq & r\tau ,
 \end{aligned}
 \right.
 \end{equation}
 %
-For \(M \gg 1\), and \(r\tau\) much greater than the lower bound of each region, we can approximate this as
+where \(\beta(\tau)\) and \(S(\beta)\) are given by the second formula of \cref{eq:detagensol}.
+
+For \(M \gg 1\), and \(r\tau\) much greater than the lower bound of each region, we can approximate the envelope as
 %
 \begin{equation}\label{eq:henvapprox}
   \snrb(\tau) \approx \left\{
@@ -2777,7 +2895,10 @@ For \(M \gg 1\), and \(r\tau\) much greater than the lower bound of each region,
 %
 This is plotted in \cref{fig:heuristicenv}.
 It should be compared to \cref{eq:env,eq:envDB}.
-
+\Cref{eq:henvapprox} has a similar form as \cref{eq:envDB}.
+The left edge of the middle section is at later times in the theoretical version if \(\gamma \gtrsim \frac{1}{2} \csch^2 \frac{y_\ast}{2} \approx 0.73 \).
+The right edge of the middle section is at later times in the theoretical version if \(\gamma \lesssim 2 y_\ast^2 \approx 4.53 \).
+The middle section has greater \(\snrb\) in the theoretical version if \(\gamma \gtrsim \frac{8\sinh^2y_\ast}{\cosh^4y_\ast} \approx 1.18 \).
 
 
 \begin{figure}[tb]
