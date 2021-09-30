@@ -1519,15 +1519,15 @@ The resulting envelope is (for \(M > 3\))
   \snrb(\tau) \leq 
   \left\{ 
   \begin{alignedat}{3}
-    &\frac{\sqrt{N} \cnst}{\cnst + r \tau}
+    &\frac{\cnst \sqrt{N}}{\cnst + r \tau}
       , &
       0 &\leq r \tau &&\leq \cnst
       , \\
-    &\sqrt{\frac{N\cnst}{4 r \tau}}
+    &\sqrt{\frac{\cnst N}{4 r \tau}}
       , &
       \cnst &< r \tau &&< \frac{(M-1)^2}{\cnst}
       , \\
-    &\frac{\sqrt{N} \cnst (M-1)}{(M-1)^2 + \cnst r \tau}
+    &\frac{\cnst \sqrt{N} (M-1)}{(M-1)^2 + \cnst r \tau}
       , &\qquad
       \frac{(M-1)^2}{\cnst} &\leq r \tau 
       .
@@ -2310,46 +2310,56 @@ We have the following invariances:
 or in differential form:
 %
 \begin{equation*}
-  s \pdiff{A}{s} + \sum_{\nu i j} \Wm^\nu_{ij} \pdiff{A}{\Wm^\nu_{ij}} = 0,
-  \qquad
-  s \pdiff{\CL}{s} + r \pdiff{\CL}{r} 
-    + \sum_{\nu i j} \brk{\Wm^\nu_{ij} \pdiff{\CL}{\Wm^\nu_{ij}} 
-                      - \kktm^\nu_{ij} \pdiff{\CL}{\kktm^\nu_{ij}}} = 0.
+  s \pdiffc<\Wm>{A}{s} + \sum_{\nu i j} \Wm^\nu_{ij} \pdiffc<s>{A}{\Wm^\nu_{ij}} 
+  = 
+  s \pdiffc<r \Wm \mathrlap{\kktm}>{\CL}{s} 
+    + r \pdiffc<s \Wm \mathrlap{\kktm}>{\CL}{r} 
+    + \sum_{\nu i j} \brk{\Wm^\nu_{ij} \pdiffc<s r \mathrlap{\kktm}>{\CL}{\Wm^\nu_{ij}} 
+                      - \kktm^\nu_{ij} \pdiffc<s r {\Wm}>{\CL}{\kktm^\nu_{ij}}} = 0.
 \end{equation*}
 %
-
-If we denote the solution to the maximisation problem by \(\W^\ast(s,r), \kkt^\ast(s,r)\), we have
+In \cref{eq:kktsol} we have an expression for the KKT multipliers at the maximum in terms of \(s\) and \(\W \).
+We denote this expression by \( \kkt^\ddagger(s, \W) \).
+If we denote the solution to the maximisation problem by \(\W^\ast(s,r), \kkt^\ast(s,r)\), we have \( \kkt^\ast(s,r) = \kkt^\ddagger(s, \W^\ast(s,r)) \) and
 %
 \begin{equation}\label{eq:optmodelscale}
 \begin{aligned}
-  \W^\ast(\lambda s, \lambda r) &= \lambda \W^\ast(s,r), &
+  \kkt^\ddagger(\lambda s, \lambda \W) 
+    &= \lambda\inv \kkt^\ddagger(s, \W), &
   \qquad \text{or} \qquad
-  s \pdiff{\W^\ast}{s} + r \pdiff{\W^\ast}{r} &= \W^\ast, \\
+  s \pdiffc<\Wm>{\kkt^\ddagger}{s} 
+      + \sum_{\nu i j} \Wm^\nu_{ij} \pdiffc<s>{\kkt^\ddagger}{\Wm^\nu_{ij}} 
+    &= -\kkt^\ddagger, \\
+  \W^\ast(\lambda s, \lambda r) 
+    &= \lambda \W^\ast(s,r), &
+  s \pdiffc<r>{\W^\ast}{s} + r \pdiffc<s>{\W^\ast}{r} 
+    &= \W^\ast, \\
   \kkt^\ast(\lambda s, \lambda r) &= \lambda\inv \kkt^\ast(s,r), &
-  s \pdiff{\kkt^\ast}{s} + r \pdiff{\kkt^\ast}{r} &= -\kkt^\ast.
+  s \pdiffc<r>{\kkt^\ast}{s} + r \pdiffc<s>{\kkt^\ast}{r} 
+    &= -\kkt^\ast.
 \end{aligned}
 \end{equation}
 %
-We can also denote the envelope by
+We can also denote the envelope by \( A^\ast(s,r) = A(s, \W^\ast(s,r) \)
 %
 \begin{equation*}
-  A^\ast(s,r) = A(s, \W^\ast(s,r))
-  \qquad \implies \qquad
 \begin{aligned}[t]
-  A^\ast(\lambda s, \lambda r) &= A^\ast(s,r), \\
-  s \pdiff{A^\ast}{s} + r \pdiff{A^\ast}{r} &= 0. \\
+  A^\ast(\lambda s, \lambda r) &= A^\ast(s,r), 
+  \qquad \text{or} \qquad
+  s \pdiff{A^\ast}{s} + r \pdiff{A^\ast}{r} &= 0.
 \end{aligned}
 \end{equation*}
 %
 This means that the topology of the optimal model and the envelope are fixed along any of the ``rays'' of constant \(r/s\) in the \((s,r)\)-plane, as depicted in \cref{fig:planes}(\ref{fig:scaling_plane}). 
 The transition probabilities of the optimal model obey a simple scaling relation along any such ray.
 
-Note from \cref{fig:planes}(\ref{fig:scaling_plane}) that the line we are interested in is the horizontal line, \(r = r_0\).
+Note from \cref{fig:planes}(\ref{fig:scaling_plane}) that the line of interest is the horizontal line, \(r = r_0\).
 This line intersects every ray except \(r = 0\).
 The same is true of any horizontal line of constant \(r \neq 0\).
 Any vertical line of constant \(s \neq 0\) will also intersect every ray except \(s = 0\).
 
-From \cref{sec:serialarea}, we know the optimal models at \(s = 0\) (There is still an ambiguity concering the scale, but it makes sense to choose to saturate the diagonal constraints in \cref{eq:wdof} so that \cref{eq:optmodelscale} holds).
+From \cref{sec:serialarea}, we know the optimal models at \(s = 0\).
+% (There is still an ambiguity concering the scale, but it makes sense to choose to saturate the diagonal constraints in \cref{eq:wdof} so that \cref{eq:optmodelscale} holds).
 At \(r = 0\) there is only one allowed model: \(\W = \mathbf{0}\).
 
 Therefore we will find the full range of optimal topologies if we look at any horizontal or vertical line.
@@ -2367,31 +2377,116 @@ More precisely:
 
 %-------Section------------------------------------------------------------------
 
+\subsection{Optimal models at \texorpdfstring{\(s=0\)}{s=0}}\label{sec:areamodels}
+
+We saw in \cref{sec:serialarea} that the optimal models at \(s = 0\) are those with the serial topology with \(\eq\) concentrated symmetrically at the two end states.
+The set of serial models with such a \(\eq\) are the limit as \(\delta \rightarrow 0\) of
+%
+\begin{equation}\label{eq:areamodels}
+\begin{aligned}
+  \W\pot_{ii+1} = \W\dep_{i+1i} = q_i, 
+  \text{ for } 2 \leq i \leq M-2,
+  \qquad
+  \W\pot_{12} &= \delta, \quad &
+  \W\pot_{M-1M} &= q_{M-1}, \\
+  \W\dep_{21} &= q_1, &
+  \W\dep_{MM-1} &= \delta.
+\end{aligned}
+\end{equation}
+%
+Where \(0 \leq q_i \leq rf^\nu\) for both \(\nu\).
+We have an \(M-1\) parameter space of maxima.
+Using results from \cref{sec:serialarea}:
+%
+\begin{equation*}
+% \begin{aligned}
+  \eqm_i = \frac{\delta}{2z} 
+  \text{ for } 2 \leq i \leq M-1,
+  \qquad
+  \eqm_1 = \eqm_M = \frac{1}{2z},
+  \text{ where } z = 1 + \frac{\delta (M-2)}{2},
+  \qquad
+  c_i = 2i - M - 1.
+% \end{aligned}
+\end{equation*}
+%
+We can find the other vectors of interest by:
+solving \(\frg \etw = (\I - \onev \eq) \w \) for \(\etw\),
+computing \(\mathbf{a} = - \enc \etw\),
+and solving \(\frg \thb = (\I - \onev \eq) \mathbf{a} \) for \(\thb\).
+First, some notation:
+%
+\begin{equation*}
+  \sum_k^{i:j} f(k) 
+    \equiv \sgn(j-i) \smashoperator{\sum_{k = \min(i,j)}^{\max(i,j)-1}} f(k)
+    = \begin{cases}
+        \sum_{k=i}^{j-1} f(k) & i < j,\\
+        - \sum_{k=j}^{i-1} f(k) & i > j.
+      \end{cases}
+\end{equation*}
+%
+Then, to leading order in small \(\delta\), we find:
+%
+\begin{equation}\label{eq:areavecs}
+\begin{aligned}
+  \etwm_i - \etwm_j &= \frac{z}{\delta} \sum_k^{i:j} \frac{1}{q_k}, & \qquad
+  \thbm_i - \thbm_j &= \frac{z}{\delta} \sum_k^{j:i} \frac{2k - M}{q_k}, \\
+  a_i &= \frac{1}{\eqm_i} 
+    \quad \text{for } 2 \leq i \leq M-1, &
+  a_1 &= a_M = 1.
+\end{aligned}
+\end{equation}
+%
+Now we can use \cref{eq:kktsol} to calculate the KKT multipliers
+%
+\begin{equation}\label{eq:areaKKT}
+\begin{aligned}
+    \kktm^\nu_{ij} = \sum_k^{i:j} \frac{k - i - \delta\dep_\nu}{q_k}
+      \quad \text{ for } 2 \leq i \leq M-1, \qquad
+    \kktm^\nu_{1j} &= \frac{1}{\delta} \sum_{k=1}^{j-1} \frac{k - 1 - \delta\dep_\nu}{q_k},
+      \\
+    \kktm^\nu_{Mj} &= \frac{1}{\delta} \sum_{k=j}^{M-1} \frac{M - k + \delta\dep_\nu}{q_k}.
+\end{aligned}
+\end{equation}
+%
+They are all nonnegative, as the numerator is only negative when \(i > j\) and the negative of the sum is used.
+There are only two ways a KKT multiplier can be zero. 
+If the sum is empty (\(j = i\)) or it contains exactly one term that is zero (\( j = i + (-1)^\nu \)).
+It is impossible for more than one term in the sum to be zero.
+Those transitions ddefine the serial topology.
+
+
+
+%-------Section------------------------------------------------------------------
+
 \section{Nearly uniform serial models}\label{sec:serial}
 
 \begin{figure}[tb]
   \centering
   % Requires \usepackage{graphicx}
   \begin{myenuma}
-    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_uni.svg}}\hspace{0.02\linewidth}\label{fig:serial_uniform}
-    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_sticky.svg}}\hspace{0.02\linewidth}\label{fig:serial_sticky}
-    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_shorten.svg}}\label{fig:serial_shorten}
+    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_uni.svg}}\label{fig:serial_uni}
+    \hspace{0.02\linewidth}
+    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_sticky.svg}}\label{fig:serial_stk}
+    \hspace{0.02\linewidth}
+    \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_shorten.svg}}\label{fig:serial_sht}
   \end{myenuma}
   \caption[Heuristic optimal models]{Heuristics for models that maximise memory curve.
   All unlabelled arrows have transition probabilities equal to 1.
-  At one particular time, the model is (\ref{fig:serial_uniform}) the uniform serial model with \(M\) states.
-  At later times the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model.
-  At earlier times, the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
+  At one particular time, the model is (\ref{fig:serial_uni}) the uniform serial model with \(M\) states.
+  At later times the model has (\ref{fig:serial_stk}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model.
+  At earlier times, the model is (\ref{fig:serial_sht}) progressively shortened by reducing the transition probability to the end states.
   Once this reaches zero we discard the old end state and work on the new end state.
   } \label{fig:heuristicmodels}
 \end{figure}
 
 
-Looking at them models that were found by numerical maximisation in \cref{fig:envvid} (see the video for the full set of models) suggests we look at the particular set of models shown in \cref{fig:heuristicmodels}.
+Looking at them models that were found by numerical maximisation in \cref{fig:envvid} 
+(see the video for the full set of models) suggests we look at the particular set of models shown in \cref{fig:heuristicmodels}.
 
-At one particular time the model is (\ref{fig:serial_uniform}) the uniform serial model with \(M\) states.
-At later times the model has (\ref{fig:serial_sticky}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as \(\tau \to \infty\).
-At earlier times the model is (\ref{fig:serial_shorten}) progressively shortened by reducing the transition probability to the end states.
+At one particular time the model is (\ref{fig:serial_uni}) the uniform serial model with \(M\) states.
+At later times the model has (\ref{fig:serial_stk}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as \(\tau \to \infty\).
+At earlier times the model is (\ref{fig:serial_sht}) progressively shortened by reducing the transition probability to the end states.
 Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state (as one can see from \cref{fig:envvid} and the video this is not quite true, but it is close enough to true to get a reasonable approximation to the envelope).
 Once the length has been reduced to \(M=2\) the model is not shortened any further and the two-state model with deterministic transitions maximises the memory curve for all earlier times.
 
@@ -2404,7 +2499,7 @@ We study models with \(m\) strong and \(m\) weak states for a total of  \(M = 2 
 
 \subsection{Uniform serial model}\label{sec:serial_uniform}
 
-Here we will look at the model in \cref{fig:heuristicmodels}\ref{fig:serial_uniform}.
+Here we will look at the model in \cref{fig:heuristicmodels}\ref{fig:serial_uni}.
 Looking at \eqref{eq:larea}, the only thing we need is differences in \(\etwm_i(s)\).
 In fact, given that the only nonzero elements of \(\enc\) are
 %
@@ -2555,7 +2650,7 @@ However, it does match up with the full formula, \eqref{eq:unienv} at the bounda
 \subsection{Shortened serial model}\label{sec:serial_shorten}
 
 
-Here we will look at the model in \cref{fig:heuristicmodels}\ref{fig:serial_shorten}.
+Here we will look at the model in \cref{fig:heuristicmodels}\ref{fig:serial_sht}.
 We proceed in the same manner as in \cref{sec:serial_uniform}, with the following differences.
 
 The following elements of \(\enc\) and \(\eq\) differ from \eqref{eq:unienc}:
@@ -2711,7 +2806,7 @@ This is related to the fact that \cref{fig:envvid} and the video shows that the 
 
 \subsection{Sticky serial model}\label{sec:serial_sticky}
 
-Here we will look at the model in \cref{fig:heuristicmodels}\ref{fig:serial_sticky}.
+Here we will look at the model in \cref{fig:heuristicmodels}\ref{fig:serial_stk}.
 We proceed in the same manner as in \cref{sec:serial_uniform}, with the following differences.
 
 The following elements of \(\enc\) and \(\eq\) are differ from \eqref{eq:unienc}:
@@ -2797,20 +2892,23 @@ We define
                     {s \Delta m \Delta g_m (\mu - \varepsilon) (g_m - \varepsilon)}.
 \end{equation*}
 %
-The maximum is at the solution of
+The maximum is at
 %
-\begin{multline}\label{eq:stickyopt}
-% \begin{aligned}
-  \brk{(1 + f_m -  g_m - \mu)\varepsilon - f_m + \mu g_m}^2 
-    = (\mu - 1) (g_m - 1) (f_m - \mu) (f_m - g_m) , \\
+\begin{equation}\label{eq:stickyopt}
+\begin{aligned}
+  % \brk{(1 + f_m -  g_m - \mu)\varepsilon - f_m + \mu g_m}^2 
+  %   = (\mu - 1) (g_m - 1) (f_m - \mu) (f_m - g_m) , \\
+  \varepsilon &= \frac{f_m - \mu g_m 
+        \pm \sqrt{(\mu - 1) (g_m - 1) (f_m - \mu) (f_m - g_m)}}
+      {1 + f_m -  g_m - \mu} \\
   \implies \qquad
-  \hat{A}(s) = \frac{\Delta f_m}{s \Delta m \Delta g_m}
+  \hat{A}(s) &= \frac{\Delta f_m}{s \Delta m \Delta g_m}
       \brk{\frac{\sqrt{(f_m - \mu)(f_m - g_m)} 
                   + \sqrt{(\mu - 1)(g_m - 1)}}
                 {\sqrt{(f_m - g_m)(g_m - 1)} 
                   + \sqrt{(f_m - \mu)(\mu - 1)}}}^2.
-% \end{aligned}
-\end{multline}
+\end{aligned}
+\end{equation}
 %
 The result is plotted in \cref{fig:sticky}.
 
