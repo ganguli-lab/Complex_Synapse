@@ -1268,6 +1268,9 @@ The second is an inner product of rank 2 tensors (functions of pairs of points o
 \end{equation}
 %
 The omission of the diagonal terms leaves only non-negative terms.
+We can think of \cref{eq:innereq} as the inner product in node-space with metric \( \diag(\eq) \), 
+and \cref{eq:innerflux} as the inner product in edge-space with metric \( \diag(\F) \).
+The edge-space metric is positive-definite if the sum in \cref{eq:innerflux} is restricted to the edges that have transitions.
 
 When the process satisfies detailed balance, \ie \(\Fm_{ij}\) is symmetric, we can relate these inner products to quantities of interest.
 
@@ -1370,11 +1373,11 @@ Now we can apply the Cauchy-Schwartz inequality to both factors to find
 \end{equation*}
 %
 We also have \( \nrm{\w}^2 = \sum_i \eqm_i \wm_i^2 = 1 \).
-Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eqm_i \MMm_{ij} \leq r \sum_i \eqm_i = r\).
+Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eqm_i \frgm_{ij} \leq r \sum_i \eqm_i = r\).
 Then, remembering \cref{eq:numrange},
 %
 \begin{equation}\label{eq:sqrtnumrange}
-  \CI(\mathbf{u}) \leq \sqrt{\frac{2\av{\mathbf{u}, -\MM \mathbf{u}}}{r\av{\mathbf{u}, \mathbf{u}}}}
+  \CI(\mathbf{u}) \leq \sqrt{\frac{2\av{\mathbf{u}, -\frg \mathbf{u}}}{r\av{\mathbf{u}, \mathbf{u}}}}
       = \sqrt{2\mathcal{W}(-\frg;\mathbf{u})/r}.
 \end{equation}
 %
@@ -2081,7 +2084,7 @@ Both must statisfy \cref{eq:oneexit} for the same \(\kktm^\nu_{mm}\), so
 \begin{equation}\label{eq:twoexits}
   \Wm^\nu_{mi}, \Wm^\nu_{mj} > 0
   \qquad \implies \qquad
-  \dgnm^\mu_{m,i} = \dgnm^\nu_{m,j}
+  \dgnm^\nu_{m,i} = \dgnm^\nu_{m,j}
   \quad \text{or}\quad
   \dgnm_{m,i} - \dgnm_{m,j} = - (-1)^\nu (\etwm_i - \etwm_j).
 \end{equation}
@@ -2170,7 +2173,7 @@ Either there would be one state like \(n\), or there would be one state like \(i
 (\ref*{fig:scaling_plane}) Scaling of optimal models in the \((s,r)\)-plane.
   Optimal models on grey ``rays'' are related by scaling, and therefore have the same topology.
   The line at \(r = r_0\) is where we need the solutions.
-  The line at \(s = \epsilon\) is where we can determine the topology.
+  The line at \(s = \epsilon\) is close to where we can determine the topology.
 \label{fig:planes}}
 \end{center}
 \end{figure}
@@ -2340,7 +2343,7 @@ If we denote the solution to the maximisation problem by \(\W^\ast(s,r), \kkt^\a
 \end{aligned}
 \end{equation}
 %
-We can also denote the envelope by \( A^\ast(s,r) = A(s, \W^\ast(s,r) \)
+We can also denote the envelope by \( A^\ast(s,r) = A(s, \W^\ast(s,r)) \)
 %
 \begin{equation*}
 \begin{aligned}[t]
@@ -2385,12 +2388,13 @@ The set of serial models with such a \(\eq\) are the limit as \(\delta \rightarr
 \begin{equation}\label{eq:areamodels}
 \begin{aligned}
   \W\pot_{ii+1} = \W\dep_{i+1i} = q_i, 
-  \text{ for } 2 \leq i \leq M-2,
+  % \text{ for } 2 \leq i \leq M-2,
   \qquad
-  \W\pot_{12} &= \delta, \quad &
-  \W\pot_{M-1M} &= q_{M-1}, \\
-  \W\dep_{21} &= q_1, &
-  \W\dep_{MM-1} &= \delta.
+  \text{except} \quad
+  \W\pot_{12} &= \delta q_1, \quad &
+  % \W\pot_{M-1M} &= q_{M-1}, \\
+  % \W\dep_{21} &= q_1, &
+  \W\dep_{MM-1} &= \delta q_{M-1}.
 \end{aligned}
 \end{equation}
 %
@@ -2430,10 +2434,20 @@ Then, to leading order in small \(\delta\), we find:
 \begin{equation}\label{eq:areavecs}
 \begin{aligned}
   \etwm_i - \etwm_j &= \frac{z}{\delta} \sum_k^{i:j} \frac{1}{q_k}, & \qquad
-  \thbm_i - \thbm_j &= \frac{z}{\delta} \sum_k^{j:i} \frac{2k - M}{q_k}, \\
+  \thbm_i - \thbm_j &= \frac{z}{\delta} \sum_k^{i:j} \frac{M - 2k}{q_k}, \\
   a_i &= \frac{1}{\eqm_i} 
     \quad \text{for } 2 \leq i \leq M-1, &
-  a_1 &= a_M = 1.
+  a_1 &= a_M = 1, \\
+  \alpha^\nu_i &= - \frac{z ((-1)^\nu c_i + 1)}{r f^\nu \delta}
+    \quad \text{for } 2 \leq i \leq M-1, &
+  \alpha\pot_1 &= \frac{z(M-2)}{r f^\nu q_1}, \\
+  \alpha\pot_M &= \alpha\dep_1 = 0, &
+  \alpha\dep_M &= \frac{z(M-2)}{r f^\nu q_{M-1}}, \\
+  \omega^\nu_i &= \frac{(-1)^\nu z}{r f^\nu \delta}
+    \quad \text{for } 2 \leq i \leq M-1, &
+  \omega\pot_1 &= \frac{z}{r f^\nu q_1}, \\
+  \omega\pot_M &= \omega\dep_1 = 0, &
+  \omega\dep_M &= - \frac{z}{r f^\nu q_{M-1}}.
 \end{aligned}
 \end{equation}
 %
@@ -2441,19 +2455,21 @@ Now we can use \cref{eq:kktsol} to calculate the KKT multipliers
 %
 \begin{equation}\label{eq:areaKKT}
 \begin{aligned}
-    \kktm^\nu_{ij} = \sum_k^{i:j} \frac{k - i - \delta\dep_\nu}{q_k}
+    \kktm^\nu_{ij} = \sum_k^{i:j} \frac{k - i + \delta\dep_\nu}{q_k}
       \quad \text{ for } 2 \leq i \leq M-1, \qquad
-    \kktm^\nu_{1j} &= \frac{1}{\delta} \sum_{k=1}^{j-1} \frac{k - 1 - \delta\dep_\nu}{q_k},
+    \kktm^\nu_{1j} &= \frac{1}{\delta} \sum_{k=1}^{j-1} \frac{k - 1 + \delta\dep_\nu}{q_k},
       \\
-    \kktm^\nu_{Mj} &= \frac{1}{\delta} \sum_{k=j}^{M-1} \frac{M - k + \delta\dep_\nu}{q_k}.
+    \kktm^\nu_{Mj} &= \frac{1}{\delta} \sum_{k=j}^{M-1} \frac{M - k - \delta\dep_\nu}{q_k}.
 \end{aligned}
 \end{equation}
 %
 They are all nonnegative, as the numerator is only negative when \(i > j\) and the negative of the sum is used.
-There are only two ways a KKT multiplier can be zero. 
-If the sum is empty (\(j = i\)) or it contains exactly one term that is zero (\( j = i + (-1)^\nu \)).
-It is impossible for more than one term in the sum to be zero.
-Those transitions ddefine the serial topology.
+There are only two ways one of these KKT multipliers could be zero: 
+the sum is empty; 
+the sum contains exactly one term and that term is zero
+(It is impossible for more than one term in the sum to be zero).
+The first occurs for \(j = i\), the second for \( j = i + (-1)^\nu \).
+Those transitions define the serial topology.
 
 
 
@@ -2556,7 +2572,7 @@ with the following exceptions
 \end{aligned}
 \end{equation}
 %
-These equations are invariant under \(\delta\eta_{2m+1-i} \to -\delta\eta_i\), so these two must be equal.
+These equations are invariant under \(\delta\eta_{2m+1-i} \to -\delta\eta_i\), so these two must be equal (up to a constant that we can drop).
 Then we have
 %
 \begin{equation}\label{eq:detahalf}
@@ -2753,7 +2769,7 @@ The results are plotted in \cref{fig:shorten}.
 (\ref{fig:short_opt}): Solid grey line is \cref{eq:unienv}, the uniform model with \(M\) treated as a continuous parameter and optimised.
 Dotted grey line is the approximate expression from \cref{eq:unienvapprox}.
 The other curves are from \cref{eq:shortopt}, optimised shortened models for various values of \(M\).
-(\ref{fig:short_ratio}): The ratios of the quantities plotted in (\ref{fig:short_opt}) to \cref{eq:unienv}.
+(\ref{fig:short_ratio}): The quantities plotted in (\ref{fig:short_opt}) divided by \cref{eq:unienv}.
 The dotted blue and orange lines are the extensions of the \(M=2,4\) lines with \(\varepsilon\) held at 0, as discussed below \cref{eq:shortenvalid}.
 Noting the scale of the y-axis, we see that \cref{eq:unienv,eq:unienvapprox} do provide good approximations, especially for larger \(M\).
 \label{fig:shorten}}
