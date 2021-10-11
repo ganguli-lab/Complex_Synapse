@@ -2892,21 +2892,21 @@ which leads to the Laplace transform
 \end{figure}
 
 We can maximise this \wrt \(\varepsilon\).
-We define
-%
-\begin{equation*}
-\begin{aligned}
-  \Delta m &= (m-1), &
-  \mu &= \frac{m}{\Delta m}, \\
-  \Delta f_m(\beta) &= S((m-1)\beta), &
-  f_m(\beta) &= \frac{S(m\beta)}{\Delta f_m(\beta)}, \\
-  \Delta g_m(\beta) &= \Delta f_m(\beta) + 1 , &
-  g_m(\beta) &= \frac{S(m\beta) + 1}{\Delta g_m(\beta)}, \\
-\end{aligned}
-  \; \implies \quad
-  \hat{A}(s) = \frac{\Delta f_m (1 - \varepsilon) (f_m - \varepsilon)}
-                    {s \Delta m \Delta g_m (\mu - \varepsilon) (g_m - \varepsilon)}.
-\end{equation*}
+% We define
+% %
+% \begin{equation*}
+% \begin{aligned}
+%   \Delta m &= (m-1), &
+%   \mu &= \frac{m}{\Delta m}, \\
+%   \Delta f_m(\beta) &= S((m-1)\beta), &
+%   f_m(\beta) &= \frac{S(m\beta)}{\Delta f_m(\beta)}, \\
+%   \Delta g_m(\beta) &= \Delta f_m(\beta) + 1 , &
+%   g_m(\beta) &= \frac{S(m\beta) + 1}{\Delta g_m(\beta)}, \\
+% \end{aligned}
+%   \; \implies \quad
+%   \hat{A}(s) = \frac{\Delta f_m (1 - \varepsilon) (f_m - \varepsilon)}
+%                     {s \Delta m \Delta g_m (\mu - \varepsilon) (g_m - \varepsilon)}.
+% \end{equation*}
 %
 The maximum is at
 %
@@ -2914,18 +2914,23 @@ The maximum is at
 \begin{aligned}
   % \brk{(1 + f_m -  g_m - \mu)\varepsilon - f_m + \mu g_m}^2 
   %   = (\mu - 1) (g_m - 1) (f_m - \mu) (f_m - g_m) , \\
-  \varepsilon &= \frac{f_m - \mu g_m 
-        \pm \sqrt{(\mu - 1) (g_m - 1) (f_m - \mu) (f_m - g_m)}}
-      {1 + f_m -  g_m - \mu} \\
-  \implies \qquad
-  \hat{A}(s) &= \frac{\Delta f_m}{s \Delta m \Delta g_m}
-      \brk{\frac{\sqrt{(f_m - \mu)(f_m - g_m)} 
-                  + \sqrt{(\mu - 1)(g_m - 1)}}
-                {\sqrt{(f_m - g_m)(g_m - 1)} 
-                  + \sqrt{(f_m - \mu)(\mu - 1)}}}^2.
+  \varepsilon 
+    % &= \frac{f_m - \mu g_m 
+    %     - \sqrt{(\mu - 1) (g_m - 1) (f_m - \mu) (f_m - g_m)}}
+    %   {1 + f_m -  g_m - \mu} \\
+    &= \frac{D - S(m\beta)}{D - S((m-1)\beta)} &
+  \implies \quad
+  \hat{A}(s) 
+    % &= \frac{\Delta f_m}{s \Delta m \Delta g_m}
+    %   \brk{\frac{\sqrt{(f_m - \mu)(f_m - g_m)} 
+    %               + \sqrt{(\mu - 1)(g_m - 1)}}
+    %             {\sqrt{(f_m - g_m)(g_m - 1)} 
+    %               + \sqrt{(f_m - \mu)(\mu - 1)}}}^2.
+    &= \frac{S(m\beta) - S((m-1)\beta)}{s\prn{D + 1}^2} ,
 \end{aligned}
 \end{equation}
 %
+where \( D = \sqrt{(m-1)S(m\beta) - m S((m-1)\beta)} \).
 The result is plotted in \cref{fig:sticky}.
 
 We can find the boundary of the region of applicability by asking: at what value of \(s\) is the optimal value of \(\varepsilon=0\)?
@@ -2972,25 +2977,29 @@ We will phrase it in terms of \(\snrb(\tau)\), reintroducing \(r\):
   \beta(\tau) = \sinh\inv \!\!\sqrt{1/2r\tau}.
 \end{equation}
 %
-Then, combining \cref{eq:binaryenv,eq:unienv,eq:stickylaplace}, using the notation \( \Delta_{\varepsilon}[T(M)] = T(M) - \varepsilon T(M-2) \) for any function \(T(M)\), we find
+Then, combining \cref{eq:binaryenv,eq:unienv,eq:stickylaplace}, 
+% using the notation \( \Delta_{\varepsilon}[T(M)] = T(M) - \varepsilon T(M-2) \) for any function \(T(M)\), 
+we find
 %
 \begin{equation}\label{eq:henv}
   \snrb(\tau) = \left\{
 \begin{aligned}
   & \frac{\sqrt{N}}{1+r\tau}, &
   & r\tau \leq \tfrac{1}{2\sinh^2\frac{y_*}{2}} , \\
-  & \sqrt{N}\prn{ \frac{ 4\sinh^2 \frac{y_*}{2} }{ y_* \cosh y_* } } \beta(\tau), &
+  & \sqrt{N} \prn{\frac{ \sinh y_* }{ \cosh^2 y_* }} \beta(\tau), &
   \tfrac{1}{2\sinh^2 \frac{y_*}{2}} \leq & r\tau \leq \tfrac{1}{2\sinh^2 \frac{y_*}{M}} , \\
-  & \max_{\varepsilon \in [0,1]} \brc{
-      \frac{2\sqrt{N}(1-\varepsilon) \Delta_{\varepsilon}\brk{S\prn{\tfrac{M\beta}{2}}}}
-      {\Delta_{\varepsilon}\brk{M} \Delta_{\varepsilon}\brk{S\prn{\tfrac{M\beta}{2}} + 1} } 
-      }, &
+  & \frac{\sqrt{N}\brk{S\prn{\tfrac{M\beta}{2}} - S\prn{\tfrac{(M-2)\beta}{2}}}}
+        {\brk{\sqrt{{\frac{M-2}{2} S\prn{\tfrac{M\beta}{2}} - \frac{M}{2} S\prn{\tfrac{(M-2)\beta}{2}}}} + 1}^2} , &
+  % & \max_{\varepsilon \in [0,1]} \brc{
+  %     \frac{2\sqrt{N}(1-\varepsilon) \Delta_{\varepsilon}\brk{S\prn{\tfrac{M\beta}{2}}}}
+  %     {\Delta_{\varepsilon}\brk{M} \Delta_{\varepsilon}\brk{S\prn{\tfrac{M\beta}{2}} + 1} } 
+  %     }, &
   \tfrac{1}{2\sinh^2 \frac{y_*}{M}} \leq & r\tau ,
 \end{aligned}
 \right.
 \end{equation}
 %
-where \(\beta(\tau)\) and \(S(\beta)\) are given by the second formula of \cref{eq:detagensol}.
+where \(S(\beta) = \cosh \beta(\tau) - 1\) (see \cref{eq:detagensol}) and \(y_*\) is defined in \cref{eq:unienv}.
 
 For \(M \gg 1\), and \(r\tau\) much greater than the lower bound of each region, we can approximate the envelope as
 %
@@ -3009,7 +3018,7 @@ For \(M \gg 1\), and \(r\tau\) much greater than the lower bound of each region,
 %
 This is plotted in \cref{fig:heuristicenv}.
 It should be compared to \cref{eq:env,eq:envDB}.
-\Cref{eq:henvapprox} has a similar form as \cref{eq:envDB}.
+\Cref{eq:henvapprox} has a similar form to the theoretical envelope in \cref{eq:envDB}.
 The left edge of the middle section is at later times in the theoretical version if \(\gamma \gtrsim \frac{1}{2} \csch^2 \frac{y_\ast}{2} \approx 0.73 \).
 The right edge of the middle section is at later times in the theoretical version if \(\gamma \lesssim 2 y_\ast^2 \approx 4.53 \).
 The middle section has greater \(\snrb\) in the theoretical version if \(\gamma \gtrsim \frac{8\sinh^2y_\ast}{\cosh^4y_\ast} \approx 1.18 \).
