@@ -1598,7 +1598,7 @@ The range of \(\tau\) for the second row does not exist for \(M = 3\), in which 
 
 Note that models with the serial topology must satisfy detailed balance.
 Therefore, the conjecture from \cref{sec:finite} implies that the square-root bound of \cref{sec:sqrt} applies, implying the stricter envelope of \cref{eq:envDB}.
-In \cref{fig:envnum} we compare these theoretical envelopes with the numerical maximisation from \cref{fig:envnum}.
+In \cref{fig:envnumth} we compare these theoretical envelopes with the numerical maximisation from \cref{fig:envnum}.
 We can see that this conjectured envelope is close to tight, being off by a constant factor.
 
 
@@ -1619,28 +1619,6 @@ We can see that this conjectured envelope is close to tight, being off by a cons
   \cref{eq:env} and the solid blue line is the conjectured envelope assuming detailed balance, 
   see \cref{eq:envDB}.}\label{fig:envnumth}
 \end{figure}
-
-\begin{figure}[tbp]
-  \centering
-  % Requires \usepackage{graphicx}
-  \begin{myenuma}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=7]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=13]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=21]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=27]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=36]{envelope.pdf}}
-  \item\aligntop{\includegraphics[width=0.45\linewidth,page=50]{envelope.pdf}}
-  \end{myenuma}
-  \caption[Optimal models]{The models that constitute the numeric envelope in \cref{fig:envnum}.
-  The plot to the left of each frame indicates the memory curve of the model shown to the right in green, with the numeric envelope for models with the serial topology in orange and the proven envelope, \eqref{eq:env}, in blue.
-  Above the left plot we have a graphical display of the model, described with more detail to the right.
-  The area of each node is proportional to the steady state probability in that state and the thickness of the red and blue edges are proportional to the transition probabilities under potentiation and depression.
-  The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
-  The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
-  The heat map in the centre right of each frame indicates the equilibrium probability distribution for each state.
-  See the video for the full set of models.}\label{fig:envvid}
-\end{figure}
-\
 
 %================================================================================
 
@@ -1688,7 +1666,7 @@ The derivatives, for \(m \neq n\) are
 \end{aligned}
 \end{equation}
 %
-We can solve for the KKT multipliers by noting that
+We can solve for the diagonal KKT multipliers by noting that
 %
 \begin{equation*}
   \kktm^\nu_{ij} \Wm^\nu_{ij} = 0,
@@ -1701,10 +1679,6 @@ Then, with some new vectors defined:
 %
 \begin{equation}\label{eq:kktsol}
 \begin{aligned}
-  \kktm^\nu_{mm} &= - \eqm_m \prn{ \albm^\nu_m(s) 
-    + \lambda \ombm^\nu_m(0) 
-    + \prn{{c}_m(s) + (-1)^\nu} \ombm^\nu_m(s)
-    }, \\
   \kktm^\nu_{mn} &= \eqm_m \big( 
       \brk{ \thbm_n(s) - \thbm_m(s) - \albm^\nu_m(s) }
     + \lambda \brk{ \etwm_n(0) - \etwm_m(0) - \ombm^\nu_m(0) } 
@@ -1718,32 +1692,20 @@ Then, with some new vectors defined:
 \end{aligned}
 \end{equation}
 %
-If we note that we can write \( \W^\nu = \prn{\frg + (-1)^\nu \enc} / 2 \), we find that
+
+Let us define the following
 %
-\begin{equation}\label{eq:diagKKT}
+\begin{equation}\label{eq:dgndef}
 \begin{aligned}
-  \alb^\nu(s) &= \frac{\delta\mathbf{a}(s) + (-1)^\nu \enc \thb(s)}
-                     {2rf^\nu},
-  \qquad 
-  \omb^\nu(s) = \frac{\delta\w + s \delta\etw(s) - (-1)^\nu \mathbf{a}(s)}
-                     {2rf^\nu}, 
-  \\
-  \kktm^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
-    \left[ 
-      \hat{A}(s) - c_m(s) (\delta\wm_m + s \delta\etwm_m(s))
-      - \lambda \delta w_m
-    \right. \\ &\hphantom{= \frac{\eqm_m}{2f^\nu} \big[}
-    \left. {}
-      + (-1)^\nu \prn{ 
-        c_m(s) a_m(s) - [\encm \thbm(s)]_m
-        - \delta\wm_m - s \delta\etwm_m(s)
-        + \lambda a_m(0)
-      }
-    \right], 
+    \dgn_{m}(s) &= \thb(s) + c_m \etw(s) + \lambda \etw(0), \\
+    \qquad
+    \dgn^\nu_m(s) &= \dgn_m(s) + (-1)^\nu \etw(s),   
 \end{aligned}
+  \implies \quad
+  \pdiff{\CL}{\Wm^\nu_{mn}} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n}) + \kktm^\nu_{mn} - \kktm^\nu_{mm}.
 \end{equation}
 %
-where \(\delta\) indicates mean subtraction and \(\eq \mathbf{a}(s) = \hat{A}(s)\).
+They should be thought of as collections of vectors rather than matrices, with the first \(m\) a label rather than an index.
 
 The expressions in \cref{eq:finitederivs} have the same form as for \(s=0\), which allowed us to argue that the model with maximal area must have the serial topology in \cref{sec:areapert} and \cite{Lahiri2013synapse}.
 The one missing ingredient is the scale invariance.
@@ -1765,6 +1727,28 @@ The models found numerically are described in \cref{fig:envvid}.
   The orange line indicates maximisation of the memory curve over the space of all matrices satisfying the constraints \eqref{eq:constr}.
   The green line indicates maximisation over models with the serial topology, \ie potentiation only moves up one state and depression only moves down one state.
   }\label{fig:envnum}
+\end{figure}
+
+
+\begin{figure}[tbp]
+  \centering
+  % Requires \usepackage{graphicx}
+  \begin{myenuma}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=7]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=13]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=21]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=27]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=36]{envelope.pdf}}
+  \item\aligntop{\includegraphics[width=0.45\linewidth,page=50]{envelope.pdf}}
+  \end{myenuma}
+  \caption[Optimal models]{The models that constitute the numeric envelope in \cref{fig:envnum}.
+  The plot to the left of each frame indicates the memory curve of the model shown to the right in green, with the numeric envelope for models with the serial topology in orange and the proven envelope, \eqref{eq:env}, in blue.
+  Above the left plot we have a graphical display of the model, described with more detail to the right.
+  The area of each node is proportional to the steady state probability in that state and the thickness of the red and blue edges are proportional to the transition probabilities under potentiation and depression.
+  The bar graph in the upper right of each frame indicates the transition probabilities from the state to the left of each bar to the state on its right, under potentiation.
+  The bar graph in the lower right of each frame indicates the transition probabilities from the state to the right of each bar to the state on its left, under depression.
+  The heat map in the centre right of each frame indicates the equilibrium probability distribution for each state.
+  See the video for the full set of models.}\label{fig:envvid}
 \end{figure}
 
 
@@ -1941,10 +1925,11 @@ We then run into the same problems in proving our serial-topology hypothesis.
   \label{fig:shiftcond}
 \end{myenuma}
 \caption[Shifted problem vs.\ original]{Shifted problem vs.\ original.
-(\ref*{fig:envshift}) Comparison of numerical optimisation of the shifted problem in \cref{eq:lshiftlagrangian,fig:envnum} with the original problemin \cref{eq:finitelagrangian}.
+(\ref*{fig:envshift}) Comparison of numerical optimisation of the shifted problem in \cref{eq:lshiftlagrangian,fig:envnum} with the original problem in \cref{eq:finitelagrangian}.
 We see that the two approaches produce very similar numerical envelopes.
 The shifted problem involves non-linear constraints and is thus harder to solve.
-(\ref{fig:shiftcond}) Plot of the discrepancy in (\ref*{fig:envshift}) against the condition number of the fundamental matrix, \(\fund \).
+We used a limit on the condition number of \(\fund\) of \(10^3\) as a constraint during optimisation.
+(\ref*{fig:shiftcond}) Plot of the discrepancy in (\ref*{fig:envshift}) against the condition number of the fundamental matrix, \(\fund \).
 We see that most of the large discrepancies occur where the problem is numerically ill-conditioned.
 \label{fig:shifted}}
 \end{center}
@@ -1952,236 +1937,48 @@ We see that most of the large discrepancies occur where the problem is numerical
 
 %-------Section------------------------------------------------------------------
 
-\subsection{Topology constraining perturbations}\label{sec:topology}
+subsection{Diagonal constraints}\label{sec:diagKKT}
 
-In this section we will see how far we can get in constraining the topology, 
-despite the lack of scale invariance.
-
-
-%-------Section------------------------------------------------------------------
-
-\subsubsection{Triangularity}\label{sec:parttriangular}
-
-Suppose we have two states, \(i\) and \(j\), with \( \etwm_i > \etwm_j \).
-Consider the following perturbation (see also \cref{fig:triangle_s}(\ref{fig:triangle_pert})):
-%
-\begin{equation}\label{eq:pertKupdn}
-\begin{aligned}
-  2 \brk{\pdiff{\CL}{\encm_{mj}} - \pdiff{\CL}{\encm_{mi}}}
-  &= \pdiff{\CL}{\Wm\pot_{mj}} - \pdiff{\CL}{\Wm\pot_{mi}} -
-  \pdiff{\CL}{\Wm\dep_{mj}} + \pdiff{\CL}{\Wm\dep_{mi}} \\ 
-    &= 2 \eqm_m (\etwm_i - \etwm_j) 
-    + \kktm\pot_{mj} - \kktm\pot_{mi} - \kktm\dep_{mj} + \kktm\dep_{mi}.
-\end{aligned}
-\end{equation}
-%
-Because \( \etwm_i > \etwm_j \), we must have \( \kktm\pot_{mi} + \kktm\dep_{mj} > 0 \).
-So \( \Wm\pot_{mi} > 0 \) would imply that \( \Wm\dep_{mj} = 0 \) and vice versa.
-These two possibilities are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_left},\ref{fig:triangle_right}).
-
-Let us arrange the states left to right in order of decreasing \(\etw\), so that \(i\) is to the left of \(j\).
-For the unconstrained transitions \( \Wm\pot_{mj} \) and \( \Wm\dep_{mi} \) the potentiating transition goes to the \emph{right} of the depressing transition.
-For the other transitions \( \Wm\pot_{mi} \) and \( \Wm\dep_{mj} \) the potentiating transition goes to the \emph{left} of the depressing transition, and they cannot both be nonzero.
-
-This logic can be applied to any pair of states with different values of \(\etw\).
-Therefore, when starting from the same state, no potentiating transition can go to the left of any depressing transition, and no depressing transition can go to the right of any potentiating transition.
-
-For any state \(m\), there is a state \(n\) such that all potentiating transitions go to equal or smaller values of \(\etw\) all depressing transitions go to equal or greater values.
-%
-\begin{equation}\label{eq:separator}
-  \forall\ m, \;\; \exists\ n : 
-  \begin{cases}
-    \etwm_i > \etwm_n &\implies \Wm\pot_{mi} = 0, \\
-    \etwm_i < \etwm_n &\implies \Wm\dep_{mi} = 0.
-  \end{cases}
-\end{equation}
-%
-The remaining allowed transitions from \(m\) are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_allowed}).
-Note that we have not yet ruled the possibility that both \( \Wm\pot_{mn} \) and \( \Wm\dep_{mn} \) are nonzero.
-If one of those transitions is zero, there will be two states with the property above: the targets of right-most depressing and left-most potentiating transitions.
-Note that we have not yet proved anything about where \(\etwm_m\) lies with respect to any of the others.
-
-Consider the perturbation
-%
-\begin{equation}\label{eq:pertK}
-  \pdiff{\CL}{\Wm\pot_{mn}} -
-  \pdiff{\CL}{\Wm\dep_{mn}} =
-    2 \eqm_m (\etwm_m - \etwm_n) 
-    + \kktm\pot_{mn} - \kktm\pot_{mm} - \kktm\dep_{mn} + \kktm\dep_{mm}.
-\end{equation}
-%
-If we assume that both \( \Wm\pot_{mn} \) and \( \Wm\dep_{mn} \) are nonzero, we find that \( \kktm\pot_{mm} - \kktm\dep_{mm} = 2 \eqm_m (\etwm_m - \etwm_n) \).
-Therefore \( \etwm_m > \etwm_n \implies \Wm\pot_{mm} = -rf\pot \) and \( \etwm_m < \etwm_n \implies \Wm\dep_{mm} = -rf\dep \).
-It is also possible that both of the diagonal constraints are saturated.
-
-
-\begin{figure}[ht]
-\begin{center}
-\begin{myenuma}
-  \item \label{fig:triangle_pert} \aligntop{%
-  \includegraphics[width=0.28\linewidth]{pert_triangle.svg}}
-  \item \label{fig:triangle_left} \aligntop{%
-  \includegraphics[width=0.28\linewidth]{left_triangle.svg}}
-  \item \label{fig:triangle_right} \aligntop{%
-  \includegraphics[width=0.28\linewidth]{right_triangle.svg}}
-  \\[1em]
-  \item \label{fig:triangle_allowed} \aligntop{%
-  \includegraphics[width=0.4\linewidth]{allowed_triangle.svg}}
-\end{myenuma}
-\caption[Triangularising perturbation]{Triangularising perturbation.
-  (\ref*{fig:triangle_pert}) The type of perturbation considered in \cref{eq:pertKupdn}, indicating which transitions have their rates increased/decreased.
-  (\ref*{fig:triangle_left},\ref*{fig:triangle_right}) Possible end-points of this perturbation. 
-  (\ref*{fig:triangle_allowed}) The not-as-yet ruled out transitions when states are sorted so that \(\etw\) decreases to the right, with \(\etwm_m\) unconstrained (as yet).
-\label{fig:triangle_s}}
-\end{center}
-\end{figure}
-
-%================================================================================
-
-\subsubsection{Number of exits}\label{sec:exit}
-
-Let us define the following
-%
-\begin{equation}\label{eq:degenerate}
-\begin{aligned}
-    \dgn_{m}(s) &= \thb(s) + c_m \etw(s) + \lambda \etw(0), \\
-    \qquad
-    \dgn^\nu_m(s) &= \dgn_m(s) + (-1)^\nu \etw(s),   
-\end{aligned}
-  \implies \quad
-  \pdiff{\CL}{\Wm^\nu_{mn}} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n}) + \kktm^\nu_{mn} - \kktm^\nu_{mm}.
-\end{equation}
-%
-They should be thought of as collections of vectors rather than matrices, with the first \(m\) a label rather than an index.
-
-Suppose that a state \(n\) has a nonzero transition rate from state \(m\) for one \(\nu\).
-Then \(\kktm^\nu_{mn} = 0\) and:
-%
-\begin{equation}\label{eq:oneexit}
-\begin{aligned}
-  \Wm^\nu_{mn} > 0
-  \quad \implies \quad
-  \kktm^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n})
-  \quad \implies \quad
-  \dgnm^\nu_{m,m} &\geq \dgnm^\nu_{m,n} \\
-  \text{or} \quad
-  \dgnm_{m,m} - \dgnm_{m,n} &\geq - (-1)^\nu (\etwm_m - \etwm_n).
-\end{aligned}
-\end{equation}
-%
-If both \(\nu\) have nonzero rates from \(m\) to \(n\):
-%
-\begin{equation}\label{eq:doubleexit}
-  \Wm\pot_{mn}, \Wm\dep_{mn} > 0
-  \qquad \implies \qquad
-  \dgnm_{m,m} - \dgnm_{m,n} \geq \abs{\etwm_m - \etwm_n}.
-\end{equation}
-%
-
-Suppose there are two states, \(i,j\), with nonzero transitions from \(m\) for one \(\nu\).
-Both must statisfy \cref{eq:oneexit} for the same \(\kktm^\nu_{mm}\), so
-%
-\begin{equation}\label{eq:twoexits}
-  \Wm^\nu_{mi}, \Wm^\nu_{mj} > 0
-  \qquad \implies \qquad
-  \dgnm^\nu_{m,i} = \dgnm^\nu_{m,j}
-  \quad \text{or}\quad
-  \dgnm_{m,i} - \dgnm_{m,j} = - (-1)^\nu (\etwm_i - \etwm_j).
-\end{equation}
-%
-Furthermore, for another state \(k\) with zero transition rate from \(m\) for the same \(\nu\):
-%
-\begin{equation}\label{eq:nonexit}
-\begin{aligned}
-  \Wm^\nu_{mi} > 0, \Wm^\nu_{mk} = 0 
-  \;\;\; \implies \;\;\;
-  \kktm^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m,i})
-  \;\; \implies \;\;
-  \dgnm^\nu_{m,k} &\geq \dgnm^\nu_{m,i} \\
-  \text{or}\quad
-  \dgnm_{m,k} - \dgnm_{m,i} &\geq - (-1)^\nu (\etwm_k - \etwm_i).
-\end{aligned}
-\end{equation}
-%
-If both \(\nu\) have nonzero rates from \(m\) to \(i\) and \(j\):
-%
-\begin{equation}\label{eq:twodoubleexits}
-  \Wm\pot_{mi}, \Wm\dep_{mi}, \Wm\pot_{mj}, \Wm\dep_{mj} > 0
-  \qquad \implies \qquad
-  \dgnm_{m,i} = \dgnm_{m,j} 
-  \quad \text{and} \quad
-  \etwm_i = \etwm_j.
-\end{equation}
-%
-The consequences of these inequalities are depicted in \cref{fig:planes}(\ref{fig:triangle_spacing}).
-We see that \(n\) must be a global minimum of \(\dgn_m\), and if there are multiple transitions of a single type (potentiating or depressing) the targets are constrained to lie on a single line.
-Even if there is no state \(n\) that is the target of both potentiating and depressing transitions, there will be two lines at \(45^\circ \) passing through any targets of potentiating/depressing transitions that demarcate the forbidden zone.
-
-We use \(m*\) to label the intersection of the two diagonal lines in \cref{fig:planes}(\ref{fig:triangle_spacing}), wether or not there is a state there.
-It can be defined for each \(m\), provided that it has at least one outgoing transition for each plasticity type, via
+In \cref{eq:kktsol} we saw that
 %
 \begin{equation*}
-\begin{lgathered}  
-  \dgnm\pot_{m*} = \dgnm\pot_{m,j} = \min_k \dgnm\pot_{m,k},
-  \qquad
-  \dgnm\dep_{m*} = \dgnm\dep_{m,i} = \min_k \dgnm\dep_{m,k},
-  \\
-  \text{and also} \quad
-  \dgnm_{m*} = \frac{1}{2} \prn{\dgnm\pot_{m*} + \dgnm\dep_{m*}},
-  \quad
-  \etwm_{m*} = \frac{1}{2} \prn{\dgnm\pot_{m*} - \dgnm\dep_{m*}},
-  \quad
-  \thbm_{m*} = \dgnm_{m*} - c_m \etwm_{m*}.
-\end{lgathered}
+\begin{aligned}
+  \kktm^\nu_{mm} &= - \eqm_m \prn{ \albm^\nu_m(s) 
+    + \lambda \ombm^\nu_m(0) 
+    + \prn{{c}_m(s) + (-1)^\nu} \ombm^\nu_m(s)
+    }, \\
+  \text{where} \quad 
+  \alb^\nu(s) &= \frac{\W^\nu \thb(s)}{rf^\nu}, \qquad
+  \omb^\nu(s) = \frac{\W^\nu \etw(s)}{rf^\nu}.
+\end{aligned}
 \end{equation*}
 %
-As shown in \cref{eq:twoexits}, this produces the same point regardless of which states \(i\) and \(j\) we use, 
-so long as there is a nonzero depressing/potentiating transition from \(m\) to that state.
-The KKT multipliers are related to these quantities by
+If we note that we can write \( \W^\nu = \prn{\frg + (-1)^\nu \enc} / 2 \), we find that
 %
-\begin{equation}\label{eq:KKTz}
-  \kktm^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m*}),
-  \qquad
-  \kktm^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m*}).
+\begin{equation}\label{eq:diagKKT}
+\begin{aligned}
+  \alb^\nu(s) &= \frac{\delta\mathbf{a}(s) + (-1)^\nu \enc \thb(s)}
+                     {2rf^\nu},
+  \qquad 
+  \omb^\nu(s) = \frac{\delta\w + s \delta\etw(s) - (-1)^\nu \mathbf{a}(s)}
+                     {2rf^\nu}, 
+  \\
+  \kktm^\nu_{mm} &= \frac{\eqm_m}{2rf^\nu} 
+    \left[ 
+      \hat{A}(s) - c_m(s) (\delta\wm_m + s \delta\etwm_m(s))
+      - \lambda \delta w_m
+    \right. \\ &\hphantom{= \frac{\eqm_m}{2f^\nu} \big[}
+    \left. {}
+      + (-1)^\nu \prn{ 
+        c_m(s) a_m(s) - [\encm \thbm(s)]_m
+        - \delta\wm_m - s \delta\etwm_m(s)
+        + \lambda a_m(0)
+      }
+    \right], 
+\end{aligned}
 \end{equation}
 %
-
-Both of \cref{eq:twoexits,eq:twodoubleexits} require degeneracy -- 
-those two situations would require \(\dgn^\nu_m\) to have degenerate minima.
-The physicist's intuition states that degeneracy is fragile and requires a symmetry to protect it.
-Such a symmetry would imply that the states are lumpable.
-This would imply that, after lumping all lumpable states together, the situation in \cref{eq:twoexits} is impossible and \cref{eq:twodoubleexits} is even more impossible.
-If this intuition holds, we expect that \cref{fig:planes}(\ref{fig:triangle_spacing}) would have at most one state on each of the two diagonal lines.
-Either there would be one state like \(n\), or there would be one state like \(i\) and one state like \(j\), and the first of these possibilities is rather implausible.
-
-\begin{figure}[ht]
-\begin{center}
-\begin{myenuma}
-  \item \label{fig:triangle_spacing} \aligntop{ \hspace{-2em}%
-  \includegraphics[width=0.4\linewidth]{spacing_triangle.svg}}
-  \hspace{0.2em}
-  \item \label{fig:scaling_plane}\aligntop{ \hspace{-1em}%
-  \includegraphics[width=0.4\linewidth]{scaling_plane.svg}}
-\end{myenuma}
-\caption[Depicting constraints on topology]{Depicting constraints on topology.
-(\ref*{fig:triangle_spacing}) The consequences of \cref{eq:oneexit,eq:doubleexit,eq:twoexits,eq:twodoubleexits,eq:nonexit} in the \( (\dgnm_{m,l},-\etwm_l) \)-plane, 
-  with \(i\) a state with a nonzero depressing transition from \(m\), 
-  \(j\) a state with a nonzero potentiating transition, 
-  \(n\) a state with both depressing and potentiating transitions 
-  and \(k\) a state with no nonzero transitions from \(m\).
-  The positions of \(m\) and \(k\) are not yet constrained, other than being in the upper quadrant \wrt \(n\).
-(\ref*{fig:scaling_plane}) Scaling of optimal models in the \((s,r)\)-plane.
-  Optimal models on grey ``rays'' are related by scaling, and therefore have the same topology.
-  The line at \(r = r_0\) is where we need the solutions.
-  The line at \(s = \epsilon\) is close to where we can determine the topology.
-\label{fig:planes}}
-\end{center}
-\end{figure}
-
-%-------Section------------------------------------------------------------------
-
-\subsubsection{Diagonal constraints}\label{sec:diagKKT}
-
+where \(\delta\) indicates mean subtraction and \(\eq \mathbf{a}(s) = \hat{A}(s)\).
 We can write \cref{eq:diagKKT} as
 %
 \begin{equation*}
@@ -2279,7 +2076,7 @@ Then we can also write \cref{eq:diagKKT} as
 %
 again with all quantities evaluated at \(s\) unless labelled otherwise.
 
-\Cref{eq:KKTz} provides another expression for \(\kktm^\nu_{mm}\).
+\Cref{eq:KKTz} will provide another expression for \(\kktm^\nu_{mm}\).
 That expression will agree with \cref{eq:diagKKTz} provided that
 %
 \begin{equation}\label{eq:diagAgree}
@@ -2289,6 +2086,221 @@ That expression will agree with \cref{eq:diagKKTz} provided that
         + \Delta f (\etwm_m - \etwm_{m*}).
 \end{equation}
 % 
+
+%-------Section------------------------------------------------------------------
+
+\subsection{Topology constraining perturbations}\label{sec:topology}
+
+In this section we will see how far we can get in constraining the topology, 
+despite the lack of scale invariance.
+
+
+%-------Section------------------------------------------------------------------
+
+\subsubsection{Triangularity}\label{sec:parttriangular}
+
+Suppose we have two states, \(i\) and \(j\), with \( \etwm_i > \etwm_j \).
+Consider the following perturbation (see also \cref{fig:triangle_s}(\ref{fig:triangle_pert})):
+%
+\begin{equation}\label{eq:pertKupdn}
+\begin{aligned}
+  2 \brk{\pdiff{\CL}{\encm_{mj}} - \pdiff{\CL}{\encm_{mi}}}
+  &= \pdiff{\CL}{\Wm\pot_{mj}} - \pdiff{\CL}{\Wm\pot_{mi}} -
+  \pdiff{\CL}{\Wm\dep_{mj}} + \pdiff{\CL}{\Wm\dep_{mi}} \\ 
+    &= 2 \eqm_m (\etwm_i - \etwm_j) 
+    + \kktm\pot_{mj} - \kktm\pot_{mi} - \kktm\dep_{mj} + \kktm\dep_{mi}.
+\end{aligned}
+\end{equation}
+%
+Because \( \etwm_i > \etwm_j \), we must have \( \kktm\pot_{mi} + \kktm\dep_{mj} > 0 \).
+So \( \Wm\pot_{mi} > 0 \) would imply that \( \Wm\dep_{mj} = 0 \) and vice versa.
+These two possibilities are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_left},\ref{fig:triangle_right}).
+
+Let us arrange the states left to right in order of decreasing \(\etw\), so that \(i\) is to the left of \(j\).
+For the unconstrained transitions \( \Wm\pot_{mj} \) and \( \Wm\dep_{mi} \) the potentiating transition goes to the \emph{right} of the depressing transition.
+For the other transitions \( \Wm\pot_{mi} \) and \( \Wm\dep_{mj} \) the potentiating transition goes to the \emph{left} of the depressing transition, and they cannot both be nonzero.
+
+This logic can be applied to any pair of states with different values of \(\etw\).
+Therefore, when starting from the same state, no potentiating transition can go to the left of any depressing transition, and no depressing transition can go to the right of any potentiating transition.
+
+For any state \(m\), there is a state \(n\) such that all potentiating transitions go to equal or smaller values of \(\etw\) all depressing transitions go to equal or greater values.
+%
+\begin{equation}\label{eq:separator}
+  \forall\ m, \;\; \exists\ n : 
+  \begin{cases}
+    \etwm_i > \etwm_n &\implies \Wm\pot_{mi} = 0, \\
+    \etwm_i < \etwm_n &\implies \Wm\dep_{mi} = 0.
+  \end{cases}
+\end{equation}
+%
+The remaining allowed transitions from \(m\) are depicted in \cref{fig:triangle_s}(\ref{fig:triangle_allowed}).
+Note that we have not yet ruled the possibility that both \( \Wm\pot_{mn} \) and \( \Wm\dep_{mn} \) are nonzero.
+If one of those transitions is zero, there will be two states with the property above: the targets of right-most depressing and left-most potentiating transitions.
+Note that we have not yet proved anything about where \(\etwm_m\) lies with respect to any of the others.
+
+Consider the perturbation
+%
+\begin{equation}\label{eq:pertK}
+  \pdiff{\CL}{\Wm\pot_{mn}} -
+  \pdiff{\CL}{\Wm\dep_{mn}} =
+    2 \eqm_m (\etwm_m - \etwm_n) 
+    + \kktm\pot_{mn} - \kktm\pot_{mm} - \kktm\dep_{mn} + \kktm\dep_{mm}.
+\end{equation}
+%
+If we assume that both \( \Wm\pot_{mn} \) and \( \Wm\dep_{mn} \) are nonzero, we find that \( \kktm\pot_{mm} - \kktm\dep_{mm} = 2 \eqm_m (\etwm_m - \etwm_n) \).
+Therefore \( \etwm_m > \etwm_n \implies \Wm\pot_{mm} = -rf\pot \) and \( \etwm_m < \etwm_n \implies \Wm\dep_{mm} = -rf\dep \).
+It is also possible that both of the diagonal constraints are saturated.
+
+
+\begin{figure}[ht]
+\begin{center}
+\begin{myenuma}
+  \item \label{fig:triangle_pert} \aligntop{%
+  \includegraphics[width=0.28\linewidth]{pert_triangle.svg}}
+  \item \label{fig:triangle_left} \aligntop{%
+  \includegraphics[width=0.28\linewidth]{left_triangle.svg}}
+  \item \label{fig:triangle_right} \aligntop{%
+  \includegraphics[width=0.28\linewidth]{right_triangle.svg}}
+  \\[1em]
+  \item \label{fig:triangle_allowed} \aligntop{%
+  \includegraphics[width=0.4\linewidth]{allowed_triangle.svg}}
+\end{myenuma}
+\caption[Triangularising perturbation]{Triangularising perturbation.
+  (\ref*{fig:triangle_pert}) The type of perturbation considered in \cref{eq:pertKupdn}, indicating which transitions have their rates increased/decreased.
+  (\ref*{fig:triangle_left},\ref*{fig:triangle_right}) Possible end-points of this perturbation. 
+  (\ref*{fig:triangle_allowed}) The not-as-yet ruled out transitions when states are sorted so that \(\etw\) decreases to the right, with \(\etwm_m\) unconstrained (as yet).
+\label{fig:triangle_s}}
+\end{center}
+\end{figure}
+
+%================================================================================
+
+\subsubsection{Number of exits}\label{sec:exit}
+
+The arguments in this section will break down if \(\eqm_m = 0\).
+Suppose that a state \(n\) has a nonzero transition rate from state \(m\) for one \(\nu\).
+Then \(\kktm^\nu_{mn} = 0\) and:
+%
+\begin{equation}\label{eq:oneexit}
+\begin{aligned}
+  \Wm^\nu_{mn} > 0
+  \quad \implies \quad
+  \kktm^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m,n})
+  \quad \implies \quad
+  \dgnm^\nu_{m,m} &\geq \dgnm^\nu_{m,n} \\
+  \text{or} \quad
+  \dgnm_{m,m} - \dgnm_{m,n} &\geq - (-1)^\nu (\etwm_m - \etwm_n).
+\end{aligned}
+\end{equation}
+%
+If both \(\nu\) have nonzero rates from \(m\) to \(n\):
+%
+\begin{equation}\label{eq:doubleexit}
+  \Wm\pot_{mn}, \Wm\dep_{mn} > 0
+  \qquad \implies \qquad
+  \dgnm_{m,m} - \dgnm_{m,n} \geq \abs{\etwm_m - \etwm_n}.
+\end{equation}
+%
+
+Suppose there are two states, \(i,j\), with nonzero transitions from \(m\) for one \(\nu\).
+Both must statisfy \cref{eq:oneexit} for the same \(\kktm^\nu_{mm}\), so
+%
+\begin{equation}\label{eq:twoexits}
+  \Wm^\nu_{mi}, \Wm^\nu_{mj} > 0
+  \qquad \implies \qquad
+  \dgnm^\nu_{m,i} = \dgnm^\nu_{m,j}
+  \quad \text{or}\quad
+  \dgnm_{m,i} - \dgnm_{m,j} = - (-1)^\nu (\etwm_i - \etwm_j).
+\end{equation}
+%
+Furthermore, for another state \(k\) with zero transition rate from \(m\) for the same \(\nu\):
+%
+\begin{equation}\label{eq:nonexit}
+\begin{aligned}
+  \Wm^\nu_{mi} > 0, \Wm^\nu_{mk} = 0 
+  \;\;\; \implies \;\;\;
+  \kktm^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m,i})
+  \;\; \implies \;\;
+  \dgnm^\nu_{m,k} &\geq \dgnm^\nu_{m,i} \\
+  \text{or}\quad
+  \dgnm_{m,k} - \dgnm_{m,i} &\geq - (-1)^\nu (\etwm_k - \etwm_i).
+\end{aligned}
+\end{equation}
+%
+If both \(\nu\) have nonzero rates from \(m\) to \(i\) and \(j\):
+%
+\begin{equation}\label{eq:twodoubleexits}
+  \Wm\pot_{mi}, \Wm\dep_{mi}, \Wm\pot_{mj}, \Wm\dep_{mj} > 0
+  \qquad \implies \qquad
+  \dgnm_{m,i} = \dgnm_{m,j} 
+  \quad \text{and} \quad
+  \etwm_i = \etwm_j.
+\end{equation}
+%
+The consequences of these inequalities are depicted in \cref{fig:planes}(\ref{fig:triangle_spacing}).
+We see that \(n\) must be a global minimum of \(\dgn_m\), and if there are multiple transitions of a single type (potentiating or depressing) the targets are constrained to lie on a single line.
+Even if there is no state \(n\) that is the target of both potentiating and depressing transitions, there will be two lines at \(45^\circ \) passing through any targets of potentiating/depressing transitions that demarcate the forbidden zone.
+
+We use \(m*\) to label the intersection of the two diagonal lines in \cref{fig:planes}(\ref{fig:triangle_spacing}), wether or not there is a state there.
+It can be defined for each \(m\), provided that it has at least one outgoing transition for each plasticity type, via
+%
+\begin{equation*}
+\begin{lgathered}  
+  \dgnm\pot_{m*} = \dgnm\pot_{m,j} = \min_{k\neq m} \dgnm\pot_{m,k},
+  \qquad
+  \dgnm\dep_{m*} = \dgnm\dep_{m,i} = \min_{k\neq m} \dgnm\dep_{m,k},
+  \\
+  \text{and also} \quad
+  \dgnm_{m*} = \frac{1}{2} \prn{\dgnm\pot_{m*} + \dgnm\dep_{m*}},
+  \quad
+  \etwm_{m*} = \frac{1}{2} \prn{\dgnm\pot_{m*} - \dgnm\dep_{m*}},
+  \quad
+  \thbm_{m*} = \dgnm_{m*} - c_m \etwm_{m*}.
+\end{lgathered}
+\end{equation*}
+%
+As shown in \cref{eq:twoexits}, this produces the same point regardless of which states \(i\) and \(j\) we use, 
+so long as there is a nonzero depressing/potentiating transition from \(m\) to that state.
+The KKT multipliers are related to these quantities by
+%
+\begin{equation}\label{eq:KKTz}
+  \kktm^\nu_{mm} = \eqm_m (\dgnm^\nu_{m,m} - \dgnm^\nu_{m*}),
+  \qquad
+  \kktm^\nu_{mk} = \eqm_m (\dgnm^\nu_{m,k} - \dgnm^\nu_{m*}).
+\end{equation}
+%
+
+Both of \cref{eq:twoexits,eq:twodoubleexits} require degeneracy -- 
+those two situations would require \(\dgn^\nu_m\) to have degenerate minima.
+The physicist's intuition states that degeneracy is fragile and requires a symmetry to protect it.
+Such a symmetry would imply that the states are lumpable.
+This would imply that, after lumping all lumpable states together, the situation in \cref{eq:twoexits} is impossible and \cref{eq:twodoubleexits} is even more impossible.
+If this intuition holds, we expect that \cref{fig:planes}(\ref{fig:triangle_spacing}) would have at most one state on each of the two diagonal lines.
+Either there would be one state like \(n\), or there would be one state like \(i\) and one state like \(j\), and the first of these possibilities is rather implausible.
+
+\begin{figure}[ht]
+\begin{center}
+\begin{myenuma}
+  \item \label{fig:triangle_spacing} \aligntop{ \hspace{-2em}%
+  \includegraphics[width=0.4\linewidth]{spacing_triangle.svg}}
+  \hspace{0.2em}
+  \item \label{fig:scaling_plane}\aligntop{ \hspace{-1em}%
+  \includegraphics[width=0.4\linewidth]{scaling_plane.svg}}
+\end{myenuma}
+\caption[Depicting constraints on topology]{Depicting constraints on topology.
+(\ref*{fig:triangle_spacing}) The consequences of \cref{eq:oneexit,eq:doubleexit,eq:twoexits,eq:twodoubleexits,eq:nonexit} in the \( (\dgnm_{m,l},-\etwm_l) \)-plane, 
+  with \(i\) a state with a nonzero depressing transition from \(m\), 
+  \(j\) a state with a nonzero potentiating transition, 
+  \(n\) a state with both depressing and potentiating transitions 
+  and \(k\) a state with no nonzero transitions from \(m\).
+  The positions of \(m\) and \(k\) are not yet constrained, other than being in the upper quadrant \wrt \(n\).
+(\ref*{fig:scaling_plane}) Scaling of optimal models in the \((s,r)\)-plane.
+  Optimal models on grey ``rays'' are related by scaling, and therefore have the same topology.
+  The line at \(r = r_0\) is where we need the solutions.
+  The line at \(s = \epsilon\) is close to where we can determine the topology.
+\label{fig:planes}}
+\end{center}
+\end{figure}
 
 %-------Section------------------------------------------------------------------
 
@@ -2322,16 +2334,18 @@ or in differential form:
 \end{equation*}
 %
 In \cref{eq:kktsol} we have an expression for the KKT multipliers at the maximum in terms of \(s\) and \(\W \).
-We denote this expression by \( \kkt^\ddagger(s, \W) \).
-If we denote the solution to the maximisation problem by \(\W^\ast(s,r), \kkt^\ast(s,r)\), we have \( \kkt^\ast(s,r) = \kkt^\ddagger(s, \W^\ast(s,r)) \) and
+We denote this expression by \( \kkt^\ddagger(s, r, \W) \)
+(note there is \(s\) dependance through \(\thb(s), \etw(s)\) \etc and \(r\) dependance through \(\alb\) and \(\omb\)).
+If we denote the solution to the maximisation problem by \(\W^\ast(s,r), \kkt^\ast(s,r)\), we have \( \kkt^\ast(s,r) = \kkt^\ddagger(s, r, \W^\ast(s,r)) \) and
 %
 \begin{equation}\label{eq:optmodelscale}
 \begin{aligned}
-  \kkt^\ddagger(\lambda s, \lambda \W) 
-    &= \lambda\inv \kkt^\ddagger(s, \W), &
-  \qquad \text{or} \qquad
-  s \pdiffc<\Wm>{\kkt^\ddagger}{s} 
-      + \sum_{\nu i j} \Wm^\nu_{ij} \pdiffc<s>{\kkt^\ddagger}{\Wm^\nu_{ij}} 
+  \kkt^\ddagger(\lambda s, \lambda r, \lambda \W) 
+    &= \lambda\inv \kkt^\ddagger(s, r, \W), &
+  \quad \text{or} \quad
+  s \pdiffc<r \mathrlap{\Wm}>{\kkt^\ddagger}{s} +
+  r \pdiffc<s \mathrlap{\Wm}>{\kkt^\ddagger}{r} 
+      + \sum_{\nu i j} \Wm^\nu_{ij} \pdiffc<s r>{\kkt^\ddagger}{\Wm^\nu_{ij}} 
     &= -\kkt^\ddagger, \\
   \W^\ast(\lambda s, \lambda r) 
     &= \lambda \W^\ast(s,r), &
@@ -2422,7 +2436,9 @@ First, some notation:
 %
 \begin{equation*}
   \sum_k^{i:j} f(k) 
-    \equiv \sgn(j-i) \smashoperator{\sum_{k = \min(i,j)}^{\max(i,j)-1}} f(k)
+    \equiv \sum_{k = 1}^{j-1} f(k) - \sum_{k = 1}^{i-1} f(k)
+    = \sum_{k = i}^{M} f(k) - \sum_{k = j}^{M} f(k)
+    % = \sgn(j-i) \smashoperator{\sum_{k = \min(i,j)}^{\max(i,j)-1}} f(k)
     = \begin{cases}
         \sum_{k=i}^{j-1} f(k) & i < j,\\
         - \sum_{k=j}^{i-1} f(k) & i > j.
@@ -2433,21 +2449,24 @@ Then, to leading order in small \(\delta\), we find:
 %
 \begin{equation}\label{eq:areavecs}
 \begin{aligned}
-  \etwm_i - \etwm_j &= \frac{z}{\delta} \sum_k^{i:j} \frac{1}{q_k}, & \qquad
+  && \mathllap
+  {\etwm_i - \etwm_j} &= \frac{z}{\delta} \sum_k^{i:j} \frac{1}{q_k}, & \quad
   \thbm_i - \thbm_j &= \frac{z}{\delta} \sum_k^{i:j} \frac{M - 2k}{q_k}, \\
-  a_i &= \frac{1}{\eqm_i} 
-    \quad \text{for } 2 \leq i \leq M-1, &
+    i &\in [2, M-1]: &
+  a_i &= \frac{1}{\eqm_i}, &
   a_1 &= a_M = 1, \\
-  \alpha^\nu_i &= - \frac{z ((-1)^\nu c_i + 1)}{r f^\nu \delta}
-    \quad \text{for } 2 \leq i \leq M-1, &
-  \alpha\pot_1 &= \frac{z(M-2)}{r f^\nu q_1}, \\
-  \alpha\pot_M &= \alpha\dep_1 = 0, &
-  \alpha\dep_M &= \frac{z(M-2)}{r f^\nu q_{M-1}}, \\
-  \omega^\nu_i &= \frac{(-1)^\nu z}{r f^\nu \delta}
-    \quad \text{for } 2 \leq i \leq M-1, &
-  \omega\pot_1 &= \frac{z}{r f^\nu q_1}, \\
-  \omega\pot_M &= \omega\dep_1 = 0, &
-  \omega\dep_M &= - \frac{z}{r f^\nu q_{M-1}}.
+    i &\in [2, M-1]: &
+  \albm^\nu_i &= - \frac{z ((-1)^\nu c_i + 1)}{r f^\nu \delta}, &
+  \albm\pot_1 &= \frac{z(M-2)}{r f^\nu q_1}, \\
+  &&
+  \albm\pot_M &= \albm\dep_1 = 0, &
+  \albm\dep_M &= \frac{z(M-2)}{r f^\nu q_{M-1}}, \\
+    i &\in [2, M-1]: &
+  \ombm^\nu_i &= \frac{(-1)^\nu z}{r f^\nu \delta}, &
+  \ombm\pot_1 &= \frac{z}{r f^\nu q_1}, \\
+  &&
+  \ombm\pot_M &= \ombm\dep_1 = 0, &
+  \ombm\dep_M &= - \frac{z}{r f^\nu q_{M-1}}.
 \end{aligned}
 \end{equation}
 %
@@ -2455,10 +2474,10 @@ Now we can use \cref{eq:kktsol} to calculate the KKT multipliers
 %
 \begin{equation}\label{eq:areaKKT}
 \begin{aligned}
-    \kktm^\nu_{ij} = \sum_k^{i:j} \frac{k - i + \delta\dep_\nu}{q_k}
-      \quad \text{ for } 2 \leq i \leq M-1, \qquad
+    i &\in [2, M-1]: &
+    \kktm^\nu_{ij} &= \sum_k^{i:j} \frac{k - i + \delta\dep_\nu}{q_k}, &
     \kktm^\nu_{1j} &= \frac{1}{\delta} \sum_{k=1}^{j-1} \frac{k - 1 + \delta\dep_\nu}{q_k},
-      \\
+      \\ &&&&
     \kktm^\nu_{Mj} &= \frac{1}{\delta} \sum_{k=j}^{M-1} \frac{M - k - \delta\dep_\nu}{q_k}.
 \end{aligned}
 \end{equation}
@@ -2467,10 +2486,14 @@ They are all nonnegative, as the numerator is only negative when \(i > j\) and t
 There are only two ways one of these KKT multipliers could be zero: 
 the sum is empty; 
 the sum contains exactly one term and that term is zero
-(It is impossible for more than one term in the sum to be zero).
+(it is impossible for more than one term in the sum to be zero).
 The first occurs for \(j = i\), the second for \( j = i + (-1)^\nu \).
 Those transitions define the serial topology.
 
+Unfortunately, arguments based on continuity are not enough to reach the \(s=\epsilon\) line in \cref{fig:planes}\ref{fig:scaling_plane}.
+The largest \(\epsilon\) we could use would be proportional to \(r\) with a coefficient \( \sim \CO(\delta) \).
+The bottom end of the line would have to curve towards the origin and fail to intersect every ray.
+In essence, continuity can get us to a nearby ray, not a nearby vertical line.
 
 
 %-------Section------------------------------------------------------------------
