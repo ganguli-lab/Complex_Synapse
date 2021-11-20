@@ -1138,7 +1138,11 @@ with the states arranged in order of non-increasing $\etwm_i$:
 %
 These were shown by finding allowed perturbations that increase the area.
 
-This leaves two possibilities for the maximum area Markov chain.
+%-------Section------------------------------------------------------------------
+
+\subsubsection{Degeneracy}\label{sec:degeneracy_area}
+
+\hyperref[sec:areapert]{The previous section} leaves two possibilities for the maximum area Markov chain.
 Either there is no degeneracy and no shortcuts, which implies the serial topology that we'll discuss in \cref{sec:serialarea}, or there is some degeneracy, which would allow shortcuts provided that they do not bypass an entire degenerate set (see \cref{eq:shortcutarea}).
 
 Degeneracy tends to be very delicate. 
@@ -1146,6 +1150,27 @@ It is usually hard to arrange without some symmetry relating degenerate states.
 Such a symmetry would imply lumpability (see \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}). 
 The lumped chain would not have any shortcuts, as an entire degenerate set cannot be bypassed. 
 As this lumped chain has the same area (see \cite{Lahiri2013synapse}), we would need only consider the serial topology.
+
+We can almost see that degeneracy implies lumpability as follows:
+suppose there is a nonzero transition between states \(i\) and \(j\) of type \(\nu\),
+Then \(\kktm^\nu_{ij} = 0\) and \cref{eq:areaderivs} becomes
+%
+\begin{equation}\label{eq:dgn_theta}
+\begin{gathered}
+  \pdiff{\CL}{\MMdm^\nu_{ij}} =
+    r f^\nu \eqm_i \prn{ \brk{\thbm_i - \thbm_j}
+     + \prn{c_i + (-1)^\nu + \lambda} \brk{\etwm_i - \etwm_j} } 
+    = 0, \\
+    \implies \quad
+    r f^\nu \eqm_i = 0
+    \qquad \text{or} \qquad
+    \thbm_i - \thbm_j = -  \prn{c_i + (-1)^\nu + \lambda} \brk{\etwm_i - \etwm_j}. 
+\end{gathered}
+\end{equation}
+%
+Therefore, provided that state \(i\) has nonzero equilibrium probability, degeneracy in \(\etw\) implies degeneracy in \(\thb\).
+
+Let \(C_a\) denote the \(a\)'th clump of states that are degenerate in \(\etw\) and \(\thb\), in order of decreasing \(\etw\):
 
 \subsubsection{Serial topology}\label{sec:serialarea}
 
