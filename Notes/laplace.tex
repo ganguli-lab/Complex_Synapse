@@ -1168,9 +1168,96 @@ Then \(\kktm^\nu_{ij} = 0\) and \cref{eq:areaderivs} becomes
 \end{gathered}
 \end{equation}
 %
-Therefore, provided that state \(i\) has nonzero equilibrium probability, degeneracy in \(\etw\) implies degeneracy in \(\thb\).
+Therefore, provided that state \(i\) has nonzero equilibrium probability, degeneracy in \(\etw\) implies degeneracy in \(\thb\) for an otimal model.
 
-Let \(C_a\) denote the \(a\)'th clump of states that are degenerate in \(\etw\) and \(\thb\), in order of decreasing \(\etw\):
+Let \(C_a\) denote the \(a\)'th clump of states that are degenerate in \(\etw\) and \(\thb\), in order of decreasing \(\etw\).
+The arguments from \cref{sec:areapert} tell us that the transitions in \(\W\pot\) from states in \(C_a\) can only go to states in \(C_{a+1}\).%
+\footnote{We haven't said anything about intra-clump transitions yet.
+Perturbing such transitions does not break the degeneracy, so these perturbations can be extended finitely.
+Those perturbations also leave the area invariant, so they are completely null degrees of freedom.
+We can choose to set all intra-clump transitions to zero.}
+Similarly, \(\W\dep\) can only go from states in \(C_a\) to states in \(C_{a-1}\).
+
+Suppose we have two states, \(i,j\), in \(C_a\), and two states, \(k,l\), in \(C_{a+1}\), with \(\Wm\pot_{ik}, \Wm\pot_{jl} > 0\).
+Then \cref{eq:dgn_theta} tells us that
+%
+\begin{equation}\label{eq:dgn_c}
+\begin{aligned}
+  \thbm_i - \thbm_k &= - \prn{c_i + 1 + \lambda} \brk{\etwm_i - \etwm_k} 
+  \quad \implies & 
+  \thbm_a - \thbm_{a+1} &= - \prn{c_i + 1 + \lambda} \brk{\etwm_a - \etwm_{a+1}}, \\
+  \thbm_j - \thbm_l &= - \prn{c_j + 1 + \lambda} \brk{\etwm_j - \etwm_l}
+  \quad \implies & 
+  \thbm_a - \thbm_{a+1} &= - \prn{c_j + 1 + \lambda} \brk{\etwm_a - \etwm_{a+1}}, \\
+  && \implies \quad 
+  0 &= \prn{c_i - c_j} \brk{\etwm_a - \etwm_{a+1}}. \\
+\end{aligned}
+\end{equation}
+%
+Therefore \(\mathbf{c}\) has the same degeneracy as \(\etw\) and \(\thb\).
+If we make the choice \(\wm_i = \sgn c_i\) (as discussed after \cref{eq:lareacoeffs}) we see that \(\w\) also has the same degeneracy.
+A result similar to \cref{eq:dgn_c} holds with \( \text{pot} \leftrightarrow \text{dep} \).
+
+Note that, for any state \(i \in C_a\)
+%
+\begin{equation*}
+\begin{aligned}
+  [\W\pot \etw]_i &= \sum_{j \in C_{a+1}} \Wm\pot_{ij} (\etwm_j - \etwm_i)
+    = (\etwm_{a+1} - \etwm_a) \sum_{\mathclap{j \in C_{a+1}}} \Wm\pot_{ij}
+    = (\etwm_{a+1} - \etwm_a) \lambda\pot_i, \\
+  [\W\dep \etw]_i &= (\etwm_{a-1} - \etwm_a) \lambda\dep_i,
+  \quad\text{where} \quad
+  \lambda^\nu_i =  \sum_{j \neq i} \Wm^\nu_{ij}.
+\end{aligned}
+\end{equation*}
+%
+which also applies wth \(\etw\) replaced with \(\thb\) or \(\mathbf{c}\).
+All models, not just the optimal ones, satisfy
+%
+\begin{equation*}
+\begin{aligned}
+  \frg \thb(0) &= (\I - \onev \eq) \mathbf{a} = - \enc \etw(0) - \CA,
+  \\
+  \frg \etw(0) &= (\I - \onev \eq) \w = \w - \Delta p\, \onev.
+\end{aligned}
+\end{equation*}
+%
+Using the results above
+%
+\begin{equation}\label{eq:dgn_lump}
+\begin{gathered}
+\begin{aligned}
+  (\thbm_{a+1} - \thbm_a) \lambda\pot_i + (\thbm_{a-1} - \thbm_a) \lambda\dep_i
+    &= - (\etwm_{a+1} - \etwm_a) \lambda\pot_i + (\etwm_{a-1} - \etwm_a) \lambda\dep_i - \CA,
+  \\
+  (\etwm_{a+1} - \etwm_a) \lambda\pot_i + (\etwm_{a-1} - \etwm_a) \lambda\dep_i &= \wm_a - \Delta p,
+\end{aligned}
+\\
+  \implies
+\begin{aligned}
+  \lambda\pot_i &= \frac{(\CA - \wm_a + \Delta p) (\etwm_a - \etwm_{a-1}) 
+                        + (\wm_a - \Delta p) (\thbm_a - \thbm_{a-1})}
+                      {(\etwm_{a+1} - \etwm_a) (\thbm_a - \thbm_{a-1})
+                        - (\etwm_a - \etwm_{a-1}) (\thbm_{a+1} - \thbm_a)
+                        - 2 (\etwm_{a+1} - \etwm_a) (\etwm_a - \etwm_{a-1})}, \\
+  \lambda\dep_i &= \frac{(\CA + \wm_a - \Delta p) (\etwm_{a+1} - \etwm_a) 
+                        + (\wm_a - \Delta p) (\thbm_{a+1} - \thbm_a)}
+                      {(\etwm_{a+1} - \etwm_a) (\thbm_a - \thbm_{a-1})
+                        - (\etwm_a - \etwm_{a-1}) (\thbm_{a+1} - \thbm_a)
+                        - 2 (\etwm_{a+1} - \etwm_a) (\etwm_a - \etwm_{a-1})}.
+\end{aligned}
+\end{gathered}
+\end{equation}
+%
+Because the right-hand sides above depend on \(a\) and not \(i\), \cref{eq:dgn_lump} implies that \(\boldsymbol{\lambda}^\nu\) also has the same degeneracy as \(\etw\), which is the condition for lumpability under the partitions \(\brc{C_a}\) \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}.
+
+However, if we substitute the last of \cref{eq:dgn_theta} into \cref{eq:dgn_lump} we find that the denominators vanish and the numerators reduce to \( [\CA - (c_a + \lambda) (\wm_a - \Delta p)] (\etwm_a - \etwm_{a-1}) \), etc.
+When the numerator vanishes, the first two equations of \cref{eq:dgn_lump} are degenerate rather than contradictory, leaving one linear combination of the \(\lambda^\nu_i\) undetermined.
+This means we must have \( \CA = (c_a + \lambda) (\wm_a - \Delta p) \), which would seem to imply that there are only two allowed values of \(c_a\).
+
+This bizarre situation can be avoided if we note the other possibility in \cref{eq:dgn_theta}: we could have \(\eqm_i = 0\).
+As we will see below in \cref{eq:serialextarea}, the optimal models have \(\eqm_i = 0\) for all but two states.
+Using this alternative loses the degeneracy of \(\thb\) and \(\w\), leaving us just short of proving lumpability.
 
 \subsubsection{Serial topology}\label{sec:serialarea}
 
