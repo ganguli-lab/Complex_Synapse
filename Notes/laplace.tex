@@ -717,7 +717,7 @@ In analogy with the case \(s=0\) in \cite{Lahiri2013synapse}, we define
       = \eq \mathbf{a}(s).
 \end{equation}
 %
-If we regard the \(\wm_k\) as optimisable parameters (limited to the range \( [-1,1] \) wlg.),s the optimal choice is clearly \( \wm_k = \sgn(c_k) \).
+If we regard the \(\wm_k\) as optimisable parameters (limited to the range \( [-1,1] \) wlg.), the optimal choice is clearly \( \wm_k = \sgn(c_k) \).
 
 Using the same approach as the area bound in \cite{Lahiri2013synapse} we find that the derivatives are
 %
@@ -928,7 +928,7 @@ To maximise this quantity, consider the Lagrangian
 \end{aligned}
 \end{equation}
 %
-where \(\Delta p\) is the constant value we are holding \(\eq\w\) at.
+where \(\Delta p\) is the constant value at which we are holding \(\eq\w\).
 The Karush-Kuhn-Tucker necessary conditions for a maximum are
 %
 \begin{equation}\label{eq:KTarea}
@@ -2693,29 +2693,29 @@ As we are only interested in differences, we can drop any terms proportional to 
 The \(i\)'th row of this equation reads
 %
 \begin{equation}\label{eq:detarow}
-  \frac{\delta\eta_{i+1}+\delta\eta_{i-1}}{2} - (s+1)\delta\eta_i = 0,
+  \frac{\delta\etwm_{i+1}+\delta\etwm_{i-1}}{2} - (s+1)\delta\etwm_i = 0,
 \end{equation}
 %
 with the following exceptions
 %
 \begin{equation}\label{eq:detabnduni}
 \begin{aligned}
-  \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{m+1}+\delta\eta_{m-1}}{2} - (s+1)\delta\eta_{m} &= \frac{1}{s},\\
-  \frac{\delta\eta_{m+2}+\delta\eta_{m}}{2} - (s+1)\delta\eta_{m+1} &= -\frac{1}{s},\\
-  \frac{\delta\eta_{2m-1}}{2} - \prn{s+\frac{1}{2}}\delta\eta_{2m} &= 0.
+  \frac{\delta\etwm_2}{2} - \prn{s+\frac{1}{2}}\delta\etwm_1 &= 0, \\
+  \frac{\delta\etwm_{m+1}+\delta\etwm_{m-1}}{2} - (s+1)\delta\etwm_{m} &= \frac{1}{s},\\
+  \frac{\delta\etwm_{m+2}+\delta\etwm_{m}}{2} - (s+1)\delta\etwm_{m+1} &= -\frac{1}{s},\\
+  \frac{\delta\etwm_{2m-1}}{2} - \prn{s+\frac{1}{2}}\delta\etwm_{2m} &= 0.
 \end{aligned}
 \end{equation}
 %
-These equations are invariant under \(\delta\eta_{2m+1-i} \to -\delta\eta_i\), so these two must be equal (up to a constant that we can drop).
+These equations are invariant under \(\delta\etwm_{2m+1-i} \to -\delta\etwm_i\), so these two must be equal (up to a constant that we can drop).
 Then we have
 %
 \begin{equation}\label{eq:detahalf}
 \begin{aligned}
-  \frac{\delta\eta_{i+1}+\delta\eta_{i-1}}{2} - (s+1)\delta\eta_i &= 0,
+  \frac{\delta\etwm_{i+1}+\delta\etwm_{i-1}}{2} - (s+1)\delta\etwm_i &= 0,
   \quad\text{for}\quad 1<i<m, \\
-  \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{m} &= \frac{1}{s}.
+  \frac{\delta\etwm_2}{2} - \prn{s+\frac{1}{2}}\delta\etwm_1 &= 0, \\
+  \frac{\delta\etwm_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\etwm_{m} &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
 %
@@ -2723,7 +2723,7 @@ Then we have
 The first of these equations is solved by
 %
 \begin{equation}\label{eq:detagensol}
-  \delta\eta_i = B\e^{\beta(i-1)} + C\e^{\beta(1-i)},
+  \delta\etwm_i = B\e^{\beta(i-1)} + C\e^{\beta(1-i)},
   \qquad\text{where}\qquad
   s = S(\beta) \equiv 2 \sinh^2 \prn{\frac{\beta}{2}}
     = \cosh (\beta) - 1,
@@ -2832,9 +2832,9 @@ The \(\etwm_i(s)\) take the same general form \eqref{eq:detagensol} except for \
 %
 \begin{equation}\label{eq:detabndshorten}
 \begin{aligned}
-  \frac{\delta\eta_2}{2} - \prn{s+\frac{1}{2}}\delta\eta_1 &= 0, \\
-  \frac{\delta\eta_3 + (1-\varepsilon)\delta\eta_1}{2} - \prn{s+\frac{2-\varepsilon}{2}}\delta\eta_2 &= 0, \\
-  \frac{\delta\eta_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\eta_{m} &= \frac{1}{s}.
+  \frac{\delta\etwm_2}{2} - \prn{s+\frac{1}{2}}\delta\etwm_1 &= 0, \\
+  \frac{\delta\etwm_3 + (1-\varepsilon)\delta\etwm_1}{2} - \prn{s+\frac{2-\varepsilon}{2}}\delta\etwm_2 &= 0, \\
+  \frac{\delta\etwm_{m-1}}{2} - \prn{s+\frac{3}{2}}\delta\etwm_{m} &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
 %
@@ -2843,9 +2843,9 @@ These are solved by
 %
 \begin{equation}\label{eq:shortensol}
 \begin{aligned}
-  \delta\eta_i &= B\e^{(i-2)\beta} + C\e^{(2-i)\beta} \qquad
+  \delta\etwm_i &= B\e^{(i-2)\beta} + C\e^{(2-i)\beta} \qquad
         \text{for} \quad 2 \leq i \leq m, \\
-  \delta\eta_1 &= \frac{1}
+  \delta\etwm_1 &= \frac{1}
          {[(1-\varepsilon)\cosh(m\beta) + \varepsilon(2s+1)\cosh((m-1)\beta)]s}, \\
   B &= - \frac{(2s+1) \e^{\beta/2} + (1-\varepsilon) \tanh(\beta/2)}
          {s [(1-\varepsilon)\cosh(m\beta) + \varepsilon(2s+1)\cosh((m-1)\beta)]}, \\
@@ -2986,11 +2986,11 @@ The \(\etwm_i(s)\) take the same general form \eqref{eq:detagensol}, but with di
 %
 \begin{equation}\label{eq:detabndsticky}
 \begin{aligned}
-  \frac{1 - \varepsilon}{2} \delta \eta_2 
-    - \prn{s+\frac{1-\varepsilon}{2}} \delta \eta_1 
+  \frac{1 - \varepsilon}{2} \delta \etwm_2 
+    - \prn{s+\frac{1-\varepsilon}{2}} \delta \etwm_1 
     &= 0, \\
-  \frac{\delta \eta_{m-1}}{2} 
-    - \prn{s+\frac{3}{2}} \delta \eta_{m} 
+  \frac{\delta \etwm_{m-1}}{2} 
+    - \prn{s+\frac{3}{2}} \delta \etwm_{m} 
     &= \frac{1}{s}.
 \end{aligned}
 \end{equation}
