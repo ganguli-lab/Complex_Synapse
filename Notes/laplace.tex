@@ -1202,7 +1202,7 @@ Note that, for any state \(i \in C_a\)
 %
 \begin{equation*}
 \begin{aligned}
-  [\W\pot \etw]_i &= \sum_{j \in C_{a+1}} \Wm\pot_{ij} (\etwm_j - \etwm_i)
+  [\W\pot \etw]_i &= \sum_{\mathclap{j \in C_{a+1}}} \Wm\pot_{ij} (\etwm_j - \etwm_i)
     = (\etwm_{a+1} - \etwm_a) \sum_{\mathclap{j \in C_{a+1}}} \Wm\pot_{ij}
     = (\etwm_{a+1} - \etwm_a) \lambda\pot_i, \\
   [\W\dep \etw]_i &= (\etwm_{a-1} - \etwm_a) \lambda\dep_i,
@@ -1249,7 +1249,8 @@ Using the results above
 \end{gathered}
 \end{equation}
 %
-Because the right-hand sides above depend on \(a\) and not \(i\), \cref{eq:dgn_lump} implies that \(\boldsymbol{\lambda}^\nu\) also has the same degeneracy as \(\etw\), which is the condition for lumpability under the partitions \(\brc{C_a}\) \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}.
+Because the right-hand sides above depend on \(a\) and not \(i\), \cref{eq:dgn_lump} implies that \(\boldsymbol{\lambda}^\nu\) also has the same degeneracy as \(\etw\), which is the condition for lumpability under the partitions \(\brc{C_a}\) \cite{kemeny1960finite,Ball1993Lumpability,burke1958markovian}:
+for any two states in \(C_a\), we get the same value for the sum of transition rates from that state to all states in \(C_b\).
 
 However, if we substitute the last of \cref{eq:dgn_theta} into \cref{eq:dgn_lump} we find that the denominators vanish and the numerators reduce to \( [\CA - (c_a + \lambda) (\wm_a - \Delta p)] (\etwm_a - \etwm_{a-1}) \), etc.
 When the numerator vanishes, the first two equations of \cref{eq:dgn_lump} are degenerate rather than contradictory, leaving one linear combination of the \(\lambda^\nu_i\) undetermined.
@@ -1319,7 +1320,7 @@ This allows us to write the area as
 where we used $\wm_k=\sgn(c_k)$, as discussed after \cref{eq:lareacoeffs}.
 
 First let us maximise \cref{eq:serialarea} at fixed $\eqm_\pm = \sum_k \eqm_k \prn{\frac{1\pm\wm_k}{2}}$.
-Clearly this will happen when we put all of the probability at the ends: $\eqm_1=\eqm_-$ and $\eqm_n=\eqm_+$ are the only non-zero $\eqm_k$.
+Clearly this will happen when we put all of the probability at the ends: $\eqm_1=\eqm_-$ and $\eqm_M=\eqm_+$ are the only non-zero $\eqm_k$.
 This gives an area of
 \footnote{Note that including the dropped factors in \cref{eq:lsnr} would only change this to \(\CA \leq (M-1)(4\eqm_+\eqm_-)/r\sqrt{1 - (\Delta f)^2(\eqm_+ - \eqm_-)^2}\), whose maximum also lies at \(\eqm_+=\eqm_-= \frac{1}{2}\).}
 %
