@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from functools import wraps
 from numbers import Number
-from typing import Any, Callable, Dict, List, Optional, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, TypeVar, Union
 
 import numpy as np
 import scipy.optimize as sco
@@ -493,7 +493,7 @@ class OptimProblem:
         if self.model.topology.constrained:
             self.constraints = []
         elif self.opts.method == 'SLSQP':
-            self.constraints = _cn.map_join(conv_constraint, self.constraints)
+            self.constraints = conv_constraints(self.constraints)
 
     def for_scipy(self) -> Dict[str, Any]:
         """Make an `scipy.optimize.minimize` problem.
@@ -531,10 +531,9 @@ class OptimProblem:
         # must be SLSQP
         if _fail_bnd(result.x, self.bounds, itol):
             return False
-        for cons in self.constraints:
-            for constr in conv_constraint(cons):
-                if _fail_cons(result.x, constr, itol):
-                    return False
+        for constr in conv_constraints(self.constraints):
+            if _fail_cons(result.x, constr, itol):
+                return False
         return True
 
 
@@ -602,8 +601,14 @@ def constraint_coeff(model: _so.SynapseOptModel) -> la.lnarray:
     return type(model).constraint_coeff(npl, nst)
 
 
-def conv_constraint(constraint: Constraint) -> List[Dict[str, Any]]:
-    """Convert constraint from trust-constr to SLSQP format
+def conv_constraints(constraints: Sequence[Constraint]) -> List[SLSQPCons]:
+    """Convert constraints from trust-constr to SLSQP format
+    """
+    return _cn.map_join(conv_constraint, constraints)
+
+
+def conv_constraint(constraint: Constraint) -> List[SLSQPCons]:
+    """Convert one constraint from trust-constr to SLSQP format
     """
     if isinstance(constraint, dict):
         return [constraint]
@@ -611,25 +616,11 @@ def conv_constraint(constraint: Constraint) -> List[Dict[str, Any]]:
     slsqp_lb = {'type': 'ineq', 'args': ()}
     slsqp_ub = slsqp_lb.copy()
     if isinstance(constraint, sco.LinearConstraint):
-        if not (np.isscalar(constraint.lb) and np.isscalar(constraint.ub)):
-            coeffs = np.atleast_2d(constraint.A)
-            lbs = _cn.repeatify(constraint.lb)
-            ubs = _cn.repeatify(constraint.ub)
-            lins = []
-            for cff, lbb, ubb in zip(coeffs, lbs, ubs):
-                constr = sco.LinearConstraint(cff, lbb, ubb)
-                lins.extend(conv_constraint(constr))
-            return lins
-        slsqp_lb['fun'] = lambda x: constraint.A @ x - constraint.lb
-        slsqp_ub['fun'] = lambda x: constraint.ub - constraint.A @ x
-        slsqp_lb['jac'] = lambda x: constraint.A
-        slsqp_ub['jac'] = lambda x: - constraint.A
+        # if not (np.isscalar(constraint.lb) and np.isscalar(constraint.ub)):
+        #     return _conv_some_linear(constraint)
+        _conv_one_linear(constraint, slsqp_lb, slsqp_ub)
     elif isinstance(constraint, sco.NonlinearConstraint):
-        slsqp_lb['fun'] = lambda x: constraint.fun(x) - constraint.lb
-        slsqp_ub['fun'] = lambda x: constraint.ub - constraint.fun(x)
-        if callable(constraint.jac):
-            slsqp_lb['jac'] = constraint.jac
-            slsqp_ub['jac'] = lambda x: - constraint.jac(x)
+        _conv_nonlinear(constraint, slsqp_lb, slsqp_ub)
     else:
         raise TypeError(f"Unknown constraint type: {type(constraint)}")
 
@@ -641,6 +632,64 @@ def conv_constraint(constraint: Constraint) -> List[Dict[str, Any]]:
         slsqp_lb['type'] = 'eq'
         return [slsqp_lb]
     return [slsqp_lb, slsqp_ub]
+
+
+def _conv_some_linear(constr: sco.LinearConstraint) -> List[SLSQPCons]:
+    """Convert linear constraint with nonscalar bounds from trust-constr to SLSQP format
+
+    Parameters
+    ----------
+    constr : sco.LinearConstraint
+        constraint in trust-constr format
+
+    Returns
+    -------
+    List[Dict[str, Any]]
+        constraints in SLSQP format
+    """
+    coeffs = np.atleast_2d(constr.A)
+    lbs = _cn.repeatify(constr.lb)
+    ubs = _cn.repeatify(constr.ub)
+    lins = []
+    for cff, lbb, ubb in zip(coeffs, lbs, ubs):
+        constr = sco.LinearConstraint(cff, lbb, ubb)
+        lins.extend(conv_constraint(constr))
+    return lins
+
+
+def _conv_one_linear(constr: sco.LinearConstraint,
+                     slsqp_lb: SLSQPCons, slsqp_ub: SLSQPCons) -> None:
+    """Convert linear constraint from trust-constr to SLSQP format
+
+    Parameters
+    ----------
+    constr : sco.LinearConstraint
+        constraint in trust-constr format
+    slsqp_lb, slsqp_ub : Dict[str, Any]
+        constraints in SLSQP format, Modified in-place
+    """
+    slsqp_lb['fun'] = lambda x: constr.A @ x - constr.lb
+    slsqp_ub['fun'] = lambda x: constr.ub - constr.A @ x
+    slsqp_lb['jac'] = lambda x: constr.A
+    slsqp_ub['jac'] = lambda x: - constr.A
+
+
+def _conv_nonlinear(constr: sco.NonlinearConstraint,
+                    slsqp_lb: SLSQPCons, slsqp_ub: SLSQPCons) -> None:
+    """Convert nonlinear constraint from trust-constr to SLSQP format
+
+    Parameters
+    ----------
+    constr : sco.NonlinearConstraint
+        constraint in trust-constr format
+    slsqp_lb, slsqp_ub : Dict[str, Any]
+        constraints in SLSQP format, Modified in-place
+    """
+    slsqp_lb['fun'] = lambda x: constr.fun(x) - constr.lb
+    slsqp_ub['fun'] = lambda x: constr.ub - constr.fun(x)
+    if callable(constr.jac):
+        slsqp_lb['jac'] = constr.jac
+        slsqp_ub['jac'] = lambda x: - constr.jac(x)
 
 
 # =============================================================================
@@ -786,7 +835,7 @@ def _fail_bnd(sol: np.ndarray, bnds: Optional[sco.Bounds], tol: float) -> bool:
     return (sol < bnds.lb - tol).any() or (sol > bnds.ub + tol).any()
 
 
-def _fail_cons(soln: np.ndarray, cons: Dict[str, Any], itol: float) -> bool:
+def _fail_cons(soln: np.ndarray, cons: SLSQPCons, itol: float) -> bool:
     """Check if solution fails SLSQP constraint"""
     vals = cons['fun'](soln)
     if cons['type'] == 'eq':
@@ -984,8 +1033,8 @@ def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
 # =============================================================================
 Data = TypeVar('Data', Number, np.ndarray, float)
 Func = Callable[[np.ndarray], Data]
-Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint,
-                   _opt.StrDict[Any]]
+SLSQPCons = Dict[str, Any]
+Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint, SLSQPCons]
 Problem = Tuple[Func[float], Func[np.ndarray], Func[np.ndarray],
                 Optional[sco.Bounds], List[Constraint]]
 Maker = Callable[[_so.SynapseOptModel, Optional[float], ProblemOptions],

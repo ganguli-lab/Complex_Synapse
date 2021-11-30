@@ -59,6 +59,8 @@ def binary_weights(nst: int) -> la.lnarray:  # binary synaptic weights
     w : la.lnarray
         vector of synaptic weights
     """
+    if nst % 2:
+        raise ValueError(f"{nst=}, should be even for binary weights")
     weight = la.ones(nst // 2)
     return np.hstack((-weight, weight))
 
@@ -121,7 +123,7 @@ def serial_trans(nst: int, npl: int = 2, jmp: float = 1.) -> la.lnarray:
         transition matrix
     """
     if npl > 2:
-        raise ValueError("serial mdel has 2 plasticity types")
+        raise ValueError("serial model has 2 plasticity types")
     if npl == 1:
         # drn scalar, so no broadcast axis. drn = 0, so shape[-1] == 2.
         return _mp.uni_serial_params_to_mat([jmp, jmp], nst, drn=0)
@@ -146,7 +148,7 @@ def cascade_trans(nst: int, npl: int = 2, jmp: float = 0.5) -> la.lnarray:
         transition matrix
     """
     if npl > 2:
-        raise ValueError("cascade mdel has 2 plasticity types")
+        raise ValueError("cascade model has 2 plasticity types")
     if npl == 1:
         # drn is scalar, so no broadcast axis. drn = 0, so shape[-1] == 2.
         return _mp.std_cascade_params_to_mat([jmp, jmp], nst, drn=0)

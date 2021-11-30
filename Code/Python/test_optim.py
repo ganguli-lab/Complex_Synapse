@@ -26,7 +26,7 @@ s = la.geomspace(1e-4, 10, 5)
 with time_with():
     envelope, models = cso.optim_laplace_range(
         s, 10, repeats=10, cond_lim=True, cond_thresh=1e3, serial=False,
-        maker=cso.normal_problem, method='SLSQP')
+        maker=cso.normal_problem, method='trust-constr')
 # %%
 nst, sss, opts, envs, mods = csp.load_data()
 nsyn = 1e4
