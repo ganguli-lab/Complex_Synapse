@@ -225,7 +225,21 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin, ABC):
     @abstractmethod
     def zinv(self, rate: Optional[ArrayLike] = None,
              rowv: Optional[ArrayLike] = None) -> la.lnarray:
-        """Inverse of fundamental matrix"""
+        """Inverse of fundamental matrix
+
+        Parameters
+        ----------
+        rate : float, array, optional
+            Parameter of Laplace transform, ``s``. Default: 0.
+        rowv : la.lnarray, optional
+            Arbitrary row vector, ``xi``. If `None`, use vector of ones.
+            If `np.nan`, use  `peq`. By default: `None`.
+
+        Returns
+        -------
+        Zi : la.lnarray
+            inverse of generalised fundamental matrix, ``Z``.
+        """
 
     def cond(self, rate: Optional[ArrayLike] = None, *,
              rowv: Optional[ArrayLike] = None,
@@ -283,7 +297,15 @@ class SynapseBase(np.lib.mixins.NDArrayOperatorsMixin, ABC):
         return rowv @ fundi.inv
 
     def time_rev(self) -> SynapseBase:
-        """Swap plast with time rev"""
+        """Swap plast with time reversed matrices
+
+        .. math:: W^\dag = \Pi^{-1} W^T \Pi
+
+        We also swap potentiation & depression and adjust diagonals to ensure
+        plasticity matrices are valid markov processes.
+
+        Returns an object of the same type with copied `obj.plast`.
+        """
         plast = _ma.adjoint(self.plast, self.peq())
         _ma.stochastify_c(plast)
         return self.copy(plast=np.flip(plast, -3))
@@ -537,6 +559,20 @@ class SynapseDiscreteTime(SynapseBase):
             # convert to lnarray, add singletons to broadcast with matrix
             s_arr = np.exp(-la.asarray(rate)).s
         return onev.c * rowv + la.eye(self.nstate) - self.markov() * s_arr
+
+    def time_rev(self) -> SynapseBase:
+        """Swap plast with time rev
+
+        .. math:: W^\dag = \Pi^{-1} W^T \Pi
+
+        We also swap potentiation & depression and adjust diagonals to ensure
+        plasticity matrices are valid markov processes.
+
+        Returns an object of the same type with copied `obj.plast`.
+        """
+        obj = super().time_rev()
+        obj.plast += np.identity(self.nstate)
+        return obj
 
 
 # =============================================================================

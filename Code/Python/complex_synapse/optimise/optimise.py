@@ -22,15 +22,84 @@ import sl_py_tools.options_classes as _opt
 import complex_synapse.builders as _bld
 import complex_synapse.optimise.shorten as _sh
 import complex_synapse.optimise.sticky as _st
-import complex_synapse.optimise.synapse_opt as _so
 # import complex_synapse.options as _opt
 import complex_synapse.synapse_base as _sb
+from complex_synapse.optimise.synapse_opt import SynapseOptModel
 # =============================================================================
 # Class for specifying types of synapses
 # =============================================================================
 
 
 # pylint: disable=too-many-ancestors
+# =============================================================================
+# Better LinearConstraint
+# =============================================================================
+
+
+class LinearConstraint(sco.LinearConstraint):
+    """Extending Linear constraint to have callables like NonlinearConstraint
+
+    Parameters
+    ----------
+    A : {array_like, sparse matrix}, shape (m, n)
+        Matrix defining the constraint.
+    lb, ub : array_like
+        Lower and upper bounds on the constraint. Each array must have the
+        shape (m,) or be a scalar, in the latter case a bound will be the same
+        for all components of the constraint. Use ``np.inf`` with an
+        appropriate sign to specify a one-sided constraint.
+        Set components of `lb` and `ub` equal to represent an equality
+        constraint. Note that you can mix constraints of different types:
+        interval, one-sided or equality, by setting different components of
+        `lb` and `ub` as  necessary.
+    keep_feasible : array_like of bool, optional
+        Whether to keep the constraint components feasible throughout
+        iterations. A single value set this property for all components.
+        Default is False. Has no effect for equality constraints.
+
+    Methods
+    -------
+    fun
+        The function defining the constraint.
+        The signature is ``fun(x) -> array_like, shape (m,)``.
+    jac
+        Method of computing the Jacobian matrix (an m-by-n matrix,
+        where element (i, j) is the partial derivative of f[i] with
+        respect to x[j]). It must have the following signature:
+        ``jac(x) -> ndarray, shape (m, n)``.
+        Default is '2-point'.
+    hess
+        Method for computing the Hessian matrix.
+        It must return the Hessian matrix of ``dot(fun, v)`` and
+        must have the following signature:
+        ``hess(x, v) -> ndarray, shape (n, n)``.
+        Here ``v`` is ndarray with shape (m,) containing Lagrange multipliers.
+    """
+    def fun(self, x: np.ndarray) -> np.ndarray:
+        """The function defining the constraint.
+        The signature is ``fun(x) -> array_like, shape (m,)``.
+        """
+        return self.A @ x
+
+    def jac(self, x: np.ndarray) -> np.ndarray:
+        """Method of computing the Jacobian matrix (an m-by-n matrix,
+        where element (i, j) is the partial derivative of f[i] with
+        respect to x[j]). It must have the following signature:
+        ``jac(x) -> ndarray, shape (m, n)``.
+        Default is '2-point'.
+        """
+        return self.A
+
+    def hess(self, x: np.ndarray) -> np.ndarray:
+        """Method for computing the Hessian matrix.
+        It must return the Hessian matrix of ``dot(fun, v)`` and
+        must have the following signature:
+        ``hess(x, v) -> ndarray, shape (n, n)``.
+        Here ``v`` is ndarray with shape (m,) containing Lagrange multipliers.
+        """
+        return np.zeros((self.A.shape[1], self.A.shape[1], self.A.shape[0]))
+
+
 class ModelOptions(_opt.Options):
     """Class that contains model definition options.
 
@@ -365,7 +434,7 @@ class OptimOptions(_opt.MasterOptions, fallback='extra'):
         else:
             self._maker = normal_problem
 
-    def maker(self, model: _so.SynapseOptModel, rate: Optional[Number]
+    def maker(self, model: SynapseOptModel, rate: Optional[Number]
               ) -> Problem:
         """Call the `Maker` function
 
@@ -447,7 +516,7 @@ class OptimProblem:
         Constraints on the model parameters.
     """
     # The model object used for calculating loss functions etc.
-    model: Optional[_so.SynapseOptModel]
+    model: Optional[SynapseOptModel]
     # The parameters to initialise the model
     x_init: Optional[la.lnarray]
     # The loss function, its Jacobian, and its Hessian.
@@ -476,10 +545,10 @@ class OptimProblem:
     def _make_model(self) -> None:
         """Create a model"""
         if self.x_init is None:
-            self.model = _so.SynapseOptModel.rand(**self.opts.model_opts)
+            self.model = SynapseOptModel.rand(**self.opts.model_opts)
             self.x_init = self.model.get_params()
         else:
-            self.model = _so.SynapseOptModel.from_params(
+            self.model = SynapseOptModel.from_params(
                 self.x_init, **self.opts.model_opts)
 
     def _make_problem(self) -> None:
@@ -542,9 +611,24 @@ class OptimProblem:
 # =============================================================================
 
 
-def make_fn(model: _so.SynapseOptModel, method: str, *args,
+def make_fn(model: SynapseOptModel, method: str, *args,
             opts: Optional[ProblemOptions] = None, **kwds) -> Func:
     """Make a loss function from model, method and value
+
+    Parameters
+    ----------
+    model : SynapseOptModel
+        The object used for computations
+    method : str|Callable[[np.ndarray,...], Number]
+        The method of `model` that gives us the loss function, or the method.
+    opts : ProblemOptions|None, optional
+        Object containing options for the whole problem, by default None
+
+    Returns
+    -------
+    fun : Callable[[np.ndarray], Number]
+        The loss function, wrapped so that it only needs model parameters.
+    The `model` is also returned as `fun.model`.
     """
     if opts is not None:
         kwds.update(opts.for_fns())
@@ -562,9 +646,28 @@ def make_fn(model: _so.SynapseOptModel, method: str, *args,
     return loss_function
 
 
-def make_fn_set(model: _so.SynapseOptModel, method: str, opts: ProblemOptions,
+def make_fn_set(model: SynapseOptModel, method: str, opts: ProblemOptions,
                 *args, **kwds) -> Tuple[Func, ...]:
-    """Make a loss function from model, method and value
+    """Make a loss function, jacobian, hessian from model, method and value
+
+    Parameters
+    ----------
+    model : SynapseOptModel
+        The object used for computations
+    method : str|Callable[[ndarray,...], Number]
+        The method of `model` that gives us the loss function, or the method.
+    opts : ProblemOptions|None, optional
+        Object containing options for the whole problem, by default `None`.
+
+    Returns
+    -------
+    fun : Callable[[ndarray(M)], Number|ndarray(N)]
+        The loss function, wrapped so that it only needs model parameters.
+    jac : Callable[[ndarray(M)], ndarray(M)|(M,N)]
+        Jacobian of `fun`, wrapped so that it only needs model parameters.
+    hess : Callable[[ndarray(M)], ndarray(M,M)|(M,M,N)]
+        Hessian of `fun`, wrapped so that it only needs model parameters.
+    The `model` is also returned as `fun.model`.
     """
     fun = make_fn(model, method + '_fun', *args, opts=opts, **kwds)
     jac = make_fn(model, method + '_grad', *args, opts=opts, **kwds)
@@ -575,21 +678,35 @@ def make_fn_set(model: _so.SynapseOptModel, method: str, opts: ProblemOptions,
     return fun, jac, hess
 
 
-def cond_limit(model: _so.SynapseOptModel, rate: float, opts: ProblemOptions,
+def cond_limit(model: SynapseOptModel, rate: float, opts: ProblemOptions,
                ) -> sco.NonlinearConstraint:
     """Create a constraint on the condition number
+
+    Parameters
+    ----------
+    model : SynapseOptModel
+        The object used for computations
+    rate : float
+        Value of Laplace transorm parameter.
+    opts : ProblemOptions
+        Object containing options for the whole problem.
+
+    Returns
+    -------
+    constraint : sco.NonlinearConstraint
+        The constraint.
     """
     cond_fn, cond_jac, _ = make_fn_set(model, 'cond', opts, rate,
                                        cond_thresh=opts.cond_thresh)
     return sco.NonlinearConstraint(cond_fn, 0, np.inf, cond_jac, **opts.nlin())
 
 
-def constraint_coeff(model: _so.SynapseOptModel) -> la.lnarray:
+def constraint_coeff(model: SynapseOptModel) -> la.lnarray:
     """Coefficient matrix for upper bound on off-diagonal row sums.
 
     Parameters
     ----------
-    model: _so.SynapseOptModel
+    model: SynapseOptModel
         Model whose shape determines `coeffs`.
 
     Returns
@@ -602,27 +719,61 @@ def constraint_coeff(model: _so.SynapseOptModel) -> la.lnarray:
 
 
 def conv_constraints(constraints: Sequence[Constraint]) -> List[SLSQPCons]:
-    """Convert constraints from trust-constr to SLSQP format
+    """Convert sequence of constraints from trust-constr to SLSQP format
+
+    Parameters
+    ----------
+    constraints : Sequence[dict|LinearConstraint|sco.NonlinearConstraint]
+        The constraints in their original form
+
+    Returns
+    -------
+    constraint_dicts : List[dict]
+        Equivalent constraints in SLSQP format, in a list.
+
+    Raises
+    ------
+    TypeError
+        If elements of `constraints` are not of one of the listed types.
+        Note that it is the version of `LinearConstraint` from this module.
     """
     return _cn.map_join(conv_constraint, constraints)
 
 
 def conv_constraint(constraint: Constraint) -> List[SLSQPCons]:
     """Convert one constraint from trust-constr to SLSQP format
+
+    Parameters
+    ----------
+    constraint : dict|LinearConstraint|sco.NonlinearConstraint
+        The constraint in its original form
+
+    Returns
+    -------
+    constraint_dicts : List[dict]
+        Equivalent constraints in SLSQP format, in a list. If `constraint.lb`
+        and `constraint.ub` are both finite and different, the list will
+        contain two constraints.
+
+    Raises
+    ------
+    TypeError
+        If `constraint` is not of one of the listed types. Note that it is the
+        version of `LinearConstraint` from this module.
     """
-    if isinstance(constraint, dict):
+    if not isinstance(constraint,
+                      (sco.NonlinearConstraint, LinearConstraint, dict)):
+        raise TypeError(f"Unknown constraint type: {type(constraint)}")
+    elif isinstance(constraint, dict):
         return [constraint]
 
     slsqp_lb = {'type': 'ineq', 'args': ()}
     slsqp_ub = slsqp_lb.copy()
-    if isinstance(constraint, sco.LinearConstraint):
-        # if not (np.isscalar(constraint.lb) and np.isscalar(constraint.ub)):
-        #     return _conv_some_linear(constraint)
-        _conv_one_linear(constraint, slsqp_lb, slsqp_ub)
-    elif isinstance(constraint, sco.NonlinearConstraint):
-        _conv_nonlinear(constraint, slsqp_lb, slsqp_ub)
-    else:
-        raise TypeError(f"Unknown constraint type: {type(constraint)}")
+    slsqp_lb['fun'] = lambda x: constraint.fun(x) - constraint.lb
+    slsqp_ub['fun'] = lambda x: constraint.ub - constraint.fun(x)
+    if callable(constraint.jac):
+        slsqp_lb['jac'] = constraint.jac
+        slsqp_ub['jac'] = lambda x: - constraint.jac(x)
 
     if not np.isfinite(constraint.lb):
         return [slsqp_ub]
@@ -634,78 +785,42 @@ def conv_constraint(constraint: Constraint) -> List[SLSQPCons]:
     return [slsqp_lb, slsqp_ub]
 
 
-def _conv_some_linear(constr: sco.LinearConstraint) -> List[SLSQPCons]:
-    """Convert linear constraint with nonscalar bounds from trust-constr to SLSQP format
-
-    Parameters
-    ----------
-    constr : sco.LinearConstraint
-        constraint in trust-constr format
-
-    Returns
-    -------
-    List[Dict[str, Any]]
-        constraints in SLSQP format
-    """
-    coeffs = np.atleast_2d(constr.A)
-    lbs = _cn.repeatify(constr.lb)
-    ubs = _cn.repeatify(constr.ub)
-    lins = []
-    for cff, lbb, ubb in zip(coeffs, lbs, ubs):
-        constr = sco.LinearConstraint(cff, lbb, ubb)
-        lins.extend(conv_constraint(constr))
-    return lins
-
-
-def _conv_one_linear(constr: sco.LinearConstraint,
-                     slsqp_lb: SLSQPCons, slsqp_ub: SLSQPCons) -> None:
-    """Convert linear constraint from trust-constr to SLSQP format
-
-    Parameters
-    ----------
-    constr : sco.LinearConstraint
-        constraint in trust-constr format
-    slsqp_lb, slsqp_ub : Dict[str, Any]
-        constraints in SLSQP format, Modified in-place
-    """
-    slsqp_lb['fun'] = lambda x: constr.A @ x - constr.lb
-    slsqp_ub['fun'] = lambda x: constr.ub - constr.A @ x
-    slsqp_lb['jac'] = lambda x: constr.A
-    slsqp_ub['jac'] = lambda x: - constr.A
-
-
-def _conv_nonlinear(constr: sco.NonlinearConstraint,
-                    slsqp_lb: SLSQPCons, slsqp_ub: SLSQPCons) -> None:
-    """Convert nonlinear constraint from trust-constr to SLSQP format
-
-    Parameters
-    ----------
-    constr : sco.NonlinearConstraint
-        constraint in trust-constr format
-    slsqp_lb, slsqp_ub : Dict[str, Any]
-        constraints in SLSQP format, Modified in-place
-    """
-    slsqp_lb['fun'] = lambda x: constr.fun(x) - constr.lb
-    slsqp_ub['fun'] = lambda x: constr.ub - constr.fun(x)
-    if callable(constr.jac):
-        slsqp_lb['jac'] = constr.jac
-        slsqp_ub['jac'] = lambda x: - constr.jac(x)
-
-
 # =============================================================================
 # Problem creators
 # =============================================================================
 
 
-def normal_problem(model: _so.SynapseOptModel, rate: float,
+def normal_problem(model: SynapseOptModel, rate: float,
                    opts: ProblemOptions) -> Problem:
     """Make an optimize problem.
+
+    Parameters
+    ----------
+    model : SynapseOptModel
+        The object used for computations
+    rate : float
+        Value of Laplace transorm parameter.
+    opts : ProblemOptions
+        Object containing options for the whole problem.
+
+    Returns
+    -------
+    fun : Callable[[ndarray(M)], Number|ndarray(N)]
+        The loss function, wrapped so that it only needs model parameters.
+    jac : Callable[[ndarray(M)], ndarray(M)|(M,N)]
+        Jacobian of `fun`, wrapped so that it only needs model parameters.
+    hess : Callable[[ndarray(M)], ndarray(M,M)|(M,M,N)]
+        Hessian of `fun`, wrapped so that it only needs model parameters.
+    bounds : sco.Bounds
+        Bounds on each transition rate
+    diag : list[LinearConstraint|sco.NonNonlinearConstraint]
+        Bound on off-diagonal row sums.
     """
     fun, jac, hess = make_fn_set(model, 'laplace', opts, rate)
 
     con_coeff = constraint_coeff(model)
     bounds = sco.Bounds(0, 1, **opts.lin())
-    diag = [sco.LinearConstraint(con_coeff, -np.inf, 1, **opts.lin())]
+    diag = [LinearConstraint(con_coeff, -np.inf, 1, **opts.lin())]
     if opts.cond_lim:
         diag.append(cond_limit(model, rate, opts))
 
@@ -717,9 +832,31 @@ def normal_problem(model: _so.SynapseOptModel, rate: float,
 # -----------------------------------------------------------------------------
 
 
-def shifted_problem(model: _so.SynapseOptModel, rate: float,
+def shifted_problem(model: SynapseOptModel, rate: float,
                     opts: ProblemOptions) -> Problem:
     """Make an optimize problem with rate shifted to constraints.
+
+    Parameters
+    ----------
+    model : SynapseOptModel
+        The object used for computations
+    rate : float
+        Value of Laplace transorm parameter.
+    opts : ProblemOptions
+        Object containing options for the whole problem.
+
+    Returns
+    -------
+    fun : Callable[[ndarray(M)], Number|ndarray(N)]
+        The loss function, wrapped so that it only needs model parameters.
+    jac : Callable[[ndarray(M)], ndarray(M)|(M,N)]
+        Jacobian of `fun`, wrapped so that it only needs model parameters.
+    hess : Callable[[ndarray(M)], ndarray(M,M)|(M,M,N)]
+        Hessian of `fun`, wrapped so that it only needs model parameters.
+    bounds : sco.Bounds|None
+        Bounds on each transition rate.
+    diag : list[sco.NonlinearConstraint]
+        Constraints on transition rates.
     """
     if model.topology.constrained:
         raise ValueError('Shifted problem cannot have special topology')
@@ -848,7 +985,18 @@ def _fail_cons(soln: np.ndarray, cons: SLSQPCons, itol: float) -> bool:
 
 
 def first_good(prob: OptimProblem) -> sco.OptimizeResult:
-    """First solution that satisfies constraints"""
+    """First solution that satisfies constraints
+
+    Parameters
+    ----------
+    prob : OptimProblem
+        Object containing the whole problem. Updated in place.
+
+    Returns
+    -------
+    res : sco.OptimizeResult
+        Object containing the results of optimisation.
+    """
     res = sco.OptimizeResult()
     for _ in _it.dcount('tries', prob.opts.max_tries):
         try:
@@ -865,6 +1013,19 @@ def first_good(prob: OptimProblem) -> sco.OptimizeResult:
 def optim_laplace(rate: float, prob: Optional[OptimProblem] = None,
                   **kwds) -> sco.OptimizeResult:
     """Optimised model at one value of rate
+
+    Parameters
+    ----------
+    rate : float
+        Value of Laplace transorm parameter.
+    prob : OptimProblem|None, optional
+        Object containing the (previous) whole problem. If `None`, we build a
+        new one using `rate` and extra keyword arguments. By default `None`.
+
+    Returns
+    -------
+    res : sco.OptimizeResult
+        Object containing the results of optimisation.
     """
     if prob is None:
         prob = OptimProblem(rate=rate, **kwds)
@@ -917,6 +1078,24 @@ def reoptim_laplace_range(inds: np.ndarray, rates: np.ndarray,
                           snr: np.ndarray, models: np.ndarray,
                           **kwds) -> Tuple[la.lnarray, la.lnarray]:
     """Reoptimised model at many values of rate
+
+    Parameters
+    ----------
+    inds : np.ndarray[int]
+        Indices of models to reoptimise.
+    rates : np.ndarray
+        Parameters of Laplace transform at which we maximise.
+    snr : np.ndarray
+        Old maximum snr (Laplace transformed) at each value of `rates`.
+    models : np.ndarray
+        Old parameters of models that achieve `snr`.
+
+    Returns
+    -------
+    snr : la.lnarray (T,)
+        New maximum snr (Laplace transformed) at each value of `rates`.
+    models : la.lnarray (T,Q)
+        New parameters of models that achieve `snr`.
     """
     prob = OptimProblem(params=models[inds[0]], **kwds)
     # model = make_model(kwds, params=models[inds[0]])
@@ -1031,11 +1210,10 @@ def heuristic_envelope_laplace(rate: Data, nst: int) -> Data:
 # =============================================================================
 # Type hints
 # =============================================================================
-Data = TypeVar('Data', Number, np.ndarray, float)
+Data = TypeVar('Data', Number, np.ndarray, float, covariant=True)
 Func = Callable[[np.ndarray], Data]
 SLSQPCons = Dict[str, Any]
-Constraint = Union[sco.LinearConstraint, sco.NonlinearConstraint, SLSQPCons]
+Constraint = Union[LinearConstraint, sco.NonlinearConstraint, SLSQPCons]
 Problem = Tuple[Func[float], Func[np.ndarray], Func[np.ndarray],
                 Optional[sco.Bounds], List[Constraint]]
-Maker = Callable[[_so.SynapseOptModel, Optional[float], ProblemOptions],
-                 Problem]
+Maker = Callable[[SynapseOptModel, Optional[float], ProblemOptions], Problem]

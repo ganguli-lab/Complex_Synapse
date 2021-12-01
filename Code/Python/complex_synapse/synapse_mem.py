@@ -210,7 +210,17 @@ class SynapseModel(_sb.SynapseContinuousTime):
     @contextmanager
     def shifted(self, rate: _sb.ArrayLike, rowv: Optional[_sb.ArrayLike] = None
                 ) -> None:
-        """Move rate parameter of Laplace transform to plast
+        """Context manager that moves rate parameter to plast
+
+        .. math:: W -> W + s (e \\pi - I)
+
+        Parameters
+        ----------
+        rate : array like
+            Parameter of Laplace transform.
+        rowv : array like|None (M,), optional
+            Row vector to use as `\\pi`` above.
+            If `None` use steady-state distribution (default).
         """
         rowv = self.peq() if rowv is None else rowv
         # convert to lnarray, add singletons to broadcast with plast
@@ -226,6 +236,8 @@ class SynapseModel(_sb.SynapseContinuousTime):
 
 class SynapseMemoryModel(SynapseModel):
     """Class for memory curves of complex synapse models.
+
+    Methods named `snr_...` return some version of the SNR curve.
 
     Parameters (and attributes)
     ---------------------------

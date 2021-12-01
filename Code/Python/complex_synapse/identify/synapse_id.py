@@ -514,7 +514,10 @@ def elements(obj: SynapseIdModel) -> la.lnarray:
 
 def _elements_to_mats(elems: np.ndarray, nst: int, npl: int
                       ) -> Tuple[la.lnarray, la.lnarray]:
-    """Reconstruct plast and initial from elements"""
+    """Reconstruct plast and initial from elements
+
+    Inverse of `elements`
+    """
     elems = la.asarray(elems)
     initial = elems[..., -nst:]
     plast = elems[..., :-nst].unravelaxis(-1, (npl, nst, nst))

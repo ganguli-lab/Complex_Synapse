@@ -100,20 +100,6 @@ def eps_star_star(beta: Values, num: int) -> Values:
     return np.clip(epss, 0, 1)
 
 
-# # -------------------------------------
-# def sticky_star(betas: Values, num: int) -> Values:
-#     """actual heuristic envelope"""
-#     epss = eps_star(betas, num)
-#     return sticky(epss, betas, num)
-
-
-# def sticky_star_s(svals: Values, num: int) -> Values:
-#     """actual heuristic envelope"""
-#     betas = s_to_beta(svals)
-#     epss = eps_star(betas, num)
-#     return sticky(epss, betas, num)
-
-
 # -------------------------------------
 def _env_actual(betas: Values, svals: Values, numh: int) -> Values:
     """actual heuristic envelope

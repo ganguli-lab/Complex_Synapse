@@ -173,7 +173,15 @@ def _private() -> None:
 
 
 def _obj_jmp(model: _si.SynapseIdModel, data: _ps.PlasticitySequence) -> Arrays4:
-    """convert obj -> jmp"""
+    """convert obj -> jmp
+
+    Parameters
+    ----------
+    model : SynapseIdModel
+        The model to update.
+    data : PlasticitySequence
+        The data to use for the update.
+    """
     data = data.move_t_axis(-1)
     # (R,P,M,M),(R,M)
     jumps, starts = model.updaters()
@@ -182,7 +190,32 @@ def _obj_jmp(model: _si.SynapseIdModel, data: _ps.PlasticitySequence) -> Arrays4
 
 
 def _jmp_upd(jmp: Arrays4) -> Arrays3:
-    """convert jmp -> upd, updater matrices for each time-step"""
+    """convert jmp -> upd, updater matrices for each time-step
+
+    Parameters
+    ----------
+    jmp : tuple[lnarray,...](4)
+        jumps : lnarray, (R,P,M,M)
+            Plasticity matrices multiplied by readout indicators of 'to' state.
+        starts : lnarray, (R,M)
+            Initial state distribution times readout indicators of state.
+        plast_type : ArrayLike, (E,T-1), int[0:P]
+            ID of plasticity type after each time-step.
+        readouts : ArrayLike, (E,T), int[0:R]
+            ID of readout from synapse at each time-step.
+
+    Returns
+    -------
+    upd : tuple[lnarray,...](3)
+        updaters : lnarray, (E,T-1,M,M)
+            Plasticity matrices multiplied by readout indicators of 'to' state,
+            per experiment, per time.
+        initial : lnarray, (E,M)
+            Initial state distribution times readout indicators of state,
+            per experiment.
+        plast_type : lnarray, (E,T-1), int[0:P]
+            ID of plasticity type after each time-step.
+    """
     jumps, starts, plast_type, readouts = jmp
     # (E,T-1,M,M)
     updaters = jumps[readouts[..., 1:], plast_type]
@@ -199,6 +232,28 @@ def _drop_snd(args: Arrays) -> Arrays:
 
 def _upd_calc_abe_p(upd: Arrays3) -> Arrays3:
     """Calculate BW forward/backward variables.
+
+    Parameters
+    ----------
+    upd : tuple[lnarray,...](3)
+        updaters : lnarray, (E,T-1,M,M)
+            Plasticity matrices multiplied by readout indicators of 'to' state,
+            per experiment, per time.
+        initial : lnarray, (E,M)
+            Initial state distribution times readout indicators of state,
+            per experiment.
+        plast_type : lnarray, (E,T-1), int[0:P]
+            ID of plasticity type after each time-step.
+
+    Returns
+    -------
+    abe : tuple[lnarray,..](3)
+        alpha : lnarray, (E,T,M)
+            Normalised Baum-Welch forward variable.
+        beta : lnarray, (E,T,M)
+            Scaled Baum-Welch backward variable.
+        eta : lnarray, (E,T)
+            Norm of Baum-Welch forward variable.
     """
     # drop plast_types
     updaters, initial = upd[:2]
@@ -237,6 +292,35 @@ def _upd_calc_abe_p(upd: Arrays3) -> Arrays3:
 
 def _upd_abe_calc_model_p(upd: Arrays3, abe: Arrays3, **kwds) -> Arrays2:
     """One Baum-Welch/Rabiner-Juang update of the model.
+
+    Parameters
+    ----------
+    upd : tuple[lnarray,...](3)
+        updaters : lnarray, (E,T-1,M,M)
+            Plasticity matrices multiplied by readout indicators of 'to' state,
+            per experiment, per time.
+        initial : lnarray, (E,M)
+            Initial state distribution times readout indicators of state,
+            per experiment.
+        plast_type : lnarray, (E,T-1), int[0:P]
+            ID of plasticity type after each time-step.
+    abe : tuple[lnarray,..](3)
+        alpha : lnarray, (E,T,M)
+            Normalised Baum-Welch forward variable.
+        beta : lnarray, (E,T,M)
+            Scaled Baum-Welch backward variable.
+        eta : lnarray, (E,T)
+            Norm of Baum-Welch forward variable.
+
+    Returns
+    -------
+    model : Tuple[lnarray, lnarray] (P,M,M),(M,) float
+        Baum-Welch update.
+
+        plast : array_like, (P,M,M), float[0:1]
+            new estimate of transition probability matrix.
+        initial : array_like, (M,) float[0:1]
+            new estimate of distribution of initial state.
     """
     # drop initial
     updaters, plast_type = _drop_snd(upd)
@@ -276,6 +360,28 @@ def _upd_abe_calc_model_p(upd: Arrays3, abe: Arrays3, **kwds) -> Arrays2:
 
 def _jmp_calc_abe_c(jmp: Arrays4) -> Arrays3:
     """Calculate BW forward/backward variables (using C-extension).
+
+    Parameters
+    ----------
+    jmp : tuple[lnarray,...](4)
+        jumps : lnarray, (R,P,M,M)
+            Plasticity matrices multiplied by readout indicators of 'to' state.
+        starts : lnarray, (R,M)
+            Initial state distribution times readout indicators of state.
+        plast_type : ArrayLike, (E,T-1), int[0:P]
+            ID of plasticity type after each time-step.
+        readouts : ArrayLike, (E,T), int[0:R]
+            ID of readout from synapse at each time-step.
+
+    Returns
+    -------
+    abe : tuple[lnarray,..](3)
+        alpha : lnarray, (E,T,M)
+            Normalised Baum-Welch forward variable.
+        beta : lnarray, (E,T,M)
+            Scaled Baum-Welch backward variable.
+        eta : lnarray, (E,T)
+            Norm of Baum-Welch forward variable.
     """
     jumps, starts, plast_type, readouts = jmp
     if (readouts >= starts.shape[-2]).any():
@@ -287,6 +393,35 @@ def _jmp_calc_abe_c(jmp: Arrays4) -> Arrays3:
 
 def _jmp_abe_calc_model_c(jmp: Arrays4, abe: Arrays3, **kwds) -> Arrays2:
     """One Baum-Welch/Rabiner-Juang update of the model (using C-extension).
+
+    Parameters
+    ----------
+    jmp : tuple[lnarray,...](4)
+        jumps : lnarray, (R,P,M,M)
+            Plasticity matrices multiplied by readout indicators of 'to' state.
+        starts : lnarray, (R,M)
+            Initial state distribution times readout indicators of state.
+        plast_type : ArrayLike, (E,T-1), int[0:P]
+            ID of plasticity type after each time-step.
+        readouts : ArrayLike, (E,T), int[0:R]
+            ID of readout from synapse at each time-step.
+    abe : tuple[lnarray,..](3)
+        alpha : lnarray, (E,T,M)
+            Normalised Baum-Welch forward variable.
+        beta : lnarray, (E,T,M)
+            Scaled Baum-Welch backward variable.
+        eta : lnarray, (E,T)
+            Norm of Baum-Welch forward variable.
+
+    Returns
+    -------
+    model : Tuple[lnarray, lnarray] (P,M,M),(M,) float
+        Baum-Welch update.
+
+        plast : array_like, (P,M,M), float[0:1]
+            new estimate of transition probability matrix.
+        initial : array_like, (M,) float[0:1]
+            new estimate of distribution of initial state.
     """
     # drop starts
     jumps, plast_type, readouts = _drop_snd(jmp)
@@ -326,12 +461,13 @@ def _get_bw_abe(model: _si.SynapseIdModel, data: _ps.PlasticitySequence,
 
     Returns
     -------
-    alpha : lnarray, (E,T,M)
-        Normalised Baum-Welch forward variable.
-    beta : lnarray, (E,T,M)
-        Scaled Baum-Welch backward variable.
-    eta : lnarray, (E,T)
-        Norm of Baum-Welch forward variable.
+    abe : tuple[lnarray,..](3)
+        alpha : lnarray, (E,T,M)
+            Normalised Baum-Welch forward variable.
+        beta : lnarray, (E,T,M)
+            Scaled Baum-Welch backward variable.
+        eta : lnarray, (E,T)
+            Norm of Baum-Welch forward variable.
     """
     jmp = _obj_jmp(model, data)
     if P_OR_C:
@@ -491,7 +627,7 @@ class BaumWelchFitter(_fs.SynapseFitter):
     alpha, beta, eta : lnarray (E,T,M),(E,T,M),(E,T) float
         Normalised Baum-Welch forward/backward variables and the normalisers.
     opt : BaumWelchOptions
-        Optins for BW update.
+        Options for BW update.
     See `SynapseFitter` for other attributes.
 
     Options

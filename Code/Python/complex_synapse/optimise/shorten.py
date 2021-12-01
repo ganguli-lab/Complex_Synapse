@@ -49,6 +49,14 @@ def alpha_star(num: int) -> Tuple[float, float]:
     return 1 / alpha, alpha
 
 
+def _env_approx(alpha: Values, svals: Values) -> Values:
+    """Heuristic envelope from varying M
+    """
+    return A_STAR * np.abs(np.log(alpha)) / svals
+
+
+# definition of alpha doesn't matter for next 3
+# -------------------------------------
 def s_star(num: int) -> float:
     """s where num is optimal"""
     alpha = alpha_star(num)[0]
@@ -57,18 +65,18 @@ def s_star(num: int) -> float:
 
 def uni_star(alpha: Values) -> Values:
     """Heuristic envelope from varying M"""
-    return A_STAR * np.abs(np.log(alpha)) / alpha_to_s(alpha)
+    return _env_approx(alpha, alpha_to_s(alpha))
 
 
 def uni_star_s(svals: Values) -> Values:
     """Heuristic envelope from varying M"""
-    alphas = s_to_alpha(svals)[0]
-    return uni_star(alphas)
+    return _env_approx(s_to_alpha(svals)[0], svals)
 
 
 # =============================================================================
 
 
+# definition of alpha does matter for next 1
 def _components(alpha: Values, num: int) -> Tuple[Values, ...]:
     """Components of numerator and denominator
 
@@ -85,16 +93,26 @@ def _components(alpha: Values, num: int) -> Tuple[Values, ...]:
     return numer, denom, dnumer, ddenom
 
 
+# definition of alpha doesn't matter below
 # -------------------------------------
-def short(eps: Values, alpha: Values, num: int) -> Values:
+def _short(eps: Values, alpha: Values, sval: Values, num: int) -> Values:
     """Laplace-SNR for shortened serial model"""
-    sval = alpha_to_s(alpha)
     if num == 2:
         return (1 - eps) / (1 - eps + sval)
     numer, denom, dnumer, ddenom = _components(alpha, num)
     fnumer = numer - eps * dnumer
     fdenom = denom - eps * ddenom
     return 2 * fnumer / ((num - 2*eps) * sval * fdenom)
+
+
+def short(eps: Values, alpha: Values, num: int) -> Values:
+    """Laplace-SNR for shortened serial model"""
+    return _short(eps, alpha, alpha_to_s(alpha), num)
+
+
+def short_s(eps: Values, sval: Values, num: int) -> Values:
+    """Laplace-SNR for shortened serial model"""
+    return _short(eps, s_to_alpha(sval)[0], sval, num)
 
 
 # -------------------------------------
@@ -106,7 +124,7 @@ def eps_stars(alpha: Values, num: int) -> Tuple[Values, Values]:
     fnumer = numer / dnumer
     fdenom = denom / ddenom
     disc = np.sqrt((num/2 - fnumer) * (fdenom - fnumer))
-    return fnumer - disc, numer + disc
+    return fnumer - disc, fnumer + disc
 
 
 def eps_star(alpha: Values, num: int) -> Values:
@@ -124,11 +142,11 @@ def eps_star_star(alpha: Values, num: int) -> Values:
 # -------------------------------------
 def short_star(alphas: Values, num: int) -> Values:
     """Actual heuristic envelope from optimal epsilon"""
+    svals = alpha_to_s(alphas)
     if num == 2:
-        svals = alpha_to_s(alphas)
         return 1 / (1 + svals)
     epss = eps_star(alphas, num)
-    return short(epss, alphas, num)
+    return _short(epss, alphas, svals, num)
 
 
 def short_star_s(svals: Values, num: int) -> Values:
@@ -137,7 +155,7 @@ def short_star_s(svals: Values, num: int) -> Values:
         return 1 / (1 + svals)
     alphas = s_to_alpha(svals)[0]
     epss = eps_star(alphas, num)
-    return short(epss, alphas, num)
+    return _short(epss, alphas, svals, num)
 
 
 # -------------------------------------
@@ -198,7 +216,7 @@ def envelope(num: int, count: int, **kwds) -> Tuple[np.ndarray, ...]:
     if num == 2:
         return svals, 1 / (1 + svals), env
     epss = eps_star(alphas, num)
-    avals = short(epss, alphas, num)
+    avals = _short(epss, alphas, svals, num)
     return svals, avals, env
 
 

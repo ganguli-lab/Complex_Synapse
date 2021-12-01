@@ -14,6 +14,7 @@ import sl_py_tools.graph_tricks as gt
 import sl_py_tools.graph_plots as gp
 import sl_py_tools.matplotlib_tricks as mpt
 from sl_py_tools.time_tricks import time_with
+from sl_py_tools.display_tricks import delay_warnings
 np.set_printoptions(precision=2, suppress=True)
 mpt.rc_colours()
 mpt.rc_fonts('serif')
