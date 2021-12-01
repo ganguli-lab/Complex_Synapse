@@ -5,26 +5,7 @@ from typing import Tuple
 import numpy as np
 import scipy.optimize as _sco
 
-from .shorten import Y_STAR, Values
-# =============================================================================
-
-
-def beta_to_s(beta: Values) -> Values:
-    """Convert alpha to s"""
-    return np.cosh(beta) - 1
-
-
-def s_to_beta(sval: Values) -> Values:
-    """Convert s to beta. positive one of two possibilities"""
-    return np.arccosh(sval + 1)
-
-
-# -------------------------------------
-def beta_star(num: int) -> float:
-    """Value of beta at which num is optimal"""
-    return 2 * Y_STAR / num
-
-
+from .shorten import Y_STAR, Values, beta_to_s, s_to_beta, beta_star
 # =============================================================================
 
 
@@ -150,7 +131,7 @@ def limits(num: int, debug: bool = False) -> Tuple[float, float]:
     Note: higher t -> lower s -> higher M
     """
     if num == 2:
-        return (0.01, np.exp(-Y_STAR))
+        return 0.01, Y_STAR
     x_0, x_1 = beta_star(num), beta_star(num + 2)
     lo_sol = _sco.root_scalar(lower, args=(num,), x0=x_0, x1=x_1)
     if debug:
