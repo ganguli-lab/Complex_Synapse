@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from functools import wraps
 from numbers import Number
-from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, TypeVar, Union
+from typing import Any, Callable, Dict, List, Optional, Sequence, Tuple, Type, TypeVar, Union
 
 import numpy as np
 import scipy.optimize as sco
@@ -120,11 +120,11 @@ class ModelOptions(_opt.Options):
         Fraction of events of each plasticity type, An extra element is added
         if it is subnormalised. By default `0.5`.
     npl : int, optional keyword
-        Total number of plasticity types. By default `topology.npl`
+        Total number of plasticity types, P. By default `topology.npl`
     nst : int or None, optional keyword
-        Total number of states. Calculate from `npar` if `None` (default).
+        Total number of states, M. Calculate from `npar` if `None` (default).
     npar : int or None, optional keyword
-        Total number of parameters. Calculate from `nst` if `None` (default).
+        Total number of parameters, Q. Calculate from `nst` if `None` (default).
 
     All parameters are optional keywords. Any dictionary passed as positional
     parameters will be popped for the relevant items. Keyword parameters must
@@ -168,6 +168,7 @@ class ModelOptions(_opt.Options):
         """
         if None in {self.nst, self.npar}:
             raise TypeError("Must specify one of [nst, npar]")
+        return True
 
     @property
     def frac(self) -> la.lnarray:
@@ -189,13 +190,13 @@ class ModelOptions(_opt.Options):
 
     @property
     def npl(self) -> int:
-        """Number of plasticity types
+        """Number of plasticity types, P.
         """
         return self._frac.shape[-1]
 
     @npl.setter
     def npl(self, value: Optional[int]) -> None:
-        """Set the number of plasticity types.
+        """Set the number of plasticity types, P.
 
         Does nothing if `value` is `None`. Removes end elements of `frac`
         if shortening. Appends 0s if lengthening.
@@ -211,13 +212,13 @@ class ModelOptions(_opt.Options):
 
     @property
     def nst(self) -> int:
-        """Number of states
+        """Number of states, M
         """
         return self._nst
 
     @nst.setter
     def nst(self, value: Optional[int]) -> None:
-        """Set the number of states.
+        """Set the number of states, M.
 
         Does nothing if `value` is `None`.
         """
@@ -228,13 +229,13 @@ class ModelOptions(_opt.Options):
 
     @property
     def npar(self) -> int:
-        """Number of parameters
+        """Number of parameters, Q.
         """
         return self._npar
 
     @npar.setter
     def npar(self, value: Optional[int]) -> None:
-        """Set the number of states.
+        """Set the number of parameters, Q.
 
         Does nothing if `value` is `None`.
         """
@@ -501,6 +502,7 @@ class OptimProblem:
         The parameters to initialise the model.
     opts : OptimOptions
         Options for customising the optimiser.
+    model_cls : Type[SynapseParam]
 
     Attributes
     ----------
@@ -517,6 +519,8 @@ class OptimProblem:
     """
     # The model object used for calculating loss functions etc.
     model: Optional[SynapseOptModel]
+    # The class used for model
+    model_cls: Type[_sb.SynapseParam]
     # The parameters to initialise the model
     x_init: Optional[la.lnarray]
     # The loss function, its Jacobian, and its Hessian.
@@ -534,6 +538,7 @@ class OptimProblem:
         self.model = None
         self.fns = (None, None, None)
         self.bounds, self.constraints = None, []
+        self.model_cls = kwds.pop('model_cls', SynapseOptModel)
         self._rate = kwds.pop('rate', None)
         self.x_init = kwds.pop('params', None)
         if self.x_init is not None:
@@ -545,11 +550,11 @@ class OptimProblem:
     def _make_model(self) -> None:
         """Create a model"""
         if self.x_init is None:
-            self.model = SynapseOptModel.rand(**self.opts.model_opts)
+            self.model = self.model_cls.rand(**self.opts.model_opts)
             self.x_init = self.model.get_params()
         else:
-            self.model = SynapseOptModel.from_params(
-                self.x_init, **self.opts.model_opts)
+            self.model = self.model_cls.from_params(self.x_init,
+                                                    **self.opts.model_opts)
 
     def _make_problem(self) -> None:
         """Create the loss function, gradient, constraints, etc."""
@@ -661,11 +666,11 @@ def make_fn_set(model: SynapseOptModel, method: str, opts: ProblemOptions,
 
     Returns
     -------
-    fun : Callable[[ndarray(M)], Number|ndarray(N)]
+    fun : Callable[[ndarray(M)], Number|ndarray(C)]
         The loss function, wrapped so that it only needs model parameters.
-    jac : Callable[[ndarray(M)], ndarray(M)|(M,N)]
+    jac : Callable[[ndarray(M)], ndarray(M)|(M,C)]
         Jacobian of `fun`, wrapped so that it only needs model parameters.
-    hess : Callable[[ndarray(M)], ndarray(M,M)|(M,M,N)]
+    hess : Callable[[ndarray(M)], ndarray(M,M)|(M,M,C)]
         Hessian of `fun`, wrapped so that it only needs model parameters.
     The `model` is also returned as `fun.model`.
     """
@@ -719,12 +724,12 @@ def constraint_coeff(model: SynapseOptModel) -> la.lnarray:
 
 
 def conv_constraints(constraints: Sequence[Constraint]) -> List[SLSQPCons]:
-    """Convert sequence of constraints from trust-constr to SLSQP format
+    """Convert sequence of constraints from trust-constr to SLSQP format.
 
     Parameters
     ----------
     constraints : Sequence[dict|LinearConstraint|sco.NonlinearConstraint]
-        The constraints in their original form
+        The constraints in their original form.
 
     Returns
     -------
@@ -775,11 +780,11 @@ def conv_constraint(constraint: Constraint) -> List[SLSQPCons]:
         slsqp_lb['jac'] = constraint.jac
         slsqp_ub['jac'] = lambda x: - constraint.jac(x)
 
-    if not np.isfinite(constraint.lb):
+    if np.all(np.isinf(constraint.lb)):
         return [slsqp_ub]
-    if not np.isfinite(constraint.ub):
+    if np.all(np.isinf(constraint.ub)):
         return [slsqp_lb]
-    if constraint.lb == constraint.ub:
+    if np.all(constraint.lb == constraint.ub):
         slsqp_lb['type'] = 'eq'
         return [slsqp_lb]
     return [slsqp_lb, slsqp_ub]
@@ -805,11 +810,11 @@ def normal_problem(model: SynapseOptModel, rate: float,
 
     Returns
     -------
-    fun : Callable[[ndarray(M)], Number|ndarray(N)]
+    fun : Callable[[ndarray(M)], Number]
         The loss function, wrapped so that it only needs model parameters.
-    jac : Callable[[ndarray(M)], ndarray(M)|(M,N)]
+    jac : Callable[[ndarray(M)], ndarray(M)]
         Jacobian of `fun`, wrapped so that it only needs model parameters.
-    hess : Callable[[ndarray(M)], ndarray(M,M)|(M,M,N)]
+    hess : Callable[[ndarray(M)], ndarray(M,M)]
         Hessian of `fun`, wrapped so that it only needs model parameters.
     bounds : sco.Bounds
         Bounds on each transition rate
@@ -847,11 +852,11 @@ def shifted_problem(model: SynapseOptModel, rate: float,
 
     Returns
     -------
-    fun : Callable[[ndarray(M)], Number|ndarray(N)]
+    fun : Callable[[ndarray(M)], Number]
         The loss function, wrapped so that it only needs model parameters.
-    jac : Callable[[ndarray(M)], ndarray(M)|(M,N)]
+    jac : Callable[[ndarray(M)], ndarray(M)]
         Jacobian of `fun`, wrapped so that it only needs model parameters.
-    hess : Callable[[ndarray(M)], ndarray(M,M)|(M,M,N)]
+    hess : Callable[[ndarray(M)], ndarray(M,M)]
         Hessian of `fun`, wrapped so that it only needs model parameters.
     bounds : sco.Bounds|None
         Bounds on each transition rate.
@@ -884,15 +889,15 @@ def _grad_to_kkt(grad: np.ndarray, model: _sb.SynapseParam) -> np.ndarray:
     ----------
     grad : np.ndarray (...,2n(n-1))
         Gradient of loss function wrt off-diagonal elements.
-    model : SynapseParam (2,n,n)
+    model : SynapseParam (P,M,M)
         Model with transition rates.
 
     Returns
     -------
-    kkt : np.ndarray (...,2,n,n)
+    kkt : np.ndarray (...,P,M,M)
         grad with diagonals `-rowsum(plast*grad)`, subtracted from row.
     """
-    kkt = _ma.params.params_to_mat(grad, **model.topology.directed())
+    kkt = -_ma.params.params_to_mat(grad, **model.topology.directed())
     kkt[..., np.diag_indices(model.nstate, 2)] = 0
     kkt_diag = -(model.plast * kkt).sum(axis=-1, keepdims=True)
     kkt += kkt_diag
@@ -909,7 +914,7 @@ def _all_kkt_normal(prob: OptimProblem) -> np.ndarray:
 
     Returns
     -------
-    kkt : np.ndarray (2,n,n)
+    kkt : np.ndarray (P,M,M)
         KKT multipliers.
     """
     model = prob.model
@@ -927,16 +932,16 @@ def _all_kkt_shifted(prob: OptimProblem) -> np.ndarray:
 
     Returns
     -------
-    kkt : np.ndarray (2,n,n)
+    kkt : np.ndarray (P,M,M)
         KKT multipliers.
     """
     model = prob.model
     constr = conv_constraint(prob.constraints[0])[0]
-    # (2,n,n) -> (2*n**2,)
+    # (P,M,M) -> (P*M**2,)
     rhs = _all_kkt_normal(prob).ravel()
-    # (2n**2,2n(n-1))
+    # (P*M**2,PM(M-1))
     cjac = constr['jac'](model.get_params())
-    # (2n**2,2,n,n) -> (2n**2,2n**2)
+    # (P*M**2,P,M,M) -> (P*M**2,P*M**2)
     cfs = _grad_to_kkt(cjac, model).ravelaxes(-3).T
     return la.solve(cfs, rhs).reshape(model.nplast, model.nstate, model.nstate)
 
@@ -951,7 +956,7 @@ def kkt_multipliers(prob: OptimProblem) -> np.ndarray:
 
     Returns
     -------
-    kkt : np.ndarray (2,n,n)
+    kkt : np.ndarray (P,M,M)
         KKT multipliers
     """
     if prob.opts.shifted:
@@ -1114,14 +1119,14 @@ def check_cond_range(rates: np.ndarray, models: np.ndarray,
 
     Parameters
     ----------
-    rates : np.ndarray (S,)
+    rates : np.ndarray (T,)
         inverse time (Laplace parameter)
-    models : np.ndarray (S, P)
+    models : np.ndarray (T, Q)
         optimised models
 
     Returns
     -------
-    cond : np.ndarray (S,)
+    cond : np.ndarray (T,)
         condition number, worst of :math:`Z(0), Z(s)`
     """
     cnd = la.empty_like(rates)

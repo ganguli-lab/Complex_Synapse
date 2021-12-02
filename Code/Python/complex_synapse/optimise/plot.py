@@ -201,7 +201,7 @@ def ser_casc_plot(nst: int, jmp: float, sss: la.lnarray, nsyn: float = 1
     Parameters
     ----------
     nst : int
-        Number of states
+        Number of states, M.
     jmp : float
         Model parameter
     time : la.lnarray
@@ -242,7 +242,7 @@ def theory_plot(nst: int, sss: Array, nsyn: float = 1) -> Figure:
     Parameters
     ----------
     nst : int
-        Number of states
+        Number of states, M.
     sss : Array (T,)
         Rate parameter of Laplace transform of SNR curve
 
@@ -279,12 +279,12 @@ def theory_plot(nst: int, sss: Array, nsyn: float = 1) -> Figure:
 
 
 def equilibrium_plot(nst: int, sss: Array, nsyn: float = 1) -> Figure:
-    """Theoretical envelope plot
+    """Theoretical envelope plot, assuming detailed balance
 
     Parameters
     ----------
     nst : int
-        Number of states
+        Number of states, M.
     sss : Array (T,)
         Rate parameter of Laplace transform of SNR curve
     nsyn : float, optional
@@ -338,7 +338,7 @@ def optim_plot(nst: int, sss: Array, env_gen: Array, env_srl: Array,
     Parameters
     ----------
     nst : int
-        Number of states
+        Number of states, M.
     sss : Array (T,)
         Rate parameter of Laplace transform of SNR curve
     env_gen : Array (T,)
@@ -414,7 +414,7 @@ def heuristic_plot(nst: int, sss: Array, env_srl: Array, models_srl: Array,
     Parameters
     ----------
     nst : int
-        Number of states
+        Number of states, M.
     sss : Array (T,)
         Rate parameter of Laplace transform of SNR curve
     env_srl : Array (T,)

@@ -533,7 +533,7 @@ class EnvelopeFig:
     env_num : la.lnarray (T,)
         Numerical Laplacian envelope (stored as exponential running average,
         `env_num -> env_num * rate`).
-    models : la.lnarray (T,2N-2)
+    models : la.lnarray (T,2M-2)
         Parameters of serial models that form envelope, in the order
         mat_01, mat_12, ..., mat_n-2,n-1,
         mat_10, mat_21, ..., mat_n-1,n-2.
@@ -637,7 +637,7 @@ def animate(env_fig: EnvelopeFig, **kwargs) -> mpla.FuncAnimation:
         The animation.
 
     To view the animation call `plt.show()`.
-    To save a video, call `ani.save(...)`.
+    To save a video, call `mpla.save(...)`.
     See <https://matplotlib.org/api/animation_api.html>.
     """
     kwargs.setdefault('init_func', None)

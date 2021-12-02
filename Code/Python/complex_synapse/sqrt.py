@@ -24,7 +24,18 @@ from complex_synapse.optimise.optimise import Func, Constraint, Problem
 
 
 def check_sqrt(model: sm.SynapseModel) -> float:
-    """Check if sqrt bound is met"""
+    """Check if sqrt bound is met
+
+    Parameters
+    ----------
+    model : SynapseModel
+        Synapse model object for computation
+
+    Returns
+    -------
+    sqrt : float
+        max_a I_a sqrt(tau_a)
+    """
     taus, inits = model.spectrum()
     assert (taus.imag**2 < 1e-6).all()
     assert (inits.imag**2 < 1e-6).all()
@@ -32,23 +43,61 @@ def check_sqrt(model: sm.SynapseModel) -> float:
 
 
 def rand_sqrt(nst: int, **kwds) -> Tuple[float, SynapseSqrt]:
-    """Test sqrt bound with a random model"""
+    """Test sqrt bound with a random model.
+
+    Parameters
+    ----------
+    nst : int
+        Number of states.
+
+    Returns
+    -------
+    sqrt : float
+        max_a I_a sqrt(tau_a)
+    model : SynapseSqrt
+        The random model.
+    """
     kwds.setdefault('binary', True)
     model = SynapseSqrt.rand(nst, npl=2, **kwds)
-    model = cast(SynapseSqrt, model)
     model.symmetrise()
     return check_sqrt(model), model
 
 
 def rand_balanced(nst: int, frac: float = 0.5) -> la.lnarray:
-    """A random transition matrix with detailed balance"""
+    """A random transition matrix with detailed balance
+
+    Parameters
+    ----------
+    nst : int
+        Number of states, M.
+    frac : float, optional
+        Fraction of events that are potentiating, by default 0.5
+
+    Returns
+    -------
+    trans_mat : la.lnarray (M,M)
+        Transition matrix.
+    """
     flux = bld.RNG.random(nst**2)
     flux /= flux.sum()
     return ptom_balanced(flux[:-1], frac)
 
 
 def ptom_balanced(param: la.lnarray, frac: float = 0.5) -> la.lnarray:
-    """A transition matrix with detailed balance from its parameters"""
+    """A transition matrix with detailed balance from its parameters.
+
+    Parameters
+    ----------
+    param : la.lnarray (M^2 - 1,)
+        Parameters: fluxes, except last element.
+    frac : float, optional
+        Fraction of events that are potentiating, by default 0.5
+
+    Returns
+    -------
+    mat : la.lnarray (M,M)
+        Transition matrix.
+    """
     nst = int(np.sqrt(param.size + 1))
     frac = sb.append_frac(frac, 2)
     # coeffs, lbs = constraint(nst, frac)
@@ -63,7 +112,22 @@ def ptom_balanced(param: la.lnarray, frac: float = 0.5) -> la.lnarray:
 
 def mtop_balanced(mat: la.lnarray, frac: float = 0.5,
                   peq: Optional[la.lnarray] = None) -> la.lnarray:
-    """Parameters of a transition matrix with detailed balance"""
+    """Parameters of a transition matrix with detailed balance.
+
+    Parameters
+    ----------
+    mat : la.lnarray (M,M)
+        Transition matrix.
+    frac : float, optional
+        Fraction of events that are potentiating, by default 0.5
+    peq : lnarray (M,)|None, optional
+        Steady-state distribution, calculate from mat if None (default).
+
+    Returns
+    -------
+    param : la.lnarray (M^2 - 1,)
+        Parameters: fluxes, except last element.
+    """
     if peq is None:
         mrk = frac * mat[0] + (1-frac) * mat[1]
         peq = _ma.calc_peq(mrk)
@@ -73,8 +137,22 @@ def mtop_balanced(mat: la.lnarray, frac: float = 0.5,
     return param[:-1]
 
 
-def _row_cnst(row: int, nst: int, frac: float = 0.5):
+def _row_cnst(row: int, nst: int, frac: float = 0.5) -> la.lnarray:
     """Constraint for one diagonal of M^dep to be positive
+
+    Parameters
+    ----------
+    row : int
+        Row whose sum we compute.
+    nst : int
+        Number of states, M.
+    frac : float, optional
+        Fraction of events that are potentiating, by default 0.5
+
+    Returns
+    -------
+    coeffs : lnarray (M^2 - 1,)
+        Coefficients of parameters for constraint.
     """
     fpp, fmm = sb.append_frac(frac, 2)
     coeff = la.zeros((nst, nst))
@@ -92,8 +170,8 @@ def constraint(nst: int, frac: float = 0.5):
     ----------
     nst : int
         Number of states.
-    frac : float
-        Fraction of events that are potentiating.
+    frac : float, optional
+        Fraction of events that are potentiating, by default 0.5
 
     Returns
     -------
@@ -114,6 +192,18 @@ def constraint(nst: int, frac: float = 0.5):
 
 def valid(params: la.lnarray, frac: float = 0.5) -> bool:
     """Are these parameter values valid?
+
+    Parameters
+    ----------
+    param : la.lnarray (M^2 - 1,)
+        Parameters: fluxes, except last element.
+    frac : float, optional
+        Fraction of events that are potentiating, by default 0.5
+
+    Returns
+    -------
+    is_valid : bool
+        Are the parameters and their sums in range?
     """
     if (params < 1e-5).any():
         return False
@@ -123,7 +213,22 @@ def valid(params: la.lnarray, frac: float = 0.5) -> bool:
 
 
 def get_valid(nst: int, frac: float = 0.5, rng: np.random.Generator = bld.RNG):
-    """Get a valid set of parameter values"""
+    """Get a valid set of parameter values
+
+    Parameters
+    ----------
+    nst : int
+        Number of states, M.
+    frac : float, optional
+        Fraction of events that are potentiating, by default 0.5
+    rng : np.random.Generator, optional
+        Our random number generator, by default la.random.default_rng().
+
+    Returns
+    -------
+    param : la.lnarray (M^2 - 1,)
+        Parameters: fluxes, except last element.
+    """
     params = rng.random(nst**2 - 1) * 2 / nst**2
     for _ in _it.undcount('tries', 100, disp_step=10):
         if valid(params, frac):
@@ -134,7 +239,22 @@ def get_valid(nst: int, frac: float = 0.5, rng: np.random.Generator = bld.RNG):
 
 def get_serial(nst: int, frac: float = 0.5, rng: np.random.Generator = bld.RNG
                ) -> la.lnarray:
-    """Get a valid set of parameter values"""
+    """Get a valid set of parameter values for a serial model
+
+    Parameters
+    ----------
+    nst : int
+        Number of states, M.
+    frac : float, optional
+        Fraction of events that are potentiating, by default 0.5
+    rng : np.random.Generator, optional
+        Our random number generator, by default la.random.default_rng().
+
+    Returns
+    -------
+    param : la.lnarray (2*M - 2,)
+        Parameters: fluxes, except last element.
+    """
     serial = np.diagflat(la.full(nst-1, 1/nst), 1).ravel()[:-1]
     params = (rng.random(nst**2 - 1) - 0.5) * 2 / nst**2
     for _ in _it.undcount('tries', 100, disp_step=10):
@@ -169,7 +289,7 @@ class SynapseSqrt(sb.SynapseParam, sm.SynapseModel):
         self._saved = (la.array(0), la.array(0), la.array(0))
 
     def biggest(self) -> float:
-        """max(I_a * sqrt(t_a / 2))"""
+        """max(I_a * sqrt(t_a / 2)), the quamtity we optimise."""
         # taus, inits = self.spectrum()
         # if (taus.imag**2 > 1e-6).any() or (inits.imag**2 > 1e-6).any():
         #     self.symmetrise()
@@ -179,7 +299,7 @@ class SynapseSqrt(sb.SynapseParam, sm.SynapseModel):
         return - sqrts[self._ind]
 
     def biggest_grad(self) -> la.lnarray:
-        """max(I_a * sqrt(t_a / 2))"""
+        """gradient of max(I_a * sqrt(t_a / 2))"""
         if self._ind is None:
             self.biggest()
         ind = self._ind
@@ -333,20 +453,29 @@ class OptimProblem(cso.OptimProblem):
     def __init__(self, **kwds) -> None:
         kwds.setdefault('npl', 2)
         kwds.setdefault('rate', None)
+        kwds.setdefault('model_cls', SynapseSqrt)
         kwds.setdefault('maker', normal_problem)
         super().__init__(**kwds)
 
-    def _make_model(self) -> None:
-        """Create a model"""
-        if self.x_init is None:
-            self.model = SynapseSqrt.rand(**self.opts.model_opts)
-        else:
-            self.model = SynapseSqrt.from_params(self.x_init,
-                                                 **self.opts.model_opts)
+    # def _make_model(self) -> None:
+    #     """Create a model object"""
+    #     if self.x_init is None:
+    #         self.model = SynapseSqrt.rand(**self.opts.model_opts)
+    #     else:
+    #         self.model = SynapseSqrt.from_params(self.x_init,
+    #                                              **self.opts.model_opts)
 
     def update_init(self, value: Optional[la.lnarray] = None,
                     serialish: bool = False) -> None:
-        """Change initial guess"""
+        """Change initial guess (random)
+
+        Parameters
+        ----------
+        value : la.lnarray|None, optional
+            New parameters for the initial guess, by default None
+        serialish : bool, optional
+            Do we initialise favouring serial transitions? By default False
+        """
         if value is None:
             if serialish:
                 self.x_init = get_serial(self.model.nstate, self.model.frac[0],
@@ -363,7 +492,19 @@ class OptimProblem(cso.OptimProblem):
 
 def balance_cons(model: SynapseSqrt, opts: cso.ProblemOptions,
                  ) -> sco.NonlinearConstraint:
-    """Create a constraint for detailed balance
+    """Create a constraint for detailed balance.
+
+    Parameters
+    ----------
+    model : SynapseSqrt
+        The object used for computations
+    opts : ProblemOptions|None, optional
+        Object containing options for the whole problem, by default None
+
+    Returns
+    -------
+    constraint : NonlinearConstraint
+        The constraint object in trust-constr format.
     """
     cond_fn = cso.optimise.make_fn(model, 'current')
     return sco.NonlinearConstraint(cond_fn, 0, 0, **opts.nlin())
@@ -372,6 +513,28 @@ def balance_cons(model: SynapseSqrt, opts: cso.ProblemOptions,
 def normal_problem(model: SynapseSqrt, rate: Optional[float],
                    opts: cso.ProblemOptions) -> Problem:
     """Make an optimize problem.
+
+    Parameters
+    ----------
+    model : SynapseOptModel
+        The object used for computations
+    rate : float|None
+        Value of Laplace transorm parameter. Should be None.
+    opts : ProblemOptions
+        Object containing options for the whole problem.
+
+    Returns
+    -------
+    fun : Callable[[ndarray(M)], Number]
+        The loss function, wrapped so that it only needs model parameters.
+    jac : Callable[[ndarray(M)], ndarray(M)]
+        Jacobian of `fun`, wrapped so that it only needs model parameters.
+    hess : Callable[[ndarray(M)], ndarray(M,M)]
+        Hessian of `fun`, wrapped so that it only needs model parameters.
+    bounds : sco.Bounds
+        Bounds on each transition rate
+    diag : list[LinearConstraint|sco.NonNonlinearConstraint]
+        Bound on off-diagonal row sums.
     """
     assert rate is None
     fun = cso.optimise.make_fn(model, 'biggest')
@@ -381,7 +544,7 @@ def normal_problem(model: SynapseSqrt, rate: Optional[float],
     con_coeff, lbs = constraint(model.nstate, model.frac[0])
     # con_coeff = la.ones(model.nstate**2 - 1)
     bounds = sco.Bounds(1e-5, np.inf, **opts.lin())
-    diag = [sco.LinearConstraint(con_coeff, lbs, np.inf, **opts.lin())]
+    diag = [cso.optimise.LinearConstraint(con_coeff, lbs, np.inf, **opts.lin())]
     # diag.append(balance_cons(model, opts))
     if opts.cond_lim:
         diag.append(cso.optimise.cond_limit(model, None, opts))
@@ -391,7 +554,20 @@ def normal_problem(model: SynapseSqrt, rate: Optional[float],
 
 def optim_sqrt(nst: int, prob: Optional[OptimProblem] = None,
                **kwds) -> sco.OptimizeResult:
-    """Optimised model at one value of rate
+    """Optimised model
+
+    Parameters
+    ----------
+    nst : int
+        Number of states
+    prob : OptimProblem|None, optional
+        Object containing the (previous) whole problem. If `None`, we build a
+        new one using extra keyword arguments. By default `None`.
+
+    Returns
+    -------
+    res : sco.OptimizeResult
+        Object containing the results of optimisation.
     """
     kwds.setdefault('repeats', 10)
     kwds.setdefault('nst', nst)

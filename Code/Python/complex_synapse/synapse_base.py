@@ -688,7 +688,7 @@ class SynapseParam(SynapseBase):
 
     @classmethod
     def from_params(cls: Type[Syn], params: np.ndarray, *args, **kwds) -> Syn:
-        """Builds SynapseOpt object from independent parameters
+        """Builds SynapseParam object from independent parameters
 
         Parameters
         ----------

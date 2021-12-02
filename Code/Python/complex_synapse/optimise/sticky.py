@@ -18,7 +18,9 @@ def _components(beta: Values, numh: int) -> Tuple[Values, ...]:
 
     Parameters
     ----------
-    numh
+    beta : float|ndarray
+        Wavenumber across states for eta, etc.
+    numh : int
         num/2
 
     Returns
@@ -41,7 +43,22 @@ def _components(beta: Values, numh: int) -> Tuple[Values, ...]:
 
 # -------------------------------------
 def sticky(eps: Values, beta: Values, num: int) -> Values:
-    """Laplace-SNR for sticky serial model"""
+    """Laplace-SNR for sticky serial model
+
+    Parameters
+    ----------
+    eps : float|ndarray
+        Transition rate in from end states.
+    beta : float|ndarray
+        Wavenumber across states for eta, etc.
+    num : int
+        Number of states
+
+    Returns
+    -------
+    snr_laplace : float|ndarray
+        Laplace transform of SNR curve.
+    """
     sval = beta_to_s(beta)
     numer, denom, dnumer, ddenom = _components(beta, num / 2)
     fnumer = numer - eps * dnumer
@@ -52,7 +69,21 @@ def sticky(eps: Values, beta: Values, num: int) -> Values:
 
 # -------------------------------------
 def eps_stars(beta: Values, num: int) -> Tuple[Values, Values]:
-    """Optimal epsilon for sticky serial model, raw"""
+    """Optimal epsilon for sticky serial model, both solutions, unclipped.
+
+
+    Parameters
+    ----------
+    beta : float|ndarray
+        Wavenumber across states for eta, etc.
+    num : int
+        Number of states
+
+    Returns
+    -------
+    eps : tuple[float|ndarray,float|ndarray]
+        Transition rate in from end states.
+    """
     if num == 2:
         return 0, 0
     numer, denom, dnumer, ddenom = _components(beta, num / 2)
@@ -70,25 +101,60 @@ def eps_stars(beta: Values, num: int) -> Tuple[Values, Values]:
 
 
 def eps_star(beta: Values, num: int) -> Values:
-    """Optimal epsilon for sticky serial model, clipped"""
+    """Optimal epsilon for sticky serial model, 1st solution, clipped.
+
+    Parameters
+    ----------
+    beta : float|ndarray
+        Wavenumber across states for eta, etc.
+    num : int
+        Number of states
+
+    Returns
+    -------
+    eps : float|ndarray
+        Transition rate out to end states.
+    """
     epss = eps_stars(beta, num)[0]
     return np.clip(epss, 0, 1)
 
 
 def eps_star_star(beta: Values, num: int) -> Values:
-    """Optimal epsilon for sticky serial model, clipped, other solution"""
+    """Optimal epsilon for sticky serial model, clipped, other solution.
+
+    Parameters
+    ----------
+    beta : float|ndarray
+        Wavenumber across states for eta, etc.
+    num : int
+        Number of states
+
+    Returns
+    -------
+    eps : float|ndarray
+        Transition rate out to end states.
+    """
     epss = eps_stars(beta, num)[1]
     return np.clip(epss, 0, 1)
 
 
 # -------------------------------------
-def _env_actual(betas: Values, svals: Values, numh: int) -> Values:
+def _sticky_star(betas: Values, svals: Values, numh: int) -> Values:
     """actual heuristic envelope
 
     Parameters
     ----------
-    numh
-        num/2
+    beta : float|ndarray
+        Wavenumber across states for eta, etc.
+    sval : float|ndarray
+        Parameter of Laplace transform.
+    numh : int
+        Number of states, num/2
+
+    Returns
+    -------
+    snr_laplace : float|ndarray
+        Laplace transform of SNR curve.
     """
     numer, _, dnumer, _ = _components(betas, numh)
     fdm = np.sqrt((numh - 1)*numer - numh*dnumer) + 1
@@ -97,20 +163,59 @@ def _env_actual(betas: Values, svals: Values, numh: int) -> Values:
 
 
 def sticky_star(betas: Values, num: int) -> Values:
-    """actual heuristic envelope"""
+    """actual heuristic envelope
+
+    Parameters
+    ----------
+    beta : float|ndarray
+        Wavenumber across states for eta, etc.
+    num : int
+        Number of states
+
+    Returns
+    -------
+    snr_laplace : float|ndarray
+        Laplace transform of SNR curve.
+    """
     svals = beta_to_s(betas)
-    return _env_actual(betas, svals, num/2)
+    return _sticky_star(betas, svals, num//2)
 
 
 def sticky_star_s(svals: Values, num: int) -> Values:
-    """actual heuristic envelope"""
+    """actual heuristic envelope
+
+    Parameters
+    ----------
+    svals : float|ndarray
+        Parameter of Laplace transform.
+    num : int
+        Number of states
+
+    Returns
+    -------
+    snr_laplace : float|ndarray
+        Laplace transform of SNR curve.
+    """
     betas = s_to_beta(svals)
-    return _env_actual(betas, svals, num/2)
+    return _sticky_star(betas, svals, num//2)
 
 
 # -------------------------------------
 def env_approx(svals: Values, num: int) -> Values:
-    """approximate heuristic envelope"""
+    """approximate heuristic envelope
+
+    Parameters
+    ----------
+    svals : float|ndarray
+        Parameter of Laplace transform.
+    num : int
+        Number of states
+
+    Returns
+    -------
+    snr_laplace : float|ndarray
+        Approximate Laplace transform of SNR curve.
+    """
     return (num - 1) * (1 - np.sqrt(num * (num - 2) * svals))
 
 
@@ -119,6 +224,13 @@ def env_approx(svals: Values, num: int) -> Values:
 
 def lower(beta: float, num: int) -> float:
     """derivative of sticky wrt eps at eps==0
+
+    Parameters
+    ----------
+    beta : float|ndarray
+        Wavenumber across states for eta, etc.
+    num : int
+        Number of states
     """
     numer, denom, dnumer, ddenom = _components(beta, num / 2)
     # d/d(eps) (1-eps)(n - eps dn)/(m - (m-2) eps)(d - eps dd)
@@ -129,19 +241,56 @@ def lower(beta: float, num: int) -> float:
 def limits(num: int, debug: bool = False) -> Tuple[float, float]:
     """range of beta where sticky model can be optimised
     Note: higher t -> lower s -> higher M
+
+    Parameters
+    ----------
+    num : int
+        Number of states
+    debug : bool, optional
+        Print diagnostic info, in case initial guesses fails to bracket roots,
+        by default `False`.
+
+    Returns
+    -------
+    beta1 : float|ndarray
+        Wavenumber across states for eta, etc. Lower `t` side.
+    beta2 : float|ndarray
+        Wavenumber across states for eta, etc. higher `t` side.
     """
     if num == 2:
         return 0.01, Y_STAR
-    x_0, x_1 = beta_star(num), beta_star(num + 2)
-    lo_sol = _sco.root_scalar(lower, args=(num,), x0=x_0, x1=x_1)
+    x_0, x_1 = beta_star(num-2), beta_star(num + 2)
     if debug:
-        print(lo_sol.flag, eps_star(lo_sol.root, num))
+        print(f"{num=}: f(x_0)={lower(x_0, num):.2f};"
+              f" f(x_1)={lower(x_1, num):.2f};")
+    lo_sol = _sco.root_scalar(lower, args=(num,), bracket=(x_0, x_1))
+    if debug:
+        print(f" {lo_sol.flag};"
+              f" eps={eps_star(lo_sol.root, num):.2f};"
+              f" f(x)={lower(lo_sol.root, num):.2f}")
     return lo_sol.root, 0
 
 
 # -------------------------------------
 def envelope(num: int, count: int, **kwds) -> Tuple[np.ndarray, ...]:
-    """Optimised sticky model"""
+    """Optimised sticky model
+
+    Parameters
+    ----------
+    num : int
+        Number of states
+    count : int
+        Number of points between limits where we optimise
+
+    Returns
+    -------
+    svals : ndarray (count,)
+        Parameter of Laplace transform.
+    avals : ndarray (count,)
+        Laplace transform of SNR curve. Actual maximum.
+    env : ndarray (count,)
+        Laplace transform of SNR curve. Approximate maximum.
+    """
     lims = kwds.pop('lims', limits(num))
     fudge = kwds.pop('fudge', 0.0)
     lims = ((1-fudge) * lims[0], (1+fudge) * lims[1])
