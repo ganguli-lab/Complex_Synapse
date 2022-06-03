@@ -70,7 +70,7 @@
 %Markov matrix
 \newcommand{\MMm}{Q}
 \newcommand{\MM}{\mathbf{\MMm}}
-%prob distribution
+%probability distribution
 \newcommand{\prm}{p}
 \newcommand{\pr}{\mathbf{\prm}}
 %equilibrium distribution
@@ -82,7 +82,7 @@
 %first passage times
 \newcommand{\fptm}{T}
 \newcommand{\fpt}{\mathbf{\fptm}}
-%off-diag first passage times
+%off-diagonal first passage times
 \newcommand{\fptbm}{\overline{\fptm}}
 \newcommand{\fptb}{\overline{\fpt}}
 %fundamental matrix
@@ -203,7 +203,7 @@ As \(t\to\infty\), the synaptic weights will become independent of the patter st
 Thus, the vector of random variables \(\syn(\infty)\) also describes the synaptic weights under the null hypothesis -- if that given pattern had never been stored.
 
 We can test if the pattern had been previously stored by computing \(\synid\cdt\syn\) and comparing it to some threshold~\cite{Sommer1998retrieval}.
-For large \(N\), this quantity will have a Gausssian distribution.
+For large \(N\), this quantity will have a Gaussian distribution.
 There will be a ROC curve as a function of this threshold:
 %
 \begin{equation}\label{eq:ROC}
@@ -329,7 +329,7 @@ We denote the probability distribution across these states by the row vector \(\
 We denote a column vector of ones by \(\onev\), so the normalisation condition is \(\pr(t) \, \onev=1\).
 
 When the synapse is subjected to a plasticity event the internal state will change stochastically, described by the matrices \(\MMd^\nu\) whose \(i,j\) elements are the transition probabilities from state \(i\) to state \(j\), 
-and \(\nu \) labels the diffrerent types of plasticity event.
+and \(\nu \) labels the different types of plasticity event.
 Potentiating events have \(\nu=\) pot, depressing events have \(\nu=\) dep.
 We also use the notation
 %
@@ -365,7 +365,7 @@ If we treat the off diagonal elements as the independent degrees of freedom, wit
 The second of these will be referred to as the ``diagonal'' constraint.
 
 Given a sequence of plasticity events at times \(t_1,t_2,t_3,\ldots\), the probability distribution across the internal states at time \(t_n\), 
-mariginalising over states at earlier times, is
+marginalising over states at earlier times, is
 %
 \begin{equation}\label{eq:plastseq}
   \pr(t_n) = \pr(t_0)  \MMd \pot \MMd \dep \MMd \dep \MMd \pot \MMd \dep \MMd \pot \MMd \pot \MMd \dep \ldots \MMd \pot .
@@ -769,7 +769,7 @@ This is useful in numerical maximisation.
 
 \section{Upper bounds}\label{sec:upperbnds}
 
-Now to study the SNR as a function of  time, it helps to consider some variables that are more directly related to the time dependance than the matrix elements. 
+Now to study the SNR as a function of  time, it helps to consider some variables that are more directly related to the time dependence than the matrix elements. 
 So we introduce an eigenvector decomposition for \(-\frg\):
 %
 \begin{equation}\label{eq:eigendecomp}
@@ -967,7 +967,7 @@ It follows that
     = - \sum_{\nu, m} \kktm^\nu_{mm} = 0 .
 \end{equation*}
 %
-As the KKT multipliers are nonnegative, this implies that all the diagonal KKT multipliers vanish and we can ignore the diagonal constraints.
+As the KKT multipliers are non-negative, this implies that all the diagonal KKT multipliers vanish and we can ignore the diagonal constraints.
 
 Another way of seeing this is to note that all but the diagonal constraints in \cref{eq:constri} are invariant under \cref{eq:scale}.
 This means that if we have a set of parameters that satisfy the off-diagonal constraints, it can always be scaled so that it meets the diagonal constraints.
@@ -1168,7 +1168,7 @@ Then \(\kktm^\nu_{ij} = 0\) and \cref{eq:areaderivs} becomes
 \end{gathered}
 \end{equation}
 %
-Therefore, provided that state \(i\) has nonzero equilibrium probability, degeneracy in \(\etw\) implies degeneracy in \(\thb\) for an otimal model.
+Therefore, provided that state \(i\) has nonzero equilibrium probability, degeneracy in \(\etw\) implies degeneracy in \(\thb\) for an optimal model.
 
 Let \(C_a\) denote the \(a\)'th clump of states that are degenerate in \(\etw\) and \(\thb\), in order of decreasing \(\etw\).
 The arguments from \cref{sec:areapert} tell us that the transitions in \(\W\pot\) from states in \(C_a\) can only go to states in \(C_{a+1}\).%
@@ -1531,7 +1531,7 @@ This almost forces the serial topology on us (if we can argue that degenerate st
 The third inequality is saturated iff \(\mathbf{u} \propto \w\).
 This contradicts the requirements of the previous paragraph unless \(M=2\), or if it is a multistate model rather than serial.
 
-The fourth inequality can only be saturated if, for each state, the outgoing potentitation rates and depression rates separately sum to one.
+The fourth inequality can only be saturated if, for each state, the outgoing potentiation rates and depression rates separately sum to one.
 This does force degenerate states to be lumpable, and we are left with a serial topology with deterministic transitions.
 However, this cannot be done for the two end states without violating the requirements for saturating the first inequality.
 
@@ -2164,7 +2164,7 @@ If both \(\nu\) have nonzero rates from \(m\) to \(n\):
 %
 
 Suppose there are two states, \(i,j\), with nonzero transitions from \(m\) for one \(\nu\).
-Both must statisfy \cref{eq:oneexit} for the same \(\kktm^\nu_{mm}\), so
+Both must satisfy \cref{eq:oneexit} for the same \(\kktm^\nu_{mm}\), so
 %
 \begin{equation}\label{eq:twoexits}
   \Wm^\nu_{mi}, \Wm^\nu_{mj} > 0
@@ -2202,7 +2202,7 @@ The consequences of these inequalities are depicted in \cref{fig:planes}(\ref{fi
 We see that \(n\) must be a global minimum of \(\dgn_m\), and if there are multiple transitions of a single type (potentiating or depressing) the targets are constrained to lie on a single line.
 Even if there is no state \(n\) that is the target of both potentiating and depressing transitions, there will be two lines at \(45^\circ \) passing through any targets of potentiating/depressing transitions that demarcate the forbidden zone.
 
-We use \(m*\) to label the intersection of the two diagonal lines in \cref{fig:planes}(\ref{fig:triangle_spacing}), wether or not there is a state there.
+We use \(m*\) to label the intersection of the two diagonal lines in \cref{fig:planes}(\ref{fig:triangle_spacing}), whether or not there is a state there.
 It can be defined for each \(m\), provided that it has at least one outgoing transition for each plasticity type, via
 %
 \begin{equation*}
@@ -2448,7 +2448,7 @@ or in differential form:
 %
 In \cref{eq:kktsol} we have an expression for the KKT multipliers at the maximum in terms of \(s\) and \(\W \).
 We denote this expression by \( \kkt^\ddagger(s, r, \W) \)
-(note there is \(s\) dependance through \(\thb(s), \etw(s)\) \etc and \(r\) dependance through \(\alb\) and \(\omb\)).
+(note there is \(s\) dependence through \(\thb(s), \etw(s)\) \etc and \(r\) dependence through \(\alb\) and \(\omb\)).
 If we denote the solution to the maximisation problem by \(\W^\ast(s,r), \kkt^\ast(s,r)\), we have \( \kkt^\ast(s,r) = \kkt^\ddagger(s, r, \W^\ast(s,r)) \) and
 %
 \begin{equation}\label{eq:optmodelscale}
@@ -2489,7 +2489,7 @@ The same is true of any horizontal line of constant \(r \neq 0\).
 Any vertical line of constant \(s \neq 0\) will also intersect every ray except \(s = 0\).
 
 From \cref{sec:serialarea}, we know the optimal models at \(s = 0\).
-% (There is still an ambiguity concering the scale, but it makes sense to choose to saturate the diagonal constraints in \cref{eq:wdof} so that \cref{eq:optmodelscale} holds).
+% (There is still an ambiguity concerning the scale, but it makes sense to choose to saturate the diagonal constraints in \cref{eq:wdof} so that \cref{eq:optmodelscale} holds).
 At \(r = 0\) there is only one allowed model: \(\W = \mathbf{0}\).
 
 Therefore we will find the full range of optimal topologies if we look at any horizontal or vertical line.
@@ -2939,7 +2939,7 @@ We can find the boundary of the region of applicability by asking at what value 
 %
 with the \(\varepsilon=0\) case providing the lower boundary and \(\varepsilon=1\) providing the upper boundary.
 For lower \(s\), \(\varepsilon = 0\) is the optimum. 
-For higher \(s\), \(\varepsilon = 1\) is the optimum, which is eqivalent to \(\varepsilon = 0\) with \(M-2\) states.
+For higher \(s\), \(\varepsilon = 1\) is the optimum, which is equivalent to \(\varepsilon = 0\) with \(M-2\) states.
 This is depicted by the dotted lines in \cref{fig:shorten}\ref{fig:short_ratio}.
 
 \(M=2\) is a special case:
