@@ -41,7 +41,7 @@
 % \DeclareMathDelimiter{\rAngle}{\mathclose}{xlargesymbols}{"ED}{largesymbols}{"13}
 % \DeclareMathDelimiter{\lVvert}{\mathopen}{xlargesymbols}{"F2}{xlargesymbols}{"F5}
 % \DeclareMathDelimiter{\rVvert}{\mathclose}{xlargesymbols}{"F2}{xlargesymbols}{"F5}
-
+\usepackage{MnSymbol}
 \newcommand{\aav}[1]{\mathopen{}\left\llangle #1 \right\rrangle\mathclose{}}
 \newcommand{\nnrm}[1]{\mathopen{}\left\lWavy #1 \right\rWavy\mathclose{}}
 %================================================================================
@@ -802,6 +802,15 @@ We have ignored the denominator of \cref{eq:SNRcurveExact} for now.
 This will not have any effect on the results: it will not change the location of the maxima, which are at \( \Delta f = \eq \w = 0 \).
 We will confine such discussion to the footnotes.
 
+Note that
+%
+\begin{equation}\label{eq:laplaceeig}
+  \hat{A}(s) = \sum_a \frac{\CI_a}{s + q_a},
+\end{equation}
+%
+Therefore the eigenmodes with nonzero initial SNR can be found from singularity structure of \( \hat{A}(s) \) in the complex plane.
+The poles are at \(s = - \frac{1}{\tau_a}\), with residue \(\CI_a\).
+
 Now the question is what are the allowed values of \( (\CI_a, \tau_a) \)?
 We have to translate the constraints of \cref{eq:constri} into constraints on the eigenmode variables.
 Each constraint we find will be a necessary condition for the existence of a set of Markov processes \( \MMdm_{ij}^\nu \) that result in \( (\CI_a, \tau_a) \).
@@ -1544,7 +1553,17 @@ Because we think that \cref{eq:sqrtbound} can be improved, we will rewrite it as
 % 
 We have shown that the smallest \(\cnst\) for which \cref{eq:gammabnd} is true is less than 2.
 Considering the two-state model with deterministic transitions, we see that \(\cnst\) is at least 1.
-Later, looking at uniform serial models in \cref{sec:heuristicenv} we will see near \cref{eq:henvapprox} that \(\gamma\) is at least 1.18.
+For the \(M\)-state uniform serial model with deterministic transitions, in \cref{eq:unieig}, we find
+%
+\begin{equation*}
+  \CI_n \sqrt{r\tau_n} = 
+      \frac{2 \sqrt{2} \sin\frac{n\pi}{2} \cos\frac{n\pi}{2M}}
+           {\prn{M \sin \frac{n\pi}{2M}}^2},
+\end{equation*}
+%
+which is maximised at \(n=1, M \to \infty\).
+Thus we see that \(\cnst \geq \frac{128}{\pi^4} = 1.31 \).
+
 
 %--------------------------------------------------------------------------------
 
@@ -2747,6 +2766,16 @@ This can be used to compute the Laplace transform
    = \frac{2 S\prn{m \beta}}{M s \prn{S\prn{m \beta} + 1}}.
 \end{equation}
 %
+This has poles as \( \beta = \frac{(2n-1)\pi\ir}{2m} \), therefore
+%
+\begin{equation}\label{eq:unieig}
+  q_n = 1 - \cos\frac{(2n-1)\pi}{2m} = 2 \sin^2\frac{(2n-1)\pi}{4m},
+  \qquad
+  \CI_n = \frac{(-1)^{n-1} \sin\frac{(2n-1)\pi}{2m}}{m^2 q_n},
+  \qquad n = 1,\dots,m.
+\end{equation}
+%
+Note that these are only the eigenmodes with nonzero \(\CI_n\).
 
 In reality, \(M\) can only take even integer values.
 However, one can find a heuristic approximation to the envelope by maximising \wrt \(M\).
