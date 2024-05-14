@@ -2817,12 +2817,14 @@ This can be used to compute the Laplace transform
    = \frac{2 S\prn{m \beta}}{M s \prn{S\prn{m \beta} + 1}}.
 \end{equation}
 %
-This has poles as \( \beta = \frac{(2n-1)\pi\ir}{2m} \), therefore
+This has poles as \( \beta = \frac{(2n-1)\pi\ir}{2m} \).
+From \cref{eq:laplaceeig} we see that the poles and residues in the \(s\)-plane are \( (-q_n, \CI_n) \), therefore:
 %
 \begin{equation}\label{eq:unieig}
-  q_n = 1 - \cos\frac{(2n-1)\pi}{2m} = 2 \sin^2\frac{(2n-1)\pi}{4m},
+  q_n = 1 - \cos \brkfrac{(2n-1)\pi}{2m} 
+      % = 2 \sin^2\frac{(2n-1)\pi}{4m},
   \qquad
-  \CI_n = \frac{(-1)^{n-1} \sin\frac{(2n-1)\pi}{2m}}{m^2 q_n},
+  \CI_n = \frac{(-1)^{n-1}}{m^2} \cot \brkfrac{(2n-1)\pi}{4m},
   \qquad n = 1,\dots,m.
 \end{equation}
 %
@@ -2838,13 +2840,12 @@ We find that
   s = 2\sinh^2\frac{y_*}{M_*},
   \qquad
   \hat{A}_*(s) = \prn{\frac{ \sinh y_* }{ \cosh^2 y_* }} 
-      \frac{\abs{\beta(s)}}{s},
+      \frac{\operatorname{arccosh}(1+s)}{s},
   \\ \text{where}\quad
-  y_* = \tanh \frac{y_*}{2} \cosh y_* \approx 1.50553,
-  \qquad
+  y_* = \tanh \frac{y_*}{2} \cosh y_* \approx 1.50553.
 \end{multline}
 %
-and \(\beta(s)\) is given by the second formula of \cref{eq:detagensol}.
+% and \(\beta(s)\) is given by the second formula of \cref{eq:detagensol}.
 
 This is only valid for
 %
@@ -3204,8 +3205,8 @@ we find
   & r\tau \leq \tfrac{1}{2\sinh^2\frac{y_*}{2}} , \\
   & \sqrt{N} \prn{\frac{ \sinh y_* }{ \cosh^2 y_* }} \beta(\tau), &
   \tfrac{1}{2\sinh^2 \frac{y_*}{2}} \leq & r\tau \leq \tfrac{1}{2\sinh^2 \frac{y_*}{M}} , \\
-  & \frac{\sqrt{N}\brk{S\prn{\tfrac{M\beta}{2}} - S\prn{\tfrac{(M-2)\beta}{2}}}}
-        {\brk{\sqrt{{\frac{M-2}{2} S\prn{\tfrac{M\beta}{2}} - \frac{M}{2} S\prn{\tfrac{(M-2)\beta}{2}}}} + 1}^2} , &
+  & \frac{\sqrt{N}\brk{S\prn{\tfrac{M\beta(\tau)}{2}} - S\prn{\tfrac{(M-2)\beta(\tau)}{2}}}}
+        {\brk{\sqrt{{\frac{M-2}{2} S\prn{\tfrac{M\beta(\tau)}{2}} - \frac{M}{2} S\prn{\tfrac{(M-2)\beta(\tau)}{2}}}} + 1}^2} , &
   % & \max_{\varepsilon \in [0,1]} \brc{
   %     \frac{2\sqrt{N}(1-\varepsilon) \Delta_{\varepsilon}\brk{S\prn{\tfrac{M\beta}{2}}}}
   %     {\Delta_{\varepsilon}\brk{M} \Delta_{\varepsilon}\brk{S\prn{\tfrac{M\beta}{2}} + 1} } 
@@ -3215,7 +3216,7 @@ we find
 \right.
 \end{equation}
 %
-where \(S(\beta) = \cosh \beta(\tau) - 1\) (see \cref{eq:detagensol}) and \(y_*\) is defined in \cref{eq:unienv}.
+where \(S(\beta) = \cosh \beta - 1\), \( S(\beta(\tau)) = 1/\tau \) (see \cref{eq:detagensol}) and \(y_*\) is defined in \cref{eq:unienv}.
 
 For \(M \gg 1\), and \(r\tau\) much greater than the lower bound of each region, we can approximate the envelope as
 %
