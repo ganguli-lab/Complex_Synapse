@@ -19,7 +19,7 @@
 \usepackage[T1]{fontenc}
 \usepackage{a4wide}
 % \usepackage{stix2}
-\usepackage[tables,graphics,draft,panels=paralist]{sl-preamble}
+\usepackage[tables,graphics,draft,panels=paralist,noeqcref]{sl-preamble}
 %\usepackage{amsldoc} for finding documentation only
 \def\Snospace~{\S{}}
 \renewcommand{\sectionautorefname}{\Snospace}
@@ -1422,12 +1422,20 @@ The eigenvalue spectrum of \(\MM\) is closely related to its numerical range:
 \end{equation}
 %
 When \(\MM\) satisfies detailed balance (more generally when it commutes with its time reverse), the numerical range is the convex hull of the eigenvalues.
-
-The other quantity of interest in \cref{eq:snrcoeffs} is the amplitude of the eigenmodes.
-In analogy, we define the following functional (for real \(\mathbf{u}\))
+For any vector \(\mathbf{u}\) that is perpendicular to \(\onev\), we define the following functional
 %
 \begin{equation*}
-  \CI(\mathbf{u}) = \frac{(\eq \enc \mathbf{u}) (\mathbf{u}^\dag \w)}{r\mathbf{u}^\dag \mathbf{u}}
+    \tau(\mathbf{u}) = - \frac{\mathbf{u}^\dag \mathbf{u}}{\mathbf{u}^\dag \frg \mathbf{u}}
+      = \frac{1}{\mathcal{W}(-\frg, \mathbf{u})},
+\end{equation*}
+%
+with the \(\mathbf{u}\) in \( \mathcal{W}(-\frg, \mathbf{u}) \) representing the vector space spanned by \(\mathbf{u}\).
+
+The other quantity of interest in \cref{eq:snrcoeffs} is the amplitude of the eigenmodes.
+In analogy, we define the following functionals (for real \(\mathbf{u}\))
+%
+\begin{equation*}
+    \CI(\mathbf{u}) = \frac{(\eq \enc \mathbf{u}) (\mathbf{u}^\dag \w)}{r\mathbf{u}^\dag \mathbf{u}}
       = \frac{\sum_{i \neq j} \eqm_i \encm_{ij} (u_j - u_i) \sum_k \eqm_k u_k \wm_k} 
              {r\sum_{l} \eqm_l u_l^2} .
 \end{equation*}
@@ -1499,8 +1507,11 @@ Furthermore, using \cref{eq:constri}, \( \nnrm{\onem}^2 = \sum_{i \neq j} \eqm_i
 Then, remembering \cref{eq:numrange},
 %
 \begin{equation}\label{eq:sqrtnumrange}
-  \CI(\mathbf{u}) \leq \sqrt{\frac{2\av{\mathbf{u}, -\frg \mathbf{u}}}{r\av{\mathbf{u}, \mathbf{u}}}}
-      = \sqrt{2\mathcal{W}(-\frg;\mathbf{u})/r}.
+\begin{aligned}
+  \CI(\mathbf{u}) &\leq \sqrt{\frac{2\av{\mathbf{u}, -\frg \mathbf{u}}}{r\av{\mathbf{u}, \mathbf{u}}}}
+      = \sqrt{2\mathcal{W}(-\frg;\mathbf{u})/r} , &\quad \text{or} \quad
+  \CI(\mathbf{u}) \sqrt{r \tau(\mathbf{u})} &\leq \sqrt{2}.
+\end{aligned}
 \end{equation}
 %
 Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvectors, we find a bound on the eigenmodes:
@@ -1514,7 +1525,7 @@ Now, simply choosing \(\mathbf{u} = \evr_a \), one of the orthonormal eigenvecto
 %
 Numerical maximisation of the quantity above produces the same result as in \cref{sec:initial}:
 the two-state model with deterministic transitions.
-This model has \(\CI_1 = \tau_1 = 1\), suggesting that there's a factor of \(\sqrt{2}\) looseness in this bound.
+This model has \(\CI_1 = \tau_1 = 1\), suggesting that there's a factor of \(\sqrt{2}\) looseness in this bound, although we will see below that there is at least one model for which this quantity is higher.
 
 We can look at the various inequalities used in this derivation to see which models could saturate them:
 %
@@ -1551,8 +1562,7 @@ Because we think that \cref{eq:sqrtbound} can be improved, we will rewrite it as
   \CI_a \sqrt{r\tau_a} \leq \sqrt{\cnst}.
 \end{equation}
 % 
-We have shown that the smallest \(\cnst\) for which \cref{eq:gammabnd} is true is less than 2.
-Considering the two-state model with deterministic transitions, we see that \(\cnst\) is at least 1.
+We have shown that the smallest \(\cnst\) for which \cref{eq:gammabnd} is true is at most 2.
 For the \(M\)-state uniform serial model with deterministic transitions, in \cref{eq:unieig}, we find
 %
 \begin{equation*}
@@ -1562,7 +1572,7 @@ For the \(M\)-state uniform serial model with deterministic transitions, in \cre
 \end{equation*}
 %
 which is maximised at \(n=1, M \to \infty\).
-Thus we see that \(\cnst \geq \frac{128}{\pi^4} = 1.31 \).
+Thus we see that \(\cnst\) is at least \(\frac{128}{\pi^4} = 1.31 \).
 
 
 %--------------------------------------------------------------------------------
@@ -2207,6 +2217,16 @@ Furthermore, for another state \(k\) with zero transition rate from \(m\) for th
 \end{aligned}
 \end{equation}
 %
+Therefore, the only nonzero transitions from \(m\) in \(\W^\nu\) must go to the global minimum of \(\dgn^\nu_m\).
+This can also be seen by considering a perturbation that increases \(\Wm^\nu_{mi}\) and decreases \(\Wm^\nu_{mk}\) by the same amount (thus evading the diagonal constraint):
+%
+\begin{equation}\label{eq:exitminimum}
+  \pdiff{\mathcal{L}}{\Wm^\nu_{mi}} - \pdiff{\mathcal{L}}{\Wm^\nu_{mk}}
+    = \eqm_m \prn{\dgnm^\nu_{m,k} - \dgnm^\nu_{m,i}} + \kktm^\nu_{mi} - \kktm^\nu_{mk}.
+\end{equation}
+%
+If \( \dgnm^\nu_{m,k} > \dgnm^\nu_{m,i} \) we must have \( \kktm^\nu_{mk} > 0 \) and therefore \( \Wm^\nu_{mk} = 0 \).
+
 If both \(\nu\) have nonzero rates from \(m\) to \(i\) and \(j\):
 %
 \begin{equation}\label{eq:twodoubleexits}
@@ -2268,7 +2288,7 @@ Either there would be one state like \(n\), or there would be one state like \(i
   \includegraphics[width=0.4\linewidth]{scaling_plane.svg}}
 \end{myenuma}
 \caption[Depicting constraints on topology]{Depicting constraints on topology.
-(\ref*{fig:triangle_spacing}) The consequences of \cref{eq:oneexit,eq:doubleexit,eq:twoexits,eq:twodoubleexits,eq:nonexit} in the \( (\dgnm_{m,l},-\etwm_l) \)-plane, 
+(\ref*{fig:triangle_spacing}) The consequences of \cref{eq:oneexit,eq:doubleexit,eq:twoexits,eq:twodoubleexits,eq:nonexit} in the \( (-\etwm_l, \dgnm_{m,l}) \)-plane, 
   with \(i\) a state with a nonzero depressing transition from \(m\), 
   \(j\) a state with a nonzero potentiating transition, 
   \(n\) a state with both depressing and potentiating transitions 
@@ -2281,6 +2301,36 @@ Either there would be one state like \(n\), or there would be one state like \(i
 \label{fig:planes}}
 \end{center}
 \end{figure}
+
+%-------Section------------------------------------------------------------------
+
+\subsubsection{Changing planes}\label{sec:planes}
+
+Consider the setup of the previous section.
+Suppose there was a nonzero transition in \(\W\pot\) from some state \(p\) to state \(m\).
+Now \(m\) must be the minimum of \(\dgn\pot_p\), where \(j\) was the minimum of \(\dgn\pot_m\).
+
+As we move from the \( (-\etwm_l, \dgnm_{m,l}) \)-plane in \cref{fig:triangle_spacing} to the \( (-\etwm_l, \dgnm_{p,l}) \)-plane, the different states will rise or fall depending on \(c_p - c_m\) and the value of \(\etwm_l\).
+Let's focus on the rise/fall \emph{relative} to that of \(m\).
+If \(c_p > c_m\), states to the left of \(m\) will rise and those to its right will fall relative to it.
+If \(c_p < c_m\), states to the left of \(m\) will fall and those to its right will rise relative to it.
+
+If state \(j\) is to the left of \(m\) we must have \(c_p > c_m\).
+If \(j\) is to the right, as would be implied by the triangularity of \cref{sec:triangular} if it could be proven more generally,  we must have \(c_p < c_m\).
+
+Similarly, suppose  there was a nonzero transition in \(\W\dep\) from some state \(q\) to state \(m\).
+If state \(i\) is to the left of \(m\), as would be implied by the triangularity of \cref{sec:triangular}, we must have \(c_q > c_m\).
+If \(i\) is to the right we must have \(c_q < c_m\).
+
+The state \(j\) needs to do more than rise when we change planes.
+It must rise further than the gap between the diagonals passing through \(j\) and \(m\), which is \( \frac{\kktm\pot_{mm}}{\eqm_m} \).
+Regardless of the signs of the two factors, this rise is given by
+%
+\begin{equation}\label{eq:plane_rise}
+  \prn{c_m - c_p} \prn{\etwm_m - \etwm_j} \geq \frac{\kktm\pot_{mm}}{\eqm_m}.
+\end{equation}
+%
+A similar relation holds between \(c_q\), \(\etwm_i\) and \(\kktm\dep_{mm}\).
 
 %-------Section------------------------------------------------------------------
 
@@ -2642,7 +2692,7 @@ In essence, continuity can get us to a nearby ray, not a nearby vertical line.
     \hspace{0.02\linewidth}
     \item\aligntop{\includegraphics[width=0.26\linewidth]{serial_shorten.svg}}\label{fig:serial_sht}
   \end{myenuma}
-  \caption[Heuristic optimal models]{Heuristics for models that maximise memory curve.
+  \caption[Semi-empirically optimal models]{Semi-empirical models that maximise memory curve.
   All unlabelled arrows have transition probabilities equal to 1.
   At one particular time, the model is (\ref{fig:serial_uni}) the uniform serial model with \(M\) states.
   At later times the model has (\ref{fig:serial_stk}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model.
@@ -2652,8 +2702,9 @@ In essence, continuity can get us to a nearby ray, not a nearby vertical line.
 \end{figure}
 
 
-Looking at them models that were found by numerical maximisation in \cref{fig:envvid} 
+Looking at the models that were found by numerical maximisation in \cref{fig:envvid} 
 (see the video for the full set of models) suggests we look at the particular set of models shown in \cref{fig:heuristicmodels}.
+The two families of models are not identical, but are similar enough to provide some insight.
 
 At one particular time the model is (\ref{fig:serial_uni}) the uniform serial model with \(M\) states.
 At later times the model has (\ref{fig:serial_stk}) ``sticky'' end states with low exit transition probabilities, tending to the area maximising model as \(\tau \to \infty\).
@@ -2661,7 +2712,7 @@ At earlier times the model is (\ref{fig:serial_sht}) progressively shortened by 
 Once this reaches zero, we discard the old end state and shorten further by reducing the transition probability to the new end state (as one can see from \cref{fig:envvid} and the video this is not quite true, but it is close enough to true to get a reasonable approximation to the envelope).
 Once the length has been reduced to \(M=2\) the model is not shortened any further and the two-state model with deterministic transitions maximises the memory curve for all earlier times.
 
-These models' Laplace transforms can be computed analytically, as we will see below, leading to a heuristic envelope.
+These models' Laplace transforms can be computed analytically, as we will see below, leading to a semi-empirical envelope.
 All of these calculations will be performed at \(f\potdep=\frac{1}{2}\), so the denominator will play no role.
 We will work in units such that \(r=1\) temporarily, only restoring \(r\) at the end.
 We study models with \(m\) strong and \(m\) weak states for a total of  \(M = 2 m\).
@@ -2809,7 +2860,7 @@ When \(M \gg 2\), the validity region is approximately
   \frac{4.53327}{M^2} \lesssim s \lesssim 1.36423.
 \end{equation}
 %
-When \(s \sim \CO(M^{-2}) \ll 1\), we have \(\beta \approx \pm \sqrt{2s}\) and the heuristic envelope is approximately
+When \(s \sim \CO(M^{-2}) \ll 1\), we have \(\beta \approx \pm \sqrt{2s}\) and the semi-empirical envelope is approximately
 %
 \begin{equation}\label{eq:unienvapprox}
   \hat{A}_*(s) \approx \frac{ 0.54203 }{ \sqrt{s} }.
@@ -3128,7 +3179,7 @@ and the Laplace transform is
 
 %--------------------------------------------------------------------------------
 
-\subsection{Heuristic envelope}\label{sec:heuristicenv}
+\subsection{Semi-empirical envelope}\label{sec:heuristicenv}
 
 
 We can obtain a good approximation to the envelope by combining the results \cref{sec:serial_uniform} and \cref{sec:serial_sticky}, ignoring the complications of \cref{sec:serial_shorten}.
@@ -3193,8 +3244,8 @@ The middle section has greater \(\snrb\) in the theoretical version if \(\gamma 
   \centering
   % Requires \usepackage{graphicx}
   \includegraphics[width=0.8\linewidth]{LenvHeuristic.pdf}\\
-  \caption[Heuristic envelope for the signal-to-noise ratio]
-  {Heuristic envelope  for the signal-to-noise ratio, \cref{eq:henv}.
+  \caption[Semi-empirical envelope for the signal-to-noise ratio]
+  {Semi-empirical envelope  for the signal-to-noise ratio, \cref{eq:henv}.
   Analytic expressions from \cref{eq:henvapprox} describe the yellow curve and are only valid to the right of each region.}\label{fig:heuristicenv}
 \end{figure}
 
